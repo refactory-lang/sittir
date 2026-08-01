@@ -181,7 +181,7 @@ function buildSupertypeMembersMap(nodeMap: NodeMap): Map<string, string[]> {
 			return (node as AssembledEnum).resolvedKinds.length > 0 ? [...(node as AssembledEnum).resolvedKinds] : [kind];
 		if (node.modelType !== 'supertype') return [kind];
 		const members = new Set<string>();
-		for (const subtype of (node as AssembledSupertype).subtypes) {
+		for (const subtype of (node as AssembledSupertype).subtypeNames) {
 			members.add(subtype);
 			if (subtype.startsWith('_')) members.add(subtype.slice(1));
 			for (const member of expandMembers(subtype, seen)) {
@@ -552,7 +552,7 @@ function resolveSlotAccessorBody(slot: SlotModel, valueType: string): string {
 function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	const fn = `wrap${node.typeName}`;
 	const allowedKinds = [
-		...new Set(node.subtypes.flatMap((kind) => (kind.startsWith('_') ? [kind, kind.slice(1)] : [kind])))
+		...new Set(node.subtypeNames.flatMap((kind) => (kind.startsWith('_') ? [kind, kind.slice(1)] : [kind])))
 	];
 	// `data.$other` flows through the generic `_filterWrapChildrenByKind<T>` /
 	// `normalizeSingularWrapSlot<T>` helpers into an explicit

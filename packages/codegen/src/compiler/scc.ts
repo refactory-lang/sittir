@@ -126,7 +126,7 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 
 		if (node.modelType === 'supertype') {
 			const supertype = node as AssembledSupertype;
-			for (const subKind of supertype.subtypes) {
+			for (const subKind of supertype.subtypeNames) {
 				addEdge(kind, subKind);
 			}
 			continue;

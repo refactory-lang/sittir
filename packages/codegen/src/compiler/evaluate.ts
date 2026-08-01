@@ -1319,6 +1319,26 @@ function appendDedup(sink: string[], value: string): void {
 	if (!sink.includes(value)) sink.push(value);
 }
 
+// Shared by `supertypes` and `inline` callback results: both accept a mixed
+// array where the callback's `previous` param carries already-normalized
+// STRING names from the base grammar, while `$.foo` references added in the
+// override normalize to `{ type: 'SYMBOL', name: 'foo' }`. An override body
+// like `previous.concat([$.foo])` produces exactly this mixed shape; without
+// the string branch the base-inherited names silently drop (normalize()
+// turns a bare string into a STRING rule, never SYMBOL, so `n.type ===
+// SYMBOL` is always false for them).
+function appendCallbackMetadataNames(sink: string[], result: unknown): void {
+	if (!Array.isArray(result)) return;
+	for (const item of result) {
+		if (typeof item === 'string') {
+			appendDedup(sink, item);
+			continue;
+		}
+		const n = normalize(item);
+		if (n.type === SYMBOL) appendDedup(sink, n.name);
+	}
+}
+
 function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void {
 	const { refs, sinks, setWord } = ctx;
 	const baseGrammar = ctx.baseGrammar as {
@@ -1358,36 +1378,13 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 	if (opts.supertypes) {
 		const $ = createProxy('_supertypes_', refs);
 		const baseSupertypes = baseGrammar?.supertypes ?? [];
-		const result = opts.supertypes.call($, $, baseSupertypes);
-		if (Array.isArray(result)) {
-			for (const s of result) {
-				// Accept BOTH shapes — the callback's `previous` param
-				// carries already-normalized string names from the base
-				// grammar, while `$.foo` references added in the override
-				// normalize to `{ type: 'SYMBOL', name: 'foo' }`. An
-				// override body like `previous.concat([$.foo])` produces
-				// a mixed array; without the string branch the base-
-				// inherited supertypes silently drop.
-				if (typeof s === 'string') {
-					appendDedup(sinks.supertypes, s);
-					continue;
-				}
-				const n = normalize(s);
-				if (n.type === SYMBOL) appendDedup(sinks.supertypes, n.name);
-			}
-		}
+		appendCallbackMetadataNames(sinks.supertypes, opts.supertypes.call($, $, baseSupertypes));
 	}
 
 	if (opts.inline) {
 		const $ = createProxy('_inline_', refs);
 		const baseInline = baseGrammar?.inline ?? [];
-		const result = opts.inline.call($, $, baseInline);
-		if (Array.isArray(result)) {
-			for (const i of result) {
-				const n = normalize(i);
-				if (n.type === SYMBOL) appendDedup(sinks.inline, n.name);
-			}
-		}
+		appendCallbackMetadataNames(sinks.inline, opts.inline.call($, $, baseInline));
 	}
 
 	if (opts.conflicts) {

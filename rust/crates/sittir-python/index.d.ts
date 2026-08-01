@@ -927,19 +927,8 @@ export interface KeywordArgumentTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: IdentifierTransport
+  _name: KeywordIdentifierTransport
   _value: ExpressionTransport
-}
-
-export interface KeywordIdentifierTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _identifier: IdentifierTransport
 }
 
 export interface KeywordPatternTransport {
