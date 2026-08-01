@@ -1,15 +1,18 @@
 /**
- * PR-K2 (KindId-NodeRefs design §2.1/§3.2): `deriveValuesForRule` stamps
- * parser kind ids as FACTS on minted refs — `storageKindId`/`parseKindId`
- * on node refs, `resolvedKindId`/`parseKindId` on value-bearing literal
- * refs. Ids resolve through the ONE shared chain pair (PR-K1):
- * `findEntryForKindName` for rule names, `findEntryForLiteralText` for
- * literal texts (anon-scoped first — the #129 pin).
+ * `deriveValuesForRule` stamps parser kind ids as FACTS on minted refs —
+ * `storageKindId`/`parseKindId` on node refs, `resolvedKindId`/`parseKindId`
+ * on value-bearing literal refs. Ids resolve through the ONE shared chain
+ * pair: `findEntryForKindName` for rule names, `findEntryForLiteralText`
+ * for literal texts (anon-scoped first, so an anonymous token wins over a
+ * same-spelled named rule).
  *
  * Absence is typed, not discovered: a target with no catalog entry
  * (enrich markers, IR-only enums, erased hidden supertypes) mints an
- * id-less ref. No consumer reads the stamps yet (that is PR-K3); this
- * suite pins the mint contract only.
+ * id-less ref. For a SUPERTYPE rule, each subtype ref may ALREADY carry
+ * its own `kindId`/`aliasedFromId` (stamped at link) — those cases read
+ * the stamp directly instead of re-deriving via the catalog; the
+ * catalog-lookup chain above is the fallback for refs that weren't
+ * stamped.
  */
 
 import { CHOICE, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
@@ -87,7 +90,29 @@ describe('deriveValuesForRule — kind-id stamps at the mint (PR-K2)', () => {
 		};
 		const out = deriveValuesForRule(rule, ctx, 'single');
 		expect(out.map((v) => v.storageKindId)).toEqual([1, 6]);
+		// Catalog-fallback path for parseKindId (node-map.ts's re-derivation
+		// chain, distinct from the pre-stamped-ref path the next test covers).
 		expect(out.map((v) => v.parseKindId)).toEqual([1, 6]);
+	});
+
+	it('supertype subtype refs read their OWN pre-stamped id instead of re-deriving from the catalog', () => {
+		const rule: Rule = {
+			type: SUPERTYPE,
+			name: '_statement',
+			subtypes: [
+				// Stamped with an id that does NOT match its kindEntries row —
+				// if deriveValuesForRule fell back to a catalog lookup by name,
+				// 'identifier' would resolve to id 1 (see kindEntries above), not 99.
+				{ type: SYMBOL, name: 'identifier', kindId: 99 },
+				// Aliased + stamped: aliasedFromId is the effective storage id,
+				// kindId is the parse (alias-target) id — same pairing as the
+				// aliased-symbol case above, just carried on the ref itself.
+				{ type: SYMBOL, name: 'block', aliasedFrom: '_simple_statements', kindId: 42, aliasedFromId: 77 }
+			]
+		};
+		const out = deriveValuesForRule(rule, ctx, 'single');
+		expect(out.map((v) => v.storageKindId)).toEqual([99, 77]);
+		expect(out.map((v) => v.parseKindId)).toEqual([99, 42]);
 	});
 
 	it('enum-choice members stamp per-member literal-chain ids', () => {
