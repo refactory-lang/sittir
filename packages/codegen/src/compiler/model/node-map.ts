@@ -366,6 +366,17 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 
 export type NodeOrTerminal = NodeRef;
 
+// A subtype name paired with its OWN storage-side kindId, stamped once at
+// the point assemble.ts's supertype-resolution helpers discover the name
+// (a direct SymbolRule ref, a nested supertype arm, or a catalog lookup for
+// a structurally-discovered alias member with no ref at all) — never
+// re-derived downstream. `storageKindId` is legitimately absent for names
+// with no catalog entry (typed absence, not a bug).
+export interface SubtypeRef {
+	readonly name: string;
+	readonly storageKindId?: number;
+}
+
 export function isNodeRef(v: NodeOrTerminal): v is NodeRef & { node: AssembledNode | UnresolvedRef } {
 	return v.node !== undefined;
 }
@@ -2544,37 +2555,19 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 	// kind (assemble.ts), so a subtype's own `AssembledNode` may not exist yet
 	// — and is hydrated to the real node by `hydrateSlotRefs` once the full
 	// node map exists, the same two-pass pattern branch/group slot values
-	// already use. `storageKindId` is stamped here, once, from the catalog —
-	// the same construction-time stamping AssembledToken/AssembledKeyword do
-	// — so consumers read the id off the ref instead of re-resolving by name.
+	// already use. `storageKindId` is read directly off each `SubtypeRef` —
+	// assemble.ts's resolution helpers stamp it once, at discovery; this
+	// constructor never re-derives it.
 	readonly #subtypes: readonly NodeOrTerminal[];
 
-	constructor(
-		kind: string,
-		rule: SupertypeRule<'link'> | ChoiceRule<'link'>,
-		subtypeNames: readonly string[],
-		kindEntries: readonly GeneratedKindEntry[] = []
-	) {
+	constructor(kind: string, rule: SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes: readonly SubtypeRef[]) {
 		// Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
 		super(kind, rule as SupertypeRule<'link'>, { hidden: true });
-		// rule.subtypes carries link-stamped SymbolRefs for the DIRECTLY
-		// declared arms; `subtypeNames` (flattened, may include names reached
-		// only by expanding a nested hidden supertype) can list more entries
-		// than that — index by storage name (`aliasedFrom ?? name`) and read
-		// the stamp when a direct match exists, catalog-lookup fallback
-		// (AssembledToken/AssembledKeyword's own pattern) otherwise.
-		const stampedByStorageName = new Map<string, SymbolRule<'link'>>();
-		if (rule.type === SUPERTYPE) {
-			for (const s of rule.subtypes) stampedByStorageName.set(s.aliasedFrom ?? s.name, s);
-		}
-		this.#subtypes = subtypeNames.map((name): NodeOrTerminal => {
-			const stamped = stampedByStorageName.get(name);
-			return {
-				node: { kind: 'unresolved-ref', name },
-				storageKindId: stamped ? (stamped.aliasedFromId ?? stamped.kindId) : findEntryForKindName(kindEntries, name)?.id,
-				multiplicity: 'single'
-			};
-		});
+		this.#subtypes = subtypes.map((s): NodeOrTerminal => ({
+			node: { kind: 'unresolved-ref', name: s.name },
+			storageKindId: s.storageKindId,
+			multiplicity: 'single'
+		}));
 	}
 
 	get subtypes(): readonly NodeOrTerminal[] {

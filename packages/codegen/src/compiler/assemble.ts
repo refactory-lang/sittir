@@ -42,11 +42,12 @@ import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
 import {
 	collectGeneratedKindEntries,
+	findEntryForKindName,
 	findEntryForLiteralText,
 	type GeneratedIdTables,
 	type GeneratedKindEntry
 } from './generated-metadata.ts';
-import type { AssembledNode, AssembledNonterminal, NodeOrTerminal, UnresolvedRef } from './model/node-map.ts';
+import type { AssembledNode, AssembledNonterminal, NodeOrTerminal, SubtypeRef, UnresolvedRef } from './model/node-map.ts';
 import {
 	AssembledBranch,
 	AssembledPattern,
@@ -302,12 +303,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					const subtypes = resolveSupertypeSubtypes(assemblyRule, ctx, kindEntries);
 					nodes.set(
 						kind,
-						new AssembledSupertype(
-							kind,
-							assemblyRule as SupertypeRule<'link'> | ChoiceRule<'link'>,
-							subtypes,
-							kindEntries
-						)
+						new AssembledSupertype(kind, assemblyRule as SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes)
 					);
 					break;
 				}
@@ -587,15 +583,15 @@ function resolveSupertypeSubtypes(
 	rule: Rule<'link'>,
 	ctx: AssembleCtx,
 	kindEntries: readonly GeneratedKindEntry[]
-): string[] {
-	let subtypes: string[];
+): SubtypeRef[] {
+	let subtypes: SubtypeRef[];
 	if (rule.type === SUPERTYPE) {
-		subtypes = rule.subtypes.map((s) => s.aliasedFrom ?? s.name);
+		subtypes = rule.subtypes.map((s) => ({ name: s.aliasedFrom ?? s.name, storageKindId: s.aliasedFromId ?? s.kindId }));
 	} else if (rule.type === CHOICE) {
 		subtypes = rule.members
 			.map((m) => (m.type === VARIANT ? m.content : m))
 			.filter((m): m is SymbolRule<'link'> => m.type === SYMBOL)
-			.map((m) => m.name);
+			.map((m) => ({ name: m.name, storageKindId: m.aliasedFromId ?? m.kindId }));
 	} else {
 		subtypes = [];
 	}
@@ -637,12 +633,12 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
 }
 
 function resolveHiddenSubtypes(
-	names: readonly string[],
+	names: readonly SubtypeRef[],
 	ctx: AssembleCtx,
 	kindEntries: readonly GeneratedKindEntry[],
 	ownerName?: string,
 	subtypeParseNames?: Readonly<Record<string, string>>
-): string[] {
+): SubtypeRef[] {
 	const { normalizedRules: rules, topLevelAliasBodies } = ctx;
 	// Post-synthesis-removal: the rules map is keyed by SOURCE kinds
 	// only (hidden `_X`). Subtype names surface as source kinds; we
@@ -650,18 +646,19 @@ function resolveHiddenSubtypes(
 	// pointed at visible alias targets). Hidden kinds that have their
 	// own rule body are resolved via the rules map directly; the
 	// chain terminates at a concrete symbol.
-	const out: string[] = [];
+	const out: SubtypeRef[] = [];
 	const seen = new Set<string>();
-	const visit = (name: string): void => {
+	const visit = (ref: SubtypeRef): void => {
+		const name = ref.name;
 		if (seen.has(name)) return;
 		seen.add(name);
 		if (!name.startsWith('_')) {
-			out.push(name);
+			out.push(ref);
 			return;
 		}
 		const rule = rules[name];
 		if (!rule) {
-			out.push(name);
+			out.push(ref);
 			return;
 		}
 		// Declared parse-alias fact: this hidden arm MATERIALIZES as its own
@@ -673,7 +670,7 @@ function resolveHiddenSubtypes(
 		// than being flattened to its leaf members by resolveHiddenRuleContent
 		// below.
 		if (rule.type !== SUPERTYPE && subtypeParseNames && Object.prototype.hasOwnProperty.call(subtypeParseNames, name)) {
-			out.push(name);
+			out.push(ref);
 			return;
 		}
 		// Nested-supertype arms (e.g. rust's `_non_delim_token` stamping
@@ -695,44 +692,48 @@ function resolveHiddenSubtypes(
 		// separately registered node — only the hidden ENUM kind itself
 		// exists — so it still recurses via `visit` as before.
 		if (rule.type === SUPERTYPE) {
-			out.push(name);
+			out.push(ref);
 			const nestedParseNames = subtypeParseNamesOf(rule);
 			for (const subRef of rule.subtypes) {
 				const sub = subRef.aliasedFrom ?? subRef.name;
+				const subStamp = subRef.aliasedFromId ?? subRef.kindId;
 				const parseName = nestedParseNames[sub];
 				const subRule = sub.startsWith('_') ? rules[sub] : undefined;
 				if (parseName !== undefined && subRule?.type === SUPERTYPE) {
 					if (!seen.has(parseName)) {
 						seen.add(parseName);
-						out.push(parseName);
+						// The alias-materialized name's own storageKindId belongs to
+						// the separately registered AssembledSupertype node (spec 026)
+						// — no ref here carries its stamp; legitimately unstamped.
+						out.push({ name: parseName });
 					}
 					continue;
 				}
 				if (sub.startsWith('_')) {
-					visit(sub);
+					visit({ name: sub, storageKindId: subStamp });
 					continue;
 				}
 				if (!seen.has(sub)) {
 					seen.add(sub);
-					out.push(sub);
+					out.push({ name: sub, storageKindId: subStamp });
 				}
 			}
 			return;
 		}
-		if (topLevelAliasBodies.has(name)) out.push(name);
+		if (topLevelAliasBodies.has(name)) out.push(ref);
 		const resolved = resolveHiddenRuleContent(rule, new Set([name]), ctx, kindEntries);
 		if (resolved.length === 0) {
-			if (!out.includes(name)) out.push(name);
+			if (!out.some((o) => o.name === name)) out.push(ref);
 			return;
 		}
 		for (const r of resolved) {
 			// Recurse in case a hidden rule resolves to another hidden rule.
-			if (r.startsWith('_')) {
+			if (r.name.startsWith('_')) {
 				visit(r);
 				continue;
 			}
-			if (!seen.has(r)) {
-				seen.add(r);
+			if (!seen.has(r.name)) {
+				seen.add(r.name);
 				out.push(r);
 			}
 		}
@@ -742,14 +743,14 @@ function resolveHiddenSubtypes(
 }
 
 function includeAliasMemberKinds(
-	subtypes: readonly string[],
+	subtypes: readonly SubtypeRef[],
 	ctx: AssembleCtx,
 	kindEntries: readonly GeneratedKindEntry[],
 	ownerName?: string
-): string[] {
+): SubtypeRef[] {
 	const { normalizedRules: rules } = ctx;
 	const out = [...subtypes];
-	const subtypeSet = new Set(subtypes);
+	const subtypeSet = new Set(subtypes.map((s) => s.name));
 	let changed = true;
 	while (changed) {
 		changed = false;
@@ -758,7 +759,9 @@ function includeAliasMemberKinds(
 			if (name === ownerName) continue;
 			if (subtypeSet.has(name)) continue;
 			if (!isAliasMemberKind(name, ctx, subtypeSet, kindEntries)) continue;
-			out.push(name);
+			// Structurally discovered (no ref points at this kind from the
+			// supertype) — a catalog lookup is the only available stamp source.
+			out.push({ name, storageKindId: findEntryForKindName(kindEntries, name)?.id });
 			subtypeSet.add(name);
 			changed = true;
 		}
@@ -778,7 +781,7 @@ function isAliasMemberKind(
 	if (!body) return false;
 	const resolved = resolveHiddenRuleContent(body, new Set([name]), ctx, kindEntries);
 	if (resolved.length === 0) return false;
-	return resolved.every((member) => isCompatibleSubtypeMember(member, ctx, subtypeSet, new Set(), kindEntries));
+	return resolved.every((member) => isCompatibleSubtypeMember(member.name, ctx, subtypeSet, new Set(), kindEntries));
 }
 
 function isCompatibleSubtypeMember(
@@ -797,7 +800,7 @@ function isCompatibleSubtypeMember(
 	seen.add(name);
 	const resolved = resolveHiddenRuleContent(rule, new Set([name]), ctx, kindEntries);
 	if (resolved.length === 0) return false;
-	return resolved.every((member) => isCompatibleSubtypeMember(member, ctx, subtypeSet, seen, kindEntries));
+	return resolved.every((member) => isCompatibleSubtypeMember(member.name, ctx, subtypeSet, seen, kindEntries));
 }
 
 function resolveHiddenRuleContent(
@@ -805,7 +808,7 @@ function resolveHiddenRuleContent(
 	seen: Set<string>,
 	ctx: AssembleCtx,
 	kindEntries: readonly GeneratedKindEntry[]
-): string[] {
+): SubtypeRef[] {
 	const rules = ctx.normalizedRules;
 	// Wrapper-opacity attribute checks — see doc comment. Must run BEFORE the
 	// type switch: a repeat/repeat1/optional can wrap ANY rule shape, and the
@@ -820,9 +823,11 @@ function resolveHiddenRuleContent(
 	// Generic alias-of-non-symbol fallback (the `else` branch of the former
 	// ALIAS case — see doc comment). SYMBOL has its own `aliasedFrom` read
 	// below (unchanged, predates this migration) so it's excluded here to
-	// avoid short-circuiting its hidden-prefix/recursion logic.
+	// avoid short-circuiting its hidden-prefix/recursion logic. No stamp is
+	// available here — `aliasedFrom`/`aliasedFromId` are a SYMBOL-only
+	// pairing (types/rule.ts), and this rule isn't one.
 	if (rule.aliasedFrom !== undefined && rule.type !== SYMBOL) {
-		return [rule.aliasedFrom];
+		return [{ name: rule.aliasedFrom }];
 	}
 	// A closed literal-enum body (bare `choice` of all-STRING members, e.g.
 	// rust's `_primitive_type` / the alias-minted `_token_tree_punctuation`
@@ -844,20 +849,22 @@ function resolveHiddenRuleContent(
 	switch (rule.type) {
 		case SYMBOL: {
 			const refName = rule.aliasedFrom ?? rule.name;
-			if (!refName.startsWith('_')) return [refName];
+			const refStamp = rule.aliasedFromId ?? rule.kindId;
+			if (!refName.startsWith('_')) return [{ name: refName, storageKindId: refStamp }];
 			if (seen.has(refName)) return [];
 			seen.add(refName);
 			const target = rules[refName];
-			return target ? resolveHiddenRuleContent(target, seen, ctx, kindEntries) : [refName];
+			return target ? resolveHiddenRuleContent(target, seen, ctx, kindEntries) : [{ name: refName, storageKindId: refStamp }];
 		}
 		case SUPERTYPE:
 			return rule.subtypes.flatMap((symbolRef) => {
 				const s = symbolRef.aliasedFrom ?? symbolRef.name;
+				const sStamp = symbolRef.aliasedFromId ?? symbolRef.kindId;
 				if (seen.has(s)) return [];
 				seen.add(s);
-				if (!s.startsWith('_')) return [s];
+				if (!s.startsWith('_')) return [{ name: s, storageKindId: sStamp }];
 				const target = rules[s];
-				return target ? resolveHiddenRuleContent(target, seen, ctx, kindEntries) : [s];
+				return target ? resolveHiddenRuleContent(target, seen, ctx, kindEntries) : [{ name: s, storageKindId: sStamp }];
 			});
 		case CHOICE:
 			return rule.members.flatMap((m) => resolveHiddenRuleContent(m, seen, ctx, kindEntries));
@@ -874,9 +881,10 @@ function resolveHiddenRuleContent(
 			// `$` may dedupe under a sanitized/named catalog entry), not the
 			// raw literal text. Returning the raw text here when a resolved
 			// name exists would name a subtype the NodeMap never keys anything
-			// under.
+			// under. A literal has no ref to stamp — the catalog lookup by
+			// text IS the primary derivation, not a fallback for a lost stamp.
 			const entry = findEntryForLiteralText(kindEntries, rule.value);
-			return [entry?.kind ?? rule.value];
+			return [{ name: entry?.kind ?? rule.value, storageKindId: rule.resolvedKindId ?? entry?.id }];
 		}
 		case VARIANT:
 		case GROUP:
