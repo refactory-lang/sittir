@@ -1279,48 +1279,26 @@ type ModelType = AssembledNode['modelType'];
 // fixpoint (enables flatten + canonicalize to re-fire on inlined
 // content). Imported above; no longer defined here.
 
-// Phase-invariant: none of SUPERTYPE/PATTERN/STRING/enum-shaped-CHOICE are
-// wrapper-bounded types (they persist through every phase, unlike
-// OPTIONAL/FIELD/REPEAT/REPEAT1 which collapse to `never` post-normalize),
-// so this reads identically off a link-phase or a normalize-phase rule.
-// `buildInlinableKinds` (inline-sets.ts) uses this directly instead of the
-// full `classifyNode` — it only ever needs to know NON_INLINABLE_MODEL_TYPES
-// membership, never the wrapper-shape-dependent branch/multi/group answers
-// classifyNode's tail computes.
+// Phase-invariant leaf check, usable by both `classifyNode` and
+// `buildInlinableKinds` (inline-sets.ts) — see "classifyNode's RenderRule-only
+// design" in docs/compiler-phase-glossary.md.
 export function isNonInlinableLeafShape(rule: AnyRule): boolean {
 	if (isEnumChoiceRule(rule)) return true;
 	return rule.type === SUPERTYPE || rule.type === PATTERN || rule.type === STRING;
 }
 
-// classifyNode's only real caller is assemble()'s own loop now
-// (`buildInlinableKinds`, inline-sets.ts, was decoupled to
-// `isNonInlinableLeafShape` above precisely so this could move off the
-// link-phase, wrapper-bearing view it used to need) — kept as a module-level
-// export purely for assemble.test.ts's direct unit coverage. The helpers
-// below read RenderRule (the normalize-phase, wrapper-deleted view)
-// directly: wrapper-deletion already stamps the facts these used to
-// re-derive by walking OPTIONAL/FIELD/REPEAT/REPEAT1 wrapper nodes
-// (`multiplicity`/`nonterminal`/`separator`), so there is nothing left to
-// walk for those shapes at this phase.
+// Reads RenderRule directly — see "classifyNode's RenderRule-only design" in
+// docs/compiler-phase-glossary.md. Kept as a module-level export purely for
+// assemble.test.ts's direct unit coverage; assemble()'s own loop is the only
+// real caller.
 export function classifyNode(
 	kind: string,
 	rule: RenderRule,
 	opts?: { variantParents?: ReadonlySet<string>; parentAliasedKinds?: ReadonlySet<string>; wordMatcher?: RegExp }
 ): ModelType {
-	// This early exit only applies to an UNDECORATED rule — no fieldName, no
-	// multiplicity attribute. SUPERTYPE/GROUP/enum-shaped CHOICE persist as
-	// real nodes at every phase (never wrapper-collapsed), so seeing one
-	// decorated here means a FIELD/REPEAT/REPEAT1 wrapped it directly — at
-	// link-phase that wrapper's OWN type would have been checked first,
-	// never reaching this switch, so a decorated rule must fall through to
-	// the branch/multi/separatedList paths below the exact same way.
-	// PATTERN/STRING are wrapper-COLLAPSIBLE content (FIELD/REPEAT/REPEAT1
-	// vanish into their content post-wrapper-deletion): a decorated
-	// PATTERN/STRING (e.g. `repeat1('.')` collapsing to a bare-looking
-	// STRING with multiplicity:'nonEmptyArray') is exactly a field/repeat-
-	// wrapped leaf masquerading as a bare one — it must NOT early-exit as
-	// keyword/token/pattern here; classifyTerminalFallback's isAllTextShape
-	// (reached via the fallthrough below) reproduces the original answer.
+	// Guards against a DECORATED PATTERN/STRING (wrapper-collapsible content
+	// masquerading as bare) early-exiting wrong — see "classifyNode's
+	// RenderRule-only design" in docs/compiler-phase-glossary.md.
 	if (rule.fieldName === undefined && rule.multiplicity === undefined) {
 		// Enum-shaped ChoiceRules aren't one of the switch cases below — detect
 		// them directly via isEnumChoiceRule.
@@ -1373,18 +1351,9 @@ function classifyBranchOrContainer(rule: RenderRule): ModelType | null {
 	return null;
 }
 
-// Replaces the link-phase `hasAnyField(rule) || hasAnyChild(rule)` walk —
-// a narrower question than "does this produce a slot at all". A repeat over
-// terminals genuinely IS a slot (Table 2: repeat forces an array slot even
-// over terminal content) — `nonterminal` correctly says so. But
-// classifyBranchOrContainer isn't asking that; it's asking hasAnyField/
-// hasAnyChild's original question — "is there a NAMED field or a rule
-// REFERENCE here" — to decide 'branch' vs falling through to 'multi'
-// (isHiddenRepeatHelper, for a kind whose whole body IS the repeat) or
-// 'pattern' (classifyTerminalFallback, for repeated terminal content folded
-// into a larger all-text kind like `_type_identifier`). `fieldName` is the
-// flattened equivalent of hasAnyField's FIELD-only signal; SYMBOL/SUPERTYPE
-// below reproduces hasAnyChild's.
+// Replaces the link-phase `hasAnyField(rule) || hasAnyChild(rule)` walk with
+// the same, narrower question — see "classifyNode's RenderRule-only design"
+// in docs/compiler-phase-glossary.md.
 function hasSlotBearingContent(rule: RenderRule): boolean {
 	if (rule.fieldName !== undefined) return true;
 	switch (rule.type) {
@@ -1413,15 +1382,9 @@ function classifyTerminalFallback(kind: string, rule: RenderRule): ModelType {
 	);
 }
 
-// Phase-invariant by construction: OPTIONAL/REPEAT/REPEAT1/FIELD/ALIAS/TOKEN
-// collapse to `never` outside evaluate/link (rule.ts), so at normalize/
-// simplify this switch simply never reaches those cases — the recursion
-// bottoms out directly on whatever leaf wrapper-deletion left in their
-// place, with no information lost. That's what lets one implementation
-// correctly serve all three real callers: `collectAnonymousNodes` (a
-// still-wrapper-bearing Rule<'link'>, detecting TOKEN-body-flattened
-// compound literals), `classifyTerminalFallback` (normalize-phase
-// RenderRule), and `diagnoseSlotGrouping` (simplify-phase SimplifiedRule).
+// Phase-invariant by construction — see "classifyNode's RenderRule-only
+// design" in docs/compiler-phase-glossary.md for why one implementation
+// correctly serves all three real callers.
 export function isAllTextShape(rule: AnyRule): boolean {
 	switch (rule.type) {
 		case STRING:

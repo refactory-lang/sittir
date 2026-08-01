@@ -118,14 +118,8 @@ export function extractRepeatShape(rule: AnyRule): { repeat: RepeatRule | Repeat
 	}
 }
 
-// Genuinely link-phase: walks OPTIONAL/REPEAT/REPEAT1/VARIANT/GROUP wrapper
-// nodes to answer "is there a FIELD anywhere in this still-wrapper-bearing
-// tree" — used where a real Rule<'link'> tree is in hand (link.ts's own
-// classification, and AssembledBranch.isContainerShape's deliberately
-// link-phase `.rule`, node-map.ts). Not a general-purpose Rule<Phase>
-// predicate: at normalize/simplify, FIELD collapses to the
-// `fieldName`/`nonterminal` RuleBase attributes instead — a different check
-// for a different phase.
+// Genuinely link-phase only — see "Rule IR and snapshots" in
+// docs/compiler-phase-glossary.md for the phase-scoping rationale.
 export function hasAnyField(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		case FIELD:
