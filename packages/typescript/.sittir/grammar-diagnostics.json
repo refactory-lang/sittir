@@ -343,83 +343,10 @@
     "grammar": "typescript"
   },
   {
-    "code": "kindid-vaporized-symbols",
-    "message": "32 referenced kind(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "details": {
-      "kinds": [
-        "__number_operator",
-        "_abstract_marker",
-        "_accessor_marker",
-        "_async_marker",
-        "_augmented_assignment_expression_operator",
-        "_await_marker",
-        "_const_marker",
-        "_declare_marker",
-        "_jsx_opening_element_content",
-        "_jsx_start_opening_element_group1",
-        "_jsx_string",
-        "_kw_asserts",
-        "_kw_type_predicate",
-        "_operator",
-        "_readonly_marker",
-        "_static_marker",
-        "_unary_expression_operator",
-        "_using_marker",
-        "html_character_reference",
-        "jsx_attribute",
-        "jsx_closing_element",
-        "jsx_element",
-        "jsx_expression",
-        "jsx_identifier",
-        "jsx_namespace_name",
-        "jsx_opening_element",
-        "jsx_opening_element_content",
-        "jsx_self_closing_element",
-        "jsx_start_opening_element_group1",
-        "statement_identifier_group1",
-        "unescaped_double_jsx_string_fragment",
-        "unescaped_single_jsx_string_fragment"
-      ]
-    },
-    "severity": "info",
-    "scope": "grammar",
-    "grammar": "typescript"
-  },
-  {
-    "code": "kindid-vaporized-literals",
-    "message": "18 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "details": {
-      "texts": [
-        "\n",
-        "#",
-        "/*",
-        "//",
-        "/>",
-        "0",
-        "0B",
-        "0O",
-        "0X",
-        "0b",
-        "0o",
-        "0x",
-        "</",
-        "E",
-        "\\",
-        "_",
-        "e",
-        "n"
-      ]
-    },
-    "severity": "info",
-    "scope": "grammar",
-    "grammar": "typescript"
-  },
-  {
     "code": "kindid-inline-excluded-symbols",
     "message": "18 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
+    "severity": "info",
     "details": {
       "kinds": [
         "__jsx_start_opening_element_optional1",
@@ -442,7 +369,92 @@
         "_semicolon"
       ]
     },
+    "scope": "grammar",
+    "grammar": "typescript"
+  },
+  {
+    "code": "kindid-vaporized-symbols",
+    "message": "17 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
+    "canProceed": true,
     "severity": "info",
+    "details": {
+      "kinds": [
+        "_jsx_opening_element_content",
+        "_jsx_start_opening_element_group1",
+        "_jsx_string",
+        "html_character_reference",
+        "jsx_attribute",
+        "jsx_closing_element",
+        "jsx_element",
+        "jsx_expression",
+        "jsx_identifier",
+        "jsx_namespace_name",
+        "jsx_opening_element",
+        "jsx_opening_element_content",
+        "jsx_self_closing_element",
+        "jsx_start_opening_element_group1",
+        "statement_identifier_group1",
+        "unescaped_double_jsx_string_fragment",
+        "unescaped_single_jsx_string_fragment"
+      ]
+    },
+    "scope": "grammar",
+    "grammar": "typescript"
+  },
+  {
+    "code": "kindid-vaporized-literals",
+    "message": "18 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "texts": [
+        "\n",
+        "#",
+        "/*",
+        "//",
+        "/>",
+        "0",
+        "0B",
+        "0O",
+        "0X",
+        "0b",
+        "0o",
+        "0x",
+        "</",
+        "E",
+        "\\",
+        "_",
+        "e",
+        "n"
+      ]
+    },
+    "scope": "grammar",
+    "grammar": "typescript"
+  },
+  {
+    "code": "kindid-unclassified-symbols",
+    "message": "15 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "canProceed": true,
+    "severity": "warning",
+    "details": {
+      "kinds": [
+        "__number_operator",
+        "_abstract_marker",
+        "_accessor_marker",
+        "_async_marker",
+        "_augmented_assignment_expression_operator",
+        "_await_marker",
+        "_const_marker",
+        "_declare_marker",
+        "_kw_asserts",
+        "_kw_type_predicate",
+        "_operator",
+        "_readonly_marker",
+        "_static_marker",
+        "_unary_expression_operator",
+        "_using_marker"
+      ]
+    },
     "scope": "grammar",
     "grammar": "typescript"
   },

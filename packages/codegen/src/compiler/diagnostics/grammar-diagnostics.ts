@@ -203,7 +203,8 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			(d) =>
 				d.code.startsWith('kindid-unstamped') ||
 				d.code.startsWith('kindid-vaporized') ||
-				d.code.startsWith('kindid-inline-excluded')
+				d.code.startsWith('kindid-inline-excluded') ||
+				d.code.startsWith('kindid-unclassified')
 		)
 		.map((d) => ({ ...d, scope: 'grammar' as const, grammar: input.rawGrammar.name }));
 	const allDiagnostics = [

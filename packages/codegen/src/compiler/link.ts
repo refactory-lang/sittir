@@ -356,7 +356,11 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	// which reads it via this same helper). VAPORIZED vs inline-excluded
 	// classification needs THAT authoritative set, not the DSL-level one.
 	const grammarJsonInline = new Set(loadGrammarJsonInlineList(raw.name) ?? raw.inline);
-	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, grammarJsonInline);
+	const rootRuleName = Object.keys(raw.rules)[0];
+	const reachableFromRoot = rootRuleName
+		? computeReachableFromRoot({ rules, rootName: rootRuleName })
+		: new Set<string>();
+	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, grammarJsonInline, reachableFromRoot);
 
 	// Validate refine() forms against the linked rule tree.
 	if (raw.refineForms && raw.refineForms.size > 0) {
@@ -572,7 +576,8 @@ export function reportKindIdStampMisses(
 	stampMisses: KindIdStampMisses,
 	kindEntries: readonly GeneratedKindEntry[],
 	diagnostics: DiagnosticSink | undefined,
-	inlineKinds: ReadonlySet<string>
+	inlineKinds: ReadonlySet<string>,
+	reachableFromRoot: ReadonlySet<string>
 ): void {
 	if (kindEntries.length === 0 || !diagnostics) return;
 	// warning severity, reports the FULL miss set — see "Diagnostics" in
@@ -594,63 +599,149 @@ export function reportKindIdStampMisses(
 			details: { texts: [...stampMisses.literals].sort() }
 		});
 	}
-	reportVaporizedKinds(stampMisses, inlineKinds, diagnostics);
+	reportVaporizedKinds(stampMisses, inlineKinds, reachableFromRoot, diagnostics);
+}
+
+// Walks the grammar's own rule reference graph from its root rule (the
+// tree-sitter convention that the first-declared rule is the start rule —
+// verified against all 3 grammars' compiled grammar.json), following SYMBOL/
+// SUPERTYPE references and wrapper/seq/choice structure transitively. This
+// is the ONLY independent evidence available that a phantom kind is
+// genuinely dead surface rather than merely "not in the inline array" —
+// tree-sitter's compiled grammar.json retains every declared rule in its
+// `rules` map regardless of reachability, so mere presence there can't
+// distinguish the two; see "classifyNode's RenderRule-only design" sibling
+// section in docs/compiler-phase-glossary.md for the analogous phase-view
+// precedent this reachability check follows (read the authoritative
+// signal directly rather than re-deriving it from an unrelated proxy).
+function computeReachableFromRoot(input: {
+	rules: Record<string, Rule<'link'>>;
+	rootName: string;
+}): ReadonlySet<string> {
+	const { rules, rootName } = input;
+	const reachable = new Set<string>();
+	const visit = (name: string): void => {
+		if (reachable.has(name)) return;
+		reachable.add(name);
+		const rule = rules[name];
+		if (rule) for (const ref of walkRuleRefs(rule)) visit(ref);
+	};
+	visit(rootName);
+	return reachable;
+}
+
+// Same case list as resolveHiddenRuleContent (assemble.ts): collects every
+// rule-name reference reachable directly under `rule`, recursing through
+// wrapper/seq/choice structure. SYMBOL/SUPERTYPE are where a name reference
+// actually lives; every other type only contributes structure to recurse
+// through.
+function walkRuleRefs(rule: Rule<'link'>): readonly string[] {
+	switch (rule.type) {
+		case SYMBOL:
+			return [rule.aliasedFrom ?? rule.name];
+		case SUPERTYPE:
+			return rule.subtypes.map((s) => s.aliasedFrom ?? s.name);
+		case SEQ:
+		case CHOICE:
+			return rule.members.flatMap(walkRuleRefs);
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case FIELD:
+		case VARIANT:
+		case GROUP:
+		case TOKEN:
+		case ALIAS:
+			return walkRuleRefs(rule.content);
+		default:
+			return [];
+	}
+}
+
+function emitStampMissDiagnostic(entry: {
+	diagnostics: DiagnosticSink;
+	severity: 'info' | 'warning';
+	code: string;
+	message: string;
+	detailsKey: 'kinds' | 'texts';
+	items: readonly string[];
+}): void {
+	if (entry.items.length === 0) return;
+	entry.diagnostics.emit({
+		code: entry.code,
+		message: entry.message,
+		canProceed: true,
+		severity: entry.severity,
+		details: { [entry.detailsKey]: entry.items }
+	});
 }
 
 // A stamp miss is VAPORIZED (dead grammar surface, e.g. jsx nodes
 // unreachable in the non-tsx dialect) when its kind is NOT in the grammar's
-// `inline:` array — tree-sitter issues no symbol for either class, but
-// `inline:` membership is a principled, grammar-declared exclusion, so the
-// remainder is genuinely dead surface. Reported alongside (not instead of)
-// the unstamped diagnostics so existing consumers are unaffected; this is
-// the accepted-exclusion signal a future ratchet reads.
+// `inline:` array AND not reachable from the grammar's root by our own
+// reference-graph walk — the latter is real, independent evidence of dead
+// code, not just the complement of the inline-array check (see
+// computeReachableFromRoot's doc comment for why that distinction matters).
+// A miss reachable from the root, with no kindId, and not inline-excluded
+// is a genuine unresolved gap — reported separately (kindid-unclassified-*)
+// rather than silently absorbed into "vaporized", so a future regression
+// can't hide there. Literals have no rule-name identity to test reachability
+// against (a bare literal isn't itself a graph node), so they stay
+// classified purely by inline-array membership.
 function reportVaporizedKinds(
 	stampMisses: KindIdStampMisses,
 	inlineKinds: ReadonlySet<string>,
+	reachableFromRoot: ReadonlySet<string>,
 	diagnostics: DiagnosticSink
 ): void {
-	const vaporizedSymbols = [...stampMisses.symbols].filter((k) => !inlineKinds.has(k)).sort();
-	const vaporizedLiterals = [...stampMisses.literals].filter((k) => !inlineKinds.has(k)).sort();
-	if (vaporizedSymbols.length > 0) {
-		diagnostics.info({
-			code: 'kindid-vaporized-symbols',
-			message: `${vaporizedSymbols.length} referenced kind(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)`,
-			canProceed: true,
-			details: { kinds: vaporizedSymbols }
-		});
-	}
-	if (vaporizedLiterals.length > 0) {
-		diagnostics.info({
-			code: 'kindid-vaporized-literals',
-			message: `${vaporizedLiterals.length} literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)`,
-			canProceed: true,
-			details: { texts: vaporizedLiterals }
-		});
-	}
-	// The complementary half of the same partition: misses that ARE in the
-	// grammar's `inline:` array. Tree-sitter deliberately issues no symbol
-	// for an inline rule — this is model-only surface by grammar
-	// declaration, not a gap, so it gets its own accepted-exclusion label
-	// rather than reading as "missing something" alongside the vaporized
-	// class above.
 	const inlineExcludedSymbols = [...stampMisses.symbols].filter((k) => inlineKinds.has(k)).sort();
 	const inlineExcludedLiterals = [...stampMisses.literals].filter((k) => inlineKinds.has(k)).sort();
-	if (inlineExcludedSymbols.length > 0) {
-		diagnostics.info({
-			code: 'kindid-inline-excluded-symbols',
-			message: `${inlineExcludedSymbols.length} referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)`,
-			canProceed: true,
-			details: { kinds: inlineExcludedSymbols }
-		});
-	}
-	if (inlineExcludedLiterals.length > 0) {
-		diagnostics.info({
-			code: 'kindid-inline-excluded-literals',
-			message: `${inlineExcludedLiterals.length} literal(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)`,
-			canProceed: true,
-			details: { texts: inlineExcludedLiterals }
-		});
-	}
+	emitStampMissDiagnostic({
+		diagnostics,
+		severity: 'info',
+		code: 'kindid-inline-excluded-symbols',
+		message: `${inlineExcludedSymbols.length} referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)`,
+		detailsKey: 'kinds',
+		items: inlineExcludedSymbols
+	});
+	emitStampMissDiagnostic({
+		diagnostics,
+		severity: 'info',
+		code: 'kindid-inline-excluded-literals',
+		message: `${inlineExcludedLiterals.length} literal(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)`,
+		detailsKey: 'texts',
+		items: inlineExcludedLiterals
+	});
+
+	const notInlineSymbols = [...stampMisses.symbols].filter((k) => !inlineKinds.has(k));
+	const vaporizedSymbols = notInlineSymbols.filter((k) => !reachableFromRoot.has(k)).sort();
+	const unclassifiedSymbols = notInlineSymbols.filter((k) => reachableFromRoot.has(k)).sort();
+	const vaporizedLiterals = [...stampMisses.literals].filter((k) => !inlineKinds.has(k)).sort();
+
+	emitStampMissDiagnostic({
+		diagnostics,
+		severity: 'info',
+		code: 'kindid-vaporized-symbols',
+		message: `${vaporizedSymbols.length} referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)`,
+		detailsKey: 'kinds',
+		items: vaporizedSymbols
+	});
+	emitStampMissDiagnostic({
+		diagnostics,
+		severity: 'info',
+		code: 'kindid-vaporized-literals',
+		message: `${vaporizedLiterals.length} literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)`,
+		detailsKey: 'texts',
+		items: vaporizedLiterals
+	});
+	emitStampMissDiagnostic({
+		diagnostics,
+		severity: 'warning',
+		code: 'kindid-unclassified-symbols',
+		message: `${unclassifiedSymbols.length} referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion`,
+		detailsKey: 'kinds',
+		items: unclassifiedSymbols
+	});
 }
 
 function classifyAndLogHiddenRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
