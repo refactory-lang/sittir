@@ -803,8 +803,7 @@
           "name": "kind",
           "content": {
             "type": "SYMBOL",
-            "name": "_kind",
-            "hidden": true
+            "name": "_kind"
           }
         },
         {
@@ -1243,8 +1242,7 @@
           "name": "operator",
           "content": {
             "type": "SYMBOL",
-            "name": "__for_header_operator",
-            "hidden": true
+            "name": "__for_header_operator"
           }
         },
         {
@@ -7245,8 +7243,7 @@
               "name": "accessibility_modifier",
               "content": {
                 "type": "SYMBOL",
-                "name": "accessibility_modifier",
-                "hidden": false
+                "name": "accessibility_modifier"
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -7395,8 +7392,7 @@
               "name": "accessibility_modifier",
               "content": {
                 "type": "SYMBOL",
-                "name": "accessibility_modifier",
-                "hidden": false
+                "name": "accessibility_modifier"
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -10185,8 +10181,7 @@
               "name": "accessibility_modifier",
               "content": {
                 "type": "SYMBOL",
-                "name": "accessibility_modifier",
-                "hidden": false
+                "name": "accessibility_modifier"
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -11463,8 +11458,7 @@
           "name": "kind",
           "content": {
             "type": "SYMBOL",
-            "name": "_kind",
-            "hidden": true
+            "name": "_kind"
           }
         },
         {
@@ -12483,7 +12477,7 @@
           }
         ],
         "metadata": {
-          "author": "grammar"
+          "author": "enrich"
         }
       },
       "value": -1
@@ -12503,7 +12497,7 @@
           }
         ],
         "metadata": {
-          "author": "grammar"
+          "author": "enrich"
         }
       },
       "value": -1
@@ -13379,8 +13373,7 @@
           "name": "kind",
           "content": {
             "type": "SYMBOL",
-            "name": "_kind",
-            "hidden": true
+            "name": "_kind"
           }
         },
         {

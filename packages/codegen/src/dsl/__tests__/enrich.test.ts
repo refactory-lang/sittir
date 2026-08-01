@@ -767,7 +767,7 @@ describe('enrich()', () => {
 						{ type: 'STRING', value: '*' },
 						{ type: 'STRING', value: '/' }
 					],
-					metadata: { author: 'grammar' }
+					metadata: { author: 'enrich' }
 				},
 				value: -1
 			});
@@ -801,7 +801,15 @@ describe('enrich()', () => {
 			// Reuses the pre-existing VISIBLE rule directly -- no new
 			// `_public_field_definition_modifier` (or similarly prefixed)
 			// duplicate gets minted alongside it.
-			expect(field.content).toEqual({ type: 'SYMBOL', name: 'accessibility_modifier', hidden: false });
+			// Full `sym()` output, not a partial match: `inline` must be stamped
+			// too (see `tryExtractFieldEnum`'s doc comment) — a partial-object
+			// assertion here would silently accept a symbol ref missing it.
+			expect(field.content).toEqual({
+				type: 'SYMBOL',
+				name: 'accessibility_modifier',
+				hidden: false,
+				inline: false
+			});
 			expect(Object.keys(out.grammar.rules)).not.toContain('_public_field_definition_modifier');
 		});
 	});

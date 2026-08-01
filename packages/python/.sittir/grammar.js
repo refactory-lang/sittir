@@ -522,6 +522,15 @@ var PATTERN = "PATTERN";
 var SYMBOL = "SYMBOL";
 var TOKEN = "TOKEN";
 
+// packages/codegen/src/types/rule.ts
+function isEnumChoiceRule(rule) {
+  return rule.type === CHOICE && rule.members.length >= 2 && // STRING members and literal-carrying link SYMBOLs (`isLinkSymbol`,
+  // canonicalized operators AND aliased fixed-text externals like
+  // `automatic_semicolon`) are both terminal-valued — `literalTextOf`
+  // serves both shapes uniformly downstream.
+  rule.members.every((m) => m.type === STRING || m.type === SYMBOL && m.literal !== void 0);
+}
+
 // packages/codegen/src/dsl/rule-walker.ts
 var RuleWalker = class {
   #rules;
@@ -2475,12 +2484,21 @@ function buildCanonicalEnumNames(occurrences, rules) {
     }
     group.push(occ);
   }
-  const existingRuleNameByMemberKey = /* @__PURE__ */ new Map();
+  const existingNameCandidatesByMemberKey = /* @__PURE__ */ new Map();
   for (const [name, rule] of Object.entries(rules)) {
     const resolved = resolveToEnumMembersOneLevelDeep(rule);
     if (resolved === null) continue;
     const key = buildEnumMemberKey(resolved);
-    if (!existingRuleNameByMemberKey.has(key)) existingRuleNameByMemberKey.set(key, name);
+    let candidates = existingNameCandidatesByMemberKey.get(key);
+    if (!candidates) {
+      candidates = [];
+      existingNameCandidatesByMemberKey.set(key, candidates);
+    }
+    candidates.push(name);
+  }
+  const existingRuleNameByMemberKey = /* @__PURE__ */ new Map();
+  for (const [key, candidates] of existingNameCandidatesByMemberKey) {
+    existingRuleNameByMemberKey.set(key, candidates.sort()[0]);
   }
   const result = /* @__PURE__ */ new Map();
   const groups = Array.from(byKey.entries()).map(([memberKey, group], index) => {
@@ -2625,10 +2643,13 @@ function tryExtractFieldEnum(content, rules, memberKeyToCanonicalName) {
   if (enumKindName === void 0) return null;
   const synthesizedRule = {
     type: "PREC",
-    content: normalizeEnumMembers(members, { author: "grammar" }),
+    content: normalizeEnumMembers(members, { author: "enrich" }),
     value: -1
   };
-  const symRule = { type: "SYMBOL", name: enumKindName, hidden: enumKindName.startsWith("_") };
+  if (innerContent.type === "SYMBOL" && innerContent.name === enumKindName) {
+    return null;
+  }
+  const symRule = makeSymbol(enumKindName);
   const replacementContent = repeatWrapperType === null ? symRule : { ...content, content: symRule };
   return { enumKindName, synthesizedRule, replacementContent };
 }
@@ -2640,10 +2661,7 @@ function peelRepeatWrapper(rule) {
 function resolveToEnumMembers(rule, rules) {
   switch (rule.type) {
     case "CHOICE": {
-      const members = rule.members;
-      if (members.length < 2) return null;
-      const allStrings = members.every((m) => m.type === "STRING");
-      return allStrings ? members : null;
+      return isEnumChoiceRule(rule) ? rule.members : null;
     }
     // A bare single STRING is never a field-enum candidate — that's exactly
     // the class of hidden single-literal rules (e.g. `_kw_<name>`) already
@@ -2663,14 +2681,10 @@ function resolveToEnumMembers(rule, rules) {
   }
 }
 function resolveToEnumMembersOneLevelDeep(target) {
-  const unwrapped = target.type === "PREC" ? target.content : target;
+  const unwrapped = isPrecWrapper(target) ? target.content : target;
   switch (unwrapped.type) {
-    case "CHOICE": {
-      const members = unwrapped.members;
-      if (members.length < 2) return null;
-      const allStrings = members.every((m) => m.type === "STRING");
-      return allStrings ? members : null;
-    }
+    case "CHOICE":
+      return isEnumChoiceRule(unwrapped) ? unwrapped.members : null;
     default:
       return null;
   }

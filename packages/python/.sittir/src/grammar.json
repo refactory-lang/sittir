@@ -3899,8 +3899,7 @@
           "name": "operator",
           "content": {
             "type": "SYMBOL",
-            "name": "_augmented_assignment_operator",
-            "hidden": true
+            "name": "_augmented_assignment_operator"
           }
         },
         {
@@ -6635,7 +6634,7 @@
           }
         ],
         "metadata": {
-          "author": "grammar"
+          "author": "enrich"
         }
       },
       "value": -1

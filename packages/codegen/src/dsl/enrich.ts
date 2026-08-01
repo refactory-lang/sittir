@@ -83,6 +83,7 @@
  */
 
 import type { Rule, AnyRule } from '../types/rule.ts';
+import { isEnumChoiceRule } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { makeRuleMetadata, normalizeEnumMembers } from './rule-metadata.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
@@ -250,12 +251,12 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	// `synthesizeFieldEnumRules`'s doc comment. Runs last so it also sees
 	// clause-hoist-minted rules from the merge above. Verified across all
 	// three grammars (docs/superpowers/specs/2026-07-30-kindid-invariant-restoration.md
-	// §1): `tree-sitter generate` succeeds and `node-types.json` is
-	// byte-identical for rust, typescript, and python. A new non-inlined
-	// hidden rule can locally shift LR states — typescript needed one
-	// `conflicts:` entry (`[$.primary_expression, $._kind]`, the standard
-	// tree-sitter mechanism for a real local ambiguity, which keeps the
-	// rule's own parser symbol rather than suppressing it).
+	// §1): `tree-sitter generate` succeeds, `grammar.json`'s `conflicts` array
+	// is unchanged, and `node-types.json` is byte-identical for rust,
+	// typescript, and python — the `prec(-1, …)` wrapper (see
+	// `tryExtractFieldEnum`) is what keeps a newly-real hidden rule from
+	// shifting any LR state, so no grammar's `conflicts:` list needed a
+	// manual entry.
 	synthesizeFieldEnumRules(mergedRules);
 	// Register the merged rule-map so transform()/groups path-descent can resolve
 	// (and patch) enrich group-lift symbol bodies by name — the lookup that lets a
@@ -2485,11 +2486,17 @@ function makeVisibleGroupAlias(symbolRef: Rule, name: string): Rule {
 // Mints a named hidden rule for each distinct field-enum member set directly
 // into the rules bag here, at enrich time, so BOTH runtimes (tree-sitter's
 // CLI and sittir's evaluate()) see the same name and tree-sitter issues it a
-// real symbol. `compiler/evaluate.ts`'s own `synthesizeFieldEnumRules` still
-// runs afterward over the fully wire-merged rules — its
-// `canReuseExistingEnumName` check recognizes a rule already minted here (same
-// canonical name, same member set) and skips re-registering it; it only still
-// mints when an override introduces a field-enum shape this pass never saw.
+// real symbol.
+//
+// `compiler/evaluate.ts`'s post-pass version of this same mechanism is
+// DELETED, not still running as a verification pass over it (spec
+// docs/superpowers/specs/2026-07-30-kindid-invariant-restoration.md §1 calls
+// for the post-pass to become assertion-only; that follow-up hasn't landed
+// yet). Concretely: `enrich(base)` runs before `wire()` applies overrides
+// (see e.g. `packages/typescript/grammar.sittir.ts`), so a field-enum shape
+// introduced only by an override is invisible to this pass and nothing
+// synthesizes it — a known, currently-unexercised coverage gap, not a
+// silently-caught case.
 //
 // Ported from evaluate.ts's post-pass version of the same name; differs only
 // in operating on the enrich-time `Rule` shape (dual-runtime, pre-link) and
@@ -2589,14 +2596,30 @@ function buildCanonicalEnumNames(occurrences: FieldEnumOccurrence[], rules: Reco
 
 	// One O(rules) pass building memberKey → existing rule name, rather than
 	// rescanning every rule for every distinct occurrence group below.
-	// First-registration-wins mirrors the equivalent per-group linear scan's
-	// Object.entries iteration order.
-	const existingRuleNameByMemberKey = new Map<string, string>();
+	// Candidates are collected per key, then resolved to the lexicographically
+	// smallest name — NOT first-registration-wins over `Object.entries`
+	// iteration order, which is insertion-order-dependent and therefore not
+	// guaranteed identical between sittir's own runtime and tree-sitter's CLI
+	// (the same live hazard `project_grammar_js_nondeterministic_reorder`
+	// documents for python's `grammar.js`). A pick that depends on host
+	// iteration order can choose DIFFERENT existing names under the two
+	// runtimes for the same member set — minting the exact class of
+	// runtime-divergent phantom this pass exists to eliminate.
+	const existingNameCandidatesByMemberKey = new Map<string, string[]>();
 	for (const [name, rule] of Object.entries(rules)) {
 		const resolved = resolveToEnumMembersOneLevelDeep(rule);
 		if (resolved === null) continue;
 		const key = buildEnumMemberKey(resolved);
-		if (!existingRuleNameByMemberKey.has(key)) existingRuleNameByMemberKey.set(key, name);
+		let candidates = existingNameCandidatesByMemberKey.get(key);
+		if (!candidates) {
+			candidates = [];
+			existingNameCandidatesByMemberKey.set(key, candidates);
+		}
+		candidates.push(name);
+	}
+	const existingRuleNameByMemberKey = new Map<string, string>();
+	for (const [key, candidates] of existingNameCandidatesByMemberKey) {
+		existingRuleNameByMemberKey.set(key, candidates.sort()[0]!);
 	}
 
 	const result = new Map<string, string>();
@@ -2810,13 +2833,30 @@ function tryExtractFieldEnum(
 
 	// Low precedence so this newly-real rule defers to whatever else the
 	// same literal can start, without a `conflicts:` entry per occurrence.
+	// `author: 'enrich'` — this CHOICE body is minted by this pass, not
+	// authored directly in the grammar (`'grammar'` would misattribute it).
 	const synthesizedRule = {
 		type: 'PREC',
-		content: normalizeEnumMembers(members, { author: 'grammar' }),
+		content: normalizeEnumMembers(members, { author: 'enrich' }),
 		value: -1
 	} as unknown as Rule;
 
-	const symRule = { type: 'SYMBOL', name: enumKindName, hidden: enumKindName.startsWith('_') } as unknown as Rule;
+	// Already the canonical reference — nothing to rewrite. Without this,
+	// every occurrence gets rebuilt through the branch below even when it's
+	// already correct, and since that branch hand-built its SYMBOL rather
+	// than routing through the shared constructor (see below), the rebuild
+	// alone used to leak a spurious `hidden` field into tree-sitter-side
+	// grammar.json for zero semantic effect.
+	if (innerContent.type === 'SYMBOL' && (innerContent as unknown as { name: string }).name === enumKindName) {
+		return null;
+	}
+
+	// Route through the shared `makeSymbol` constructor so the ref carries
+	// the SAME construction stamps (`hidden`, `inline = name.startsWith('_')`)
+	// as every other ref under sittir's runtime — hand-building
+	// `{ type: 'SYMBOL', ... }` here skipped `inline`, which normalize's fold
+	// treats as authoritative.
+	const symRule = makeSymbol(enumKindName);
 	const replacementContent: Rule =
 		repeatWrapperType === null ? symRule : ({ ...(content as object), content: symRule } as unknown as Rule);
 
@@ -2832,10 +2872,14 @@ function peelRepeatWrapper(rule: Rule): Rule {
 function resolveToEnumMembers(rule: Rule, rules: Record<string, Rule>): StringRule[] | null {
 	switch (rule.type as string) {
 		case 'CHOICE': {
-			const members = (rule as unknown as { members: Rule[] }).members;
-			if (members.length < 2) return null;
-			const allStrings = members.every((m): m is StringRule => m.type === 'STRING');
-			return allStrings ? (members as unknown as StringRule[]) : null;
+			// `isEnumChoiceRule` also accepts a literal-carrying SYMBOL arm, but
+			// `.literal` is a link-phase stamp that doesn't exist yet at enrich
+			// time, so at this phase the predicate reduces to the same
+			// all-STRING check this function always needed — one canonical
+			// "what counts as an enum-shaped choice" instead of a second copy.
+			return isEnumChoiceRule(rule as AnyRule)
+				? ((rule as unknown as { members: Rule[] }).members as unknown as StringRule[])
+				: null;
 		}
 		// A bare single STRING is never a field-enum candidate — that's exactly
 		// the class of hidden single-literal rules (e.g. `_kw_<name>`) already
@@ -2857,17 +2901,19 @@ function resolveToEnumMembers(rule: Rule, rules: Record<string, Rule>): StringRu
 }
 
 function resolveToEnumMembersOneLevelDeep(target: Rule): StringRule[] | null {
-	// A synthesized field-enum's own body is `prec(-1, …)`-wrapped; peel it
-	// so it still resolves as a reusable CHOICE/STRING enum.
-	const unwrapped =
-		(target.type as string) === 'PREC' ? (target as unknown as { content: Rule }).content : target;
+	// A synthesized field-enum's own body is `prec(-1, …)`-wrapped; peel it so
+	// it still resolves as a reusable CHOICE/STRING enum. `isPrecWrapper`
+	// (not a bare `type === 'PREC'` check) so a user-authored rule wrapped in
+	// `prec.left`/`prec.right`/`prec.dynamic` around a choice-of-strings is
+	// just as reusable as one wrapped in plain `prec`.
+	const unwrapped = isPrecWrapper(target as { type: string })
+		? (target as unknown as { content: Rule }).content
+		: target;
 	switch (unwrapped.type as string) {
-		case 'CHOICE': {
-			const members = (unwrapped as unknown as { members: Rule[] }).members;
-			if (members.length < 2) return null;
-			const allStrings = members.every((m): m is StringRule => m.type === 'STRING');
-			return allStrings ? (members as unknown as StringRule[]) : null;
-		}
+		case 'CHOICE':
+			return isEnumChoiceRule(unwrapped as AnyRule)
+				? ((unwrapped as unknown as { members: Rule[] }).members as unknown as StringRule[])
+				: null;
 		default:
 			return null;
 	}
