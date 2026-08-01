@@ -30,7 +30,7 @@ import {
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
-import type { AnyRule, Rule, SeparatorFlankMode } from '../types/rule.ts';
+import type { AnyRule, SeparatorFlankMode } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal, NodeOrTerminal } from '../compiler/model/node-map.ts';
 import {
 	isNodeRef,

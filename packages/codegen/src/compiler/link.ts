@@ -51,7 +51,6 @@ import {
 	sym,
 	replaceAtPath,
 	isSymbol,
-	isString,
 	isRepeat1,
 	isRepeat,
 	isOptional,

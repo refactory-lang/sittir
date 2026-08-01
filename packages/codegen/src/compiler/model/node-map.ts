@@ -66,7 +66,6 @@ import type {
 	RepeatRule,
 	Repeat1Rule,
 	StringRule,
-	SymbolRule,
 	TokenRule,
 	SupertypeRule,
 	Multiplicity,
