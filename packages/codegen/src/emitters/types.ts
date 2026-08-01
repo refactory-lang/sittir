@@ -434,7 +434,7 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 				leafValueMap.set(kind, node.values);
 				break;
 			case 'supertype':
-				supertypes.push({ kind, subtypes: node.subtypes });
+				supertypes.push({ kind, subtypes: [...node.subtypeNames] });
 				break;
 			case 'token':
 			case 'multi':

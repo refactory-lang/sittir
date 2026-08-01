@@ -79,7 +79,6 @@ export const NODE_KINDS = [
 	'import_statement',
 	'interpolation',
 	'keyword_argument',
-	'keyword_identifier',
 	'keyword_pattern',
 	'lambda',
 	'lambda_parameters',
@@ -1855,7 +1854,6 @@ export const FIELD_MAP: Record<
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'value', required: true, multiple: false }
 	],
-	keyword_identifier: [{ name: 'identifier', required: true, multiple: false }],
 	keyword_pattern: [
 		{ name: 'identifier', required: true, multiple: false },
 		{ name: 'simplePattern', required: true, multiple: false }

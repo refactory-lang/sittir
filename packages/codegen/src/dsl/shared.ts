@@ -6,24 +6,33 @@
  * lookup is a single `Map<string, ...>` pass (O(n)) instead of a pairwise
  * scan against every candidate seen so far (O(n^2)). `list-patterns.ts`'s
  * `rulesEqual` is defined in terms of it: `ruleKey(a) === ruleKey(b)` iff
- * `rulesEqual(a, b)`.
+ * `rulesEqual(a, b)`. `enrich.ts`'s group/clause-hoist dedupe
+ * (`visibleGroupSynthName`/`clauseHoistSynthName`) key their dedupe maps
+ * with it too, in place of a former standalone `canonicalStringifyClause`.
  *
  * Deliberately minimal traversal: `type`, `name`, `value`, `named`,
  * `separator`, and children (`.members` or `.content`, whichever is present)
  * are the only fields read. DSL-layer rules are materialized by two
  * different runtimes (sittir's own `evaluate()`, tree-sitter's CLI) that
  * agree on these but aren't guaranteed to agree on every shape a field can
- * take — e.g. `.separator` is a plain string pre-lift and a
- * `{value,trailing,leading}` fact post-lift for the exact same logical rule,
- * and a raw string literal used directly inside `seq(...)`/`choice(...)` is
- * still a bare string (not yet coerced to a `STRING` rule node) at the point
- * enrich runs, before evaluate's pattern-replacement pass. Hand-casing every
- * rule TYPE's own field set would make the key only as robust as that
- * per-type modeling, which is exactly what varies between the two
- * materializations; reading a small, fixed set of fields generically
- * (whichever happen to be present, and returning a bare primitive as its own
- * key when a "rule" turns out to just be one) avoids needing to know which
- * rule types carry which fields, or which fields are even wrapped yet.
+ * take, or on which extra bookkeeping fields get stamped onto a rule object
+ * along the way — e.g. `.separator` is a plain string pre-lift and a
+ * `{value,trailing,leading}` fact post-lift for the exact same logical
+ * rule; a raw string literal used directly inside `seq(...)`/`choice(...)`
+ * is still a bare string (not yet coerced to a `STRING` rule node) at the
+ * point enrich runs; and sittir's own `evaluate()` runtime stamps every
+ * `$.foo` reference with a `_ref: {refType, from, to}` provenance field
+ * that tree-sitter's CLI runtime never adds. That last one is exactly what
+ * broke group-dedupe before this key existed: hashing a rule by its whole
+ * object (minus a hand-maintained exclusion list of known-bad fields like
+ * `_ref`) meant every NEW provenance stamp added anywhere in the Rule shape
+ * was a fresh way for the same logical body to hash differently under the
+ * two runtimes, re-opening the exact bug — a rust `slice_pattern`/
+ * `tuple_struct_pattern` shared group body minted as two silently-empty
+ * phantom duplicates instead of one. Reading a small, fixed, INCLUSION list
+ * of fields is immune to that failure mode by construction: an unlisted
+ * field, however it got stamped or by whichever runtime, is never read, so
+ * it can never affect the key.
  *
  * Only fields a shape's identity depends on are read — never the whole rule
  * object. `metadata`, `id`, `inline`, and other `RuleBase` bookkeeping are

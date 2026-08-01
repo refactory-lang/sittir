@@ -130,6 +130,17 @@ re-exposed on `NodeMap` and attached per node in Assemble):
 `SimplifiedRule` additionally approaches the flat seq-of-leaves shape
 (assertable via `SITTIR_ASSERT_UNIVERSAL_SHAPE=1`).
 
+`dsl/rule-transforms.ts::hasAnyField` is one of the few justified
+wrapper-shape-dependent consumers: it walks `OPTIONAL`/`REPEAT`/`REPEAT1`/
+`VARIANT`/`GROUP` wrapper nodes to answer "is there a FIELD anywhere in
+this still-wrapper-bearing tree", genuinely needed only where a real
+`Rule<'link'>` tree is in hand (`link.ts`'s own classification, and
+`AssembledBranch.isContainerShape`'s deliberately link-phase `.rule`). At
+normalize/simplify a FIELD has already collapsed to the `fieldName` /
+`nonterminal` `RuleBase` attribute — a different, phase-appropriate check
+(`hasSlotBearingContent` in `compiler/assemble.ts`) answers the same
+question there instead of re-deriving it by walking wrappers.
+
 ## Phase 0: Enrich (`dsl/enrich.ts`)
 
 `enrich(base)` runs at module load, **before tree-sitter consumes the
@@ -261,6 +272,33 @@ user-facing kinds are marked by fixpoint passes.
 Reference: [glossary/compiler.md](glossary/compiler.md),
 [glossary/compiler-model.md](glossary/compiler-model.md).
 
+### `classifyNode`'s RenderRule-only design
+
+`classifyNode` (`compiler/assemble.ts`) reads `RenderRule` (the
+wrapper-deleted normalize-phase view) exclusively, never the link-phase
+`inlinedRule` — the reverse of `assemble()`'s node CONSTRUCTORS, most of
+which still need `inlinedRule`'s pre-deletion wrapper node (`AssembledGroup`
+being the deliberate exception noted on its own construction site;
+`AssembledMulti` also constructs directly off `RenderRule` since a hidden
+repeat helper's own body IS the repeat). An "undecorated" guard
+(`fieldName === undefined && multiplicity === undefined`) gates the
+SUPERTYPE/GROUP/PATTERN/STRING early-exit switch: `PATTERN`/`STRING` are
+wrapper-COLLAPSIBLE (a `repeat1('.')` collapses to a bare-looking `STRING`
+carrying `multiplicity: 'nonEmptyArray'`), so a *decorated* one is really a
+field/repeat-wrapped leaf masquerading as bare and must fall through to
+`classifyTerminalFallback` instead of early-exiting as keyword/token/pattern.
+`hasSlotBearingContent` replaces the link-phase `hasAnyField(rule) ||
+hasAnyChild(rule)` walk with the SAME question — "is there a named field or
+a rule reference here" — narrower than "does this produce a slot at all"
+(a repeat over terminals genuinely IS a slot per Table 2, which
+`nonterminal` correctly reflects; `hasSlotBearingContent` isn't asking that).
+`isAllTextShape` is phase-invariant by construction: `OPTIONAL`/`REPEAT`/
+`REPEAT1`/`FIELD`/`ALIAS`/`TOKEN` collapse to `never` outside evaluate/link,
+so the same switch correctly serves all three of its real callers —
+`collectAnonymousNodes` (still-wrapper-bearing `Rule<'link'>`),
+`classifyTerminalFallback` (normalize-phase `RenderRule`), and
+`diagnoseSlotGrouping` (simplify-phase `SimplifiedRule`).
+
 ## Phase 5: Emit (`emitters/*.ts`)
 
 `emitAll` (emitters/emit.ts) fans out to the emitters. Every emitter
@@ -287,6 +325,24 @@ so drift shows up in review). Notable codes: `kindid-unstamped-*` (the
 phantom-kind inventory — see Link), `parsekind-noninjective`,
 `seq-with-nested-seq`, `typename-collision`. Inspect via
 `sittir tool grammar-diagnostics`.
+
+`kindid-unstamped-symbols`/`kindid-unstamped-literals` (`link.ts`'s
+`reportKindIdStampMisses`) are `warning`-severity, promoted from `info`: a
+stamp miss means a referenced kind or literal never resolved a parser
+kindId — visible now instead of deferring the gap to a native "unknown
+kind id" render error, per the invariant's end-state goal. They report the
+FULL miss set, not split by exclusion class — `reportVaporizedKinds`
+partitions symbol misses three ways: `kindid-inline-excluded-symbols`
+(in the grammar's authoritative `inline:` array), `kindid-vaporized-symbols`
+(not inline AND unreachable from the grammar's root by an independent
+reference-graph walk — real evidence of dead surface, not just the
+complement of the inline check), and `kindid-unclassified-symbols`
+(not inline but reachable — a genuine, unaccepted gap, reported at
+`warning` severity so a future regression can't hide inside "vaporized").
+Literal misses stay a two-way split (inline-excluded vs vaporized) since
+bare literal text has no rule-name identity to test reachability against.
+Cross-reference these codes against the unstamped codes to see which
+entries already have an accepted reason.
 
 Reference:
 [glossary/compiler-diagnostics.md](glossary/compiler-diagnostics.md).

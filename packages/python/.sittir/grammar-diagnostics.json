@@ -190,10 +190,11 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "13 referenced kind(s) resolved no parser kindId",
+    "message": "15 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
+        "_compound_statement",
         "_except_clause_as_optional1",
         "_exec_statement_optional1",
         "_expressions",
@@ -206,10 +207,11 @@
         "_simple_statement",
         "_suite",
         "_unary_operator_operator",
-        "keyword_identifier"
+        "keyword_identifier",
+        "statement_group1"
       ]
     },
-    "severity": "info",
+    "severity": "warning",
     "scope": "grammar",
     "grammar": "python"
   },
@@ -235,7 +237,84 @@
         "True"
       ]
     },
+    "severity": "warning",
+    "scope": "grammar",
+    "grammar": "python"
+  },
+  {
+    "code": "kindid-inline-excluded-symbols",
+    "message": "13 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "canProceed": true,
     "severity": "info",
+    "details": {
+      "kinds": [
+        "_compound_statement",
+        "_except_clause_as_optional1",
+        "_exec_statement_optional1",
+        "_expressions",
+        "_function_definition_optional1",
+        "_kw_async_marker",
+        "_kw_real",
+        "_kw_type",
+        "_left_hand_side",
+        "_raise_statement_optional1",
+        "_simple_statement",
+        "_suite",
+        "keyword_identifier"
+      ]
+    },
+    "scope": "grammar",
+    "grammar": "python"
+  },
+  {
+    "code": "kindid-vaporized-symbols",
+    "message": "1 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "kinds": [
+        "statement_group1"
+      ]
+    },
+    "scope": "grammar",
+    "grammar": "python"
+  },
+  {
+    "code": "kindid-vaporized-literals",
+    "message": "14 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "texts": [
+        "\u0000",
+        "\n",
+        "\r",
+        "#",
+        "...",
+        "0B",
+        "0O",
+        "0X",
+        "0b",
+        "0o",
+        "0x",
+        "False",
+        "None",
+        "True"
+      ]
+    },
+    "scope": "grammar",
+    "grammar": "python"
+  },
+  {
+    "code": "kindid-unclassified-symbols",
+    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "canProceed": true,
+    "severity": "warning",
+    "details": {
+      "kinds": [
+        "_unary_operator_operator"
+      ]
+    },
     "scope": "grammar",
     "grammar": "python"
   },

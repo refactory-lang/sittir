@@ -127,7 +127,8 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): S
 			return;
 		}
 		if (rule.type === SUPERTYPE) {
-			for (const sub of rule.subtypes) {
+			for (const subRef of rule.subtypes) {
+				const sub = subRef.aliasedFrom ?? subRef.name;
 				if (isHidden(sub)) supertypeNamed.add(sub);
 			}
 			return;
@@ -816,7 +817,7 @@ function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 			walkSymbols(rule.content, visit);
 			return;
 		case SUPERTYPE:
-			for (const sub of rule.subtypes) visit(sub);
+			for (const subRef of rule.subtypes) visit(subRef.aliasedFrom ?? subRef.name);
 			return;
 	}
 }

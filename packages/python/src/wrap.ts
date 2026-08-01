@@ -666,6 +666,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'pattern_list',
 		'yield'
 	]),
+	keyword_identifier: new Set(['identifier']),
 	_dict_pattern_kv: new Set(['_key_value_pattern', 'key_value_pattern', 'splat_pattern'])
 };
 
@@ -1274,7 +1275,6 @@ export function wrapAssertStatement(
 		readonly _await?: T.Expression | readonly T.Expression[];
 		readonly _binary_operator?: T.Expression | readonly T.Expression[];
 		readonly _identifier?: T.Expression | readonly T.Expression[];
-		readonly _keyword_identifier?: T.Expression | readonly T.Expression[];
 		readonly _string?: T.Expression | readonly T.Expression[];
 		readonly _concatenated_string?: T.Expression | readonly T.Expression[];
 		readonly _integer?: T.Expression | readonly T.Expression[];
@@ -1323,7 +1323,6 @@ export function wrapAssertStatement(
 				'_generator_expression',
 				'_identifier',
 				'_integer',
-				'_keyword_identifier',
 				'_lambda',
 				'_list',
 				'_list_comprehension',
@@ -1353,7 +1352,6 @@ export function wrapAssertStatement(
 								data._await,
 								data._binary_operator,
 								data._identifier,
-								data._keyword_identifier,
 								data._string,
 								data._concatenated_string,
 								data._integer,
@@ -1460,12 +1458,6 @@ export function wrapExpressionStatement(
 			| T.AugmentedAssignment
 			| T.Yield;
 		readonly _identifier?: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield;
-		readonly _keyword_identifier?:
-			| T.Expression
-			| T.ExpressionStatementTuple
-			| T.Assignment
-			| T.AugmentedAssignment
-			| T.Yield;
 		readonly _string?: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield;
 		readonly _concatenated_string?:
 			| T.Expression
@@ -1581,7 +1573,6 @@ export function wrapExpressionStatement(
 				'_generator_expression',
 				'_identifier',
 				'_integer',
-				'_keyword_identifier',
 				'_lambda',
 				'_list',
 				'_list_comprehension',
@@ -1609,7 +1600,6 @@ export function wrapExpressionStatement(
 					data._await ??
 					data._binary_operator ??
 					data._identifier ??
-					data._keyword_identifier ??
 					data._string ??
 					data._concatenated_string ??
 					data._integer ??
@@ -1728,7 +1718,6 @@ export function wrapReturnStatement(
 		readonly _await?: T.Expressions;
 		readonly _binary_operator?: T.Expressions;
 		readonly _identifier?: T.Expressions;
-		readonly _keyword_identifier?: T.Expressions;
 		readonly _string?: T.Expressions;
 		readonly _concatenated_string?: T.Expressions;
 		readonly _integer?: T.Expressions;
@@ -1779,7 +1768,6 @@ export function wrapReturnStatement(
 				'_generator_expression',
 				'_identifier',
 				'_integer',
-				'_keyword_identifier',
 				'_lambda',
 				'_list',
 				'_list_comprehension',
@@ -1806,7 +1794,6 @@ export function wrapReturnStatement(
 					data._await ??
 					data._binary_operator ??
 					data._identifier ??
-					data._keyword_identifier ??
 					data._string ??
 					data._concatenated_string ??
 					data._integer ??
@@ -1861,7 +1848,6 @@ export function wrapDeleteStatement(
 		readonly _await?: T.Expressions;
 		readonly _binary_operator?: T.Expressions;
 		readonly _identifier?: T.Expressions;
-		readonly _keyword_identifier?: T.Expressions;
 		readonly _string?: T.Expressions;
 		readonly _concatenated_string?: T.Expressions;
 		readonly _integer?: T.Expressions;
@@ -1912,7 +1898,6 @@ export function wrapDeleteStatement(
 				'_generator_expression',
 				'_identifier',
 				'_integer',
-				'_keyword_identifier',
 				'_lambda',
 				'_list',
 				'_list_comprehension',
@@ -1939,7 +1924,6 @@ export function wrapDeleteStatement(
 					data._await ??
 					data._binary_operator ??
 					data._identifier ??
-					data._keyword_identifier ??
 					data._string ??
 					data._concatenated_string ??
 					data._integer ??
@@ -1994,7 +1978,6 @@ export function wrapRaiseStatement(
 		readonly _await?: T.Expressions;
 		readonly _binary_operator?: T.Expressions;
 		readonly _identifier?: T.Expressions;
-		readonly _keyword_identifier?: T.Expressions;
 		readonly _string?: T.Expressions;
 		readonly _concatenated_string?: T.Expressions;
 		readonly _integer?: T.Expressions;
@@ -2045,7 +2028,6 @@ export function wrapRaiseStatement(
 				'_generator_expression',
 				'_identifier',
 				'_integer',
-				'_keyword_identifier',
 				'_lambda',
 				'_list',
 				'_list_comprehension',
@@ -2072,7 +2054,6 @@ export function wrapRaiseStatement(
 					data._await ??
 					data._binary_operator ??
 					data._identifier ??
-					data._keyword_identifier ??
 					data._string ??
 					data._concatenated_string ??
 					data._integer ??
@@ -3420,7 +3401,6 @@ export function wrapExpressionList(
 		readonly _await?: T.Expression;
 		readonly _binary_operator?: T.Expression;
 		readonly _identifier?: T.Expression;
-		readonly _keyword_identifier?: T.Expression;
 		readonly _string?: T.Expression;
 		readonly _concatenated_string?: T.Expression;
 		readonly _integer?: T.Expression;
@@ -3469,7 +3449,6 @@ export function wrapExpressionList(
 				'_generator_expression',
 				'_identifier',
 				'_integer',
-				'_keyword_identifier',
 				'_lambda',
 				'_list',
 				'_list_comprehension',
@@ -3496,7 +3475,6 @@ export function wrapExpressionList(
 					data._await ??
 					data._binary_operator ??
 					data._identifier ??
-					data._keyword_identifier ??
 					data._string ??
 					data._concatenated_string ??
 					data._integer ??
@@ -4129,7 +4107,6 @@ export function wrap_Parameters(
 export function wrapPatterns(
 	data: T.Patterns & {
 		readonly _identifier?: T.Pattern;
-		readonly _keyword_identifier?: T.Pattern;
 		readonly _subscript?: T.Pattern;
 		readonly _attribute?: T.Pattern;
 		readonly _list_splat_pattern?: T.Pattern;
@@ -4145,7 +4122,6 @@ export function wrapPatterns(
 			? _toArr(data._pattern)
 			: _concatInSourceOrder([
 					data._identifier,
-					data._keyword_identifier,
 					data._subscript,
 					data._attribute,
 					data._list_splat_pattern,
@@ -4161,7 +4137,6 @@ export function wrapPatterns(
 			..._omitWrapKeys(data, [
 				'_attribute',
 				'_identifier',
-				'_keyword_identifier',
 				'_list_pattern',
 				'_list_splat_pattern',
 				'_subscript',
@@ -4391,9 +4366,9 @@ export function wrapTypedDefaultParameter(data: T.TypedDefaultParameter, tree: T
 
 export function wrapListSplatPattern(
 	data: T.ListSplatPattern & {
-		readonly _identifier?: T.Identifier | T.Subscript | T.Attribute;
-		readonly _subscript?: T.Identifier | T.Subscript | T.Attribute;
-		readonly _attribute?: T.Identifier | T.Subscript | T.Attribute;
+		readonly _identifier?: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute;
+		readonly _subscript?: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute;
+		readonly _attribute?: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute;
 	},
 	tree: TreeHandle
 ) {
@@ -4410,7 +4385,7 @@ export function wrapListSplatPattern(
 			),
 
 			content() {
-				return drillIn<T.Identifier | T.Subscript | T.Attribute>(this._content, tree);
+				return drillIn<T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.ListSplatPattern['_content']>) =>
@@ -4424,9 +4399,9 @@ export function wrapListSplatPattern(
 
 export function wrapDictionarySplatPattern(
 	data: T.DictionarySplatPattern & {
-		readonly _identifier?: T.Identifier | T.Subscript | T.Attribute;
-		readonly _subscript?: T.Identifier | T.Subscript | T.Attribute;
-		readonly _attribute?: T.Identifier | T.Subscript | T.Attribute;
+		readonly _identifier?: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute;
+		readonly _subscript?: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute;
+		readonly _attribute?: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute;
 	},
 	tree: TreeHandle
 ) {
@@ -4443,7 +4418,7 @@ export function wrapDictionarySplatPattern(
 			),
 
 			content() {
-				return drillIn<T.Identifier | T.Subscript | T.Attribute>(this._content, tree);
+				return drillIn<T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.DictionarySplatPattern['_content']>) =>
@@ -5056,7 +5031,6 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 export function wrapPatternList(
 	data: T.PatternList & {
 		readonly _identifier?: T.Pattern;
-		readonly _keyword_identifier?: T.Pattern;
 		readonly _subscript?: T.Pattern;
 		readonly _attribute?: T.Pattern;
 		readonly _list_splat_pattern?: T.Pattern;
@@ -5070,7 +5044,6 @@ export function wrapPatternList(
 			..._omitWrapKeys(data, [
 				'_attribute',
 				'_identifier',
-				'_keyword_identifier',
 				'_list_pattern',
 				'_list_splat_pattern',
 				'_subscript',
@@ -5080,7 +5053,6 @@ export function wrapPatternList(
 			_pattern: normalizeSingularWrapSlot(
 				data._pattern ??
 					data._identifier ??
-					data._keyword_identifier ??
 					data._subscript ??
 					data._attribute ??
 					data._list_splat_pattern ??
@@ -5161,7 +5133,6 @@ export function wrapYield(
 		readonly _await?: T.Expression | T.Expressions;
 		readonly _binary_operator?: T.Expression | T.Expressions;
 		readonly _identifier?: T.Expression | T.Expressions;
-		readonly _keyword_identifier?: T.Expression | T.Expressions;
 		readonly _string?: T.Expression | T.Expressions;
 		readonly _concatenated_string?: T.Expression | T.Expressions;
 		readonly _integer?: T.Expression | T.Expressions;
@@ -5212,7 +5183,6 @@ export function wrapYield(
 				'_generator_expression',
 				'_identifier',
 				'_integer',
-				'_keyword_identifier',
 				'_lambda',
 				'_list',
 				'_list_comprehension',
@@ -5239,7 +5209,6 @@ export function wrapYield(
 					data._await ??
 					data._binary_operator ??
 					data._identifier ??
-					data._keyword_identifier ??
 					data._string ??
 					data._concatenated_string ??
 					data._integer ??
@@ -5546,13 +5515,6 @@ export function wrapType(
 			| T.ConstrainedType
 			| T.MemberType;
 		readonly _identifier?: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType;
-		readonly _keyword_identifier?:
-			| T.Expression
-			| T.SplatType
-			| T.GenericType
-			| T.UnionType
-			| T.ConstrainedType
-			| T.MemberType;
 		readonly _string?: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType;
 		readonly _concatenated_string?:
 			| T.Expression
@@ -5680,7 +5642,6 @@ export function wrapType(
 				'_generic_type',
 				'_identifier',
 				'_integer',
-				'_keyword_identifier',
 				'_lambda',
 				'_list',
 				'_list_comprehension',
@@ -5710,7 +5671,6 @@ export function wrapType(
 					data._await ??
 					data._binary_operator ??
 					data._identifier ??
-					data._keyword_identifier ??
 					data._string ??
 					data._concatenated_string ??
 					data._integer ??
@@ -5945,7 +5905,7 @@ export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle) {
 			}),
 
 			name() {
-				return drillIn<T.Identifier>(this._name, tree);
+				return drillIn<T.Identifier | T.KeywordIdentifier>(this._name, tree);
 			},
 			value() {
 				return drillIn<T.Expression>(this._value, tree);
@@ -6258,7 +6218,6 @@ export function wrapParenthesizedExpression(
 		readonly _await?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
 		readonly _binary_operator?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
 		readonly _identifier?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _keyword_identifier?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
 		readonly _string?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
 		readonly _concatenated_string?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
 		readonly _integer?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
@@ -6309,7 +6268,6 @@ export function wrapParenthesizedExpression(
 				'_generator_expression',
 				'_identifier',
 				'_integer',
-				'_keyword_identifier',
 				'_lambda',
 				'_list',
 				'_list_comprehension',
@@ -6338,7 +6296,6 @@ export function wrapParenthesizedExpression(
 					data._await ??
 					data._binary_operator ??
 					data._identifier ??
-					data._keyword_identifier ??
 					data._string ??
 					data._concatenated_string ??
 					data._integer ??
@@ -6396,7 +6353,6 @@ export function wrapCollectionElements(
 		readonly _await?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
 		readonly _binary_operator?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
 		readonly _identifier?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
-		readonly _keyword_identifier?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
 		readonly _string?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
 		readonly _concatenated_string?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
 		readonly _integer?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
@@ -6441,7 +6397,6 @@ export function wrapCollectionElements(
 					data._await,
 					data._binary_operator,
 					data._identifier,
-					data._keyword_identifier,
 					data._string,
 					data._concatenated_string,
 					data._integer,
@@ -6495,7 +6450,6 @@ export function wrapCollectionElements(
 				'_generator_expression',
 				'_identifier',
 				'_integer',
-				'_keyword_identifier',
 				'_lambda',
 				'_list',
 				'_list_comprehension',
@@ -7026,12 +6980,6 @@ export function wrapArgumentListGroup1(
 			| T.DictionarySplat
 			| T.ParenthesizedListSplat
 			| T.KeywordArgument;
-		readonly _keyword_identifier?:
-			| T.Expression
-			| T.ListSplat
-			| T.DictionarySplat
-			| T.ParenthesizedListSplat
-			| T.KeywordArgument;
 		readonly _string?: T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument;
 		readonly _concatenated_string?:
 			| T.Expression
@@ -7151,7 +7099,6 @@ export function wrapArgumentListGroup1(
 					data._await,
 					data._binary_operator,
 					data._identifier,
-					data._keyword_identifier,
 					data._string,
 					data._concatenated_string,
 					data._integer,
@@ -7207,7 +7154,6 @@ export function wrapArgumentListGroup1(
 				'_identifier',
 				'_integer',
 				'_keyword_argument',
-				'_keyword_identifier',
 				'_lambda',
 				'_list',
 				'_list_comprehension',
@@ -7249,7 +7195,6 @@ export function wrapExpressionListGroup1(
 		readonly _await?: T.Expression;
 		readonly _binary_operator?: T.Expression;
 		readonly _identifier?: T.Expression;
-		readonly _keyword_identifier?: T.Expression;
 		readonly _string?: T.Expression;
 		readonly _concatenated_string?: T.Expression;
 		readonly _integer?: T.Expression;
@@ -7291,7 +7236,6 @@ export function wrapExpressionListGroup1(
 					data._await,
 					data._binary_operator,
 					data._identifier,
-					data._keyword_identifier,
 					data._string,
 					data._concatenated_string,
 					data._integer,
@@ -7342,7 +7286,6 @@ export function wrapExpressionListGroup1(
 				'_generator_expression',
 				'_identifier',
 				'_integer',
-				'_keyword_identifier',
 				'_lambda',
 				'_list',
 				'_list_comprehension',
@@ -7458,7 +7401,6 @@ export function wrapDictPatternGroup2(
 export function wrapPatternListGroup1(
 	data: T.PatternListGroup1 & {
 		readonly _identifier?: T.Pattern;
-		readonly _keyword_identifier?: T.Pattern;
 		readonly _subscript?: T.Pattern;
 		readonly _attribute?: T.Pattern;
 		readonly _list_splat_pattern?: T.Pattern;
@@ -7474,7 +7416,6 @@ export function wrapPatternListGroup1(
 			? _toArr(data._pattern)
 			: _concatInSourceOrder([
 					data._identifier,
-					data._keyword_identifier,
 					data._subscript,
 					data._attribute,
 					data._list_splat_pattern,
@@ -7490,7 +7431,6 @@ export function wrapPatternListGroup1(
 			..._omitWrapKeys(data, [
 				'_attribute',
 				'_identifier',
-				'_keyword_identifier',
 				'_list_pattern',
 				'_list_splat_pattern',
 				'_subscript',
@@ -7518,7 +7458,6 @@ export function wrapSliceGroup1(
 		readonly _await?: T.Expression;
 		readonly _binary_operator?: T.Expression;
 		readonly _identifier?: T.Expression;
-		readonly _keyword_identifier?: T.Expression;
 		readonly _string?: T.Expression;
 		readonly _concatenated_string?: T.Expression;
 		readonly _integer?: T.Expression;
@@ -7567,7 +7506,6 @@ export function wrapSliceGroup1(
 				'_generator_expression',
 				'_identifier',
 				'_integer',
-				'_keyword_identifier',
 				'_lambda',
 				'_list',
 				'_list_comprehension',
@@ -7594,7 +7532,6 @@ export function wrapSliceGroup1(
 					data._await ??
 					data._binary_operator ??
 					data._identifier ??
-					data._keyword_identifier ??
 					data._string ??
 					data._concatenated_string ??
 					data._integer ??
@@ -8052,7 +7989,6 @@ export function wrapExpressionStatementTuple(
 		readonly _await?: T.Expression;
 		readonly _binary_operator?: T.Expression;
 		readonly _identifier?: T.Expression;
-		readonly _keyword_identifier?: T.Expression;
 		readonly _string?: T.Expression;
 		readonly _concatenated_string?: T.Expression;
 		readonly _integer?: T.Expression;
@@ -8094,7 +8030,6 @@ export function wrapExpressionStatementTuple(
 					data._await,
 					data._binary_operator,
 					data._identifier,
-					data._keyword_identifier,
 					data._string,
 					data._concatenated_string,
 					data._integer,
@@ -8145,7 +8080,6 @@ export function wrapExpressionStatementTuple(
 				'_generator_expression',
 				'_identifier',
 				'_integer',
-				'_keyword_identifier',
 				'_lambda',
 				'_list',
 				'_list_comprehension',
@@ -8394,7 +8328,6 @@ export function wrapComparisonOperatorComparator(
 		readonly _await?: T.PrimaryExpression;
 		readonly _binary_operator?: T.PrimaryExpression;
 		readonly _identifier?: T.PrimaryExpression;
-		readonly _keyword_identifier?: T.PrimaryExpression;
 		readonly _string?: T.PrimaryExpression;
 		readonly _concatenated_string?: T.PrimaryExpression;
 		readonly _integer?: T.PrimaryExpression;
@@ -8436,7 +8369,6 @@ export function wrapComparisonOperatorComparator(
 				'_generator_expression',
 				'_identifier',
 				'_integer',
-				'_keyword_identifier',
 				'_list',
 				'_list_comprehension',
 				'_list_splat_pattern',
@@ -8491,7 +8423,6 @@ export function wrapComparisonOperatorComparator(
 					data._await ??
 					data._binary_operator ??
 					data._identifier ??
-					data._keyword_identifier ??
 					data._string ??
 					data._concatenated_string ??
 					data._integer ??
