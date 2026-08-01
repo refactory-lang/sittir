@@ -194,12 +194,12 @@
     "canProceed": true,
     "details": {
       "kinds": [
-        "_async_marker",
         "_compound_statement",
         "_except_clause_as_optional1",
         "_exec_statement_optional1",
         "_expressions",
         "_function_definition_optional1",
+        "_kw_async_marker",
         "_kw_real",
         "_kw_type",
         "_left_hand_side",
@@ -243,7 +243,7 @@
   },
   {
     "code": "kindid-inline-excluded-symbols",
-    "message": "12 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "13 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -253,6 +253,7 @@
         "_exec_statement_optional1",
         "_expressions",
         "_function_definition_optional1",
+        "_kw_async_marker",
         "_kw_real",
         "_kw_type",
         "_left_hand_side",
@@ -306,12 +307,11 @@
   },
   {
     "code": "kindid-unclassified-symbols",
-    "message": "2 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
       "kinds": [
-        "_async_marker",
         "_unary_operator_operator"
       ]
     },

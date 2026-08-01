@@ -30,7 +30,7 @@ export type LeafStringMap = {
 	true: 'True';
 	false: 'False';
 	none: 'None';
-	_async_marker: 'async';
+	_kw_async_marker: 'async';
 	_unary_operator_operator: '+' | '-' | '~';
 	_augmented_assignment_operator:
 		| '+='
@@ -244,7 +244,7 @@ export const enum SyntaxKind {
 	None = 'none',
 	Comment = 'comment',
 	LineContinuation = 'line_continuation',
-	AsyncMarker = '_async_marker',
+	KwAsyncMarker = '_kw_async_marker',
 	UnaryOperatorOperator = '_unary_operator_operator',
 	AugmentedAssignmentOperator = '_augmented_assignment_operator',
 	WildcardPattern = '_wildcard_pattern',

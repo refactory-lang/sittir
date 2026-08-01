@@ -64,8 +64,8 @@ export type LeafStringMap = {
 		| 'bool'
 		| 'str'
 		| 'char';
-	_ref_marker: 'ref';
-	_move_marker: 'move';
+	_kw_ref_marker: 'ref';
+	_kw_move_marker: 'move';
 	_compound_assignment_expr_operator: '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=';
 	_token_tree_punctuation:
 		| '+'
@@ -420,8 +420,8 @@ export const enum SyntaxKind {
 	Crate = 'crate',
 	Metavariable = 'metavariable',
 	PrimitiveType = '_primitive_type',
-	RefMarker = '_ref_marker',
-	MoveMarker = '_move_marker',
+	KwRefMarker = '_kw_ref_marker',
+	KwMoveMarker = '_kw_move_marker',
 	CompoundAssignmentExprOperator = '_compound_assignment_expr_operator',
 	TokenTreePunctuation = '_token_tree_punctuation',
 	TokenKeywords = '_token_keywords',

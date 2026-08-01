@@ -199,7 +199,7 @@ export interface AsyncBlockTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _move_marker?: MoveMarkerTransport
+  _move_marker?: KwMoveMarkerTransport
   _block: Box<BlockTransport>
 }
 
@@ -480,7 +480,7 @@ export interface ClosureExpressionTransport {
   '$triviaData'?: TransportTrivia
   _static_marker?: boolean
   _async_marker?: boolean
-  _move_marker?: MoveMarkerTransport
+  _move_marker?: KwMoveMarkerTransport
   _parameters: ClosureParametersTransport
   _content: Box<ClosureExpressionContentTransportSlot>
 }
@@ -886,7 +886,7 @@ export interface FieldPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _ref_marker?: RefMarkerTransport
+  _ref_marker?: KwRefMarkerTransport
   _mutable_specifier?: MutableSpecifierTransport
   _content: FieldPatternContentTransportSlot
 }
@@ -1032,7 +1032,7 @@ export interface GenBlockTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _move_marker?: MoveMarkerTransport
+  _move_marker?: KwMoveMarkerTransport
   _block: Box<BlockTransport>
 }
 

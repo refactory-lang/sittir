@@ -696,7 +696,7 @@ function registerKwRule(
 	kwRules: Record<string, Rule>,
 	rulesBag: Record<string, Rule>
 ): Rule | null {
-	const hiddenName = `_${keyword}`;
+	const hiddenName = `_kw_${keyword}`;
 	if (hiddenName in kwRules) return makeSymbol(hiddenName);
 	const existing = rulesBag[hiddenName];
 	if (existing === undefined) {
@@ -1308,7 +1308,7 @@ function tryPromoteInnerKeyword(
 		reportSkip(
 			'optional-keyword-prefix',
 			ruleName,
-			`rule '_${fieldName}' already exists in base.grammar.rules with different content`
+			`rule '_kw_${fieldName}' already exists in base.grammar.rules with different content`
 		);
 		return null;
 	}

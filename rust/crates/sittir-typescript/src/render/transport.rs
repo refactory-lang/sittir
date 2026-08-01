@@ -229,11 +229,11 @@ pub enum AnyTransport {
     IntersectionType(IntersectionTypeTransport),
     FunctionType(FunctionTypeTransport),
     TypeIdentifier(TypeIdentifierTransport),
-    AsyncMarker(AsyncMarkerTransport),
-    StaticMarker(StaticMarkerTransport),
-    ReadonlyMarker(ReadonlyMarkerTransport),
-    AbstractMarker(AbstractMarkerTransport),
-    ConstMarker(ConstMarkerTransport),
+    KwAsyncMarker(KwAsyncMarkerTransport),
+    KwStaticMarker(KwStaticMarkerTransport),
+    KwReadonlyMarker(KwReadonlyMarkerTransport),
+    KwAbstractMarker(KwAbstractMarkerTransport),
+    KwConstMarker(KwConstMarkerTransport),
     ExportClauseGroup1(ExportClauseGroup1Transport),
     ExportSpecifierOptional1(ExportSpecifierOptional1Transport),
     ImportStatementGroup1(ImportStatementGroup1Transport),
@@ -415,7 +415,7 @@ pub enum AnyTransport {
     Literal3_61_73_73_65_72_74,
     Literal4_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal5_61_77_61_69_74,
-    Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     Literal7_2e,
     Literal8_75_73_69_6e_67,
     Literal9_26_26,
@@ -443,8 +443,8 @@ pub enum AnyTransport {
     Literal31_3f_3f,
     Literal32_69_6e_73_74_61_6e_63_65_6f_66,
     Literal33_3b,
-    Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
-    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+    Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
     Literal36_67_65_74,
     Literal37_73_65_74,
     Literal38_5f_6b_77_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72,
@@ -453,9 +453,9 @@ pub enum AnyTransport {
     Literal41_21,
     Literal42_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal43_63_6f_6e_73_74,
-    Literal44_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72,
+    Literal44_5f_6b_77_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72,
     Literal45_3a,
-    Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+    Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
     Literal47_3f_2e,
     Literal48_7b,
     Literal49_7b_7c,
@@ -12243,7 +12243,7 @@ impl RenderableTransport for ClassHeritageContentTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum FunctionExpressionAsyncMarkerTransportSlot {
-    Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -12255,7 +12255,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionExpressionAsyncMarkerTra
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionExpressionAsyncMarkerTransportSlot",
                     ))),
@@ -12267,7 +12267,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionExpressionAsyncMarkerTra
                     ::napi::Error::from_reason("$type property missing in FunctionExpressionAsyncMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionExpressionAsyncMarkerTransportSlot",
                     ))),
@@ -12310,7 +12310,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionExpressionAsyncMarkerT
 
 fn function_expression_async_marker_transport_slot_to_any(t: FunctionExpressionAsyncMarkerTransportSlot) -> AnyTransport {
     match t {
-        FunctionExpressionAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+        FunctionExpressionAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -12320,7 +12320,7 @@ impl RenderableTransport for FunctionExpressionAsyncMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            FunctionExpressionAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            FunctionExpressionAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -12433,7 +12433,7 @@ impl RenderableTransport for FunctionExpressionReturnTypeTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum FunctionDeclarationAsyncMarkerTransportSlot {
-    Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -12445,7 +12445,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionDeclarationAsyncMarkerTr
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionDeclarationAsyncMarkerTransportSlot",
                     ))),
@@ -12457,7 +12457,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionDeclarationAsyncMarkerTr
                     ::napi::Error::from_reason("$type property missing in FunctionDeclarationAsyncMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionDeclarationAsyncMarkerTransportSlot",
                     ))),
@@ -12500,7 +12500,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionDeclarationAsyncMarker
 
 fn function_declaration_async_marker_transport_slot_to_any(t: FunctionDeclarationAsyncMarkerTransportSlot) -> AnyTransport {
     match t {
-        FunctionDeclarationAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+        FunctionDeclarationAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -12510,7 +12510,7 @@ impl RenderableTransport for FunctionDeclarationAsyncMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            FunctionDeclarationAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            FunctionDeclarationAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -12707,7 +12707,7 @@ impl RenderableTransport for FunctionDeclarationAutomaticSemicolonTransportSlot 
 
 #[derive(Debug, Clone)]
 pub enum GeneratorFunctionAsyncMarkerTransportSlot {
-    Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -12719,7 +12719,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GeneratorFunctionAsyncMarkerTran
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in GeneratorFunctionAsyncMarkerTransportSlot",
                     ))),
@@ -12731,7 +12731,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GeneratorFunctionAsyncMarkerTran
                     ::napi::Error::from_reason("$type property missing in GeneratorFunctionAsyncMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in GeneratorFunctionAsyncMarkerTransportSlot",
                     ))),
@@ -12774,7 +12774,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GeneratorFunctionAsyncMarkerTr
 
 fn generator_function_async_marker_transport_slot_to_any(t: GeneratorFunctionAsyncMarkerTransportSlot) -> AnyTransport {
     match t {
-        GeneratorFunctionAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+        GeneratorFunctionAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -12784,7 +12784,7 @@ impl RenderableTransport for GeneratorFunctionAsyncMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            GeneratorFunctionAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            GeneratorFunctionAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -12897,7 +12897,7 @@ impl RenderableTransport for GeneratorFunctionReturnTypeTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum GeneratorFunctionDeclarationAsyncMarkerTransportSlot {
-    Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -12909,7 +12909,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GeneratorFunctionDeclarationAsyn
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in GeneratorFunctionDeclarationAsyncMarkerTransportSlot",
                     ))),
@@ -12921,7 +12921,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GeneratorFunctionDeclarationAsyn
                     ::napi::Error::from_reason("$type property missing in GeneratorFunctionDeclarationAsyncMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in GeneratorFunctionDeclarationAsyncMarkerTransportSlot",
                     ))),
@@ -12964,7 +12964,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GeneratorFunctionDeclarationAs
 
 fn generator_function_declaration_async_marker_transport_slot_to_any(t: GeneratorFunctionDeclarationAsyncMarkerTransportSlot) -> AnyTransport {
     match t {
-        GeneratorFunctionDeclarationAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+        GeneratorFunctionDeclarationAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -12974,7 +12974,7 @@ impl RenderableTransport for GeneratorFunctionDeclarationAsyncMarkerTransportSlo
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            GeneratorFunctionDeclarationAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            GeneratorFunctionDeclarationAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -13171,7 +13171,7 @@ impl RenderableTransport for GeneratorFunctionDeclarationAutomaticSemicolonTrans
 
 #[derive(Debug, Clone)]
 pub enum ArrowFunctionAsyncMarkerTransportSlot {
-    Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -13183,7 +13183,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionAsyncMarkerTranspor
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ArrowFunctionAsyncMarkerTransportSlot",
                     ))),
@@ -13195,7 +13195,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionAsyncMarkerTranspor
                     ::napi::Error::from_reason("$type property missing in ArrowFunctionAsyncMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ArrowFunctionAsyncMarkerTransportSlot",
                     ))),
@@ -13238,7 +13238,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ArrowFunctionAsyncMarkerTransp
 
 fn arrow_function_async_marker_transport_slot_to_any(t: ArrowFunctionAsyncMarkerTransportSlot) -> AnyTransport {
     match t {
-        ArrowFunctionAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+        ArrowFunctionAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -13248,7 +13248,7 @@ impl RenderableTransport for ArrowFunctionAsyncMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ArrowFunctionAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            ArrowFunctionAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -17873,7 +17873,7 @@ impl RenderableTransport for ClassBodyContentTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum FieldDefinitionStaticMarkerTransportSlot {
-    Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+    Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -17885,7 +17885,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldDefinitionStaticMarkerTrans
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    108 => Ok(Self::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    108 => Ok(Self::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FieldDefinitionStaticMarkerTransportSlot",
                     ))),
@@ -17897,7 +17897,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldDefinitionStaticMarkerTrans
                     ::napi::Error::from_reason("$type property missing in FieldDefinitionStaticMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    108 => Ok(Self::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    108 => Ok(Self::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FieldDefinitionStaticMarkerTransportSlot",
                     ))),
@@ -17940,7 +17940,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FieldDefinitionStaticMarkerTra
 
 fn field_definition_static_marker_transport_slot_to_any(t: FieldDefinitionStaticMarkerTransportSlot) -> AnyTransport {
     match t {
-        FieldDefinitionStaticMarkerTransportSlot::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+        FieldDefinitionStaticMarkerTransportSlot::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -17950,7 +17950,7 @@ impl RenderableTransport for FieldDefinitionStaticMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            FieldDefinitionStaticMarkerTransportSlot::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
+            FieldDefinitionStaticMarkerTransportSlot::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
         }
     }
 }
@@ -18041,7 +18041,7 @@ impl RenderableTransport for ClassStaticBlockAutomaticSemicolonTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum MethodDefinitionStaticMarkerTransportSlot {
-    Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+    Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -18053,7 +18053,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionStaticMarkerTran
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    108 => Ok(Self::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    108 => Ok(Self::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodDefinitionStaticMarkerTransportSlot",
                     ))),
@@ -18065,7 +18065,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionStaticMarkerTran
                     ::napi::Error::from_reason("$type property missing in MethodDefinitionStaticMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    108 => Ok(Self::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    108 => Ok(Self::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodDefinitionStaticMarkerTransportSlot",
                     ))),
@@ -18108,7 +18108,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodDefinitionStaticMarkerTr
 
 fn method_definition_static_marker_transport_slot_to_any(t: MethodDefinitionStaticMarkerTransportSlot) -> AnyTransport {
     match t {
-        MethodDefinitionStaticMarkerTransportSlot::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+        MethodDefinitionStaticMarkerTransportSlot::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -18118,14 +18118,14 @@ impl RenderableTransport for MethodDefinitionStaticMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            MethodDefinitionStaticMarkerTransportSlot::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
+            MethodDefinitionStaticMarkerTransportSlot::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum MethodDefinitionReadonlyMarkerTransportSlot {
-    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -18137,7 +18137,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionReadonlyMarkerTr
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodDefinitionReadonlyMarkerTransportSlot",
                     ))),
@@ -18149,7 +18149,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionReadonlyMarkerTr
                     ::napi::Error::from_reason("$type property missing in MethodDefinitionReadonlyMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodDefinitionReadonlyMarkerTransportSlot",
                     ))),
@@ -18192,7 +18192,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodDefinitionReadonlyMarker
 
 fn method_definition_readonly_marker_transport_slot_to_any(t: MethodDefinitionReadonlyMarkerTransportSlot) -> AnyTransport {
     match t {
-        MethodDefinitionReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+        MethodDefinitionReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -18202,14 +18202,14 @@ impl RenderableTransport for MethodDefinitionReadonlyMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            MethodDefinitionReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+            MethodDefinitionReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum MethodDefinitionAsyncMarkerTransportSlot {
-    Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -18221,7 +18221,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionAsyncMarkerTrans
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodDefinitionAsyncMarkerTransportSlot",
                     ))),
@@ -18233,7 +18233,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionAsyncMarkerTrans
                     ::napi::Error::from_reason("$type property missing in MethodDefinitionAsyncMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodDefinitionAsyncMarkerTransportSlot",
                     ))),
@@ -18276,7 +18276,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodDefinitionAsyncMarkerTra
 
 fn method_definition_async_marker_transport_slot_to_any(t: MethodDefinitionAsyncMarkerTransportSlot) -> AnyTransport {
     match t {
-        MethodDefinitionAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+        MethodDefinitionAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -18286,7 +18286,7 @@ impl RenderableTransport for MethodDefinitionAsyncMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            MethodDefinitionAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            MethodDefinitionAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -18953,7 +18953,7 @@ impl RenderableTransport for PublicFieldDefinitionOptionalityMarkerTransportSlot
 
 #[derive(Debug, Clone)]
 pub enum MethodSignatureStaticMarkerTransportSlot {
-    Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+    Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -18965,7 +18965,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureStaticMarkerTrans
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    108 => Ok(Self::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    108 => Ok(Self::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodSignatureStaticMarkerTransportSlot",
                     ))),
@@ -18977,7 +18977,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureStaticMarkerTrans
                     ::napi::Error::from_reason("$type property missing in MethodSignatureStaticMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    108 => Ok(Self::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    108 => Ok(Self::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodSignatureStaticMarkerTransportSlot",
                     ))),
@@ -19020,7 +19020,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodSignatureStaticMarkerTra
 
 fn method_signature_static_marker_transport_slot_to_any(t: MethodSignatureStaticMarkerTransportSlot) -> AnyTransport {
     match t {
-        MethodSignatureStaticMarkerTransportSlot::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+        MethodSignatureStaticMarkerTransportSlot::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -19030,14 +19030,14 @@ impl RenderableTransport for MethodSignatureStaticMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            MethodSignatureStaticMarkerTransportSlot::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
+            MethodSignatureStaticMarkerTransportSlot::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum MethodSignatureReadonlyMarkerTransportSlot {
-    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -19049,7 +19049,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureReadonlyMarkerTra
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodSignatureReadonlyMarkerTransportSlot",
                     ))),
@@ -19061,7 +19061,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureReadonlyMarkerTra
                     ::napi::Error::from_reason("$type property missing in MethodSignatureReadonlyMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodSignatureReadonlyMarkerTransportSlot",
                     ))),
@@ -19104,7 +19104,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodSignatureReadonlyMarkerT
 
 fn method_signature_readonly_marker_transport_slot_to_any(t: MethodSignatureReadonlyMarkerTransportSlot) -> AnyTransport {
     match t {
-        MethodSignatureReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+        MethodSignatureReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -19114,14 +19114,14 @@ impl RenderableTransport for MethodSignatureReadonlyMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            MethodSignatureReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+            MethodSignatureReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum MethodSignatureAsyncMarkerTransportSlot {
-    Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -19133,7 +19133,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureAsyncMarkerTransp
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodSignatureAsyncMarkerTransportSlot",
                     ))),
@@ -19145,7 +19145,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureAsyncMarkerTransp
                     ::napi::Error::from_reason("$type property missing in MethodSignatureAsyncMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodSignatureAsyncMarkerTransportSlot",
                     ))),
@@ -19188,7 +19188,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodSignatureAsyncMarkerTran
 
 fn method_signature_async_marker_transport_slot_to_any(t: MethodSignatureAsyncMarkerTransportSlot) -> AnyTransport {
     match t {
-        MethodSignatureAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+        MethodSignatureAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -19198,7 +19198,7 @@ impl RenderableTransport for MethodSignatureAsyncMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            MethodSignatureAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            MethodSignatureAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -19773,7 +19773,7 @@ impl RenderableTransport for AbstractMethodSignatureReturnTypeTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum FunctionSignatureAsyncMarkerTransportSlot {
-    Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -19785,7 +19785,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureAsyncMarkerTran
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionSignatureAsyncMarkerTransportSlot",
                     ))),
@@ -19797,7 +19797,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureAsyncMarkerTran
                     ::napi::Error::from_reason("$type property missing in FunctionSignatureAsyncMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    43 => Ok(Self::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    43 => Ok(Self::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionSignatureAsyncMarkerTransportSlot",
                     ))),
@@ -19840,7 +19840,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionSignatureAsyncMarkerTr
 
 fn function_signature_async_marker_transport_slot_to_any(t: FunctionSignatureAsyncMarkerTransportSlot) -> AnyTransport {
     match t {
-        FunctionSignatureAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+        FunctionSignatureAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -19850,7 +19850,7 @@ impl RenderableTransport for FunctionSignatureAsyncMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            FunctionSignatureAsyncMarkerTransportSlot::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            FunctionSignatureAsyncMarkerTransportSlot::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -21452,7 +21452,7 @@ impl RenderableTransport for ExtendsTypeClauseTypeTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum EnumDeclarationConstMarkerTransportSlot {
-    Literal44_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72,
+    Literal44_5f_6b_77_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -21464,7 +21464,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumDeclarationConstMarkerTransp
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    129 => Ok(Self::Literal44_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72),
+                    129 => Ok(Self::Literal44_5f_6b_77_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in EnumDeclarationConstMarkerTransportSlot",
                     ))),
@@ -21476,7 +21476,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumDeclarationConstMarkerTransp
                     ::napi::Error::from_reason("$type property missing in EnumDeclarationConstMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    129 => Ok(Self::Literal44_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72),
+                    129 => Ok(Self::Literal44_5f_6b_77_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in EnumDeclarationConstMarkerTransportSlot",
                     ))),
@@ -21519,7 +21519,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EnumDeclarationConstMarkerTran
 
 fn enum_declaration_const_marker_transport_slot_to_any(t: EnumDeclarationConstMarkerTransportSlot) -> AnyTransport {
     match t {
-        EnumDeclarationConstMarkerTransportSlot::Literal44_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal44_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72,
+        EnumDeclarationConstMarkerTransportSlot::Literal44_5f_6b_77_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal44_5f_6b_77_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -21529,14 +21529,14 @@ impl RenderableTransport for EnumDeclarationConstMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            EnumDeclarationConstMarkerTransportSlot::Literal44_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => dest.write_str("const").map_err(::askama::Error::from),
+            EnumDeclarationConstMarkerTransportSlot::Literal44_5f_6b_77_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => dest.write_str("const").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum RequiredParameterReadonlyMarkerTransportSlot {
-    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -21548,7 +21548,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterReadonlyMarkerT
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RequiredParameterReadonlyMarkerTransportSlot",
                     ))),
@@ -21560,7 +21560,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterReadonlyMarkerT
                     ::napi::Error::from_reason("$type property missing in RequiredParameterReadonlyMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RequiredParameterReadonlyMarkerTransportSlot",
                     ))),
@@ -21603,7 +21603,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RequiredParameterReadonlyMarke
 
 fn required_parameter_readonly_marker_transport_slot_to_any(t: RequiredParameterReadonlyMarkerTransportSlot) -> AnyTransport {
     match t {
-        RequiredParameterReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+        RequiredParameterReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -21613,7 +21613,7 @@ impl RenderableTransport for RequiredParameterReadonlyMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            RequiredParameterReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+            RequiredParameterReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
         }
     }
 }
@@ -21726,7 +21726,7 @@ impl RenderableTransport for RequiredParameterPatternTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum OptionalParameterReadonlyMarkerTransportSlot {
-    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -21738,7 +21738,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterReadonlyMarkerT
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in OptionalParameterReadonlyMarkerTransportSlot",
                     ))),
@@ -21750,7 +21750,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterReadonlyMarkerT
                     ::napi::Error::from_reason("$type property missing in OptionalParameterReadonlyMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in OptionalParameterReadonlyMarkerTransportSlot",
                     ))),
@@ -21793,7 +21793,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<OptionalParameterReadonlyMarke
 
 fn optional_parameter_readonly_marker_transport_slot_to_any(t: OptionalParameterReadonlyMarkerTransportSlot) -> AnyTransport {
     match t {
-        OptionalParameterReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+        OptionalParameterReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -21803,7 +21803,7 @@ impl RenderableTransport for OptionalParameterReadonlyMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            OptionalParameterReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+            OptionalParameterReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
         }
     }
 }
@@ -21916,7 +21916,7 @@ impl RenderableTransport for OptionalParameterPatternTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum ParameterNameReadonlyMarkerTransportSlot {
-    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -21928,7 +21928,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterNameReadonlyMarkerTrans
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ParameterNameReadonlyMarkerTransportSlot",
                     ))),
@@ -21940,7 +21940,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterNameReadonlyMarkerTrans
                     ::napi::Error::from_reason("$type property missing in ParameterNameReadonlyMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ParameterNameReadonlyMarkerTransportSlot",
                     ))),
@@ -21983,7 +21983,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParameterNameReadonlyMarkerTra
 
 fn parameter_name_readonly_marker_transport_slot_to_any(t: ParameterNameReadonlyMarkerTransportSlot) -> AnyTransport {
     match t {
-        ParameterNameReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+        ParameterNameReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -21993,7 +21993,7 @@ impl RenderableTransport for ParameterNameReadonlyMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ParameterNameReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+            ParameterNameReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
         }
     }
 }
@@ -22747,7 +22747,7 @@ impl RenderableTransport for TupleParameterNameTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum ConstructorTypeAbstractMarkerTransportSlot {
-    Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+    Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -22759,7 +22759,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstructorTypeAbstractMarkerTra
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    128 => Ok(Self::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    128 => Ok(Self::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ConstructorTypeAbstractMarkerTransportSlot",
                     ))),
@@ -22771,7 +22771,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstructorTypeAbstractMarkerTra
                     ::napi::Error::from_reason("$type property missing in ConstructorTypeAbstractMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    128 => Ok(Self::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    128 => Ok(Self::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ConstructorTypeAbstractMarkerTransportSlot",
                     ))),
@@ -22814,7 +22814,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ConstructorTypeAbstractMarkerT
 
 fn constructor_type_abstract_marker_transport_slot_to_any(t: ConstructorTypeAbstractMarkerTransportSlot) -> AnyTransport {
     match t {
-        ConstructorTypeAbstractMarkerTransportSlot::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+        ConstructorTypeAbstractMarkerTransportSlot::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -22824,7 +22824,7 @@ impl RenderableTransport for ConstructorTypeAbstractMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ConstructorTypeAbstractMarkerTransportSlot::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => dest.write_str("abstract").map_err(::askama::Error::from),
+            ConstructorTypeAbstractMarkerTransportSlot::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => dest.write_str("abstract").map_err(::askama::Error::from),
         }
     }
 }
@@ -25178,7 +25178,7 @@ impl RenderableTransport for CallSignatureReturnTypeTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum PropertySignatureStaticMarkerTransportSlot {
-    Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+    Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -25190,7 +25190,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureStaticMarkerTra
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    108 => Ok(Self::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    108 => Ok(Self::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PropertySignatureStaticMarkerTransportSlot",
                     ))),
@@ -25202,7 +25202,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureStaticMarkerTra
                     ::napi::Error::from_reason("$type property missing in PropertySignatureStaticMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    108 => Ok(Self::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    108 => Ok(Self::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PropertySignatureStaticMarkerTransportSlot",
                     ))),
@@ -25245,7 +25245,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PropertySignatureStaticMarkerT
 
 fn property_signature_static_marker_transport_slot_to_any(t: PropertySignatureStaticMarkerTransportSlot) -> AnyTransport {
     match t {
-        PropertySignatureStaticMarkerTransportSlot::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+        PropertySignatureStaticMarkerTransportSlot::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -25255,14 +25255,14 @@ impl RenderableTransport for PropertySignatureStaticMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            PropertySignatureStaticMarkerTransportSlot::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
+            PropertySignatureStaticMarkerTransportSlot::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum PropertySignatureReadonlyMarkerTransportSlot {
-    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -25274,7 +25274,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureReadonlyMarkerT
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PropertySignatureReadonlyMarkerTransportSlot",
                     ))),
@@ -25286,7 +25286,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureReadonlyMarkerT
                     ::napi::Error::from_reason("$type property missing in PropertySignatureReadonlyMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PropertySignatureReadonlyMarkerTransportSlot",
                     ))),
@@ -25329,7 +25329,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PropertySignatureReadonlyMarke
 
 fn property_signature_readonly_marker_transport_slot_to_any(t: PropertySignatureReadonlyMarkerTransportSlot) -> AnyTransport {
     match t {
-        PropertySignatureReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+        PropertySignatureReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -25339,7 +25339,7 @@ impl RenderableTransport for PropertySignatureReadonlyMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            PropertySignatureReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+            PropertySignatureReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
         }
     }
 }
@@ -25430,7 +25430,7 @@ impl RenderableTransport for PropertySignatureOptionalMarkerTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum TypeParameterConstMarkerTransportSlot {
-    Literal44_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72,
+    Literal44_5f_6b_77_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -25442,7 +25442,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeParameterConstMarkerTranspor
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    129 => Ok(Self::Literal44_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72),
+                    129 => Ok(Self::Literal44_5f_6b_77_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TypeParameterConstMarkerTransportSlot",
                     ))),
@@ -25454,7 +25454,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeParameterConstMarkerTranspor
                     ::napi::Error::from_reason("$type property missing in TypeParameterConstMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    129 => Ok(Self::Literal44_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72),
+                    129 => Ok(Self::Literal44_5f_6b_77_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TypeParameterConstMarkerTransportSlot",
                     ))),
@@ -25497,7 +25497,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeParameterConstMarkerTransp
 
 fn type_parameter_const_marker_transport_slot_to_any(t: TypeParameterConstMarkerTransportSlot) -> AnyTransport {
     match t {
-        TypeParameterConstMarkerTransportSlot::Literal44_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal44_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72,
+        TypeParameterConstMarkerTransportSlot::Literal44_5f_6b_77_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal44_5f_6b_77_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -25507,7 +25507,7 @@ impl RenderableTransport for TypeParameterConstMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypeParameterConstMarkerTransportSlot::Literal44_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => dest.write_str("const").map_err(::askama::Error::from),
+            TypeParameterConstMarkerTransportSlot::Literal44_5f_6b_77_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => dest.write_str("const").map_err(::askama::Error::from),
         }
     }
 }
@@ -25603,7 +25603,7 @@ impl RenderableTransport for ConstraintContentTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum ConstructSignatureAbstractMarkerTransportSlot {
-    Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+    Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -25615,7 +25615,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstructSignatureAbstractMarker
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    128 => Ok(Self::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    128 => Ok(Self::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ConstructSignatureAbstractMarkerTransportSlot",
                     ))),
@@ -25627,7 +25627,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstructSignatureAbstractMarker
                     ::napi::Error::from_reason("$type property missing in ConstructSignatureAbstractMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    128 => Ok(Self::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    128 => Ok(Self::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ConstructSignatureAbstractMarkerTransportSlot",
                     ))),
@@ -25670,7 +25670,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ConstructSignatureAbstractMark
 
 fn construct_signature_abstract_marker_transport_slot_to_any(t: ConstructSignatureAbstractMarkerTransportSlot) -> AnyTransport {
     match t {
-        ConstructSignatureAbstractMarkerTransportSlot::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+        ConstructSignatureAbstractMarkerTransportSlot::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -25680,7 +25680,7 @@ impl RenderableTransport for ConstructSignatureAbstractMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ConstructSignatureAbstractMarkerTransportSlot::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => dest.write_str("abstract").map_err(::askama::Error::from),
+            ConstructSignatureAbstractMarkerTransportSlot::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => dest.write_str("abstract").map_err(::askama::Error::from),
         }
     }
 }
@@ -30172,7 +30172,7 @@ impl RenderableTransport for PublicFieldDefinitionAccessFirstDeclareMarkerTransp
 
 #[derive(Debug, Clone)]
 pub enum PublicFieldDefinitionStaticModsStaticMarkerTransportSlot {
-    Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+    Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -30184,7 +30184,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionStaticModsS
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    108 => Ok(Self::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    108 => Ok(Self::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionStaticModsStaticMarkerTransportSlot",
                     ))),
@@ -30196,7 +30196,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionStaticModsS
                     ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionStaticModsStaticMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    108 => Ok(Self::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    108 => Ok(Self::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionStaticModsStaticMarkerTransportSlot",
                     ))),
@@ -30239,7 +30239,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionStaticMod
 
 fn public_field_definition_static_mods_static_marker_transport_slot_to_any(t: PublicFieldDefinitionStaticModsStaticMarkerTransportSlot) -> AnyTransport {
     match t {
-        PublicFieldDefinitionStaticModsStaticMarkerTransportSlot::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+        PublicFieldDefinitionStaticModsStaticMarkerTransportSlot::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -30249,14 +30249,14 @@ impl RenderableTransport for PublicFieldDefinitionStaticModsStaticMarkerTranspor
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            PublicFieldDefinitionStaticModsStaticMarkerTransportSlot::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
+            PublicFieldDefinitionStaticModsStaticMarkerTransportSlot::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot {
-    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -30268,7 +30268,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionStaticModsR
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot",
                     ))),
@@ -30280,7 +30280,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionStaticModsR
                     ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot",
                     ))),
@@ -30323,7 +30323,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionStaticMod
 
 fn public_field_definition_static_mods_readonly_marker_transport_slot_to_any(t: PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot) -> AnyTransport {
     match t {
-        PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+        PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -30333,14 +30333,14 @@ impl RenderableTransport for PublicFieldDefinitionStaticModsReadonlyMarkerTransp
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+            PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot {
-    Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+    Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -30352,7 +30352,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionAbstractFir
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    128 => Ok(Self::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    128 => Ok(Self::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot",
                     ))),
@@ -30364,7 +30364,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionAbstractFir
                     ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    128 => Ok(Self::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    128 => Ok(Self::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot",
                     ))),
@@ -30407,7 +30407,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionAbstractF
 
 fn public_field_definition_abstract_first_abstract_marker_transport_slot_to_any(t: PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot) -> AnyTransport {
     match t {
-        PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+        PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -30417,14 +30417,14 @@ impl RenderableTransport for PublicFieldDefinitionAbstractFirstAbstractMarkerTra
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => dest.write_str("abstract").map_err(::askama::Error::from),
+            PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => dest.write_str("abstract").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot {
-    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -30436,7 +30436,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionAbstractFir
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot",
                     ))),
@@ -30448,7 +30448,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionAbstractFir
                     ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot",
                     ))),
@@ -30491,7 +30491,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionAbstractF
 
 fn public_field_definition_abstract_first_readonly_marker_transport_slot_to_any(t: PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot) -> AnyTransport {
     match t {
-        PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+        PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -30501,14 +30501,14 @@ impl RenderableTransport for PublicFieldDefinitionAbstractFirstReadonlyMarkerTra
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+            PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot {
-    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -30520,7 +30520,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionReadonlyFir
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot",
                     ))),
@@ -30532,7 +30532,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionReadonlyFir
                     ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    117 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    117 => Ok(Self::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot",
                     ))),
@@ -30575,7 +30575,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionReadonlyF
 
 fn public_field_definition_readonly_first_readonly_marker_transport_slot_to_any(t: PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot) -> AnyTransport {
     match t {
-        PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+        PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -30585,14 +30585,14 @@ impl RenderableTransport for PublicFieldDefinitionReadonlyFirstReadonlyMarkerTra
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+            PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot {
-    Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+    Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -30604,7 +30604,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionReadonlyFir
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    128 => Ok(Self::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    128 => Ok(Self::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot",
                     ))),
@@ -30616,7 +30616,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionReadonlyFir
                     ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    128 => Ok(Self::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    128 => Ok(Self::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot",
                     ))),
@@ -30659,7 +30659,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionReadonlyF
 
 fn public_field_definition_readonly_first_abstract_marker_transport_slot_to_any(t: PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot) -> AnyTransport {
     match t {
-        PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+        PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -30669,7 +30669,7 @@ impl RenderableTransport for PublicFieldDefinitionReadonlyFirstAbstractMarkerTra
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => dest.write_str("abstract").map_err(::askama::Error::from),
+            PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => dest.write_str("abstract").map_err(::askama::Error::from),
         }
     }
 }
@@ -35743,7 +35743,7 @@ pub struct FunctionExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<AsyncMarkerTransport>,
+    pub async_marker: Option<KwAsyncMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: Option<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
@@ -35803,7 +35803,7 @@ pub struct FunctionDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<AsyncMarkerTransport>,
+    pub async_marker: Option<KwAsyncMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
@@ -35865,7 +35865,7 @@ pub struct GeneratorFunctionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<AsyncMarkerTransport>,
+    pub async_marker: Option<KwAsyncMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: Option<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
@@ -35925,7 +35925,7 @@ pub struct GeneratorFunctionDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<AsyncMarkerTransport>,
+    pub async_marker: Option<KwAsyncMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
@@ -35987,7 +35987,7 @@ pub struct ArrowFunctionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<AsyncMarkerTransport>,
+    pub async_marker: Option<KwAsyncMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Box<ArrowFunctionBodyTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
@@ -39052,7 +39052,7 @@ pub struct FieldDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<DecoratorTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static_marker"))]
-    pub static_marker: Option<StaticMarkerTransport>,
+    pub static_marker: Option<KwStaticMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property"))]
     pub property: PropertyNameTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -39260,13 +39260,13 @@ pub struct MethodDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
     pub accessibility_modifier: Option<AccessibilityModifierEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static_marker"))]
-    pub static_marker: Option<StaticMarkerTransport>,
+    pub static_marker: Option<KwStaticMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override_modifier"))]
     pub override_modifier: Option<OverrideModifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_marker"))]
-    pub readonly_marker: Option<ReadonlyMarkerTransport>,
+    pub readonly_marker: Option<KwReadonlyMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<AsyncMarkerTransport>,
+    pub async_marker: Option<KwAsyncMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind"))]
     pub accessor_kind: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
@@ -39834,11 +39834,11 @@ pub struct PublicFieldDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_public_field_definition_readonly_first"))]
     pub public_field_definition_readonly_first: Option<PublicFieldDefinitionReadonlyFirstTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static_marker"))]
-    pub static_marker: Option<StaticMarkerTransport>,
+    pub static_marker: Option<KwStaticMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_marker"))]
-    pub readonly_marker: Option<ReadonlyMarkerTransport>,
+    pub readonly_marker: Option<KwReadonlyMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_marker"))]
-    pub abstract_marker: Option<AbstractMarkerTransport>,
+    pub abstract_marker: Option<KwAbstractMarkerTransport>,
 }
 
 impl RenderableTransport for PublicFieldDefinitionTransport {
@@ -39994,13 +39994,13 @@ pub struct MethodSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
     pub accessibility_modifier: Option<AccessibilityModifierEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static_marker"))]
-    pub static_marker: Option<StaticMarkerTransport>,
+    pub static_marker: Option<KwStaticMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override_modifier"))]
     pub override_modifier: Option<OverrideModifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_marker"))]
-    pub readonly_marker: Option<ReadonlyMarkerTransport>,
+    pub readonly_marker: Option<KwReadonlyMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<AsyncMarkerTransport>,
+    pub async_marker: Option<KwAsyncMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind"))]
     pub accessor_kind: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
@@ -40126,7 +40126,7 @@ pub struct FunctionSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<AsyncMarkerTransport>,
+    pub async_marker: Option<KwAsyncMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
@@ -41126,7 +41126,7 @@ pub struct EnumDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_const_marker"))]
-    pub const_marker: Option<ConstMarkerTransport>,
+    pub const_marker: Option<KwConstMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
@@ -41571,7 +41571,7 @@ pub struct RequiredParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<DecoratorTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_marker"))]
-    pub readonly_marker: Option<ReadonlyMarkerTransport>,
+    pub readonly_marker: Option<KwReadonlyMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: RequiredParameterPatternTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
@@ -41633,7 +41633,7 @@ pub struct OptionalParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<DecoratorTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_marker"))]
-    pub readonly_marker: Option<ReadonlyMarkerTransport>,
+    pub readonly_marker: Option<KwReadonlyMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: OptionalParameterPatternTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
@@ -41695,7 +41695,7 @@ pub struct ParameterNameTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<DecoratorTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_marker"))]
-    pub readonly_marker: Option<ReadonlyMarkerTransport>,
+    pub readonly_marker: Option<KwReadonlyMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: ParameterNamePatternTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
@@ -42359,7 +42359,7 @@ pub struct ConstructorTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_marker"))]
-    pub abstract_marker: Option<AbstractMarkerTransport>,
+    pub abstract_marker: Option<KwAbstractMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
     pub type_parameters: Option<TypeParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
@@ -43807,11 +43807,11 @@ pub struct PropertySignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
     pub accessibility_modifier: Option<AccessibilityModifierEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static_marker"))]
-    pub static_marker: Option<StaticMarkerTransport>,
+    pub static_marker: Option<KwStaticMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override_modifier"))]
     pub override_modifier: Option<OverrideModifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_marker"))]
-    pub readonly_marker: Option<ReadonlyMarkerTransport>,
+    pub readonly_marker: Option<KwReadonlyMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: PropertyNameTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker"))]
@@ -43917,7 +43917,7 @@ pub struct TypeParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_const_marker"))]
-    pub const_marker: Option<ConstMarkerTransport>,
+    pub const_marker: Option<KwConstMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constraint"))]
@@ -44075,7 +44075,7 @@ pub struct ConstructSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_marker"))]
-    pub abstract_marker: Option<AbstractMarkerTransport>,
+    pub abstract_marker: Option<KwAbstractMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
     pub type_parameters: Option<TypeParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
@@ -44577,7 +44577,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeIdentifierTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct AsyncMarkerTransport {
+pub struct KwAsyncMarkerTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -44587,7 +44587,7 @@ pub struct AsyncMarkerTransport {
     pub text: String,
 }
 
-impl RenderableTransport for AsyncMarkerTransport {
+impl RenderableTransport for KwAsyncMarkerTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -44597,7 +44597,7 @@ impl RenderableTransport for AsyncMarkerTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsyncMarkerTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -44608,7 +44608,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncMarkerTransport {
             ::napi::ValueType::Number => "async".to_string(),
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("AsyncMarkerTransport received false; omit the field instead of sending false"));
+                    return Err(::napi::Error::from_reason("KwAsyncMarkerTransport received false; omit the field instead of sending false"));
                 }
                 "async".to_string()
             }
@@ -44630,7 +44630,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncMarkerTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsyncMarkerTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -44650,7 +44650,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncMarkerTransport {
             }
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("AsyncMarkerTransport received false; omit the field instead of sending false"));
+                    return Err(::napi::Error::from_reason("KwAsyncMarkerTransport received false; omit the field instead of sending false"));
                 }
                 return Ok(Self {
                     transport_source: None,
@@ -44685,7 +44685,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncMarkerTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AsyncMarkerTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for KwAsyncMarkerTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -44695,27 +44695,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for AsyncMarkerTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AsyncMarkerTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<KwAsyncMarkerTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AsyncMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
+        KwAsyncMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AsyncMarkerTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<KwAsyncMarkerTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AsyncMarkerTransport::to_napi_value(env, *val)
+        KwAsyncMarkerTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct StaticMarkerTransport {
+pub struct KwStaticMarkerTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -44725,7 +44725,7 @@ pub struct StaticMarkerTransport {
     pub text: String,
 }
 
-impl RenderableTransport for StaticMarkerTransport {
+impl RenderableTransport for KwStaticMarkerTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -44735,7 +44735,7 @@ impl RenderableTransport for StaticMarkerTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for StaticMarkerTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -44746,7 +44746,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticMarkerTransport {
             ::napi::ValueType::Number => "static".to_string(),
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("StaticMarkerTransport received false; omit the field instead of sending false"));
+                    return Err(::napi::Error::from_reason("KwStaticMarkerTransport received false; omit the field instead of sending false"));
                 }
                 "static".to_string()
             }
@@ -44768,7 +44768,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticMarkerTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for StaticMarkerTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -44788,7 +44788,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticMarkerTransport {
             }
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("StaticMarkerTransport received false; omit the field instead of sending false"));
+                    return Err(::napi::Error::from_reason("KwStaticMarkerTransport received false; omit the field instead of sending false"));
                 }
                 return Ok(Self {
                     transport_source: None,
@@ -44823,7 +44823,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticMarkerTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StaticMarkerTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for KwStaticMarkerTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -44833,27 +44833,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for StaticMarkerTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StaticMarkerTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<KwStaticMarkerTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        StaticMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
+        KwStaticMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StaticMarkerTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<KwStaticMarkerTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        StaticMarkerTransport::to_napi_value(env, *val)
+        KwStaticMarkerTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct ReadonlyMarkerTransport {
+pub struct KwReadonlyMarkerTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -44863,7 +44863,7 @@ pub struct ReadonlyMarkerTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ReadonlyMarkerTransport {
+impl RenderableTransport for KwReadonlyMarkerTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -44873,7 +44873,7 @@ impl RenderableTransport for ReadonlyMarkerTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyMarkerTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for KwReadonlyMarkerTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -44884,7 +44884,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyMarkerTransport {
             ::napi::ValueType::Number => "readonly".to_string(),
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("ReadonlyMarkerTransport received false; omit the field instead of sending false"));
+                    return Err(::napi::Error::from_reason("KwReadonlyMarkerTransport received false; omit the field instead of sending false"));
                 }
                 "readonly".to_string()
             }
@@ -44906,7 +44906,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyMarkerTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyMarkerTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for KwReadonlyMarkerTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -44926,7 +44926,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyMarkerTransport {
             }
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("ReadonlyMarkerTransport received false; omit the field instead of sending false"));
+                    return Err(::napi::Error::from_reason("KwReadonlyMarkerTransport received false; omit the field instead of sending false"));
                 }
                 return Ok(Self {
                     transport_source: None,
@@ -44961,7 +44961,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyMarkerTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ReadonlyMarkerTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for KwReadonlyMarkerTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -44971,27 +44971,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for ReadonlyMarkerTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ReadonlyMarkerTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<KwReadonlyMarkerTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ReadonlyMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
+        KwReadonlyMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ReadonlyMarkerTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<KwReadonlyMarkerTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ReadonlyMarkerTransport::to_napi_value(env, *val)
+        KwReadonlyMarkerTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct AbstractMarkerTransport {
+pub struct KwAbstractMarkerTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -45001,7 +45001,7 @@ pub struct AbstractMarkerTransport {
     pub text: String,
 }
 
-impl RenderableTransport for AbstractMarkerTransport {
+impl RenderableTransport for KwAbstractMarkerTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -45011,7 +45011,7 @@ impl RenderableTransport for AbstractMarkerTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AbstractMarkerTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for KwAbstractMarkerTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -45022,7 +45022,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMarkerTransport {
             ::napi::ValueType::Number => "abstract".to_string(),
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("AbstractMarkerTransport received false; omit the field instead of sending false"));
+                    return Err(::napi::Error::from_reason("KwAbstractMarkerTransport received false; omit the field instead of sending false"));
                 }
                 "abstract".to_string()
             }
@@ -45044,7 +45044,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMarkerTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AbstractMarkerTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for KwAbstractMarkerTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -45064,7 +45064,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMarkerTransport {
             }
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("AbstractMarkerTransport received false; omit the field instead of sending false"));
+                    return Err(::napi::Error::from_reason("KwAbstractMarkerTransport received false; omit the field instead of sending false"));
                 }
                 return Ok(Self {
                     transport_source: None,
@@ -45099,7 +45099,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMarkerTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AbstractMarkerTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for KwAbstractMarkerTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -45109,27 +45109,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for AbstractMarkerTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AbstractMarkerTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<KwAbstractMarkerTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AbstractMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
+        KwAbstractMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AbstractMarkerTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<KwAbstractMarkerTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AbstractMarkerTransport::to_napi_value(env, *val)
+        KwAbstractMarkerTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct ConstMarkerTransport {
+pub struct KwConstMarkerTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -45139,7 +45139,7 @@ pub struct ConstMarkerTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ConstMarkerTransport {
+impl RenderableTransport for KwConstMarkerTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -45149,7 +45149,7 @@ impl RenderableTransport for ConstMarkerTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ConstMarkerTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for KwConstMarkerTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -45160,7 +45160,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstMarkerTransport {
             ::napi::ValueType::Number => "const".to_string(),
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("ConstMarkerTransport received false; omit the field instead of sending false"));
+                    return Err(::napi::Error::from_reason("KwConstMarkerTransport received false; omit the field instead of sending false"));
                 }
                 "const".to_string()
             }
@@ -45182,7 +45182,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstMarkerTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ConstMarkerTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for KwConstMarkerTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -45202,7 +45202,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstMarkerTransport {
             }
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("ConstMarkerTransport received false; omit the field instead of sending false"));
+                    return Err(::napi::Error::from_reason("KwConstMarkerTransport received false; omit the field instead of sending false"));
                 }
                 return Ok(Self {
                     transport_source: None,
@@ -45237,7 +45237,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstMarkerTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ConstMarkerTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for KwConstMarkerTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -45247,22 +45247,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for ConstMarkerTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ConstMarkerTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<KwConstMarkerTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ConstMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
+        KwConstMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ConstMarkerTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<KwConstMarkerTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ConstMarkerTransport::to_napi_value(env, *val)
+        KwConstMarkerTransport::to_napi_value(env, *val)
     }
 }
 
@@ -48268,9 +48268,9 @@ pub struct PublicFieldDefinitionStaticModsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static_marker"))]
-    pub static_marker: StaticMarkerTransport,
+    pub static_marker: KwStaticMarkerTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_marker"))]
-    pub readonly_marker: Option<ReadonlyMarkerTransport>,
+    pub readonly_marker: Option<KwReadonlyMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override_modifier"))]
     pub override_modifier: Option<OverrideModifierTransport>,
 }
@@ -48322,9 +48322,9 @@ pub struct PublicFieldDefinitionAbstractFirstTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_marker"))]
-    pub abstract_marker: AbstractMarkerTransport,
+    pub abstract_marker: KwAbstractMarkerTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_marker"))]
-    pub readonly_marker: Option<ReadonlyMarkerTransport>,
+    pub readonly_marker: Option<KwReadonlyMarkerTransport>,
 }
 
 impl RenderableTransport for PublicFieldDefinitionAbstractFirstTransport {
@@ -48374,9 +48374,9 @@ pub struct PublicFieldDefinitionReadonlyFirstTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_marker"))]
-    pub readonly_marker: ReadonlyMarkerTransport,
+    pub readonly_marker: KwReadonlyMarkerTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_marker"))]
-    pub abstract_marker: Option<AbstractMarkerTransport>,
+    pub abstract_marker: Option<KwAbstractMarkerTransport>,
 }
 
 impl RenderableTransport for PublicFieldDefinitionReadonlyFirstTransport {
@@ -62458,7 +62458,7 @@ fn render_parameter_name(node: &ParameterNameTransport, dest: &mut dyn ::std::fm
         }
     }
     if let Some(child) = &node.readonly_marker {
-        render_readonly_marker(child, dest)?;
+        render_kw_readonly_marker(child, dest)?;
     }
     node.pattern.render_into(dest)?;
     if let Some(child) = &node.accessibility_modifier {
@@ -62981,23 +62981,23 @@ fn render_type_identifier(t: &TypeIdentifierTransport, dest: &mut dyn ::std::fmt
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_async_marker(t: &AsyncMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_kw_async_marker(t: &KwAsyncMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_static_marker(t: &StaticMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_kw_static_marker(t: &KwStaticMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_readonly_marker(t: &ReadonlyMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_kw_readonly_marker(t: &KwReadonlyMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_abstract_marker(t: &AbstractMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_kw_abstract_marker(t: &KwAbstractMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_const_marker(t: &ConstMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_kw_const_marker(t: &KwConstMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -64641,11 +64641,11 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::IntersectionType(t) => render_intersection_type(t, dest),
             AnyTransport::FunctionType(t) => render_function_type(t, dest),
             AnyTransport::TypeIdentifier(t) => t.render_into(dest),
-            AnyTransport::AsyncMarker(t) => t.render_into(dest),
-            AnyTransport::StaticMarker(t) => t.render_into(dest),
-            AnyTransport::ReadonlyMarker(t) => t.render_into(dest),
-            AnyTransport::AbstractMarker(t) => t.render_into(dest),
-            AnyTransport::ConstMarker(t) => t.render_into(dest),
+            AnyTransport::KwAsyncMarker(t) => t.render_into(dest),
+            AnyTransport::KwStaticMarker(t) => t.render_into(dest),
+            AnyTransport::KwReadonlyMarker(t) => t.render_into(dest),
+            AnyTransport::KwAbstractMarker(t) => t.render_into(dest),
+            AnyTransport::KwConstMarker(t) => t.render_into(dest),
             AnyTransport::ExportClauseGroup1(t) => render_export_clause_group1(t, dest),
             AnyTransport::ExportSpecifierOptional1(t) => render_export_specifier_optional1(t, dest),
             AnyTransport::ImportStatementGroup1(t) => render_import_statement_group1(t, dest),
@@ -64827,7 +64827,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Literal3_61_73_73_65_72_74 => dest.write_str("assert").map_err(::askama::Error::from),
             AnyTransport::Literal4_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
             AnyTransport::Literal5_61_77_61_69_74 => dest.write_str("await").map_err(::askama::Error::from),
-            AnyTransport::Literal6_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            AnyTransport::Literal6_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
             AnyTransport::Literal7_2e => dest.write_str(".").map_err(::askama::Error::from),
             AnyTransport::Literal8_75_73_69_6e_67 => dest.write_str("using").map_err(::askama::Error::from),
             AnyTransport::Literal9_26_26 => dest.write_str("&&").map_err(::askama::Error::from),
@@ -64855,8 +64855,8 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Literal31_3f_3f => dest.write_str("??").map_err(::askama::Error::from),
             AnyTransport::Literal32_69_6e_73_74_61_6e_63_65_6f_66 => dest.write_str("instanceof").map_err(::askama::Error::from),
             AnyTransport::Literal33_3b => dest.write_str(";").map_err(::askama::Error::from),
-            AnyTransport::Literal34_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
-            AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+            AnyTransport::Literal34_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
+            AnyTransport::Literal35_5f_6b_77_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
             AnyTransport::Literal36_67_65_74 => dest.write_str("get").map_err(::askama::Error::from),
             AnyTransport::Literal37_73_65_74 => dest.write_str("set").map_err(::askama::Error::from),
             AnyTransport::Literal38_5f_6b_77_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72 => dest.write_str("?").map_err(::askama::Error::from),
@@ -64865,9 +64865,9 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Literal41_21 => dest.write_str("!").map_err(::askama::Error::from),
             AnyTransport::Literal42_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
             AnyTransport::Literal43_63_6f_6e_73_74 => dest.write_str("const").map_err(::askama::Error::from),
-            AnyTransport::Literal44_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => dest.write_str("const").map_err(::askama::Error::from),
+            AnyTransport::Literal44_5f_6b_77_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => dest.write_str("const").map_err(::askama::Error::from),
             AnyTransport::Literal45_3a => dest.write_str(":").map_err(::askama::Error::from),
-            AnyTransport::Literal46_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => dest.write_str("abstract").map_err(::askama::Error::from),
+            AnyTransport::Literal46_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => dest.write_str("abstract").map_err(::askama::Error::from),
             AnyTransport::Literal47_3f_2e => dest.write_str("?.").map_err(::askama::Error::from),
             AnyTransport::Literal48_7b => dest.write_str("{").map_err(::askama::Error::from),
             AnyTransport::Literal49_7b_7c => dest.write_str("{|").map_err(::askama::Error::from),
@@ -65089,11 +65089,11 @@ impl AnyTransport {
             Self::IntersectionType(t) => t.transport_named,
             Self::FunctionType(t) => t.transport_named,
             Self::TypeIdentifier(t) => t.transport_named,
-            Self::AsyncMarker(t) => t.transport_named,
-            Self::StaticMarker(t) => t.transport_named,
-            Self::ReadonlyMarker(t) => t.transport_named,
-            Self::AbstractMarker(t) => t.transport_named,
-            Self::ConstMarker(t) => t.transport_named,
+            Self::KwAsyncMarker(t) => t.transport_named,
+            Self::KwStaticMarker(t) => t.transport_named,
+            Self::KwReadonlyMarker(t) => t.transport_named,
+            Self::KwAbstractMarker(t) => t.transport_named,
+            Self::KwConstMarker(t) => t.transport_named,
             Self::ExportClauseGroup1(t) => t.transport_named,
             Self::ExportSpecifierOptional1(t) => t.transport_named,
             Self::ImportStatementGroup1(t) => t.transport_named,

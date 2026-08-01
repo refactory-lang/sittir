@@ -2363,18 +2363,6 @@
       ]
     },
     {
-      "kind": "_async_marker",
-      "modelType": "keyword",
-      "typeName": "AsyncMarker",
-      "factoryName": "asyncMarker",
-      "irKey": "asyncMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"async\" as const",
-      "text": "async",
-      "factoryShape": "text"
-    },
-    {
       "kind": "_augmented_assignment_operator",
       "modelType": "enum",
       "typeName": "AugmentedAssignmentOperator",
@@ -3071,6 +3059,18 @@
         "key",
         "value"
       ]
+    },
+    {
+      "kind": "_kw_async_marker",
+      "modelType": "keyword",
+      "typeName": "KwAsyncMarker",
+      "factoryName": "kwAsyncMarker",
+      "irKey": "kwAsyncMarker",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"async\" as const",
+      "text": "async",
+      "factoryShape": "text"
     },
     {
       "kind": "_left_hand_side",
@@ -6896,15 +6896,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_async_marker",
-              "parseKind": "_async_marker",
+              "name": "_kw_async_marker",
+              "parseKind": "_kw_async_marker",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_async_marker"
+              "_kw_async_marker"
             ]
           }
         },
@@ -6981,15 +6981,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_async_marker",
-              "parseKind": "_async_marker",
+              "name": "_kw_async_marker",
+              "parseKind": "_kw_async_marker",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_async_marker"
+              "_kw_async_marker"
             ]
           }
         },
@@ -7184,15 +7184,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_async_marker",
-              "parseKind": "_async_marker",
+              "name": "_kw_async_marker",
+              "parseKind": "_kw_async_marker",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_async_marker"
+              "_kw_async_marker"
             ]
           }
         },
@@ -11380,15 +11380,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_async_marker",
-              "parseKind": "_async_marker",
+              "name": "_kw_async_marker",
+              "parseKind": "_kw_async_marker",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_async_marker"
+              "_kw_async_marker"
             ]
           }
         },
