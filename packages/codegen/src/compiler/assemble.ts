@@ -23,6 +23,7 @@ import {
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
+	AnyRule,
 	RenderRule,
 	SimplifiedRule,
 	GroupRule,
@@ -61,8 +62,6 @@ import {
 	drainAssembleWarnings,
 	recordAssembleWarning,
 	resetAssembleWarnings,
-	hasAnyField,
-	hasAnyChild,
 	nameNode,
 	isNodeRef,
 	storageKindOfRef,
@@ -240,16 +239,23 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			const inlinedRule = hoistInnerFieldsForTemplate(
 				inlineRefs(assemblyRule, { rules: normalized.linkRules })
 			) as Rule<'link'>;
-			const modelType = classifyNode(kind, inlinedRule, {
-				variantParents,
-				parentAliasedKinds: normalized.parentAliasedKinds,
-				wordMatcher: wordMatcherRegex
-			});
 			// `rules[kind]` (SimplifiedGrammar's phase product) and `normalizedRules[kind]`
 			// are both pre-computed by normalize — alias-body kinds are now also
 			// snapshotted there (PR2 Task 3.B-prereq-alias).
 			const simplifiedRule = normalized.rules[kind]!;
 			const renderRule: RenderRule = normalized.normalizedRules![kind]!;
+			// Classification reads the already-stamped normalize-phase view
+			// (`renderRule`) instead of re-deriving wrapper shape from
+			// `inlinedRule` — wrapper-deletion already computed the same facts
+			// (multiplicity/nonterminal/separator) these checks used to walk
+			// OPTIONAL/FIELD/REPEAT/REPEAT1 nodes for. `inlinedRule` (Rule<'link'>)
+			// still feeds the node CONSTRUCTORS below (AssembledGroup/Multi
+			// deliberately need the pre-deletion wrapper node).
+			const modelType = classifyNode(kind, renderRule, {
+				variantParents,
+				parentAliasedKinds: normalized.parentAliasedKinds,
+				wordMatcher: wordMatcherRegex
+			});
 			const variantChildKinds = variantChildrenByParent.get(kind);
 
 			switch (modelType) {
@@ -1277,25 +1283,65 @@ type ModelType = AssembledNode['modelType'];
 // fixpoint (enables flatten + canonicalize to re-fire on inlined
 // content). Imported above; no longer defined here.
 
+// Phase-invariant: none of SUPERTYPE/PATTERN/STRING/enum-shaped-CHOICE are
+// wrapper-bounded types (they persist through every phase, unlike
+// OPTIONAL/FIELD/REPEAT/REPEAT1 which collapse to `never` post-normalize),
+// so this reads identically off a link-phase or a normalize-phase rule.
+// `buildInlinableKinds` (inline-sets.ts) uses this directly instead of the
+// full `classifyNode` — it only ever needs to know NON_INLINABLE_MODEL_TYPES
+// membership, never the wrapper-shape-dependent branch/multi/group answers
+// classifyNode's tail computes.
+export function isNonInlinableLeafShape(rule: AnyRule): boolean {
+	if (isEnumChoiceRule(rule)) return true;
+	return rule.type === SUPERTYPE || rule.type === PATTERN || rule.type === STRING;
+}
+
+// classifyNode's only real caller is assemble()'s own loop now
+// (`buildInlinableKinds`, inline-sets.ts, was decoupled to
+// `isNonInlinableLeafShape` above precisely so this could move off the
+// link-phase, wrapper-bearing view it used to need) — kept as a module-level
+// export purely for assemble.test.ts's direct unit coverage. The helpers
+// below read RenderRule (the normalize-phase, wrapper-deleted view)
+// directly: wrapper-deletion already stamps the facts these used to
+// re-derive by walking OPTIONAL/FIELD/REPEAT/REPEAT1 wrapper nodes
+// (`multiplicity`/`nonterminal`/`separator`), so there is nothing left to
+// walk for those shapes at this phase.
 export function classifyNode(
 	kind: string,
-	rule: Rule<'link'>,
+	rule: RenderRule,
 	opts?: { variantParents?: ReadonlySet<string>; parentAliasedKinds?: ReadonlySet<string>; wordMatcher?: RegExp }
 ): ModelType {
-	// PR-P: enum-shaped ChoiceRules detected via isEnumChoiceRule before switch.
-	if (isEnumChoiceRule(rule)) return 'enum';
-	switch (rule.type) {
-		// PR-P: ENUM case removed — handled by isEnumChoiceRule above.
-		case SUPERTYPE:
-			return 'supertype';
-		case GROUP:
-			return 'group';
-		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted; shape-classify via classifyTerminalFallback
-		case PATTERN:
-			return 'pattern';
-		case STRING:
-			// keyword vs token honours the grammar's `word` rule — see matchesWordShape.
-			return matchesWordShape(rule.value, opts?.wordMatcher) ? 'keyword' : 'token';
+	// This early exit only applies to an UNDECORATED rule — no fieldName, no
+	// multiplicity attribute. SUPERTYPE/GROUP/enum-shaped CHOICE persist as
+	// real nodes at every phase (never wrapper-collapsed), so seeing one
+	// decorated here means a FIELD/REPEAT/REPEAT1 wrapped it directly — at
+	// link-phase that wrapper's OWN type would have been checked first,
+	// never reaching this switch, so a decorated rule must fall through to
+	// the branch/multi/separatedList paths below the exact same way.
+	// PATTERN/STRING are wrapper-COLLAPSIBLE content (FIELD/REPEAT/REPEAT1
+	// vanish into their content post-wrapper-deletion): a decorated
+	// PATTERN/STRING (e.g. `repeat1('.')` collapsing to a bare-looking
+	// STRING with multiplicity:'nonEmptyArray') is exactly a field/repeat-
+	// wrapped leaf masquerading as a bare one — it must NOT early-exit as
+	// keyword/token/pattern here; classifyTerminalFallback's isAllTextShape
+	// (reached via the fallthrough below) reproduces the original answer.
+	if (rule.fieldName === undefined && rule.multiplicity === undefined) {
+		// Enum-shaped ChoiceRules aren't one of the switch cases below — detect
+		// them directly via isEnumChoiceRule.
+		if (isEnumChoiceRule(rule)) return 'enum';
+		switch (rule.type) {
+			case SUPERTYPE:
+				return 'supertype';
+			case GROUP:
+				return 'group';
+			// No TERMINAL case: that rule type doesn't exist — terminal-shaped
+			// leaves classify via classifyTerminalFallback below instead.
+			case PATTERN:
+				return 'pattern';
+			case STRING:
+				// keyword vs token honours the grammar's `word` rule — see matchesWordShape.
+				return matchesWordShape(rule.value, opts?.wordMatcher) ? 'keyword' : 'token';
+		}
 	}
 
 	if (isHiddenRepeatHelper(kind, rule, opts?.parentAliasedKinds)) return 'multi';
@@ -1305,11 +1351,11 @@ export function classifyNode(
 	return classifyTerminalFallback(kind, rule);
 }
 
-function isSeparatedListShape(rule: Rule<'link'>): boolean {
-	if (rule.type !== REPEAT && rule.type !== REPEAT1) return false;
+function isSeparatedListShape(rule: RenderRule): boolean {
+	if (rule.multiplicity !== 'array' && rule.multiplicity !== 'nonEmptyArray') return false;
 	const sep = rule.separator;
 	if (sep === undefined) return false;
-	if (isNonterminalRuleType(sep.value as Rule<'evaluate'>)) return true;
+	if (isNonterminalRuleType(sep.value)) return true;
 	// Only a genuinely OPTIONAL flank has per-instance variability worth
 	// this classification — 'mandatory' (always present) is compile-time
 	// renderable exactly like 'none' (absent), and stays classified as
@@ -1317,22 +1363,51 @@ function isSeparatedListShape(rule: Rule<'link'>): boolean {
 	return sep.trailing === 'optional' || sep.leading === 'optional';
 }
 
-function isHiddenRepeatHelper(kind: string, rule: Rule<'link'>, parentAliasedKinds?: ReadonlySet<string>): boolean {
+function isHiddenRepeatHelper(kind: string, rule: RenderRule, parentAliasedKinds?: ReadonlySet<string>): boolean {
 	if (!kind.startsWith('_')) return false;
-	if (extractRepeatShape(rule) === null) return false;
+	if (rule.multiplicity !== 'array' && rule.multiplicity !== 'nonEmptyArray') return false;
 	// If this kind appears as the content of a named alias in any parent rule,
 	// it produces a real runtime CST node — do NOT classify as multi.
 	if (parentAliasedKinds?.has(kind)) return false;
 	return true;
 }
 
-function classifyBranchOrContainer(rule: Rule<'link'>): ModelType | null {
-	if (hasAnyField(rule) || hasAnyChild(rule)) return 'branch';
+function classifyBranchOrContainer(rule: RenderRule): ModelType | null {
+	if (hasSlotBearingContent(rule)) return 'branch';
 	return null;
 }
 
-function classifyTerminalFallback(kind: string, rule: Rule<'link'>): ModelType {
-	// PR-P: isEnumChoiceRule checked BEFORE isAllTextShape — an all-STRING ChoiceRule<'link'>
+// Replaces the link-phase `hasAnyField(rule) || hasAnyChild(rule)` walk —
+// a narrower question than "does this produce a slot at all". A repeat over
+// terminals genuinely IS a slot (Table 2: repeat forces an array slot even
+// over terminal content) — `nonterminal` correctly says so. But
+// classifyBranchOrContainer isn't asking that; it's asking hasAnyField/
+// hasAnyChild's original question — "is there a NAMED field or a rule
+// REFERENCE here" — to decide 'branch' vs falling through to 'multi'
+// (isHiddenRepeatHelper, for a kind whose whole body IS the repeat) or
+// 'pattern' (classifyTerminalFallback, for repeated terminal content folded
+// into a larger all-text kind like `_type_identifier`). `fieldName` is the
+// flattened equivalent of hasAnyField's FIELD-only signal; SYMBOL/SUPERTYPE
+// below reproduces hasAnyChild's.
+function hasSlotBearingContent(rule: RenderRule): boolean {
+	if (rule.fieldName !== undefined) return true;
+	switch (rule.type) {
+		case SYMBOL:
+		case SUPERTYPE:
+			return true;
+		case SEQ:
+		case CHOICE:
+			return rule.members.some(hasSlotBearingContent);
+		case VARIANT:
+		case GROUP:
+			return hasSlotBearingContent(rule.content);
+		default:
+			return false;
+	}
+}
+
+function classifyTerminalFallback(kind: string, rule: RenderRule): ModelType {
+	// isEnumChoiceRule checked BEFORE isAllTextShape — an all-STRING ChoiceRule
 	// passes isAllTextShape too, but must classify as 'enum', not 'pattern'.
 	if (isEnumChoiceRule(rule)) return 'enum';
 	if (isAllTextShape(rule)) return 'pattern';
@@ -1342,7 +1417,16 @@ function classifyTerminalFallback(kind: string, rule: Rule<'link'>): ModelType {
 	);
 }
 
-export function isAllTextShape(rule: Rule<'link'>): boolean {
+// Phase-invariant by construction: OPTIONAL/REPEAT/REPEAT1/FIELD/ALIAS/TOKEN
+// collapse to `never` outside evaluate/link (rule.ts), so at normalize/
+// simplify this switch simply never reaches those cases — the recursion
+// bottoms out directly on whatever leaf wrapper-deletion left in their
+// place, with no information lost. That's what lets one implementation
+// correctly serve all three real callers: `collectAnonymousNodes` (a
+// still-wrapper-bearing Rule<'link'>, detecting TOKEN-body-flattened
+// compound literals), `classifyTerminalFallback` (normalize-phase
+// RenderRule), and `diagnoseSlotGrouping` (simplify-phase SimplifiedRule).
+export function isAllTextShape(rule: AnyRule): boolean {
 	switch (rule.type) {
 		case STRING:
 		case PATTERN:

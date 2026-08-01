@@ -74,7 +74,7 @@ import type {
 	RepeatedShapeEntry,
 	RefineForm
 } from './types.ts';
-import { hasAnyField } from './model/node-map.ts';
+import { hasAnyField } from '../dsl/rule-transforms.ts';
 import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';

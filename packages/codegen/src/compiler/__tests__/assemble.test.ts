@@ -134,7 +134,7 @@ describe('Assemble — classifyNode', () => {
 				}
 			]
 		};
-		expect(classifyNode('function_item', rule)).toBe('branch');
+		expect(classifyNode('function_item', deleteWrapper(rule))).toBe('branch');
 	});
 
 	it('classifies visible repeat as branch (container-shape)', () => {
@@ -146,7 +146,7 @@ describe('Assemble — classifyNode', () => {
 			type: REPEAT,
 			content: { type: SYMBOL, name: 'item' }
 		};
-		expect(classifyNode('items', rule)).toBe('branch');
+		expect(classifyNode('items', deleteWrapper(rule))).toBe('branch');
 	});
 
 	it('does NOT classify a bare repeat with no separator as separatedList', () => {
@@ -154,7 +154,7 @@ describe('Assemble — classifyNode', () => {
 			type: REPEAT,
 			content: { type: SYMBOL, name: 'item' }
 		};
-		expect(classifyNode('items_no_sep', rule)).toBe('branch');
+		expect(classifyNode('items_no_sep', deleteWrapper(rule))).toBe('branch');
 	});
 
 	it('classifies visible choice with same field set as branch', () => {
@@ -203,22 +203,22 @@ describe('Assemble — classifyNode', () => {
 				}
 			]
 		};
-		expect(classifyNode('binary_op', rule)).toBe('branch');
+		expect(classifyNode('binary_op', deleteWrapper(rule))).toBe('branch');
 	});
 
 	it('classifies visible pattern as pattern', () => {
 		const rule: Rule<'link'> = { type: PATTERN, value: '[a-z]+' };
-		expect(classifyNode('identifier', rule)).toBe('pattern');
+		expect(classifyNode('identifier', deleteWrapper(rule))).toBe('pattern');
 	});
 
 	it('classifies visible single alphanumeric string as keyword', () => {
 		const rule: Rule<'link'> = { type: STRING, value: 'true' };
-		expect(classifyNode('true', rule)).toBe('keyword');
+		expect(classifyNode('true', deleteWrapper(rule))).toBe('keyword');
 	});
 
 	it('classifies visible non-alphanumeric string as token (T027b)', () => {
 		const rule: Rule<'link'> = { type: STRING, value: '->' };
-		expect(classifyNode('arrow', rule)).toBe('token');
+		expect(classifyNode('arrow', deleteWrapper(rule))).toBe('token');
 	});
 
 	it('classifies enum as enum', () => {
@@ -229,7 +229,7 @@ describe('Assemble — classifyNode', () => {
 				{ type: STRING, value: 'crate' }
 			]
 		};
-		expect(classifyNode('visibility', rule)).toBe('enum');
+		expect(classifyNode('visibility', deleteWrapper(rule))).toBe('enum');
 	});
 
 	it('classifies hidden choice as supertype when already SupertypeRule', () => {
@@ -238,7 +238,7 @@ describe('Assemble — classifyNode', () => {
 			name: '_expression',
 			subtypes: [{ type: SYMBOL, name: 'binary_expression' }, { type: SYMBOL, name: 'identifier' }]
 		};
-		expect(classifyNode('_expression', rule)).toBe('supertype');
+		expect(classifyNode('_expression', deleteWrapper(rule))).toBe('supertype');
 	});
 
 	it('classifies SupertypeRule (from Link) as supertype regardless of name', () => {
@@ -249,9 +249,10 @@ describe('Assemble — classifyNode', () => {
 			name: 'expression',
 			subtypes: [{ type: SYMBOL, name: 'binary_expression' }, { type: SYMBOL, name: 'identifier' }]
 		};
-		expect(classifyNode('expression', rule)).toBe('supertype');
-		expect(classifyNode('_expression', rule)).toBe('supertype');
-		expect(classifyNode('anything', rule)).toBe('supertype');
+		const renderRule = deleteWrapper(rule);
+		expect(classifyNode('expression', renderRule)).toBe('supertype');
+		expect(classifyNode('_expression', renderRule)).toBe('supertype');
+		expect(classifyNode('anything', renderRule)).toBe('supertype');
 	});
 
 	it('classifies hidden seq with fields as group', () => {
@@ -269,7 +270,7 @@ describe('Assemble — classifyNode', () => {
 				]
 			}
 		};
-		expect(classifyNode('_sig', rule)).toBe('group');
+		expect(classifyNode('_sig', deleteWrapper(rule))).toBe('group');
 	});
 
 	it('assembles hidden alias sources from their captured leaf body', () => {
@@ -538,7 +539,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				}
 			}
 		};
-		expect(classifyNode('member_list', rule)).toBe('separatedList');
+		expect(classifyNode('member_list', deleteWrapper(rule))).toBe('separatedList');
 	});
 
 	it('classifies a rule with a literal separator and an optional trailing flank as separatedList', () => {
@@ -550,7 +551,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				trailing: 'optional'
 			}
 		};
-		expect(classifyNode('member_list', rule)).toBe('separatedList');
+		expect(classifyNode('member_list', deleteWrapper(rule))).toBe('separatedList');
 	});
 
 	it('classifies a rule with a literal separator and an optional leading flank as separatedList', () => {
@@ -562,7 +563,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				leading: 'optional'
 			}
 		};
-		expect(classifyNode('member_list', rule)).toBe('separatedList');
+		expect(classifyNode('member_list', deleteWrapper(rule))).toBe('separatedList');
 	});
 
 	it('does NOT classify a rule with a literal separator and no flank as separatedList', () => {
@@ -573,7 +574,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				value: { type: STRING, value: ',' }
 			}
 		};
-		expect(classifyNode('member_list', rule)).toBe('branch');
+		expect(classifyNode('member_list', deleteWrapper(rule))).toBe('branch');
 	});
 
 	it('does NOT classify a branch with one array-multiplicity field among several named fields as separatedList', () => {
@@ -599,7 +600,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				}
 			]
 		};
-		expect(classifyNode('some_branch', rule)).toBe('branch');
+		expect(classifyNode('some_branch', deleteWrapper(rule))).toBe('branch');
 	});
 });
 
@@ -711,7 +712,7 @@ describe('Assemble — T027a empty seq after stripping', () => {
 				{ type: STRING, value: '}' }
 			]
 		};
-		const modelType = classifyNode('braces', rule);
+		const modelType = classifyNode('braces', deleteWrapper(rule));
 		expect(modelType).toBe('pattern');
 	});
 });
