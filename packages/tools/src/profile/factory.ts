@@ -1,23 +1,18 @@
 /**
  * profile/factory — factory-render-parse error bucketing with optional
- * recursive-materialisation and AST-mismatch detail.
+ * AST-mismatch detail.
  *
  * Merges the diagnostic ideas from three scratch scripts:
  *   - profile-shallow.ts      (shallow mode, top error buckets)
- *   - profile-recursive.ts    (recursive mode, classified buckets with samples)
+ *   - profile-recursive.ts    (classified buckets with samples)
  *   - profile-recursive-ast.ts (AST mismatch detail alongside bucket counts)
  *
  * Usage:
- *   profile-factory [--grammar rust|typescript|python] [--recursive] [--ast]
+ *   profile-factory [--grammar rust|typescript|python] [--ast]
  *
  * Options:
  *   --grammar    one grammar only (default: all three)
- *   --recursive  enable SITTIR_VALIDATE_RECURSIVE for deep child materialisation
  *   --ast        include AST-mismatch breakdown alongside reparse errors
- *
- * Note on recursive mode: the SITTIR_VALIDATE_RECURSIVE env var is set for the
- * duration of the validator call and restored to its prior value afterwards via
- * try/finally, leaving no global env mutation behind.
  */
 
 // ---------------------------------------------------------------------------
@@ -70,7 +65,6 @@ const ALL_GRAMMARS: readonly Grammar[] = ['rust', 'typescript', 'python'];
 
 export interface ProfileFactoryOptions {
 	grammar?: string;
-	recursive: boolean;
 	showAst: boolean;
 }
 
@@ -94,30 +88,11 @@ function classifyMessage(msg: string): string {
 // Per-grammar profiling
 // ---------------------------------------------------------------------------
 
-/**
- * Run factory-render-parse for one grammar with optional recursive mode.
- *
- * Recursive mode is enabled by setting `SITTIR_VALIDATE_RECURSIVE=1` before
- * calling the validator and restoring the prior value afterwards — the validator
- * reads this env var internally. The try/finally ensures no global mutation
- * leaks even on error.
- */
-async function runFactoryWithRecursive(grammar: Grammar, recursive: boolean): Promise<FactoryRenderParseResult> {
+/** Run factory-render-parse for one grammar. */
+async function runFactoryOnce(grammar: Grammar): Promise<FactoryRenderParseResult> {
 	const { runFactory, defaultTemplatesPath } = await loadValidatorModules();
 	const tp = defaultTemplatesPath(grammar);
-	const prev = process.env['SITTIR_VALIDATE_RECURSIVE'];
-	if (recursive) process.env['SITTIR_VALIDATE_RECURSIVE'] = '1';
-	try {
-		return await runFactory(grammar, tp, 'native');
-	} finally {
-		if (recursive) {
-			if (prev === undefined) {
-				delete process.env['SITTIR_VALIDATE_RECURSIVE'];
-			} else {
-				process.env['SITTIR_VALIDATE_RECURSIVE'] = prev;
-			}
-		}
-	}
+	return await runFactory(grammar, tp, 'native');
 }
 
 /** Print the bucketed error report for one grammar. */
@@ -165,12 +140,11 @@ function reportGrammar(result: FactoryRenderParseResult, showAst: boolean): void
 
 export async function run(opts: ProfileFactoryOptions): Promise<number> {
 	const grammars: readonly Grammar[] = opts.grammar ? [opts.grammar as Grammar] : ALL_GRAMMARS;
-	const { recursive, showAst } = opts;
-	if (recursive) process.stdout.write('(recursive mode: SITTIR_VALIDATE_RECURSIVE=1 for each run)\n');
+	const { showAst } = opts;
 
 	for (const g of grammars) {
 		try {
-			const result = await runFactoryWithRecursive(g, recursive);
+			const result = await runFactoryOnce(g);
 			reportGrammar(result, showAst);
 		} catch (e) {
 			process.stderr.write(`${g}: ERROR ${(e as Error).message}\n`);

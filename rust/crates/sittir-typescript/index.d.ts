@@ -71,11 +71,11 @@ export interface AbstractMethodSignatureTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _accessibility_modifier?: _AccessibilityModifierEnum
-  _override_modifier?: _OverrideModifierTransport
-  _accessor_kind?: AccessorKindEnum
+  _accessibility_modifier?: AccessibilityModifierEnum
+  _override_modifier?: OverrideModifierTransport
+  _accessor_kind?: Box<AnyTransport>
   _name: PropertyNameTransport
-  _optional_marker?: OptionalMarkerTransport
+  _optional_marker?: KwOptionalMarkerTransport
   _type_parameters?: TypeParametersTransport
   _parameters: FormalParametersTransport
   _return_type?: AbstractMethodSignatureReturnTypeTransportSlot
@@ -190,7 +190,7 @@ export interface ArrowFunctionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _async_marker?: AsyncMarkerTransport
+  _async_marker?: KwAsyncMarkerTransport
   _body: Box<ArrowFunctionBodyTransportSlot>
   _content: ArrowFunctionContentTransportSlot
 }
@@ -590,7 +590,7 @@ export interface ConstructorTypeTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _abstract_marker?: AbstractMarkerTransport
+  _abstract_marker?: KwAbstractMarkerTransport
   _type_parameters?: TypeParametersTransport
   _parameters: FormalParametersTransport
   _type: Box<TypeTransport>
@@ -604,7 +604,7 @@ export interface ConstructSignatureTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _abstract_marker?: AbstractMarkerTransport
+  _abstract_marker?: KwAbstractMarkerTransport
   _type_parameters?: TypeParametersTransport
   _parameters: FormalParametersTransport
   _type?: TypeAnnotationTransport
@@ -761,7 +761,7 @@ export interface EnumDeclarationTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _const_marker?: ConstMarkerTransport
+  _const_marker?: KwConstMarkerTransport
   _name: IdentifierTransport
   _body: EnumBodyTransport
 }
@@ -808,7 +808,7 @@ export interface ExportSpecifierTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _export_kind?: ExportSpecifierExportKindEnum
+  _export_kind?: Box<AnyTransport>
   _name: ModuleExportNameTransport
   _alias?: ModuleExportNameTransport
 }
@@ -1010,7 +1010,7 @@ export interface FieldDefinitionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _decorator?: Array<DecoratorTransport>
-  _static_marker?: StaticMarkerTransport
+  _static_marker?: KwStaticMarkerTransport
   _property: PropertyNameTransport
   _value?: ExpressionTransport
 }
@@ -1158,7 +1158,7 @@ export interface FunctionDeclarationTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _async_marker?: AsyncMarkerTransport
+  _async_marker?: KwAsyncMarkerTransport
   _name: IdentifierTransport
   _type_parameters?: TypeParametersTransport
   _parameters: FormalParametersTransport
@@ -1175,7 +1175,7 @@ export interface FunctionExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _async_marker?: AsyncMarkerTransport
+  _async_marker?: KwAsyncMarkerTransport
   _name?: IdentifierTransport
   _type_parameters?: TypeParametersTransport
   _parameters: FormalParametersTransport
@@ -1191,7 +1191,7 @@ export interface FunctionSignatureTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _async_marker?: AsyncMarkerTransport
+  _async_marker?: KwAsyncMarkerTransport
   _name: IdentifierTransport
   _type_parameters?: TypeParametersTransport
   _parameters: FormalParametersTransport
@@ -1220,7 +1220,7 @@ export interface GeneratorFunctionDeclarationTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _async_marker?: AsyncMarkerTransport
+  _async_marker?: KwAsyncMarkerTransport
   _name: IdentifierTransport
   _type_parameters?: TypeParametersTransport
   _parameters: FormalParametersTransport
@@ -1237,7 +1237,7 @@ export interface GeneratorFunctionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _async_marker?: AsyncMarkerTransport
+  _async_marker?: KwAsyncMarkerTransport
   _name?: IdentifierTransport
   _type_parameters?: TypeParametersTransport
   _parameters: FormalParametersTransport
@@ -1371,7 +1371,7 @@ export interface ImportSpecifierTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _import_kind?: ExportSpecifierExportKindEnum
+  _import_kind?: Box<AnyTransport>
   _content: ImportSpecifierContentTransportSlot
 }
 
@@ -1759,7 +1759,7 @@ export interface MemberExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _object: Box<MemberExpressionObjectTransportSlot>
-  _optional_chain?: OptionalChainTransport
+  _separator: MemberExpressionSeparatorTransportSlot
   _property: MemberExpressionPropertyTransportSlot
 }
 
@@ -1782,14 +1782,14 @@ export interface MethodDefinitionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _accessibility_modifier?: _AccessibilityModifierEnum
-  _static_marker?: StaticMarkerTransport
-  _override_modifier?: _OverrideModifierTransport
-  _readonly_marker?: ReadonlyMarkerTransport
-  _async_marker?: AsyncMarkerTransport
-  _accessor_kind?: AccessorKindEnum
+  _accessibility_modifier?: AccessibilityModifierEnum
+  _static_marker?: KwStaticMarkerTransport
+  _override_modifier?: OverrideModifierTransport
+  _readonly_marker?: KwReadonlyMarkerTransport
+  _async_marker?: KwAsyncMarkerTransport
+  _accessor_kind?: Box<AnyTransport>
   _name: PropertyNameTransport
-  _optional_marker?: OptionalMarkerTransport
+  _optional_marker?: KwOptionalMarkerTransport
   _type_parameters?: TypeParametersTransport
   _parameters: FormalParametersTransport
   _return_type?: MethodDefinitionReturnTypeTransportSlot
@@ -1804,14 +1804,14 @@ export interface MethodSignatureTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _accessibility_modifier?: _AccessibilityModifierEnum
-  _static_marker?: StaticMarkerTransport
-  _override_modifier?: _OverrideModifierTransport
-  _readonly_marker?: ReadonlyMarkerTransport
-  _async_marker?: AsyncMarkerTransport
-  _accessor_kind?: AccessorKindEnum
+  _accessibility_modifier?: AccessibilityModifierEnum
+  _static_marker?: KwStaticMarkerTransport
+  _override_modifier?: OverrideModifierTransport
+  _readonly_marker?: KwReadonlyMarkerTransport
+  _async_marker?: KwAsyncMarkerTransport
+  _accessor_kind?: Box<AnyTransport>
   _name: PropertyNameTransport
-  _optional_marker?: OptionalMarkerTransport
+  _optional_marker?: KwOptionalMarkerTransport
   _type_parameters?: TypeParametersTransport
   _parameters: FormalParametersTransport
   _return_type?: MethodSignatureReturnTypeTransportSlot
@@ -2002,9 +2002,9 @@ export interface ObjectTypeTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _opening: ObjectTypeOpeningEnum
+  _opening: Box<AnyTransport>
   _members?: ObjectTypeContentTransport
-  _closing: ObjectTypeClosingEnum
+  _closing: Box<AnyTransport>
 }
 
 export interface OmittingTypeAnnotationTransport {
@@ -2038,7 +2038,7 @@ export interface OptionalParameterTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _decorator?: Array<DecoratorTransport>
-  _readonly_marker?: ReadonlyMarkerTransport
+  _readonly_marker?: KwReadonlyMarkerTransport
   _pattern: OptionalParameterPatternTransportSlot
   _type?: TypeAnnotationTransport
   _value?: ExpressionTransport
@@ -2102,7 +2102,7 @@ export interface ParameterNameTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _decorator?: Array<DecoratorTransport>
-  _readonly_marker?: ReadonlyMarkerTransport
+  _readonly_marker?: KwReadonlyMarkerTransport
   _pattern: ParameterNamePatternTransportSlot
   _accessibility_modifier?: AccessibilityModifierEnum
   _override_modifier?: OverrideModifierTransport
@@ -2162,12 +2162,12 @@ export interface PropertySignatureTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _accessibility_modifier?: _AccessibilityModifierEnum
-  _static_marker?: StaticMarkerTransport
-  _override_modifier?: _OverrideModifierTransport
-  _readonly_marker?: ReadonlyMarkerTransport
+  _accessibility_modifier?: AccessibilityModifierEnum
+  _static_marker?: KwStaticMarkerTransport
+  _override_modifier?: OverrideModifierTransport
+  _readonly_marker?: KwReadonlyMarkerTransport
   _name: PropertyNameTransport
-  _optional_marker?: OptionalMarkerTransport
+  _optional_marker?: KwOptionalMarkerTransport
   _type?: TypeAnnotationTransport
 }
 
@@ -2179,8 +2179,8 @@ export interface PublicFieldDefinitionAbstractFirstTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _abstract_marker: AbstractMarkerTransport
-  _readonly_marker?: ReadonlyMarkerTransport
+  _abstract_marker: KwAbstractMarkerTransport
+  _readonly_marker?: KwReadonlyMarkerTransport
 }
 
 export interface PublicFieldDefinitionAccessFirstTransport {
@@ -2214,8 +2214,8 @@ export interface PublicFieldDefinitionReadonlyFirstTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _readonly_marker: ReadonlyMarkerTransport
-  _abstract_marker?: AbstractMarkerTransport
+  _readonly_marker: KwReadonlyMarkerTransport
+  _abstract_marker?: KwAbstractMarkerTransport
 }
 
 export interface PublicFieldDefinitionStaticModsTransport {
@@ -2226,8 +2226,8 @@ export interface PublicFieldDefinitionStaticModsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _static_marker: StaticMarkerTransport
-  _readonly_marker?: ReadonlyMarkerTransport
+  _static_marker: KwStaticMarkerTransport
+  _readonly_marker?: KwReadonlyMarkerTransport
   _override_modifier?: OverrideModifierTransport
 }
 
@@ -2243,15 +2243,15 @@ export interface PublicFieldDefinitionTransport {
   _visibility_prefix?: PublicFieldDefinitionVisibilityPrefixTransportSlot
   _accessor_marker?: boolean
   _name: PropertyNameTransport
-  _optionality_marker?: PublicFieldDefinitionOptionalityMarkerEnum
+  _optionality_marker?: Box<AnyTransport>
   _type?: TypeAnnotationTransport
   _value?: ExpressionTransport
   _public_field_definition_static_mods?: PublicFieldDefinitionStaticModsTransport
   _public_field_definition_abstract_first?: PublicFieldDefinitionAbstractFirstTransport
   _public_field_definition_readonly_first?: PublicFieldDefinitionReadonlyFirstTransport
-  _static_marker?: StaticMarkerTransport
-  _readonly_marker?: ReadonlyMarkerTransport
-  _abstract_marker?: AbstractMarkerTransport
+  _static_marker?: KwStaticMarkerTransport
+  _readonly_marker?: KwReadonlyMarkerTransport
+  _abstract_marker?: KwAbstractMarkerTransport
 }
 
 export interface ReadonlyTypeTransport {
@@ -2286,7 +2286,7 @@ export interface RequiredParameterTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _decorator?: Array<DecoratorTransport>
-  _readonly_marker?: ReadonlyMarkerTransport
+  _readonly_marker?: KwReadonlyMarkerTransport
   _pattern: RequiredParameterPatternTransportSlot
   _type?: TypeAnnotationTransport
   _value?: ExpressionTransport
@@ -2650,7 +2650,7 @@ export interface TypeParameterTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _const_marker?: ConstMarkerTransport
+  _const_marker?: KwConstMarkerTransport
   _name: IdentifierTransport
   _constraint?: ConstraintTransport
   _value?: DefaultTypeTransport

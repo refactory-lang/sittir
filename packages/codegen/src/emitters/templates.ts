@@ -109,13 +109,13 @@ interface SlotLookupMiss {
 	readonly ruleId: string | undefined;
 	readonly name: string | undefined;
 	readonly fieldName: string | undefined;
-	readonly recoveredBy: 'fieldName' | 'symbol-name' | 'none';
+	readonly recoveredBy: 'fieldName' | 'symbol-name' | 'alias-source' | 'none';
 }
 const DBG_SLOT_MISS = process.env.DBG_SLOT_MISS === '1';
 const SLOT_MISS_LOG: SlotLookupMiss[] = [];
 function dumpSlotMissLog(grammar: string): void {
 	if (!DBG_SLOT_MISS || SLOT_MISS_LOG.length === 0) return;
-	const tally = { fieldName: 0, 'symbol-name': 0, none: 0 } as Record<string, number>;
+	const tally = { fieldName: 0, 'symbol-name': 0, 'alias-source': 0, none: 0 } as Record<string, number>;
 	for (const m of SLOT_MISS_LOG) tally[m.recoveredBy] = (tally[m.recoveredBy] ?? 0) + 1;
 	process.stderr.write(
 		`\n=== slotByRuleId MISS inventory [${grammar}] — ${SLOT_MISS_LOG.length} total ` +
@@ -583,6 +583,25 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 				recoveredBy = 'symbol-name';
 			}
 		}
+		// Fallback C: alias source → storageName. A singular `alias($._hidden,
+		// $.visible)` reference survives wrapper-deletion as
+		// `SYMBOL(visible, aliasedFrom='_hidden')` with no id (rebuilt, not
+		// preserved), so slotByRuleId, Fallback A (no fieldName), and Fallback B
+		// (slot is keyed by the HIDDEN target's name, not the visible alias name)
+		// all miss. The slot's own name derives from the same hidden target, so
+		// join on `aliasedFrom` instead of the alias's display name.
+		if (
+			recovered === undefined &&
+			rule.type === SYMBOL &&
+			(rule as { aliasedFrom?: string }).aliasedFrom !== undefined
+		) {
+			const aliasSourceName = (rule as { aliasedFrom: string }).aliasedFrom.replace(/^_+/, '').toLowerCase();
+			const byAliasSource = ctx.ownerSlots[aliasSourceName];
+			if (byAliasSource) {
+				recovered = byAliasSource;
+				recoveredBy = 'alias-source';
+			}
+		}
 	}
 	if (DBG_SLOT_MISS) {
 		SLOT_MISS_LOG.push({
@@ -1027,7 +1046,7 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	return undefined;
 }
 
-function scanArmBody(body: string): { key: string | undefined; needsGate: boolean } {
+function scanArmBody(body: string): { key: string | undefined; needsGate: boolean; discriminatorKey: string | undefined } {
 	const tagRe = /\{\{-?\s*([A-Za-z_]\w*)[^}]*\}\}|\{%-?\s*(if|endif)\b[^%]*?%\}/g;
 	let depth = 0;
 	let last = 0;
@@ -1049,7 +1068,7 @@ function scanArmBody(body: string): { key: string | undefined; needsGate: boolea
 		}
 	}
 	if (depth === 0 && body.slice(last).trim() !== '') depth0Payload = true;
-	return { key: depth0Ref ?? firstGated, needsGate: depth0Payload };
+	return { key: depth0Ref ?? firstGated, needsGate: depth0Payload, discriminatorKey: firstGated };
 }
 
 // emitOptional and emitRepeat were deleted in PR2 Task 3.B3.
@@ -1190,31 +1209,110 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 	// choice(seq('=', value), arguments): the `arguments` arm vanished and
 	// the seq arm's bare `=` leaked into argument-form renders).
 	{
-		const blockByKey = new Map<string, string>();
-		// See the union-backed branch above for why array-slot marks must stay
-		// speculative (snapshot/restore per arm) until we know a body survives
-		// into the returned text.
-		const arraySlotDeltaByKey = new Map<string, AssembledNonterminal[]>();
+		// Two passes: (1) scan every arm's body into an ArmInfo — deferring
+		// the by-key dedup — then (2) resolve KEY COLLISIONS across
+		// sibling arms before building the final blockByKey. A collision
+		// happens when 2+ arms share a trailing UNGATED slot reference
+		// (scanArmBody's `depth0Ref`) that outranks each arm's own gated
+		// discriminator when scanned in isolation — e.g. rust
+		// `function_type`'s trait-form/fn-form arms both end in an ungated
+		// `{{ parameters }}`, so both key on 'parameters' and the
+		// dedup-by-longest-body below silently drops one arm entirely.
+		// Once 2+ arms are found sharing a key, each one's OWN
+		// discriminator (a real, more specific registered slot) is a
+		// better key than the shared one, since it no longer collides.
+		interface ArmInfo {
+			key: string;
+			discriminatorKey: string | undefined;
+			body: string;
+			needsGate: boolean;
+			delta: AssembledNonterminal[];
+		}
+		const armInfos: ArmInfo[] = [];
 		let ungateableArm = false;
+		// A PURE-LITERAL arm (no `{{ }}`/`{% %}` markers at all — e.g. ts
+		// member_expression's plain `.` arm alongside its `optional_chain`
+		// arm) has no slot to gate on, but it's a legitimate "default"
+		// branch for an otherwise-gateable choice, not something to drop.
+		// Track it separately from genuinely-ungateable arms (which DO
+		// reference something but have no valid gate key — those still
+		// bail below, since emitting only the gated arms would lose real
+		// content with no fallback to catch it).
+		let literalFallback: string | undefined;
+		let literalFallbackAmbiguous = false;
 		for (const arm of rule.members) {
 			const beforeSlots = new Set(ctx.emittedArraySlots);
 			const body = emitRule(arm as RenderRule, ctx);
 			const delta = [...ctx.emittedArraySlots].filter((s) => !beforeSlots.has(s));
 			restoreEmittedArraySlots(ctx, beforeSlots);
 			if (!body) continue;
-			const { key, needsGate } = scanArmBody(body);
+			const { key, needsGate, discriminatorKey } = scanArmBody(body);
 			if (key === undefined || ctx.ownerSlots?.[key] === undefined) {
-				// A non-empty arm with nothing valid to gate on — emitting only
-				// the gated arms would drop it. Fall back to first-arm below.
+				if (!/\{\{|\{%/.test(body)) {
+					if (literalFallback === undefined) literalFallback = body;
+					else if (literalFallback !== body) literalFallbackAmbiguous = true;
+					continue;
+				}
+				// A non-empty, ref-bearing arm with nothing valid to gate on —
+				// emitting only the gated arms would drop it. Fall back to
+				// first-arm below.
 				ungateableArm = true;
 				break;
 			}
-			const block = needsGate ? `{% if ${key} | isPresent %}${body}{% endif %}` : body;
-			const prev = blockByKey.get(key);
-			if (prev === undefined || block.length > prev.length) {
-				blockByKey.set(key, block);
-				arraySlotDeltaByKey.set(key, delta);
+			armInfos.push({ key, discriminatorKey, body, needsGate, delta });
+		}
+		if (!ungateableArm) {
+			const countByKey = new Map<string, number>();
+			for (const info of armInfos) countByKey.set(info.key, (countByKey.get(info.key) ?? 0) + 1);
+			for (const info of armInfos) {
+				if (
+					(countByKey.get(info.key) ?? 0) > 1 &&
+					info.discriminatorKey !== undefined &&
+					info.discriminatorKey !== info.key &&
+					ctx.ownerSlots?.[info.discriminatorKey] !== undefined
+				) {
+					info.key = info.discriminatorKey;
+				}
 			}
+		}
+		const blockByKey = new Map<string, string>();
+		// Raw (unwrapped) body per key, kept alongside blockByKey's
+		// pre-wrapped `{% if %}...{% endif %}` strings so a literal
+		// fallback arm (below) can be spliced into a single if/elif/else
+		// chain instead of a concatenation of independent blocks.
+		// `undefined` when the arm's own body isn't a plain needsGate
+		// payload (rare — see the `every` check below before using this).
+		const rawBodyByKey = new Map<string, string | undefined>();
+		// See the union-backed branch above for why array-slot marks must stay
+		// speculative (snapshot/restore per arm) until we know a body survives
+		// into the returned text.
+		const arraySlotDeltaByKey = new Map<string, AssembledNonterminal[]>();
+		for (const info of armInfos) {
+			const block = info.needsGate ? `{% if ${info.key} | isPresent %}${info.body}{% endif %}` : info.body;
+			const prev = blockByKey.get(info.key);
+			if (prev === undefined || block.length > prev.length) {
+				blockByKey.set(info.key, block);
+				rawBodyByKey.set(info.key, info.needsGate ? info.body : undefined);
+				arraySlotDeltaByKey.set(info.key, info.delta);
+			}
+		}
+		const rawBodies = [...rawBodyByKey.values()];
+		if (
+			!ungateableArm &&
+			literalFallback !== undefined &&
+			!literalFallbackAmbiguous &&
+			blockByKey.size >= 1 &&
+			rawBodies.every((v) => v !== undefined)
+		) {
+			for (const delta of arraySlotDeltaByKey.values()) {
+				for (const s of delta) ctx.emittedArraySlots.add(s);
+			}
+			const parts: string[] = [];
+			[...blockByKey.keys()].forEach((key, i) => {
+				parts.push(`${i === 0 ? '{% if' : '{% elif'} ${key} | isPresent %}${rawBodyByKey.get(key)}`);
+			});
+			parts.push(`{% else %}${literalFallback}{% endif %}`);
+			return parts.join('');
 		}
 		if (!ungateableArm && blockByKey.size >= 2) {
 			for (const delta of arraySlotDeltaByKey.values()) {
@@ -1222,9 +1320,10 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			}
 			return [...blockByKey.values()].join('');
 		}
-		// ungateableArm, or fewer than 2 distinct keys: falls through to the
-		// first-arm-wins loop below. Every per-arm probe above was already
-		// rolled back, so `ctx.emittedArraySlots` is unchanged by this block.
+		// ungateableArm, or fewer than 2 distinct keys with no usable literal
+		// fallback: falls through to the first-arm-wins loop below. Every
+		// per-arm probe above was already rolled back, so
+		// `ctx.emittedArraySlots` is unchanged by this block.
 	}
 	// Pure-literal or unregistered choice — emit the first non-empty arm's text.
 	for (const member of rule.members) {

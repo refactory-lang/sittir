@@ -76,7 +76,8 @@ interface CommonModule {
 	getChildFactoryArgs(
 		kind: string,
 		childConfig: Record<string, unknown>,
-		factorySlots?: Record<string, Record<string, FactorySlotMeta>>
+		factorySlots?: Record<string, Record<string, FactorySlotMeta>>,
+		factoryFields?: Record<string, readonly string[]>
 	): readonly unknown[];
 	loadNodeModel(grammar: string): Promise<{
 		factoryShapes: Record<string, FactoryShape>;
@@ -256,7 +257,7 @@ export function buildFactoryNode(
 		polymorphVariants: artifacts.polymorphVariants,
 		kindNameFromId
 	});
-	const childArgs = common.getChildFactoryArgs(resolvedKind, config, artifacts.factorySlots);
+	const childArgs = common.getChildFactoryArgs(resolvedKind, config, artifacts.factorySlots, artifacts.factoryFields);
 	if (shape === 'spread') {
 		return factory(...childArgs);
 	}

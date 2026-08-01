@@ -408,7 +408,7 @@ describe('switch_statement', () => {
 describe('for_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.forStatement({
-			initializer: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			initializer: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
 			condition: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any
 		});
@@ -417,7 +417,7 @@ describe('for_statement', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.forStatement({
-			initializer: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			initializer: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
 			condition: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any
 		});
@@ -1048,6 +1048,7 @@ describe('member_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.memberExpression({
 			object: { $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any,
+			separator: '.',
 			property: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.MemberExpression);
@@ -1056,6 +1057,7 @@ describe('member_expression', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.memberExpression({
 			object: { $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any,
+			separator: '.',
 			property: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);

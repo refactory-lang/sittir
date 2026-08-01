@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 260,
+  "nodeCount": 257,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -15,6 +15,7 @@
     "_simple_statement",
     "_statement",
     "expression",
+    "keyword_identifier",
     "parameter",
     "pattern",
     "primary_expression"
@@ -1841,15 +1842,6 @@
         "nonEmpty": false
       }
     },
-    "keyword_identifier": {
-      "identifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "await": {
       "primary_expression": {
         "unnamed": false,
@@ -2129,16 +2121,6 @@
   },
   "nodes": [
     {
-      "kind": "(",
-      "modelType": "token",
-      "typeName": "Paren",
-      "irKey": "paren",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"(\" as const",
-      "text": "("
-    },
-    {
       "kind": ")",
       "modelType": "pattern",
       "typeName": "CloseParen",
@@ -2146,66 +2128,6 @@
       "irKey": ")",
       "hidden": false,
       "factoryShape": "text"
-    },
-    {
-      "kind": "*",
-      "modelType": "token",
-      "typeName": "Star",
-      "irKey": "star",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"*\" as const",
-      "text": "*"
-    },
-    {
-      "kind": "**",
-      "modelType": "token",
-      "typeName": "Starstar",
-      "irKey": "starstar",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"**\" as const",
-      "text": "**"
-    },
-    {
-      "kind": ",",
-      "modelType": "token",
-      "typeName": "Comma",
-      "irKey": "comma",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\",\" as const",
-      "text": ","
-    },
-    {
-      "kind": "-",
-      "modelType": "token",
-      "typeName": "Minus",
-      "irKey": "minus",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"-\" as const",
-      "text": "-"
-    },
-    {
-      "kind": "->",
-      "modelType": "token",
-      "typeName": "Arrow",
-      "irKey": "arrow",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"->\" as const",
-      "text": "->"
-    },
-    {
-      "kind": ".",
-      "modelType": "token",
-      "typeName": "Dot",
-      "irKey": "dot",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\".\" as const",
-      "text": "."
     },
     {
       "kind": "...",
@@ -2216,66 +2138,6 @@
       "isParameterless": true,
       "stampExpression": "\"...\" as const",
       "text": "..."
-    },
-    {
-      "kind": "/",
-      "modelType": "token",
-      "typeName": "Slash",
-      "irKey": "slash",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"/\" as const",
-      "text": "/"
-    },
-    {
-      "kind": ":",
-      "modelType": "token",
-      "typeName": "Colon",
-      "irKey": "colon",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\":\" as const",
-      "text": ":"
-    },
-    {
-      "kind": ":=",
-      "modelType": "token",
-      "typeName": "Coloneq",
-      "irKey": "coloneq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\":=\" as const",
-      "text": ":="
-    },
-    {
-      "kind": "=",
-      "modelType": "token",
-      "typeName": "Eq",
-      "irKey": "eq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"=\" as const",
-      "text": "="
-    },
-    {
-      "kind": ">>",
-      "modelType": "token",
-      "typeName": "Shr",
-      "irKey": "shr",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\">>\" as const",
-      "text": ">>"
-    },
-    {
-      "kind": "@",
-      "modelType": "token",
-      "typeName": "At",
-      "irKey": "at",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"@\" as const",
-      "text": "@"
     },
     {
       "kind": "False",
@@ -2309,26 +2171,6 @@
       "stampExpression": "\"True\" as const",
       "text": "True",
       "factoryShape": "text"
-    },
-    {
-      "kind": "[",
-      "modelType": "token",
-      "typeName": "Bracket",
-      "irKey": "bracket",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"[\" as const",
-      "text": "["
-    },
-    {
-      "kind": "\\",
-      "modelType": "token",
-      "typeName": "TokBs",
-      "irKey": "tokBs",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\\\\\" as const",
-      "text": "\\"
     },
     {
       "kind": "]",
@@ -2521,18 +2363,6 @@
       ]
     },
     {
-      "kind": "_async_marker",
-      "modelType": "keyword",
-      "typeName": "AsyncMarker",
-      "factoryName": "asyncMarker",
-      "irKey": "asyncMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"async\" as const",
-      "text": "async",
-      "factoryShape": "text"
-    },
-    {
       "kind": "_augmented_assignment_operator",
       "modelType": "enum",
       "typeName": "AugmentedAssignmentOperator",
@@ -2694,19 +2524,6 @@
         "operators",
         "primary_expression"
       ]
-    },
-    {
-      "kind": "_complex_pattern_operator",
-      "modelType": "enum",
-      "typeName": "ComplexPatternOperator",
-      "factoryName": "complexPatternOperator",
-      "irKey": "complexPatternOperator",
-      "hidden": false,
-      "values": [
-        "+",
-        "-"
-      ],
-      "factoryShape": "text"
     },
     {
       "kind": "_compound_statement",
@@ -3244,6 +3061,18 @@
       ]
     },
     {
+      "kind": "_kw_async_marker",
+      "modelType": "keyword",
+      "typeName": "KwAsyncMarker",
+      "factoryName": "kwAsyncMarker",
+      "irKey": "kwAsyncMarker",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"async\" as const",
+      "text": "async",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_left_hand_side",
       "modelType": "supertype",
       "typeName": "LeftHandSide",
@@ -3684,19 +3513,6 @@
       ]
     },
     {
-      "kind": "_splat_pattern_operator",
-      "modelType": "enum",
-      "typeName": "SplatPatternOperator",
-      "factoryName": "splatPatternOperator",
-      "irKey": "splatPatternOperator",
-      "hidden": false,
-      "values": [
-        "*",
-        "**"
-      ],
-      "factoryShape": "text"
-    },
-    {
       "kind": "_statement",
       "modelType": "supertype",
       "typeName": "Statement",
@@ -3976,6 +3792,50 @@
       "factoryShape": "text"
     },
     {
+      "kind": "anon_await",
+      "modelType": "keyword",
+      "typeName": "AnonAwait",
+      "irKey": "anonAwait",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"await\" as const",
+      "text": "await",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "anon_lambda",
+      "modelType": "keyword",
+      "typeName": "AnonLambda",
+      "irKey": "anonLambda",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"lambda\" as const",
+      "text": "lambda",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "anon_type",
+      "modelType": "keyword",
+      "typeName": "AnonType",
+      "irKey": "anonType",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"type\" as const",
+      "text": "type",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "anon_yield",
+      "modelType": "keyword",
+      "typeName": "AnonYield",
+      "irKey": "anonYield",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"yield\" as const",
+      "text": "yield",
+      "factoryShape": "text"
+    },
+    {
       "kind": "argument_list",
       "modelType": "branch",
       "typeName": "ArgumentList",
@@ -4227,7 +4087,7 @@
     {
       "kind": "at",
       "modelType": "token",
-      "typeName": "At2",
+      "typeName": "At",
       "irKey": "at",
       "hidden": true,
       "isParameterless": true,
@@ -4724,6 +4584,16 @@
       "stampExpression": "\"break\" as const",
       "text": "break",
       "factoryShape": "text"
+    },
+    {
+      "kind": "bslash",
+      "modelType": "token",
+      "typeName": "Bslash",
+      "irKey": "bslash",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\\\\" as const",
+      "text": "\\"
     },
     {
       "kind": "call",
@@ -5348,9 +5218,29 @@
       ]
     },
     {
+      "kind": "colon",
+      "modelType": "token",
+      "typeName": "Colon",
+      "irKey": "colon",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\":\" as const",
+      "text": ":"
+    },
+    {
+      "kind": "colon_eq",
+      "modelType": "token",
+      "typeName": "ColonEq",
+      "irKey": "colonEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\":=\" as const",
+      "text": ":="
+    },
+    {
       "kind": "comma",
       "modelType": "token",
-      "typeName": "Comma2",
+      "typeName": "Comma",
       "irKey": "comma",
       "hidden": true,
       "isParameterless": true,
@@ -5496,18 +5386,21 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_complex_pattern_operator",
-              "parseKind": "_complex_pattern_operator",
-              "unresolved": true
+              "value": "+",
+              "parseKind": "plus"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-",
+              "parseKind": "dash"
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_complex_pattern_operator"
-            ]
+            "kinds": []
           }
         },
         {
@@ -5814,6 +5707,16 @@
       "isParameterless": true,
       "stampExpression": "\"-\" as const",
       "text": "-"
+    },
+    {
+      "kind": "dash_gt",
+      "modelType": "token",
+      "typeName": "DashGt",
+      "irKey": "dashGt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"->\" as const",
+      "text": "->"
     },
     {
       "kind": "decorated_definition",
@@ -6278,6 +6181,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
+              "name": "keyword_identifier",
+              "parseKind": "keyword_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "subscript",
               "parseKind": "subscript",
               "unresolved": true
@@ -6294,6 +6204,7 @@
             "typeName": "",
             "kinds": [
               "identifier",
+              "keyword_identifier",
               "subscript",
               "attribute"
             ]
@@ -6305,6 +6216,16 @@
       "factoryFields": [
         "content"
       ]
+    },
+    {
+      "kind": "dot",
+      "modelType": "token",
+      "typeName": "Dot",
+      "irKey": "dot",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\".\" as const",
+      "text": "."
     },
     {
       "kind": "dotted_name",
@@ -6507,6 +6428,16 @@
       "factoryFields": [
         "body"
       ]
+    },
+    {
+      "kind": "eq",
+      "modelType": "token",
+      "typeName": "Eq",
+      "irKey": "eq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"=\" as const",
+      "text": "="
     },
     {
       "kind": "escape_interpolation",
@@ -6965,15 +6896,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_async_marker",
-              "parseKind": "_async_marker",
+              "name": "_kw_async_marker",
+              "parseKind": "_kw_async_marker",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_async_marker"
+              "_kw_async_marker"
             ]
           }
         },
@@ -7050,15 +6981,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_async_marker",
-              "parseKind": "_async_marker",
+              "name": "_kw_async_marker",
+              "parseKind": "_kw_async_marker",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_async_marker"
+              "_kw_async_marker"
             ]
           }
         },
@@ -7253,15 +7184,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_async_marker",
-              "parseKind": "_async_marker",
+              "name": "_kw_async_marker",
+              "parseKind": "_kw_async_marker",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_async_marker"
+              "_kw_async_marker"
             ]
           }
         },
@@ -7888,15 +7819,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "optional",
-              "value": "*",
-              "parseKind": "star"
+              "name": "wildcard_import",
+              "parseKind": "wildcard_import",
+              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "wildcard_import"
+            ]
           }
         },
         {
@@ -8145,12 +8079,20 @@
               "name": "identifier",
               "parseKind": "identifier",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "keyword_identifier",
+              "parseKind": "keyword_identifier",
+              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "identifier"
+              "identifier",
+              "keyword_identifier"
             ]
           }
         },
@@ -8187,39 +8129,11 @@
     },
     {
       "kind": "keyword_identifier",
-      "modelType": "branch",
+      "modelType": "supertype",
       "typeName": "KeywordIdentifier",
-      "factoryName": "keywordIdentifier",
       "irKey": "keywordIdentifier",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "identifier"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "direct",
-      "factoryFields": [
+      "hidden": true,
+      "subtypes": [
         "identifier"
       ]
     },
@@ -8458,6 +8372,26 @@
       ]
     },
     {
+      "kind": "lbrace",
+      "modelType": "token",
+      "typeName": "Lbrace",
+      "irKey": "lbrace",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"{\" as const",
+      "text": "{"
+    },
+    {
+      "kind": "lbrack",
+      "modelType": "token",
+      "typeName": "Lbrack",
+      "irKey": "lbrack",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"[\" as const",
+      "text": "["
+    },
+    {
       "kind": "line_continuation",
       "modelType": "pattern",
       "typeName": "LineContinuation",
@@ -8668,6 +8602,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
+              "name": "keyword_identifier",
+              "parseKind": "keyword_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "subscript",
               "parseKind": "subscript",
               "unresolved": true
@@ -8684,6 +8625,7 @@
             "typeName": "",
             "kinds": [
               "identifier",
+              "keyword_identifier",
               "subscript",
               "attribute"
             ]
@@ -8695,6 +8637,16 @@
       "factoryFields": [
         "content"
       ]
+    },
+    {
+      "kind": "lparen",
+      "modelType": "token",
+      "typeName": "Lparen",
+      "irKey": "lparen",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"(\" as const",
+      "text": "("
     },
     {
       "kind": "lt_lt",
@@ -9408,7 +9360,7 @@
     {
       "kind": "pipe",
       "modelType": "token",
-      "typeName": "Pipe2",
+      "typeName": "Pipe",
       "irKey": "pipe",
       "hidden": true,
       "isParameterless": true,
@@ -9701,6 +9653,26 @@
       ]
     },
     {
+      "kind": "rbrace",
+      "modelType": "token",
+      "typeName": "Rbrace",
+      "irKey": "rbrace",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"}\" as const",
+      "text": "}"
+    },
+    {
+      "kind": "rbrack",
+      "modelType": "token",
+      "typeName": "Rbrack",
+      "irKey": "rbrack",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"]\" as const",
+      "text": "]"
+    },
+    {
       "kind": "relative_import",
       "modelType": "branch",
       "typeName": "RelativeImport",
@@ -9812,6 +9784,16 @@
       ]
     },
     {
+      "kind": "rparen",
+      "modelType": "token",
+      "typeName": "Rparen",
+      "irKey": "rparen",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\")\" as const",
+      "text": ")"
+    },
+    {
       "kind": "set",
       "modelType": "branch",
       "typeName": "Set",
@@ -9914,7 +9896,7 @@
     {
       "kind": "slash",
       "modelType": "token",
-      "typeName": "Slash2",
+      "typeName": "Slash",
       "irKey": "slash",
       "hidden": true,
       "isParameterless": true,
@@ -10034,18 +10016,21 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_splat_pattern_operator",
-              "parseKind": "_splat_pattern_operator",
-              "unresolved": true
+              "value": "*",
+              "parseKind": "star"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "**",
+              "parseKind": "star_star"
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_splat_pattern_operator"
-            ]
+            "kinds": []
           }
         },
         {
@@ -10102,11 +10087,16 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_splat_pattern_operator",
-              "parseKind": "_splat_pattern_operator",
-              "unresolved": true
+              "value": "*",
+              "parseKind": "star"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "**",
+              "parseKind": "star_star"
             },
             {
               "kind": "node-ref",
@@ -10119,7 +10109,6 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_splat_pattern_operator",
               "identifier"
             ]
           }
@@ -10134,7 +10123,7 @@
     {
       "kind": "star",
       "modelType": "token",
-      "typeName": "Star2",
+      "typeName": "Star",
       "irKey": "star",
       "hidden": true,
       "isParameterless": true,
@@ -11391,15 +11380,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_async_marker",
-              "parseKind": "_async_marker",
+              "name": "_kw_async_marker",
+              "parseKind": "_kw_async_marker",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_async_marker"
+              "_kw_async_marker"
             ]
           }
         },
@@ -11518,26 +11507,6 @@
       "factoryFields": [
         "content"
       ]
-    },
-    {
-      "kind": "{",
-      "modelType": "token",
-      "typeName": "Brace",
-      "irKey": "brace",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"{\" as const",
-      "text": "{"
-    },
-    {
-      "kind": "|",
-      "modelType": "token",
-      "typeName": "Pipe",
-      "irKey": "pipe",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"|\" as const",
-      "text": "|"
     },
     {
       "kind": "}",

@@ -2,7 +2,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type { AssembledNonterminal, AssembledNode } from '../compiler/model/node-map.ts';
 import { allFormFieldsOf } from '../compiler/model/node-map.ts';
-import { fieldTypeComponents, resolveHiddenKeywordLiteral } from './shared.ts';
+import { fieldTypeComponents, resolveHiddenKeywordLeaf } from './shared.ts';
 
 export interface TransportLiteral {
 	readonly kind: string;
@@ -97,7 +97,11 @@ function fieldTransportLiterals(
 			if (component.kind === 'literal') {
 				return [
 					{
-						literal: { kind: component.value, text: component.value, resolvedKindId: component.resolvedKindId },
+						literal: {
+							kind: component.rawKind ?? component.value,
+							text: component.value,
+							resolvedKindId: component.resolvedKindId
+						},
 						fromKind: false
 					}
 				];
@@ -117,14 +121,16 @@ function supertypeTransportTypeNames(nodeMap: NodeMap): Set<string> {
 }
 
 function terminalTransportLiteralForKind(kind: string, nodeMap: NodeMap): TransportLiteral | undefined {
-	const hiddenLiteral = resolveHiddenKeywordLiteral(kind, nodeMap);
-	if (hiddenLiteral !== undefined) return { kind, text: hiddenLiteral };
+	const hiddenLeaf = resolveHiddenKeywordLeaf(kind, nodeMap);
+	if (hiddenLeaf !== undefined && hiddenLeaf.text !== undefined) {
+		return { kind, text: hiddenLeaf.text, resolvedKindId: hiddenLeaf.resolvedKindId };
+	}
 	const node = nodeMap.nodes.get(kind);
 	switch (node?.modelType) {
 		case 'keyword':
-			return { kind, text: node.text };
+			return { kind, text: node.text, resolvedKindId: node.resolvedKindId };
 		case 'token':
-			return node.text === undefined ? undefined : { kind, text: node.text };
+			return node.text === undefined ? undefined : { kind, text: node.text, resolvedKindId: node.resolvedKindId };
 		default:
 			return undefined;
 	}

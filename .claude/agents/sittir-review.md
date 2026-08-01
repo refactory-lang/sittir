@@ -40,6 +40,7 @@ You review sittir codegen changes for correctness-of-DESIGN, not just correctnes
 A prioritized findings list — each with **severity** (blocker / important / nit), the **dimension** (DRY / principle #N / spec-conformance / gate-hole / hygiene / bug), `file:line`, the evidence, and a concrete fix direction. Lead with DRY + spec-conformance + gate-holes (the correctness-class findings). End with an overall **verdict: ship / fix-then-ship / needs-rework**, and note anything you ruled out. Do NOT edit or regen — `sittir-codegen` implements the fixes.
 
 ## Reference
+- **`.claude/coding-standards.md`** — the nine working standards are explicit review dimensions: flag re-derived facts/predicates that have a stamped or canonical source (rule 3), local patches where the root fix was in reach (rule 2), raised ratchet ceilings (rule 8), and provenance-narrating comments (rule 9).
 - The active spec + plan (the dispatcher names them — e.g. `docs/superpowers/specs/2026-05-22-compiler-simplification-design.md` and the per-PR plan / master plan).
 - `CLAUDE.md` (Universal rules — DRY is the core correctness rule) + `.claude/*.md` (architecture / codegen-conventions / grammar-workflow / project-workflow).
 - `docs/compiler-phase-glossary.md` — read first for any compiler-phase question.

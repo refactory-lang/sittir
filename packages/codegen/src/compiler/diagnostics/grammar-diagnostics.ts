@@ -16,6 +16,7 @@ import type { AssembleWarning } from '../model/node-map.ts';
 import { drainSlotGroupingDiagnostics } from '../simplify.ts';
 import type { SlotGroupingDiagnostic } from './slot-grouping.ts';
 import type { RawGrammar } from '../types.ts';
+import type { GeneratedIdTables } from '../generated-metadata.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 
 export type { GrammarDiagnostic };
@@ -159,11 +160,17 @@ export function collectGrammarDiagnostics(input: {
 	return { diagnostics: [...parseKindMapped, ...deriveShapeMapped, ...assembleWarningMapped, ...slotGroupingMapped] };
 }
 
-export function collectGrammarDiagnosticsForGrammar(input: { rawGrammar: RawGrammar }): {
+export function collectGrammarDiagnosticsForGrammar(input: {
+	rawGrammar: RawGrammar;
+	generatedIdTables?: GeneratedIdTables;
+}): {
 	nodeMap: AssembledNodeMap;
 	diagnostics: readonly GrammarDiagnostic[];
 } {
-	const linked = link(input.rawGrammar);
+	// Link's own sink carries the kindId stamp-miss report (the per-build
+	// phantom-kind inventory) when id tables are supplied.
+	const linkSink = new DiagnosticSink();
+	const linked = link(input.rawGrammar, { generatedIdTables: input.generatedIdTables, diagnostics: linkSink });
 	// Mirror generate.ts's NormalizeCtx inputs (shared via inline-sets.ts): without
 	// inlineKinds, diagnoseSlotGrouping's shape-①b (auto-group helper bodies,
 	// e.g. rust `_match_block_optional1`) never fires on this path, so
@@ -180,7 +187,7 @@ export function collectGrammarDiagnosticsForGrammar(input: { rawGrammar: RawGram
 		})
 	);
 	const nodeMap = assemble(
-		AssembleCtx.from(normalized, undefined, undefined, loadGrammarJsonAliasMap(input.rawGrammar.name))
+		AssembleCtx.from(normalized, input.generatedIdTables, undefined, loadGrammarJsonAliasMap(input.rawGrammar.name))
 	);
 	const slotGroupingDiagnostics = drainSlotGroupingDiagnostics();
 	// §D-2c content-alias injectivity — sole consumer of the diagnostic-only
@@ -190,6 +197,16 @@ export function collectGrammarDiagnosticsForGrammar(input: { rawGrammar: RawGram
 		contentAliasedTo: linked.contentAliasedTo
 	});
 	const orphanedSyntheticGroups = new Set(input.rawGrammar.orphanedSyntheticGroups ?? []);
+	const kindIdStampDiagnostics: GrammarDiagnostic[] = linkSink
+		.all()
+		.filter(
+			(d) =>
+				d.code.startsWith('kindid-unstamped') ||
+				d.code.startsWith('kindid-vaporized') ||
+				d.code.startsWith('kindid-inline-excluded') ||
+				d.code.startsWith('kindid-unclassified')
+		)
+		.map((d) => ({ ...d, scope: 'grammar' as const, grammar: input.rawGrammar.name }));
 	const allDiagnostics = [
 		...collectGrammarDiagnostics({
 			grammar: input.rawGrammar.name,
@@ -200,6 +217,7 @@ export function collectGrammarDiagnosticsForGrammar(input: { rawGrammar: RawGram
 			expectDiagnostics: input.rawGrammar.expectDiagnostics
 		}).diagnostics,
 		...contentAliasDiagnostics,
+		...kindIdStampDiagnostics,
 		...(input.rawGrammar.bodyPatternZeroMatches ?? []).map((name) =>
 			fromBodyPatternZeroMatch(input.rawGrammar.name, name)
 		)

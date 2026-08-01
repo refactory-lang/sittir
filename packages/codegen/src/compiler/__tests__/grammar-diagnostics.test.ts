@@ -9,8 +9,9 @@ import { diagnoseSlotGrouping } from '../diagnostics/slot-grouping.ts';
 import type { DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
 import type { SimplifiedRule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
+import type { GeneratedIdTables } from '../generated-metadata.ts';
 
-function buildRawGrammar(rules: Record<string, unknown>): RawGrammar {
+function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = []): RawGrammar {
 	const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules as never);
 	return {
 		name: 'synth',
@@ -19,7 +20,7 @@ function buildRawGrammar(rules: Record<string, unknown>): RawGrammar {
 		extras: [],
 		externals: [],
 		supertypes: [],
-		inline: [],
+		inline,
 		conflicts: [],
 		word: null,
 		references: []
@@ -247,6 +248,48 @@ describe('grammar diagnostics preflight', () => {
 		expect(result.diagnostics).toEqual([
 			expect.objectContaining({ code: 'typename-collision', ownerKind: 'host', severity: 'info', canProceed: true })
 		]);
+	});
+
+	it("collectGrammarDiagnosticsForGrammar surfaces link's kindid-inline-excluded-symbols and kindid-unclassified-symbols diagnostics", () => {
+		// 'known' has a kindId; 'inline_only_kind' is a stamp miss declared in
+		// the grammar's own inline: array; 'gap_kind' is a stamp miss that is
+		// neither inline nor stamped, reachable from the root ('host', the
+		// first declared rule) — a genuine, unaccepted gap.
+		const rawGrammar = buildRawGrammar(
+			{
+				host: {
+					type: 'SEQ',
+					members: [
+						{ type: 'SYMBOL', name: 'known' },
+						{ type: 'SYMBOL', name: 'inline_only_kind' },
+						{ type: 'SYMBOL', name: 'gap_kind' }
+					]
+				},
+				known: { type: 'PATTERN', value: 'x' },
+				inline_only_kind: { type: 'PATTERN', value: 'y' },
+				gap_kind: { type: 'PATTERN', value: 'z' }
+			},
+			['inline_only_kind']
+		);
+		const generatedIdTables: GeneratedIdTables = { kindIds: { known: 1 }, sourceArtifact: 'test' };
+		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar, generatedIdTables });
+		expect(result.diagnostics).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					scope: 'grammar',
+					code: 'kindid-inline-excluded-symbols',
+					grammar: 'synth',
+					details: { kinds: ['inline_only_kind'] }
+				}),
+				expect.objectContaining({
+					scope: 'grammar',
+					code: 'kindid-unclassified-symbols',
+					grammar: 'synth',
+					severity: 'warning',
+					details: { kinds: ['gap_kind'] }
+				})
+			])
+		);
 	});
 
 	it('nonterminal-separator-unstamped blocks (canProceed: false) — zero-instance guard', () => {

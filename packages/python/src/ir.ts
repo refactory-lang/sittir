@@ -234,6 +234,10 @@ export const fExpression = {
 	yield: _attach(FR.coerceToYield, { from: FR.coerceToYield, strict: F.buildYield })
 } as const;
 
+export const keywordIdentifier = {
+	identifier: F.buildIdentifier
+} as const;
+
 export const dictPatternKv = {
 	splat: _attach(FR.coerceToSplatPattern, { from: FR.coerceToSplatPattern, strict: F.buildSplatPattern })
 } as const;
@@ -667,6 +671,7 @@ export const ir = {
 	leftHandSide,
 	rightHandSide,
 	fExpression,
+	keywordIdentifier,
 	dictPatternKv,
 	from
 } as const;

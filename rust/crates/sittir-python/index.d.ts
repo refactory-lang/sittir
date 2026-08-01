@@ -378,7 +378,7 @@ export interface ComplexPatternTransport {
   '$triviaData'?: TransportTrivia
   _real?: boolean
   _imaginary: ComplexPatternImaginaryTransportSlot
-  _operator: ComplexPatternOperatorEnum
+  _operator: Box<AnyTransport>
   _content: ComplexPatternContentTransportSlot
 }
 
@@ -729,7 +729,7 @@ export interface ForInClauseTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _async_marker?: AsyncMarkerTransport
+  _async_marker?: KwAsyncMarkerTransport
   _left: LeftHandSideTransport
   _right: Array<ExpressionWithinForInClauseTransport>
 }
@@ -753,7 +753,7 @@ export interface ForStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _async_marker?: AsyncMarkerTransport
+  _async_marker?: KwAsyncMarkerTransport
   _left: LeftHandSideTransport
   _right: ExpressionsTransport
   _body: ForStatementBodyTransportSlot
@@ -779,7 +779,7 @@ export interface FunctionDefinitionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _async_marker?: AsyncMarkerTransport
+  _async_marker?: KwAsyncMarkerTransport
   _name: IdentifierTransport
   _type_parameters?: TypeParameterTransport
   _parameters: ParametersTransport
@@ -867,7 +867,7 @@ export interface ImportFromStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _module_name: ImportFromStatementModuleNameTransportSlot
-  _wildcard_import?: boolean
+  _wildcard_import?: WildcardImportTransport
   _name?: Array<ImportFromStatementNameTransportSlot>
   _import_list?: ImportListTransport
 }
@@ -927,19 +927,8 @@ export interface KeywordArgumentTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: IdentifierTransport
+  _name: KeywordIdentifierTransport
   _value: ExpressionTransport
-}
-
-export interface KeywordIdentifierTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _identifier: IdentifierTransport
 }
 
 export interface KeywordPatternTransport {
@@ -1399,7 +1388,7 @@ export interface SplatPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _operator: SplatPatternOperatorEnum
+  _operator: Box<AnyTransport>
   _identifier: SplatPatternIdentifierTransportSlot
 }
 
@@ -1669,7 +1658,7 @@ export interface WithStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _async_marker?: AsyncMarkerTransport
+  _async_marker?: KwAsyncMarkerTransport
   _with_clause: WithClauseTransport
   _body: WithStatementBodyTransportSlot
 }

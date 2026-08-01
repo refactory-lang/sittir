@@ -627,6 +627,23 @@ function findEnrichShapedFieldThroughTransparentWrappers(
 	return null;
 }
 
+function unifyChoiceArmFieldNames(content: unknown, unifiedName: string): unknown {
+	const r = content as Record<string, unknown>;
+	if (!r || typeof r !== 'object' || !isChoiceType(r.type as string)) return content;
+	const members = r.members as unknown[] | undefined;
+	if (!Array.isArray(members)) return content;
+	let anyChanged = false;
+	const newMembers = members.map((m) => {
+		if (isEnrichShapedFieldWrapper(m) && m.name !== unifiedName) {
+			anyChanged = true;
+			return { ...m, name: unifiedName, metadata: makeRuleMetadata({ fieldSource: 'override' }) };
+		}
+		return m;
+	});
+	if (!anyChanged) return content;
+	return { ...r, members: newMembers };
+}
+
 function resolveFieldPlaceholder(
 	patch: FieldPlaceholder,
 	originalMember: RuntimeRule,
@@ -684,6 +701,13 @@ function resolveFieldPlaceholder(
 			};
 			const reconstructed = nested.reconstruct(renamedField) as RuntimeRule;
 			return reconstructed;
+		}
+		// Not optional-shaped either — unifyChoiceArmFieldNames covers the
+		// remaining case: an override-wrapped choice whose arms are already
+		// fielded under their own (differing) names.
+		const unified = unifyChoiceArmFieldNames(content, patch.name);
+		if (unified !== content) {
+			content = unified;
 		}
 	}
 	const maybeSymbolized = maybeKeywordSymbol(patch.name, content, (body) => wrapInPrec(body, precStack));

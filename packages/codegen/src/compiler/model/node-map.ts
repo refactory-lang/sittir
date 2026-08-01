@@ -20,9 +20,12 @@
  *      accumulators + the optional-body and audit-context module pointers.
  *   2. Slot model & derivation — `NodeRef`/`NodeOrTerminal`/`FieldStorageInfo`
  *      content types, cardinality (`deriveSlotCardinality`…), value guards,
- *      naming utilities (`snakeToCamel`/`pluralize`), the Rule<'link'> walkers
- *      (`hasAnyField`/`hasAnyChild`), and the Rule<'link'> → slots/values derivation
- *      (`deriveSlots`, `deriveValuesForRule`, `dedupeValues`, separators, `nameNode`).
+ *      naming utilities (`snakeToCamel`/`pluralize`), and the Rule<'link'> →
+ *      slots/values derivation (`deriveSlots`, `deriveValuesForRule`,
+ *      `dedupeValues`, separators, `nameNode`). `hasAnyField` (the Rule<'link'>
+ *      wrapper walker `isContainerShape` below still needs) lives in
+ *      `dsl/rule-transforms.ts` — this module holds the assembled-node data
+ *      model, not general rule-shape predicates.
  *   3. AssembledNonterminal & naming projection — the slot class + `kindsOf`/
  *      `valueParseKindsOf` + the `projectSlotNaming` projection.
  *   4. AssembledNode class hierarchy — `AssembledBranch`/`Polymorph`/`Pattern`/
@@ -69,7 +72,7 @@ import type {
 	RuleId,
 	SeparatorFlankMode
 } from '../../types/rule.ts';
-import { isSeq, isField, literalTextOf, isEnumChoiceRule, isLinkSymbol } from '../../types/rule.ts';
+import { isSeq, isField, literalTextOf, isEnumChoiceRule, isLinkSymbol, subtypeParseNamesOf } from '../../types/rule.ts';
 import { isStringType } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
@@ -85,6 +88,7 @@ import {
 	type ParseKindCollisionValue
 } from '../../types/parsekind-collisions.ts';
 import { describeDeriveShape, type DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
+import { hasAnyField } from '../../dsl/rule-transforms.ts';
 
 // ============================================================================
 // 1. Diagnostics & module state
@@ -334,7 +338,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	// NAMED rule (#129 class). Same stamped-fact semantics as
 	// `storageKindId`.
 	readonly resolvedKindId?: number;
-	// Parse-as kind ref (§7.3 / §4g, PR-A front-load): the CST kind this value
+	// Parse-as kind ref: the CST kind this value
 	// surfaces under — the alias TARGET when aliased (`rule.name`), else the
 	// own kind. Differs from `node` (render/source = `aliasedFrom ?? rule.name`)
 	// only for aliased/variant values. `storageName`/`parseNames` project this.
@@ -360,6 +364,17 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 }
 
 export type NodeOrTerminal = NodeRef;
+
+// A subtype name paired with its OWN storage-side kindId, stamped once at
+// the point assemble.ts's supertype-resolution helpers discover the name
+// (a direct SymbolRule ref, a nested supertype arm, or a catalog lookup for
+// a structurally-discovered alias member with no ref at all) — never
+// re-derived downstream. `storageKindId` is legitimately absent for names
+// with no catalog entry (typed absence, not a bug).
+export interface SubtypeRef {
+	readonly name: string;
+	readonly storageKindId?: number;
+}
 
 export function isNodeRef(v: NodeOrTerminal): v is NodeRef & { node: AssembledNode | UnresolvedRef } {
 	return v.node !== undefined;
@@ -529,43 +544,6 @@ const TS_RESERVED = new Set([
 
 export function safeParamName(name: string): string {
 	return TS_RESERVED.has(name) ? `${name}_` : name;
-}
-
-export function hasAnyField(rule: Rule<'link'>): boolean {
-	switch (rule.type) {
-		case FIELD:
-			return true;
-		case SEQ:
-		case CHOICE:
-			return rule.members.some(hasAnyField);
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case VARIANT:
-		case GROUP:
-			return hasAnyField(rule.content);
-		default:
-			return false;
-	}
-}
-
-export function hasAnyChild(rule: Rule<'link'>): boolean {
-	switch (rule.type) {
-		case SYMBOL:
-		case SUPERTYPE:
-			return true;
-		case SEQ:
-		case CHOICE:
-			return rule.members.some(hasAnyChild);
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case VARIANT:
-		case GROUP:
-			return hasAnyChild(rule.content);
-		default:
-			return false;
-	}
 }
 
 const DERIVE_AUDIT = process.env.SITTIR_AUDIT_DERIVE === '1';
@@ -1059,6 +1037,36 @@ export function isSyntheticFieldWrapper(content: Rule<'link'>): boolean {
 	return content.members.some(isField);
 }
 
+// ---------------------------------------------------------------------------
+// `deriveValuesForRule`'s SYMBOL/SUPERTYPE/STRING/PATTERN cases read the ids
+// `canonicalizeRuleLiterals` (link.ts) already stamped onto the leaf instead
+// of re-deriving them from `ctx.kindEntries`. The catalog lookup survives
+// ONLY as a fallback for a rule that never passed through that stamping pass
+// — legitimately, that includes every hand-built `Rule` fixture this same
+// function is unit-tested against (see `derive-values-kindid-stamps.test.ts`,
+// which deliberately constructs UNSTAMPED rules to exercise this exact path),
+// so this function has no way to tell "expected test fixture" from "a real
+// post-link rule link.ts failed to stamp" — it cannot assert here without
+// breaking the former. `noteKindIdFallbackHit` stays a log, opt-in via
+// DBG_KINDID_FALLBACK; link.ts's `reportKindIdStampMisses` diagnostic is the
+// actual hard gate for a genuinely missing stamp, checked where the context
+// (a real generation run vs. a fixture) is actually known.
+// ---------------------------------------------------------------------------
+const DBG_KINDID_FALLBACK = process.env.DBG_KINDID_FALLBACK === '1';
+function noteKindIdFallbackHit(hit: { site: string; name: string }): void {
+	if (!DBG_KINDID_FALLBACK) return;
+	process.stderr.write(
+		`[DBG_KINDID_FALLBACK] ${hit.site}: literal/name lookup resolved an id for '${hit.name}' with no stamp present\n`
+	);
+}
+
+function findKindEntryById(lookup: {
+	entries: readonly GeneratedKindEntry[];
+	id: number;
+}): GeneratedKindEntry | undefined {
+	return lookup.entries.find((entry) => entry.id === lookup.id);
+}
+
 export function deriveValuesForRule(
 	rule: Rule<'link'>,
 	ctx: DeriveCtx | undefined,
@@ -1083,12 +1091,25 @@ export function deriveValuesForRule(
 			// only writer — so `literal !== undefined` alone is the exact same
 			// condition, structurally, not an inference.
 			if (rule.literal !== undefined) {
-				// The value is the literal text, so its id resolves through the
-				// LITERAL chain (anon token wins a same-spelled NAMED rule);
-				// `resolvedKind`/`parseKind` keep the link-minted alias-target
-				// NAME (`rule.name`) as before — ids are stamped facts, not a
-				// re-derivation of the name (KindId-NodeRefs §2.1).
+				// The value is the literal text; its id was stamped at link time
+				// onto `kindId` by the same LITERAL chain (anon token wins a
+				// same-spelled NAMED rule) — read that fact instead of
+				// re-resolving it here. `resolvedKind`/`parseKind` keep the
+				// link-minted alias-target NAME (`rule.name`) as before.
+				if (rule.kindId !== undefined || rule.aliasedFromId !== undefined) {
+					return [
+						{
+							value: rule.literal,
+							resolvedKind: rule.name,
+							resolvedKindId: rule.aliasedFromId ?? rule.kindId,
+							parseKind: { kind: 'unresolved-ref', name: rule.name },
+							parseKindId: rule.kindId,
+							multiplicity
+						}
+					];
+				}
 				const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.literal);
+				if (entry !== undefined) noteKindIdFallbackHit({ site: 'SYMBOL(literal)', name: rule.literal });
 				return [
 					{
 						value: rule.literal,
@@ -1104,15 +1125,27 @@ export function deriveValuesForRule(
 			// symbol came from an alias). Only source kinds exist in
 			// rules post-synthesis-removal.
 			const refName = rule.aliasedFrom ?? rule.name;
+			if (rule.kindId !== undefined || rule.aliasedFromId !== undefined) {
+				return [
+					{
+						node: { kind: 'unresolved-ref', name: refName },
+						storageKindId: rule.aliasedFromId ?? rule.kindId,
+						// parse-as kind = the alias TARGET (`rule.name`); `node` is the
+						// render/source (`refName`). For `_suite`: node=_simple_statements,
+						// parseKind=block (the CST kind).
+						parseKind: { kind: 'unresolved-ref', name: rule.name },
+						parseKindId: rule.kindId,
+						multiplicity: relaxForOptionalBody(refName, multiplicity)
+					}
+				];
+			}
 			const storageEntry = findEntryForKindName(ctx?.kindEntries ?? [], refName);
 			const parseEntry = refName === rule.name ? storageEntry : findEntryForKindName(ctx?.kindEntries ?? [], rule.name);
+			if (storageEntry !== undefined || parseEntry !== undefined) noteKindIdFallbackHit({ site: 'SYMBOL(ref)', name: refName });
 			return [
 				{
 					node: { kind: 'unresolved-ref', name: refName },
 					storageKindId: storageEntry?.id,
-					// parse-as kind = the alias TARGET (`rule.name`); `node` is the
-					// render/source (`refName`). For `_suite`: node=_simple_statements,
-					// parseKind=block (the CST kind). §7.3 / §4g.
 					// `parseEntry.parseId` (falling back to `.id`) — an alias
 					// occurrence carries its OWN distinct runtime symbol id,
 					// separate from the source rule's storage id; dispatch must
@@ -1125,16 +1158,30 @@ export function deriveValuesForRule(
 		}
 		case SUPERTYPE:
 			// Supertype refs expand to their subtype list — each subtype is a
-			// valid concrete kind the slot can hold.
-			return rule.subtypes.map((name) => {
+			// valid concrete kind the slot can hold. Each subtype ref's own
+			// kindId/aliasedFromId is stamped at link (canonicalizeRuleLiterals's
+			// SUPERTYPE arm) — read that fact first, catalog fallback only for
+			// refs that weren't stamped (mirrors the SYMBOL(ref) case above).
+			return rule.subtypes.map((subRef) => {
+				const name = subRef.aliasedFrom ?? subRef.name;
+				if (subRef.kindId !== undefined || subRef.aliasedFromId !== undefined) {
+					return {
+						node: { kind: 'unresolved-ref' as const, name },
+						storageKindId: subRef.aliasedFromId ?? subRef.kindId,
+						parseKind: { kind: 'unresolved-ref' as const, name: subRef.name },
+						parseKindId: subRef.kindId,
+						multiplicity: relaxForOptionalBody(name, multiplicity)
+					};
+				}
 				const entry = findEntryForKindName(ctx?.kindEntries ?? [], name);
 				// Aliased arm: the flatten stamped the parse name the arm
-				// displays under (`subtypeParseNames`); its catalog row carries
-				// the alias occurrence's own runtime id, which is what dispatch
-				// must key on — mirrors the SYMBOL case's aliasedFrom/name pair
-				// above.
-				const parseName = rule.subtypeParseNames?.[name];
+				// displays under (`aliasedFrom`/`name` on the ref itself); its
+				// catalog row carries the alias occurrence's own runtime id,
+				// which is what dispatch must key on — mirrors the SYMBOL
+				// case's aliasedFrom/name pair above.
+				const parseName = subRef.name !== name ? subRef.name : undefined;
 				const parseEntry = parseName === undefined ? entry : findEntryForKindName(ctx?.kindEntries ?? [], parseName);
+				if (entry !== undefined || parseEntry !== undefined) noteKindIdFallbackHit({ site: 'SUPERTYPE(subtype)', name });
 				return {
 					node: { kind: 'unresolved-ref' as const, name },
 					storageKindId: entry?.id,
@@ -1150,7 +1197,26 @@ export function deriveValuesForRule(
 		// pattern slot had no values and was elided (e.g. token_repetition's
 		// separator pattern never became a slot).
 		case PATTERN: {
+			// Stamped leaf: `resolvedKindId` was already resolved through the
+			// literal chain at link time — look the entry up BY that id (not by
+			// re-matching `rule.value` against the catalog) to recover the
+			// display name/parse id, since the id is the trusted key here.
+			if (rule.resolvedKindId !== undefined) {
+				const entry = findKindEntryById({ entries: ctx?.kindEntries ?? [], id: rule.resolvedKindId });
+				const rk = entry?.kind;
+				return [
+					{
+						value: rule.value,
+						resolvedKind: rk,
+						resolvedKindId: rule.resolvedKindId,
+						parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
+						parseKindId: entry?.parseId ?? rule.resolvedKindId,
+						multiplicity
+					}
+				];
+			}
 			const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.value);
+			if (entry !== undefined) noteKindIdFallbackHit({ site: 'STRING/PATTERN', name: rule.value });
 			const rk = entry?.kind;
 			return [
 				{
@@ -2314,6 +2380,10 @@ function collectFixedLiteral(
 export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
 	readonly modelType = 'keyword' as const;
 	readonly resolvedKind?: string;
+	/** Catalog id of `resolvedKind` — stamped once here, at construction, from
+	 *  the same literal-text lookup; consumers dispatch on this id instead of
+	 *  re-deriving one from the keyword's text later. */
+	readonly resolvedKindId?: number;
 
 	constructor(
 		kind: string,
@@ -2326,7 +2396,22 @@ export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
 		}
 	) {
 		super(kind, rule, opts);
-		this.resolvedKind = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value)?.kind;
+		// Stamped leaf: `rule.resolvedKindId` was already resolved through the
+		// literal chain at link time — look the catalog entry up BY that id
+		// (unambiguous) to recover the display kind name, instead of re-matching
+		// `rule.value` against the catalog.
+		if (rule.resolvedKindId !== undefined) {
+			this.resolvedKindId = rule.resolvedKindId;
+			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
+		} else {
+			// SYNTHESIZED StringRule (e.g. assemble's anonymous-node collection
+			// builds `{ type: STRING, value }` fresh, never reaching link-time
+			// stamping) — the literal-text lookup genuinely still fires here.
+			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value);
+			if (entry !== undefined) noteKindIdFallbackHit({ site: 'AssembledKeyword', name: rule.value });
+			this.resolvedKind = entry?.kind;
+			this.resolvedKindId = entry?.id;
+		}
 	}
 
 	get text(): string {
@@ -2351,6 +2436,8 @@ export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
 export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule> {
 	readonly modelType = 'token' as const;
 	readonly resolvedKind?: string;
+	/** Catalog id of `resolvedKind` — stamped at construction; see AssembledKeyword. */
+	readonly resolvedKindId?: number;
 
 	constructor(
 		kind: string,
@@ -2358,8 +2445,18 @@ export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule
 		opts?: { kindEntries?: readonly GeneratedKindEntry[] }
 	) {
 		super(kind, rule, { hidden: true });
-		this.resolvedKind =
-			rule.type === STRING ? findEntryForLiteralText(opts?.kindEntries ?? [], rule.value)?.kind : undefined;
+		if (rule.type === STRING && rule.resolvedKindId !== undefined) {
+			this.resolvedKindId = rule.resolvedKindId;
+			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
+		} else {
+			// SYNTHESIZED StringRule (never link-stamped) or a TOKEN rule (no
+			// `resolvedKindId` field at all) — literal-text lookup as before.
+			const entry = rule.type === STRING ? findEntryForLiteralText(opts?.kindEntries ?? [], rule.value) : undefined;
+			if (entry !== undefined)
+				noteKindIdFallbackHit({ site: 'AssembledToken', name: rule.type === STRING ? rule.value : '' });
+			this.resolvedKind = entry?.kind;
+			this.resolvedKindId = entry?.id;
+		}
 	}
 	// No emitFactory — tokens are always hidden, no factoryName.
 
@@ -2457,48 +2554,65 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 	// #subtypes stores the RESOLVED subtype list (hidden names expanded to
 	// their concrete kinds) — this differs from rule.subtypes which carries
 	// the raw names as declared in the grammar. Do NOT replace with rule.subtypes.
-	readonly #subtypes: string[];
+	//
+	// Each entry's `.node` starts as an `UnresolvedRef` — supertypes are
+	// constructed in the same single forward-referencing pass as every other
+	// kind (assemble.ts), so a subtype's own `AssembledNode` may not exist yet
+	// — and is hydrated to the real node by `hydrateSlotRefs` once the full
+	// node map exists, the same two-pass pattern branch/group slot values
+	// already use. `storageKindId` is read directly off each `SubtypeRef` —
+	// assemble.ts's resolution helpers stamp it once, at discovery; this
+	// constructor never re-derives it.
+	readonly #subtypes: readonly NodeOrTerminal[];
 
-	constructor(kind: string, rule: SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes: string[]) {
+	constructor(kind: string, rule: SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes: readonly SubtypeRef[]) {
 		// Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
 		super(kind, rule as SupertypeRule<'link'>, { hidden: true });
-		this.#subtypes = subtypes;
+		this.#subtypes = subtypes.map((s): NodeOrTerminal => ({
+			node: { kind: 'unresolved-ref', name: s.name },
+			storageKindId: s.storageKindId,
+			multiplicity: 'single'
+		}));
 	}
 
-	get subtypes(): string[] {
+	get subtypes(): readonly NodeOrTerminal[] {
 		return this.#subtypes;
 	}
 
+	get subtypeNames(): readonly string[] {
+		return this.#subtypes.filter(isNodeRef).map((v) => storageKindOfRef(v.node));
+	}
+
 	get subtypeParseNames(): Readonly<Record<string, string>> | undefined {
-		return this.rule.type === SUPERTYPE ? this.rule.subtypeParseNames : undefined;
+		if (this.rule.type !== SUPERTYPE) return undefined;
+		const pairs = subtypeParseNamesOf(this.rule);
+		return Object.keys(pairs).length > 0 ? pairs : undefined;
 	}
 }
 
-export class AssembledMulti extends AssembledNodeBase<RepeatRule | Repeat1Rule> {
+export class AssembledMulti extends AssembledNodeBase<RenderRule> {
 	readonly modelType = 'multi' as const;
-	// rule narrowed — multis are hidden repeat helpers. Classifier
-	// routes repeat / repeat1 shapes here when the hidden rule's
-	// top-level content is a repeat.
+	// rule is the normalize-phase RenderRule: wrapper-deletion already pushed
+	// the REPEAT/REPEAT1 wrapper's own multiplicity/separator down onto its
+	// content, so the wrapper-bearing node no longer exists to hold — the
+	// same facts these getters used to read off the wrapper live on `rule`
+	// itself now.
 
-	constructor(kind: string, rule: RepeatRule | Repeat1Rule, opts?: { irKey?: string }) {
+	constructor(kind: string, rule: RenderRule, opts?: { irKey?: string }) {
 		// Multi nodes are always hidden (no factoryName)
 		super(kind, rule, { hidden: true, irKey: opts?.irKey });
 	}
 
-	get elementRule(): Rule<'link'> {
-		return this.rule.content;
+	get elementRule(): RenderRule {
+		return this.rule;
 	}
 
 	get nonEmpty(): boolean {
-		return this.rule.type === REPEAT1;
+		return this.rule.multiplicity === 'nonEmptyArray';
 	}
 
 	get separator(): string | undefined {
-		// this.rule.separator is Rule<'link'>-phase-parameterized;
-		// extractSeparatorString reads the structurally identical normalize-phase
-		// shape (RepeatRule<'link'> shares RuleBase<'normalize'>.separator's shape
-		// post-PR-S) — cast the phase view.
-		return extractSeparatorString(this.rule.separator as RuleBase<'normalize'>['separator']);
+		return extractSeparatorString(this.rule.separator);
 	}
 
 	get trailing(): SeparatorFlankMode | undefined {

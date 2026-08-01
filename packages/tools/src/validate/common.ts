@@ -1596,7 +1596,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		return factory(drilled.$text ?? '');
 	}
 	const childConfig = nodeToConfig(drilled, { ...opts, _depth: _depth + 1 });
-	const childArgs = getChildFactoryArgs(kind, childConfig, opts.factorySlots);
+	const childArgs = getChildFactoryArgs(kind, childConfig, opts.factorySlots, opts.factoryFields);
 	// 'spread' shape: rest-params signature — spread `children`.
 	if (shape === 'spread') {
 		return factory(...childArgs);
@@ -1806,13 +1806,30 @@ function normalizeConfigSlotValue(
 	return resolved;
 }
 
+/**
+ * Resolve the spread-shape factory's single rest-param slot from
+ * `nodeToConfig`'s output. `nodeToConfig` only writes the literal
+ * `children` key for genuinely UNNAMED ($other-derived) slots — a
+ * spread-shape kind whose sole field has a real grammar name (e.g.
+ * python `module`'s `statement`) gets that key instead
+ * (`slotConfigKey`'s field-origin branch: `snakeToCamel(slot.name)`).
+ * Without `factoryFields`, such kinds always read `undefined` here and
+ * the spread call silently invokes the factory with zero arguments.
+ *
+ * @param factoryFields - Declared factory field list per kind (from
+ *   `_factoryFields`). Optional for backward compatibility with callers
+ *   that only ever exercise the genuinely-unnamed `children` case.
+ */
 export function getChildFactoryArgs(
 	kind: string,
 	childConfig: Record<string, unknown>,
-	factorySlots: NodeToConfigOpts['factorySlots']
+	factorySlots: NodeToConfigOpts['factorySlots'],
+	factoryFields?: Record<string, readonly string[]>
 ): readonly unknown[] {
-	const childrenValue = childConfig.children;
-	const childrenMeta = factorySlots?.[kind]?.children;
+	const declaredField = factoryFields?.[kind]?.[0];
+	const configKey = declaredField ? snakeToCamel(declaredField) : 'children';
+	const childrenValue = childConfig[configKey];
+	const childrenMeta = factorySlots?.[kind]?.[declaredField ?? 'children'];
 	if (slotModelArityFromMeta(childrenMeta, true) === 'one') {
 		return childrenValue == null ? [] : [childrenValue];
 	}

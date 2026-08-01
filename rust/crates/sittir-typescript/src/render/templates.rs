@@ -1164,8 +1164,8 @@ pub struct MappedTypeClauseTemplate<'a> {
 #[template(path = "member_expression.jinja", escape = "none")]
 pub struct MemberExpressionTemplate<'a> {
     pub object: SingleNonterminalView<'a>,
-    pub optional_chain: OptionalNonterminalView<'a>,
     pub property: SingleNonterminalView<'a>,
+    pub separator: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
