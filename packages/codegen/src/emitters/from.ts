@@ -62,8 +62,8 @@ function buildSupertypeByKey(nodeMap: NodeMap): Map<string, string> {
 	const supertypeByKey = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node.modelType !== 'supertype') continue;
-		if (node.subtypes.length === 0) continue;
-		const key = [...node.subtypes].sort().join('\n');
+		if (node.subtypeNames.length === 0) continue;
+		const key = [...node.subtypeNames].sort().join('\n');
 		if (!supertypeByKey.has(key)) {
 			const safe = kind.replace(/^_+/, '').replace(/[^\w]/g, '_');
 			supertypeByKey.set(key, `_super_${safe}`);
@@ -728,7 +728,7 @@ function expandAndDedupeContentTypes(
 	const visit = (kind: string): void => {
 		const node = nodeMap.nodes.get(kind);
 		if (node?.modelType === 'supertype') {
-			for (const subtype of node.subtypes) visit(subtype);
+			for (const subtype of node.subtypeNames) visit(subtype);
 			return;
 		}
 		// PR-K3e: dedupe by the mint-stamped id where the slot's values carry

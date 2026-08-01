@@ -662,6 +662,48 @@ module.exports = grammar(base, {
 		}
 	});
 
+	it('preserves base grammar inline names when an extension callback appends its own', async () => {
+		// `inline`'s callback receives `previous` as already-normalized STRING
+		// names from the base grammar, while `$.bar` (added in the override)
+		// normalizes to a SYMBOL. `[...previous, $.bar]` is exactly the mixed
+		// shape appendCallbackMetadataNames (evaluate.ts) must handle without
+		// dropping the inherited string.
+		const dir = mkdtempSync(resolve(tmpdir(), 'sittir-inline-inherit-'));
+		const baseEntry = resolve(dir, 'base.js');
+		const overrideEntry = resolve(dir, 'override.js');
+		writeFileSync(
+			baseEntry,
+			`module.exports = grammar({
+  name: "inline_inherit_test",
+  inline: ($) => [$.foo],
+  rules: {
+    source_file: ($) => $.container,
+    container: ($) => $.foo,
+    foo: ($) => 'foo',
+  },
+});\n`,
+			'utf8'
+		);
+		writeFileSync(
+			overrideEntry,
+			`const base = require(${JSON.stringify(baseEntry)});
+module.exports = grammar(base, {
+  name: 'inline_inherit_test',
+  inline: ($, previous) => [...previous, $.bar],
+  rules: {
+    bar: ($) => 'bar',
+  },
+});\n`,
+			'utf8'
+		);
+		try {
+			const raw = await evaluate(overrideEntry);
+			expect(raw.inline).toEqual(['foo', 'bar']);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	});
+
 	it('anchors symbol references to the originating rule ID', async () => {
 		const raw = await evaluate(fixture('rule-identity-grammar.js'));
 		const refs = raw.references.filter((ref) => ref.from === 'container');
