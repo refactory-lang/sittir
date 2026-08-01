@@ -89,7 +89,7 @@ function makeHiddenSupertypeChildrenNodeMap() {
 		'tuple_type',
 		new AssembledBranch('tuple_type', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
 	);
-	nodes.set('_type', new AssembledSupertype('_type', typeRule, ['_primitive_type']));
+	nodes.set('_type', new AssembledSupertype('_type', typeRule, [{ name: '_primitive_type' }]));
 	nodes.set(
 		'_primitive_type',
 		new AssembledEnum('_primitive_type', primitiveTypeRule, {
@@ -118,7 +118,7 @@ function makeVisibleSupertypeChildrenNodeMap() {
 		'typed_value',
 		new AssembledBranch('typed_value', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
 	);
-	nodes.set('expression', new AssembledSupertype('expression', expressionRule, ['identifier']));
+	nodes.set('expression', new AssembledSupertype('expression', expressionRule, [{ name: 'identifier' }]));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }

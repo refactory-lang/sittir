@@ -49,7 +49,7 @@ export function buildSupertypeTransportSet(nodeMap: NodeMap): Map<string, Readon
 		const members = new Set<string>([kind]);
 		const node = nodeMap.nodes.get(kind);
 		if (!node || node.modelType !== 'supertype') return members;
-		for (const subtype of (node as AssembledSupertype).subtypes) {
+		for (const subtype of (node as AssembledSupertype).subtypeNames) {
 			members.add(subtype);
 			for (const nested of expandSupertypeKinds(subtype, seen)) members.add(nested);
 		}
@@ -70,7 +70,7 @@ function expandWrapRuntimeKinds(kind: string, nodeMap: NodeMap | undefined, seen
 	if (!node) return [kind];
 	if (node.modelType === 'supertype') {
 		const members = new Set<string>([kind]);
-		for (const subtype of (node as AssembledSupertype).subtypes) {
+		for (const subtype of (node as AssembledSupertype).subtypeNames) {
 			members.add(subtype);
 			for (const member of expandWrapRuntimeKinds(subtype, nodeMap, seen)) members.add(member);
 		}
