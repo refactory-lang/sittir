@@ -75,6 +75,7 @@ import type {
 	RefineForm
 } from './types.ts';
 import { hasAnyField } from './model/node-map.ts';
+import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
@@ -349,7 +350,13 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const stampMisses: KindIdStampMisses = { symbols: new Set(), literals: new Set() };
 	canonicalizeCatalogLiteralRefs(rules, kindEntries, stampMisses);
 	canonicalizeCatalogLiteralRefsInMap(topLevelAliasBodies, kindEntries, stampMisses);
-	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, new Set(raw.inline));
+	// `raw.inline` (evaluate's own DSL-level record) drops inherited
+	// base-grammar inline entries — the parser's actual compiled inline set
+	// lives in grammar.json (see generate.ts's own NormalizeCtx construction,
+	// which reads it via this same helper). VAPORIZED vs inline-excluded
+	// classification needs THAT authoritative set, not the DSL-level one.
+	const grammarJsonInline = new Set(loadGrammarJsonInlineList(raw.name) ?? raw.inline);
+	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, grammarJsonInline);
 
 	// Validate refine() forms against the linked rule tree.
 	if (raw.refineForms && raw.refineForms.size > 0) {
@@ -571,13 +578,21 @@ export function reportKindIdStampMisses(
 			details: { texts: [...stampMisses.literals].sort() }
 		});
 	}
-	// VAPORIZED (dead grammar surface, e.g. jsx nodes unreachable in the
-	// non-tsx dialect): a stamp miss whose kind is NOT in the grammar's
-	// `inline:` array. Tree-sitter deliberately issues no symbol for either
-	// class, but `inline:` membership is a principled, grammar-declared
-	// exclusion — this is the remainder. Reported alongside (not instead of)
-	// the unstamped diagnostics above so existing consumers are unaffected;
-	// this is the accepted-exclusion signal a future ratchet reads.
+	reportVaporizedKinds(stampMisses, inlineKinds, diagnostics);
+}
+
+// A stamp miss is VAPORIZED (dead grammar surface, e.g. jsx nodes
+// unreachable in the non-tsx dialect) when its kind is NOT in the grammar's
+// `inline:` array — tree-sitter issues no symbol for either class, but
+// `inline:` membership is a principled, grammar-declared exclusion, so the
+// remainder is genuinely dead surface. Reported alongside (not instead of)
+// the unstamped diagnostics so existing consumers are unaffected; this is
+// the accepted-exclusion signal a future ratchet reads.
+function reportVaporizedKinds(
+	stampMisses: KindIdStampMisses,
+	inlineKinds: ReadonlySet<string>,
+	diagnostics: DiagnosticSink
+): void {
 	const vaporizedSymbols = [...stampMisses.symbols].filter((k) => !inlineKinds.has(k)).sort();
 	const vaporizedLiterals = [...stampMisses.literals].filter((k) => !inlineKinds.has(k)).sort();
 	if (vaporizedSymbols.length > 0) {
