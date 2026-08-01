@@ -145,7 +145,6 @@ pub enum AnyTransport {
     Integer(IntegerTransport),
     Float(FloatTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -2773,9 +2772,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
-                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::KeywordIdentifier(value));
-                        }
                         if let Ok(value) = SubscriptTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Subscript(value));
                         }
@@ -2784,6 +2780,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         }
                         if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ListSplatPattern(value));
+                        }
+                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::KeywordIdentifier(value));
                         }
                         if let Ok(value) = TuplePatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::TuplePattern(value));
@@ -2830,9 +2829,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
-                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::KeywordIdentifier(value));
-                        }
                         if let Ok(value) = SubscriptTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Subscript(value));
                         }
@@ -2841,6 +2837,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         }
                         if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ListSplatPattern(value));
+                        }
+                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::KeywordIdentifier(value));
                         }
                         if let Ok(value) = TuplePatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::TuplePattern(value));
@@ -2911,7 +2910,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternTransport> {
 fn pattern_transport_to_any(t: PatternTransport) -> AnyTransport {
     match t {
         PatternTransport::Identifier(inner) => AnyTransport::Identifier(inner),
-        PatternTransport::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
+        PatternTransport::KeywordIdentifier(inner) => keyword_identifier_transport_to_any(inner),
         PatternTransport::Subscript(inner) => AnyTransport::Subscript(inner),
         PatternTransport::Attribute(inner) => AnyTransport::Attribute(inner),
         PatternTransport::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
@@ -3634,9 +3633,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
-                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::KeywordIdentifier(value));
-                        }
                         if let Ok(value) = StringTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::String(value));
                         }
@@ -3693,6 +3689,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                         }
                         if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ListSplatPattern(value));
+                        }
+                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::KeywordIdentifier(value));
                         }
                         if let Ok(value) = ListTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::List(value));
@@ -3805,9 +3804,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
-                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::KeywordIdentifier(value));
-                        }
                         if let Ok(value) = StringTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::String(value));
                         }
@@ -3864,6 +3860,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                         }
                         if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ListSplatPattern(value));
+                        }
+                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::KeywordIdentifier(value));
                         }
                         if let Ok(value) = ListTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::List(value));
@@ -3996,7 +3995,7 @@ fn primary_expression_transport_to_any(t: PrimaryExpressionTransport) -> AnyTran
         PrimaryExpressionTransport::Await(inner) => AnyTransport::Await(inner),
         PrimaryExpressionTransport::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         PrimaryExpressionTransport::Identifier(inner) => AnyTransport::Identifier(inner),
-        PrimaryExpressionTransport::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
+        PrimaryExpressionTransport::KeywordIdentifier(inner) => keyword_identifier_transport_to_any(inner),
         PrimaryExpressionTransport::String(inner) => AnyTransport::String(inner),
         PrimaryExpressionTransport::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         PrimaryExpressionTransport::Integer(inner) => AnyTransport::Integer(inner),
@@ -4843,6 +4842,98 @@ impl RenderableTransport for FExpressionTransport {
 }
 
 #[derive(Debug, Clone)]
+pub enum KeywordIdentifierTransport {
+    Identifier(IdentifierTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for KeywordIdentifierTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in KeywordIdentifierTransport",
+                    ))),
+                }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in KeywordIdentifierTransport")
+                )?;
+                match kind_id {
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in KeywordIdentifierTransport",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("KeywordIdentifierTransport: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for KeywordIdentifierTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("KeywordIdentifierTransport is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<KeywordIdentifierTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        KeywordIdentifierTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<KeywordIdentifierTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        KeywordIdentifierTransport::to_napi_value(env, *val)
+    }
+}
+
+fn keyword_identifier_transport_to_any(t: KeywordIdentifierTransport) -> AnyTransport {
+    match t {
+        KeywordIdentifierTransport::Identifier(inner) => AnyTransport::Identifier(inner),
+        KeywordIdentifierTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for KeywordIdentifierTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_keyword_identifier(self, dest)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum DictPatternKvTransport {
     KeyValuePattern(KeyValuePatternTransport),
     SplatPattern(SplatPatternTransport),
@@ -5623,7 +5714,6 @@ pub enum ExpressionStatementContentTransportSlot {
     Await(AwaitTransport),
     BinaryOperator(BinaryOperatorTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     String(StringTransport),
     ConcatenatedString(ConcatenatedStringTransport),
     Integer(IntegerTransport),
@@ -5945,7 +6035,6 @@ fn expression_statement_content_transport_slot_to_any(t: ExpressionStatementCont
         ExpressionStatementContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
         ExpressionStatementContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         ExpressionStatementContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ExpressionStatementContentTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
         ExpressionStatementContentTransportSlot::String(inner) => AnyTransport::String(inner),
         ExpressionStatementContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         ExpressionStatementContentTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
@@ -5992,7 +6081,6 @@ impl RenderableTransport for ExpressionStatementContentTransportSlot {
             ExpressionStatementContentTransportSlot::Await(inner) => render_await(inner, dest),
             ExpressionStatementContentTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
             ExpressionStatementContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ExpressionStatementContentTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
             ExpressionStatementContentTransportSlot::String(inner) => render_string(inner, dest),
             ExpressionStatementContentTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
             ExpressionStatementContentTransportSlot::Integer(inner) => render_integer(inner, dest),
@@ -10108,7 +10196,6 @@ pub enum YieldContentTransportSlot {
     Await(AwaitTransport),
     BinaryOperator(BinaryOperatorTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     String(StringTransport),
     ConcatenatedString(ConcatenatedStringTransport),
     Integer(IntegerTransport),
@@ -10409,7 +10496,6 @@ fn yield_content_transport_slot_to_any(t: YieldContentTransportSlot) -> AnyTrans
         YieldContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
         YieldContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         YieldContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        YieldContentTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
         YieldContentTransportSlot::String(inner) => AnyTransport::String(inner),
         YieldContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         YieldContentTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
@@ -10453,7 +10539,6 @@ impl RenderableTransport for YieldContentTransportSlot {
             YieldContentTransportSlot::Await(inner) => render_await(inner, dest),
             YieldContentTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
             YieldContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            YieldContentTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
             YieldContentTransportSlot::String(inner) => render_string(inner, dest),
             YieldContentTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
             YieldContentTransportSlot::Integer(inner) => render_integer(inner, dest),
@@ -10494,7 +10579,6 @@ pub enum SubscriptSubscriptTransportSlot {
     Await(AwaitTransport),
     BinaryOperator(BinaryOperatorTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     String(StringTransport),
     ConcatenatedString(ConcatenatedStringTransport),
     Integer(IntegerTransport),
@@ -10795,7 +10879,6 @@ fn subscript_subscript_transport_slot_to_any(t: SubscriptSubscriptTransportSlot)
         SubscriptSubscriptTransportSlot::Await(inner) => AnyTransport::Await(inner),
         SubscriptSubscriptTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         SubscriptSubscriptTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        SubscriptSubscriptTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
         SubscriptSubscriptTransportSlot::String(inner) => AnyTransport::String(inner),
         SubscriptSubscriptTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         SubscriptSubscriptTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
@@ -10839,7 +10922,6 @@ impl RenderableTransport for SubscriptSubscriptTransportSlot {
             SubscriptSubscriptTransportSlot::Await(inner) => render_await(inner, dest),
             SubscriptSubscriptTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
             SubscriptSubscriptTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            SubscriptSubscriptTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
             SubscriptSubscriptTransportSlot::String(inner) => render_string(inner, dest),
             SubscriptSubscriptTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
             SubscriptSubscriptTransportSlot::Integer(inner) => render_integer(inner, dest),
@@ -11090,7 +11172,6 @@ pub enum TypeContentTransportSlot {
     Await(AwaitTransport),
     BinaryOperator(BinaryOperatorTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     String(StringTransport),
     ConcatenatedString(ConcatenatedStringTransport),
     Integer(IntegerTransport),
@@ -11419,7 +11500,6 @@ fn type_content_transport_slot_to_any(t: TypeContentTransportSlot) -> AnyTranspo
         TypeContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
         TypeContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         TypeContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        TypeContentTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
         TypeContentTransportSlot::String(inner) => AnyTransport::String(inner),
         TypeContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         TypeContentTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
@@ -11467,7 +11547,6 @@ impl RenderableTransport for TypeContentTransportSlot {
             TypeContentTransportSlot::Await(inner) => render_await(inner, dest),
             TypeContentTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
             TypeContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            TypeContentTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
             TypeContentTransportSlot::String(inner) => render_string(inner, dest),
             TypeContentTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
             TypeContentTransportSlot::Integer(inner) => render_integer(inner, dest),
@@ -11617,7 +11696,6 @@ pub enum ParenthesizedExpressionContentTransportSlot {
     Await(AwaitTransport),
     BinaryOperator(BinaryOperatorTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     String(StringTransport),
     ConcatenatedString(ConcatenatedStringTransport),
     Integer(IntegerTransport),
@@ -11932,7 +12010,6 @@ fn parenthesized_expression_content_transport_slot_to_any(t: ParenthesizedExpres
         ParenthesizedExpressionContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
         ParenthesizedExpressionContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         ParenthesizedExpressionContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ParenthesizedExpressionContentTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
         ParenthesizedExpressionContentTransportSlot::String(inner) => AnyTransport::String(inner),
         ParenthesizedExpressionContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         ParenthesizedExpressionContentTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
@@ -11978,7 +12055,6 @@ impl RenderableTransport for ParenthesizedExpressionContentTransportSlot {
             ParenthesizedExpressionContentTransportSlot::Await(inner) => render_await(inner, dest),
             ParenthesizedExpressionContentTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
             ParenthesizedExpressionContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ParenthesizedExpressionContentTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
             ParenthesizedExpressionContentTransportSlot::String(inner) => render_string(inner, dest),
             ParenthesizedExpressionContentTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
             ParenthesizedExpressionContentTransportSlot::Integer(inner) => render_integer(inner, dest),
@@ -12021,7 +12097,6 @@ pub enum CollectionElementsContentTransportSlot {
     Await(AwaitTransport),
     BinaryOperator(BinaryOperatorTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     String(StringTransport),
     ConcatenatedString(ConcatenatedStringTransport),
     Integer(IntegerTransport),
@@ -12336,7 +12411,6 @@ fn collection_elements_content_transport_slot_to_any(t: CollectionElementsConten
         CollectionElementsContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
         CollectionElementsContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         CollectionElementsContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        CollectionElementsContentTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
         CollectionElementsContentTransportSlot::String(inner) => AnyTransport::String(inner),
         CollectionElementsContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         CollectionElementsContentTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
@@ -12382,7 +12456,6 @@ impl RenderableTransport for CollectionElementsContentTransportSlot {
             CollectionElementsContentTransportSlot::Await(inner) => render_await(inner, dest),
             CollectionElementsContentTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
             CollectionElementsContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            CollectionElementsContentTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
             CollectionElementsContentTransportSlot::String(inner) => render_string(inner, dest),
             CollectionElementsContentTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
             CollectionElementsContentTransportSlot::Integer(inner) => render_integer(inner, dest),
@@ -12925,7 +12998,6 @@ pub enum ArgumentListGroup1ContentTransportSlot {
     Await(AwaitTransport),
     BinaryOperator(BinaryOperatorTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     String(StringTransport),
     ConcatenatedString(ConcatenatedStringTransport),
     Integer(IntegerTransport),
@@ -13247,7 +13319,6 @@ fn argument_list_group1_content_transport_slot_to_any(t: ArgumentListGroup1Conte
         ArgumentListGroup1ContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
         ArgumentListGroup1ContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         ArgumentListGroup1ContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ArgumentListGroup1ContentTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
         ArgumentListGroup1ContentTransportSlot::String(inner) => AnyTransport::String(inner),
         ArgumentListGroup1ContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         ArgumentListGroup1ContentTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
@@ -13294,7 +13365,6 @@ impl RenderableTransport for ArgumentListGroup1ContentTransportSlot {
             ArgumentListGroup1ContentTransportSlot::Await(inner) => render_await(inner, dest),
             ArgumentListGroup1ContentTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
             ArgumentListGroup1ContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ArgumentListGroup1ContentTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
             ArgumentListGroup1ContentTransportSlot::String(inner) => render_string(inner, dest),
             ArgumentListGroup1ContentTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
             ArgumentListGroup1ContentTransportSlot::Integer(inner) => render_integer(inner, dest),
@@ -19286,7 +19356,7 @@ pub struct KeywordArgumentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: IdentifierTransport,
+    pub name: KeywordIdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ExpressionTransport,
 }
@@ -20903,56 +20973,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IdentifierTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         IdentifierTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct KeywordIdentifierTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
-    pub identifier: IdentifierTransport,
-}
-
-impl RenderableTransport for KeywordIdentifierTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_keyword_identifier(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<KeywordIdentifierTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        KeywordIdentifierTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<KeywordIdentifierTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        KeywordIdentifierTransport::to_napi_value(env, *val)
     }
 }
 
@@ -33153,13 +33173,6 @@ fn render_identifier(t: &IdentifierTransport, dest: &mut dyn ::std::fmt::Write) 
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_keyword_identifier(node: &KeywordIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = KeywordIdentifierTemplate {
-        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
-    };
-    template.render_into(dest)
-}
-
 fn render_true(t: &TrueTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -34143,6 +34156,13 @@ fn render_fexpression(t: &FExpressionTransport, dest: &mut dyn ::std::fmt::Write
     }
 }
 
+fn render_keyword_identifier(t: &KeywordIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    match t {
+        KeywordIdentifierTransport::Identifier(inner) => render_identifier(inner, dest),
+        KeywordIdentifierTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+    }
+}
+
 fn render_dict_pattern_kv(t: &DictPatternKvTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
         DictPatternKvTransport::KeyValuePattern(inner) => render_key_value_pattern(inner, dest),
@@ -34295,7 +34315,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Integer(t) => t.render_into(dest),
             AnyTransport::Float(t) => t.render_into(dest),
             AnyTransport::Identifier(t) => t.render_into(dest),
-            AnyTransport::KeywordIdentifier(t) => render_keyword_identifier(t, dest),
             AnyTransport::True(t) => t.render_into(dest),
             AnyTransport::False(t) => t.render_into(dest),
             AnyTransport::None(t) => t.render_into(dest),
@@ -34579,7 +34598,6 @@ impl AnyTransport {
             Self::Integer(t) => t.transport_named,
             Self::Float(t) => t.transport_named,
             Self::Identifier(t) => t.transport_named,
-            Self::KeywordIdentifier(t) => t.transport_named,
             Self::True(t) => t.transport_named,
             Self::False(t) => t.transport_named,
             Self::None(t) => t.transport_named,

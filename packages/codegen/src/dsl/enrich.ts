@@ -239,8 +239,9 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			recordUnaliasDiagnostic(unaliasSink, diagnostic);
 		}
 	}
-	// Inject `_kw_<name>` hidden rules — user rules NEVER shadow them
-	// (they start with `_kw_`, a reserved prefix).
+	// Inject `_<kw>_marker` hidden rules — `registerKwRule` already checked
+	// each one against `rulesBag` (reusing or declining on collision), so
+	// nothing here can shadow a base-grammar rule of the same name.
 	// Inject clause-group rules — user rules NEVER shadow them either
 	// (they start with `_<parentKind>_optional`, a synthesized prefix).
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
@@ -375,7 +376,7 @@ function applyEnrichPasses(
 ): Rule {
 	// Fixed-point loop. The current pass set has well-defined
 	// non-overlapping outputs (symbol-to-field wraps SYMBOLs as FIELD;
-	// optional-keyword wraps optional(STRING) as FIELD(SYMBOL(_kw_<x>))),
+	// optional-keyword wraps optional(STRING) as FIELD(SYMBOL(_<x>_marker))),
 	// so a single iteration converges in practice. Looping is defensive:
 	// if a pass's output ever exposes new candidates for an earlier
 	// pass (e.g. structural simplification creates a new top-level
@@ -399,7 +400,7 @@ function applyEnrichPasses(
 		// adds `_kw_<name>` hidden rules that shift tree-sitter's parser-
 		// generator tables, breaking unrelated rules' reparse (rust corpus
 		// regresses by ~47/136 with this pass on).
-		r = applyOptionalKeyword(ruleName, r, kwRules, wordMatcher);
+		r = applyOptionalKeyword(ruleName, r, kwRules, rulesBag, wordMatcher);
 		if (r === before) {
 			converged = true;
 			break;
@@ -689,12 +690,29 @@ function makeSymbol(name: string): Rule {
 	return symFn(name);
 }
 
-function registerKwRule(stringLiteral: Rule, keyword: string, kwRules: Record<string, Rule>): Rule {
+function registerKwRule(
+	stringLiteral: Rule,
+	keyword: string,
+	kwRules: Record<string, Rule>,
+	rulesBag: Record<string, Rule>
+): Rule | null {
 	const hiddenName = `_kw_${keyword}`;
-	if (!(hiddenName in kwRules)) {
+	if (hiddenName in kwRules) return makeSymbol(hiddenName);
+	const existing = rulesBag[hiddenName];
+	if (existing === undefined) {
 		kwRules[hiddenName] = stringLiteral;
+		return makeSymbol(hiddenName);
 	}
-	return makeSymbol(hiddenName);
+	// The name is a convention (`_<kw>_marker`), not a reservation — a base
+	// grammar can define its own rule at this exact name. Reuse it when it
+	// structurally IS this keyword (ruleKey covers type/named along with
+	// value, so an existing rule that displays the same text but visibly —
+	// e.g. a `named: true` ALIAS — correctly does NOT match); only decline
+	// on a genuine, unrelated collision.
+	if (ruleKey(existing as RuntimeRule) === ruleKey(stringLiteral as RuntimeRule)) {
+		return makeSymbol(hiddenName);
+	}
+	return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -1184,12 +1202,13 @@ function applyOptionalKeyword(
 	ruleName: string,
 	rule: Rule,
 	kwRules: Record<string, Rule>,
+	rulesBag: Record<string, Rule>,
 	wordMatcher: RegExp | undefined
 ): Rule {
 	// Peel prec wrappers so claimed-name set covers the inner seq.
 	const inner = peelPrec(rule);
 	const claimed = isSeqType(inner.type) ? collectFieldNamesRuntime(inner) : new Set<string>();
-	return walkOptionalKeyword(ruleName, rule, claimed, kwRules, wordMatcher) ?? rule;
+	return walkOptionalKeyword(ruleName, rule, claimed, kwRules, rulesBag, wordMatcher) ?? rule;
 }
 
 function peelPrec(rule: Rule): Rule {
@@ -1205,13 +1224,14 @@ function walkOptionalKeyword(
 	rule: Rule,
 	claimedAtSeqLevel: Set<string>,
 	kwRules: Record<string, Rule>,
+	rulesBag: Record<string, Rule>,
 	wordMatcher: RegExp | undefined
 ): Rule | null {
 	if (isSeqType(rule.type)) {
 		const members = (rule as unknown as { members: Rule[] }).members;
 		let changed = false;
 		const newMembers = members.map((m) => {
-			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, wordMatcher);
+			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
 			if (out === null) return m;
 			changed = true;
 			return out;
@@ -1222,7 +1242,7 @@ function walkOptionalKeyword(
 		const members = (rule as unknown as { members: Rule[] }).members;
 		let changed = false;
 		const newMembers = members.map((m) => {
-			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, wordMatcher);
+			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
 			if (out === null) return m;
 			changed = true;
 			return out;
@@ -1231,9 +1251,17 @@ function walkOptionalKeyword(
 	}
 	const peeled = peelOptional(rule);
 	if (peeled.isOptional) {
-		const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, kwRules, wordMatcher);
+		const replacement = tryPromoteInnerKeyword(
+			ruleName,
+			rule,
+			peeled.inner,
+			claimedAtSeqLevel,
+			kwRules,
+			rulesBag,
+			wordMatcher
+		);
 		if (replacement !== null) return replacement;
-		const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, wordMatcher);
+		const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
 		if (innerRewritten !== null) {
 			return rebuildOptional(rule, innerRewritten);
 		}
@@ -1241,14 +1269,14 @@ function walkOptionalKeyword(
 	}
 	if (isRepeatType(rule.type) || isFieldType(rule.type)) {
 		const content = (rule as unknown as { content: Rule }).content;
-		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, wordMatcher);
+		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
 		if (out === null) return null;
 		return { ...rule, content: out } as Rule;
 	}
 	// Descend through prec wrappers to reach inner seqs.
 	if (isPrecWrapper(rule as { type: string })) {
 		const content = (rule as unknown as { content: Rule }).content;
-		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, wordMatcher);
+		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
 		if (out === null) return null;
 		return { ...rule, content: out } as Rule;
 	}
@@ -1261,6 +1289,7 @@ function tryPromoteInnerKeyword(
 	inner: Rule,
 	claimed: Set<string>,
 	kwRules: Record<string, Rule>,
+	rulesBag: Record<string, Rule>,
 	wordMatcher: RegExp | undefined
 ): Rule | null {
 	const innerNorm = normalizeMember(inner);
@@ -1274,7 +1303,15 @@ function tryPromoteInnerKeyword(
 		return null;
 	}
 	claimed.add(fieldName);
-	const symbolRef = registerKwRule(inner, fieldName, kwRules);
+	const symbolRef = registerKwRule(inner, fieldName, kwRules, rulesBag);
+	if (symbolRef === null) {
+		reportSkip(
+			'optional-keyword-prefix',
+			ruleName,
+			`rule '_kw_${fieldName}' already exists in base.grammar.rules with different content`
+		);
+		return null;
+	}
 	const fieldNode = makeField(fieldName, symbolRef);
 	return rebuildOptional(optionalRule, fieldNode);
 }
@@ -1460,7 +1497,15 @@ function applyClauseHoist(
 	// new tree-sitter LR ambiguity, not a naming collision. Threaded
 	// through every recursive call so a mint under a prec wrapper can
 	// re-apply the SAME wrapper to its own registered body.
-	ambientPrec?: Rule
+	ambientPrec?: Rule,
+	// The nearest enclosing `field(name, ...)` this position is STILL
+	// directly the content of — set on FIELD descent, propagated unchanged
+	// through PREC/REPEAT/OPTIONAL (transparent wrappers, same position),
+	// reset to `undefined` at SEQ/CHOICE member boundaries (a member is a
+	// distinct position, no longer "the field's content" as a whole).
+	// Consumed by `visibleGroupSynthName` to prefer `_<parent>_<field>`
+	// over an opaque ordinal when a group is hoisted from a fielded slot.
+	enclosingFieldName?: string
 ): Rule {
 	// Check if this node is an optional(seq) or CHOICE[seq,BLANK] pattern.
 	const peeled = peelOptionalSeq(rule);
@@ -1476,7 +1521,8 @@ function applyClauseHoist(
 			groupDedupeMap,
 			visibleGroupHiddenNames,
 			clauseGroupOwners,
-			ambientPrec
+			ambientPrec,
+			enclosingFieldName
 		);
 
 		if (ruleMatchesEmpty(recursedSeqBody)) {
@@ -1532,8 +1578,10 @@ function applyClauseHoist(
 			//     node. (Aliasing the multi-member seq DIRECTLY made tree-sitter
 			//     DISTRIBUTE the alias across the seq's members → scattered empty
 			//     leaves → reader "singular slot got array" → dropped slot.)
-			// link's `mintContentAliasKinds` resolves THROUGH the symbol to register
-			// `<name> = <hidden body>` as the IR kind.
+			// The hidden rule stays the single source of truth; link's
+			// `aliasSourceKinds` mechanism (assemble.ts) promotes it to
+			// user-facing visibility once its slot reference is hydrated,
+			// rather than the alias minting a second, duplicate rule.
 			// Keep `counter.opt` advancing too — the hidden-hoist name space must
 			// stay consistent with applyAutoGroups's ordinal numbering for any
 			// run where it is still active (it is disabled this chunk, but the
@@ -1546,7 +1594,8 @@ function applyClauseHoist(
 				counter,
 				rulesBag,
 				clauseGroupRules,
-				ambientPrec
+				ambientPrec,
+				enclosingFieldName
 			);
 			if (names !== null) {
 				// Pass 2 tag: this hidden rule backs a VISIBLE alias → keep it OUT of
@@ -1612,7 +1661,8 @@ function applyClauseHoist(
 				groupDedupeMap,
 				visibleGroupHiddenNames,
 				clauseGroupOwners,
-				ambientPrec
+				ambientPrec,
+				enclosingFieldName
 			);
 			const promoted = mintStructuredChoiceArm(
 				recursed,
@@ -1625,7 +1675,11 @@ function applyClauseHoist(
 				clauseGroupOwners,
 				// Single non-BLANK arm: no siblings, no leading-name collisions.
 				new Set(),
-				ambientPrec
+				ambientPrec,
+				// The whole optional content is still the field's logical
+				// position (this is optional(seq)/CHOICE[content, BLANK], not a
+				// seq/choice member boundary) — carry the field name in.
+				enclosingFieldName
 			);
 			const final = promoted ?? recursed;
 			if (final === opt.inner) return rule;
@@ -1756,7 +1810,8 @@ function applyClauseHoist(
 			groupDedupeMap,
 			visibleGroupHiddenNames,
 			clauseGroupOwners,
-			innerAmbientPrec
+			innerAmbientPrec,
+			enclosingFieldName
 		);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
@@ -1776,7 +1831,8 @@ function applyClauseHoist(
 			groupDedupeMap,
 			visibleGroupHiddenNames,
 			clauseGroupOwners,
-			ambientPrec
+			ambientPrec,
+			(rule as unknown as { name: string }).name
 		);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
@@ -2112,7 +2168,15 @@ function visibleGroupSynthName(
 	// `or_pattern: $ => prec.left(-2, choice(...))`) doesn't strip that
 	// precedence from the extracted piece and create a NEW ambiguity that
 	// didn't exist in the un-extracted grammar.
-	ambientPrec?: Rule
+	ambientPrec?: Rule,
+	// The field this content was hoisted out of (e.g. `field('attributes',
+	// optional(seq(...)))`), if any — `applyClauseHoist` threads this
+	// through FIELD/PREC/REPEAT/OPTIONAL descent, resetting it at SEQ/CHOICE
+	// member boundaries (a seq member is no longer "the field's content").
+	// Naming the group after the field it fills (`_<parent>_<field>`) is
+	// more legible than an opaque ordinal and reuses a name the grammar
+	// author already chose, rather than minting a fresh one.
+	enclosingFieldName?: string
 ): { visibleName: string; hiddenName: string } | null {
 	const key = ruleKey(content as RuntimeRule);
 	const registeredBody = ambientPrec ? ({ ...ambientPrec, content } as Rule) : content;
@@ -2122,8 +2186,32 @@ function visibleGroupSynthName(
 		if (!(hiddenName in clauseGroupRules)) clauseGroupRules[hiddenName] = registeredBody;
 		return { visibleName: existing, hiddenName };
 	}
+	const base = parentKind.replace(/^_+/, '');
+	const register = (visibleName: string): { visibleName: string; hiddenName: string } => {
+		const hiddenName = `_${visibleName}`;
+		groupDedupeMap[key] = visibleName;
+		// Pass 1 — uniform hidden creation: register the seq body as a HIDDEN
+		// rule so tree-sitter sees a single named symbol to alias.
+		clauseGroupRules[hiddenName] = registeredBody;
+		return { visibleName, hiddenName };
+	};
+	if (enclosingFieldName !== undefined) {
+		const visibleName = `${base}_${enclosingFieldName}`;
+		// Also decline when a DIFFERENT group body already claimed this same
+		// field-derived name (e.g. two distinct group bodies under the same
+		// parent both wrapped in `field('body', ...)`) — `rulesBag` alone
+		// can't see this, since a synthesized hidden name only ever lands in
+		// `clauseGroupRules`, never the base grammar.
+		if (
+			!(visibleName in rulesBag) &&
+			!(`_${visibleName}` in rulesBag) &&
+			!(`_${visibleName}` in clauseGroupRules)
+		) {
+			return register(visibleName);
+		}
+	}
 	counter.grp += 1;
-	const visibleName = `${parentKind.replace(/^_+/, '')}_group${counter.grp}`;
+	const visibleName = `${base}_group${counter.grp}`;
 	const hiddenName = `_${visibleName}`;
 	if (visibleName in rulesBag || hiddenName in rulesBag) {
 		process.stderr.write(
@@ -2131,11 +2219,7 @@ function visibleGroupSynthName(
 		);
 		return null;
 	}
-	groupDedupeMap[key] = visibleName;
-	// Pass 1 — uniform hidden creation: register the seq body as a HIDDEN rule
-	// (`_<parent>_group<N>`) so tree-sitter sees a single named symbol to alias.
-	clauseGroupRules[hiddenName] = registeredBody;
-	return { visibleName, hiddenName };
+	return register(visibleName);
 }
 
 function promoteExistingHiddenRuleName(
@@ -2218,7 +2302,12 @@ function mintStructuredChoiceArm(
 	visibleGroupHiddenNames: Set<string>,
 	clauseGroupOwners: Map<string, string>,
 	collidingLeadingNames: ReadonlySet<string>,
-	ambientPrec?: Rule
+	ambientPrec?: Rule,
+	// See visibleGroupSynthName's doc comment — same field-derived naming as
+	// applyClauseHoist's OPTIONAL-position callers thread in; only those
+	// callers pass a value, seq/choice-member callers correctly omit it (a
+	// member is a distinct position, not "the field's content" as a whole).
+	enclosingFieldName?: string
 ): Rule | null {
 	const t = (arm as { type?: string }).type;
 	if (typeof t !== 'string') return null;
@@ -2254,7 +2343,9 @@ function mintStructuredChoiceArm(
 			groupDedupeMap,
 			visibleGroupHiddenNames,
 			clauseGroupOwners,
-			collidingLeadingNames
+			collidingLeadingNames,
+			undefined,
+			enclosingFieldName
 		);
 		if (!minted) return null;
 		return { ...arm, content: minted } as Rule;
@@ -2325,7 +2416,8 @@ function mintStructuredChoiceArm(
 			counter,
 			rulesBag,
 			clauseGroupRules,
-			ambientPrec
+			ambientPrec,
+			enclosingFieldName
 		);
 		if (!names) return null;
 		visibleGroupHiddenNames.add(names.hiddenName);

@@ -252,9 +252,25 @@ consumers (`from.ts`) are unaffected; full suite green.
   source-inventory note) to exact floors per grammar (ideally 0 non-excluded,
   plus the principled `inline:`/VAPORIZED-accepted counts from Phase 4).
 - `kindid-unstamped-*` diagnostics promoted from `info` to `warn`/fail for
-  every class not on the accepted-exclusion list — the spec's "compile
-  fails loudly... instead of deferring the gap to a native 'unknown kind
-  id' render error."
+  the full miss set — the spec's "compile fails loudly... instead of
+  deferring the gap to a native 'unknown kind id' render error." Landed as
+  full-set promotion, not a subtraction of the accepted-exclusion classes:
+  the original design partitioned symbol misses two ways
+  (`kindid-vaporized-*` = not in the grammar's `inline:` array,
+  `kindid-inline-excluded-*` = in it) — complementary by construction, so
+  "misses minus both classes" was provably always empty, meaning a genuinely
+  unexplained future regression would silently classify as accepted
+  "vaporized" surface. This was superseded by a reachability-based redesign:
+  `kindid-vaporized-symbols` now requires independent evidence (unreachable
+  from the grammar's root by a reference-graph walk), and a symbol that's
+  neither inline nor unreachable lands in the new `kindid-unclassified-symbols`
+  bucket — a genuine, unaccepted gap, reported at `warning` severity so it
+  can't hide inside "vaporized." Literal misses still partition two ways
+  (bare literal text has no rule-name identity to test reachability
+  against). The inline-excluded/vaporized/unclassified codes stay as
+  cross-reference labels a reader checks against the warning, not a
+  severity gate of their own — except unclassified, which is itself
+  `warning`-severity.
 - Delete the now-dead fallback chains flagged (not removed) in Phase 1:
   `resolveLiteralKindId`'s `byText`/`byKind` chain and
   `resolveAcceptedTransportIds`'s `parseAliases`/fixed-literal fallback in

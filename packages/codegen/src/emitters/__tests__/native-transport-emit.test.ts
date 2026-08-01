@@ -69,7 +69,10 @@ function makeMinimalNodeMap(): NodeMap {
 			]
 		})
 	);
-	nodes.set('_expression', new AssembledSupertype('_expression', expressionRule, ['identifier', 'call_expression']));
+	nodes.set(
+		'_expression',
+		new AssembledSupertype('_expression', expressionRule, [{ name: 'identifier' }, { name: 'call_expression' }])
+	);
 	return nodeMapWith(nodes);
 }
 
@@ -205,8 +208,8 @@ function makeReservedNestedSupertypeNodeMap(): NodeMap {
 	);
 	nodes.set('string_literal', new AssembledPattern('string_literal', { type: PATTERN, value: '".*"' }));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('_literal', new AssembledSupertype('_literal', literalRule, ['string_literal']));
-	nodes.set('_expression', new AssembledSupertype('_expression', expressionRule, ['_literal', 'identifier']));
+	nodes.set('_literal', new AssembledSupertype('_literal', literalRule, [{ name: 'string_literal' }]));
+	nodes.set('_expression', new AssembledSupertype('_expression', expressionRule, [{ name: '_literal' }, { name: 'identifier' }]));
 	return nodeMapWith(nodes);
 }
 
@@ -234,7 +237,10 @@ function makeSupertypeAndSubtypeChildrenNodeMap(): NodeMap {
 		'supertype_alias_parent',
 		new AssembledBranch('supertype_alias_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
 	);
-	nodes.set('_expression', new AssembledSupertype('_expression', expressionRule, ['identifier', 'call_expression']));
+	nodes.set(
+		'_expression',
+		new AssembledSupertype('_expression', expressionRule, [{ name: 'identifier' }, { name: 'call_expression' }])
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set(
 		'call_expression',
@@ -317,9 +323,9 @@ function makeTransparentStatementWrapperNodeMap(): NodeMap {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'_simple_statement',
-		new AssembledSupertype('_simple_statement', simpleStatementRule, ['expression_statement'])
+		new AssembledSupertype('_simple_statement', simpleStatementRule, [{ name: 'expression_statement' }])
 	);
-	nodes.set('_statement', new AssembledSupertype('_statement', statementRule, ['_simple_statements']));
+	nodes.set('_statement', new AssembledSupertype('_statement', statementRule, [{ name: '_simple_statements' }]));
 	nodes.set(
 		'_simple_statements',
 		new AssembledBranch('_simple_statements', wrapperRule, deleteWrapper(wrapperRule), deleteWrapper(wrapperRule))
@@ -398,7 +404,10 @@ function makeSupertypeBackedChildEnumNodeMap(): NodeMap {
 	nodes.set('pair', new AssembledBranch('pair', pairRule, deleteWrapper(pairRule), deleteWrapper(pairRule)));
 	nodes.set(
 		'_shorthand_property_identifier',
-		new AssembledSupertype('_shorthand_property_identifier', shorthandRule, ['identifier', '_reserved_identifier'])
+		new AssembledSupertype('_shorthand_property_identifier', shorthandRule, [
+			{ name: 'identifier' },
+			{ name: '_reserved_identifier' }
+		])
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('_reserved_identifier', new AssembledPattern('_reserved_identifier', { type: PATTERN, value: '[a-z]+' }));

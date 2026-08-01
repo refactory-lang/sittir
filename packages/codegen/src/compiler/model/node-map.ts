@@ -20,9 +20,12 @@
  *      accumulators + the optional-body and audit-context module pointers.
  *   2. Slot model & derivation — `NodeRef`/`NodeOrTerminal`/`FieldStorageInfo`
  *      content types, cardinality (`deriveSlotCardinality`…), value guards,
- *      naming utilities (`snakeToCamel`/`pluralize`), the Rule<'link'> walkers
- *      (`hasAnyField`/`hasAnyChild`), and the Rule<'link'> → slots/values derivation
- *      (`deriveSlots`, `deriveValuesForRule`, `dedupeValues`, separators, `nameNode`).
+ *      naming utilities (`snakeToCamel`/`pluralize`), and the Rule<'link'> →
+ *      slots/values derivation (`deriveSlots`, `deriveValuesForRule`,
+ *      `dedupeValues`, separators, `nameNode`). `hasAnyField` (the Rule<'link'>
+ *      wrapper walker `isContainerShape` below still needs) lives in
+ *      `dsl/rule-transforms.ts` — this module holds the assembled-node data
+ *      model, not general rule-shape predicates.
  *   3. AssembledNonterminal & naming projection — the slot class + `kindsOf`/
  *      `valueParseKindsOf` + the `projectSlotNaming` projection.
  *   4. AssembledNode class hierarchy — `AssembledBranch`/`Polymorph`/`Pattern`/
@@ -69,7 +72,7 @@ import type {
 	RuleId,
 	SeparatorFlankMode
 } from '../../types/rule.ts';
-import { isSeq, isField, literalTextOf, isEnumChoiceRule, isLinkSymbol } from '../../types/rule.ts';
+import { isSeq, isField, literalTextOf, isEnumChoiceRule, isLinkSymbol, subtypeParseNamesOf } from '../../types/rule.ts';
 import { isStringType } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
@@ -85,6 +88,7 @@ import {
 	type ParseKindCollisionValue
 } from '../../types/parsekind-collisions.ts';
 import { describeDeriveShape, type DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
+import { hasAnyField } from '../../dsl/rule-transforms.ts';
 
 // ============================================================================
 // 1. Diagnostics & module state
@@ -361,6 +365,17 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 
 export type NodeOrTerminal = NodeRef;
 
+// A subtype name paired with its OWN storage-side kindId, stamped once at
+// the point assemble.ts's supertype-resolution helpers discover the name
+// (a direct SymbolRule ref, a nested supertype arm, or a catalog lookup for
+// a structurally-discovered alias member with no ref at all) — never
+// re-derived downstream. `storageKindId` is legitimately absent for names
+// with no catalog entry (typed absence, not a bug).
+export interface SubtypeRef {
+	readonly name: string;
+	readonly storageKindId?: number;
+}
+
 export function isNodeRef(v: NodeOrTerminal): v is NodeRef & { node: AssembledNode | UnresolvedRef } {
 	return v.node !== undefined;
 }
@@ -529,43 +544,6 @@ const TS_RESERVED = new Set([
 
 export function safeParamName(name: string): string {
 	return TS_RESERVED.has(name) ? `${name}_` : name;
-}
-
-export function hasAnyField(rule: Rule<'link'>): boolean {
-	switch (rule.type) {
-		case FIELD:
-			return true;
-		case SEQ:
-		case CHOICE:
-			return rule.members.some(hasAnyField);
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case VARIANT:
-		case GROUP:
-			return hasAnyField(rule.content);
-		default:
-			return false;
-	}
-}
-
-export function hasAnyChild(rule: Rule<'link'>): boolean {
-	switch (rule.type) {
-		case SYMBOL:
-		case SUPERTYPE:
-			return true;
-		case SEQ:
-		case CHOICE:
-			return rule.members.some(hasAnyChild);
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case VARIANT:
-		case GROUP:
-			return hasAnyChild(rule.content);
-		default:
-			return false;
-	}
 }
 
 const DERIVE_AUDIT = process.env.SITTIR_AUDIT_DERIVE === '1';
@@ -1175,18 +1153,30 @@ export function deriveValuesForRule(
 		}
 		case SUPERTYPE:
 			// Supertype refs expand to their subtype list — each subtype is a
-			// valid concrete kind the slot can hold. No link-time stamp exists
-			// for these ids yet (`canonicalizeRuleLiterals` has no SUPERTYPE
-			// arm), so this case still re-derives per call, same as before.
-			return rule.subtypes.map((name) => {
+			// valid concrete kind the slot can hold. Each subtype ref's own
+			// kindId/aliasedFromId is stamped at link (canonicalizeRuleLiterals's
+			// SUPERTYPE arm) — read that fact first, catalog fallback only for
+			// refs that weren't stamped (mirrors the SYMBOL(ref) case above).
+			return rule.subtypes.map((subRef) => {
+				const name = subRef.aliasedFrom ?? subRef.name;
+				if (subRef.kindId !== undefined || subRef.aliasedFromId !== undefined) {
+					return {
+						node: { kind: 'unresolved-ref' as const, name },
+						storageKindId: subRef.aliasedFromId ?? subRef.kindId,
+						parseKind: { kind: 'unresolved-ref' as const, name: subRef.name },
+						parseKindId: subRef.kindId,
+						multiplicity: relaxForOptionalBody(name, multiplicity)
+					};
+				}
 				const entry = findEntryForKindName(ctx?.kindEntries ?? [], name);
 				// Aliased arm: the flatten stamped the parse name the arm
-				// displays under (`subtypeParseNames`); its catalog row carries
-				// the alias occurrence's own runtime id, which is what dispatch
-				// must key on — mirrors the SYMBOL case's aliasedFrom/name pair
-				// above.
-				const parseName = rule.subtypeParseNames?.[name];
+				// displays under (`aliasedFrom`/`name` on the ref itself); its
+				// catalog row carries the alias occurrence's own runtime id,
+				// which is what dispatch must key on — mirrors the SYMBOL
+				// case's aliasedFrom/name pair above.
+				const parseName = subRef.name !== name ? subRef.name : undefined;
 				const parseEntry = parseName === undefined ? entry : findEntryForKindName(ctx?.kindEntries ?? [], parseName);
+				if (entry !== undefined || parseEntry !== undefined) noteKindIdFallbackHit({ site: 'SUPERTYPE(subtype)', name });
 				return {
 					node: { kind: 'unresolved-ref' as const, name },
 					storageKindId: entry?.id,
@@ -2558,48 +2548,65 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 	// #subtypes stores the RESOLVED subtype list (hidden names expanded to
 	// their concrete kinds) — this differs from rule.subtypes which carries
 	// the raw names as declared in the grammar. Do NOT replace with rule.subtypes.
-	readonly #subtypes: string[];
+	//
+	// Each entry's `.node` starts as an `UnresolvedRef` — supertypes are
+	// constructed in the same single forward-referencing pass as every other
+	// kind (assemble.ts), so a subtype's own `AssembledNode` may not exist yet
+	// — and is hydrated to the real node by `hydrateSlotRefs` once the full
+	// node map exists, the same two-pass pattern branch/group slot values
+	// already use. `storageKindId` is read directly off each `SubtypeRef` —
+	// assemble.ts's resolution helpers stamp it once, at discovery; this
+	// constructor never re-derives it.
+	readonly #subtypes: readonly NodeOrTerminal[];
 
-	constructor(kind: string, rule: SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes: string[]) {
+	constructor(kind: string, rule: SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes: readonly SubtypeRef[]) {
 		// Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
 		super(kind, rule as SupertypeRule<'link'>, { hidden: true });
-		this.#subtypes = subtypes;
+		this.#subtypes = subtypes.map((s): NodeOrTerminal => ({
+			node: { kind: 'unresolved-ref', name: s.name },
+			storageKindId: s.storageKindId,
+			multiplicity: 'single'
+		}));
 	}
 
-	get subtypes(): string[] {
+	get subtypes(): readonly NodeOrTerminal[] {
 		return this.#subtypes;
 	}
 
+	get subtypeNames(): readonly string[] {
+		return this.#subtypes.filter(isNodeRef).map((v) => storageKindOfRef(v.node));
+	}
+
 	get subtypeParseNames(): Readonly<Record<string, string>> | undefined {
-		return this.rule.type === SUPERTYPE ? this.rule.subtypeParseNames : undefined;
+		if (this.rule.type !== SUPERTYPE) return undefined;
+		const pairs = subtypeParseNamesOf(this.rule);
+		return Object.keys(pairs).length > 0 ? pairs : undefined;
 	}
 }
 
-export class AssembledMulti extends AssembledNodeBase<RepeatRule | Repeat1Rule> {
+export class AssembledMulti extends AssembledNodeBase<RenderRule> {
 	readonly modelType = 'multi' as const;
-	// rule narrowed — multis are hidden repeat helpers. Classifier
-	// routes repeat / repeat1 shapes here when the hidden rule's
-	// top-level content is a repeat.
+	// rule is the normalize-phase RenderRule: wrapper-deletion already pushed
+	// the REPEAT/REPEAT1 wrapper's own multiplicity/separator down onto its
+	// content, so the wrapper-bearing node no longer exists to hold — the
+	// same facts these getters used to read off the wrapper live on `rule`
+	// itself now.
 
-	constructor(kind: string, rule: RepeatRule | Repeat1Rule, opts?: { irKey?: string }) {
+	constructor(kind: string, rule: RenderRule, opts?: { irKey?: string }) {
 		// Multi nodes are always hidden (no factoryName)
 		super(kind, rule, { hidden: true, irKey: opts?.irKey });
 	}
 
-	get elementRule(): Rule<'link'> {
-		return this.rule.content;
+	get elementRule(): RenderRule {
+		return this.rule;
 	}
 
 	get nonEmpty(): boolean {
-		return this.rule.type === REPEAT1;
+		return this.rule.multiplicity === 'nonEmptyArray';
 	}
 
 	get separator(): string | undefined {
-		// this.rule.separator is Rule<'link'>-phase-parameterized;
-		// extractSeparatorString reads the structurally identical normalize-phase
-		// shape (RepeatRule<'link'> shares RuleBase<'normalize'>.separator's shape
-		// post-PR-S) — cast the phase view.
-		return extractSeparatorString(this.rule.separator as RuleBase<'normalize'>['separator']);
+		return extractSeparatorString(this.rule.separator);
 	}
 
 	get trailing(): SeparatorFlankMode | undefined {

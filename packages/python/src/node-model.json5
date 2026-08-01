@@ -15,6 +15,7 @@
     "_simple_statement",
     "_statement",
     "expression",
+    "keyword_identifier",
     "parameter",
     "pattern",
     "primary_expression"
@@ -1838,15 +1839,6 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "keyword_identifier": {
-      "identifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -6189,6 +6181,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
+              "name": "keyword_identifier",
+              "parseKind": "keyword_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "subscript",
               "parseKind": "subscript",
               "unresolved": true
@@ -6205,6 +6204,7 @@
             "typeName": "",
             "kinds": [
               "identifier",
+              "keyword_identifier",
               "subscript",
               "attribute"
             ]
@@ -8079,12 +8079,20 @@
               "name": "identifier",
               "parseKind": "identifier",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "keyword_identifier",
+              "parseKind": "keyword_identifier",
+              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "identifier"
+              "identifier",
+              "keyword_identifier"
             ]
           }
         },
@@ -8121,39 +8129,11 @@
     },
     {
       "kind": "keyword_identifier",
-      "modelType": "branch",
+      "modelType": "supertype",
       "typeName": "KeywordIdentifier",
-      "factoryName": "keywordIdentifier",
       "irKey": "keywordIdentifier",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "identifier"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "direct",
-      "factoryFields": [
+      "hidden": true,
+      "subtypes": [
         "identifier"
       ]
     },
@@ -8622,6 +8602,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
+              "name": "keyword_identifier",
+              "parseKind": "keyword_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "subscript",
               "parseKind": "subscript",
               "unresolved": true
@@ -8638,6 +8625,7 @@
             "typeName": "",
             "kinds": [
               "identifier",
+              "keyword_identifier",
               "subscript",
               "attribute"
             ]

@@ -10,6 +10,7 @@ const EXPECTED = [
 	'check-perf',
 	'classify',
 	'compare-overrides',
+	'defect-histogram',
 	'diff-failures',
 	'dump-ast-mismatches',
 	'exercise',
@@ -32,7 +33,7 @@ const EXPECTED = [
 ];
 
 describe('tool namespace', () => {
-	it('registers exactly the 26 converted tools', () => {
+	it('registers exactly the 27 converted tools', () => {
 		expect(toolModules.map((m) => m.name).sort()).toEqual([...EXPECTED].sort());
 	});
 
