@@ -15,11 +15,11 @@
  * stamped.
  */
 
-import { CHOICE, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, PATTERN, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import { deriveValuesForRule, type DeriveCtx } from '../model/node-map.ts';
+import { AssembledKeyword, AssembledToken, deriveValuesForRule, type DeriveCtx } from '../model/node-map.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
-import type { Rule } from '../../types/rule.ts';
+import type { Rule, StringRule } from '../../types/rule.ts';
 
 const kindEntries: readonly GeneratedKindEntry[] = [
 	{ kind: 'identifier', id: 1 },
@@ -132,5 +132,53 @@ describe('deriveValuesForRule — kind-id stamps at the mint (PR-K2)', () => {
 		const [v] = deriveValuesForRule(rule, undefined, 'single');
 		expect(v?.storageKindId).toBeUndefined();
 		expect(v?.parseKindId).toBeUndefined();
+	});
+
+	// The tests above construct UNSTAMPED rules for the plain symbol/literal
+	// cases, so they only exercise the catalog-fallback path and would still
+	// pass if the link-time-stamp fast path were accidentally removed. Each
+	// test below stamps a value that DISAGREES with what the catalog would
+	// resolve, so only the fast path (not the fallback) can produce the
+	// expected id.
+	it('a stamped link-operator literal reads ids from the stamp, not the catalog', () => {
+		// Catalog resolves '<' to id 4 (see kindEntries) — the stamp disagrees.
+		const rule: Rule = { type: SYMBOL, name: 'lt', literal: '<', kindId: 999 };
+		const [v] = deriveValuesForRule(rule, ctx, 'single');
+		expect(v).toMatchObject({ value: '<', resolvedKind: 'lt', resolvedKindId: 999, parseKindId: 999 });
+	});
+
+	it('a stamped plain symbol ref reads ids from the stamp, not the catalog', () => {
+		// Catalog resolves 'identifier' to id 1 (see kindEntries) — disagrees.
+		const rule: Rule = { type: SYMBOL, name: 'identifier', kindId: 999 };
+		const [v] = deriveValuesForRule(rule, ctx, 'single');
+		expect(v).toMatchObject({ storageKindId: 999, parseKindId: 999 });
+	});
+
+	it('a stamped PATTERN reads the id from the stamp, not the catalog', () => {
+		// This text has NO catalog entry at all — if the fast path were
+		// removed, resolvedKindId would fall back to undefined, not 4.
+		const rule: Rule = { type: PATTERN, value: '~~nowhere~~', resolvedKindId: 4 };
+		const [v] = deriveValuesForRule(rule, ctx, 'single');
+		expect(v).toMatchObject({ resolvedKind: 'lt', resolvedKindId: 4, parseKindId: 4 });
+	});
+});
+
+describe('AssembledKeyword / AssembledToken — construction-time id stamp', () => {
+	it('AssembledKeyword reads resolvedKindId from the stamp, not the catalog', () => {
+		// Catalog resolves 'type' to the ANON twin id 3 (#129 pin, see above) —
+		// the stamp deliberately disagrees.
+		const rule: StringRule = { type: STRING, value: 'type', resolvedKindId: 999 };
+		const node = new AssembledKeyword('type', rule as unknown as StringRule<'link'>, { kindEntries });
+		expect(node.resolvedKindId).toBe(999);
+		// resolvedKind is looked up BY the stamped id (999 has no catalog row),
+		// not re-derived from the text — proving the id, not the text, drives it.
+		expect(node.resolvedKind).toBeUndefined();
+	});
+
+	it('AssembledToken reads resolvedKindId from the stamp, not the catalog', () => {
+		const rule: StringRule = { type: STRING, value: 'type', resolvedKindId: 999 };
+		const node = new AssembledToken('type', rule as unknown as StringRule<'link'>, { kindEntries });
+		expect(node.resolvedKindId).toBe(999);
+		expect(node.resolvedKind).toBeUndefined();
 	});
 });

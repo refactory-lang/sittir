@@ -338,7 +338,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	// NAMED rule (#129 class). Same stamped-fact semantics as
 	// `storageKindId`.
 	readonly resolvedKindId?: number;
-	// Parse-as kind ref (§7.3 / §4g, PR-A front-load): the CST kind this value
+	// Parse-as kind ref: the CST kind this value
 	// surfaces under — the alias TARGET when aliased (`rule.name`), else the
 	// own kind. Differs from `node` (render/source = `aliasedFrom ?? rule.name`)
 	// only for aliased/variant values. `storageName`/`parseNames` project this.
@@ -1038,14 +1038,19 @@ export function isSyntheticFieldWrapper(content: Rule<'link'>): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// `deriveValuesForRule`'s SYMBOL/STRING/PATTERN cases read the ids
+// `deriveValuesForRule`'s SYMBOL/SUPERTYPE/STRING/PATTERN cases read the ids
 // `canonicalizeRuleLiterals` (link.ts) already stamped onto the leaf instead
 // of re-deriving them from `ctx.kindEntries`. The catalog lookup survives
-// ONLY as a fallback for rules that never passed through that stamping pass
-// (hand-built fixtures, and SYNTHESIZED leaves minted after link, e.g.
-// assemble's anonymous-node collection) — the env-gated diagnostic below
-// surfaces when that fallback resolves an id the stamp missed, since for a
-// post-link rule that signals a stamping bug rather than an expected miss.
+// ONLY as a fallback for a rule that never passed through that stamping pass
+// — legitimately, that includes every hand-built `Rule` fixture this same
+// function is unit-tested against (see `derive-values-kindid-stamps.test.ts`,
+// which deliberately constructs UNSTAMPED rules to exercise this exact path),
+// so this function has no way to tell "expected test fixture" from "a real
+// post-link rule link.ts failed to stamp" — it cannot assert here without
+// breaking the former. `noteKindIdFallbackHit` stays a log, opt-in via
+// DBG_KINDID_FALLBACK; link.ts's `reportKindIdStampMisses` diagnostic is the
+// actual hard gate for a genuinely missing stamp, checked where the context
+// (a real generation run vs. a fixture) is actually known.
 // ---------------------------------------------------------------------------
 const DBG_KINDID_FALLBACK = process.env.DBG_KINDID_FALLBACK === '1';
 function noteKindIdFallbackHit(hit: { site: string; name: string }): void {
@@ -1127,7 +1132,7 @@ export function deriveValuesForRule(
 						storageKindId: rule.aliasedFromId ?? rule.kindId,
 						// parse-as kind = the alias TARGET (`rule.name`); `node` is the
 						// render/source (`refName`). For `_suite`: node=_simple_statements,
-						// parseKind=block (the CST kind). §7.3 / §4g.
+						// parseKind=block (the CST kind).
 						parseKind: { kind: 'unresolved-ref', name: rule.name },
 						parseKindId: rule.kindId,
 						multiplicity: relaxForOptionalBody(refName, multiplicity)
@@ -2447,7 +2452,8 @@ export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule
 			// SYNTHESIZED StringRule (never link-stamped) or a TOKEN rule (no
 			// `resolvedKindId` field at all) — literal-text lookup as before.
 			const entry = rule.type === STRING ? findEntryForLiteralText(opts?.kindEntries ?? [], rule.value) : undefined;
-			if (entry !== undefined) noteKindIdFallbackHit({ site: 'AssembledToken', name: rule.type === STRING ? rule.value : '' });
+			if (entry !== undefined)
+				noteKindIdFallbackHit({ site: 'AssembledToken', name: rule.type === STRING ? rule.value : '' });
 			this.resolvedKind = entry?.kind;
 			this.resolvedKindId = entry?.id;
 		}

@@ -16,6 +16,7 @@
  * (T017) owns filesystem I/O and the template-directory copy.
  */
 
+import { writeSync } from 'node:fs';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import type {
@@ -2429,7 +2430,13 @@ function registerKindIdFastPathDump(): void {
 	if (kindidFastPathDumpRegistered) return;
 	kindidFastPathDumpRegistered = true;
 	process.once('exit', () => {
-		process.stderr.write(
+		// `process.stderr.write` isn't guaranteed to flush from an `exit`
+		// listener when stderr is an async pipe (as in CI) — Node only
+		// permits synchronous work during `exit`, so a buffered async write
+		// can be silently truncated or dropped. `writeSync` bypasses the
+		// stream's buffering entirely.
+		writeSync(
+			2,
 			`[DBG_KINDID_FASTPATH] resolveLiteralKindId: stamp=${literalKindIdFastPathHits} fallback=${literalKindIdFallbackHits}; ` +
 				`resolveAcceptedTransportIds: stamp=${transportIdsFastPathHits} fallback=${transportIdsFallbackHits}\n`
 		);
