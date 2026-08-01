@@ -12,6 +12,7 @@ import type {
 	ExpressionWithinForInClause,
 	Expressions,
 	FExpression,
+	KeywordIdentifier,
 	LeftHandSide,
 	NamedExpressionLhs,
 	Parameter,
@@ -230,6 +231,7 @@ export interface IsGuards {
 	leftHandSide(v: { readonly $type: string | number }): v is LeftHandSide;
 	rightHandSide(v: { readonly $type: string | number }): v is RightHandSide;
 	fExpression(v: { readonly $type: string | number }): v is FExpression;
+	keywordIdentifier(v: { readonly $type: string | number }): v is KeywordIdentifier;
 	dictPatternKv(v: { readonly $type: string | number }): v is DictPatternKv;
 }
 
@@ -388,6 +390,7 @@ export interface AssertGuards {
 	leftHandSide(v: { readonly $type: string | number }): asserts v is LeftHandSide;
 	rightHandSide(v: { readonly $type: string | number }): asserts v is RightHandSide;
 	fExpression(v: { readonly $type: string | number }): asserts v is FExpression;
+	keywordIdentifier(v: { readonly $type: string | number }): asserts v is KeywordIdentifier;
 	dictPatternKv(v: { readonly $type: string | number }): asserts v is DictPatternKv;
 }
 
@@ -419,6 +422,7 @@ const _supertype_primaryExpression_ids = new Set<number>([
 const _supertype_leftHandSide_ids = new Set<number>([197]);
 const _supertype_rightHandSide_ids = new Set<number>([161, 195, 196, 197, 199]);
 const _supertype_fExpression_ids = new Set<number>([161, 197, 199]);
+const _supertype_keywordIdentifier_ids = new Set<number>([1]);
 const _supertype_dictPatternKv_ids = new Set<number>([167, 169]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -765,6 +769,7 @@ export const is = {
 	leftHandSide: _sg(_supertype_leftHandSide_ids),
 	rightHandSide: _sg(_supertype_rightHandSide_ids),
 	fExpression: _sg(_supertype_fExpression_ids),
+	keywordIdentifier: _sg(_supertype_keywordIdentifier_ids),
 	dictPatternKv: _sg(_supertype_dictPatternKv_ids)
 } as unknown as IsGuards;
 
@@ -932,6 +937,7 @@ export const assert = {
 	leftHandSide: _makeAssert('leftHandSide', is.leftHandSide as _AnyGuard),
 	rightHandSide: _makeAssert('rightHandSide', is.rightHandSide as _AnyGuard),
 	fExpression: _makeAssert('fExpression', is.fExpression as _AnyGuard),
+	keywordIdentifier: _makeAssert('keywordIdentifier', is.keywordIdentifier as _AnyGuard),
 	dictPatternKv: _makeAssert('dictPatternKv', is.dictPatternKv as _AnyGuard)
 } as unknown as AssertGuards;
 

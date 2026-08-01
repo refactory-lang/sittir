@@ -1497,7 +1497,15 @@ function applyClauseHoist(
 	// new tree-sitter LR ambiguity, not a naming collision. Threaded
 	// through every recursive call so a mint under a prec wrapper can
 	// re-apply the SAME wrapper to its own registered body.
-	ambientPrec?: Rule
+	ambientPrec?: Rule,
+	// The nearest enclosing `field(name, ...)` this position is STILL
+	// directly the content of — set on FIELD descent, propagated unchanged
+	// through PREC/REPEAT/OPTIONAL (transparent wrappers, same position),
+	// reset to `undefined` at SEQ/CHOICE member boundaries (a member is a
+	// distinct position, no longer "the field's content" as a whole).
+	// Consumed by `visibleGroupSynthName` to prefer `_<parent>_<field>`
+	// over an opaque ordinal when a group is hoisted from a fielded slot.
+	enclosingFieldName?: string
 ): Rule {
 	// Check if this node is an optional(seq) or CHOICE[seq,BLANK] pattern.
 	const peeled = peelOptionalSeq(rule);
@@ -1513,7 +1521,8 @@ function applyClauseHoist(
 			groupDedupeMap,
 			visibleGroupHiddenNames,
 			clauseGroupOwners,
-			ambientPrec
+			ambientPrec,
+			enclosingFieldName
 		);
 
 		if (ruleMatchesEmpty(recursedSeqBody)) {
@@ -1569,8 +1578,10 @@ function applyClauseHoist(
 			//     node. (Aliasing the multi-member seq DIRECTLY made tree-sitter
 			//     DISTRIBUTE the alias across the seq's members → scattered empty
 			//     leaves → reader "singular slot got array" → dropped slot.)
-			// link's `mintContentAliasKinds` resolves THROUGH the symbol to register
-			// `<name> = <hidden body>` as the IR kind.
+			// The hidden rule stays the single source of truth; link's
+			// `aliasSourceKinds` mechanism (assemble.ts) promotes it to
+			// user-facing visibility once its slot reference is hydrated,
+			// rather than the alias minting a second, duplicate rule.
 			// Keep `counter.opt` advancing too — the hidden-hoist name space must
 			// stay consistent with applyAutoGroups's ordinal numbering for any
 			// run where it is still active (it is disabled this chunk, but the
@@ -1583,7 +1594,8 @@ function applyClauseHoist(
 				counter,
 				rulesBag,
 				clauseGroupRules,
-				ambientPrec
+				ambientPrec,
+				enclosingFieldName
 			);
 			if (names !== null) {
 				// Pass 2 tag: this hidden rule backs a VISIBLE alias → keep it OUT of
@@ -1649,7 +1661,8 @@ function applyClauseHoist(
 				groupDedupeMap,
 				visibleGroupHiddenNames,
 				clauseGroupOwners,
-				ambientPrec
+				ambientPrec,
+				enclosingFieldName
 			);
 			const promoted = mintStructuredChoiceArm(
 				recursed,
@@ -1662,7 +1675,11 @@ function applyClauseHoist(
 				clauseGroupOwners,
 				// Single non-BLANK arm: no siblings, no leading-name collisions.
 				new Set(),
-				ambientPrec
+				ambientPrec,
+				// The whole optional content is still the field's logical
+				// position (this is optional(seq)/CHOICE[content, BLANK], not a
+				// seq/choice member boundary) — carry the field name in.
+				enclosingFieldName
 			);
 			const final = promoted ?? recursed;
 			if (final === opt.inner) return rule;
@@ -1793,7 +1810,8 @@ function applyClauseHoist(
 			groupDedupeMap,
 			visibleGroupHiddenNames,
 			clauseGroupOwners,
-			innerAmbientPrec
+			innerAmbientPrec,
+			enclosingFieldName
 		);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
@@ -1813,7 +1831,8 @@ function applyClauseHoist(
 			groupDedupeMap,
 			visibleGroupHiddenNames,
 			clauseGroupOwners,
-			ambientPrec
+			ambientPrec,
+			(rule as unknown as { name: string }).name
 		);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
@@ -2149,7 +2168,15 @@ function visibleGroupSynthName(
 	// `or_pattern: $ => prec.left(-2, choice(...))`) doesn't strip that
 	// precedence from the extracted piece and create a NEW ambiguity that
 	// didn't exist in the un-extracted grammar.
-	ambientPrec?: Rule
+	ambientPrec?: Rule,
+	// The field this content was hoisted out of (e.g. `field('attributes',
+	// optional(seq(...)))`), if any — `applyClauseHoist` threads this
+	// through FIELD/PREC/REPEAT/OPTIONAL descent, resetting it at SEQ/CHOICE
+	// member boundaries (a seq member is no longer "the field's content").
+	// Naming the group after the field it fills (`_<parent>_<field>`) is
+	// more legible than an opaque ordinal and reuses a name the grammar
+	// author already chose, rather than minting a fresh one.
+	enclosingFieldName?: string
 ): { visibleName: string; hiddenName: string } | null {
 	const key = ruleKey(content as RuntimeRule);
 	const registeredBody = ambientPrec ? ({ ...ambientPrec, content } as Rule) : content;
@@ -2159,8 +2186,32 @@ function visibleGroupSynthName(
 		if (!(hiddenName in clauseGroupRules)) clauseGroupRules[hiddenName] = registeredBody;
 		return { visibleName: existing, hiddenName };
 	}
+	const base = parentKind.replace(/^_+/, '');
+	const register = (visibleName: string): { visibleName: string; hiddenName: string } => {
+		const hiddenName = `_${visibleName}`;
+		groupDedupeMap[key] = visibleName;
+		// Pass 1 — uniform hidden creation: register the seq body as a HIDDEN
+		// rule so tree-sitter sees a single named symbol to alias.
+		clauseGroupRules[hiddenName] = registeredBody;
+		return { visibleName, hiddenName };
+	};
+	if (enclosingFieldName !== undefined) {
+		const visibleName = `${base}_${enclosingFieldName}`;
+		// Also decline when a DIFFERENT group body already claimed this same
+		// field-derived name (e.g. two distinct group bodies under the same
+		// parent both wrapped in `field('body', ...)`) — `rulesBag` alone
+		// can't see this, since a synthesized hidden name only ever lands in
+		// `clauseGroupRules`, never the base grammar.
+		if (
+			!(visibleName in rulesBag) &&
+			!(`_${visibleName}` in rulesBag) &&
+			!(`_${visibleName}` in clauseGroupRules)
+		) {
+			return register(visibleName);
+		}
+	}
 	counter.grp += 1;
-	const visibleName = `${parentKind.replace(/^_+/, '')}_group${counter.grp}`;
+	const visibleName = `${base}_group${counter.grp}`;
 	const hiddenName = `_${visibleName}`;
 	if (visibleName in rulesBag || hiddenName in rulesBag) {
 		process.stderr.write(
@@ -2168,11 +2219,7 @@ function visibleGroupSynthName(
 		);
 		return null;
 	}
-	groupDedupeMap[key] = visibleName;
-	// Pass 1 — uniform hidden creation: register the seq body as a HIDDEN rule
-	// (`_<parent>_group<N>`) so tree-sitter sees a single named symbol to alias.
-	clauseGroupRules[hiddenName] = registeredBody;
-	return { visibleName, hiddenName };
+	return register(visibleName);
 }
 
 function promoteExistingHiddenRuleName(
@@ -2255,7 +2302,12 @@ function mintStructuredChoiceArm(
 	visibleGroupHiddenNames: Set<string>,
 	clauseGroupOwners: Map<string, string>,
 	collidingLeadingNames: ReadonlySet<string>,
-	ambientPrec?: Rule
+	ambientPrec?: Rule,
+	// See visibleGroupSynthName's doc comment — same field-derived naming as
+	// applyClauseHoist's OPTIONAL-position callers thread in; only those
+	// callers pass a value, seq/choice-member callers correctly omit it (a
+	// member is a distinct position, not "the field's content" as a whole).
+	enclosingFieldName?: string
 ): Rule | null {
 	const t = (arm as { type?: string }).type;
 	if (typeof t !== 'string') return null;
@@ -2291,7 +2343,9 @@ function mintStructuredChoiceArm(
 			groupDedupeMap,
 			visibleGroupHiddenNames,
 			clauseGroupOwners,
-			collidingLeadingNames
+			collidingLeadingNames,
+			undefined,
+			enclosingFieldName
 		);
 		if (!minted) return null;
 		return { ...arm, content: minted } as Rule;
@@ -2362,7 +2416,8 @@ function mintStructuredChoiceArm(
 			counter,
 			rulesBag,
 			clauseGroupRules,
-			ambientPrec
+			ambientPrec,
+			enclosingFieldName
 		);
 		if (!names) return null;
 		visibleGroupHiddenNames.add(names.hiddenName);

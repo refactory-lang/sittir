@@ -92,6 +92,9 @@ export function makeMinimalNodeMap(): NodeMap {
 			]
 		})
 	);
-	nodes.set('_expression', new AssembledSupertype('_expression', expressionRule, ['identifier', 'call_expression']));
+	nodes.set(
+		'_expression',
+		new AssembledSupertype('_expression', expressionRule, [{ name: 'identifier' }, { name: 'call_expression' }])
+	);
 	return makeNodeMapWith(nodes);
 }

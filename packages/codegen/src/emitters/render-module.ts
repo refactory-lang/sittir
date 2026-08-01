@@ -336,7 +336,7 @@ function collectEffectiveSupertypeTransportShape(
 	for (const [storage, parse] of Object.entries(supertypeNode.subtypeParseNames ?? {})) {
 		if (!state.parseNames.has(storage)) state.parseNames.set(storage, parse);
 	}
-	for (const subKind of supertypeNode.subtypes) {
+	for (const subKind of supertypeNode.subtypeNames) {
 		const subNode = nodeMap.nodes.get(subKind);
 		if (subNode === undefined) continue;
 		if (isReservedSupertypeTransportNode(subNode)) {
@@ -1892,7 +1892,7 @@ function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: Nod
 			if (node.modelType !== 'supertype') continue;
 			if (!used.has(node.typeName)) continue;
 			const supertypeNode = node as AssembledSupertype;
-			for (const subKind of supertypeNode.subtypes) {
+			for (const subKind of supertypeNode.subtypeNames) {
 				const subNode = nodeMap.nodes.get(subKind);
 				if (subNode === undefined || subNode.modelType !== 'supertype') continue;
 				const enumName = `${rustTypeIdent(subNode.typeName)}Transport`;
@@ -2125,7 +2125,7 @@ function emitSupertypeTransportEnum(
 		boxedInEnum(subKind, ownerKind, subNode, nodeMap);
 
 	// See `admitsVerbatimCollapse` docstring for the full rationale.
-	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypes, nodeMap);
+	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypeNames, nodeMap);
 
 	const emitDecodeTrials = (leafOnly = false, indent = '                '): string[] => {
 		// Self-alias / reserved-supertype kind_id: parser sent the supertype's
@@ -2359,7 +2359,7 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	const ownerKind = supertypeNode.kind;
 
 	// See `admitsVerbatimCollapse` docstring for the full rationale.
-	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypes, nodeMap);
+	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypeNames, nodeMap);
 
 	lines.push(`fn ${fnName}(t: &${enumName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(`    match t {`);
@@ -2388,7 +2388,7 @@ function collectConcreteTransportKinds(kind: string, nodeMap: NodeMap, seen: Set
 	if (node === undefined) return [];
 	if (node.modelType !== 'supertype') return [kind];
 	const concreteKinds = new Set<string>();
-	for (const subtype of (node as AssembledSupertype).subtypes) {
+	for (const subtype of (node as AssembledSupertype).subtypeNames) {
 		for (const concreteKind of collectConcreteTransportKinds(subtype, nodeMap, seen)) {
 			concreteKinds.add(concreteKind);
 		}

@@ -103,7 +103,7 @@ export function referencedKinds(nodeMap: NodeMap): Set<string> {
 				for (const s of Object.values(node.slots)) for (const t of slotKindNames(s)) referenced.add(t);
 				break;
 			case 'supertype':
-				for (const t of node.subtypes) referenced.add(t);
+				for (const t of node.subtypeNames) referenced.add(t);
 				break;
 		}
 	}
@@ -191,8 +191,8 @@ export function resolveHiddenKeywordLeaf(
 	// Single-subtype supertypes (e.g. `_semicolon` → `_automatic_semicolon`)
 	// — follow the chain so fields whose value is the supertype inherit the
 	// leaf/keyword/token literal for auto-stamp detection.
-	if (node instanceof AssembledSupertype && node.subtypes.length === 1) {
-		return resolveHiddenKeywordLeaf(node.subtypes[0]!, nodeMap);
+	if (node instanceof AssembledSupertype && node.subtypeNames.length === 1) {
+		return resolveHiddenKeywordLeaf(node.subtypeNames[0]!, nodeMap);
 	}
 	return undefined;
 }
@@ -213,8 +213,8 @@ function isHiddenInfraKind(kindName: string, nodeMap: NodeMap): boolean {
 	if (literal !== undefined) return true;
 	const node = nodeMap.nodes.get(kindName);
 	if (!(node instanceof AssembledSupertype)) return false;
-	if (node.subtypes.length === 0) return false;
-	return node.subtypes.every((subtype) => isHiddenInfraKind(subtype, nodeMap));
+	if (node.subtypeNames.length === 0) return false;
+	return node.subtypeNames.every((subtype) => isHiddenInfraKind(subtype, nodeMap));
 }
 
 // ---------------------------------------------------------------------------
@@ -612,7 +612,10 @@ export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: Node
 	return slot;
 }
 
-function configurableFactoryFields(fields: readonly AssembledNonterminal[], nodeMap: NodeMap): AssembledNonterminal[] {
+export function configurableFactoryFields(
+	fields: readonly AssembledNonterminal[],
+	nodeMap: NodeMap
+): AssembledNonterminal[] {
 	return fields.filter(
 		(field) =>
 			stampExpressionFor(field, nodeMap) === undefined &&
