@@ -90,6 +90,9 @@ describe('deriveValuesForRule — kind-id stamps at the mint (PR-K2)', () => {
 		};
 		const out = deriveValuesForRule(rule, ctx, 'single');
 		expect(out.map((v) => v.storageKindId)).toEqual([1, 6]);
+		// Catalog-fallback path for parseKindId (node-map.ts's re-derivation
+		// chain, distinct from the pre-stamped-ref path the next test covers).
+		expect(out.map((v) => v.parseKindId)).toEqual([1, 6]);
 	});
 
 	it('supertype subtype refs read their OWN pre-stamped id instead of re-deriving from the catalog', () => {
