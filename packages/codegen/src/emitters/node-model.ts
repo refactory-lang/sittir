@@ -30,7 +30,7 @@ import {
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
-import type { Rule, SeparatorFlankMode } from '../types/rule.ts';
+import type { AnyRule, Rule, SeparatorFlankMode } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal, NodeOrTerminal } from '../compiler/model/node-map.ts';
 import {
 	isNodeRef,
@@ -344,9 +344,14 @@ function serializeValue(v: NodeOrTerminal): SerializedValue {
 	return out;
 }
 
-function extractElementKinds(rule: Rule<'link'>): string[] {
+// Phase-invariant, same convention as assemble.ts's isAllTextShape: at
+// normalize/simplify, OPTIONAL/REPEAT/REPEAT1/FIELD collapse to `never`, so
+// this switch simply never reaches those cases when called on a
+// wrapper-deleted RenderRule (AssembledMulti.elementRule) — it bottoms out
+// directly on whatever leaf wrapper-deletion left in place.
+function extractElementKinds(rule: AnyRule): string[] {
 	const out = new Set<string>();
-	const walk = (r: Rule<'link'>): void => {
+	const walk = (r: AnyRule): void => {
 		switch (r.type) {
 			case SYMBOL:
 				out.add(r.name);

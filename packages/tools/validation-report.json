@@ -150,6 +150,7 @@
       "kinds": [
         "_abstract_type_optional1",
         "_array_type_optional1",
+        "_async_marker",
         "_closure_parameters_optional1",
         "_compound_assignment_expr_operator",
         "_const_parameter_optional1",
@@ -159,32 +160,31 @@
         "_extern_crate_declaration_optional1",
         "_function_item_optional1",
         "_in_path",
-        "_kw_async_marker",
         "_kw_comma",
-        "_kw_move_marker",
         "_kw_operator",
         "_kw_pub",
-        "_kw_ref_marker",
         "_kw_reference",
-        "_kw_static_marker",
         "_kw_turbofish",
-        "_kw_unsafe_marker",
         "_let_declaration_optional1",
         "_let_declaration_optional2",
         "_match_block_optional1",
         "_match_pattern_optional1",
+        "_move_marker",
         "_path",
         "_primitive_type",
+        "_ref_marker",
         "_reserved_identifier",
+        "_static_marker",
         "_tokens",
         "_type_parameter_optional1",
+        "_unsafe_marker",
         "_variadic_parameter_optional1",
         "_visibility_modifier_pub_parens",
         "_while_expression_optional1",
         "in_path"
       ]
     },
-    "severity": "info",
+    "severity": "warning",
     "scope": "grammar"
   },
   {
@@ -201,6 +201,87 @@
         "b",
         "mut",
         "r#\""
+      ]
+    },
+    "severity": "warning",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "code": "kindid-vaporized-symbols",
+    "message": "10 referenced kind(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "details": {
+      "kinds": [
+        "_async_marker",
+        "_compound_assignment_expr_operator",
+        "_in_path",
+        "_move_marker",
+        "_primitive_type",
+        "_ref_marker",
+        "_static_marker",
+        "_unsafe_marker",
+        "_visibility_modifier_pub_parens",
+        "in_path"
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "code": "kindid-vaporized-literals",
+    "message": "5 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "details": {
+      "texts": [
+        "\"#",
+        "\\",
+        "b",
+        "mut",
+        "r#\""
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "code": "kindid-inline-excluded-symbols",
+    "message": "24 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "canProceed": true,
+    "details": {
+      "kinds": [
+        "_abstract_type_optional1",
+        "_array_type_optional1",
+        "_closure_parameters_optional1",
+        "_const_parameter_optional1",
+        "_declaration_statement",
+        "_enum_variant_optional1",
+        "_expression_ending_with_block",
+        "_extern_crate_declaration_optional1",
+        "_function_item_optional1",
+        "_kw_comma",
+        "_kw_operator",
+        "_kw_pub",
+        "_kw_reference",
+        "_kw_turbofish",
+        "_let_declaration_optional1",
+        "_let_declaration_optional2",
+        "_match_block_optional1",
+        "_match_pattern_optional1",
+        "_path",
+        "_reserved_identifier",
+        "_tokens",
+        "_type_parameter_optional1",
+        "_variadic_parameter_optional1",
+        "_while_expression_optional1"
       ]
     },
     "severity": "info",
@@ -561,13 +642,19 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "42 referenced kind(s) resolved no parser kindId",
+    "message": "50 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "__jsx_start_opening_element_optional1",
         "__number_operator",
+        "_abstract_marker",
+        "_accessor_marker",
+        "_async_marker",
         "_augmented_assignment_expression_operator",
+        "_await_marker",
+        "_const_marker",
+        "_declare_marker",
         "_export_specifier_optional1",
         "_expressions",
         "_identifier",
@@ -578,38 +665,40 @@
         "_jsx_attribute_optional1",
         "_jsx_attribute_value",
         "_jsx_child",
+        "_jsx_element",
         "_jsx_element_name",
         "_jsx_identifier",
         "_jsx_opening_element_content",
         "_jsx_start_opening_element",
         "_jsx_start_opening_element_group1",
-        "_kw_abstract_marker",
-        "_kw_accessor_marker",
+        "_jsx_string",
         "_kw_asserts",
-        "_kw_async_marker",
-        "_kw_await_marker",
-        "_kw_const_marker",
-        "_kw_declare_marker",
         "_kw_optional_marker",
-        "_kw_readonly_marker",
-        "_kw_static_marker",
         "_kw_type_predicate",
-        "_kw_using_marker",
         "_mapped_type_clause_optional1",
         "_operator",
+        "_readonly_marker",
         "_semicolon",
+        "_static_marker",
         "_unary_expression_operator",
+        "_using_marker",
         "html_character_reference",
+        "jsx_attribute",
         "jsx_closing_element",
+        "jsx_element",
+        "jsx_expression",
+        "jsx_identifier",
         "jsx_namespace_name",
         "jsx_opening_element",
         "jsx_opening_element_content",
+        "jsx_self_closing_element",
         "jsx_start_opening_element_group1",
+        "statement_identifier_group1",
         "unescaped_double_jsx_string_fragment",
         "unescaped_single_jsx_string_fragment"
       ]
     },
-    "severity": "info",
+    "severity": "warning",
     "scope": "grammar"
   },
   {
@@ -639,6 +728,116 @@
         "_",
         "e",
         "n"
+      ]
+    },
+    "severity": "warning",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "code": "kindid-vaporized-symbols",
+    "message": "30 referenced kind(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "details": {
+      "kinds": [
+        "__number_operator",
+        "_abstract_marker",
+        "_accessor_marker",
+        "_async_marker",
+        "_augmented_assignment_expression_operator",
+        "_await_marker",
+        "_const_marker",
+        "_declare_marker",
+        "_jsx_opening_element_content",
+        "_jsx_start_opening_element_group1",
+        "_jsx_string",
+        "_operator",
+        "_readonly_marker",
+        "_static_marker",
+        "_unary_expression_operator",
+        "_using_marker",
+        "html_character_reference",
+        "jsx_attribute",
+        "jsx_closing_element",
+        "jsx_element",
+        "jsx_expression",
+        "jsx_identifier",
+        "jsx_namespace_name",
+        "jsx_opening_element",
+        "jsx_opening_element_content",
+        "jsx_self_closing_element",
+        "jsx_start_opening_element_group1",
+        "statement_identifier_group1",
+        "unescaped_double_jsx_string_fragment",
+        "unescaped_single_jsx_string_fragment"
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "code": "kindid-vaporized-literals",
+    "message": "18 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "details": {
+      "texts": [
+        "\n",
+        "#",
+        "/*",
+        "//",
+        "/>",
+        "0",
+        "0B",
+        "0O",
+        "0X",
+        "0b",
+        "0o",
+        "0x",
+        "</",
+        "E",
+        "\\",
+        "_",
+        "e",
+        "n"
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "code": "kindid-inline-excluded-symbols",
+    "message": "20 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "canProceed": true,
+    "details": {
+      "kinds": [
+        "__jsx_start_opening_element_optional1",
+        "_export_specifier_optional1",
+        "_expressions",
+        "_identifier",
+        "_index_signature_optional1",
+        "_infer_type_optional1",
+        "_jsx_attribute",
+        "_jsx_attribute_name",
+        "_jsx_attribute_optional1",
+        "_jsx_attribute_value",
+        "_jsx_child",
+        "_jsx_element",
+        "_jsx_element_name",
+        "_jsx_identifier",
+        "_jsx_start_opening_element",
+        "_kw_asserts",
+        "_kw_optional_marker",
+        "_kw_type_predicate",
+        "_mapped_type_clause_optional1",
+        "_semicolon"
       ]
     },
     "severity": "info",
@@ -1030,15 +1229,16 @@
     "grammar": "python",
     "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "13 referenced kind(s) resolved no parser kindId",
+    "message": "15 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
+        "_async_marker",
+        "_compound_statement",
         "_except_clause_as_optional1",
         "_exec_statement_optional1",
         "_expressions",
         "_function_definition_optional1",
-        "_kw_async_marker",
         "_kw_real",
         "_kw_type",
         "_left_hand_side",
@@ -1046,10 +1246,11 @@
         "_simple_statement",
         "_suite",
         "_unary_operator_operator",
-        "keyword_identifier"
+        "keyword_identifier",
+        "statement_group1"
       ]
     },
-    "severity": "info",
+    "severity": "warning",
     "scope": "grammar"
   },
   {
@@ -1075,6 +1276,77 @@
         "False",
         "None",
         "True"
+      ]
+    },
+    "severity": "warning",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "code": "kindid-vaporized-symbols",
+    "message": "3 referenced kind(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "details": {
+      "kinds": [
+        "_async_marker",
+        "_unary_operator_operator",
+        "statement_group1"
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "code": "kindid-vaporized-literals",
+    "message": "14 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "details": {
+      "texts": [
+        "\u0000",
+        "\n",
+        "\r",
+        "#",
+        "...",
+        "0B",
+        "0O",
+        "0X",
+        "0b",
+        "0o",
+        "0x",
+        "False",
+        "None",
+        "True"
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "code": "kindid-inline-excluded-symbols",
+    "message": "12 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "canProceed": true,
+    "details": {
+      "kinds": [
+        "_compound_statement",
+        "_except_clause_as_optional1",
+        "_exec_statement_optional1",
+        "_expressions",
+        "_function_definition_optional1",
+        "_kw_real",
+        "_kw_type",
+        "_left_hand_side",
+        "_raise_statement_optional1",
+        "_simple_statement",
+        "_suite",
+        "keyword_identifier"
       ]
     },
     "severity": "info",

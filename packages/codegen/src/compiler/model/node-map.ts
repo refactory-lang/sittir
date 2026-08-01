@@ -2592,31 +2592,29 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 	}
 }
 
-export class AssembledMulti extends AssembledNodeBase<RepeatRule | Repeat1Rule> {
+export class AssembledMulti extends AssembledNodeBase<RenderRule> {
 	readonly modelType = 'multi' as const;
-	// rule narrowed — multis are hidden repeat helpers. Classifier
-	// routes repeat / repeat1 shapes here when the hidden rule's
-	// top-level content is a repeat.
+	// rule is the normalize-phase RenderRule: wrapper-deletion already pushed
+	// the REPEAT/REPEAT1 wrapper's own multiplicity/separator down onto its
+	// content, so the wrapper-bearing node no longer exists to hold — the
+	// same facts these getters used to read off the wrapper live on `rule`
+	// itself now.
 
-	constructor(kind: string, rule: RepeatRule | Repeat1Rule, opts?: { irKey?: string }) {
+	constructor(kind: string, rule: RenderRule, opts?: { irKey?: string }) {
 		// Multi nodes are always hidden (no factoryName)
 		super(kind, rule, { hidden: true, irKey: opts?.irKey });
 	}
 
-	get elementRule(): Rule<'link'> {
-		return this.rule.content;
+	get elementRule(): RenderRule {
+		return this.rule;
 	}
 
 	get nonEmpty(): boolean {
-		return this.rule.type === REPEAT1;
+		return this.rule.multiplicity === 'nonEmptyArray';
 	}
 
 	get separator(): string | undefined {
-		// this.rule.separator is Rule<'link'>-phase-parameterized;
-		// extractSeparatorString reads the structurally identical normalize-phase
-		// shape (RepeatRule<'link'> shares RuleBase<'normalize'>.separator's shape
-		// post-PR-S) — cast the phase view.
-		return extractSeparatorString(this.rule.separator as RuleBase<'normalize'>['separator']);
+		return extractSeparatorString(this.rule.separator);
 	}
 
 	get trailing(): SeparatorFlankMode | undefined {

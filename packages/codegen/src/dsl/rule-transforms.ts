@@ -318,7 +318,17 @@ export function inlineRefs<R extends AnyRule>(
 
 export function resolveGroupOrMultiInlineTarget(target: AnyRule): AnyRule | null {
 	const isGroup = target.type === GROUP;
-	const isMulti = extractRepeatShape(target) !== null;
+	// `extractRepeatShape` finds a REPEAT/REPEAT1 wrapper node — the link-phase
+	// shape. Called post-wrapper-deletion (normalize's own `inlineHiddenSeqRefs`
+	// fixpoint, which only ever sees the wrapper-deleted `normalizedRules` view),
+	// that node is already gone: the SAME fact survives as a bare
+	// `multiplicity: 'array' | 'nonEmptyArray'` attribute on the target's own
+	// rule. Checking both keeps this function correct for its wrapper-bearing
+	// caller (`inlineRefs`, from assemble's link-phase `inlinedRule`) and its
+	// wrapper-deleted caller alike.
+	const targetMultiplicity = (target as { multiplicity?: 'optional' | 'array' | 'nonEmptyArray' }).multiplicity;
+	const isMulti =
+		extractRepeatShape(target) !== null || targetMultiplicity === 'array' || targetMultiplicity === 'nonEmptyArray';
 	if (!isGroup && !isMulti) return null;
 	return isGroup ? (target as { content: AnyRule }).content : target;
 }
