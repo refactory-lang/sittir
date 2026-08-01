@@ -83,8 +83,9 @@
  */
 
 import type { Rule, AnyRule } from '../types/rule.ts';
+import { isEnumChoiceRule } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
-import { makeRuleMetadata } from './rule-metadata.ts';
+import { makeRuleMetadata, normalizeEnumMembers } from './rule-metadata.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 import type { EnrichRule } from '../grammar-shapes/enrich-type.ts';
 import {
@@ -100,7 +101,8 @@ import {
 	typeEq
 } from '../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
-import { detectRepeatSeparator, firstStringOfChoice, rulesEqual } from './list-patterns.ts';
+import { detectRepeatSeparator, firstStringOfChoice } from './list-patterns.ts';
+import { ruleKey } from './shared.ts';
 import {
 	diagnoseParseKindCollisions,
 	type ParseKindCollisionDiagnostic,
@@ -238,11 +240,24 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			recordUnaliasDiagnostic(unaliasSink, diagnostic);
 		}
 	}
-	// Inject `_kw_<name>` hidden rules — user rules NEVER shadow them
-	// (they start with `_kw_`, a reserved prefix).
+	// Inject `_<kw>_marker` hidden rules — `registerKwRule` already checked
+	// each one against `rulesBag` (reusing or declining on collision), so
+	// nothing here can shadow a base-grammar rule of the same name.
 	// Inject clause-group rules — user rules NEVER shadow them either
 	// (they start with `_<parentKind>_optional`, a synthesized prefix).
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+	// Mint inline field-enum choices (`field('operator', choice('+', '-', …))`)
+	// as named hidden rules directly into `mergedRules`, pre-generate — see
+	// `synthesizeFieldEnumRules`'s doc comment. Runs last so it also sees
+	// clause-hoist-minted rules from the merge above. Verified across all
+	// three grammars (docs/superpowers/specs/2026-07-30-kindid-invariant-restoration.md
+	// §1): `tree-sitter generate` succeeds, `grammar.json`'s `conflicts` array
+	// is unchanged, and `node-types.json` is byte-identical for rust,
+	// typescript, and python — the `prec(-1, …)` wrapper (see
+	// `tryExtractFieldEnum`) is what keeps a newly-real hidden rule from
+	// shifting any LR state, so no grammar's `conflicts:` list needed a
+	// manual entry.
+	synthesizeFieldEnumRules(mergedRules);
 	// Register the merged rule-map so transform()/groups path-descent can resolve
 	// (and patch) enrich group-lift symbol bodies by name — the lookup that lets a
 	// path patch travel THROUGH a hoisted `_<parent>_<kind><N>` symbol into its
@@ -362,7 +377,7 @@ function applyEnrichPasses(
 ): Rule {
 	// Fixed-point loop. The current pass set has well-defined
 	// non-overlapping outputs (symbol-to-field wraps SYMBOLs as FIELD;
-	// optional-keyword wraps optional(STRING) as FIELD(SYMBOL(_kw_<x>))),
+	// optional-keyword wraps optional(STRING) as FIELD(SYMBOL(_<x>_marker))),
 	// so a single iteration converges in practice. Looping is defensive:
 	// if a pass's output ever exposes new candidates for an earlier
 	// pass (e.g. structural simplification creates a new top-level
@@ -386,7 +401,7 @@ function applyEnrichPasses(
 		// adds `_kw_<name>` hidden rules that shift tree-sitter's parser-
 		// generator tables, breaking unrelated rules' reparse (rust corpus
 		// regresses by ~47/136 with this pass on).
-		r = applyOptionalKeyword(ruleName, r, kwRules, wordMatcher);
+		r = applyOptionalKeyword(ruleName, r, kwRules, rulesBag, wordMatcher);
 		if (r === before) {
 			converged = true;
 			break;
@@ -676,12 +691,29 @@ function makeSymbol(name: string): Rule {
 	return symFn(name);
 }
 
-function registerKwRule(stringLiteral: Rule, keyword: string, kwRules: Record<string, Rule>): Rule {
+function registerKwRule(
+	stringLiteral: Rule,
+	keyword: string,
+	kwRules: Record<string, Rule>,
+	rulesBag: Record<string, Rule>
+): Rule | null {
 	const hiddenName = `_kw_${keyword}`;
-	if (!(hiddenName in kwRules)) {
+	if (hiddenName in kwRules) return makeSymbol(hiddenName);
+	const existing = rulesBag[hiddenName];
+	if (existing === undefined) {
 		kwRules[hiddenName] = stringLiteral;
+		return makeSymbol(hiddenName);
 	}
-	return makeSymbol(hiddenName);
+	// The name is a convention (`_<kw>_marker`), not a reservation — a base
+	// grammar can define its own rule at this exact name. Reuse it when it
+	// structurally IS this keyword (ruleKey covers type/named along with
+	// value, so an existing rule that displays the same text but visibly —
+	// e.g. a `named: true` ALIAS — correctly does NOT match); only decline
+	// on a genuine, unrelated collision.
+	if (ruleKey(existing as RuntimeRule) === ruleKey(stringLiteral as RuntimeRule)) {
+		return makeSymbol(hiddenName);
+	}
+	return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -1171,12 +1203,13 @@ function applyOptionalKeyword(
 	ruleName: string,
 	rule: Rule,
 	kwRules: Record<string, Rule>,
+	rulesBag: Record<string, Rule>,
 	wordMatcher: RegExp | undefined
 ): Rule {
 	// Peel prec wrappers so claimed-name set covers the inner seq.
 	const inner = peelPrec(rule);
 	const claimed = isSeqType(inner.type) ? collectFieldNamesRuntime(inner) : new Set<string>();
-	return walkOptionalKeyword(ruleName, rule, claimed, kwRules, wordMatcher) ?? rule;
+	return walkOptionalKeyword(ruleName, rule, claimed, kwRules, rulesBag, wordMatcher) ?? rule;
 }
 
 function peelPrec(rule: Rule): Rule {
@@ -1192,13 +1225,14 @@ function walkOptionalKeyword(
 	rule: Rule,
 	claimedAtSeqLevel: Set<string>,
 	kwRules: Record<string, Rule>,
+	rulesBag: Record<string, Rule>,
 	wordMatcher: RegExp | undefined
 ): Rule | null {
 	if (isSeqType(rule.type)) {
 		const members = (rule as unknown as { members: Rule[] }).members;
 		let changed = false;
 		const newMembers = members.map((m) => {
-			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, wordMatcher);
+			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
 			if (out === null) return m;
 			changed = true;
 			return out;
@@ -1209,7 +1243,7 @@ function walkOptionalKeyword(
 		const members = (rule as unknown as { members: Rule[] }).members;
 		let changed = false;
 		const newMembers = members.map((m) => {
-			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, wordMatcher);
+			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
 			if (out === null) return m;
 			changed = true;
 			return out;
@@ -1218,9 +1252,17 @@ function walkOptionalKeyword(
 	}
 	const peeled = peelOptional(rule);
 	if (peeled.isOptional) {
-		const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, kwRules, wordMatcher);
+		const replacement = tryPromoteInnerKeyword(
+			ruleName,
+			rule,
+			peeled.inner,
+			claimedAtSeqLevel,
+			kwRules,
+			rulesBag,
+			wordMatcher
+		);
 		if (replacement !== null) return replacement;
-		const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, wordMatcher);
+		const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
 		if (innerRewritten !== null) {
 			return rebuildOptional(rule, innerRewritten);
 		}
@@ -1228,14 +1270,14 @@ function walkOptionalKeyword(
 	}
 	if (isRepeatType(rule.type) || isFieldType(rule.type)) {
 		const content = (rule as unknown as { content: Rule }).content;
-		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, wordMatcher);
+		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
 		if (out === null) return null;
 		return { ...rule, content: out } as Rule;
 	}
 	// Descend through prec wrappers to reach inner seqs.
 	if (isPrecWrapper(rule as { type: string })) {
 		const content = (rule as unknown as { content: Rule }).content;
-		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, wordMatcher);
+		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
 		if (out === null) return null;
 		return { ...rule, content: out } as Rule;
 	}
@@ -1248,6 +1290,7 @@ function tryPromoteInnerKeyword(
 	inner: Rule,
 	claimed: Set<string>,
 	kwRules: Record<string, Rule>,
+	rulesBag: Record<string, Rule>,
 	wordMatcher: RegExp | undefined
 ): Rule | null {
 	const innerNorm = normalizeMember(inner);
@@ -1261,7 +1304,15 @@ function tryPromoteInnerKeyword(
 		return null;
 	}
 	claimed.add(fieldName);
-	const symbolRef = registerKwRule(inner, fieldName, kwRules);
+	const symbolRef = registerKwRule(inner, fieldName, kwRules, rulesBag);
+	if (symbolRef === null) {
+		reportSkip(
+			'optional-keyword-prefix',
+			ruleName,
+			`rule '_kw_${fieldName}' already exists in base.grammar.rules with different content`
+		);
+		return null;
+	}
 	const fieldNode = makeField(fieldName, symbolRef);
 	return rebuildOptional(optionalRule, fieldNode);
 }
@@ -1334,41 +1385,6 @@ interface ClauseHoistCounter {
 	// bag (§7.7 Principle #14) because it already travels through every
 	// applyClauseHoist recursion into the mint site.
 	readonly supertypeNames?: ReadonlySet<string>;
-}
-
-function canonicalStringifyClause(value: unknown): string {
-	if (value === null || typeof value !== 'object') {
-		return JSON.stringify(value);
-	}
-	if (Array.isArray(value)) {
-		return '[' + value.map((v) => canonicalStringifyClause(v)).join(',') + ']';
-	}
-	const obj = value as Record<string, unknown>;
-	const keys = Object.keys(obj).sort();
-	const parts: string[] = [];
-	for (const k of keys) {
-		// Runtime-only provenance stamps must not leak into this dedupe key.
-		// The sittir runtime's `createProxy` (compiler/evaluate.ts) stamps
-		// every `$.foo` reference with `_ref: { refType: 'symbol', from:
-		// currentRule, to: name }` — baking the PARENT rule's name into the
-		// body used for `visibleGroupSynthName`'s dedupe hash. Tree-sitter's
-		// own dsl.js runtime doesn't stamp this, so the two runtimes computed
-		// DIFFERENT hashes for the SAME structural body when a group is
-		// shared across parents (e.g. rust's `slice_pattern` and
-		// `tuple_struct_pattern` share one group body) — the sittir side
-		// would then mint a phantom per-parent duplicate the wire never
-		// populates, rendering as silently empty. `id`/`_ref` are the
-		// decisive keys to strip; `metadata`/`hidden`/`inline` are
-		// belt-and-braces (identical for identical structures, so stripping
-		// them can't change any dedupe decision). This function also keys
-		// `clauseDedupeMap`, so this fix realigns clause-hoist naming too —
-		// expected, not a separate concern.
-		if (k === 'id' || k === '_ref' || k === 'metadata' || k === 'hidden' || k === 'inline') continue;
-		const v = obj[k];
-		if (typeof v === 'function' || typeof v === 'undefined') continue;
-		parts.push(JSON.stringify(k) + ':' + canonicalStringifyClause(v));
-	}
-	return '{' + parts.join(',') + '}';
 }
 
 function peelOptionalSeq(rule: Rule): {
@@ -1482,7 +1498,15 @@ function applyClauseHoist(
 	// new tree-sitter LR ambiguity, not a naming collision. Threaded
 	// through every recursive call so a mint under a prec wrapper can
 	// re-apply the SAME wrapper to its own registered body.
-	ambientPrec?: Rule
+	ambientPrec?: Rule,
+	// The nearest enclosing `field(name, ...)` this position is STILL
+	// directly the content of — set on FIELD descent, propagated unchanged
+	// through PREC/REPEAT/OPTIONAL (transparent wrappers, same position),
+	// reset to `undefined` at SEQ/CHOICE member boundaries (a member is a
+	// distinct position, no longer "the field's content" as a whole).
+	// Consumed by `visibleGroupSynthName` to prefer `_<parent>_<field>`
+	// over an opaque ordinal when a group is hoisted from a fielded slot.
+	enclosingFieldName?: string
 ): Rule {
 	// Check if this node is an optional(seq) or CHOICE[seq,BLANK] pattern.
 	const peeled = peelOptionalSeq(rule);
@@ -1498,7 +1522,8 @@ function applyClauseHoist(
 			groupDedupeMap,
 			visibleGroupHiddenNames,
 			clauseGroupOwners,
-			ambientPrec
+			ambientPrec,
+			enclosingFieldName
 		);
 
 		if (ruleMatchesEmpty(recursedSeqBody)) {
@@ -1554,8 +1579,10 @@ function applyClauseHoist(
 			//     node. (Aliasing the multi-member seq DIRECTLY made tree-sitter
 			//     DISTRIBUTE the alias across the seq's members → scattered empty
 			//     leaves → reader "singular slot got array" → dropped slot.)
-			// link's `mintContentAliasKinds` resolves THROUGH the symbol to register
-			// `<name> = <hidden body>` as the IR kind.
+			// The hidden rule stays the single source of truth; link's
+			// `aliasSourceKinds` mechanism (assemble.ts) promotes it to
+			// user-facing visibility once its slot reference is hydrated,
+			// rather than the alias minting a second, duplicate rule.
 			// Keep `counter.opt` advancing too — the hidden-hoist name space must
 			// stay consistent with applyAutoGroups's ordinal numbering for any
 			// run where it is still active (it is disabled this chunk, but the
@@ -1568,7 +1595,8 @@ function applyClauseHoist(
 				counter,
 				rulesBag,
 				clauseGroupRules,
-				ambientPrec
+				ambientPrec,
+				enclosingFieldName
 			);
 			if (names !== null) {
 				// Pass 2 tag: this hidden rule backs a VISIBLE alias → keep it OUT of
@@ -1634,7 +1662,8 @@ function applyClauseHoist(
 				groupDedupeMap,
 				visibleGroupHiddenNames,
 				clauseGroupOwners,
-				ambientPrec
+				ambientPrec,
+				enclosingFieldName
 			);
 			const promoted = mintStructuredChoiceArm(
 				recursed,
@@ -1647,7 +1676,11 @@ function applyClauseHoist(
 				clauseGroupOwners,
 				// Single non-BLANK arm: no siblings, no leading-name collisions.
 				new Set(),
-				ambientPrec
+				ambientPrec,
+				// The whole optional content is still the field's logical
+				// position (this is optional(seq)/CHOICE[content, BLANK], not a
+				// seq/choice member boundary) — carry the field name in.
+				enclosingFieldName
 			);
 			const final = promoted ?? recursed;
 			if (final === opt.inner) return rule;
@@ -1778,7 +1811,8 @@ function applyClauseHoist(
 			groupDedupeMap,
 			visibleGroupHiddenNames,
 			clauseGroupOwners,
-			innerAmbientPrec
+			innerAmbientPrec,
+			enclosingFieldName
 		);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
@@ -1798,7 +1832,8 @@ function applyClauseHoist(
 			groupDedupeMap,
 			visibleGroupHiddenNames,
 			clauseGroupOwners,
-			ambientPrec
+			ambientPrec,
+			(rule as unknown as { name: string }).name
 		);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
@@ -1812,16 +1847,16 @@ function applyClauseHoist(
 // ---------------------------------------------------------------------------
 
 export function clusterSignatures(values: readonly RuntimeRule[]): string[] {
+	const indexByKey = new Map<string, number>();
 	const clusterOf: string[] = [];
-	const representatives: RuntimeRule[] = [];
 	for (const value of values) {
-		const existingIdx = representatives.findIndex((rep) => rulesEqual(rep, value));
-		if (existingIdx === -1) {
-			representatives.push(value);
-			clusterOf.push(String(representatives.length - 1));
-		} else {
-			clusterOf.push(String(existingIdx));
+		const key = ruleKey(value);
+		let idx = indexByKey.get(key);
+		if (idx === undefined) {
+			idx = indexByKey.size;
+			indexByKey.set(key, idx);
 		}
+		clusterOf.push(String(idx));
 	}
 	return clusterOf;
 }
@@ -2093,7 +2128,7 @@ function clauseHoistSynthName(
 	rulesBag: Record<string, Rule>,
 	clauseGroupRules: Record<string, Rule>
 ): string | null {
-	const key = canonicalStringifyClause(seqBody);
+	const key = ruleKey(seqBody as RuntimeRule);
 	const existing = dedupeMap[key];
 	if (existing !== undefined) {
 		// Dedupe hit: reuse the already-assigned name. Do NOT increment the
@@ -2134,18 +2169,54 @@ function visibleGroupSynthName(
 	// `or_pattern: $ => prec.left(-2, choice(...))`) doesn't strip that
 	// precedence from the extracted piece and create a NEW ambiguity that
 	// didn't exist in the un-extracted grammar.
-	ambientPrec?: Rule
+	ambientPrec?: Rule,
+	// The field this content was hoisted out of (e.g. `field('attributes',
+	// optional(seq(...)))`), if any — `applyClauseHoist` threads this
+	// through FIELD/PREC/REPEAT/OPTIONAL descent, resetting it at SEQ/CHOICE
+	// member boundaries (a seq member is no longer "the field's content").
+	// Naming the group after the field it fills (`_<parent>_<field>`) is
+	// more legible than an opaque ordinal and reuses a name the grammar
+	// author already chose, rather than minting a fresh one.
+	enclosingFieldName?: string
 ): { visibleName: string; hiddenName: string } | null {
-	const key = canonicalStringifyClause(content);
 	const registeredBody = ambientPrec ? ({ ...ambientPrec, content } as Rule) : content;
+	// Key on the registered body, not the bare content: two occurrences of
+	// the identical content under different ambient precedence must NOT
+	// dedupe to one hidden rule, or the second occurrence's precedence
+	// silently vanishes (first-registered body wins at line below).
+	const key = ruleKey(registeredBody as RuntimeRule);
 	const existing = groupDedupeMap[key];
 	if (existing !== undefined) {
 		const hiddenName = `_${existing}`;
 		if (!(hiddenName in clauseGroupRules)) clauseGroupRules[hiddenName] = registeredBody;
 		return { visibleName: existing, hiddenName };
 	}
+	const base = parentKind.replace(/^_+/, '');
+	const register = (visibleName: string): { visibleName: string; hiddenName: string } => {
+		const hiddenName = `_${visibleName}`;
+		groupDedupeMap[key] = visibleName;
+		// Pass 1 — uniform hidden creation: register the seq body as a HIDDEN
+		// rule so tree-sitter sees a single named symbol to alias.
+		clauseGroupRules[hiddenName] = registeredBody;
+		return { visibleName, hiddenName };
+	};
+	if (enclosingFieldName !== undefined) {
+		const visibleName = `${base}_${enclosingFieldName}`;
+		// Also decline when a DIFFERENT group body already claimed this same
+		// field-derived name (e.g. two distinct group bodies under the same
+		// parent both wrapped in `field('body', ...)`) — `rulesBag` alone
+		// can't see this, since a synthesized hidden name only ever lands in
+		// `clauseGroupRules`, never the base grammar.
+		if (
+			!(visibleName in rulesBag) &&
+			!(`_${visibleName}` in rulesBag) &&
+			!(`_${visibleName}` in clauseGroupRules)
+		) {
+			return register(visibleName);
+		}
+	}
 	counter.grp += 1;
-	const visibleName = `${parentKind.replace(/^_+/, '')}_group${counter.grp}`;
+	const visibleName = `${base}_group${counter.grp}`;
 	const hiddenName = `_${visibleName}`;
 	if (visibleName in rulesBag || hiddenName in rulesBag) {
 		process.stderr.write(
@@ -2153,11 +2224,7 @@ function visibleGroupSynthName(
 		);
 		return null;
 	}
-	groupDedupeMap[key] = visibleName;
-	// Pass 1 — uniform hidden creation: register the seq body as a HIDDEN rule
-	// (`_<parent>_group<N>`) so tree-sitter sees a single named symbol to alias.
-	clauseGroupRules[hiddenName] = registeredBody;
-	return { visibleName, hiddenName };
+	return register(visibleName);
 }
 
 function promoteExistingHiddenRuleName(
@@ -2240,7 +2307,12 @@ function mintStructuredChoiceArm(
 	visibleGroupHiddenNames: Set<string>,
 	clauseGroupOwners: Map<string, string>,
 	collidingLeadingNames: ReadonlySet<string>,
-	ambientPrec?: Rule
+	ambientPrec?: Rule,
+	// See visibleGroupSynthName's doc comment — same field-derived naming as
+	// applyClauseHoist's OPTIONAL-position callers thread in; only those
+	// callers pass a value, seq/choice-member callers correctly omit it (a
+	// member is a distinct position, not "the field's content" as a whole).
+	enclosingFieldName?: string
 ): Rule | null {
 	const t = (arm as { type?: string }).type;
 	if (typeof t !== 'string') return null;
@@ -2276,7 +2348,9 @@ function mintStructuredChoiceArm(
 			groupDedupeMap,
 			visibleGroupHiddenNames,
 			clauseGroupOwners,
-			collidingLeadingNames
+			collidingLeadingNames,
+			undefined,
+			enclosingFieldName
 		);
 		if (!minted) return null;
 		return { ...arm, content: minted } as Rule;
@@ -2347,7 +2421,8 @@ function mintStructuredChoiceArm(
 			counter,
 			rulesBag,
 			clauseGroupRules,
-			ambientPrec
+			ambientPrec,
+			enclosingFieldName
 		);
 		if (!names) return null;
 		visibleGroupHiddenNames.add(names.hiddenName);
@@ -2398,4 +2473,448 @@ function makeVisibleGroupAlias(symbolRef: Rule, name: string): Rule {
 	// is REQUIRED for transform-path's path-descent (see doc comment above) —
 	// the runtime alias() doesn't add it, so stamp it on the cased result.
 	return { ...aliasFn(symbolRef, symbol(name)), metadata: makeRuleMetadata({ author: 'enrich' }) };
+}
+
+// ---------------------------------------------------------------------------
+// Field-enum synthesis — promote inline field-enums to named hidden rules
+// ---------------------------------------------------------------------------
+//
+// `field('operator', choice('+', '-', …))` has no catalog row of its own —
+// tree-sitter never sees a name for the choice, only the anon tokens it
+// collapses to — the phantom-kind class documented in
+// docs/superpowers/specs/2026-07-30-kindid-invariant-restoration.md §1.
+// Mints a named hidden rule for each distinct field-enum member set directly
+// into the rules bag here, at enrich time, so BOTH runtimes (tree-sitter's
+// CLI and sittir's evaluate()) see the same name and tree-sitter issues it a
+// real symbol.
+//
+// `compiler/evaluate.ts`'s post-pass version of this same mechanism is
+// DELETED, not still running as a verification pass over it (spec
+// docs/superpowers/specs/2026-07-30-kindid-invariant-restoration.md §1 calls
+// for the post-pass to become assertion-only; that follow-up hasn't landed
+// yet). Concretely: `enrich(base)` runs before `wire()` applies overrides
+// (see e.g. `packages/typescript/grammar.sittir.ts`), so a field-enum shape
+// introduced only by an override is invisible to this pass and nothing
+// synthesizes it — a known, currently-unexercised coverage gap, not a
+// silently-caught case.
+//
+// Ported from evaluate.ts's post-pass version of the same name; differs only
+// in operating on the enrich-time `Rule` shape (dual-runtime, pre-link) and
+// dropping evaluate's `EvaluateCtx`/provenance bookkeeping and its
+// multi-generation `purgeSupersededEnumRules` cleanup — enrich runs exactly
+// once per grammar load, so neither applies here.
+
+function synthesizeFieldEnumRules(rules: Record<string, Rule>): void {
+	const fieldOccurrences = collectFieldEnumOccurrences(rules);
+	const conflictingSites = collectConflictingFieldEnumSites(fieldOccurrences);
+	const memberKeyToCanonicalName = buildCanonicalEnumNames(fieldOccurrences, rules);
+
+	const rewrites = new Map<string, Rule>();
+	const newRules = new Map<string, Rule>();
+	const sweep: FieldEnumSweepState = { rules, newRules, memberKeyToCanonicalName, conflictingSites };
+	for (const [parentKind, rule] of Object.entries(rules)) {
+		const rewritten = rewriteFieldEnums(rule, parentKind, sweep);
+		if (rewritten !== rule) rewrites.set(parentKind, rewritten);
+	}
+
+	for (const [kind, newRule] of rewrites) {
+		rules[kind] = newRule;
+	}
+	for (const [kindName, enumRule] of newRules) {
+		if (!rules[kindName]) {
+			rules[kindName] = enumRule;
+		}
+	}
+}
+
+interface FieldEnumOccurrence {
+	readonly parentKind: string;
+	readonly fieldName: string;
+	readonly memberKey: string;
+	readonly members: StringRule[];
+}
+
+function collectFieldEnumOccurrences(rules: Record<string, Rule>): FieldEnumOccurrence[] {
+	const occurrences: FieldEnumOccurrence[] = [];
+	for (const [parentKind, rule] of Object.entries(rules)) {
+		walkFieldEnums(rule, rules, parentKind, occurrences);
+	}
+	return occurrences;
+}
+
+function walkFieldEnums(
+	rule: Rule,
+	rules: Record<string, Rule>,
+	parentKind: string,
+	out: FieldEnumOccurrence[]
+): void {
+	switch (rule.type as string) {
+		case 'FIELD': {
+			const fieldRule = rule as unknown as { name: string; content: Rule };
+			// Peel one level of repeat/repeat1 wrapper so that
+			// `field(name, repeat(choice('a','b')))` is treated the same as
+			// `field(name, choice('a','b'))` for occurrence collection purposes.
+			// The repeat wrapper is preserved in the rewrite pass below.
+			const enumContent = peelRepeatWrapper(fieldRule.content);
+			const members = resolveToEnumMembers(enumContent, rules);
+			if (members !== null && members.length > 0) {
+				const memberKey = buildEnumMemberKey(members);
+				out.push({ parentKind, fieldName: fieldRule.name, memberKey, members });
+			}
+			// Always recurse into content — a field can nest other fields.
+			walkFieldEnums(fieldRule.content, rules, parentKind, out);
+			return;
+		}
+		case 'SEQ':
+		case 'CHOICE':
+			for (const m of (rule as unknown as { members: Rule[] }).members) walkFieldEnums(m, rules, parentKind, out);
+			return;
+		case 'OPTIONAL':
+		case 'REPEAT':
+		case 'REPEAT1':
+		case 'VARIANT':
+		case 'GROUP':
+		case 'TOKEN':
+			walkFieldEnums((rule as unknown as { content: Rule }).content, rules, parentKind, out);
+			return;
+		default:
+			return;
+	}
+}
+
+function buildCanonicalEnumNames(occurrences: FieldEnumOccurrence[], rules: Record<string, Rule>): Map<string, string> {
+	// Group occurrences by memberKey.
+	const byKey = new Map<string, FieldEnumOccurrence[]>();
+	for (const occ of occurrences) {
+		let group = byKey.get(occ.memberKey);
+		if (!group) {
+			group = [];
+			byKey.set(occ.memberKey, group);
+		}
+		group.push(occ);
+	}
+
+	// One O(rules) pass building memberKey → existing rule name, rather than
+	// rescanning every rule for every distinct occurrence group below.
+	// Candidates are collected per key, then resolved to the lexicographically
+	// smallest name — NOT first-registration-wins over `Object.entries`
+	// iteration order, which is insertion-order-dependent and therefore not
+	// guaranteed identical between sittir's own runtime and tree-sitter's CLI
+	// (the same live hazard `project_grammar_js_nondeterministic_reorder`
+	// documents for python's `grammar.js`). A pick that depends on host
+	// iteration order can choose DIFFERENT existing names under the two
+	// runtimes for the same member set — minting the exact class of
+	// runtime-divergent phantom this pass exists to eliminate.
+	const existingNameCandidatesByMemberKey = new Map<string, string[]>();
+	for (const [name, rule] of Object.entries(rules)) {
+		const resolved = resolveToEnumMembersOneLevelDeep(rule);
+		if (resolved === null) continue;
+		const key = buildEnumMemberKey(resolved);
+		let candidates = existingNameCandidatesByMemberKey.get(key);
+		if (!candidates) {
+			candidates = [];
+			existingNameCandidatesByMemberKey.set(key, candidates);
+		}
+		candidates.push(name);
+	}
+	const existingRuleNameByMemberKey = new Map<string, string>();
+	for (const [key, candidates] of existingNameCandidatesByMemberKey) {
+		existingRuleNameByMemberKey.set(key, candidates.sort()[0]!);
+	}
+
+	const result = new Map<string, string>();
+	const groups = Array.from(byKey.entries()).map(([memberKey, group], index) => {
+		const first = group[0]!;
+		const candidate = deriveCandidateName(group, existingRuleNameByMemberKey, first);
+		return { memberKey, group, first, index, ...candidate };
+	});
+
+	groups.sort((a, b) => a.priority - b.priority || a.index - b.index);
+
+	const claimedNames = new Set<string>();
+	for (const group of groups) {
+		const chosenName = claimUniqueEnumName(group.name, rules, group.memberKey, claimedNames);
+		claimedNames.add(chosenName);
+		result.set(group.memberKey, chosenName);
+	}
+
+	return result;
+}
+
+function fallbackName(occ: FieldEnumOccurrence): string {
+	return `_${occ.parentKind}_${occ.fieldName}`;
+}
+
+function fieldEnumSiteKey(parentKind: string, fieldName: string): string {
+	return `${parentKind} ${fieldName}`;
+}
+
+function collectConflictingFieldEnumSites(occurrences: readonly FieldEnumOccurrence[]): ReadonlySet<string> {
+	const memberKeysBySite = new Map<string, Set<string>>();
+	for (const occ of occurrences) {
+		const siteKey = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
+		let keys = memberKeysBySite.get(siteKey);
+		if (!keys) {
+			keys = new Set<string>();
+			memberKeysBySite.set(siteKey, keys);
+		}
+		keys.add(occ.memberKey);
+	}
+	const conflicting = new Set<string>();
+	for (const [siteKey, keys] of memberKeysBySite) {
+		if (keys.size > 1) conflicting.add(siteKey);
+	}
+	return conflicting;
+}
+
+function claimUniqueEnumName(
+	baseName: string,
+	rules: Record<string, Rule>,
+	memberKey: string,
+	claimedNames: ReadonlySet<string>
+): string {
+	if (!claimedNames.has(baseName) && canReuseExistingEnumName(baseName, rules, memberKey)) {
+		return baseName;
+	}
+	const slug = enumMemberKeySlug(memberKey);
+	let candidate = `${baseName}__${slug}`;
+	let attempt = 2;
+	while (
+		claimedNames.has(candidate) ||
+		(!canReuseExistingEnumName(candidate, rules, memberKey) && Object.prototype.hasOwnProperty.call(rules, candidate))
+	) {
+		candidate = `${baseName}__${slug}_${attempt}`;
+		attempt++;
+	}
+	return candidate;
+}
+
+function canReuseExistingEnumName(name: string, rules: Record<string, Rule>, memberKey: string): boolean {
+	const existing = rules[name];
+	if (existing === undefined) return true;
+	const members = resolveToEnumMembersOneLevelDeep(existing);
+	if (members === null) return false;
+	return buildEnumMemberKey(members) === memberKey;
+}
+
+function buildEnumMemberKey(members: readonly StringRule[]): string {
+	return [...members]
+		.map((m) => m.value)
+		.sort()
+		.join(',');
+}
+
+function enumMemberKeySlug(memberKey: string): string {
+	return memberKey
+		.split(',')
+		.map((member) => {
+			const encoded = Array.from(member)
+				.map((ch) => (/[A-Za-z0-9]/.test(ch) ? ch.toLowerCase() : `x${ch.codePointAt(0)!.toString(16)}`))
+				.join('');
+			return encoded.length > 0 ? encoded : 'empty';
+		})
+		.join('__');
+}
+
+function deriveCandidateName(
+	group: FieldEnumOccurrence[],
+	existingRuleNameByMemberKey: ReadonlyMap<string, string>,
+	first: FieldEnumOccurrence
+): { name: string; priority: number } {
+	// Priority 0: some existing rule, anywhere in the grammar, already has
+	// this exact member set — reuse ITS name verbatim (whatever it is,
+	// visible or hidden), regardless of whether this occurrence's field
+	// happens to share that name. Two rules with identical string-choice
+	// bodies are the same production to tree-sitter; minting a second one
+	// creates a real, separately-symbolized duplicate the LR table
+	// generator then has to disambiguate against the original (e.g.
+	// `_accessibility_modifier` vs the pre-existing `accessibility_modifier`).
+	const existingName = existingRuleNameByMemberKey.get(first.memberKey);
+	if (existingName !== undefined) {
+		if (existingName !== first.fieldName && !process.env.SITTIR_QUIET) {
+			process.stderr.write(
+				`enrich: field '${first.fieldName}' on '${first.parentKind}' reuses existing rule '${existingName}' (identical member set) instead of minting a new one\n`
+			);
+		}
+		return { name: existingName, priority: 0 };
+	}
+
+	const allSameFieldName = group.every((o) => o.fieldName === first.fieldName);
+	if (allSameFieldName) {
+		// Priority 2: shared field name across ≥2 distinct parent kinds.
+		const distinctParents = new Set(group.map((o) => o.parentKind)).size;
+		if (distinctParents >= 2) {
+			return { name: `_${first.fieldName}`, priority: 2 };
+		}
+	}
+
+	// Priority 3: fallback — first parent + field name.
+	return { name: fallbackName(first), priority: 3 };
+}
+
+interface FieldEnumSweepState {
+	readonly rules: Record<string, Rule>;
+	readonly newRules: Map<string, Rule>;
+	readonly memberKeyToCanonicalName: Map<string, string>;
+	readonly conflictingSites: ReadonlySet<string>;
+}
+
+function rewriteFieldEnums(rule: Rule, parentKind: string, sweep: FieldEnumSweepState): Rule {
+	const { rules, newRules, memberKeyToCanonicalName, conflictingSites } = sweep;
+	const recurse = (r: Rule): Rule => rewriteFieldEnums(r, parentKind, sweep);
+
+	switch (rule.type as string) {
+		case 'FIELD': {
+			const fieldRule = rule as unknown as { name: string; content: Rule; metadata?: unknown };
+			const synthesized = conflictingSites.has(fieldEnumSiteKey(parentKind, fieldRule.name))
+				? null
+				: tryExtractFieldEnum(fieldRule.content, rules, memberKeyToCanonicalName);
+			if (synthesized !== null) {
+				const { enumKindName, synthesizedRule, replacementContent } = synthesized;
+				if (!newRules.has(enumKindName)) {
+					newRules.set(enumKindName, synthesizedRule);
+				}
+				// Replace the field's inline content with the replacement content rule.
+				// For bare enum: symbol(enumKindName).
+				// For repeat/repeat1(enum): repeat/repeat1(symbol(enumKindName)).
+				return {
+					type: 'FIELD',
+					name: fieldRule.name,
+					content: replacementContent,
+					metadata: fieldRule.metadata
+				} as unknown as Rule;
+			}
+			// Content isn't an enum candidate — recurse to find nested fields.
+			const newContent = recurse(fieldRule.content);
+			if (newContent === fieldRule.content) return rule;
+			return { ...rule, content: newContent } as unknown as Rule;
+		}
+		case 'SEQ':
+		case 'CHOICE': {
+			const members = (rule as unknown as { members: Rule[] }).members;
+			const newMembers = members.map(recurse);
+			if (newMembers.every((m, i) => m === members[i])) return rule;
+			return { ...rule, members: newMembers } as unknown as Rule;
+		}
+		case 'OPTIONAL':
+		case 'REPEAT':
+		case 'REPEAT1':
+		case 'VARIANT':
+		case 'GROUP':
+		case 'TOKEN': {
+			const content = (rule as unknown as { content: Rule }).content;
+			const newContent = recurse(content);
+			if (newContent === content) return rule;
+			return { ...rule, content: newContent } as unknown as Rule;
+		}
+		default:
+			return rule;
+	}
+}
+
+function tryExtractFieldEnum(
+	content: Rule,
+	rules: Record<string, Rule>,
+	memberKeyToCanonicalName: Map<string, string>
+): { enumKindName: string; synthesizedRule: Rule; replacementContent: Rule } | null {
+	// Peel one level of repeat/repeat1 wrapper so `field(name, repeat(enum))`
+	// is handled alongside `field(name, enum)`. The wrapper type is remembered
+	// so the rewrite can restore it around the synthesized symbol reference.
+	const contentType = content.type as string;
+	const repeatWrapperType = contentType === 'REPEAT' || contentType === 'REPEAT1' ? contentType : null;
+	const innerContent = repeatWrapperType !== null ? (content as unknown as { content: Rule }).content : content;
+
+	const members = resolveToEnumMembers(innerContent, rules);
+	if (members === null || members.length === 0) return null;
+
+	const memberKey = buildEnumMemberKey(members);
+	const enumKindName = memberKeyToCanonicalName.get(memberKey);
+	if (enumKindName === undefined) return null;
+
+	// Low precedence so this newly-real rule defers to whatever else the
+	// same literal can start, without a `conflicts:` entry per occurrence.
+	// `author: 'enrich'` — this CHOICE body is minted by this pass, not
+	// authored directly in the grammar (`'grammar'` would misattribute it).
+	const synthesizedRule = {
+		type: 'PREC',
+		content: normalizeEnumMembers(members, { author: 'enrich' }),
+		value: -1
+	} as unknown as Rule;
+
+	// Already the canonical reference — nothing to rewrite. Without this,
+	// every occurrence gets rebuilt through the branch below even when it's
+	// already correct, and since that branch hand-built its SYMBOL rather
+	// than routing through the shared constructor (see below), the rebuild
+	// alone used to leak a spurious `hidden` field into tree-sitter-side
+	// grammar.json for zero semantic effect.
+	if (innerContent.type === 'SYMBOL' && (innerContent as unknown as { name: string }).name === enumKindName) {
+		return null;
+	}
+
+	// Route through the shared `makeSymbol` constructor so the ref carries
+	// the SAME construction stamps (`hidden`, `inline = name.startsWith('_')`)
+	// as every other ref under sittir's runtime — hand-building
+	// `{ type: 'SYMBOL', ... }` here skipped `inline`, which normalize's fold
+	// treats as authoritative.
+	const symRule = makeSymbol(enumKindName);
+	const replacementContent: Rule =
+		repeatWrapperType === null ? symRule : ({ ...(content as object), content: symRule } as unknown as Rule);
+
+	return { enumKindName, synthesizedRule, replacementContent };
+}
+
+function peelRepeatWrapper(rule: Rule): Rule {
+	const ruleType = rule.type as string;
+	if (ruleType === 'REPEAT' || ruleType === 'REPEAT1') return (rule as unknown as { content: Rule }).content;
+	return rule;
+}
+
+function resolveToEnumMembers(rule: Rule, rules: Record<string, Rule>): StringRule[] | null {
+	switch (rule.type as string) {
+		case 'CHOICE': {
+			// `isEnumChoiceRule` also accepts a literal-carrying SYMBOL arm, but
+			// `.literal` is a link-phase stamp that doesn't exist yet at enrich
+			// time, so at this phase the predicate reduces to the same
+			// all-STRING check this function always needed — one canonical
+			// "what counts as an enum-shaped choice" instead of a second copy.
+			return isEnumChoiceRule(rule as AnyRule)
+				? ((rule as unknown as { members: Rule[] }).members as unknown as StringRule[])
+				: null;
+		}
+		// A bare single STRING is never a field-enum candidate — that's exactly
+		// the class of hidden single-literal rules (e.g. `_kw_<name>`) already
+		// minted by an earlier enrich pass. A genuine field-enum is inherently a
+		// CHOICE of ≥2 alternatives; unlike evaluate.ts's post-pass, this
+		// enrich-time pass runs against those very hidden rules, so it must not
+		// match STRING here or one level through SYMBOL (below) — doing so once
+		// hijacked `_kw_async`'s reference into a spurious re-synthesized name.
+		case 'SYMBOL': {
+			// Follow one level of symbol indirection.
+			const name = (rule as unknown as { name: string }).name;
+			const target = rules[name];
+			if (target === undefined) return null;
+			return resolveToEnumMembersOneLevelDeep(target);
+		}
+		default:
+			return null;
+	}
+}
+
+function resolveToEnumMembersOneLevelDeep(target: Rule): StringRule[] | null {
+	// A synthesized field-enum's own body is `prec(-1, …)`-wrapped; peel it so
+	// it still resolves as a reusable CHOICE/STRING enum. `isPrecWrapper`
+	// (not a bare `type === 'PREC'` check) so a user-authored rule wrapped in
+	// `prec.left`/`prec.right`/`prec.dynamic` around a choice-of-strings is
+	// just as reusable as one wrapped in plain `prec`.
+	const unwrapped = isPrecWrapper(target as { type: string })
+		? (target as unknown as { content: Rule }).content
+		: target;
+	switch (unwrapped.type as string) {
+		case 'CHOICE':
+			return isEnumChoiceRule(unwrapped as AnyRule)
+				? ((unwrapped as unknown as { members: Rule[] }).members as unknown as StringRule[])
+				: null;
+		default:
+			return null;
+	}
 }

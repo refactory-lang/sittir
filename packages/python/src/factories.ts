@@ -1348,7 +1348,7 @@ export function buildKeywordPattern(config: T.KeywordPattern.Config) {
 
 export function buildSplatPattern(config: T.SplatPattern.Config) {
 	const _operator = coerceKindEnumStorage(config.operator, [
-		['*', TSKindId.Star2] as const,
+		['*', TSKindId.Star] as const,
 		['**', TSKindId.StarStar] as const
 	]);
 	const _identifier = config.identifier;
@@ -1580,7 +1580,7 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 	);
 }
 
-export function buildListSplatPattern(child: T.Identifier | T.Subscript | T.Attribute) {
+export function buildListSplatPattern(child: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -1589,7 +1589,9 @@ export function buildListSplatPattern(child: T.Identifier | T.Subscript | T.Attr
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.Identifier | T.Subscript | T.Attribute) => buildListSplatPattern(v) }
+				$with: {
+					$child: (v: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) => buildListSplatPattern(v)
+				}
 			},
 			{
 				content: () => _content
@@ -1599,7 +1601,7 @@ export function buildListSplatPattern(child: T.Identifier | T.Subscript | T.Attr
 	);
 }
 
-export function buildDictionarySplatPattern(child: T.Identifier | T.Subscript | T.Attribute) {
+export function buildDictionarySplatPattern(child: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -1608,7 +1610,9 @@ export function buildDictionarySplatPattern(child: T.Identifier | T.Subscript | 
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.Identifier | T.Subscript | T.Attribute) => buildDictionarySplatPattern(v) }
+				$with: {
+					$child: (v: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) => buildDictionarySplatPattern(v)
+				}
 			},
 			{
 				content: () => _content
@@ -1702,13 +1706,13 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config) {
 	const _operator = coerceKindEnumStorage(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['-', TSKindId.Dash] as const,
-		['*', TSKindId.Star2] as const,
-		['@', TSKindId.At2] as const,
-		['/', TSKindId.Slash2] as const,
+		['*', TSKindId.Star] as const,
+		['@', TSKindId.At] as const,
+		['/', TSKindId.Slash] as const,
 		['%', TSKindId.Percent] as const,
 		['//', TSKindId.SlashSlash] as const,
 		['**', TSKindId.StarStar] as const,
-		['|', TSKindId.Pipe2] as const,
+		['|', TSKindId.Pipe] as const,
 		['&', TSKindId.Amp] as const,
 		['^', TSKindId.Caret] as const,
 		['<<', TSKindId.LtLt] as const,
@@ -2277,7 +2281,7 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config) {
 				_name,
 				_value,
 				$with: {
-					name: (value: T.Identifier) => buildKeywordArgument({ ...config, name: value }),
+					name: (value: T.Identifier | T.KeywordIdentifier) => buildKeywordArgument({ ...config, name: value }),
 					value: (value: T.Expression) => buildKeywordArgument({ ...config, value: value })
 				}
 			},
@@ -3110,6 +3114,20 @@ export function buildDictionaryGroup1(
 	);
 }
 
+export function buildAugmentedAssignmentOperator(
+	text: '+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='
+) {
+	return withMethods(
+		{
+			$type: TSKindId.AugmentedAssignmentOperator as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export function buildExceptClauseAs(config: T.ExceptClauseAs.Config) {
 	const _value = config.value;
 	const _alias = config.alias;
@@ -3795,6 +3813,7 @@ export type FluentKindMap = {
 	_pattern_list_group1: FluentNode<'_pattern_list_group1', T.PatternListGroup1.Config>;
 	_slice_group1: FluentNode<'_slice_group1', T.SliceGroup1.Config>;
 	_dictionary_group1: FluentNode<'_dictionary_group1', T.DictionaryGroup1.Config>;
+	_augmented_assignment_operator: T.AugmentedAssignmentOperator;
 	_except_clause_as: T.ExceptClauseAs;
 	case_tuple_pattern: FluentNode<'case_tuple_pattern', T.CaseTuplePattern.Config>;
 	case_list_pattern: FluentNode<'case_list_pattern', T.CaseListPattern.Config>;
@@ -3958,6 +3977,7 @@ export const _factoryMap = {
 	_pattern_list_group1: buildPatternListGroup1,
 	_slice_group1: buildSliceGroup1,
 	_dictionary_group1: buildDictionaryGroup1,
+	_augmented_assignment_operator: buildAugmentedAssignmentOperator,
 	_except_clause_as: buildExceptClauseAs,
 	case_tuple_pattern: buildCaseTuplePattern,
 	case_list_pattern: buildCaseListPattern,

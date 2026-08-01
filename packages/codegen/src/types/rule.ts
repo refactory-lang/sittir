@@ -262,10 +262,28 @@ export function isEnumChoiceRule<R extends AnyRule>(
 export type SupertypeRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SUPERTYPE;
 	readonly name: string;
-	readonly subtypes: string[];
-
-	readonly subtypeParseNames?: Readonly<Record<string, string>>;
+	// Each subtype is a real SymbolRule reference (or, for a bare STRING
+	// choice arm with no natural symbol, one synthesized from its catalog
+	// entry) — never a name string. This is the same convention every other
+	// rule-tree reference to another kind uses (SeqRule/ChoiceRule members),
+	// so subtype kindId/aliasedFromId stamp inline on the ref itself
+	// (`kindId`, `aliasedFrom`, `aliasedFromId`) instead of a parallel
+	// name-keyed table — `aliasedFrom ?? name` recovers the storage name.
+	readonly subtypes: SymbolRule<T>[];
 };
+
+/**
+ * Storage→parse name pairs for the aliased arms of a supertype's subtypes —
+ * projected on demand from `SupertypeRule.subtypes` (single source of truth;
+ * replaces the former separately-stored `subtypeParseNames` field).
+ */
+export function subtypeParseNamesOf<T extends PhaseName>(rule: SupertypeRule<T>): Readonly<Record<string, string>> {
+	const pairs: Record<string, string> = {};
+	for (const s of rule.subtypes) {
+		if (s.aliasedFrom !== undefined && s.aliasedFrom !== s.name) pairs[s.aliasedFrom] = s.name;
+	}
+	return pairs;
+}
 
 export type GroupRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof GROUP;
@@ -280,11 +298,13 @@ export type GroupRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 export type StringRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof STRING;
 	readonly value: string;
+	readonly resolvedKindId?: number;
 };
 
 export type PatternRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof PATTERN;
 	readonly value: string;
+	readonly resolvedKindId?: number;
 };
 
 // ---------------------------------------------------------------------------
@@ -316,6 +336,8 @@ export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly literal?: string;
 	readonly hidden?: boolean;
 	readonly aliasedFrom?: string;
+	readonly kindId?: number;
+	readonly aliasedFromId?: number;
 };
 
 export type AliasRule<Phase extends PhaseName = 'link'> = Phase extends WrapperPhase

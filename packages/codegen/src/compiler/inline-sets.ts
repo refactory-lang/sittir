@@ -16,7 +16,7 @@
 
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { classifyNode } from './assemble.ts';
+import { isNonInlinableLeafShape } from './assemble.ts';
 import type { LinkedGrammar } from './types.ts';
 
 export function loadGrammarJsonInlineList(grammar: string): readonly string[] | undefined {
@@ -75,14 +75,12 @@ export function loadGrammarJsonAliasMap(grammar: string): ReadonlyMap<string, st
 	return out;
 }
 
-const NON_INLINABLE_MODEL_TYPES = new Set(['supertype', 'keyword', 'token', 'pattern', 'enum']);
-
 export function buildInlinableKinds(inlineKinds: ReadonlySet<string>, linked: LinkedGrammar): Set<string> {
 	return new Set(
 		[...inlineKinds].filter((k) => {
 			const rule = linked.rules[k];
 			if (!rule) return true; // un-classifiable (no IR rule) — leave inlinable
-			return !NON_INLINABLE_MODEL_TYPES.has(classifyNode(k, rule, { parentAliasedKinds: linked.parentAliasedKinds }));
+			return !isNonInlinableLeafShape(rule);
 		})
 	);
 }

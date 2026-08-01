@@ -40,7 +40,13 @@ lookups. The lookups agree today only by discipline, not by construction.
 ## Source inventory (audited)
 
 153 kind names across the three grammars have no kind-id row
-(rust 53, typescript 69, python 31), from five sources:
+(rust 53, typescript 69, python 31), from five sources. The mechanical
+ratchet's initial per-grammar ceilings (rust 54, typescript 70, python 31 —
+155 total; see `phantom-kind-ratchet.test.ts`'s first-committed `CEILINGS`)
+run 2 higher than this manual breakdown (1 each in rust and typescript) —
+the generated-consts scan the ratchet runs against is the authoritative
+count; treat 155 as the real starting baseline and this table as the
+composition of the 153 its five named sources account for:
 
 | # | Source (mint site) | Count | Nature |
 |---|---|---|---|
@@ -50,14 +56,14 @@ lookups. The lookups agree today only by discipline, not by construction.
 | d | VAPORIZED (in grammar.json, no parser symbol; mostly unreachable jsx in the non-tsx dialect) | 15 | dead surface — wants pruning/flagging, not id routing |
 | e | `collectAnonymousNodes` (assemble.ts) keying anonymous nodes by RAW literal text while the catalog names the same tokens sanitized (`comma`, `lparen`, ...) | 94 | naming-domain mismatch — the tokens HAVE ids under other names |
 
-Two further mint sites are zero-phantom today but are the invariant's live
-risk surface, and one of them is the feasibility proof for §1: auto-group
-synthesis (`applyAutoGroups`, dsl/wire) already runs on the wire path
-pre-generate AND deposits into evaluate — the exact dual-execution pattern
-field-enum routing needs, working in production. Body-pattern group /
-renderAs / visibleExternals injection is dual-registered the same way. Any
-IR-vs-grammar.js desugar divergence at these sites mints a phantom silently
-— the link diagnostic is their regression gate.
+Two further mint-site families are zero-phantom today but are the
+invariant's live risk surface, and the feasibility proof for §1 lives in
+enrich: `applyClauseHoist` mints synthesized rule names directly into
+`base.grammar.rules` pre-generate — DSL-native minting that reaches both
+executions, working in production. Group/renderAs/visibleExternals
+injection is dual-registered the same way. Any IR-vs-grammar.js desugar
+divergence at these sites mints a phantom silently — the link diagnostic is
+their regression gate.
 
 Load-bearing: (a) and (c) are live on the TS construction surface
 (`from.ts` leaf-registry string dispatch; `kindIdFromName` throws
@@ -78,8 +84,9 @@ registration currently in evaluate's `synthesizeFieldEnumRules` run as a
 DSL finalization pass, so `_<parent>_<field>` / `_<field>` rules are present
 in the grammar tree-sitter compiles and receive real symbols
 (`sym__member_expression_separator`). This placement is proven in-repo:
-auto-group synthesis already runs on the wire path pre-generate and deposits
-the same rules into evaluate — zero phantoms from that class today.
+enrich's clause-hoist (`applyClauseHoist`) already mints synthesized rule
+names directly into `base.grammar.rules` pre-generate — zero phantoms from
+that class today.
 
 Parse behavior is unchanged by construction: hidden-symbol nodes are elided
 from the CST (children promoted to the parent), and tree-sitter propagates an
@@ -111,17 +118,20 @@ Constraints:
 ### 1b. Catalog-first naming for anonymous nodes (largest class, no parser change)
 
 `collectAnonymousNodes` resolves each literal through the catalog
-(`findGeneratedKindEntry`) and keys the node by the catalog row's kind name,
-falling back to raw text only with a diagnostic. Kills the 94-name class (e)
-outright — these tokens already have ids; only the naming domain diverged.
+(`findEntryForLiteralText`, anon-token-first) and keys the node by the
+catalog row's kind name, falling back to raw text only with a diagnostic.
+Kills the 94-name class (e) outright — these tokens already have ids; only
+the naming domain diverged.
 
 ### 2. Link is the single stamping point (ids are consumed uniformly)
 
 `link()` already receives `generatedIdTables` (parsed from `parser.c`). A
 link pass stamps every value-bearing rule-tree leaf:
 
-- `SYMBOL` → `storageKindId` (by `aliasedFrom ?? name`) and `parseKindId`
-  (by `name` / alias-occurrence row) — the same pair `deriveValuesForRule`
+- `SYMBOL` → `kindId` (by `name`, always) and `aliasedFromId` (by
+  `aliasedFrom`, only when present — no fallback baked into the stamp; a
+  consumer needing the effective storage identity computes
+  `aliasedFromId ?? kindId` itself) — the same pair `deriveValuesForRule`
   computes today, moved to the tree.
 - `STRING` / fixed-literal `PATTERN` → `resolvedKindId` (by literal text,
   anon-token-first).
@@ -152,9 +162,11 @@ compile-time signal. Recommended order:
    its unstampable-leaf report is the live, always-current phantom inventory
    (regenerated per build into grammar-diagnostics.json) that scopes the
    later steps precisely — superseding one-off audits. Ratchet: the
-   diagnostic count starts at the audited 153 and may only shrink.
+   diagnostic count starts at the measured 155 (the ratchet's actual
+   first-committed ceiling; see the source-inventory note above) and may
+   only shrink.
 2. **Catalog-first anonymous-node naming (1b)** — pure naming, no parser
-   change, removes 94 of 153.
+   change, removes 94 of 155.
 3. **Pre-generate synthesis routing**, driven by the diagnostic, one
    synthesis source at a time (field-enums first — the
    `_member_expression_separator` class, 39 names), each behind the

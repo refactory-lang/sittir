@@ -4,23 +4,30 @@ Generate typed factories, render templates, and native bindings from tree-sitter
 
 ## Quick reference
 
-- Package manager: `pnpm`
-- Validate: `pnpm run validate:native`
+Dev commands are sourced from [DEVELOPMENT.md](DEVELOPMENT.md) — the three most-used, inline for convenience:
+
+- Validate: `pnpm run validate:native` (compare runs: `pnpm run validate:history`)
 - Generate a grammar package: `pnpm exec tsx packages/cli/src/cli.ts gen --grammar <rust|typescript|python> --all --output packages/<lang>/src`
-- Developer diagnostics: `pnpm exec tsx packages/cli/src/cli.ts tool <tool> [flags]` (run with `--help` for the list). Tools include `counts`, `dump-ast-mismatches`, `diff-failures`, `probe-kind`, `profile`, and others — see [project workflow doc](.claude/project-workflow.md#diagnostic-tools-sittirtools) for the full list and authoring conventions.
-- CLI command reference: [docs/cli-command-glossary.md](docs/cli-command-glossary.md) — every `sittir` command, generated from the commander tree.
+- Developer diagnostics: `pnpm exec tsx packages/cli/src/cli.ts tool <tool> [flags]` (`--help` lists all) — see [project workflow doc](.claude/project-workflow.md#diagnostic-tools-sittirtools) for tool highlights and authoring conventions.
+
+CLI command reference: [docs/cli-command-glossary.md](docs/cli-command-glossary.md) — every `sittir` command, generated from the commander tree.
 
 ## Universal rules
 
 - DRY is the #1 core correctness rule for codegen work: each fact should have one source and one derivation. For example, the source of truth for node kinds is the tree-sitter grammar; the source of truth for factory signatures is the rendered template. Avoid hand-editing derived outputs, and fix the source or codegen logic instead.
-- The js/dispatch-based engine is **deprecated**. The Rust render engine, Rust Tree-Sitter bindings are the source of truth.
+- The js/dispatch-based render engine is **removed** (`@sittir/legacy-core` survives only as diagnostic/validator tooling). The Rust render engine and Rust tree-sitter bindings are the source of truth; `createEngine()` is native-only and throws rather than falling back.
 - Generated artifacts are derived outputs. Do not hand-edit `packages/{rust,python,typescript}/src/*`, `packages/{rust,python,typescript}/templates/*.jinja`, `packages/{rust,python,typescript}/.sittir/*`, or `packages/{rust,python,typescript}/overrides.suggested.ts`; fix codegen or `packages/<lang>/grammar.sittir.ts` and regenerate.
 - TypeScript is ESM; local imports use `.ts` extensions.
 - Comments and documentation (glossary entries, ADRs, JSDoc, inline) must not reference spec/plan/PR/task numbers (e.g. "PR-137", "ADR-0009", "spec 026", "R11", "task 8"). Those planning artifacts get archived, renamed, or deleted — a numbered reference rots into a dangling pointer nobody can resolve. Describe the actual constraint, invariant, or rationale directly instead of citing where it was decided.
+- The grammar executes TWICE: tree-sitter's CLI runs the esbuild-bundled `.sittir/grammar.js`, and sittir's `evaluate()` re-runs the same DSL — both call the same bundled enrich/wire code, so DSL-layer synthesis reaches parser AND IR, while anything minted only in compile-time post-passes exists only on the sittir side (a phantom kind: a name with no parser-issued kindId). Ground truth for "did tree-sitter see it" is `.sittir/src/grammar.json`. Full model: [Codegen glossary](docs/compiler-phase-glossary.md).
+
+## Working standards
+
+@.claude/coding-standards.md
 
 ## Detailed instructions
 
-- [Compiler phase glossary](docs/compiler-phase-glossary.md) — per-function reference for every phase.
+- [Codegen glossary](docs/compiler-phase-glossary.md) — DSL layer + dual-pipeline execution model + compiler-phase narrative, with an index into the per-directory function glossaries (`docs/glossary/`).
 - [Architecture and data model](.claude/architecture.md)
 - [TypeScript and codegen conventions](.claude/codegen-conventions.md)
 - [Grammar, templates, and overrides workflow](.claude/grammar-workflow.md)

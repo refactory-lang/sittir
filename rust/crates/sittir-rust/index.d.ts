@@ -199,7 +199,7 @@ export interface AsyncBlockTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _move_marker?: MoveMarkerTransport
+  _move_marker?: KwMoveMarkerTransport
   _block: Box<BlockTransport>
 }
 
@@ -480,7 +480,7 @@ export interface ClosureExpressionTransport {
   '$triviaData'?: TransportTrivia
   _static_marker?: boolean
   _async_marker?: boolean
-  _move_marker?: MoveMarkerTransport
+  _move_marker?: KwMoveMarkerTransport
   _parameters: ClosureParametersTransport
   _content: Box<ClosureExpressionContentTransportSlot>
 }
@@ -766,7 +766,7 @@ export interface ExternCrateDeclarationTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _visibility_modifier?: VisibilityModifierTransport
-  _crate: string
+  _crate: CrateTransport
   _name: IdentifierTransport
   _alias?: IdentifierTransport
 }
@@ -886,8 +886,8 @@ export interface FieldPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _ref_marker?: boolean
-  _mutable_specifier?: _MutableSpecifierTransport
+  _ref_marker?: KwRefMarkerTransport
+  _mutable_specifier?: MutableSpecifierTransport
   _content: FieldPatternContentTransportSlot
 }
 
@@ -1032,7 +1032,7 @@ export interface GenBlockTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _move_marker?: MoveMarkerTransport
+  _move_marker?: KwMoveMarkerTransport
   _block: Box<BlockTransport>
 }
 
@@ -1151,7 +1151,7 @@ export interface ImplItemTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _unsafe_marker?: UnsafeMarkerTransport
+  _unsafe_marker?: boolean
   _type_parameters?: TypeParametersTransport
   _trait_clause?: ImplItemTraitClauseTransportSlot
   _type: _TypeTransport
@@ -1272,7 +1272,7 @@ export interface LetDeclarationTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _mutable_specifier?: _MutableSpecifierTransport
+  _mutable_specifier?: MutableSpecifierTransport
   _pattern: PatternTransport
   _type?: _TypeTransport
   _value?: ExpressionTransport
@@ -1511,7 +1511,7 @@ export interface MutPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _mutable_specifier: _MutableSpecifierTransport
+  _mutable_specifier: MutableSpecifierTransport
   _pattern: Box<PatternTransport>
 }
 
@@ -1615,7 +1615,7 @@ export interface ParameterTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _mutable_specifier?: _MutableSpecifierTransport
+  _mutable_specifier?: MutableSpecifierTransport
   _pattern: ParameterPatternTransportSlot
   _type: _TypeTransport
 }
@@ -1664,7 +1664,7 @@ export interface RangeExpressionBinaryTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _start: Box<ExpressionTransport>
-  _operator: RangeExpressionBinaryOperatorEnum
+  _operator: Box<AnyTransport>
   _end: Box<ExpressionTransport>
 }
 
@@ -1677,7 +1677,7 @@ export interface RangeExpressionPostfixTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _start: Box<ExpressionTransport>
-  _operator: OperatorUX2ex2eTransport
+  _operator: KwOperatorTransport
 }
 
 export interface RangeExpressionPrefixTransport {
@@ -1688,7 +1688,7 @@ export interface RangeExpressionPrefixTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _operator: OperatorUX2ex2eTransport
+  _operator: KwOperatorTransport
   _end: Box<ExpressionTransport>
 }
 
@@ -1792,7 +1792,7 @@ export interface ReferencePatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _mutable_specifier?: _MutableSpecifierTransport
+  _mutable_specifier?: MutableSpecifierTransport
   _pattern: Box<PatternTransport>
 }
 
@@ -1805,7 +1805,7 @@ export interface ReferenceTypeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _lifetime?: LifetimeTransport
-  _mutable_specifier?: _MutableSpecifierTransport
+  _mutable_specifier?: MutableSpecifierTransport
   _type: Box<_TypeTransport>
 }
 
@@ -1900,8 +1900,8 @@ export interface SelfParameterTransport {
   '$triviaData'?: TransportTrivia
   _reference?: boolean
   _lifetime?: LifetimeTransport
-  _mutable_specifier?: _MutableSpecifierTransport
-  _self: string
+  _mutable_specifier?: MutableSpecifierTransport
+  _self: Self_Transport
 }
 
 export interface ShorthandFieldInitializerTransport {
@@ -2060,7 +2060,7 @@ export interface TokenBindingPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _name: MetavariableTransport
-  _type: TokenBindingPatternTypeEnum
+  _type: FragmentSpecifierEnum
 }
 
 export interface TokenRepetitionPatternTransport {
@@ -2072,7 +2072,7 @@ export interface TokenRepetitionPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _separator?: boolean
-  _operator: OperatorEnum
+  _operator: Box<AnyTransport>
   _token_pattern?: Array<TokenPatternTransport>
 }
 
@@ -2085,7 +2085,7 @@ export interface TokenRepetitionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _separator?: boolean
-  _operator: OperatorEnum
+  _operator: Box<AnyTransport>
   _tokens?: Array<TokensTransport>
 }
 
@@ -2197,7 +2197,7 @@ export interface TraitItemTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _visibility_modifier?: VisibilityModifierTransport
-  _unsafe_marker?: UnsafeMarkerTransport
+  _unsafe_marker?: boolean
   _name: IdentifierTransport
   _type_parameters?: TypeParametersTransport
   _bounds?: TraitBoundsTransport
@@ -2392,7 +2392,7 @@ export interface UnaryExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _operator: UnaryExpressionOperatorEnum
+  _operator: Box<AnyTransport>
   _operand: Box<ExpressionTransport>
 }
 
@@ -2533,7 +2533,7 @@ export interface VariadicParameterTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _mutable_specifier?: _MutableSpecifierTransport
+  _mutable_specifier?: MutableSpecifierTransport
   _pattern?: PatternTransport
 }
 

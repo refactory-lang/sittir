@@ -16,6 +16,7 @@
  * (T017) owns filesystem I/O and the template-directory copy.
  */
 
+import { writeSync } from 'node:fs';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import type {
@@ -336,7 +337,7 @@ function collectEffectiveSupertypeTransportShape(
 	for (const [storage, parse] of Object.entries(supertypeNode.subtypeParseNames ?? {})) {
 		if (!state.parseNames.has(storage)) state.parseNames.set(storage, parse);
 	}
-	for (const subKind of supertypeNode.subtypes) {
+	for (const subKind of supertypeNode.subtypeNames) {
 		const subNode = nodeMap.nodes.get(subKind);
 		if (subNode === undefined) continue;
 		if (isReservedSupertypeTransportNode(subNode)) {
@@ -1892,7 +1893,7 @@ function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: Nod
 			if (node.modelType !== 'supertype') continue;
 			if (!used.has(node.typeName)) continue;
 			const supertypeNode = node as AssembledSupertype;
-			for (const subKind of supertypeNode.subtypes) {
+			for (const subKind of supertypeNode.subtypeNames) {
 				const subNode = nodeMap.nodes.get(subKind);
 				if (subNode === undefined || subNode.modelType !== 'supertype') continue;
 				const enumName = `${rustTypeIdent(subNode.typeName)}Transport`;
@@ -2125,7 +2126,7 @@ function emitSupertypeTransportEnum(
 		boxedInEnum(subKind, ownerKind, subNode, nodeMap);
 
 	// See `admitsVerbatimCollapse` docstring for the full rationale.
-	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypes, nodeMap);
+	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypeNames, nodeMap);
 
 	const emitDecodeTrials = (leafOnly = false, indent = '                '): string[] => {
 		// Self-alias / reserved-supertype kind_id: parser sent the supertype's
@@ -2359,7 +2360,7 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	const ownerKind = supertypeNode.kind;
 
 	// See `admitsVerbatimCollapse` docstring for the full rationale.
-	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypes, nodeMap);
+	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypeNames, nodeMap);
 
 	lines.push(`fn ${fnName}(t: &${enumName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(`    match t {`);
@@ -2388,7 +2389,7 @@ function collectConcreteTransportKinds(kind: string, nodeMap: NodeMap, seen: Set
 	if (node === undefined) return [];
 	if (node.modelType !== 'supertype') return [kind];
 	const concreteKinds = new Set<string>();
-	for (const subtype of (node as AssembledSupertype).subtypes) {
+	for (const subtype of (node as AssembledSupertype).subtypeNames) {
 		for (const concreteKind of collectConcreteTransportKinds(subtype, nodeMap, seen)) {
 			concreteKinds.add(concreteKind);
 		}
@@ -2412,6 +2413,36 @@ interface AcceptedTransportIdsInput {
 	parseName?: string;
 }
 
+// ---------------------------------------------------------------------------
+// Fast-path coverage (env-gated via `DBG_KINDID_FASTPATH=1`): tallies how
+// often `resolveLiteralKindId`/`resolveAcceptedTransportIds` are satisfied by
+// their link-time mint-stamp fast path versus falling through to the
+// name/text derivation chains. The fallback chains stay load-bearing (not
+// every kind routes through the catalog yet) — this is measurement only.
+// ---------------------------------------------------------------------------
+const DBG_KINDID_FASTPATH = process.env.DBG_KINDID_FASTPATH === '1';
+let literalKindIdFastPathHits = 0;
+let literalKindIdFallbackHits = 0;
+let transportIdsFastPathHits = 0;
+let transportIdsFallbackHits = 0;
+let kindidFastPathDumpRegistered = false;
+function registerKindIdFastPathDump(): void {
+	if (kindidFastPathDumpRegistered) return;
+	kindidFastPathDumpRegistered = true;
+	process.once('exit', () => {
+		// `process.stderr.write` isn't guaranteed to flush from an `exit`
+		// listener when stderr is an async pipe (as in CI) — Node only
+		// permits synchronous work during `exit`, so a buffered async write
+		// can be silently truncated or dropped. `writeSync` bypasses the
+		// stream's buffering entirely.
+		writeSync(
+			2,
+			`[DBG_KINDID_FASTPATH] resolveLiteralKindId: stamp=${literalKindIdFastPathHits} fallback=${literalKindIdFallbackHits}; ` +
+				`resolveAcceptedTransportIds: stamp=${transportIdsFastPathHits} fallback=${transportIdsFallbackHits}\n`
+		);
+	});
+}
+
 /**
  * Single derivation of "which numeric kind_ids should route to this concrete
  * kind at this reference site" — shared by `emitPerSlotChildEnum` and
@@ -2423,15 +2454,20 @@ interface AcceptedTransportIdsInput {
  */
 function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[] {
 	const { kind, node, nodeMap, kindIdByKind, kindEntries, stampedIds, parseAliases, parseName } = input;
-	const acceptedIds: number[] =
-		stampedIds !== undefined
-			? [...stampedIds]
-			: [
-					...new Set<string>([
-						...collectConcreteTransportKinds(kind, nodeMap),
-						...acceptedTransportKinds(kind, nodeMap, parseAliases)
-					])
-				].map((k) => kindIdByKind.get(k)).filter((id): id is number => id !== undefined);
+	if (DBG_KINDID_FASTPATH) registerKindIdFastPathDump();
+	let acceptedIds: number[];
+	if (stampedIds !== undefined) {
+		if (DBG_KINDID_FASTPATH) transportIdsFastPathHits++;
+		acceptedIds = [...stampedIds];
+	} else {
+		if (DBG_KINDID_FASTPATH) transportIdsFallbackHits++;
+		acceptedIds = [
+			...new Set<string>([
+				...collectConcreteTransportKinds(kind, nodeMap),
+				...acceptedTransportKinds(kind, nodeMap, parseAliases)
+			])
+		].map((k) => kindIdByKind.get(k)).filter((id): id is number => id !== undefined);
+	}
 	if (parseName !== undefined && kindEntries !== undefined) {
 		const parseEntry = findKindEntry(kindEntries, parseName);
 		const parseId = parseEntry?.parseId ?? parseEntry?.id;
@@ -2620,23 +2656,17 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 	return entries;
 }
 
-/**
- * Single derivation of "which numeric kind_id backs this literal" — a
- * literal's `.kind` is either the rendered TEXT itself (a bare terminal, no
- * underlying kind) or the name of the real hidden kind it collapsed from
- * (`_newline`, `_not_escape_sequence`, ...). In the latter case `.kind`
- * uniquely identifies one catalog row; TEXT does not — two unrelated
- * hidden kinds can render identical text (e.g. two single-backslash
- * tokens), and matching by text first would silently pick whichever one
- * the catalog happens to list first, leaving the other's id unroutable.
- * Prefer the unambiguous kind-name lookup whenever one exists.
- */
 function resolveLiteralKindId(
 	literal: TransportLiteral,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	kindIdByKind?: ReadonlyMap<string, number>
 ): number | undefined {
-	if (literal.resolvedKindId !== undefined) return literal.resolvedKindId;
+	if (DBG_KINDID_FASTPATH) registerKindIdFastPathDump();
+	if (literal.resolvedKindId !== undefined) {
+		if (DBG_KINDID_FASTPATH) literalKindIdFastPathHits++;
+		return literal.resolvedKindId;
+	}
+	if (DBG_KINDID_FASTPATH) literalKindIdFallbackHits++;
 	if (kindEntries === undefined) return kindIdByKind?.get(literal.kind);
 	const byText = (): number | undefined => findKindEntryForLiteral(kindEntries, literal.text)?.id;
 	const byKind = (): number | undefined => findKindEntry(kindEntries, literal.kind)?.id;
@@ -2965,8 +2995,8 @@ function renderAnyTransportWithNapiFromValue(
 	// Use the same emittedNodeIds set to skip KindIds already claimed by node arms.
 	// Id resolution is `resolveLiteralKindId` — text-first for bare terminals
 	// (a literal whose text equals a NAMED rule's name, e.g. python's `'type'`,
-	// must resolve through the anon-token catalog row, not the rule's own id —
-	// #129), kind-name-first for hidden-keyword/token/pattern collapses (whose
+	// must resolve through the anon-token catalog row, not the rule's own id),
+	// kind-name-first for hidden-keyword/token/pattern collapses (whose
 	// `.kind` uniquely identifies one row; TEXT does not when two such kinds
 	// render identical text).
 	for (const [index, literal] of literals.entries()) {

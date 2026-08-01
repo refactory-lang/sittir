@@ -234,8 +234,6 @@ import type {
 	MutableSpecifierTree,
 	NegativeLiteral,
 	NegativeLiteralTree,
-	Operator,
-	OperatorTree,
 	OrPattern,
 	OrPatternTree,
 	OrderedFieldDeclarationList,
@@ -257,18 +255,12 @@ import type {
 	QualifiedType,
 	QualifiedTypeTree,
 	RangeExpression,
-	RangeExpressionBinaryOperator,
-	RangeExpressionBinaryOperatorTree,
 	RangeExpressionTree,
 	RangePattern,
 	RangePatternTree,
 	RawStringLiteral,
 	RawStringLiteralContent,
 	RawStringLiteralContentTree,
-	RawStringLiteralEnd,
-	RawStringLiteralEndTree,
-	RawStringLiteralStart,
-	RawStringLiteralStartTree,
 	RawStringLiteralTree,
 	RefPattern,
 	RefPatternTree,
@@ -328,8 +320,6 @@ import type {
 	SuperTree,
 	TokenBindingPattern,
 	TokenBindingPatternTree,
-	TokenBindingPatternType,
-	TokenBindingPatternTypeTree,
 	TokenKeywords,
 	TokenKeywordsTree,
 	TokenRepetition,
@@ -389,8 +379,6 @@ import type {
 	TypeParameters,
 	TypeParametersTree,
 	UnaryExpression,
-	UnaryExpressionOperator,
-	UnaryExpressionOperatorTree,
 	UnaryExpressionTree,
 	UnionItem,
 	UnionItemTree,
@@ -774,26 +762,6 @@ export type _Type_PrimitiveType = _TypeAssert<
 		| TSKindId.Char
 	>
 >;
-export type _Type_TokenBindingPatternType = _TypeAssert<
-	_TypeExtends<
-		TokenBindingPatternType['$type'],
-		| TSKindId.AnonBlock
-		| TSKindId.Expr
-		| TSKindId.Expr2021
-		| TSKindId.Ident
-		| TSKindId.Item
-		| TSKindId.AnonLifetime
-		| TSKindId.Literal
-		| TSKindId.Meta
-		| TSKindId.Pat
-		| TSKindId.PatParam
-		| TSKindId.Path
-		| TSKindId.Stmt
-		| TSKindId.Tt
-		| TSKindId.Ty
-		| TSKindId.Vis
-	>
->;
 export type _Type_CompoundAssignmentExprOperator = _TypeAssert<
 	_TypeExtends<
 		CompoundAssignmentExprOperator['$type'],
@@ -819,8 +787,8 @@ export type _Type_TokenTreePunctuation = _TypeAssert<
 		| TSKindId.Percent
 		| TSKindId.Caret
 		| TSKindId.Bang
-		| TSKindId.Amp2
-		| TSKindId.Pipe2
+		| TSKindId.Amp
+		| TSKindId.Pipe
 		| TSKindId.AmpAmp
 		| TSKindId.PipePipe
 		| TSKindId.LtLt
@@ -901,24 +869,9 @@ export type _Type_LineCommentRegularDslash = _TypeAssert<
 export type _Type_LineCommentContent = _TypeAssert<
 	_TypeExtends<LineCommentContent['$type'], TSKindId.LineCommentContent>
 >;
-export type _Type_Operator = _TypeAssert<
-	_TypeExtends<Operator['$type'], TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>
->;
-export type _Type_UnaryExpressionOperator = _TypeAssert<
-	_TypeExtends<UnaryExpressionOperator['$type'], TSKindId.Dash | TSKindId.Star | TSKindId.Bang>
->;
-export type _Type_RangeExpressionBinaryOperator = _TypeAssert<
-	_TypeExtends<RangeExpressionBinaryOperator['$type'], TSKindId.DotDot | TSKindId.DotDotDot | TSKindId.DotDotEq>
->;
 export type _Type_StringContent = _TypeAssert<_TypeExtends<StringContent['$type'], TSKindId.StringContent>>;
-export type _Type_RawStringLiteralStart = _TypeAssert<
-	_TypeExtends<RawStringLiteralStart['$type'], TSKindId.RawStringLiteralStart>
->;
 export type _Type_RawStringLiteralContent = _TypeAssert<
 	_TypeExtends<RawStringLiteralContent['$type'], TSKindId.RawStringLiteralContent>
->;
-export type _Type_RawStringLiteralEnd = _TypeAssert<
-	_TypeExtends<RawStringLiteralEnd['$type'], TSKindId.RawStringLiteralEnd>
 >;
 export type _Type_FloatLiteral = _TypeAssert<_TypeExtends<FloatLiteral['$type'], TSKindId.FloatLiteral>>;
 export type _Type_LineDocContent = _TypeAssert<_TypeExtends<LineDocContent['$type'], TSKindId.LineDocContent>>;
@@ -1218,9 +1171,6 @@ export type _Tree_Super = _TypeAssert<_TypeExtends<SuperTree['type'], 'super'>>;
 export type _Tree_Crate = _TypeAssert<_TypeExtends<CrateTree['type'], 'crate'>>;
 export type _Tree_Metavariable = _TypeAssert<_TypeExtends<MetavariableTree['type'], 'metavariable'>>;
 export type _Tree_PrimitiveType = _TypeAssert<_TypeExtends<PrimitiveTypeTree['type'], '_primitive_type'>>;
-export type _Tree_TokenBindingPatternType = _TypeAssert<
-	_TypeExtends<TokenBindingPatternTypeTree['type'], '_token_binding_pattern_type'>
->;
 export type _Tree_CompoundAssignmentExprOperator = _TypeAssert<
 	_TypeExtends<CompoundAssignmentExprOperatorTree['type'], '_compound_assignment_expr_operator'>
 >;
@@ -1237,22 +1187,9 @@ export type _Tree_LineCommentRegularDslash = _TypeAssert<
 export type _Tree_LineCommentContent = _TypeAssert<
 	_TypeExtends<LineCommentContentTree['type'], '_line_comment_content'>
 >;
-export type _Tree_Operator = _TypeAssert<_TypeExtends<OperatorTree['type'], '_operator'>>;
-export type _Tree_UnaryExpressionOperator = _TypeAssert<
-	_TypeExtends<UnaryExpressionOperatorTree['type'], '_unary_expression_operator'>
->;
-export type _Tree_RangeExpressionBinaryOperator = _TypeAssert<
-	_TypeExtends<RangeExpressionBinaryOperatorTree['type'], '__range_expression_binary_operator'>
->;
 export type _Tree_StringContent = _TypeAssert<_TypeExtends<StringContentTree['type'], 'string_content'>>;
-export type _Tree_RawStringLiteralStart = _TypeAssert<
-	_TypeExtends<RawStringLiteralStartTree['type'], '_raw_string_literal_start'>
->;
 export type _Tree_RawStringLiteralContent = _TypeAssert<
 	_TypeExtends<RawStringLiteralContentTree['type'], 'raw_string_literal_content'>
->;
-export type _Tree_RawStringLiteralEnd = _TypeAssert<
-	_TypeExtends<RawStringLiteralEndTree['type'], '_raw_string_literal_end'>
 >;
 export type _Tree_FloatLiteral = _TypeAssert<_TypeExtends<FloatLiteralTree['type'], 'float_literal'>>;
 export type _Tree_LineDocContent = _TypeAssert<_TypeExtends<LineDocContentTree['type'], '_line_doc_content'>>;

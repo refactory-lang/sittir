@@ -707,7 +707,7 @@ export function buildOrderedFieldDeclarationList(attributes?: T.OrderedFieldDecl
 
 export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Config) {
 	const _visibility_modifier = config.visibilityModifier;
-	const _crate = coerceKindEnumStorage('crate' as const, [['crate', TSKindId.Crate] as const]);
+	const _crate = coerceKindEnumStorage('crate' as const, []);
 	const _name = config.name;
 	const _alias = config.alias;
 	return withMethods(
@@ -1502,7 +1502,7 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 	const _reference = coerceBooleanKeywordStorage(config.reference);
 	const _lifetime = config.lifetime;
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
-	const _self = coerceKindEnumStorage('self' as const, [['self', TSKindId.Self] as const]);
+	const _self = coerceKindEnumStorage('self' as const, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2340,8 +2340,8 @@ export function buildBinaryExpression(config: T.BinaryExpression.Config) {
 	const _operator = coerceKindEnumStorage(config.operator, [
 		['&&', TSKindId.AmpAmp] as const,
 		['||', TSKindId.PipePipe] as const,
-		['&', TSKindId.Amp2] as const,
-		['|', TSKindId.Pipe2] as const,
+		['&', TSKindId.Amp] as const,
+		['|', TSKindId.Pipe] as const,
 		['^', TSKindId.Caret] as const,
 		['==', TSKindId.EqEq] as const,
 		['!=', TSKindId.BangEq] as const,
@@ -3545,7 +3545,7 @@ export function buildStructPattern(config: T.StructPattern.Config) {
 	);
 }
 
-export function buildFieldPattern(child?: 'mut' | T.Identifier | T.FieldPatternNamed) {
+export function buildFieldPattern(child?: 'ref' | T.MutableSpecifier | T.Identifier | T.FieldPatternNamed) {
 	const _ref_marker = child;
 	return withMethods(
 		withAccessors(
@@ -3554,7 +3554,7 @@ export function buildFieldPattern(child?: 'mut' | T.Identifier | T.FieldPatternN
 				$source: 2 as const,
 				$named: true as const,
 				_ref_marker,
-				$with: { $child: (v: 'mut' | T.Identifier | T.FieldPatternNamed) => buildFieldPattern(v) }
+				$with: { $child: (v: 'ref' | T.MutableSpecifier | T.Identifier | T.FieldPatternNamed) => buildFieldPattern(v) }
 			},
 			{
 				refMarker: () => _ref_marker
@@ -5632,40 +5632,12 @@ export function buildStringContent(text: string) {
 	);
 }
 
-export function buildRawStringLiteralStart(text: string) {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_raw_string_literal_start: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.RawStringLiteralStart as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export function buildRawStringLiteralContent(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`raw_string_literal_content: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.RawStringLiteralContent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildRawStringLiteralEnd(text: string) {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_raw_string_literal_end: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.RawStringLiteralEnd as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -5947,9 +5919,7 @@ export type FluentKindMap = {
 	_type_argument: FluentNode<'_type_argument', T.TypeArgument.Config>;
 	_match_block_arms: T.MatchBlockArms;
 	string_content: T.StringContent;
-	_raw_string_literal_start: T.RawStringLiteralStart;
 	raw_string_literal_content: T.RawStringLiteralContent;
-	_raw_string_literal_end: T.RawStringLiteralEnd;
 	float_literal: T.FloatLiteral;
 	_line_doc_content: T.LineDocContent;
 	_error_sentinel: T.ErrorSentinel;
@@ -6180,9 +6150,7 @@ export const _factoryMap = {
 	_type_argument: buildTypeArgument,
 	_match_block_arms: buildMatchBlockArms,
 	string_content: buildStringContent,
-	_raw_string_literal_start: buildRawStringLiteralStart,
 	raw_string_literal_content: buildRawStringLiteralContent,
-	_raw_string_literal_end: buildRawStringLiteralEnd,
 	float_literal: buildFloatLiteral,
 	_line_doc_content: buildLineDocContent,
 	_error_sentinel: buildErrorSentinel
