@@ -438,13 +438,13 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 	for (const entry of promotedSupertypes) {
 		const node = nodeMap.nodes.get(entry.kind);
 		// `node instanceof AssembledSupertype` is the established discriminator
-		// for reaching `.subtypes` (see emitters/shared.ts:264/287) — a bare
+		// for reaching `.subtypeNames` (see emitters/shared.ts:264/287) — a bare
 		// `modelType === 'supertype'` string comparison doesn't narrow the
 		// `AssembledNode` union to the concrete class. tsgo's control-flow
 		// narrowing doesn't carry through to the ternary's true-branch member
-		// access here (verified in isolation), so the `.subtypes` read needs an
-		// explicit non-null + cast past the checker gap.
-		const subs = node instanceof AssembledSupertype ? (node as AssembledSupertype).subtypes : [];
+		// access here (verified in isolation), so the `.subtypeNames` read needs
+		// an explicit non-null + cast past the checker gap.
+		const subs = node instanceof AssembledSupertype ? (node as AssembledSupertype).subtypeNames : [];
 		emit(entry.kind, () => {
 			const tag = entry.applied ? 'applied' : 'held';
 			lines.push(`  // [${tag}] promoted supertype`);

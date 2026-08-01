@@ -1580,7 +1580,7 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 	);
 }
 
-export function buildListSplatPattern(child: T.Identifier | T.Subscript | T.Attribute) {
+export function buildListSplatPattern(child: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -1589,7 +1589,9 @@ export function buildListSplatPattern(child: T.Identifier | T.Subscript | T.Attr
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.Identifier | T.Subscript | T.Attribute) => buildListSplatPattern(v) }
+				$with: {
+					$child: (v: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) => buildListSplatPattern(v)
+				}
 			},
 			{
 				content: () => _content
@@ -1599,7 +1601,7 @@ export function buildListSplatPattern(child: T.Identifier | T.Subscript | T.Attr
 	);
 }
 
-export function buildDictionarySplatPattern(child: T.Identifier | T.Subscript | T.Attribute) {
+export function buildDictionarySplatPattern(child: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -1608,7 +1610,9 @@ export function buildDictionarySplatPattern(child: T.Identifier | T.Subscript | 
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.Identifier | T.Subscript | T.Attribute) => buildDictionarySplatPattern(v) }
+				$with: {
+					$child: (v: T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute) => buildDictionarySplatPattern(v)
+				}
 			},
 			{
 				content: () => _content
@@ -2277,7 +2281,7 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config) {
 				_name,
 				_value,
 				$with: {
-					name: (value: T.Identifier) => buildKeywordArgument({ ...config, name: value }),
+					name: (value: T.Identifier | T.KeywordIdentifier) => buildKeywordArgument({ ...config, name: value }),
 					value: (value: T.Expression) => buildKeywordArgument({ ...config, value: value })
 				}
 			},
