@@ -590,7 +590,7 @@ export function buildForStatement(config: T.ForStatement.Config) {
 				_increment,
 				_body,
 				$with: {
-					initializer: (value: T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | ';') =>
+					initializer: (value: T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.EmptyStatement) =>
 						buildForStatement({ ...config, initializer: value }),
 					condition: (value: T.Expressions | T.EmptyStatement) => buildForStatement({ ...config, condition: value }),
 					increment: (value?: T.Expressions) => buildForStatement({ ...config, increment: value }),
@@ -1722,7 +1722,7 @@ export function buildAwaitExpression(expression: T.AwaitExpression.Config['expre
 
 export function buildMemberExpression(config: T.MemberExpression.Config) {
 	const _object = config.object;
-	const _separator = coerceKindEnumStorage(config.separator, [['.', TSKindId.Dot2] as const]);
+	const _separator = coerceKindEnumStorage(config.separator, [['.', TSKindId.Dot] as const]);
 	const _property = config.property;
 	return withMethods(
 		withAccessors(
@@ -1983,23 +1983,23 @@ export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config>
 		['>>', TSKindId.GtGt] as const,
 		['>>>', TSKindId.GtGtGt] as const,
 		['<<', TSKindId.LtLt] as const,
-		['&', TSKindId.Amp2] as const,
+		['&', TSKindId.Amp] as const,
 		['^', TSKindId.Caret] as const,
-		['|', TSKindId.Pipe2] as const,
+		['|', TSKindId.Pipe] as const,
 		['+', TSKindId.Plus] as const,
 		['-', TSKindId.Dash] as const,
-		['*', TSKindId.Star2] as const,
-		['/', TSKindId.Slash2] as const,
+		['*', TSKindId.Star] as const,
+		['/', TSKindId.Slash] as const,
 		['%', TSKindId.Percent] as const,
 		['**', TSKindId.StarStar] as const,
-		['<', TSKindId.Lt2] as const,
+		['<', TSKindId.Lt] as const,
 		['<=', TSKindId.LtEq] as const,
 		['==', TSKindId.EqEq] as const,
 		['===', TSKindId.EqEqEq] as const,
 		['!=', TSKindId.BangEq] as const,
 		['!==', TSKindId.BangEqEq] as const,
 		['>=', TSKindId.GtEq] as const,
-		['>', TSKindId.Gt2] as const,
+		['>', TSKindId.Gt] as const,
 		['??', TSKindId.QmarkQmark] as const,
 		['instanceof', TSKindId.Instanceof] as const
 	]);
@@ -2632,7 +2632,7 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config) {
 	const _accessor_kind = coerceKindEnumStorage(config.accessorKind, [
 		['get', TSKindId.Get] as const,
 		['set', TSKindId.Set] as const,
-		['*', TSKindId.Star2] as const
+		['*', TSKindId.Star] as const
 	]);
 	const _name = config.name;
 	const _optional_marker = coerceBooleanKeywordStorage(config.optionalMarker);
@@ -2909,7 +2909,7 @@ export function buildMethodSignature(config: T.MethodSignature.Config) {
 	const _accessor_kind = coerceKindEnumStorage(config.accessorKind, [
 		['get', TSKindId.Get] as const,
 		['set', TSKindId.Set] as const,
-		['*', TSKindId.Star2] as const
+		['*', TSKindId.Star] as const
 	]);
 	const _name = config.name;
 	const _optional_marker = coerceBooleanKeywordStorage(config.optionalMarker);
@@ -2984,7 +2984,7 @@ export function buildAbstractMethodSignature(config: T.AbstractMethodSignature.C
 	const _accessor_kind = coerceKindEnumStorage(config.accessorKind, [
 		['get', TSKindId.Get] as const,
 		['set', TSKindId.Set] as const,
-		['*', TSKindId.Star2] as const
+		['*', TSKindId.Star] as const
 	]);
 	const _name = config.name;
 	const _optional_marker = coerceBooleanKeywordStorage(config.optionalMarker);
@@ -4318,7 +4318,7 @@ export function buildTypePredicateAnnotation(typePredicate: T.TypePredicateAnnot
 export function buildTypeQueryMemberExpression(config: T.TypeQueryMemberExpression.Config) {
 	const _object = config.object;
 	const _content = coerceKindEnumStorage(config.content, [
-		['.', TSKindId.Dot2] as const,
+		['.', TSKindId.Dot] as const,
 		['?.', TSKindId.QmarkDot] as const
 	]);
 	const _property = config.property;
@@ -5507,6 +5507,30 @@ export function buildTupleTypeGroup1(elements: NonEmptyArray<T.TupleTypeMember>,
 	);
 }
 
+export function buildKind(text: 'let' | 'const') {
+	return withMethods(
+		{
+			$type: TSKindId.Kind as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildForHeaderOperator(text: 'in' | 'of') {
+	return withMethods(
+		{
+			$type: TSKindId.ForHeaderOperator as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export function buildAmbientDeclarationGlobal(config: T.AmbientDeclarationGlobal.Config) {
 	const _body = config.body;
 	return withMethods(
@@ -5574,7 +5598,7 @@ export function buildObjectTypeContent(
 ) {
 	_assertNonEmpty(elements, 'object_type_content.elements');
 	const _content = elements;
-	const _separator_kind = ({ ',': TSKindId.Comma2, ';': TSKindId.Semi } as Record<string, number>)[
+	const _separator_kind = ({ ',': TSKindId.Comma, ';': TSKindId.Semi } as Record<string, number>)[
 		options.separatorKind ?? ','
 	];
 	const _leading_sep = options.leading ?? false;
@@ -6041,7 +6065,7 @@ export function buildClassBodyMember(config: T.ClassBodyMember.Config) {
 	const _terminator = coerceKindEnumStorage(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const,
-		[',', TSKindId.Comma2] as const
+		[',', TSKindId.Comma] as const
 	]);
 	return withMethods(
 		withAccessors(
@@ -6885,6 +6909,8 @@ export type FluentKindMap = {
 	_formal_parameters_group1: FluentNode<'_formal_parameters_group1', T.FormalParametersGroup1.Config>;
 	_enum_body_group1: T.EnumBodyGroup1;
 	_tuple_type_group1: FluentNode<'_tuple_type_group1', T.TupleTypeGroup1.Config>;
+	_kind: T.Kind;
+	__for_header_operator: T.ForHeaderOperator;
 	_ambient_declaration_global: T.AmbientDeclarationGlobal;
 	_ambient_declaration_module: T.AmbientDeclarationModule;
 	object_type_content: FluentNode<'object_type_content', T.ObjectTypeContent.Config>;
@@ -7149,6 +7175,8 @@ export const _factoryMap = {
 	_formal_parameters_group1: buildFormalParametersGroup1,
 	_enum_body_group1: buildEnumBodyGroup1,
 	_tuple_type_group1: buildTupleTypeGroup1,
+	_kind: buildKind,
+	__for_header_operator: buildForHeaderOperator,
 	_ambient_declaration_global: buildAmbientDeclarationGlobal,
 	_ambient_declaration_module: buildAmbientDeclarationModule,
 	object_type_content: buildObjectTypeContent,

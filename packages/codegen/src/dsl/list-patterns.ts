@@ -25,6 +25,7 @@
 
 import { typeEq, type RuntimeRule } from '../types/runtime-shapes.ts';
 import type { SeparatorFlankMode } from '../types/rule.ts';
+import { ruleKey } from './shared.ts';
 
 interface SeparatorFact {
 	readonly value: RuntimeRule;
@@ -38,70 +39,7 @@ export function separatorFactsEqual(a: SeparatorFact | undefined, b: SeparatorFa
 }
 
 export function rulesEqual(a: RuntimeRule, b: RuntimeRule): boolean {
-	const ta = a.type.toLowerCase();
-	if (ta !== b.type.toLowerCase()) return false;
-	const A = a as Record<string, unknown>;
-	const B = b as Record<string, unknown>;
-	switch (ta) {
-		case 'string':
-		case 'pattern':
-			return A.value === B.value;
-		case 'symbol':
-			return A.name === B.name;
-		case 'enum': {
-			const am = A.members as { value: unknown }[];
-			const bm = B.members as { value: unknown }[];
-			return am.length === bm.length && am.every((m, i) => m.value === bm[i]!.value);
-		}
-		case 'seq':
-		case 'choice': {
-			const am = A.members as RuntimeRule[];
-			const bm = B.members as RuntimeRule[];
-			return am.length === bm.length && am.every((m, i) => rulesEqual(m, bm[i]!));
-		}
-		case 'optional':
-			return rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
-		case 'repeat':
-		case 'repeat1': {
-			// `.separator` is either a plain string (evaluate-phase, unlifted) or
-			// the nested {value, trailing?, leading?} fact (link-phase, PR-S) — a
-			// freshly-allocated wrapper object per lift call, so `===` incorrectly
-			// treats two structurally-identical separators as unequal. Compare via
-			// separatorFactsEqual only when BOTH sides are the object form; a
-			// mixed object-vs-string comparison (one side already lifted, the
-			// other not) falls through to `===` (correctly `false`) instead of
-			// casting the string side to SeparatorFact and crashing inside
-			// separatorFactsEqual reading `.value`/`.trailing` off a string.
-			const aObj = typeof A.separator === 'object' && A.separator !== null;
-			const bObj = typeof B.separator === 'object' && B.separator !== null;
-			const sepEqual =
-				aObj && bObj
-					? separatorFactsEqual(A.separator as SeparatorFact, B.separator as SeparatorFact)
-					: A.separator === B.separator;
-			return sepEqual && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
-		}
-		case 'field':
-			return A.name === B.name && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
-		case 'blank':
-			return true;
-		case 'token':
-		case 'immediate_token':
-			return rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
-		case 'prec':
-		case 'prec_left':
-		case 'prec_right':
-		case 'prec_dynamic':
-			// `.value` is a number for PREC_DYNAMIC, number-or-name for the others.
-			return A.value === B.value && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
-		case 'alias':
-			// ALIAS renames its `.content` to the display name `.value`, with
-			// `.named` toggling named-vs-anonymous CST visibility.
-			return (
-				A.value === B.value && A.named === B.named && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule)
-			);
-		default:
-			return false;
-	}
+	return ruleKey(a) === ruleKey(b);
 }
 
 export function firstStringOfChoice(r: RuntimeRule): string | null {

@@ -87,6 +87,30 @@
   },
   {
     "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "</",
+    "message": "[assemble] anonymous literal \"</\" resolved no parser kindId — keyed by raw text '</'",
+    "canProceed": true,
+    "details": {
+      "literalText": "</"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "/>",
+    "message": "[assemble] anonymous literal \"/>\" resolved no parser kindId — keyed by raw text '/>'",
+    "canProceed": true,
+    "details": {
+      "literalText": "/>"
+    }
+  },
+  {
+    "scope": "grammar",
     "code": "typename-collision",
     "severity": "info",
     "grammar": "typescript",
@@ -215,166 +239,6 @@
   },
   {
     "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_accessibility_modifier",
-    "message": "[assemble] typeName collision: kind '_accessibility_modifier' renamed 'AccessibilityModifier' → '_AccessibilityModifier' (visible sibling(s): 'accessibility_modifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "AccessibilityModifier",
-      "newType": "_AccessibilityModifier",
-      "visibleKinds": [
-        "accessibility_modifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_override_modifier",
-    "message": "[assemble] typeName collision: kind '_override_modifier' renamed 'OverrideModifier' → '_OverrideModifier' (visible sibling(s): 'override_modifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "OverrideModifier",
-      "newType": "_OverrideModifier",
-      "visibleKinds": [
-        "override_modifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "star",
-    "message": "[assemble] typeName collision between visible kinds: 'star' renamed 'Star' → 'Star2' (siblings: '*')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Star",
-      "newType": "Star2",
-      "siblingKinds": [
-        "*"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "gt",
-    "message": "[assemble] typeName collision between visible kinds: 'gt' renamed 'Gt' → 'Gt2' (siblings: '>')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Gt",
-      "newType": "Gt2",
-      "siblingKinds": [
-        ">"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "dot",
-    "message": "[assemble] typeName collision between visible kinds: 'dot' renamed 'Dot' → 'Dot2' (siblings: '.')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Dot",
-      "newType": "Dot2",
-      "siblingKinds": [
-        "."
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "amp",
-    "message": "[assemble] typeName collision between visible kinds: 'amp' renamed 'Amp' → 'Amp2' (siblings: '&')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Amp",
-      "newType": "Amp2",
-      "siblingKinds": [
-        "&"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "pipe",
-    "message": "[assemble] typeName collision between visible kinds: 'pipe' renamed 'Pipe' → 'Pipe2' (siblings: '|')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Pipe",
-      "newType": "Pipe2",
-      "siblingKinds": [
-        "|"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "slash",
-    "message": "[assemble] typeName collision between visible kinds: 'slash' renamed 'Slash' → 'Slash2' (siblings: '/')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Slash",
-      "newType": "Slash2",
-      "siblingKinds": [
-        "/"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "lt",
-    "message": "[assemble] typeName collision between visible kinds: 'lt' renamed 'Lt' → 'Lt2' (siblings: '<')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Lt",
-      "newType": "Lt2",
-      "siblingKinds": [
-        "<"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "comma",
-    "message": "[assemble] typeName collision between visible kinds: 'comma' renamed 'Comma' → 'Comma2' (siblings: ',')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Comma",
-      "newType": "Comma2",
-      "siblingKinds": [
-        ","
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "multi-slot-nested-seq",
     "severity": "warning",
     "grammar": "typescript",
@@ -388,30 +252,16 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "55 referenced kind(s) resolved no parser kindId",
+    "message": "50 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
-        "__binary_expression_group1_operator",
-        "__for_header_operator",
         "__jsx_start_opening_element_optional1",
         "__number_operator",
-        "_abstract_marker",
-        "_accessibility_modifier",
-        "_accessor_kind",
-        "_asserts_annotation_asserts",
-        "_assignment_expression_using_marker",
-        "_async_marker",
         "_augmented_assignment_expression_operator",
-        "_const_marker",
-        "_declare_marker",
-        "_export_specifier_export_kind",
         "_export_specifier_optional1",
         "_expressions",
-        "_for_in_statement_await_marker",
-        "_for_statement_initializer",
         "_identifier",
-        "_import_attribute_object",
         "_index_signature_optional1",
         "_infer_type_optional1",
         "_jsx_attribute",
@@ -419,37 +269,46 @@
         "_jsx_attribute_optional1",
         "_jsx_attribute_value",
         "_jsx_child",
+        "_jsx_element",
         "_jsx_element_name",
         "_jsx_identifier",
         "_jsx_opening_element_content",
         "_jsx_start_opening_element",
         "_jsx_start_opening_element_group1",
-        "_kind",
-        "_kind__var",
+        "_jsx_string",
+        "_kw_abstract_marker",
+        "_kw_accessor_marker",
+        "_kw_asserts",
+        "_kw_async_marker",
+        "_kw_await_marker",
+        "_kw_const_marker",
+        "_kw_declare_marker",
+        "_kw_optional_marker",
+        "_kw_readonly_marker",
+        "_kw_static_marker",
+        "_kw_type_predicate",
+        "_kw_using_marker",
         "_mapped_type_clause_optional1",
-        "_member_expression_separator",
-        "_object_type_closing",
-        "_object_type_opening",
         "_operator",
-        "_optional_marker",
-        "_override_modifier",
-        "_public_field_definition_accessor_marker",
-        "_public_field_definition_optionality_marker",
-        "_readonly_marker",
         "_semicolon",
-        "_static_marker",
         "_unary_expression_operator",
         "html_character_reference",
+        "jsx_attribute",
         "jsx_closing_element",
+        "jsx_element",
+        "jsx_expression",
+        "jsx_identifier",
         "jsx_namespace_name",
         "jsx_opening_element",
         "jsx_opening_element_content",
+        "jsx_self_closing_element",
         "jsx_start_opening_element_group1",
+        "statement_identifier_group1",
         "unescaped_double_jsx_string_fragment",
         "unescaped_single_jsx_string_fragment"
       ]
     },
-    "severity": "info",
+    "severity": "warning",
     "scope": "grammar",
     "grammar": "typescript"
   },
@@ -479,7 +338,123 @@
         "n"
       ]
     },
+    "severity": "warning",
+    "scope": "grammar",
+    "grammar": "typescript"
+  },
+  {
+    "code": "kindid-inline-excluded-symbols",
+    "message": "24 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "canProceed": true,
     "severity": "info",
+    "details": {
+      "kinds": [
+        "__jsx_start_opening_element_optional1",
+        "_export_specifier_optional1",
+        "_expressions",
+        "_identifier",
+        "_index_signature_optional1",
+        "_infer_type_optional1",
+        "_jsx_attribute",
+        "_jsx_attribute_name",
+        "_jsx_attribute_optional1",
+        "_jsx_attribute_value",
+        "_jsx_child",
+        "_jsx_element",
+        "_jsx_element_name",
+        "_jsx_identifier",
+        "_jsx_start_opening_element",
+        "_kw_abstract_marker",
+        "_kw_async_marker",
+        "_kw_const_marker",
+        "_kw_optional_marker",
+        "_kw_readonly_marker",
+        "_kw_static_marker",
+        "_kw_using_marker",
+        "_mapped_type_clause_optional1",
+        "_semicolon"
+      ]
+    },
+    "scope": "grammar",
+    "grammar": "typescript"
+  },
+  {
+    "code": "kindid-vaporized-symbols",
+    "message": "17 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "kinds": [
+        "_jsx_opening_element_content",
+        "_jsx_start_opening_element_group1",
+        "_jsx_string",
+        "html_character_reference",
+        "jsx_attribute",
+        "jsx_closing_element",
+        "jsx_element",
+        "jsx_expression",
+        "jsx_identifier",
+        "jsx_namespace_name",
+        "jsx_opening_element",
+        "jsx_opening_element_content",
+        "jsx_self_closing_element",
+        "jsx_start_opening_element_group1",
+        "statement_identifier_group1",
+        "unescaped_double_jsx_string_fragment",
+        "unescaped_single_jsx_string_fragment"
+      ]
+    },
+    "scope": "grammar",
+    "grammar": "typescript"
+  },
+  {
+    "code": "kindid-vaporized-literals",
+    "message": "18 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "texts": [
+        "\n",
+        "#",
+        "/*",
+        "//",
+        "/>",
+        "0",
+        "0B",
+        "0O",
+        "0X",
+        "0b",
+        "0o",
+        "0x",
+        "</",
+        "E",
+        "\\",
+        "_",
+        "e",
+        "n"
+      ]
+    },
+    "scope": "grammar",
+    "grammar": "typescript"
+  },
+  {
+    "code": "kindid-unclassified-symbols",
+    "message": "9 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "canProceed": true,
+    "severity": "warning",
+    "details": {
+      "kinds": [
+        "__number_operator",
+        "_augmented_assignment_expression_operator",
+        "_kw_accessor_marker",
+        "_kw_asserts",
+        "_kw_await_marker",
+        "_kw_declare_marker",
+        "_kw_type_predicate",
+        "_operator",
+        "_unary_expression_operator"
+      ]
+    },
     "scope": "grammar",
     "grammar": "typescript"
   },

@@ -4,9 +4,12 @@ Use this file when the task touches generated packages, runtime data shapes, or 
 
 ## Package layers
 
-- `@sittir/legacy-core` — deprecated as a production engine (native is the source of truth; the package name signals this); retained as diagnostic/validator tooling. Grammar-driven render engine, validation, CST/edit creation, and runtime read helpers.
 - `@sittir/types` — zero-runtime TypeScript types such as `AnyNodeData`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>`, `ByteRange`, `Edit`, and `RenderContext`.
-- `@sittir/codegen` — reads `grammar.json` + `node-types.json` and emits the grammar-specific packages.
+- `@sittir/common` — backend-neutral runtime: `readNode`, `applyEdits`, the native boundary, and `createNativeEngine` behind the shared engine interface.
+- `@sittir/codegen` — the compiler (evaluate → link → normalize → simplify → assemble → emit) and emitters producing the grammar-specific packages.
+- `@sittir/cli` — the unified `sittir` binary (`gen`, `tool *`, `validate *`).
+- `@sittir/tools` — validator + diagnostic implementations the CLI dispatches to.
+- `@sittir/legacy-core` — not a production engine (native is the source of truth; the name signals this); retained only as diagnostic/validator tooling (lower-level Nunjucks renderer, shared engine option types).
 
 ## Generated grammar packages
 
@@ -14,15 +17,17 @@ Each generated package (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) 
 
 - `grammar.ts` — grammar type literal for type projections
 - `types.ts` — concrete interfaces, `TSKindId`, config/tree/from projections, unions
-- `rules.ts` — render rules
-- `joinby.ts` — list separator metadata
 - `factories.ts` — unified factories
 - `from.ts` — `.from()` resolution layer
 - `wrap.ts` — tree node → typed node hydration
+- `is.ts` — type guards (`is.*`, `isNode`, `isTree`, `assert.*`)
 - `utils.ts` — per-grammar client helpers
 - `ir.ts` — developer-facing short-name namespace
 - `consts.ts` — discoverable arrays/maps of kinds, keywords, operators
+- `engine.ts` / `backend.ts` / `boundary.ts` / `hash.ts` — native-only `createEngine()`, backend selection, baked template-bundle hash
+- `node-model.json5` — debug snapshot of the assembled model
 - `index.ts` — barrel exports
+- `../templates/*.jinja` — one render template per renderable kind (package root, beside `src/`)
 
 ## Current NodeData shape
 

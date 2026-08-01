@@ -2,6 +2,10 @@
 
 Use this file for emitter changes, generated TypeScript work, or any task that edits codegen-adjacent TS.
 
+Repo-wide rules (DRY, root fixes, stamped facts, verification gates,
+ratchets) live in [coding-standards.md](coding-standards.md); this file adds
+the codegen-specific conventions.
+
 ## Core correctness rule
 
 DRY is the main correctness rule for the pipeline:
@@ -17,15 +21,14 @@ Apply it concretely:
 
 ## Fix the generator, not the generated output
 
-Generated files are derived artifacts. If they are wrong, fix `packages/codegen/src/` or `packages/<lang>/overrides.ts`, then regenerate.
+Generated files are derived artifacts. If they are wrong, fix `packages/codegen/src/` or `packages/<lang>/grammar.sittir.ts`, then regenerate.
 
 Never hand-edit:
 
 - `packages/{rust,python,typescript}/src/*`
 - `packages/{rust,python,typescript}/templates/*.jinja`
 - `packages/{rust,python,typescript}/.sittir/*`
-- `packages/{rust,python,typescript}/factory-map.json5`
-- `packages/{rust,python,typescript}/overrides.suggested.ts`
+- `packages/{rust,python,typescript}/overrides.suggested.ts` (written next to `grammar.sittir.ts` only when there are suggestions)
 
 ## Generated-output hygiene
 
@@ -45,12 +48,12 @@ When touching emitters or generated-TS-facing helpers:
 - Do not use type-escape hatches (`as any`, `as unknown`, `@ts-ignore`, `@ts-nocheck`, `eslint-disable`) as workaround fixes.
 - Allowed exceptions:
   - `as const`
-  - `@ts-nocheck` in `overrides.ts`
-  - narrow `as unknown as Foo` bridges inside `packages/codegen/src/dsl/*` when guarded by `runtime-shapes.ts`, with a one-line reason
+  - `@ts-nocheck` in `grammar.sittir.ts`
+  - narrow `as unknown as Foo` bridges inside `packages/codegen/src/dsl/*` when guarded by `types/runtime-shapes.ts`, with a one-line reason
 
 ## Rule discrimination
 
-For `packages/codegen/src/compiler/rule.ts`:
+For the Rule IR (`packages/codegen/src/types/rule.ts`):
 
 1. Prefer `switch (rule.type)` with `assertNever(rule)`.
 2. Use exported type guards (`isSeq`, `isChoice`, `isField`, `isSymbol`, ...) in predicates such as `.find()` or `.filter()`.
@@ -58,7 +61,7 @@ For `packages/codegen/src/compiler/rule.ts`:
 
 Do not introduce enum/const indirection for rule-type strings.
 
-For DSL runtime-shape bridging, use the dual-case helpers in `packages/codegen/src/dsl/runtime-shapes.ts` instead of hand-written `'seq' || 'SEQ'` ladders.
+For DSL runtime-shape bridging, use the dual-case helpers in `packages/codegen/src/types/runtime-shapes.ts` instead of hand-written `'seq' || 'SEQ'` ladders.
 
 ## Function-structure rule
 
@@ -77,12 +80,13 @@ drafted-but-deferred (not rejected) spec. `@deprecated` says "remove this
 despite it having callers"; `@forFutureUse` says "keep this despite it
 having none."
 
-Format — always include a one-line reason citing the ADR/spec:
+Format — always include a one-line reason naming the deferred surface (cite
+the ADR by file path, not by bare number, so the reference stays resolvable):
 
 ```ts
 /**
- * @forFutureUse ADR-0018 (dehoisted NodeData surface) — $with update namespace.
- * Not yet wired into generated output; scaffolding only.
+ * @forFutureUse dehoisted NodeData surface (docs/adr/0018-dehoist-nodedata-surface.md, accepted) — $with
+ * update namespace. Not yet wired into generated output; scaffolding only.
  */
 ```
 

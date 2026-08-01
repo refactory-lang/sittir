@@ -177,19 +177,20 @@ patches both surfaces.
 The compiler proper then runs in seven ordered phases over the parser
 artifacts. Each phase has a single responsibility and produces a
 well-defined intermediate representation; later phases never revisit
-decisions earlier ones made. Detailed per-function semantics live in
+decisions earlier ones made. The phase narrative and an index into the
+per-directory function glossaries live in
 [`docs/compiler-phase-glossary.md`](docs/compiler-phase-glossary.md); the
 summary below is the contract a reader needs to navigate the source.
 
 | Phase                | Source                       | Input                           | Output                              | Responsibility                                                                                                                                                                                            |
 | -------------------- | ---------------------------- | ------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **0. Enrich**        | `dsl/enrich.ts`              | `GrammarResult`                 | Enriched `GrammarResult` + `_kw_*`  | Mechanical grammar pre-pass invoked from `grammar.sittir.ts` as `grammar(enrich(base), {...})`. Promotes bare symbols to `field()`, lifts `optional(literal)` keywords into hidden `_kw_*` rules. Because enrich runs inside the override-DSL transpile, its rewrites end up in `.sittir/grammar.js` — the parser and the downstream codegen see identical rules. |
+| **0. Enrich**        | `dsl/enrich.ts`              | `GrammarResult`                 | Enriched `GrammarResult` + `_kw_*`  | Mechanical grammar pre-pass invoked from `grammar.sittir.ts` as `grammar(enrich(base), {...})`. Promotes bare symbols to `field()`, lifts `optional(literal)` keywords into hidden `_kw_*` rules, and hoists `optional(seq(...))` content into synthesized hidden helpers or visible aliased group kinds (clause hoist). Because enrich runs inside the override-DSL transpile, its rewrites end up in `.sittir/grammar.js` — the parser and the downstream codegen see identical rules. |
 | **1. Evaluate**      | `compiler/evaluate.ts`       | `grammar.js` / `grammar.sittir.ts`   | `RawGrammar`                        | Executes the tree-sitter DSL with sittir extensions (`role()`, `variant()`, `transform()`). Normalizes seq/choice/optional/repeat, lifts `commaSep` patterns, synthesizes hidden enum rules from inline `field(name, choice('a','b','c'))`. |
-| **2. Link**          | `compiler/link.ts`           | `RawGrammar`, `node-types.json` | `LinkedGrammar`                     | Resolves what each node *is*. Strips `alias` and `token` wrappers, classifies hidden rules (enum / supertype / group), detects clauses, infers field names from the symbol-reference graph, classifies polymorphs (both heuristic and `variant()`-sourced), annotates block-bearer fields. Shape-preserving — no restructuring. |
-| **3. Optimize**      | `compiler/optimize.ts`       | `LinkedGrammar`                 | `OptimizedGrammar`                  | Non-lossy structural simplification. Collapses degenerate wrappers, fans out `seq(a, choice(b, c))`, factors common prefix/suffix, dedupes adjacent members, inlines single-use hidden rules. Does not rename fields or reclassify nodes. |
-| **3.5. Simplify**    | `compiler/simplify.ts`       | `OptimizedGrammar`              | `simplifiedRules` map               | Derivation-only view. Strips anonymous delimiters, hoists fields out of single-content wrappers, merges position-equivalent choice branches. Used to derive each kind's field/child slots — *not* used by template emission, which keeps the raw rule so delimiters survive. |
-| **4. Assemble**      | `compiler/assemble.ts`       | `OptimizedGrammar`              | `NodeMap`                           | First materialization of nodes. Classifies each rule into a model type (branch / polymorph / supertype / group / enum / pattern / keyword / token), hydrates slot refs, marks parameterless kinds (kinds whose required slots auto-stamp from a single literal or a single parameterless ref), resolves colliding names, assigns short `ir.*` keys. |
-| **5. Emit**          | `emitters/*`                 | `NodeMap`                       | `.ts` + `.jinja` files              | Renders types, factories, `.from()` resolvers, `wrap.ts`, type guards, the `ir.ts` namespace, consts, render rules, Jinja templates, JoinBy metadata, the native render bundle, and per-kind tests. |
+| **2. Link**          | `compiler/link.ts`           | `RawGrammar`, `node-types.json` | `LinkedGrammar`                     | Resolves what each node *is*. Strips `alias` and `token` wrappers, classifies hidden rules (enum / supertype / group), lifts separated lists into separator-bearing repeats, infers field names from the symbol-reference graph, classifies polymorphs (both heuristic and `variant()`-sourced), stamps parser-issued kindIds onto catalog refs (unstamped names are reported to `.sittir/grammar-diagnostics.json`), annotates block-bearer fields. Shape-preserving — no restructuring. |
+| **3. Normalize**     | `compiler/normalize.ts` + `compiler/wrapper-deletion.ts` | `LinkedGrammar`                 | `SimplifiedGrammar`                 | Non-lossy structural normalization: collapses degenerate wrappers, fans out `seq(a, choice(b, c))`, factors common prefix/suffix, dedupes adjacent members, inlines single-use hidden rules. Then wrapper deletion pushes `optional`/`field`/`repeat`/`repeat1`/`alias` wrappers down to leaf attributes, producing the wrapper-free `RenderRule` view templates consume. |
+| **3.5. Simplify**    | `compiler/simplify.ts`       | `RenderRule` map                | `SimplifiedRule` map                | Derivation-only view. Inlines parser-inlined helpers, strips anonymous delimiters, merges position-equivalent choice branches, canonicalizes toward a flat seq-of-leaves. Used to derive each kind's slots — *not* used by template emission, which reads the wrapper-free render rule so delimiters survive. |
+| **4. Assemble**      | `compiler/assemble.ts`       | `SimplifiedGrammar`             | `NodeMap`                           | First materialization of nodes. Classifies each rule into a model type (branch / polymorph / supertype / group / enum / pattern / keyword / token), hydrates slot refs, marks parameterless kinds (kinds whose required slots auto-stamp from a single literal or a single parameterless ref), resolves colliding names, assigns short `ir.*` keys. |
+| **5. Emit**          | `emitters/*`                 | `NodeMap`                       | `.ts` + `.rs` + `.jinja` files      | Renders types, factories, `.from()` resolvers, `wrap.ts`, type guards, the `ir.ts` namespace, consts, Jinja templates, the native render/transport modules, and per-kind tests. |
 
 Three commitments worth flagging:
 
@@ -325,14 +326,14 @@ update namespace; for kinds with a single unnamed slot it exposes
 
 ```
 NodeData ──▶ render rule ──▶ Jinja template ──▶ source text
-              (raw rule)      (per kind)
+              (wrapper-free)   (per kind)
 ```
 
 Render reads `_<field>` and `$children` directly off `NodeData`. Templates
-are emitted from the *raw* post-Optimize rule, deliberately ahead of
-Simplify, so anonymous delimiters and separator placement survive.
-Field/child derivation reads the simplified rule; templates and derivation
-are two views of the same tree.
+are emitted from the wrapper-free post-Normalize render rule, deliberately
+ahead of Simplify, so anonymous delimiters and separator placement survive.
+Slot derivation reads the simplified rule; templates and derivation are two
+views of the same tree.
 
 `createEngine()` delegates to the native binding and throws if it isn't
 loadable or its baked `templateBundleHash` doesn't match the generated
@@ -480,29 +481,17 @@ target API in flight.
 | [`@sittir/types`](packages/types)           | Pure TypeScript types — zero runtime                                                 |
 | [`@sittir/common`](packages/common)         | Backend-neutral runtime: `readNode`, `applyEdits`, native boundary, engine interface |
 | [`@sittir/legacy-core`](packages/legacy-core) | Deprecated JS/Nunjucks render engine; diagnostic + validator tooling only, not production |
-| [`@sittir/codegen`](packages/codegen)       | Seven-phase compiler, emitters, and CLI                                              |
-| [`@sittir/tools`](packages/tools)           | Diagnostics + validation facade: `probe-*`, `counts`, `probe-factory`, `history`, `walk`, `exercise`, `inspect-*` (CLI + run APIs) |
+| [`@sittir/codegen`](packages/codegen)       | The compiler (enrich → evaluate → link → normalize → simplify → assemble → emit) and emitters |
+| [`@sittir/cli`](packages/cli)               | Unified `sittir` binary: `gen`, `tool *`, `validate *` (see [docs/cli-command-glossary.md](docs/cli-command-glossary.md)) |
+| [`@sittir/tools`](packages/tools)           | Diagnostics + validation implementations: `probe-*`, `walk`, `exercise`, `inspect-*`, validator counts/history (run APIs behind the CLI) |
 | [`@sittir/rust`](packages/rust)             | Generated Rust package                                                               |
 | [`@sittir/typescript`](packages/typescript) | Generated TypeScript package                                                         |
 | [`@sittir/python`](packages/python)         | Generated Python package                                                             |
 
 ## Development
 
-```bash
-pnpm install                  # install workspace
-pnpm test                     # run all vitest suites
-pnpm -r run type-check        # type-check every package
-pnpm run type-check:examples  # type-check the example modules
-pnpm run validate:all         # cross-backend validator counts (native + JS, recursive)
-
-# Regenerate one grammar package
-pnpm --filter @sittir/rust run regenerate
-
-# Or invoke the codegen CLI directly
-npx tsx packages/codegen/src/cli.ts --grammar rust       --all --output packages/rust/src
-npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
-npx tsx packages/codegen/src/cli.ts --grammar python     --all --output packages/python/src
-```
+Contributor setup, regeneration, validation, native-build, and diagnostic
+commands live in [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## License
 

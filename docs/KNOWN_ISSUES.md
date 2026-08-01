@@ -2,16 +2,6 @@
 
 Running list of known, non-blocking gaps discovered during feature work — documented here rather than silently forgotten, but not urgent enough to have blocked the work that found them. When one gets fixed, delete its entry rather than marking it done.
 
-## `mintContentAliasKinds`'s self-referential classification bug when an alias target's name equals the kind's own natural stripped name
-
-**Found during:** Track B (separator-as-slot follow-up), `packages/python/grammar.sittir.ts`, promoting `_patterns`/`_collection_elements` to visible `separatedList` kinds.
-
-When a hidden rule `_foo` is promoted via a reference-site `alias($._foo, $.<visibleName>)` and `<visibleName>` is chosen to be the EXACT underscore-stripped natural name (`foo`), the promoted kind fails to classify as `separatedList` — it stays `modelType: "branch"` with a single field that is a circular self-reference back to its own kind (`{"name": "foo", "values": [{"kind": "node-ref", "name": "_foo", "parseKind": "foo"}]}`). Reproduced with a throwaway, semantically unrelated alias target name (`zzztest_group`), confirming the trigger is purely "alias target name == kind's own natural stripped name," not anything specific to `patterns`/`collection_elements`.
-
-**Status: worked around, not fixed.** Track B's overrides use non-natural names (`pattern_group`, `element_list`) specifically to avoid this bug — see `packages/python/grammar.sittir.ts`'s Track B comment block. The underlying bug is un-fixed and out of `grammar.sittir.ts`'s scope; it most likely lives in `compiler/assemble.ts`'s `isSeparatedListShape` / parse-kind self-reference resolution (not yet root-caused past this point).
-
-**Fix, if/when prioritized:** trace why a self-matching alias-target name causes the classifier to treat the kind's own slot as a reference to itself instead of resolving through to the real repeat/separator shape, likely in `assemble.ts`'s parse-kind resolution or `resolveParseKindCollisions` (`compiler/model/node-map.ts`).
-
 ## `_concatInSourceOrder` sorts text-collapsed leaves (no `$span`/`$childIndex`) to the end, losing source order
 
 **Found during:** `isInlineSafe` separator-variability qualification follow-on (rust render-emptiness regression investigation), `packages/codegen/src/emitters/wrap.ts`, `_concatInSourceOrder` (~line 1384, emitted runtime helper).

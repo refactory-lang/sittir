@@ -5,19 +5,24 @@
 import {
 	ALIAS,
 	CHOICE,
+	DEDENT,
 	FIELD,
 	GROUP,
+	INDENT,
+	NEWLINE,
 	OPTIONAL,
 	PATTERN,
 	REPEAT,
 	REPEAT1,
 	SEQ,
 	STRING,
+	SUPERTYPE,
 	SYMBOL,
 	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, SeparatorFlankMode } from '../types/rule.ts';
+import { assertNever } from '../polymorph-variant.ts';
 import { RuleWalker } from './rule-walker.ts';
 
 // `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
@@ -115,6 +120,36 @@ export function extractRepeatShape(rule: AnyRule): { repeat: RepeatRule | Repeat
 			return extractRepeatShape((rule as { content: AnyRule }).content);
 		default:
 			return null;
+	}
+}
+
+// Genuinely link-phase only — see "Rule IR and snapshots" in
+// docs/compiler-phase-glossary.md for the phase-scoping rationale.
+export function hasAnyField(rule: Rule<'link'>): boolean {
+	switch (rule.type) {
+		case FIELD:
+			return true;
+		case SEQ:
+		case CHOICE:
+			return rule.members.some(hasAnyField);
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case VARIANT:
+		case GROUP:
+		case ALIAS:
+		case TOKEN:
+			return hasAnyField(rule.content);
+		case SYMBOL:
+		case SUPERTYPE:
+		case STRING:
+		case PATTERN:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+			return false;
+		default:
+			return assertNever(rule);
 	}
 }
 
@@ -292,7 +327,17 @@ export function inlineRefs<R extends AnyRule>(
 
 export function resolveGroupOrMultiInlineTarget(target: AnyRule): AnyRule | null {
 	const isGroup = target.type === GROUP;
-	const isMulti = extractRepeatShape(target) !== null;
+	// `extractRepeatShape` finds a REPEAT/REPEAT1 wrapper node — the link-phase
+	// shape. Called post-wrapper-deletion (normalize's own `inlineHiddenSeqRefs`
+	// fixpoint, which only ever sees the wrapper-deleted `normalizedRules` view),
+	// that node is already gone: the SAME fact survives as a bare
+	// `multiplicity: 'array' | 'nonEmptyArray'` attribute on the target's own
+	// rule. Checking both keeps this function correct for its wrapper-bearing
+	// caller (`inlineRefs`, from assemble's link-phase `inlinedRule`) and its
+	// wrapper-deleted caller alike.
+	const targetMultiplicity = (target as { multiplicity?: 'optional' | 'array' | 'nonEmptyArray' }).multiplicity;
+	const isMulti =
+		extractRepeatShape(target) !== null || targetMultiplicity === 'array' || targetMultiplicity === 'nonEmptyArray';
 	if (!isGroup && !isMulti) return null;
 	return isGroup ? (target as { content: AnyRule }).content : target;
 }

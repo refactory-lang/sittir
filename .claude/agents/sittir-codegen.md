@@ -49,6 +49,8 @@ Gate counts are **necessary but not sufficient**: when the dispatcher names a co
 - AST-match matters as much as covPass (covPass can hold while AST-match regresses — that exact bug happened). If a fast signal or the counts reveal a slot/name/multiplicity change that alters rendered output, fix it before committing.
 - Backend terminology is **js vs native**. Do not describe the deprecated JS engine as the TypeScript language pack; the TypeScript grammar/package remains a normal in-scope target for generation and review.
 - If your change is clearly incomplete or you hit something you can't resolve on fast signals, STOP and report **BLOCKED** with your analysis rather than committing a guess.
+- **A failed gate stops the work for review — never auto-revert.** An unexpected diff under a supposed no-behavior-change edit, or a count that moves when it shouldn't, is evidence of a real latent divergence. Preserve the failing working tree intact (no revert/reset/stash/cleanup) and report which files diffed with excerpts; review happens on the intact state.
+- **Comments state live constraints, not provenance** (coding-standards rule 9). Why-a-change-was-made goes in the commit message; a PreToolUse hook blocks commits whose added comments narrate provenance or cite planning-artifact numbers.
 
 ## Report (your final message)
 
@@ -60,6 +62,6 @@ Gate counts are **necessary but not sufficient**: when the dispatcher names a co
 
 ## Reference
 
-- Active design + plan: `docs/superpowers/specs/2026-05-21-nonterminal-driven-slot-derivation-design.md` and `docs/superpowers/plans/2026-05-21-nonterminal-driven-slot-derivation.md`.
-- Project rules: `CLAUDE.md` (Universal rules) and `.claude/*.md` (architecture / codegen-conventions / grammar-workflow / project-workflow).
+- The governing spec + plan for your task: the dispatcher names them — do not assume a default.
+- Project rules: `CLAUDE.md` (Universal rules) and `.claude/*.md` — **`.claude/coding-standards.md` first** (the repo-wide working standards: DRY at the root, stamped facts, verification gates, ratchets).
 - Compiler reference: `docs/compiler-phase-glossary.md` (read first for any compiler-phase question).
