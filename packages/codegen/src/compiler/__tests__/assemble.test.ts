@@ -987,8 +987,8 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		// stamped-SubtypeRef chain, only names directly in the OUTER rule's
 		// `rule.subtypes` got their id re-derived by AssembledSupertype's
 		// constructor; a flattened, nested-arm name silently landed with
-		// storageKindId undefined (PR #199 finding #1). No kindEntries/catalog
-		// is passed anywhere here — every id below must come from a ref stamp.
+		// storageKindId undefined. No kindEntries/catalog is passed anywhere
+		// here — every id below must come from a ref stamp.
 		const normalized = makeNormalized({
 			_outer: {
 				type: SUPERTYPE,

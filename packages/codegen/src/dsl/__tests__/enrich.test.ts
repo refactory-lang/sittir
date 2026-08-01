@@ -881,6 +881,124 @@ describe('enrich()', () => {
 			expect(out.grammar.rules.call_body).toMatchObject({ type: 'STRING', value: 'unrelated' });
 		});
 
+		it('names a visible group after its wrapping field for optional(choice(...)) content, not just optional(seq(...))', () => {
+			// `optional(seq(...))` is peeled to the seq body before the mint path
+			// below ever runs (a separate branch above this one) — this covers the
+			// sibling case: a non-seq (CHOICE) body directly inside the field's
+			// optional, which reaches mintStructuredChoiceArm via the "optional
+			// position with a non-seq body" path and must carry the same
+			// enclosing-field name through. Both choice arms are symbol-bearing
+			// (matching rust's real `attribute`: `optional(choice(seq('=', value),
+			// arguments))`) so the choice has two real slots and isn't collapsed
+			// to a single inline-safe slot before reaching the outer arm mint.
+			const input = mkGrammar({
+				call: {
+					type: FIELD,
+					name: 'body',
+					content: {
+						type: OPTIONAL,
+						content: {
+							type: CHOICE,
+							members: [
+								{
+									type: SEQ,
+									members: [
+										{ type: STRING, value: '=' },
+										{ type: SYMBOL, name: 'value' }
+									]
+								},
+								{ type: SYMBOL, name: 'arguments' }
+							]
+						}
+					}
+				},
+				value: { type: STRING, value: 'v' },
+				arguments: { type: STRING, value: 'args' }
+			});
+			const out = runEnrich(input);
+			expect(out.grammar.rules._call_body).toBeDefined();
+			expect(out.grammar.rules._call_group1).toBeUndefined();
+			expect(out.grammar.rules.call_group1).toBeUndefined();
+		});
+
+		it('falls back to the ordinal when a DIFFERENT group body already claimed the field-derived name', () => {
+			// Two distinct choice arms under the same parent each wrap a
+			// STRUCTURALLY DIFFERENT optional(seq(...)) in field('body', ...) —
+			// both compute the same candidate name `call_body`. The first claims
+			// it; `rulesBag` alone can't see that (a synthesized hidden name only
+			// ever lands in `clauseGroupRules`), so without checking
+			// `clauseGroupRules` too, the second silently overwrites the first
+			// arm's body instead of falling back to an ordinal.
+			const input = mkGrammar({
+				call: {
+					type: CHOICE,
+					members: [
+						{
+							type: SEQ,
+							members: [
+								{ type: STRING, value: 'k1' },
+								{
+									type: FIELD,
+									name: 'body',
+									content: {
+										type: OPTIONAL,
+										content: {
+											type: SEQ,
+											members: [
+												{ type: SYMBOL, name: 'a' },
+												{ type: SYMBOL, name: 'b' }
+											]
+										}
+									}
+								}
+							]
+						},
+						{
+							type: SEQ,
+							members: [
+								{ type: STRING, value: 'k2' },
+								{
+									type: FIELD,
+									name: 'body',
+									content: {
+										type: OPTIONAL,
+										content: {
+											type: SEQ,
+											members: [
+												{ type: SYMBOL, name: 'c' },
+												{ type: SYMBOL, name: 'd' }
+											]
+										}
+									}
+								}
+							]
+						}
+					]
+				},
+				a: { type: STRING, value: 'a' },
+				b: { type: STRING, value: 'b' },
+				c: { type: STRING, value: 'c' },
+				d: { type: STRING, value: 'd' }
+			});
+			const out = runEnrich(input);
+			// The first arm's body claims `_call_body` and keeps its own content.
+			expect(out.grammar.rules._call_body).toMatchObject({
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'a' },
+					{ type: 'SYMBOL', name: 'b' }
+				]
+			});
+			// The second arm falls back to an ordinal instead of overwriting it.
+			expect(out.grammar.rules._call_group1).toMatchObject({
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'c' },
+					{ type: 'SYMBOL', name: 'd' }
+				]
+			});
+		});
+
 		it('does NOT use a field name from a seq/choice member position (only the direct enclosing field)', () => {
 			const input = mkGrammar({
 				// `field('items', ...)` wraps a SEQ; the optional(seq(...)) inside

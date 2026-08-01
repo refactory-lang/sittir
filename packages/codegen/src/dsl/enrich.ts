@@ -1675,7 +1675,11 @@ function applyClauseHoist(
 				clauseGroupOwners,
 				// Single non-BLANK arm: no siblings, no leading-name collisions.
 				new Set(),
-				ambientPrec
+				ambientPrec,
+				// The whole optional content is still the field's logical
+				// position (this is optional(seq)/CHOICE[content, BLANK], not a
+				// seq/choice member boundary) — carry the field name in.
+				enclosingFieldName
 			);
 			const final = promoted ?? recursed;
 			if (final === opt.inner) return rule;
@@ -2193,7 +2197,18 @@ function visibleGroupSynthName(
 	};
 	if (enclosingFieldName !== undefined) {
 		const visibleName = `${base}_${enclosingFieldName}`;
-		if (!(visibleName in rulesBag) && !(`_${visibleName}` in rulesBag)) return register(visibleName);
+		// Also decline when a DIFFERENT group body already claimed this same
+		// field-derived name (e.g. two distinct group bodies under the same
+		// parent both wrapped in `field('body', ...)`) — `rulesBag` alone
+		// can't see this, since a synthesized hidden name only ever lands in
+		// `clauseGroupRules`, never the base grammar.
+		if (
+			!(visibleName in rulesBag) &&
+			!(`_${visibleName}` in rulesBag) &&
+			!(`_${visibleName}` in clauseGroupRules)
+		) {
+			return register(visibleName);
+		}
 	}
 	counter.grp += 1;
 	const visibleName = `${base}_group${counter.grp}`;
@@ -2287,7 +2302,12 @@ function mintStructuredChoiceArm(
 	visibleGroupHiddenNames: Set<string>,
 	clauseGroupOwners: Map<string, string>,
 	collidingLeadingNames: ReadonlySet<string>,
-	ambientPrec?: Rule
+	ambientPrec?: Rule,
+	// See visibleGroupSynthName's doc comment — same field-derived naming as
+	// applyClauseHoist's OPTIONAL-position callers thread in; only those
+	// callers pass a value, seq/choice-member callers correctly omit it (a
+	// member is a distinct position, not "the field's content" as a whole).
+	enclosingFieldName?: string
 ): Rule | null {
 	const t = (arm as { type?: string }).type;
 	if (typeof t !== 'string') return null;
@@ -2323,7 +2343,9 @@ function mintStructuredChoiceArm(
 			groupDedupeMap,
 			visibleGroupHiddenNames,
 			clauseGroupOwners,
-			collidingLeadingNames
+			collidingLeadingNames,
+			undefined,
+			enclosingFieldName
 		);
 		if (!minted) return null;
 		return { ...arm, content: minted } as Rule;
@@ -2394,7 +2416,8 @@ function mintStructuredChoiceArm(
 			counter,
 			rulesBag,
 			clauseGroupRules,
-			ambientPrec
+			ambientPrec,
+			enclosingFieldName
 		);
 		if (!names) return null;
 		visibleGroupHiddenNames.add(names.hiddenName);

@@ -331,14 +331,18 @@ phantom-kind inventory — see Link), `parsekind-noninjective`,
 stamp miss means a referenced kind or literal never resolved a parser
 kindId — visible now instead of deferring the gap to a native "unknown
 kind id" render error, per the invariant's end-state goal. They report the
-FULL miss set, not split by exclusion class — `kindid-vaporized-*`/
-`kindid-inline-excluded-*` are each a subset of this same set, computed
-from `inlineKinds` membership alone (a purely structural signal, not proof
-a given miss is genuinely dead surface — there is no cheap way to prove
-reachability here, so "not inline" cannot be narrowed to "known-dead"
-without risking silently swallowing a real future regression). Cross-
-reference the vaporized/inline-excluded codes against the unstamped codes
-to see which entries already have an accepted reason.
+FULL miss set, not split by exclusion class — `reportVaporizedKinds`
+partitions symbol misses three ways: `kindid-inline-excluded-symbols`
+(in the grammar's authoritative `inline:` array), `kindid-vaporized-symbols`
+(not inline AND unreachable from the grammar's root by an independent
+reference-graph walk — real evidence of dead surface, not just the
+complement of the inline check), and `kindid-unclassified-symbols`
+(not inline but reachable — a genuine, unaccepted gap, reported at
+`warning` severity so a future regression can't hide inside "vaporized").
+Literal misses stay a two-way split (inline-excluded vs vaporized) since
+bare literal text has no rule-name identity to test reachability against.
+Cross-reference these codes against the unstamped codes to see which
+entries already have an accepted reason.
 
 Reference:
 [glossary/compiler-diagnostics.md](glossary/compiler-diagnostics.md).

@@ -132,6 +132,8 @@ export function hasAnyField(rule: Rule<'link'>): boolean {
 		case REPEAT1:
 		case VARIANT:
 		case GROUP:
+		case ALIAS:
+		case TOKEN:
 			return hasAnyField(rule.content);
 		default:
 			return false;
