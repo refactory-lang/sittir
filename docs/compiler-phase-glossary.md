@@ -326,5 +326,19 @@ phantom-kind inventory — see Link), `parsekind-noninjective`,
 `seq-with-nested-seq`, `typename-collision`. Inspect via
 `sittir tool grammar-diagnostics`.
 
+`kindid-unstamped-symbols`/`kindid-unstamped-literals` (`link.ts`'s
+`reportKindIdStampMisses`) are `warning`-severity, promoted from `info`: a
+stamp miss means a referenced kind or literal never resolved a parser
+kindId — visible now instead of deferring the gap to a native "unknown
+kind id" render error, per the invariant's end-state goal. They report the
+FULL miss set, not split by exclusion class — `kindid-vaporized-*`/
+`kindid-inline-excluded-*` are each a subset of this same set, computed
+from `inlineKinds` membership alone (a purely structural signal, not proof
+a given miss is genuinely dead surface — there is no cheap way to prove
+reachability here, so "not inline" cannot be narrowed to "known-dead"
+without risking silently swallowing a real future regression). Cross-
+reference the vaporized/inline-excluded codes against the unstamped codes
+to see which entries already have an accepted reason.
+
 Reference:
 [glossary/compiler-diagnostics.md](glossary/compiler-diagnostics.md).

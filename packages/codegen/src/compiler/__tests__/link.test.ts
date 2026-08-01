@@ -1121,6 +1121,16 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 		});
 	});
 
+	it('reports an unstamped literal as warning severity too', () => {
+		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
+		const misses: KindIdStampMisses = { symbols: new Set(), literals: new Set(['r#"']) };
+		const sink = new DiagnosticSink();
+		reportKindIdStampMisses(misses, entries, sink, new Set());
+		const unstampedLiterals = sink.all().find((d) => d.code === 'kindid-unstamped-literals');
+		expect(unstampedLiterals?.details).toEqual({ texts: ['r#"'] });
+		expect(unstampedLiterals?.severity).toBe('warning');
+	});
+
 	it('splits a mixed miss set: inline kinds excluded from the vaporized bucket, literals handled the same way', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
 		const misses: KindIdStampMisses = {
