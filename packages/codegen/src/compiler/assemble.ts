@@ -75,7 +75,7 @@ import {
 } from './model/node-map.ts';
 import { simplifyRule, hoistInnerFieldsForTemplate } from './simplify.ts';
 import { deriveStructuralVariantChildren } from './variant-structural.ts';
-import { inlineRefs, extractRepeatShape } from '../dsl/rule-transforms.ts';
+import { inlineRefs } from '../dsl/rule-transforms.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
@@ -249,8 +249,11 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			// `inlinedRule` — wrapper-deletion already computed the same facts
 			// (multiplicity/nonterminal/separator) these checks used to walk
 			// OPTIONAL/FIELD/REPEAT/REPEAT1 nodes for. `inlinedRule` (Rule<'link'>)
-			// still feeds the node CONSTRUCTORS below (AssembledGroup/Multi
-			// deliberately need the pre-deletion wrapper node).
+			// still feeds most node CONSTRUCTORS below (AssembledGroup deliberately
+			// needs the pre-deletion wrapper node); AssembledMulti constructs
+			// directly off `renderRule` — a hidden repeat helper's own body IS the
+			// repeat, so wrapper-deletion's pushed-down attributes are already
+			// everything it needs.
 			const modelType = classifyNode(kind, renderRule, {
 				variantParents,
 				parentAliasedKinds: normalized.parentAliasedKinds,
@@ -324,14 +327,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					break;
 				}
 				case 'multi': {
-					const shape = extractRepeatShape(inlinedRule);
-					if (!shape) {
-						throw new Error(
-							`assemble: '${kind}' classified as 'multi' but extractRepeatShape ` +
-								`returned null — classifier and extractor must agree on shape.`
-						);
-					}
-					nodes.set(kind, new AssembledMulti(kind, shape.repeat));
+					nodes.set(kind, new AssembledMulti(kind, renderRule));
 					break;
 				}
 				case 'separatedList': {

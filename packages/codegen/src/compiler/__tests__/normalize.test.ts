@@ -1,4 +1,4 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import {
 	normalizeGrammar,
@@ -10,6 +10,7 @@ import {
 	factorChoiceBranches,
 	dedupeSeqMembers
 } from '../normalize.ts';
+import { classifyNode } from '../assemble.ts';
 import type { Rule } from '../../types/rule.ts';
 import type { LinkedGrammar, ExternalRole } from '../types.ts';
 
@@ -125,6 +126,28 @@ describe('Normalize — normalizeGrammar()', () => {
 	// in variants" moved to link.test.ts after variant tagging was
 	// relocated to Link in commit (Phase 2 classification cleanup).
 	// See `link.test.ts → 'tagVariants wraps visible choice members'`.
+
+	it('folds a hidden repeat-helper reference into its sole referrer', () => {
+		// `parent`'s ENTIRE body is a reference to `_x_repeat1`, a hidden kind
+		// whose own body is `repeat1(...)`. The reference is single-use (not
+		// kept), so normalize's inline-hoist fixpoint should splice
+		// `_x_repeat1`'s (wrapper-deleted) body into `parent` — the same
+		// treatment a hidden GROUP reference already gets. Before the fix,
+		// `resolveGroupOrMultiInlineTarget` only recognized a REPEAT/REPEAT1
+		// wrapper NODE, which is already gone by the time this fixpoint runs
+		// (it operates on the wrapper-deleted view) — so `_x_repeat1` never
+		// folded and `parent` stayed a bare, unfolded SYMBOL reference.
+		const linked = makeLinked({
+			parent: { type: SYMBOL, name: '_x_repeat1', inline: true },
+			_x_repeat1: { type: REPEAT1, content: { type: STRING, value: 'x' } }
+		});
+		const normalized = normalizeGrammar(linked);
+		const parentRule = normalized.normalizedRules['parent']!;
+		expect(parentRule.type).not.toBe('SYMBOL');
+		// The unfolded shape misclassified as 'branch' (a bare SYMBOL ref);
+		// once folded, `parent`'s all-text repeated body classifies as 'pattern'.
+		expect(classifyNode('parent', parentRule)).toBe('pattern');
+	});
 });
 
 // ---------------------------------------------------------------------------
