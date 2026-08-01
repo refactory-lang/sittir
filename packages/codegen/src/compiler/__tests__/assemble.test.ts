@@ -965,7 +965,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		expect((aliasNode as AssembledSupertype).subtypeNames).toEqual(['identifier']);
 	});
 
-	it('AssembledSupertype constructor reads storageKindId off pre-stamped subtype refs, not the catalog', () => {
+	it('AssembledSupertype constructor trusts each pre-stamped SubtypeRef directly, no re-derivation', () => {
 		const rule: Rule<'link'> = {
 			type: SUPERTYPE,
 			name: '_expression',
@@ -974,10 +974,39 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 				{ type: SYMBOL, name: 'block', aliasedFrom: '_simple_statements', kindId: 42, aliasedFromId: 77 }
 			]
 		};
-		// Empty kindEntries: if the constructor fell back to a catalog lookup
-		// instead of reading the stamp off each ref, storageKindId would come
-		// out undefined for both entries.
-		const node = new AssembledSupertype('_expression', rule, ['identifier', '_simple_statements'], []);
+		const node = new AssembledSupertype('_expression', rule, [
+			{ name: 'identifier', storageKindId: 99 },
+			{ name: '_simple_statements', storageKindId: 77 }
+		]);
 		expect(node.subtypes.map((s) => s.storageKindId)).toEqual([99, 77]);
+	});
+
+	it('carries a nested supertype arm\'s own stamped kindId through to the flattened subtype list', () => {
+		// `_outer` never directly references `identifier` / `_simple_statements` —
+		// they're reachable ONLY through `_inner`'s own `subtypes`. Before the
+		// stamped-SubtypeRef chain, only names directly in the OUTER rule's
+		// `rule.subtypes` got their id re-derived by AssembledSupertype's
+		// constructor; a flattened, nested-arm name silently landed with
+		// storageKindId undefined (PR #199 finding #1). No kindEntries/catalog
+		// is passed anywhere here — every id below must come from a ref stamp.
+		const normalized = makeNormalized({
+			_outer: {
+				type: SUPERTYPE,
+				name: '_outer',
+				subtypes: [{ type: SYMBOL, name: '_inner', kindId: 10 }]
+			},
+			_inner: {
+				type: SUPERTYPE,
+				name: '_inner',
+				subtypes: [
+					{ type: SYMBOL, name: 'identifier', kindId: 99 },
+					{ type: SYMBOL, name: 'block', aliasedFrom: '_simple_statements', kindId: 42, aliasedFromId: 77 }
+				]
+			}
+		});
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_outer') as AssembledSupertype;
+		expect(node.modelType).toBe('supertype');
+		expect(node.subtypeNames).toEqual(['_inner', 'identifier', '_simple_statements']);
+		expect(node.subtypes.map((s) => s.storageKindId)).toEqual([10, 99, 77]);
 	});
 });
