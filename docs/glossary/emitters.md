@@ -5922,3 +5922,19 @@ All producers emit a numeric `$type`, so the emitted guards compare numeric
 `TSKindId` values only. The one exception is the legacy path taken when
 `generatedIdTables` is absent — unit-test callers that bypass the full codegen
 pipeline — which falls back to string equality.
+
+### `resolveLiteralKindId` (`packages/codegen/src/emitters/render-module.ts:2624`)
+
+```text
+/**
+ * Single derivation of "which numeric kind_id backs this literal" — a
+ * literal's `.kind` is either the rendered TEXT itself (a bare terminal, no
+ * underlying kind) or the name of the real hidden kind it collapsed from
+ * (`_newline`, `_not_escape_sequence`, ...). In the latter case `.kind`
+ * uniquely identifies one catalog row; TEXT does not — two unrelated
+ * hidden kinds can render identical text (e.g. two single-backslash
+ * tokens), and matching by text first would silently pick whichever one
+ * the catalog happens to list first, leaving the other's id unroutable.
+ * Prefer the unambiguous kind-name lookup whenever one exists.
+ */
+```

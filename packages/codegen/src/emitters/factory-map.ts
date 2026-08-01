@@ -144,7 +144,7 @@ export function expandRuntimeDiscriminatorKinds(discriminatorKinds: readonly str
 		}
 		visiting.add(normalized);
 		pushAliasMintedArmParseNames(node, seen, expanded);
-		for (const subtype of node.subtypes) visit(subtype);
+		for (const subtype of node.subtypeNames) visit(subtype);
 		visiting.delete(normalized);
 	}
 

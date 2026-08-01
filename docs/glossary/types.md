@@ -745,3 +745,35 @@ agree on UPPERCASE discriminants, so there is no case ambiguity left to
 absorb. They are consolidated here rather than written inline as `t === 'SEQ'`
 per call site because callers frequently hold a `t: unknown` and want a typed
 narrowing guard.
+
+### `resolvedKindId` (`packages/codegen/src/types/rule.ts:283`)
+
+```text
+/** Parser-issued anon-token kindId for `value` — stamped once at link
+ *  (`canonicalizeRuleLiterals`); the fact prepared for downstream phases to
+ *  read instead of re-resolving the literal against the catalog (the
+ *  consumer-side migration is a separate, later change). */
+```
+
+### `resolvedKindId` (`packages/codegen/src/types/rule.ts:292`)
+
+```text
+/** Stamped at link for fixed-literal patterns only — see StringRule. */
+```
+
+### `kindId` (`packages/codegen/src/types/rule.ts:321`)
+
+```text
+/** Parser-issued kindId of this occurrence's own name — stamped once at
+ *  link (`canonicalizeRuleLiterals`). Absent = `name` has no parser symbol
+ *  (phantom / inline / vaporized). */
+```
+
+### `aliasedFromId` (`packages/codegen/src/types/rule.ts:322`)
+
+```text
+/** Parser-issued kindId of `aliasedFrom`'s own occurrence, present ONLY
+ *  when `aliasedFrom` is set — no fallback to `kindId` (that fallback is a
+ *  consumer's job: `aliasedFromId ?? kindId` for whoever needs the
+ *  effective storage identity). Stamped at link alongside `kindId`. */
+```

@@ -42,7 +42,6 @@ import type {
 	AliasRule,
 	SymbolRef
 } from '../types/rule.ts';
-import { isEnumChoiceRule } from '../types/rule.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import type { AnyRule } from '../types/rule.ts';
 import type { RawGrammar } from './types.ts';
@@ -597,7 +596,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	// body so the `_X → X` invariant holds uniformly — every alias
 	// target has a named hidden source in the rules map.
 	synthesizeInlineAliasSources(rules, ctx);
-	synthesizeFieldEnumRules(rules, ctx);
 	const identified = buildRuleCatalog(rules, { provenanceByKind });
 	const references = attachReferenceRuleIds(refs, { ruleCatalog: identified.ruleCatalog });
 
@@ -724,414 +722,6 @@ function rewriteInlineAliases(
 			} as Rule<'evaluate'>;
 		default:
 			return rule;
-	}
-}
-
-// ---------------------------------------------------------------------------
-// synthesizeFieldEnumRules — promote inline field-enums to named hidden rules
-// ---------------------------------------------------------------------------
-
-function synthesizeFieldEnumRules(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
-	// First pass: collect all (parentKind, fieldName, members) triples so we
-	// can count how often each field name appears with the same member set and
-	// build the canonical-name dedup map before any rewriting happens.
-	const fieldOccurrences = collectFieldEnumOccurrences(rules, ctx);
-	const conflictingSites = collectConflictingFieldEnumSites(fieldOccurrences);
-	const memberKeyToCanonicalName = buildCanonicalEnumNames(fieldOccurrences, ctx);
-
-	// Second pass: rewrite rules using the pre-computed canonical names.
-	const rewrites = new Map<string, Rule<'evaluate'>>();
-	const newRules = new Map<string, Rule<'evaluate'>>();
-
-	const sweep: FieldEnumSweepState = { newRules, memberKeyToCanonicalName, conflictingSites };
-	for (const [parentKind, rule] of Object.entries(rules)) {
-		const rewritten = rewriteFieldEnums(rule, ctx, parentKind, sweep);
-		if (rewritten !== rule) rewrites.set(parentKind, rewritten);
-	}
-
-	// Apply rule rewrites.
-	for (const [kind, newRule] of rewrites) {
-		rules[kind] = newRule;
-	}
-
-	// Register synthesized enum rules.
-	for (const [kindName, enumRule] of newRules) {
-		if (!rules[kindName]) {
-			rules[kindName] = enumRule;
-			ctx.provenanceByKind.set(kindName, 'evaluate-synthesized');
-		}
-	}
-
-	// Cleanup pass: remove pre-existing enum rules that are superseded by a
-	// canonical name for the same member set. This handles the multi-pass
-	// evaluation pattern where the base grammar's synthesized enum kinds
-	// (e.g. `_update_expression_operator`) remain in the rules map when the
-	// override grammar synthesizes a better canonical name (`_operator`) for
-	// the same member set. Only remove rules whose provenance is
-	// 'evaluate-synthesized' (i.e., created by a previous synthesis pass)
-	// AND whose member set now has a different canonical name.
-	purgeSupersededEnumRules(rules, ctx, memberKeyToCanonicalName);
-}
-
-function purgeSupersededEnumRules(
-	rules: Record<string, Rule<'evaluate'>>,
-	ctx: EvaluateCtx,
-	memberKeyToCanonicalName: Map<string, string>
-): void {
-	for (const [name, rule] of Object.entries(rules)) {
-		// Only consider hidden enum rules — visible grammar rules and non-enum
-		// rules must never be removed here.
-		if (!name.startsWith('_')) continue;
-		// PR-P: ENUM type retired — detect via isEnumChoiceRule.
-		if (!isEnumChoiceRule(rule)) continue;
-
-		const memberKey = [...(rule.members as StringRule<'evaluate'>[])]
-			.map((m) => m.value)
-			.sort()
-			.join(',');
-		const canonicalName = memberKeyToCanonicalName.get(memberKey);
-		if (canonicalName !== undefined && canonicalName !== name) {
-			// This rule is superseded — remove it.
-			delete rules[name];
-			ctx.provenanceByKind.delete(name);
-		}
-	}
-}
-
-interface FieldEnumOccurrence {
-	readonly parentKind: string;
-	readonly fieldName: string;
-	readonly memberKey: string;
-	readonly members: StringRule<'evaluate'>[];
-}
-
-function collectFieldEnumOccurrences(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): FieldEnumOccurrence[] {
-	const occurrences: FieldEnumOccurrence[] = [];
-	for (const [parentKind, rule] of Object.entries(rules)) {
-		walkFieldEnums(rule, ctx, parentKind, occurrences);
-	}
-	return occurrences;
-}
-
-function walkFieldEnums(
-	rule: Rule<'evaluate'>,
-	ctx: EvaluateCtx,
-	parentKind: string,
-	out: FieldEnumOccurrence[]
-): void {
-	switch (rule.type) {
-		case FIELD: {
-			// Peel one level of repeat/repeat1 wrapper so that
-			// `field(name, repeat(choice('a','b')))` is treated the same as
-			// `field(name, choice('a','b'))` for occurrence collection purposes.
-			// The repeat wrapper is preserved in the rewrite pass below.
-			const enumContent = peelRepeatWrapper(rule.content);
-			const members = resolveToEnumMembers(enumContent, ctx);
-			if (members !== null && members.length > 0) {
-				const memberKey = buildEnumMemberKey(members);
-				out.push({ parentKind, fieldName: rule.name, memberKey, members });
-			}
-			// Always recurse into content — a field can nest other fields.
-			walkFieldEnums(rule.content, ctx, parentKind, out);
-			return;
-		}
-		case SEQ:
-		case CHOICE:
-			for (const m of rule.members) walkFieldEnums(m, ctx, parentKind, out);
-			return;
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case VARIANT:
-		case GROUP:
-		case TOKEN:
-			walkFieldEnums((rule as { content: Rule<'evaluate'> }).content, ctx, parentKind, out);
-			return;
-		default:
-			return;
-	}
-}
-
-function buildCanonicalEnumNames(occurrences: FieldEnumOccurrence[], ctx: EvaluateCtx): Map<string, string> {
-	// Group occurrences by memberKey.
-	const byKey = new Map<string, FieldEnumOccurrence[]>();
-	for (const occ of occurrences) {
-		let group = byKey.get(occ.memberKey);
-		if (!group) {
-			group = [];
-			byKey.set(occ.memberKey, group);
-		}
-		group.push(occ);
-	}
-
-	const result = new Map<string, string>();
-	const groups = Array.from(byKey.entries()).map(([memberKey, group], index) => {
-		const first = group[0]!;
-		const candidate = deriveCandidateName(group, ctx, first);
-		return { memberKey, group, first, index, ...candidate };
-	});
-
-	groups.sort((a, b) => a.priority - b.priority || a.index - b.index);
-
-	const claimedNames = new Set<string>();
-	for (const group of groups) {
-		const chosenName = claimUniqueEnumName(group.name, ctx, group.memberKey, claimedNames);
-		claimedNames.add(chosenName);
-		result.set(group.memberKey, chosenName);
-	}
-
-	return result;
-}
-
-function fallbackName(occ: FieldEnumOccurrence): string {
-	return `_${occ.parentKind}_${occ.fieldName}`;
-}
-
-function fieldEnumSiteKey(parentKind: string, fieldName: string): string {
-	return `${parentKind}\u0000${fieldName}`;
-}
-
-function collectConflictingFieldEnumSites(occurrences: readonly FieldEnumOccurrence[]): ReadonlySet<string> {
-	const memberKeysBySite = new Map<string, Set<string>>();
-	for (const occ of occurrences) {
-		const siteKey = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
-		let keys = memberKeysBySite.get(siteKey);
-		if (!keys) {
-			keys = new Set<string>();
-			memberKeysBySite.set(siteKey, keys);
-		}
-		keys.add(occ.memberKey);
-	}
-	const conflicting = new Set<string>();
-	for (const [siteKey, keys] of memberKeysBySite) {
-		if (keys.size > 1) conflicting.add(siteKey);
-	}
-	return conflicting;
-}
-
-function claimUniqueEnumName(
-	baseName: string,
-	ctx: EvaluateCtx,
-	memberKey: string,
-	claimedNames: ReadonlySet<string>
-): string {
-	if (!claimedNames.has(baseName) && canReuseExistingEnumName(baseName, ctx, memberKey)) {
-		return baseName;
-	}
-	const slug = enumMemberKeySlug(memberKey);
-	let candidate = `${baseName}__${slug}`;
-	let attempt = 2;
-	while (
-		claimedNames.has(candidate) ||
-		(!canReuseExistingEnumName(candidate, ctx, memberKey) && Object.prototype.hasOwnProperty.call(ctx.rules, candidate))
-	) {
-		candidate = `${baseName}__${slug}_${attempt}`;
-		attempt++;
-	}
-	return candidate;
-}
-
-function canReuseExistingEnumName(name: string, ctx: EvaluateCtx, memberKey: string): boolean {
-	const existing = ctx.rules[name];
-	if (existing === undefined) return true;
-	const members = resolveToEnumMembersOneLevelDeep(existing);
-	if (members === null) return false;
-	return buildEnumMemberKey(members) === memberKey;
-}
-
-function buildEnumMemberKey(members: readonly StringRule<'evaluate'>[]): string {
-	return [...members]
-		.map((m) => m.value)
-		.sort()
-		.join(',');
-}
-
-function enumMemberKeySlug(memberKey: string): string {
-	return memberKey
-		.split(',')
-		.map((member) => {
-			const encoded = Array.from(member)
-				.map((ch) => (/[A-Za-z0-9]/.test(ch) ? ch.toLowerCase() : `x${ch.codePointAt(0)!.toString(16)}`))
-				.join('');
-			return encoded.length > 0 ? encoded : 'empty';
-		})
-		.join('__');
-}
-
-function deriveCandidateName(
-	group: FieldEnumOccurrence[],
-	ctx: EvaluateCtx,
-	first: FieldEnumOccurrence
-): { name: string; priority: number } {
-	const allSameFieldName = group.every((o) => o.fieldName === first.fieldName);
-
-	if (allSameFieldName) {
-		// Priority 1: field name matches an existing grammar rule with same members.
-		const existingMatch = fieldNameMatchesGrammarRule(first.fieldName, ctx, first.members);
-		if (existingMatch) {
-			return { name: `_${first.fieldName}`, priority: 1 };
-		}
-
-		// Priority 2: shared field name across ≥2 distinct parent kinds.
-		const distinctParents = new Set(group.map((o) => o.parentKind)).size;
-		if (distinctParents >= 2) {
-			return { name: `_${first.fieldName}`, priority: 2 };
-		}
-	}
-
-	// Priority 3: fallback — first parent + field name.
-	return { name: fallbackName(first), priority: 3 };
-}
-
-function fieldNameMatchesGrammarRule(fieldName: string, ctx: EvaluateCtx, members: StringRule<'evaluate'>[]): boolean {
-	const rule = ctx.rules[fieldName];
-	if (rule === undefined) return false;
-
-	const resolved = resolveToEnumMembersOneLevelDeep(rule);
-	if (resolved === null) return false;
-
-	const targetKey = [...members]
-		.map((m) => m.value)
-		.sort()
-		.join(',');
-	const ruleKey = buildEnumMemberKey(resolved);
-	return ruleKey === targetKey;
-}
-
-interface FieldEnumSweepState {
-	readonly newRules: Map<string, Rule<'evaluate'>>;
-	readonly memberKeyToCanonicalName: Map<string, string>;
-	readonly conflictingSites: ReadonlySet<string>;
-}
-
-function rewriteFieldEnums(
-	rule: Rule<'evaluate'>,
-	ctx: EvaluateCtx,
-	parentKind: string,
-	sweep: FieldEnumSweepState
-): Rule<'evaluate'> {
-	const { newRules, memberKeyToCanonicalName, conflictingSites } = sweep;
-	const recurse = (r: Rule<'evaluate'>): Rule<'evaluate'> => rewriteFieldEnums(r, ctx, parentKind, sweep);
-
-	switch (rule.type) {
-		case FIELD: {
-			const synthesized = conflictingSites.has(fieldEnumSiteKey(parentKind, rule.name))
-				? null
-				: tryExtractFieldEnum(rule.content, ctx, memberKeyToCanonicalName);
-			if (synthesized !== null) {
-				const { enumKindName, synthesizedRule, replacementContent } = synthesized;
-				if (!newRules.has(enumKindName)) {
-					newRules.set(enumKindName, synthesizedRule);
-				}
-				// Replace the field's inline content with the replacement content rule.
-				// For bare enum: symbol(enumKindName).
-				// For repeat/repeat1(enum): repeat/repeat1(symbol(enumKindName)).
-				return {
-					type: FIELD,
-					name: rule.name,
-					content: replacementContent,
-					// (debt PR-P1) Blind carry — `fieldSource` now lives inside the
-					// opaque `metadata` bag; this rebuild must not read/branch on it,
-					// just propagate it forward untouched.
-					metadata: rule.metadata
-				} satisfies FieldRule<'evaluate'>;
-			}
-			// Content isn't an enum candidate — recurse to find nested fields.
-			const newContent = recurse(rule.content);
-			if (newContent === rule.content) return rule;
-			return { ...rule, content: newContent } as FieldRule<'evaluate'>;
-		}
-		case SEQ:
-		case CHOICE: {
-			const newMembers = rule.members.map(recurse);
-			if (newMembers.every((m, i) => m === rule.members[i])) return rule;
-			return { ...rule, members: newMembers } as Rule<'evaluate'>;
-		}
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case VARIANT:
-		case GROUP:
-		case TOKEN: {
-			const newContent = recurse((rule as { content: Rule<'evaluate'> }).content);
-			if (newContent === (rule as { content: Rule<'evaluate'> }).content) return rule;
-			return { ...rule, content: newContent } as Rule<'evaluate'>;
-		}
-		default:
-			return rule;
-	}
-}
-
-function tryExtractFieldEnum(
-	content: Rule<'evaluate'>,
-	ctx: EvaluateCtx,
-	memberKeyToCanonicalName: Map<string, string>
-): { enumKindName: string; synthesizedRule: Rule<'evaluate'>; replacementContent: Rule<'evaluate'> } | null {
-	// Peel one level of repeat/repeat1 wrapper so `field(name, repeat(enum))`
-	// is handled alongside `field(name, enum)`. The wrapper type is remembered
-	// so the rewrite can restore it around the synthesized symbol reference.
-	const repeatWrapperType = content.type === REPEAT || content.type === REPEAT1 ? content.type : null;
-	const innerContent =
-		repeatWrapperType !== null ? (content as RepeatRule<'evaluate'> | Repeat1Rule<'evaluate'>).content : content;
-
-	const members = resolveToEnumMembers(innerContent, ctx);
-	if (members === null || members.length === 0) return null;
-
-	const memberKey = buildEnumMemberKey(members);
-	const enumKindName = memberKeyToCanonicalName.get(memberKey);
-	if (enumKindName === undefined) return null;
-
-	const synthesizedRule = normalizeEnumMembers(members, { author: 'grammar' });
-
-	const symRule: SymbolRule<'evaluate'> = { type: SYMBOL, name: enumKindName, hidden: true };
-	const replacementContent: Rule<'evaluate'> =
-		repeatWrapperType === null
-			? symRule
-			: repeatWrapperType === REPEAT
-				? { ...(content as RepeatRule<'evaluate'>), content: symRule }
-				: { ...(content as Repeat1Rule<'evaluate'>), content: symRule };
-
-	return { enumKindName, synthesizedRule, replacementContent };
-}
-
-function peelRepeatWrapper(rule: Rule<'evaluate'>): Rule<'evaluate'> {
-	if (rule.type === REPEAT || rule.type === REPEAT1) return rule.content;
-	return rule;
-}
-
-function resolveToEnumMembers(rule: Rule<'evaluate'>, ctx: EvaluateCtx): StringRule<'evaluate'>[] | null {
-	// PR-P: ENUM type retired — detect via isEnumChoiceRule first.
-	if (isEnumChoiceRule(rule)) return rule.members as StringRule<'evaluate'>[];
-	switch (rule.type) {
-		// PR-P: ENUM case removed — handled by isEnumChoiceRule above.
-		case STRING:
-			// Single inline literal — wrap as a 1-member enum.
-			return [rule];
-		case SYMBOL: {
-			// Follow one level of symbol indirection.
-			const target = ctx.rules[rule.name];
-			if (target === undefined) return null;
-			return resolveToEnumMembersOneLevelDeep(target);
-		}
-		default:
-			return null;
-	}
-}
-
-function resolveToEnumMembersOneLevelDeep(target: Rule<'evaluate'>): StringRule<'evaluate'>[] | null {
-	switch (target.type) {
-		case STRING:
-			return [target];
-		// PR-P: ENUM case merged into CHOICE — isEnumChoiceRule detects both.
-		case CHOICE: {
-			// After PR-P, normalizeEnumMembers emits type: CHOICE for enum sets.
-			// The ENUM case (type: 'enum') is also handled here for safety.
-			if (target.members.length === 0) return null;
-			const allStrings = target.members.every((m): m is StringRule<'evaluate'> => m.type === STRING);
-			return allStrings ? target.members : null;
-		}
-		default:
-			return null;
 	}
 }
 
@@ -1729,6 +1319,26 @@ function appendDedup(sink: string[], value: string): void {
 	if (!sink.includes(value)) sink.push(value);
 }
 
+// Shared by `supertypes` and `inline` callback results: both accept a mixed
+// array where the callback's `previous` param carries already-normalized
+// STRING names from the base grammar, while `$.foo` references added in the
+// override normalize to `{ type: 'SYMBOL', name: 'foo' }`. An override body
+// like `previous.concat([$.foo])` produces exactly this mixed shape; without
+// the string branch the base-inherited names silently drop (normalize()
+// turns a bare string into a STRING rule, never SYMBOL, so `n.type ===
+// SYMBOL` is always false for them).
+function appendCallbackMetadataNames(sink: string[], result: unknown): void {
+	if (!Array.isArray(result)) return;
+	for (const item of result) {
+		if (typeof item === 'string') {
+			appendDedup(sink, item);
+			continue;
+		}
+		const n = normalize(item);
+		if (n.type === SYMBOL) appendDedup(sink, n.name);
+	}
+}
+
 function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void {
 	const { refs, sinks, setWord } = ctx;
 	const baseGrammar = ctx.baseGrammar as {
@@ -1768,36 +1378,13 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 	if (opts.supertypes) {
 		const $ = createProxy('_supertypes_', refs);
 		const baseSupertypes = baseGrammar?.supertypes ?? [];
-		const result = opts.supertypes.call($, $, baseSupertypes);
-		if (Array.isArray(result)) {
-			for (const s of result) {
-				// Accept BOTH shapes — the callback's `previous` param
-				// carries already-normalized string names from the base
-				// grammar, while `$.foo` references added in the override
-				// normalize to `{ type: 'SYMBOL', name: 'foo' }`. An
-				// override body like `previous.concat([$.foo])` produces
-				// a mixed array; without the string branch the base-
-				// inherited supertypes silently drop.
-				if (typeof s === 'string') {
-					appendDedup(sinks.supertypes, s);
-					continue;
-				}
-				const n = normalize(s);
-				if (n.type === SYMBOL) appendDedup(sinks.supertypes, n.name);
-			}
-		}
+		appendCallbackMetadataNames(sinks.supertypes, opts.supertypes.call($, $, baseSupertypes));
 	}
 
 	if (opts.inline) {
 		const $ = createProxy('_inline_', refs);
 		const baseInline = baseGrammar?.inline ?? [];
-		const result = opts.inline.call($, $, baseInline);
-		if (Array.isArray(result)) {
-			for (const i of result) {
-				const n = normalize(i);
-				if (n.type === SYMBOL) appendDedup(sinks.inline, n.name);
-			}
-		}
+		appendCallbackMetadataNames(sinks.inline, opts.inline.call($, $, baseInline));
 	}
 
 	if (opts.conflicts) {

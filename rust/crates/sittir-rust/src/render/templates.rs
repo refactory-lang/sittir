@@ -859,6 +859,7 @@ pub struct FunctionSignatureItemTemplate<'a> {
 #[template(path = "function_type.jinja", escape = "none")]
 pub struct FunctionTypeTemplate<'a> {
     pub for_lifetimes: OptionalNonterminalView<'a>,
+    pub function_type_fn_form: OptionalNonterminalView<'a>,
     pub function_type_trait_form: OptionalNonterminalView<'a>,
     pub parameters: SingleNonterminalView<'a>,
     pub return_type: OptionalNonterminalView<'a>,

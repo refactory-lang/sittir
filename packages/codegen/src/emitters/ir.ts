@@ -94,7 +94,7 @@ export function emitIr(config: EmitIrConfig): string {
 
 		const memberEntries: string[] = [];
 		const usedMemberKeys = new Set<string>();
-		for (const subKind of sup.subtypes) {
+		for (const subKind of sup.subtypeNames) {
 			if (subKind.startsWith('_')) continue;
 			const sub = nodeMap.nodes.get(subKind);
 			if (!sub) continue;
@@ -155,7 +155,7 @@ export function emitIr(config: EmitIrConfig): string {
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node.modelType !== 'supertype') continue;
 		const sup = node as AssembledSupertype;
-		for (const subKind of sup.subtypes) {
+		for (const subKind of sup.subtypeNames) {
 			if (subKind.startsWith('_')) continue;
 			const sub = nodeMap.nodes.get(subKind);
 			if (!sub?.rawFactoryName) continue;

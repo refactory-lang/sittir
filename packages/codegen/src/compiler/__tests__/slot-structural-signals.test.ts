@@ -119,8 +119,11 @@ describe('slot structural signals', () => {
 		const slot = getBranch(nodeMap, 'box').fields[0];
 		expect(slot?.isUnnamed).toBe(true);
 
+		// The slot's storageName is the hidden alias source (`helper`), not the
+		// alias's cosmetic display name (`obj`) — `obj` is never a real transport
+		// field. The template must bind to the slot that actually backs it.
 		const templates = runTemplateEmitter({ grammar: 'synth', nodeMap });
-		expect(templates.bodies.get('box')).toContain('{{ obj }}');
+		expect(templates.bodies.get('box')).toContain('{{ helper }}');
 	});
 
 	it('two unnamed same-kind slots in one branch fire storagename-collision (not silently collapsed)', () => {

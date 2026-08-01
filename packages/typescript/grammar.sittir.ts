@@ -343,6 +343,10 @@ export default grammar(
 					2: field('index_type')
 				},
 
+				member_expression: {
+					1: field('separator')
+				},
+
 				method_definition: {
 					1: field('static_marker'),
 					'3/0': field('readonly_marker'),

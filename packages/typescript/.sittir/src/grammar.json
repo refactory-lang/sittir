@@ -802,17 +802,8 @@
           "type": "FIELD",
           "name": "kind",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "let"
-              },
-              {
-                "type": "STRING",
-                "value": "const"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "_kind"
           }
         },
         {
@@ -1250,17 +1241,8 @@
           "type": "FIELD",
           "name": "operator",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "in"
-              },
-              {
-                "type": "STRING",
-                "value": "of"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "__for_header_operator"
           }
         },
         {
@@ -3816,21 +3798,31 @@
             }
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "."
-              },
-              {
-                "type": "FIELD",
-                "name": "optional_chain",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "optional_chain"
+            "type": "FIELD",
+            "name": "separator",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "."
+                },
+                {
+                  "type": "FIELD",
+                  "name": "separator",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "optional_chain"
+                  },
+                  "metadata": {
+                    "fieldSource": "override"
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "FIELD",
@@ -11465,17 +11457,8 @@
           "type": "FIELD",
           "name": "kind",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "let"
-              },
-              {
-                "type": "STRING",
-                "value": "const"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "_kind"
           }
         },
         {
@@ -12479,6 +12462,46 @@
         }
       ]
     },
+    "_kind": {
+      "type": "PREC",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "let"
+          },
+          {
+            "type": "STRING",
+            "value": "const"
+          }
+        ],
+        "metadata": {
+          "author": "enrich"
+        }
+      },
+      "value": -1
+    },
+    "__for_header_operator": {
+      "type": "PREC",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "in"
+          },
+          {
+            "type": "STRING",
+            "value": "of"
+          }
+        ],
+        "metadata": {
+          "author": "enrich"
+        }
+      },
+      "value": -1
+    },
     "_ambient_declaration_global": {
       "type": "SEQ",
       "members": [
@@ -13349,17 +13372,8 @@
           "type": "FIELD",
           "name": "kind",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "let"
-              },
-              {
-                "type": "STRING",
-                "value": "const"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "_kind"
           }
         },
         {
@@ -13587,6 +13601,9 @@
       "type": "BLANK"
     },
     "_kw_index_type": {
+      "type": "BLANK"
+    },
+    "_kw_separator": {
       "type": "BLANK"
     },
     "_kw_static_marker": {

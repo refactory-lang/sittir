@@ -32,6 +32,7 @@ import {
 	resolveFieldStorageInfo,
 	stampExpressionFor,
 	isHiddenInfraSlot,
+	configurableFactoryFields,
 	type BranchSlotClass,
 	classifyFactoryShape,
 	classifyChildFactorySurface,
@@ -62,8 +63,8 @@ function buildSupertypeByKey(nodeMap: NodeMap): Map<string, string> {
 	const supertypeByKey = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node.modelType !== 'supertype') continue;
-		if (node.subtypes.length === 0) continue;
-		const key = [...node.subtypes].sort().join('\n');
+		if (node.subtypeNames.length === 0) continue;
+		const key = [...node.subtypeNames].sort().join('\n');
 		if (!supertypeByKey.has(key)) {
 			const safe = kind.replace(/^_+/, '').replace(/[^\w]/g, '_');
 			supertypeByKey.set(key, `_super_${safe}`);
@@ -311,10 +312,12 @@ function emitBranchFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const fields = node.fields;
-	// Auto-stamp fields are always `required` but they have no slot in Config —
-	// exclude them from the optionality check so the input `?` marker is correct.
-	const nonStampFields = fields.filter((f) => !isAutoStampField(f, nodeMap));
-	const opt = nonStampFields.some((f) => isRequired(f)) ? '' : '?';
+	// A field forces required input only if the caller must actually supply
+	// it: auto-stamped fields (always `required` but have no Config slot) and
+	// keyword-presence fields (default to absent/false) are excluded, same as
+	// configurableFactoryFields' definition of the real Config surface
+	// (shared.ts) — a caller only ever HAS to supply what that surface lists.
+	const opt = configurableFactoryFields(fields, nodeMap).some((f) => isRequired(f)) ? '' : '?';
 	const typeName = node.typeName;
 	const lines: string[] = [];
 	const { inputType, inputOptional } = buildBranchSignatureParts(node, factory, opt);
@@ -728,7 +731,7 @@ function expandAndDedupeContentTypes(
 	const visit = (kind: string): void => {
 		const node = nodeMap.nodes.get(kind);
 		if (node?.modelType === 'supertype') {
-			for (const subtype of node.subtypes) visit(subtype);
+			for (const subtype of node.subtypeNames) visit(subtype);
 			return;
 		}
 		// PR-K3e: dedupe by the mint-stamped id where the slot's values carry

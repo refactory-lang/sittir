@@ -16,6 +16,7 @@
  * (T017) owns filesystem I/O and the template-directory copy.
  */
 
+import { writeSync } from 'node:fs';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import type {
@@ -33,7 +34,6 @@ import {
 	isMultiple,
 	isRequired,
 	isNodeRef,
-	isTerminalValue,
 	kindsOf,
 	structuralFieldsOf,
 	allFormFieldsOf,
@@ -61,7 +61,8 @@ import {
 	classifyBranchSlots,
 	classifyPrimitiveField,
 	type PrimitiveFieldStorage,
-	wordCharAsciiTable
+	wordCharAsciiTable,
+	fieldTypeComponents
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -336,7 +337,7 @@ function collectEffectiveSupertypeTransportShape(
 	for (const [storage, parse] of Object.entries(supertypeNode.subtypeParseNames ?? {})) {
 		if (!state.parseNames.has(storage)) state.parseNames.set(storage, parse);
 	}
-	for (const subKind of supertypeNode.subtypes) {
+	for (const subKind of supertypeNode.subtypeNames) {
 		const subNode = nodeMap.nodes.get(subKind);
 		if (subNode === undefined) continue;
 		if (isReservedSupertypeTransportNode(subNode)) {
@@ -1892,7 +1893,7 @@ function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: Nod
 			if (node.modelType !== 'supertype') continue;
 			if (!used.has(node.typeName)) continue;
 			const supertypeNode = node as AssembledSupertype;
-			for (const subKind of supertypeNode.subtypes) {
+			for (const subKind of supertypeNode.subtypeNames) {
 				const subNode = nodeMap.nodes.get(subKind);
 				if (subNode === undefined || subNode.modelType !== 'supertype') continue;
 				const enumName = `${rustTypeIdent(subNode.typeName)}Transport`;
@@ -2125,7 +2126,7 @@ function emitSupertypeTransportEnum(
 		boxedInEnum(subKind, ownerKind, subNode, nodeMap);
 
 	// See `admitsVerbatimCollapse` docstring for the full rationale.
-	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypes, nodeMap);
+	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypeNames, nodeMap);
 
 	const emitDecodeTrials = (leafOnly = false, indent = '                '): string[] => {
 		// Self-alias / reserved-supertype kind_id: parser sent the supertype's
@@ -2359,7 +2360,7 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	const ownerKind = supertypeNode.kind;
 
 	// See `admitsVerbatimCollapse` docstring for the full rationale.
-	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypes, nodeMap);
+	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypeNames, nodeMap);
 
 	lines.push(`fn ${fnName}(t: &${enumName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(`    match t {`);
@@ -2388,7 +2389,7 @@ function collectConcreteTransportKinds(kind: string, nodeMap: NodeMap, seen: Set
 	if (node === undefined) return [];
 	if (node.modelType !== 'supertype') return [kind];
 	const concreteKinds = new Set<string>();
-	for (const subtype of (node as AssembledSupertype).subtypes) {
+	for (const subtype of (node as AssembledSupertype).subtypeNames) {
 		for (const concreteKind of collectConcreteTransportKinds(subtype, nodeMap, seen)) {
 			concreteKinds.add(concreteKind);
 		}
@@ -2412,6 +2413,36 @@ interface AcceptedTransportIdsInput {
 	parseName?: string;
 }
 
+// ---------------------------------------------------------------------------
+// Fast-path coverage (env-gated via `DBG_KINDID_FASTPATH=1`): tallies how
+// often `resolveLiteralKindId`/`resolveAcceptedTransportIds` are satisfied by
+// their link-time mint-stamp fast path versus falling through to the
+// name/text derivation chains. The fallback chains stay load-bearing (not
+// every kind routes through the catalog yet) — this is measurement only.
+// ---------------------------------------------------------------------------
+const DBG_KINDID_FASTPATH = process.env.DBG_KINDID_FASTPATH === '1';
+let literalKindIdFastPathHits = 0;
+let literalKindIdFallbackHits = 0;
+let transportIdsFastPathHits = 0;
+let transportIdsFallbackHits = 0;
+let kindidFastPathDumpRegistered = false;
+function registerKindIdFastPathDump(): void {
+	if (kindidFastPathDumpRegistered) return;
+	kindidFastPathDumpRegistered = true;
+	process.once('exit', () => {
+		// `process.stderr.write` isn't guaranteed to flush from an `exit`
+		// listener when stderr is an async pipe (as in CI) — Node only
+		// permits synchronous work during `exit`, so a buffered async write
+		// can be silently truncated or dropped. `writeSync` bypasses the
+		// stream's buffering entirely.
+		writeSync(
+			2,
+			`[DBG_KINDID_FASTPATH] resolveLiteralKindId: stamp=${literalKindIdFastPathHits} fallback=${literalKindIdFallbackHits}; ` +
+				`resolveAcceptedTransportIds: stamp=${transportIdsFastPathHits} fallback=${transportIdsFallbackHits}\n`
+		);
+	});
+}
+
 /**
  * Single derivation of "which numeric kind_ids should route to this concrete
  * kind at this reference site" — shared by `emitPerSlotChildEnum` and
@@ -2423,15 +2454,20 @@ interface AcceptedTransportIdsInput {
  */
 function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[] {
 	const { kind, node, nodeMap, kindIdByKind, kindEntries, stampedIds, parseAliases, parseName } = input;
-	const acceptedIds: number[] =
-		stampedIds !== undefined
-			? [...stampedIds]
-			: [
-					...new Set<string>([
-						...collectConcreteTransportKinds(kind, nodeMap),
-						...acceptedTransportKinds(kind, nodeMap, parseAliases)
-					])
-				].map((k) => kindIdByKind.get(k)).filter((id): id is number => id !== undefined);
+	if (DBG_KINDID_FASTPATH) registerKindIdFastPathDump();
+	let acceptedIds: number[];
+	if (stampedIds !== undefined) {
+		if (DBG_KINDID_FASTPATH) transportIdsFastPathHits++;
+		acceptedIds = [...stampedIds];
+	} else {
+		if (DBG_KINDID_FASTPATH) transportIdsFallbackHits++;
+		acceptedIds = [
+			...new Set<string>([
+				...collectConcreteTransportKinds(kind, nodeMap),
+				...acceptedTransportKinds(kind, nodeMap, parseAliases)
+			])
+		].map((k) => kindIdByKind.get(k)).filter((id): id is number => id !== undefined);
+	}
 	if (parseName !== undefined && kindEntries !== undefined) {
 		const parseEntry = findKindEntry(kindEntries, parseName);
 		const parseId = parseEntry?.parseId ?? parseEntry?.id;
@@ -2561,25 +2597,38 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 	// named `<TypeName><FieldName>TransportSlot` (e.g. `AttributedParameterParameterTransportSlot`)
 	// — no special-case "Child" suffix anymore.
 	const consider = (typeName: string, ownerKind: string, field: AssembledNonterminal): void => {
-		const slotKinds = kindsOf(field);
+		// `fieldTypeComponents` is the single source of truth for "is this
+		// value a real child kind (its own transport type) or a literal" —
+		// already used to build the module-wide literal projection
+		// (`fieldTransportLiterals`/`collectTransportLiterals`). A node-ref to
+		// a HIDDEN keyword/token (e.g. an enrich-synthesized field-promotion
+		// helper like `_member_expression_separator`) collapses to a literal
+		// there via `resolveHiddenKeywordLiteral`; re-deriving kinds/literals
+		// from `kindsOf`+`isTerminalValue` here missed that collapse, so a
+		// hidden-keyword arm got treated as a "real" child needing its own
+		// boxed struct variant instead of joining the slot's other literal(s)
+		// — the exact gap `member_expression`'s unified `separator` field hit.
+		const slotKinds: string[] = [];
 		const literalSet = new Set<string>();
 		const literals: TransportLiteral[] = [];
-		// Iterate the terminal values directly (not slotLiteralValues) so the
-		// mint-time resolvedKindId stamp rides along (PR-K3a).
-		for (const v of field.values) {
-			if (!isTerminalValue(v)) continue;
-			const text = v.value;
-			const key = `${text}\0${text}`;
+		for (const component of fieldTypeComponents(field, nodeMap)) {
+			if (component.kind === 'nodeKind') {
+				if (!slotKinds.includes(component.rawKind)) slotKinds.push(component.rawKind);
+				continue;
+			}
+			if (component.kind !== 'literal') continue;
+			const literalKind = component.rawKind ?? component.value;
+			const key = `${literalKind}\0${component.value}`;
 			if (literalSet.has(key)) continue;
 			literalSet.add(key);
-			literals.push({ kind: text, text, resolvedKindId: v.resolvedKindId });
+			literals.push({ kind: literalKind, text: component.value, resolvedKindId: component.resolvedKindId });
 		}
 		// Mixed-content override: a slot with named kinds AND anonymous literal
 		// content is heterogeneous regardless of classifier.
 		const hasMixedContent = slotKinds.length > 0 && literals.length > 0;
 		const cls = hasMixedContent ? ({ tag: 'heterogeneous' } as const) : classifySlotForEmit(slotKinds, nodeMap);
 		if (cls.tag !== 'heterogeneous') return;
-		if (!hasAnyConcreteChildKind(slotKinds, nodeMap)) return;
+		if (!hasAnyConcreteChildKind(slotKinds, nodeMap) && literals.length === 0) return;
 		const enumName = perSlotEnumName(typeName, field.name);
 		if (seen.has(enumName)) return;
 		if (reservedTransportNames.has(enumName)) return;
@@ -2605,6 +2654,39 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 		}
 	}
 	return entries;
+}
+
+function resolveLiteralKindId(
+	literal: TransportLiteral,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindIdByKind?: ReadonlyMap<string, number>
+): number | undefined {
+	if (DBG_KINDID_FASTPATH) registerKindIdFastPathDump();
+	if (literal.resolvedKindId !== undefined) {
+		if (DBG_KINDID_FASTPATH) literalKindIdFastPathHits++;
+		return literal.resolvedKindId;
+	}
+	if (DBG_KINDID_FASTPATH) literalKindIdFallbackHits++;
+	if (kindEntries === undefined) return kindIdByKind?.get(literal.kind);
+	const byText = (): number | undefined => findKindEntryForLiteral(kindEntries, literal.text)?.id;
+	const byKind = (): number | undefined => findKindEntry(kindEntries, literal.kind)?.id;
+	const isKindDerived = literal.kind !== literal.text;
+	const id = isKindDerived ? (byKind() ?? byText()) : (byText() ?? byKind());
+	// A kind-derived literal (collapsed from a real hidden keyword/token/
+	// pattern, not a bare grammar-inline string) has a catalog row by
+	// construction — if that row exists but resolution still failed, the
+	// derivation itself is broken, not a benign unrouted variant. Fail at
+	// codegen time rather than emit a match arm that silently can't be
+	// reached, deferring the same gap to an opaque native "unknown kind id"
+	// error at runtime.
+	if (id === undefined && isKindDerived && hasCatalogEntry(kindEntries, literal.kind)) {
+		throw new Error(
+			`resolveLiteralKindId: kind-derived literal '${literal.kind}' (text ${JSON.stringify(literal.text)}) ` +
+				`has a catalog entry but resolved zero routable ids — neither the mint stamp, kind-name lookup, ` +
+				`nor text lookup found one`
+		);
+	}
+	return id;
 }
 
 function emitPerSlotChildEnum(
@@ -2697,15 +2779,7 @@ function emitPerSlotChildEnum(
 			}
 		}
 		for (const literal of entry.literals) {
-			// PR-K3a: the mint stamp (resolvedKindId, minted through the same
-			// literal-first chain — #129) is authoritative when present. The
-			// emit-time chain remains only for stamp-less literals (kind-
-			// derived keyword/token texts) and the no-catalog fallback.
-			const id =
-				literal.resolvedKindId ??
-				(kindEntries !== undefined
-					? (findKindEntryForLiteral(kindEntries, literal.text) ?? findKindEntry(kindEntries, literal.kind))?.id
-					: kindIdByKind.get(literal.kind));
+			const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
 			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
 			emittedIds.add(id);
@@ -2919,19 +2993,14 @@ function renderAnyTransportWithNapiFromValue(
 	// One match arm per literal kind — unit variants, no payload.
 	// The literal text is a compile-time constant; JS does not need to send it.
 	// Use the same emittedNodeIds set to skip KindIds already claimed by node arms.
-	// Resolution is literal-first (#129): `kindIdByKind` keys every entry by
-	// its catalog kind BEFORE symbolName, so a literal whose text equals a
-	// NAMED rule's name (python's `'type'`) resolved to the rule's id — which
-	// a node arm had already claimed, so the literal arm was deduped away and
-	// the anon token's id had NO arm at all. Resolve the literal TEXT through
-	// the anon-scoped lookup, falling back to the catalog-key form for
-	// literals keyed by parser-symbol name.
+	// Id resolution is `resolveLiteralKindId` — text-first for bare terminals
+	// (a literal whose text equals a NAMED rule's name, e.g. python's `'type'`,
+	// must resolve through the anon-token catalog row, not the rule's own id),
+	// kind-name-first for hidden-keyword/token/pattern collapses (whose
+	// `.kind` uniquely identifies one row; TEXT does not when two such kinds
+	// render identical text).
 	for (const [index, literal] of literals.entries()) {
-		// PR-K3a: mint stamp first; emit-time chain only for stamp-less
-		// (kind-derived) literals.
-		const id =
-			literal.resolvedKindId ??
-			(findKindEntryForLiteral(kindEntries, literal.text) ?? findKindEntry(kindEntries, literal.kind))?.id;
+		const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
 		if (id === undefined) continue;
 		if (emittedNodeIds.has(id)) continue; // T016: skip duplicate KindId
 		emittedNodeIds.add(id);

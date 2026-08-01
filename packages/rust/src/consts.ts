@@ -186,28 +186,21 @@ export const NODE_KINDS = [
 /** All leaf/terminal node kind strings. */
 export const LEAF_KINDS = [
 	'_',
-	'__range_expression_binary_operator',
 	'_compound_assignment_expr_operator',
 	'_error_sentinel',
 	'_field_identifier',
+	'_kw_move_marker',
+	'_kw_ref_marker',
 	'_line_comment_content',
 	'_line_comment_regular_dslash',
 	'_line_doc_content',
-	'_move_marker',
-	'_mutable_specifier',
-	'_operator',
 	'_pointer_type_const',
 	'_primitive_type',
-	'_raw_string_literal_end',
-	'_raw_string_literal_start',
 	'_reference_expression_raw_const',
 	'_reserved_identifier',
-	'_token_binding_pattern_type',
 	'_token_keywords',
 	'_token_tree_punctuation',
 	'_type_identifier',
-	'_unary_expression_operator',
-	'_unsafe_marker',
 	'_wildcard_pattern',
 	'as',
 	'async',
@@ -271,36 +264,19 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
 	'_',
-	'_foreign_mod_item_semi',
-	'_impl_item_semi',
-	'_inner_block_doc_comment_marker',
-	'_inner_line_doc_comment_marker',
-	'_mod_item_external',
-	'_move_marker',
-	'_mutable_specifier',
-	'_outer_block_doc_comment_marker',
-	'_outer_line_doc_comment_marker',
+	'_kw_move_marker',
+	'_kw_ref_marker',
 	'_pointer_type_const',
-	'_range_expression_bare',
-	'_range_pattern_left_bare',
-	'_raw_string_literal_raw_string_literal_end',
-	'_raw_string_literal_raw_string_literal_start',
-	'_struct_item_unit',
-	'_unsafe_marker',
 	'_wildcard_pattern',
-	'amp',
-	'amp_amp',
 	'as',
 	'async',
 	'await',
 	'break',
-	'caret',
 	'const',
 	'continue',
 	'crate',
 	'dyn',
 	'else',
-	'empty_statement',
 	'enum',
 	'extern',
 	'fn',
@@ -316,13 +292,9 @@ export const KEYWORDS = [
 	'move',
 	'mut',
 	'mutable_specifier',
-	'never_type',
-	'pipe',
-	'pipe_pipe',
 	'pub',
 	'raw',
 	'ref',
-	'remaining_field_pattern',
 	'return',
 	'self',
 	'static',
@@ -341,45 +313,62 @@ export const KEYWORDS = [
 
 /** Operator/punctuation tokens. */
 export const OPERATORS = [
-	'!',
-	'"',
 	'"#',
-	'#',
-	'$',
-	'&',
-	'&&',
-	"'",
-	'(',
-	')',
-	'*',
-	'*/',
-	'+',
-	',',
-	'-',
-	'->',
-	'.',
-	'..',
-	'...',
-	'/',
-	'/*',
-	'//',
-	':',
-	'::',
-	';',
-	'<',
-	'=',
-	'=>',
-	'>',
-	'?',
-	'@',
-	'[',
-	']',
-	'_operator__x2ex2e',
-	'macro_rules!',
+	'_foreign_mod_item_semi',
+	'_impl_item_semi',
+	'_inner_block_doc_comment_marker',
+	'_inner_line_doc_comment_marker',
+	'_kw_operator',
+	'_mod_item_external',
+	'_outer_block_doc_comment_marker',
+	'_outer_line_doc_comment_marker',
+	'_range_expression_bare',
+	'_range_pattern_left_bare',
+	'_raw_string_literal_end',
+	'_raw_string_literal_start',
+	'_struct_item_unit',
+	'amp',
+	'amp_amp',
+	'at',
+	'bang',
+	'caret',
+	'colon',
+	'colon_colon',
+	'comma',
+	'dash',
+	'dash_gt',
+	'dollar',
+	'dot',
+	'dot_dot',
+	'dot_dot_dot',
+	'dquote',
+	'empty_statement',
+	'eq',
+	'eq_gt',
+	'gt',
+	'lbrace',
+	'lbrack',
+	'lparen',
+	'lt',
+	'macro_rules_bang',
+	'never_type',
+	'pipe',
+	'pipe_pipe',
+	'plus',
+	'pound',
+	'qmark',
 	'r#"',
-	'{',
-	'|',
-	'}'
+	'rbrace',
+	'rbrack',
+	'remaining_field_pattern',
+	'rparen',
+	'semi',
+	'slash',
+	'slash_slash',
+	'slash_star',
+	'squote',
+	'star',
+	'star_slash'
 ] as const;
 
 export type NodeKind = (typeof NODE_KINDS)[number];
@@ -2939,10 +2928,6 @@ export const FIELD_MAP: Record<
 	yield_expression: [{ name: 'expression', required: false, multiple: false }]
 };
 
-/** Valid values for `__range_expression_binary_operator` nodes. */
-export const __RANGE_EXPRESSION_BINARY_OPERATORS = ['..', '...', '..='] as const;
-export type RangeExpressionBinaryOperatorValue = (typeof __RANGE_EXPRESSION_BINARY_OPERATORS)[number];
-
 /** Valid values for `_compound_assignment_expr_operator` nodes. */
 export const _COMPOUND_ASSIGNMENT_EXPR_OPERATORS = [
 	'+=',
@@ -2957,10 +2942,6 @@ export const _COMPOUND_ASSIGNMENT_EXPR_OPERATORS = [
 	'>>='
 ] as const;
 export type CompoundAssignmentExprOperatorValue = (typeof _COMPOUND_ASSIGNMENT_EXPR_OPERATORS)[number];
-
-/** Valid values for `_operator` nodes. */
-export const _OPERATORS = ['+', '*', '?'] as const;
-export type OperatorValue = (typeof _OPERATORS)[number];
 
 /** Valid values for `_primitive_type` nodes. */
 export const _PRIMITIVE_TYPES = [
@@ -2987,26 +2968,6 @@ export type PrimitiveTypeValue = (typeof _PRIMITIVE_TYPES)[number];
 /** Valid values for `_reserved_identifier` nodes. */
 export const _RESERVED_IDENTIFIERS = ['default', 'union', 'gen'] as const;
 export type ReservedIdentifierValue = (typeof _RESERVED_IDENTIFIERS)[number];
-
-/** Valid values for `_token_binding_pattern_type` nodes. */
-export const _TOKEN_BINDING_PATTERN_TYPES = [
-	'block',
-	'expr',
-	'expr_2021',
-	'ident',
-	'item',
-	'lifetime',
-	'literal',
-	'meta',
-	'pat',
-	'pat_param',
-	'path',
-	'stmt',
-	'tt',
-	'ty',
-	'vis'
-] as const;
-export type TokenBindingPatternTypeValue = (typeof _TOKEN_BINDING_PATTERN_TYPES)[number];
 
 /** Valid values for `_token_keywords` nodes. */
 export const _TOKEN_KEYWORDSS = [
@@ -3090,10 +3051,6 @@ export const _TOKEN_TREE_PUNCTUATIONS = [
 	'?'
 ] as const;
 export type TokenTreePunctuationValue = (typeof _TOKEN_TREE_PUNCTUATIONS)[number];
-
-/** Valid values for `_unary_expression_operator` nodes. */
-export const _UNARY_EXPRESSION_OPERATORS = ['-', '*', '!'] as const;
-export type UnaryExpressionOperatorValue = (typeof _UNARY_EXPRESSION_OPERATORS)[number];
 
 /** Valid values for `boolean_literal` nodes. */
 export const BOOLEAN_LITERALS = ['true', 'false'] as const;

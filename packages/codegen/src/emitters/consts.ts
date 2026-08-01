@@ -54,11 +54,7 @@ export function emitConsts(config: EmitConstsConfig): string {
 				keywords.push(kind);
 				break;
 			case 'token':
-				if (/^[a-z_]+$/i.test(kind)) {
-					keywords.push(kind);
-				} else {
-					operators.push(kind);
-				}
+				operators.push(kind);
 				break;
 			// supertype, group — not in any public const array
 		}

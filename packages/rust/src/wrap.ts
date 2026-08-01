@@ -1055,7 +1055,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'use',
 		'where',
 		'while',
-		'$',
+		'dollar',
 		'token_pattern_group1',
 		'delim_token_tree'
 	]),
@@ -1174,7 +1174,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'use',
 		'where',
 		'while',
-		'$'
+		'dollar'
 	]),
 	_condition: new Set([
 		'_expression',
@@ -5756,7 +5756,7 @@ export function wrapDelimTokens(
 		'_non_delim_token',
 		'non_delim_token',
 		'token_pattern_group1',
-		'$',
+		'dollar',
 		'delim_token_tree'
 	]) as T.DelimTokens | readonly T.DelimTokens[] | undefined;
 	const filtered =
@@ -5765,7 +5765,7 @@ export function wrapDelimTokens(
 			'_non_delim_token',
 			'non_delim_token',
 			'token_pattern_group1',
-			'$',
+			'dollar',
 			'delim_token_tree'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
@@ -5808,7 +5808,7 @@ export function wrapNonDelimToken(
 		'token_tree_punctuation',
 		'_token_keywords',
 		'token_keywords',
-		'$'
+		'dollar'
 	]) as T.NonDelimToken | readonly T.NonDelimToken[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -5834,7 +5834,7 @@ export function wrapNonDelimToken(
 			'token_tree_punctuation',
 			'_token_keywords',
 			'token_keywords',
-			'$'
+			'dollar'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
 		return drillIn<T.NonDelimToken>(data as T.NonDelimToken, tree);
@@ -6176,8 +6176,8 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 						readTerminalFromOther(data, [
 							TSKindId.AmpAmp,
 							TSKindId.PipePipe,
-							TSKindId.Amp2,
-							TSKindId.Pipe2,
+							TSKindId.Amp,
+							TSKindId.Pipe,
 							TSKindId.Caret,
 							TSKindId.EqEq,
 							TSKindId.BangEq,
@@ -8543,7 +8543,7 @@ export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle) {
 			}),
 
 			mutableSpecifier() {
-				return drillIn<'mut'>(this._mutable_specifier, tree);
+				return drillIn<T.MutableSpecifier>(this._mutable_specifier, tree);
 			},
 			pattern() {
 				return drillAs<T.Pattern>(this._pattern, tree, [{ from: 'wildcard_pattern', to: '_wildcard_pattern' }]);
@@ -11352,7 +11352,7 @@ export function wrapDelimTokenTreeParen(
 		readonly _super?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _crate?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _token_keywords?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _$?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly _dollar?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _delim_token_tree?: T.DelimTokens | readonly T.DelimTokens[];
 	},
 	tree: TreeHandle
@@ -11360,11 +11360,11 @@ export function wrapDelimTokenTreeParen(
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
-				'_$',
 				'_boolean_literal',
 				'_char_literal',
 				'_crate',
 				'_delim_token_tree',
+				'_dollar',
 				'_float_literal',
 				'_identifier',
 				'_integer_literal',
@@ -11400,7 +11400,7 @@ export function wrapDelimTokenTreeParen(
 							data._super,
 							data._crate,
 							data._token_keywords,
-							data._$,
+							data._dollar,
 							data._delim_token_tree
 						]),
 				false,
@@ -11439,7 +11439,7 @@ export function wrapDelimTokenTreeBracket(
 		readonly _super?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _crate?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _token_keywords?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _$?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly _dollar?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _delim_token_tree?: T.DelimTokens | readonly T.DelimTokens[];
 	},
 	tree: TreeHandle
@@ -11447,11 +11447,11 @@ export function wrapDelimTokenTreeBracket(
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
-				'_$',
 				'_boolean_literal',
 				'_char_literal',
 				'_crate',
 				'_delim_token_tree',
+				'_dollar',
 				'_float_literal',
 				'_identifier',
 				'_integer_literal',
@@ -11487,7 +11487,7 @@ export function wrapDelimTokenTreeBracket(
 							data._super,
 							data._crate,
 							data._token_keywords,
-							data._$,
+							data._dollar,
 							data._delim_token_tree
 						]),
 				false,
@@ -11526,7 +11526,7 @@ export function wrapDelimTokenTreeBrace(
 		readonly _super?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _crate?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _token_keywords?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _$?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly _dollar?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _delim_token_tree?: T.DelimTokens | readonly T.DelimTokens[];
 	},
 	tree: TreeHandle
@@ -11534,11 +11534,11 @@ export function wrapDelimTokenTreeBrace(
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
-				'_$',
 				'_boolean_literal',
 				'_char_literal',
 				'_crate',
 				'_delim_token_tree',
+				'_dollar',
 				'_float_literal',
 				'_identifier',
 				'_integer_literal',
@@ -11574,7 +11574,7 @@ export function wrapDelimTokenTreeBrace(
 							data._super,
 							data._crate,
 							data._token_keywords,
-							data._$,
+							data._dollar,
 							data._delim_token_tree
 						]),
 				false,
@@ -12518,9 +12518,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_type_argument: (d, t) => wrapTypeArgument(d as unknown as T.TypeArgument, t),
 	_match_block_arms: (d, t) => wrapMatchBlockArms(d as unknown as T.MatchBlockArms, t),
 	string_content: (d) => ({ ...d, $type: TSKindId.StringContent as const }),
-	_raw_string_literal_start: (d) => ({ ...d, $type: TSKindId.RawStringLiteralStart as const }),
 	raw_string_literal_content: (d) => ({ ...d, $type: TSKindId.RawStringLiteralContent as const }),
-	_raw_string_literal_end: (d) => ({ ...d, $type: TSKindId.RawStringLiteralEnd as const }),
 	float_literal: (d) => ({ ...d, $type: TSKindId.FloatLiteral as const }),
 	_line_doc_content: (d) => ({ ...d, $type: TSKindId.LineDocContent as const }),
 	_error_sentinel: (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const }),
@@ -12565,6 +12563,8 @@ const _aliasTargetToSource: Record<string, string> = {
 	impl_item_negative_clause: '_impl_item_negative_clause',
 	impl_item_positive_clause: '_impl_item_positive_clause',
 	in_path: '_in_path',
+	kw_move_marker: '_kw_move_marker',
+	kw_ref_marker: '_kw_ref_marker',
 	let_chain: '_let_chain',
 	line_comment_content: '_line_comment_content',
 	line_comment_doc: '_line_comment_doc',
@@ -12577,9 +12577,7 @@ const _aliasTargetToSource: Record<string, string> = {
 	macro_definition_paren: '_macro_definition_paren',
 	match_arm_with_comma: '_match_arm_with_comma',
 	match_block_arms: '_match_block_arms',
-	move_marker: '_move_marker',
 	non_special_token: '_non_special_token',
-	operator: '_operator',
 	or_pattern_binary: '_or_pattern_binary',
 	or_pattern_prefix: '_or_pattern_prefix',
 	ordered_field_declaration_list_group1: '_ordered_field_declaration_list_group1',
@@ -12589,7 +12587,6 @@ const _aliasTargetToSource: Record<string, string> = {
 	pointer_type_const: '_pointer_type_const',
 	primitive_type: '_primitive_type',
 	range_expression_binary: '_range_expression_binary',
-	range_expression_binary_operator: '__range_expression_binary_operator',
 	range_expression_postfix: '_range_expression_postfix',
 	range_expression_prefix: '_range_expression_prefix',
 	range_pattern_group2: '_range_pattern_group2',
@@ -12602,7 +12599,6 @@ const _aliasTargetToSource: Record<string, string> = {
 	struct_item_brace: '_struct_item_brace',
 	struct_item_tuple: '_struct_item_tuple',
 	struct_pattern_group1: '_struct_pattern_group1',
-	token_binding_pattern_type: '_token_binding_pattern_type',
 	token_pattern: '_token_pattern',
 	token_tree_brace: '_token_tree_brace',
 	token_tree_bracket: '_token_tree_bracket',
@@ -12614,8 +12610,6 @@ const _aliasTargetToSource: Record<string, string> = {
 	tokens: '_tokens',
 	tuple_pattern_group1: '_tuple_pattern_group1',
 	type_argument: '_type_argument',
-	unary_expression_operator: '_unary_expression_operator',
-	unsafe_marker: '_unsafe_marker',
 	use_bounds_group1: '_use_bounds_group1',
 	use_clause: '_use_clause',
 	use_list_group1: '_use_list_group1',

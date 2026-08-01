@@ -35,7 +35,7 @@ export async function run(opts: DiffFailuresOptions): Promise<number> {
 		for (const i of r.issues) console.log(`  ${i.type === 'literal-leak' ? 'W' : 'E'} ${i.kind}: ${i.message}`);
 	}
 	if (which === 'all' || which === 'factory') {
-		const r = await validateFactoryRenderParse(opts.grammar, tp);
+		const r = await validateFactoryRenderParse(opts.grammar, tp, 'native');
 		console.log(`\n=== FACTORY_RENDER_PARSE (${r.pass}/${r.total}, ast=${r.astMatchPass}) ===`);
 		for (const e of r.errors) console.log(`  E ${e.kind}: ${e.message}`);
 	}

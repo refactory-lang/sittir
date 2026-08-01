@@ -103,7 +103,7 @@ export function referencedKinds(nodeMap: NodeMap): Set<string> {
 				for (const s of Object.values(node.slots)) for (const t of slotKindNames(s)) referenced.add(t);
 				break;
 			case 'supertype':
-				for (const t of node.subtypes) referenced.add(t);
+				for (const t of node.subtypeNames) referenced.add(t);
 				break;
 		}
 	}
@@ -175,23 +175,30 @@ export function isAutoStampField(field: AssembledNonterminal, nodeMap: NodeMap):
 	return resolveEffectiveLiteral(field, nodeMap) !== undefined;
 }
 
-export function resolveHiddenKeywordLiteral(kindName: string, nodeMap: NodeMap): string | undefined {
+export function resolveHiddenKeywordLeaf(
+	kindName: string,
+	nodeMap: NodeMap
+): AssembledKeyword | AssembledToken | undefined {
 	if (!kindName.startsWith('_')) return undefined;
 	const node = nodeMap.nodes.get(kindName);
-	if (node instanceof AssembledKeyword) return node.text;
+	if (node instanceof AssembledKeyword) return node;
 	// Tokens with StringRule bodies are anonymous-string literals that
 	// the classifier routed through `token()` / `prec()` wrappers (the
 	// evaluator strips prec but token shape survives). They're
 	// functionally identical to keywords for inlining purposes — a
 	// single literal text the field accepts.
-	if (node instanceof AssembledToken) return node.text;
+	if (node instanceof AssembledToken && node.text !== undefined) return node;
 	// Single-subtype supertypes (e.g. `_semicolon` → `_automatic_semicolon`)
 	// — follow the chain so fields whose value is the supertype inherit the
 	// leaf/keyword/token literal for auto-stamp detection.
-	if (node instanceof AssembledSupertype && node.subtypes.length === 1) {
-		return resolveHiddenKeywordLiteral(node.subtypes[0]!, nodeMap);
+	if (node instanceof AssembledSupertype && node.subtypeNames.length === 1) {
+		return resolveHiddenKeywordLeaf(node.subtypeNames[0]!, nodeMap);
 	}
 	return undefined;
+}
+
+export function resolveHiddenKeywordLiteral(kindName: string, nodeMap: NodeMap): string | undefined {
+	return resolveHiddenKeywordLeaf(kindName, nodeMap)?.text;
 }
 
 export function isHiddenInfraSlot(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
@@ -206,8 +213,8 @@ function isHiddenInfraKind(kindName: string, nodeMap: NodeMap): boolean {
 	if (literal !== undefined) return true;
 	const node = nodeMap.nodes.get(kindName);
 	if (!(node instanceof AssembledSupertype)) return false;
-	if (node.subtypes.length === 0) return false;
-	return node.subtypes.every((subtype) => isHiddenInfraKind(subtype, nodeMap));
+	if (node.subtypeNames.length === 0) return false;
+	return node.subtypeNames.every((subtype) => isHiddenInfraKind(subtype, nodeMap));
 }
 
 // ---------------------------------------------------------------------------
@@ -265,7 +272,11 @@ export type TypeComponent =
 	// `resolvedKindId` is the PR-K2 mint stamp carried off the terminal
 	// value (PR-K3a) — absent for hidden-keyword pre-inlined literals,
 	// whose ref ids describe the HIDDEN kind, not the literal's anon token.
-	| { kind: 'literal'; value: string; resolvedKindId?: number }
+	// `rawKind` is set for the latter case (the hidden kind's own name, e.g.
+	// `_newline`) so id resolution can still join on the KIND when the
+	// literal's TEXT collides with an unrelated kind's text elsewhere in the
+	// same catalog (two different kinds can render identical text).
+	| { kind: 'literal'; value: string; resolvedKindId?: number; rawKind?: string }
 	| { kind: 'missing'; value: string; rawKind: string };
 
 export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMap): TypeComponent[] {
@@ -277,9 +288,15 @@ export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMa
 		}
 		if (!isNodeRef(v)) continue;
 		const t = storageKindOfRef(v.node);
-		const lit = resolveHiddenKeywordLiteral(t, nodeMap);
-		if (lit !== undefined) {
-			out.push({ kind: 'literal', value: lit });
+		const leaf = resolveHiddenKeywordLeaf(t, nodeMap);
+		if (leaf?.text !== undefined) {
+			// Two stamps, both minted at node/value construction, never
+			// re-derived from text here: `v.storageKindId` (the ref's own
+			// catalog row, when the hidden kind IS a parser symbol) and the
+			// leaf's `resolvedKindId` (the anon token's row, for
+			// compile-synthesized kinds like evaluate's field-enum names that
+			// have no parser symbol of their own).
+			out.push({ kind: 'literal', value: leaf.text, rawKind: t, resolvedKindId: v.storageKindId ?? leaf.resolvedKindId });
 			continue;
 		}
 		const node = nodeMap.nodes.get(t);
@@ -595,7 +612,10 @@ export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: Node
 	return slot;
 }
 
-function configurableFactoryFields(fields: readonly AssembledNonterminal[], nodeMap: NodeMap): AssembledNonterminal[] {
+export function configurableFactoryFields(
+	fields: readonly AssembledNonterminal[],
+	nodeMap: NodeMap
+): AssembledNonterminal[] {
 	return fields.filter(
 		(field) =>
 			stampExpressionFor(field, nodeMap) === undefined &&

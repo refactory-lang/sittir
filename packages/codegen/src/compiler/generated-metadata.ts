@@ -129,16 +129,6 @@ export function findEntryForLiteralText<T extends KindEntryLike>(entries: readon
 	);
 }
 
-export function findGeneratedKindEntry(
-	entries: readonly GeneratedKindEntry[],
-	kind: string
-): GeneratedKindEntry | undefined {
-	/* Delegates to the shared chain; the symbolName tail is anon-first (steps
-	   3/4 split), unlike a merged find() where entry ORDER would decide
-	   anon-vs-named symbolName ties. */
-	return findEntryForKindName(entries, kind);
-}
-
 function collectKindIds(language: TreeSitterLanguageMetadata): Map<string, number> {
 	const result = new Map<string, number>();
 	const namedness = new Map<string, boolean>();

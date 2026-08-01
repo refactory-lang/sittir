@@ -40,6 +40,17 @@ vi.mock('../src/run.ts', () => ({
 	formatFactoryRenderParseReport: vi.fn().mockReturnValue('factory: pass=7 total=7')
 }));
 
+// Mock cachedNativeEngineProfile so debug-profile-skip tests can control it
+// independently of the (also mocked) run.ts collectors. Partial mock — other
+// common.ts exports (e.g. adaptNode) are used transitively by index.ts.
+vi.mock('../src/validate/common.ts', async (importOriginal) => {
+	const actual = await importOriginal<typeof import('../src/validate/common.ts')>();
+	return {
+		...actual,
+		cachedNativeEngineProfile: vi.fn().mockReturnValue(undefined)
+	};
+});
+
 // Mock readHistory so runHistoryCli tests are deterministic.
 vi.mock('../src/history.ts', () => ({
 	readHistory: vi.fn().mockReturnValue([
@@ -70,6 +81,7 @@ vi.mock('../src/history.ts', () => ({
 import { runCountsCli, runProbeFactoryCli, runHistoryCli } from '../src/commands.ts';
 import { runFrom, runRt, runFactory, runCoverage } from '../src/run.ts';
 import { appendHistory, readHistory } from '../src/history.ts';
+import { cachedNativeEngineProfile } from '../src/validate/common.ts';
 
 describe('@sittir/validator cli surface — exports', () => {
 	it('exports runCountsCli as a function', () => {
@@ -193,6 +205,16 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 				factoryRenderParsePass: 7
 			})
 		);
+		logSpy.mockRestore();
+	});
+
+	it('skips appendHistory when the native engine is a debug build', async () => {
+		vi.mocked(cachedNativeEngineProfile).mockReturnValueOnce('debug');
+		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+		await runCountsCli(['rust']);
+		expect(vi.mocked(appendHistory)).not.toHaveBeenCalled();
+		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
+		expect(allOutput).toMatch(/DEBUG build.*skipping validation-history record/);
 		logSpy.mockRestore();
 	});
 });

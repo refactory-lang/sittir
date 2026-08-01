@@ -76,6 +76,15 @@ if [ -n "$wave_hits" ]; then
     notes+=("decomp candidates (wave cleanup): $wave_list")
 fi
 
+# 4b. Comment-slop scan — newly added comment lines narrating provenance or
+# citing planning-artifact numbers (coding-standards rule 9). Same check the
+# pre-commit gate BLOCKS on; here it nudges so the author fixes its own slop
+# with context still warm, before the commit stage.
+slop_hits=$(scripts/comment-slop-check.sh --working 2>/dev/null | head -5)
+if [ -n "$slop_hits" ]; then
+    notes+=("comment-slop (provenance/number refs in new comments — will block at commit): $(echo "$slop_hits" | head -3 | tr '\n' ' ' | sed 's/ $//')")
+fi
+
 # 5. Type-escape-hatch scan — flag newly-added lines that introduce type-
 # checker escape hatches. These are usually band-aids that fix a type error
 # by silencing it; the correct fix is to adjust the types or the shape.
