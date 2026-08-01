@@ -32,6 +32,7 @@ import {
 	resolveFieldStorageInfo,
 	stampExpressionFor,
 	isHiddenInfraSlot,
+	configurableFactoryFields,
 	type BranchSlotClass,
 	classifyFactoryShape,
 	classifyChildFactorySurface,
@@ -311,10 +312,12 @@ function emitBranchFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const fields = node.fields;
-	// Auto-stamp fields are always `required` but they have no slot in Config —
-	// exclude them from the optionality check so the input `?` marker is correct.
-	const nonStampFields = fields.filter((f) => !isAutoStampField(f, nodeMap));
-	const opt = nonStampFields.some((f) => isRequired(f)) ? '' : '?';
+	// A field forces required input only if the caller must actually supply
+	// it: auto-stamped fields (always `required` but have no Config slot) and
+	// keyword-presence fields (default to absent/false) are excluded, same as
+	// configurableFactoryFields' definition of the real Config surface
+	// (shared.ts) — a caller only ever HAS to supply what that surface lists.
+	const opt = configurableFactoryFields(fields, nodeMap).some((f) => isRequired(f)) ? '' : '?';
 	const typeName = node.typeName;
 	const lines: string[] = [];
 	const { inputType, inputOptional } = buildBranchSignatureParts(node, factory, opt);

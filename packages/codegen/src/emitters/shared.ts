@@ -612,7 +612,10 @@ export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: Node
 	return slot;
 }
 
-function configurableFactoryFields(fields: readonly AssembledNonterminal[], nodeMap: NodeMap): AssembledNonterminal[] {
+export function configurableFactoryFields(
+	fields: readonly AssembledNonterminal[],
+	nodeMap: NodeMap
+): AssembledNonterminal[] {
 	return fields.filter(
 		(field) =>
 			stampExpressionFor(field, nodeMap) === undefined &&

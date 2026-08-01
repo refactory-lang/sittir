@@ -1559,16 +1559,16 @@ export function coerceToParameters(input?: T.ParametersGroup1 | T.Parameters): R
 	return F.buildParameters(input as Parameters<typeof F.buildParameters>[0]);
 }
 
-export function coerceToSelfParameter(input: T.SelfParameter.Loose): ReturnType<typeof F.buildSelfParameter> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSelfParameter>;
+export function coerceToSelfParameter(input?: T.SelfParameter.Loose): ReturnType<typeof F.buildSelfParameter> {
+	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSelfParameter>;
 	return F.buildSelfParameter({
-		reference: _resolveBooleanKeyword(input.reference),
-		lifetime: _resolveOneBranch<T.Lifetime>(input.lifetime, 'lifetime'),
-		mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
+		reference: _resolveBooleanKeyword(input?.reference),
+		lifetime: _resolveOneBranch<T.Lifetime>(input?.lifetime, 'lifetime'),
+		mutableSpecifier: _resolveBooleanKeyword(input?.mutableSpecifier),
 		self: _requireField(
 			'self_parameter',
 			'self',
-			coerceKindEnumStorage(_resolveOneLeaf<T.Self>(input.self, 'self'), [])
+			coerceKindEnumStorage(_resolveOneLeaf<T.Self>(input?.self, 'self'), [])
 		)
 	});
 }
