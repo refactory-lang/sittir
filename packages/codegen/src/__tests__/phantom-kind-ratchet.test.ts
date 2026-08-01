@@ -6,11 +6,9 @@ import { describe, expect, it } from 'vitest';
  * name-keyed id resolution and violate the every-kind-has-a-kindId
  * invariant.
  *
- * The ceilings are EXACT FLOORS (Phase 5 of
- * docs/superpowers/plans/2026-07-30-kindid-invariant-restoration-plan.md),
- * not an audited baseline with slack — every remaining phantom in this count
- * is either the grammar's `inline:`-array class (S6) or genuinely
- * unreachable VAPORIZED dead surface (S7), per the classified
+ * Each ceiling is a shrink-only upper bound, not an audited target: every
+ * remaining phantom is classified as either the grammar's `inline:`-array
+ * class or genuinely unreachable dead surface, per the
  * kindid-inline-excluded-* / kindid-vaporized-* diagnostics in
  * grammar-diagnostics.json. Migrating a synthesis source pre-generate,
  * fixing anonymous-node naming, or pruning dead kinds lowers a grammar's
