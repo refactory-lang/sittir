@@ -53,6 +53,7 @@ export interface CodegenOptions {
 	tsGenerate?: boolean;
 	skipTsChain?: boolean;
 	buildNative?: boolean;
+	nativeDebug?: boolean;
 	workspaceCheck?: boolean;
 	noEmitDiff?: boolean;
 	allowDiagnostics?: string[];
@@ -241,7 +242,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	// not run this function and therefore do not inherit this env.
 	process.env.SITTIR_INTERNAL_CODEGEN_RUN = '1';
 
-	const { grammar, outputDir, all, nodes, testsDir, noEmitDiff, buildNative, workspaceCheck } = opts;
+	const { grammar, outputDir, all, nodes, testsDir, noEmitDiff, buildNative, nativeDebug, workspaceCheck } = opts;
 
 	if (!outputDir) {
 		throw new Error('Missing required argument: --output. Use --help for usage.');
@@ -354,13 +355,17 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		// previous templates baked in. Opt out with --no-build-native.
 		if (buildNative !== false) {
 			const nativeCrate = `rust/crates/sittir-${grammar}`;
-			// Dev/gate loop can build the napi crate in DEBUG via SITTIR_NATIVE_DEBUG=1.
+			// Dev/gate loop can build the napi crate in DEBUG via --native-debug.
 			// The validate gate only needs a CORRECT .node (AST-match), not an optimized
 			// one — and the debug profile enables incremental compilation (the release
 			// profile has `incremental = false`), so a codegen edit → regen recompiles
 			// only the changed crate + relinks instead of a full from-scratch optimized
 			// build. Keep the default `build` (`--release`) for CI / production artifacts.
-			const nativeBuildScript = process.env.SITTIR_NATIVE_DEBUG === '1' ? 'build:debug' : 'build';
+			// Explicit opt-in only (--native-debug, not an env var): build-profile
+			// choice affects the shared, historically-compared validate:native
+			// numbers, so it must be visible in the invocation, never inherited
+			// from ambient shell state.
+			const nativeBuildScript = nativeDebug === true ? 'build:debug' : 'build';
 			console.log(
 				`  → rebuilding grammar-owned N-API binding for ${grammar}` +
 					`${nativeBuildScript === 'build:debug' ? ' (debug + incremental)' : ''}…`

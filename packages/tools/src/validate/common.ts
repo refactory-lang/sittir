@@ -364,13 +364,28 @@ function loadNativeEngineForGrammar(grammar: string): NativeEngineLoadResult {
 	if (profile === 'debug' && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
 		throw new Error(
 			`Native engine for '${grammar}' is a DEBUG build — debug binaries are refused for ` +
-				`validation (known segfault class). Rebuild release (SITTIR_NATIVE_DEBUG unset or 0), ` +
+				`validation (known segfault class). Rebuild release (\`gen\` without --native-debug), ` +
 				`or set SITTIR_ALLOW_DEBUG_VALIDATE=1 to override.`
 		);
 	}
 
 	_cachedNativeEngine = { grammar, engine, binaryMtimeMs };
 	return { engine };
+}
+
+/**
+ * Compile profile of the currently cached native engine for `grammar`
+ * ('debug' | 'release'), or undefined if no native engine has been loaded
+ * for it yet (or the binary predates the `buildProfile` getter). A debug
+ * profile only reaches here via `SITTIR_ALLOW_DEBUG_VALIDATE=1` — the loader
+ * above refuses debug binaries by default — so callers that record results
+ * (e.g. validation-history) still need to check this explicitly.
+ */
+export function cachedNativeEngineProfile(grammar: string): string | undefined {
+	if (_cachedNativeEngine && _cachedNativeEngine.grammar === grammar) {
+		return (_cachedNativeEngine.engine as { buildProfile?: string }).buildProfile;
+	}
+	return undefined;
 }
 
 export function buildReadHandle(

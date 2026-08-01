@@ -22,6 +22,7 @@ interface GenCliOptions {
 	tsGenerate?: boolean;
 	skipTsChain?: boolean;
 	buildNative?: boolean; // commander sets false for --no-build-native
+	nativeDebug?: boolean;
 	workspaceCheck?: boolean; // commander sets false for --no-workspace-check
 	emitDiff?: boolean; // commander sets false for --no-emit-diff
 	roundtrip?: boolean;
@@ -46,6 +47,10 @@ export const gen: CommandModule = {
 			.option('--skip-ts-chain', 'Skip the auto transpile + tree-sitter generate chain')
 			.option('--roundtrip', 'Run validator probes after generation')
 			.addOption(new Option('--no-build-native', 'Skip the post-regen N-API rebuild'))
+			.option(
+				'--native-debug',
+				'Build the post-regen N-API binding in debug (incremental, unoptimized — dev iteration only, never for CI/validation)'
+			)
 			.addOption(
 				new Option(
 					'--no-workspace-check',
@@ -67,6 +72,7 @@ export const gen: CommandModule = {
 					tsGenerate: opts.tsGenerate,
 					skipTsChain: opts.skipTsChain,
 					buildNative: opts.buildNative, // false only if --no-build-native
+					nativeDebug: opts.nativeDebug, // true only if --native-debug
 					workspaceCheck: opts.workspaceCheck, // false only if --no-workspace-check
 					noEmitDiff: opts.emitDiff === false, // true only if --no-emit-diff
 					allowDiagnostics: opts.allowDiagnostic
