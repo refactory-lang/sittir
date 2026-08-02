@@ -15,7 +15,7 @@ import type { DeriveShapeDiagnostic } from './derive-shapes.ts';
 import type { AssembleWarning } from '../model/node-map.ts';
 import { drainSlotGroupingDiagnostics } from '../simplify.ts';
 import type { SlotGroupingDiagnostic } from './slot-grouping.ts';
-import type { RawGrammar } from '../types.ts';
+import type { RawGrammar, DesugarDivergenceEvent } from '../types.ts';
 import type { GeneratedIdTables } from '../generated-metadata.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 
@@ -126,6 +126,24 @@ export function fromBodyPatternZeroMatch(grammar: string, hiddenName: string): G
 	};
 }
 
+const DESUGAR_DIVERGENCE_DESCRIPTIONS: Record<DesugarDivergenceEvent['site'], string> = {
+	'inline-alias-source': 'synthesizeInlineAliasSources (S2) minted an alias source with no wire-side deposit',
+	'body-pattern-group': "evaluateRulesAndInjectSynthetics's body-pattern-group fallback (S4) fired with no wire-side deposit"
+};
+
+export function fromDesugarDivergence(grammar: string, event: DesugarDivergenceEvent): GrammarDiagnostic {
+	return {
+		scope: 'grammar',
+		code: `desugar-divergence-${event.site}`,
+		severity: 'warning',
+		grammar,
+		ownerKind: event.name,
+		message: `${DESUGAR_DIVERGENCE_DESCRIPTIONS[event.site]}: '${event.name}'. Tree-sitter's separate execution of this grammar never registers this rule, so it has no parser-issued kindId — a phantom kind by construction.`,
+		proposal: `Route this synthesis through the DSL layer (enrich/wire) pre-generate, so both executions mint the same rule, instead of leaving it to this evaluate-only fallback.`,
+		canProceed: true
+	};
+}
+
 export function collectGrammarDiagnostics(input: {
 	grammar: string;
 	parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
@@ -220,6 +238,9 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		...kindIdStampDiagnostics,
 		...(input.rawGrammar.bodyPatternZeroMatches ?? []).map((name) =>
 			fromBodyPatternZeroMatch(input.rawGrammar.name, name)
+		),
+		...(input.rawGrammar.desugarDivergences ?? []).map((event) =>
+			fromDesugarDivergence(input.rawGrammar.name, event)
 		)
 	];
 	return {

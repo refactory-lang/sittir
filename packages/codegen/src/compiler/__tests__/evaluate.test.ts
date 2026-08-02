@@ -436,6 +436,14 @@ describe('Evaluate — edge cases', () => {
 			expect(Object.keys(raw.rules)).toContain('_expr');
 		});
 	});
+
+	describe('S2 desugar-divergence — synthesizeInlineAliasSources', () => {
+		it('records a divergence event when an alias target has no declared rule or SYMBOL source', async () => {
+			const raw = await evaluate(fixture('inline-alias-divergence-grammar.js'));
+			expect(raw.rules).toHaveProperty('_orphan_target');
+			expect(raw.desugarDivergences).toEqual([{ site: 'inline-alias-source', name: '_orphan_target' }]);
+		});
+	});
 });
 
 describe('Evaluate — evaluate()', () => {

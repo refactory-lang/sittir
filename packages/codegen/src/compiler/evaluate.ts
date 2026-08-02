@@ -44,7 +44,7 @@ import type {
 } from '../types/rule.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import type { AnyRule } from '../types/rule.ts';
-import type { RawGrammar } from './types.ts';
+import type { RawGrammar, DesugarDivergenceEvent } from './types.ts';
 import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
 import { classifyByType } from './rule-catalog.ts';
 import { assertNever } from '../polymorph-variant.ts';
@@ -512,6 +512,7 @@ export interface EvaluateCtx {
 	readonly sinks: MetadataSinks;
 	readonly setWord: (w: string) => void;
 	readonly bodyPatternZeroMatches: string[];
+	readonly desugarDivergences: DesugarDivergenceEvent[];
 }
 
 function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: GrammarOptions): { grammar: any } {
@@ -556,7 +557,8 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		setWord: (w) => {
 			word = w;
 		},
-		bodyPatternZeroMatches: []
+		bodyPatternZeroMatches: [],
+		desugarDivergences: []
 	};
 
 	const { roles: collectedRoles } = withRoleScope(() => {
@@ -622,7 +624,8 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		expectDiagnostics,
 		expectTestFailures,
 		orphanedSyntheticGroups,
-		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined
+		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined,
+		desugarDivergences: ctx.desugarDivergences.length > 0 ? [...ctx.desugarDivergences] : undefined
 	} satisfies RawGrammar;
 	// Propagate enrich()'s un-aliasing diagnostics from the base grammar result
 	// (the `optionsOrBase` first arg in extension mode) onto this evaluated
@@ -690,6 +693,10 @@ function rewriteInlineAliases(
 					if (!rules[syntheticHiddenName]) {
 						rules[syntheticHiddenName] = recurse(rule.content);
 						provenanceByKind.set(syntheticHiddenName, 'evaluate-synthesized');
+						// This mint has no wire-side counterpart — tree-sitter's
+						// separate execution of the same grammar never registers
+						// `syntheticHiddenName`, so it phantoms by construction.
+						ctx.desugarDivergences.push({ site: 'inline-alias-source', name: syntheticHiddenName });
 					}
 					return {
 						...rule,
@@ -894,6 +901,12 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 					if (result && typeof result === 'object' && typeof (result as { type?: unknown }).type === 'string') {
 						rules[hiddenName] = normalize(result as Input);
 						provenanceByKind.set(hiddenName, 'evaluate-synthesized');
+						// `hiddenName` was absent from `wireCtx.deposits` above (the
+						// `hiddenName in rules` guard would have skipped otherwise) —
+						// this local re-evaluation is the only mint for it, so
+						// tree-sitter's separate execution of the same grammar has
+						// no guarantee of seeing the same rule.
+						ctx.desugarDivergences.push({ site: 'body-pattern-group', name: hiddenName });
 					}
 				} catch {
 					// body fn failed to evaluate in sittir context — skip; wire path handles it

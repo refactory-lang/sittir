@@ -292,6 +292,40 @@ describe('grammar diagnostics preflight', () => {
 		);
 	});
 
+	it('collectGrammarDiagnosticsForGrammar surfaces desugarDivergences (S2/S4 evaluate-only mints)', () => {
+		const rawGrammar: RawGrammar = {
+			...buildRawGrammar({
+				host: { type: 'SYMBOL', name: 'known' },
+				known: { type: 'PATTERN', value: 'x' }
+			}),
+			desugarDivergences: [
+				{ site: 'inline-alias-source', name: '_orphan_alias_target' },
+				{ site: 'body-pattern-group', name: '_orphan_group' }
+			]
+		};
+		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar });
+		expect(result.diagnostics).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					scope: 'grammar',
+					code: 'desugar-divergence-inline-alias-source',
+					grammar: 'synth',
+					ownerKind: '_orphan_alias_target',
+					severity: 'warning',
+					canProceed: true
+				}),
+				expect.objectContaining({
+					scope: 'grammar',
+					code: 'desugar-divergence-body-pattern-group',
+					grammar: 'synth',
+					ownerKind: '_orphan_group',
+					severity: 'warning',
+					canProceed: true
+				})
+			])
+		);
+	});
+
 	it('nonterminal-separator-unstamped blocks (canProceed: false) — zero-instance guard', () => {
 		// No grammar fixture can fire this today (no kind in any of the 3 grammars
 		// routes a nonterminal separator through the slot-value stamp path's
