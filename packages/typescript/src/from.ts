@@ -2,7 +2,7 @@
 
 import * as F from './factories.js';
 import type * as T from './types.js';
-import { TSKindId } from './types.js';
+import { TSKindId, KIND_LITERAL_TEXT } from './types.js';
 import type { AnyNodeData } from '@sittir/types';
 import { coerceKindEnumStorage, isNodeData } from './utils.js';
 
@@ -3323,9 +3323,7 @@ export function coerceToObjectTypeContent(
 				separatorKind: (() => {
 					const sk = (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
 						._separator_kind;
-					return sk === undefined
-						? undefined
-						: ({ [TSKindId.Comma]: ',', [TSKindId.Semi]: ';' } as Record<number, string>)[sk];
+					return sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk);
 				})(),
 				leading: (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
 					._leading_sep,

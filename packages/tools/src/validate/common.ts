@@ -1309,6 +1309,23 @@ export async function loadKindNames(grammar: string): Promise<ReadonlyMap<number
 	}
 }
 
+/**
+ * Load the static `KIND_LITERAL_TEXT` map from the grammar's generated types
+ * module — literal punctuation/keyword text for anonymous-token kind ids
+ * (the fact `KIND_NAMES`/`KIND_DISPLAY_NAMES` deliberately omit; see
+ * `emitKindIdEnumAndLookups`'s doc comment, codegen/src/emitters/types.ts).
+ */
+export async function loadKindLiteralText(grammar: string): Promise<ReadonlyMap<number, string> | undefined> {
+	const typesModulePath = TYPES_MODULE_PATHS[grammar];
+	if (!typesModulePath) return undefined;
+	try {
+		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		return typesModule.KIND_LITERAL_TEXT as ReadonlyMap<number, string> | undefined;
+	} catch {
+		return undefined;
+	}
+}
+
 export async function loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined> {
 	const typesModulePath = TYPES_MODULE_PATHS[grammar];
 	if (!typesModulePath) return undefined;
@@ -1466,6 +1483,11 @@ export interface NodeToConfigOpts {
 	/** Phase D: resolver for numeric $type → string kind name. Required when
 	 * input nodes carry numeric $type (readNode output post-Phase-D). */
 	readonly kindNameFromId?: (id: number) => string | undefined;
+	/** `KIND_LITERAL_TEXT` (types.ts) — literal punctuation/keyword text for
+	 * anonymous-token kind ids. Reverses a separatedList's captured
+	 * `_separator_kind` back to the literal string its factory's
+	 * `options.separatorKind` expects. */
+	readonly kindLiteralText?: ReadonlyMap<number, string>;
 }
 
 interface ReadNodeLike {
@@ -1615,6 +1637,25 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	// 'spread' shape: rest-params signature — spread `children`.
 	if (shape === 'spread') {
 		return factory(...childArgs);
+	}
+	// 'elements' shape: separatedList factory — `(elements, options?:
+	// {separatorKind?, leading?, trailing?})`, distinct from 'spread's
+	// rest-param convention (see classifyFactoryShape).
+	if (shape === 'elements') {
+		const separatorSourceKind = (drilled as { _separator_kind?: number })._separator_kind;
+		const separatorKind = separatorSourceKind === undefined ? undefined : opts.kindLiteralText?.get(separatorSourceKind);
+		const leading = (drilled as { _leading_sep?: boolean })._leading_sep === true;
+		const trailing = (drilled as { _trailing_sep?: boolean })._trailing_sep === true;
+		const elementsOptions: { separatorKind?: string; leading?: boolean; trailing?: boolean } = {};
+		if (separatorKind !== undefined) elementsOptions.separatorKind = separatorKind;
+		if (leading) elementsOptions.leading = true;
+		if (trailing) elementsOptions.trailing = true;
+		return (
+			factory as unknown as (
+				elements: readonly unknown[],
+				options?: { separatorKind?: string; leading?: boolean; trailing?: boolean }
+			) => unknown
+		)(childArgs, Object.keys(elementsOptions).length > 0 ? elementsOptions : undefined);
 	}
 	// 'direct' shape: factory takes one direct value rather than a config
 	// object. Field-backed direct calls use factoryFields metadata; child-

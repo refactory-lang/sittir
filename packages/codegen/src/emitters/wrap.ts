@@ -47,6 +47,7 @@ import {
 	kindIdMemberName,
 	hasCatalogEntry,
 	kindDiscriminantExpr,
+	kindDiscriminantExprForId,
 	collectCatalogKinds,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
@@ -861,10 +862,13 @@ function emitFieldStorageLines(
 		const reclaimKindIdsExpr =
 			storageInfo.kind === 'kindEnum'
 				? (() => {
-						const reclaimKinds = storageInfo.enumKinds.filter(
-							(k) => hasCatalogEntry(kindEntries, k) && !collidedReclaimKinds.has(k)
-						);
-						const ids = reclaimKinds.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries));
+						const ids = storageInfo.enumKinds
+							.filter((k) => !collidedReclaimKinds.has(k))
+							.map((k) => {
+								const id = storageInfo.enumKindsById.get(k);
+								return id !== undefined && kindEntries ? kindDiscriminantExprForId(id, kindEntries) : undefined;
+							})
+							.filter((expr): expr is string => expr !== undefined);
 						return ids.length > 0 ? `[${ids.join(', ')}]` : undefined;
 					})()
 				: undefined;

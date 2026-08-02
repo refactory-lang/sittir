@@ -2645,14 +2645,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                     170 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
+                    28 => Ok(Self::NonSpecialToken(
+                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    )),
                     126 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
                     127 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                    )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     29 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
@@ -3110,14 +3110,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                     170 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
+                    28 => Ok(Self::NonSpecialToken(
+                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    )),
                     126 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
                     127 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                    )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     29 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
@@ -3575,14 +3575,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
                     170 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
+                    28 => Ok(Self::NonSpecialToken(
+                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    )),
                     126 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
                     127 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                    )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     29 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
@@ -3974,14 +3974,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
                     170 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
+                    28 => Ok(Self::NonSpecialToken(
+                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    )),
                     126 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
                     127 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                    )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     29 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
@@ -8220,8 +8220,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                     243 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::TokenPatternGroup1(
-                        TokenPatternGroup1Transport::from_napi_value(env, napi_val)?
+                    170 => Ok(Self::NonDelimToken(
+                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    309 => Ok(Self::NonDelimToken(
+                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    28 => Ok(Self::NonDelimToken(
+                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     241 => Ok(Self::DelimTokenTree(
                         DelimTokenTreeTransport::from_napi_value(env, napi_val)?
@@ -8304,8 +8310,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                     243 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::TokenPatternGroup1(
-                        TokenPatternGroup1Transport::from_napi_value(env, napi_val)?
+                    170 => Ok(Self::NonDelimToken(
+                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    309 => Ok(Self::NonDelimToken(
+                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    28 => Ok(Self::NonDelimToken(
+                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     241 => Ok(Self::DelimTokenTree(
                         DelimTokenTreeTransport::from_napi_value(env, napi_val)?
@@ -8536,14 +8548,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                     170 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
+                    28 => Ok(Self::NonSpecialToken(
+                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    )),
                     126 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
                     127 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                    )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     29 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
@@ -8974,14 +8986,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                     170 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
+                    28 => Ok(Self::NonSpecialToken(
+                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    )),
                     126 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
                     127 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                    )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     29 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
@@ -9839,8 +9851,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                     239 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ExpressionExceptRange(
-                        ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
+                    238 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     126 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
@@ -10331,8 +10343,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                     239 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ExpressionExceptRange(
-                        ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
+                    238 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     126 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?

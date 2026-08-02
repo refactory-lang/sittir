@@ -436,6 +436,7 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 			kind: 'boolean',
 			texts: text ? [text] : [],
 			enumKinds: [],
+			enumKindsById: new Map(),
 			collapsesMultiplicity: true
 		};
 	}
@@ -444,27 +445,36 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 			kind: 'bitflag',
 			texts: keywordPresenceValues(field, nodeMap),
 			enumKinds: [],
+			enumKindsById: new Map(),
 			collapsesMultiplicity: true
 		};
 	}
 
 	const enumKinds: string[] = [];
+	const enumKindsById = new Map<string, number>();
 	const texts: string[] = [];
 	const seenKinds = new Set<string>();
 	const seenTexts = new Set<string>();
+	const verbatim = (): FieldStorageInfo => ({
+		kind: 'verbatim',
+		texts: [],
+		enumKinds: [],
+		enumKindsById: new Map(),
+		collapsesMultiplicity: false
+	});
 	for (const value of field.values) {
 		if (isNodeRef(value)) {
 			const resolvedKind = storageKindOfRef(value.node);
 			const node = nodeMap.nodes.get(resolvedKind);
 			if (node instanceof AssembledEnum) {
-				if (node.values.length <= 1 || node.resolvedKinds.length === 0) {
-					return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
-				}
-				for (const enumKind of node.resolvedKinds) {
-					if (seenKinds.has(enumKind)) continue;
+				if (node.values.length <= 1 || node.resolvedKinds.length === 0) return verbatim();
+				node.resolvedKinds.forEach((enumKind, i) => {
+					if (seenKinds.has(enumKind)) return;
 					seenKinds.add(enumKind);
 					enumKinds.push(enumKind);
-				}
+					const id = node.resolvedKindIds[i];
+					if (id !== undefined) enumKindsById.set(enumKind, id);
+				});
 				for (const text of node.values) {
 					if (seenTexts.has(text)) continue;
 					seenTexts.add(text);
@@ -474,12 +484,11 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 			}
 			if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
 				const text = node.text;
-				if (node.resolvedKind === undefined || text === undefined) {
-					return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
-				}
+				if (node.resolvedKind === undefined || text === undefined) return verbatim();
 				if (!seenKinds.has(node.resolvedKind)) {
 					seenKinds.add(node.resolvedKind);
 					enumKinds.push(node.resolvedKind);
+					if (node.resolvedKindId !== undefined) enumKindsById.set(node.resolvedKind, node.resolvedKindId);
 				}
 				if (!seenTexts.has(text)) {
 					seenTexts.add(text);
@@ -487,27 +496,25 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 				}
 				continue;
 			}
-			return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
+			return verbatim();
 		}
-		if (!isTerminalValue(value) || value.resolvedKind === undefined) {
-			return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
-		}
+		if (!isTerminalValue(value) || value.resolvedKind === undefined) return verbatim();
 		if (!seenKinds.has(value.resolvedKind)) {
 			seenKinds.add(value.resolvedKind);
 			enumKinds.push(value.resolvedKind);
+			if (value.resolvedKindId !== undefined) enumKindsById.set(value.resolvedKind, value.resolvedKindId);
 		}
 		if (!seenTexts.has(value.value)) {
 			seenTexts.add(value.value);
 			texts.push(value.value);
 		}
 	}
-	if (enumKinds.length === 0) {
-		return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
-	}
+	if (enumKinds.length === 0) return verbatim();
 	return {
 		kind: 'kindEnum',
 		texts,
 		enumKinds,
+		enumKindsById,
 		collapsesMultiplicity: false
 	};
 }
@@ -564,7 +571,7 @@ export function resolveFieldStorageInfo(
 // ---------------------------------------------------------------------------
 
 export type { BranchSlotClass } from '../compiler/model/node-map.ts';
-export type FactoryShape = 'config' | 'spread' | 'text' | 'direct';
+export type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements';
 export type ChildFactorySurface = 'direct' | 'spread';
 
 export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): BranchSlotClass {
@@ -632,6 +639,8 @@ export function resolveFactoryFieldNames(node: AssembledNode, nodeMap: NodeMap):
 			if (fields.length === 0) return undefined;
 			return fields.map((field) => field.name);
 		}
+		case 'separatedList':
+			return [canonicalSeparatedListField(node).name];
 		default:
 			return undefined;
 	}
@@ -679,10 +688,13 @@ export function classifyFactoryShape(
 			return 'text';
 		case 'token':
 			return options?.includeTokenText ? 'text' : null;
-		case 'branch':
-		// TEMPORARY: 'separatedList' shares 'branch's factory-shape logic —
-		// see isSlotBearingCompound's doc comment.
-		case 'separatedList': {
+		// A separatedList always has exactly one many-arity element slot
+		// (canonicalSeparatedListField) — never branch's multi-shape
+		// surface — and its factory always takes `(elements, options)`,
+		// distinct from a branch spread factory's rest-param `(...children)`.
+		case 'separatedList':
+			return 'elements';
+		case 'branch': {
 			const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 			if (slotClass.tag === 'singleSlot') {
 				if (slotClass.slot.isUnnamed) {

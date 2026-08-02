@@ -1953,6 +1953,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionsTransport {
                     184 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    185 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
                     161 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
@@ -2068,6 +2071,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionsTransport {
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     184 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    185 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     161 => Ok(Self::ExpressionList(
@@ -3053,6 +3059,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionWithinForInClauseTrans
                     184 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    185 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
                     194 => Ok(Self::LambdaWithinForInClause(
                         LambdaWithinForInClauseTransport::from_napi_value(env, napi_val)?
                     )),
@@ -3177,6 +3186,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionWithinForInClauseTrans
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     184 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    185 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     194 => Ok(Self::LambdaWithinForInClause(
@@ -4299,6 +4311,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for RightHandSideTransport {
                     184 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    185 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
                     161 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
@@ -4447,6 +4462,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for RightHandSideTransport {
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     184 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    185 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     161 => Ok(Self::ExpressionList(
@@ -4645,6 +4663,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FExpressionTransport {
                     184 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    185 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
                     161 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
@@ -4781,6 +4802,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FExpressionTransport {
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     184 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    185 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     161 => Ok(Self::ExpressionList(

@@ -3734,7 +3734,10 @@
       "elementKinds": [
         "attributed_argument"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "attributed_argument"
+      ]
     },
     {
       "kind": "_array_expression_group1",
@@ -4977,7 +4980,10 @@
       "elementKinds": [
         "attributed_enum_variant"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "attributed_enum_variant"
+      ]
     },
     {
       "kind": "_enum_variant_optional1",
@@ -5244,7 +5250,10 @@
       "elementKinds": [
         "attributed_field_declaration"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "attributed_field_declaration"
+      ]
     },
     {
       "kind": "_field_identifier",
@@ -5271,7 +5280,10 @@
         "field_initializer",
         "base_field_initializer"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "_field_pattern_named",
@@ -6442,7 +6454,10 @@
       "elementKinds": [
         "attributed_ordered_field"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "attributed_ordered_field"
+      ]
     },
     {
       "kind": "_outer_block_doc_comment_marker",
@@ -6478,7 +6493,10 @@
       "elementKinds": [
         "attributed_parameter"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "attributed_parameter"
+      ]
     },
     {
       "kind": "_path",
@@ -7138,7 +7156,10 @@
       "elementKinds": [
         "_pattern"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "pattern"
+      ]
     },
     {
       "kind": "_statement",
@@ -7323,7 +7344,10 @@
         "field_pattern",
         "remaining_field_pattern"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "_token_keywords",
@@ -7718,7 +7742,10 @@
         "_pattern",
         "closure_expression"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "_type",
@@ -7899,7 +7926,10 @@
         "lifetime",
         "_type_identifier"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "_use_clause",
@@ -7936,7 +7966,10 @@
       "elementKinds": [
         "_use_clause"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "use_clause"
+      ]
     },
     {
       "kind": "_use_wildcard_clause",
@@ -8180,7 +8213,10 @@
       "elementKinds": [
         "where_predicate"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "where_predicate"
+      ]
     },
     {
       "kind": "_while_expression_optional1",

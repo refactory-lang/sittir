@@ -2397,6 +2397,33 @@ function collectConcreteTransportKinds(kind: string, nodeMap: NodeMap, seen: Set
 	return [...concreteKinds];
 }
 
+/**
+ * Id-carrying counterpart of `collectConcreteTransportKinds`: recurses via
+ * `AssembledSupertype.subtypes` (each entry's own stamped `storageKindId`,
+ * assemble.ts's discovery-time stamp) instead of `.subtypeNames`, so an
+ * alias-occurrence subtype's accepted id comes from its own mint stamp
+ * rather than a later separate name->id lookup that can diverge from it.
+ * A subtype with no stamped id (nested supertype, or genuinely id-less)
+ * recurses/yields nothing — purely additive alongside the name-keyed path.
+ */
+function collectConcreteTransportKindIds(kind: string, nodeMap: NodeMap, seen: Set<string> = new Set()): number[] {
+	if (seen.has(kind)) return [];
+	seen.add(kind);
+	const node = nodeMap.nodes.get(kind);
+	if (node === undefined || node.modelType !== 'supertype') return [];
+	const ids = new Set<number>();
+	for (const subtype of (node as AssembledSupertype).subtypes) {
+		if (subtype.storageKindId !== undefined) {
+			ids.add(subtype.storageKindId);
+			continue;
+		}
+		if (!isNodeRef(subtype)) continue;
+		const name = storageKindOfRef(subtype.node);
+		for (const nestedId of collectConcreteTransportKindIds(name, nodeMap, seen)) ids.add(nestedId);
+	}
+	return [...ids];
+}
+
 interface AcceptedTransportIdsInput {
 	kind: string;
 	node: AssembledNode;
@@ -2461,12 +2488,21 @@ function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[]
 		acceptedIds = [...stampedIds];
 	} else {
 		if (DBG_KINDID_FASTPATH) transportIdsFallbackHits++;
-		acceptedIds = [
+		const nameKeyedIds = [
 			...new Set<string>([
 				...collectConcreteTransportKinds(kind, nodeMap),
 				...acceptedTransportKinds(kind, nodeMap, parseAliases)
 			])
-		].map((k) => kindIdByKind.get(k)).filter((id): id is number => id !== undefined);
+		]
+			.map((k) => kindIdByKind.get(k))
+			.filter((id): id is number => id !== undefined);
+		// Supertype-expanded subtypes each carry their OWN stamped
+		// storageKindId (assemble.ts's discovery-time stamp) — an alias
+		// occurrence's id can genuinely differ from what the name-keyed
+		// `kindIdByKind` lookup above resolves for that same subtype name.
+		// Union both sources; the stamped ids are the ones this defect class
+		// depends on, the name-keyed ids cover everything the stamp doesn't.
+		acceptedIds = [...new Set([...nameKeyedIds, ...collectConcreteTransportKindIds(kind, nodeMap)])];
 	}
 	if (parseName !== undefined && kindEntries !== undefined) {
 		const parseEntry = findKindEntry(kindEntries, parseName);

@@ -12,6 +12,7 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "FIELD_MAP": "object",
   "KEYWORDS": "array",
   "KIND_DISPLAY_NAMES": "object",
+  "KIND_LITERAL_TEXT": "object",
   "KIND_NAMES": "object",
   "KeywordIdentifierKind": "object",
   "LEAF_KINDS": "array",

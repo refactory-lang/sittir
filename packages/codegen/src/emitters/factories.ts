@@ -232,7 +232,13 @@ function buildFactoryMapEntries(
 		const fluent = node.modelType === 'branch' || node.modelType === 'separatedList';
 		const classified = classifyFactoryShape(node, nodeMap, { includeTokenText: true });
 		if (!classified) continue;
-		const shape = classified === 'spread' ? 'children' : classified;
+		// `MapEntry.shape` is dead-to-runtime (emitFactoryMapConst/
+		// emitFluentKindMap never read it) — 'spread'/'elements' both
+		// collapse to 'children' here purely so this field's narrower type
+		// stays satisfied; the validator-only distinction lives in
+		// factory-map.ts's own factoryShapes, built straight from
+		// classifyFactoryShape without this remap.
+		const shape = classified === 'spread' || classified === 'elements' ? 'children' : classified;
 		mapEntries.push({
 			kind,
 			factory: node.rawFactoryName,
@@ -437,14 +443,15 @@ export function kindEnumTextMapExpr(
 			if (!resolved || resolved.modelType !== 'enum') continue;
 			for (const text of resolved.values) {
 				// PR-K3a: the enum node's construction-time literal-chain
-				// record is authoritative; its resolved KIND is an exact
-				// catalog key, so kindDiscriminantExpr maps it straight to
-				// the TSKindId member. The old chain remains only for
-				// catalog-less construction (fixtures).
+				// record is authoritative and already carries the stamped id
+				// (`rec.id`) — resolve straight from it via
+				// kindDiscriminantExprForId rather than re-deriving one from
+				// `rec.kind` through a fresh name-keyed catalog scan. The old
+				// chain remains only for catalog-less construction (fixtures).
 				const rec = resolved.resolvedByText.get(text);
 				const discriminant =
 					rec !== undefined
-						? kindDiscriminantExpr(rec.kind, nodeMap, kindEntries)
+						? (kindDiscriminantExprForId(rec.id, kindEntries) ?? kindDiscriminantExpr(rec.kind, nodeMap, kindEntries))
 						: findKindEntryForLiteral(kindEntries, text) !== undefined
 							? kindDiscriminantExprForLiteral(text, kindEntries)
 							: hasCatalogEntry(kindEntries, resolved.kind)

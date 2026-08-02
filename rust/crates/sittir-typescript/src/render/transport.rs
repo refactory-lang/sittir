@@ -2938,6 +2938,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionsTransport {
                     210 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    211 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
                     247 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -3071,6 +3074,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionsTransport {
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     210 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    211 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     247 => Ok(Self::SequenceExpression(
@@ -6444,6 +6450,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleTypeMemberTransport {
                     308 => Ok(Self::Type(
                         TypeTransport::from_napi_value(env, napi_val)?
                     )),
+                    315 => Ok(Self::Type(
+                        TypeTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TupleTypeMemberTransport",
                     ))),
@@ -6571,6 +6580,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleTypeMemberTransport {
                         TypeTransport::from_napi_value(env, napi_val)?
                     )),
                     308 => Ok(Self::Type(
+                        TypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    315 => Ok(Self::Type(
                         TypeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
