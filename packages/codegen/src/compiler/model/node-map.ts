@@ -311,6 +311,14 @@ export interface FieldStorageInfo {
 	readonly kind: FieldStorageKind;
 	readonly texts: readonly string[];
 	readonly enumKinds: readonly string[];
+	/**
+	 * Stamped catalog id per `enumKinds` member, keyed by kind name — same
+	 * stamped-fact discipline as `NodeRef.resolvedKindId`; absent only for a
+	 * kind with no catalog entry. Consumers that need a numeric id for one
+	 * of these kinds (transport dispatch, `$other` reclamation) read this
+	 * instead of re-deriving one via a fresh name-keyed catalog scan.
+	 */
+	readonly enumKindsById: ReadonlyMap<string, number>;
 	readonly collapsesMultiplicity: boolean;
 }
 
@@ -2494,6 +2502,12 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 	readonly modelType = 'enum' as const;
 	readonly resolvedKinds: readonly string[];
 	/**
+	 * Catalog id per `resolvedKinds` entry, same index, same construction
+	 * pass — the id counterpart consumers should read instead of re-deriving
+	 * one from `resolvedKinds`' member name via a fresh catalog scan.
+	 */
+	readonly resolvedKindIds: readonly number[];
+	/**
 	 * Per-member-TEXT catalog resolution, derived ONCE at construction
 	 * through the literal chain (PR-K3a). Key = member text; value = the
 	 * resolved catalog kind + parser id. First-wins on duplicate texts
@@ -2519,6 +2533,7 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 		// the legacy resolvedKinds list (duplicates preserved) and the
 		// per-text map.
 		const resolved: string[] = [];
+		const resolvedIds: number[] = [];
 		const byText = new Map<string, { kind: string; id: number }>();
 		for (const member of rule.members) {
 			const text = literalTextOf(member);
@@ -2533,9 +2548,11 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 				(isLinkSymbol(member) ? findEntryForKindName(opts?.kindEntries ?? [], member.name) : undefined);
 			if (entry === undefined) continue;
 			resolved.push(entry.kind);
+			resolvedIds.push(entry.id);
 			if (!byText.has(text)) byText.set(text, { kind: entry.kind, id: entry.id });
 		}
 		this.resolvedKinds = resolved;
+		this.resolvedKindIds = resolvedIds;
 		this.resolvedByText = byText;
 		if (this.values.length < 2) {
 			throw new Error(

@@ -307,6 +307,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	factorySlots: Record<string, Record<string, FactorySlotMeta>>;
 	polymorphVariants: PolymorphVariantMap;
 	kindNameFromId: ((id: number) => string | undefined) | undefined;
+	kindLiteralText: ReadonlyMap<number, string> | undefined;
 	importFailure: { message: string } | null;
 }> {
 	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
@@ -317,6 +318,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let polymorphVariants: PolymorphVariantMap = {};
 	let kindNameFromId: ((id: number) => string | undefined) | undefined = undefined;
+	let kindLiteralText: ReadonlyMap<number, string> | undefined = undefined;
 	if (!factoryModulePath) {
 		return {
 			factoryMap,
@@ -326,6 +328,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factorySlots,
 			polymorphVariants,
 			kindNameFromId,
+			kindLiteralText,
 			importFailure: null
 		};
 	}
@@ -344,10 +347,21 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		if (typesModulePath) {
 			try {
 				const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
-				const kindNamesMap = typesModule.KIND_DISPLAY_NAMES as ReadonlyMap<number, string> | undefined;
+				// KIND_NAMES (not KIND_DISPLAY_NAMES): this validator's `kind`
+				// resolution feeds factoryMap/factoryShapes/factoryFields lookups,
+				// which are keyed by the canonical (wrap-dispatch) catalog name —
+				// the same identity `wrapNode` stamps. KIND_DISPLAY_NAMES is
+				// tree-sitter's raw parse label, which collapses distinct
+				// canonical kinds sharing one display name (python's `block`
+				// (160) and `_match_block` (135) both display as "block") onto
+				// the wrong factory, producing a false `$type` mismatch even
+				// though the wrapped reference and a correctly-selected factory
+				// would agree.
+				const kindNamesMap = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
 				if (kindNamesMap) {
 					kindNameFromId = (id: number) => kindNamesMap.get(id);
 				}
+				kindLiteralText = typesModule.KIND_LITERAL_TEXT as ReadonlyMap<number, string> | undefined;
 			} catch (e) {
 				// Without kindNameFromId every walked candidate is rejected (its
 				// numeric $type can't be resolved to a kind name), so the validator
@@ -364,6 +378,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 					factorySlots,
 					polymorphVariants,
 					kindNameFromId,
+					kindLiteralText,
 					importFailure: { message }
 				};
 			}
@@ -376,6 +391,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factorySlots,
 			polymorphVariants,
 			kindNameFromId,
+			kindLiteralText,
 			importFailure: null
 		};
 	} catch (e) {
@@ -389,6 +405,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factorySlots,
 			polymorphVariants,
 			kindNameFromId,
+			kindLiteralText,
 			importFailure: { message }
 		};
 	}
@@ -480,7 +497,8 @@ function buildFactoryNodeData(
 		input?: string;
 		rendered?: string;
 	}[],
-	kindNameFromId?: (id: number) => string | undefined
+	kindNameFromId?: (id: number) => string | undefined,
+	kindLiteralText?: ReadonlyMap<number, string>
 ): AnyNodeData | null {
 	const factory = factoryMap[renderedKind];
 	if (!factory) return null;
@@ -517,6 +535,38 @@ function buildFactoryNodeData(
 			// can't be reconstructed from children.
 			const text = (referenceData as { $text?: string }).$text ?? '';
 			return (factory as (text: string) => AnyNodeData)(text);
+		} else if (shape === 'elements') {
+			// separatedList factory: `(elements, options?: {separatorKind?, leading?, trailing?})`
+			// — distinct calling convention from 'spread's rest-param
+			// factories (both used to share the 'spread' tag; see
+			// classifyFactoryShape's separatedList case).
+			const config = nodeToConfig(referenceData, {
+				factoryMap,
+				factoryShapes,
+				fieldAliasMap,
+				factoryFields,
+				factorySlots,
+				polymorphVariants,
+				cstNodeKindHint,
+				firstNamedChildKindHint,
+				namedChildKindHints,
+				kindNameFromId
+			});
+			const elements = getChildFactoryArgs(renderedKind, config, factorySlots, factoryFields);
+			const separatorSourceKind = (referenceData as { _separator_kind?: number })._separator_kind;
+			const separatorKind = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
+			const leading = (referenceData as { _leading_sep?: boolean })._leading_sep === true;
+			const trailing = (referenceData as { _trailing_sep?: boolean })._trailing_sep === true;
+			const options: { separatorKind?: string; leading?: boolean; trailing?: boolean } = {};
+			if (separatorKind !== undefined) options.separatorKind = separatorKind;
+			if (leading) options.leading = true;
+			if (trailing) options.trailing = true;
+			return (
+				factory as (
+					elements: readonly unknown[],
+					options?: { separatorKind?: string; leading?: boolean; trailing?: boolean }
+				) => AnyNodeData
+			)(elements, Object.keys(options).length > 0 ? options : undefined);
 		} else {
 			// shape === 'spread' — child-spread factory.
 			const config = nodeToConfig(referenceData, {
@@ -557,8 +607,17 @@ export async function validateFactoryRenderParse(
 	loadRawEntries(grammar);
 	const ruleKinds = deriveRuleKinds(templatesPath);
 
-	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, polymorphVariants, kindNameFromId, importFailure } =
-		await loadFactoryModuleForGrammar(grammar);
+	const {
+		factoryMap,
+		factoryShapes,
+		fieldAliasMap,
+		factoryFields,
+		factorySlots,
+		polymorphVariants,
+		kindNameFromId,
+		kindLiteralText,
+		importFailure
+	} = await loadFactoryModuleForGrammar(grammar);
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
 
@@ -697,7 +756,8 @@ export async function validateFactoryRenderParse(
 					entry.name,
 					inputSource,
 					errors,
-					kindNameFromId
+					kindNameFromId,
+					kindLiteralText
 				);
 				if (factoryData === null) {
 					// No factory for this kind, or the factory threw (already

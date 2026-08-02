@@ -5627,7 +5627,10 @@
       "elementKinds": [
         "export_specifier"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "export_specifier"
+      ]
     },
     {
       "kind": "_export_specifier_optional1",
@@ -6774,7 +6777,10 @@
       "elementKinds": [
         "_formal_parameter"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "formal_parameter"
+      ]
     },
     {
       "kind": "_from_clause",
@@ -7916,7 +7922,10 @@
       "elementKinds": [
         "import_specifier"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "import_specifier"
+      ]
     },
     {
       "kind": "_number",
@@ -8724,7 +8733,10 @@
       "elementKinds": [
         "_tuple_type_member"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "tuple_type_member"
+      ]
     },
     {
       "kind": "_tuple_type_member",
@@ -19296,7 +19308,10 @@
         "index_signature",
         "method_signature"
       ],
-      "factoryShape": "spread"
+      "factoryShape": "elements",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "omitting_type_annotation",

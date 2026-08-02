@@ -17,6 +17,7 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "JsxElementNameKind": "object",
   "KEYWORDS": "array",
   "KIND_DISPLAY_NAMES": "object",
+  "KIND_LITERAL_TEXT": "object",
   "KIND_NAMES": "object",
   "LEAF_KINDS": "array",
   "ModuleExportNameKind": "object",

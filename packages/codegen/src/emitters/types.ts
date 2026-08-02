@@ -554,6 +554,20 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[]): vo
 	lines.push(']);');
 	lines.push('');
 
+	lines.push(
+		'/** Literal punctuation/keyword text for anonymous tokens — the fact KIND_DISPLAY_NAMES deliberately omits (see its comment above). Absent for named-rule kinds, which have no single literal text. */'
+	);
+	lines.push('export const KIND_LITERAL_TEXT: ReadonlyMap<number, string> = new Map([');
+	for (const entry of entries) {
+		if (!entry.anon || entry.symbolName === undefined) continue;
+		lines.push(`  [${entry.id}, ${JSON.stringify(entry.symbolName)}],`);
+		if (entry.parseId !== undefined && entry.parseId !== entry.id) {
+			lines.push(`  [${entry.parseId}, ${JSON.stringify(entry.symbolName)}],`);
+		}
+	}
+	lines.push(']);');
+	lines.push('');
+
 	lines.push('export function kindIdFromName(kindName: string): TSKindId {');
 	lines.push('  switch (kindName) {');
 	// Catalog-key cases (e.g. `"as_pattern"`, `"plus"`).

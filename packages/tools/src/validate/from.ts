@@ -16,6 +16,7 @@ import {
 	loadLanguageForGrammar,
 	loadKindIdFromName,
 	loadKindNameFromId,
+	loadKindLiteralText,
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
@@ -205,6 +206,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 			}
 		: rawKindIdFromName;
 	const kindNameFromId = await loadKindNameFromId(grammar);
+	const kindLiteralText = await loadKindLiteralText(grammar);
 
 	// Import from() + factory + wrap modules. `.from()` expects a fluent
 	// NodeData (from factory output OR readTreeNode wrap) OR a camelCase
@@ -383,6 +385,36 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						const textForFactory =
 							readData.$text ?? (readData.$span ? entry.source.slice(readData.$span.start, readData.$span.end) : '');
 						factoryResult = (factory as (text: string) => AnyNodeData)(textForFactory);
+					} else if (shape === 'elements') {
+						// separatedList factory: `(elements, options?: {separatorKind?,
+						// leading?, trailing?})` — distinct calling convention from
+						// 'spread's rest-param factories (see classifyFactoryShape's
+						// separatedList case).
+						const config = nodeToConfig(readData, {
+							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,
+							factoryShapes,
+							factoryFields,
+							factorySlots,
+							fieldAliasMap,
+							polymorphVariants: polymorphVariants as any,
+							kindNameFromId
+						});
+						const elements = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
+						const separatorSourceKind = (readData as { _separator_kind?: number })._separator_kind;
+						const separatorKind =
+							separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
+						const leading = (readData as { _leading_sep?: boolean })._leading_sep === true;
+						const trailing = (readData as { _trailing_sep?: boolean })._trailing_sep === true;
+						const options: { separatorKind?: string; leading?: boolean; trailing?: boolean } = {};
+						if (separatorKind !== undefined) options.separatorKind = separatorKind;
+						if (leading) options.leading = true;
+						if (trailing) options.trailing = true;
+						factoryResult = (
+							factory as (
+								elements: readonly unknown[],
+								options?: { separatorKind?: string; leading?: boolean; trailing?: boolean }
+							) => AnyNodeData
+						)(elements, Object.keys(options).length > 0 ? options : undefined);
 					} else {
 						const config = nodeToConfig(readData, {
 							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,
