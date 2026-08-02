@@ -100,14 +100,10 @@ describe('post-evaluate invariant', () => {
 			expect(violations, violations.join('\n')).toEqual([]);
 		});
 
-		it(`${grammar}: no S2/S4 desugar divergences`, async () => {
-			// synthesizeInlineAliasSources (S2) and the body-pattern-group
-			// fallback (S4) mint rules enrich() didn't already pre-generate
-			// hoist into a real symbol — see docs/superpowers/plans/2026-07-30-
-			// kindid-invariant-restoration-plan.md's Phase 5 "tighten" task.
+		it(`${grammar}: no desugar divergences`, async () => {
 			// enrich() runs on the base grammar BEFORE this evaluate() call
-			// (grammar.sittir.ts: `enrich(base)`), so it already promotes
-			// shapes like upstream tree-sitter-rust's
+			// (grammar.sittir.ts: `enrich(base)`), so it already pre-generate
+			// hoists shapes like upstream tree-sitter-rust's
 			// `alias(choice(...), $.primitive_type)` into a real named rule —
 			// this stays 0 on the actual shipped pipeline even though the
 			// SAME check against the raw, un-enriched base grammar (see
@@ -162,7 +158,7 @@ describe('post-evaluate invariant', () => {
 				// replacement (silently-dead elevation) — read by
 				// collectGrammarDiagnosticsForGrammar for `body-pattern-zero-match`.
 				'bodyPatternZeroMatches',
-				// S2/S4 evaluate-only mints with no wire-side deposit — read by
+				// Evaluate-only mints with no wire-side deposit — read by
 				// collectGrammarDiagnosticsForGrammar for `desugar-divergence-*`.
 				'desugarDivergences'
 			]);

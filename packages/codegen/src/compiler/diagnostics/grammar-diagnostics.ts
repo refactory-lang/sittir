@@ -127,8 +127,8 @@ export function fromBodyPatternZeroMatch(grammar: string, hiddenName: string): G
 }
 
 const DESUGAR_DIVERGENCE_DESCRIPTIONS: Record<DesugarDivergenceEvent['site'], string> = {
-	'inline-alias-source': 'synthesizeInlineAliasSources (S2) minted an alias source with no wire-side deposit',
-	'body-pattern-group': "evaluateRulesAndInjectSynthetics's body-pattern-group fallback (S4) fired with no wire-side deposit"
+	'inline-alias-source': 'synthesizeInlineAliasSources minted an alias source with no wire-side deposit',
+	'body-pattern-group': "evaluateRulesAndInjectSynthetics's body-pattern-group fallback fired with no wire-side deposit"
 };
 
 export function fromDesugarDivergence(grammar: string, event: DesugarDivergenceEvent): GrammarDiagnostic {

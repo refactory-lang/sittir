@@ -292,7 +292,7 @@ describe('grammar diagnostics preflight', () => {
 		);
 	});
 
-	it('collectGrammarDiagnosticsForGrammar surfaces desugarDivergences (S2/S4 evaluate-only mints)', () => {
+	it('collectGrammarDiagnosticsForGrammar surfaces desugarDivergences (evaluate-only mints with no wire-side deposit)', () => {
 		const rawGrammar: RawGrammar = {
 			...buildRawGrammar({
 				host: { type: 'SYMBOL', name: 'known' },

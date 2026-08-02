@@ -901,11 +901,8 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 					if (result && typeof result === 'object' && typeof (result as { type?: unknown }).type === 'string') {
 						rules[hiddenName] = normalize(result as Input);
 						provenanceByKind.set(hiddenName, 'evaluate-synthesized');
-						// `hiddenName` was absent from `wireCtx.deposits` above (the
-						// `hiddenName in rules` guard would have skipped otherwise) —
-						// this local re-evaluation is the only mint for it, so
-						// tree-sitter's separate execution of the same grammar has
-						// no guarantee of seeing the same rule.
+						// No wire-side deposit registered `hiddenName` (the guard above would
+						// have skipped otherwise), so this local mint has no guaranteed twin.
 						ctx.desugarDivergences.push({ site: 'body-pattern-group', name: hiddenName });
 					}
 				} catch {

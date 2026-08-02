@@ -131,8 +131,8 @@ export interface RawGrammar {
 }
 
 /**
- * A mint at an evaluate-only synthesis site (S2 `synthesizeInlineAliasSources`,
- * S4 the body-pattern-group fallback in `evaluateRulesAndInjectSynthetics`)
+ * A mint at an evaluate-only synthesis site (`synthesizeInlineAliasSources`,
+ * or the body-pattern-group fallback in `evaluateRulesAndInjectSynthetics`)
  * that fired without a matching wire-side deposit for the same name — the
  * dual-execution divergence the kindid invariant depends on these sites
  * staying free of. See `fromDesugarDivergence` in grammar-diagnostics.ts.
