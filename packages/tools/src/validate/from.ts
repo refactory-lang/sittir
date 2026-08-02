@@ -301,7 +301,14 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 				// the native engine emits under a different rule name, skip rather
 				// than fall back to a mismatched WASM ID.
 				const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
-				if (nativeCoords === null && handle.read) continue;
+				if (nativeCoords === null && handle.read) {
+					errors.push({
+						kind,
+						severity: 'error',
+						message: `native coords unresolved for alias target — comparing against a mismatched WASM id would be unsound`
+					});
+					continue;
+				}
 				// Use readTreeNode (wrapped via per-kind dispatch) when available,
 				// so `.from()` sees a fluent NodeData — the supported input shape
 				// per spec 008 US3. Fall back to raw readNode if the wrap module
@@ -389,7 +396,12 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						const childArgs = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
 						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(...childArgs);
 					}
-				} catch {
+				} catch (e) {
+					errors.push({
+						kind,
+						severity: 'error',
+						message: `factory build throws: ${(e as Error).message}`
+					});
 					skip++;
 					continue;
 				}

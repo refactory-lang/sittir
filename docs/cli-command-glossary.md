@@ -26,6 +26,7 @@ Generate typed factories, templates, and native bindings from a grammar
 - `--skip-ts-chain` — Skip the auto transpile + tree-sitter generate chain
 - `--roundtrip` — Run validator probes after generation
 - `--no-build-native` — Skip the post-regen N-API rebuild
+- `--native-debug` — Build the post-regen N-API binding in debug (incremental, unoptimized — dev iteration only, never for CI/validation)
 - `--no-workspace-check` — Skip the post-build cargo check --workspace (multi-grammar drivers run it once, on the last grammar)
 - `--no-emit-diff` — Suppress the post-regen emit diff
 - `--allow-diagnostic <code>` — Allow a blocking grammar diagnostic (repeatable) (default: ``)
@@ -212,6 +213,22 @@ Compare override key sets between backup and current overrides.suggested.ts
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool compare-overrides [options]
+```
+
+### `tool corpus-coverage-census`
+
+Declared rule kinds with zero corpus exposure
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `--all-grammars` — Run all three grammars
+- `--format <fmt>` — Output format: list | json (default: `list`)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool corpus-coverage-census [options]
 ```
 
 ### `tool defect-histogram`

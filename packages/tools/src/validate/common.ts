@@ -2664,3 +2664,26 @@ export function emitValidatorMetrics(): void {
 	const backend: 'ts' | 'native' = process.env.SITTIR_BACKEND === 'native' ? 'native' : 'ts';
 	dumpMetrics(backend);
 }
+
+// ---------------------------------------------------------------------------
+// Mismatch dedup — ancestor-containment collapse
+// ---------------------------------------------------------------------------
+
+/**
+ * A failing node re-renders as part of every enclosing ancestor kind's own
+ * independent round-trip test, so read-render-parse and factory-render-parse
+ * each report the same defect once per ancestor kind — one bug becomes N
+ * rows. Collapse to the innermost (root-cause) span per entry: drop a
+ * mismatch when another mismatch for the same entry has a span strictly
+ * contained within it.
+ */
+export function dedupeMismatchesByContainment<T extends { entry?: string; start: number; end: number }>(
+	mismatches: readonly T[]
+): T[] {
+	return mismatches.filter(
+		(m, i) =>
+			!mismatches.some(
+				(n, j) => j !== i && n.entry === m.entry && n.start >= m.start && n.end <= m.end && (n.start > m.start || n.end < m.end)
+			)
+	);
+}

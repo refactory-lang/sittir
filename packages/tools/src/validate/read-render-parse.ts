@@ -32,6 +32,7 @@ import {
 	stripStructuralNodeText,
 	emitValidatorMetrics,
 	loadNodeModel,
+	dedupeMismatchesByContainment,
 	type TSNode,
 	type TSTree,
 	type WrappedNodeData,
@@ -264,6 +265,8 @@ export interface ReadRenderParseResult {
 		message: string;
 		input?: string;
 		rendered?: string;
+		start: number;
+		end: number;
 	}[];
 	/**
 	 * Accessor-throw occurrences hit while materializing wrapped nodes for
@@ -455,6 +458,8 @@ export async function validateReadRenderParse(
 		message: string;
 		input?: string;
 		rendered?: string;
+		start: number;
+		end: number;
 	}[] = [];
 	const accessorThrows: AccessorThrowRecord[] = [];
 	const onAccessorThrow = (rec: AccessorThrowRecord): void => {
@@ -700,7 +705,9 @@ export async function validateReadRenderParse(
 								entry: entry.name,
 								message: diff,
 								input: inputSource,
-								rendered
+								rendered,
+								start: nodeStartIndex,
+								end: nodeEndIndex
 							});
 						} else {
 							kindAstMatch = true;
@@ -840,7 +847,7 @@ export async function validateReadRenderParse(
 		skip,
 		astMatchPass,
 		errors,
-		astMismatches,
+		astMismatches: dedupeMismatchesByContainment(astMismatches),
 		accessorThrows
 	};
 }

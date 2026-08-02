@@ -41,6 +41,7 @@ import {
 	nodeToConfig,
 	emitValidatorMetrics,
 	loadNodeModel,
+	dedupeMismatchesByContainment,
 	type TSNode,
 	type TSTree,
 	type WrappedNodeData
@@ -280,6 +281,8 @@ export interface FactoryRenderParseResult {
 		message: string;
 		input?: string;
 		rendered?: string;
+		start: number;
+		end: number;
 	}[];
 }
 
@@ -573,6 +576,8 @@ export async function validateFactoryRenderParse(
 		message: string;
 		input?: string;
 		rendered?: string;
+		start: number;
+		end: number;
 	}[] = [];
 	const testedPairs = initKindEntryDeduplicator();
 	let pass = 0;
@@ -712,7 +717,9 @@ export async function validateFactoryRenderParse(
 						kind,
 						entry: entry.name,
 						message: diff,
-						input: inputSource
+						input: inputSource,
+						start: cand.start,
+						end: cand.end
 					});
 					continue;
 				}
@@ -731,7 +738,7 @@ export async function validateFactoryRenderParse(
 		skip,
 		astMatchPass: pass,
 		errors,
-		astMismatches
+		astMismatches: dedupeMismatchesByContainment(astMismatches)
 	};
 }
 
