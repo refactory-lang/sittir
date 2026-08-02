@@ -72,6 +72,7 @@ import {
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
+import { collectSeparatorCandidateKindNames } from './wrap.ts';
 
 // TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
 // isSlotBearingCompound's doc comment (shared.ts).
@@ -157,7 +158,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	emitSyntaxKindEnum(lines, allKinds, nodeMap);
 
 	// 1b. TSKindId runtime discriminants + lookup helpers
-	if (kindEntries) emitKindIdEnumAndLookups(lines, kindEntries);
+	if (kindEntries) emitKindIdEnumAndLookups(lines, kindEntries, nodeMap);
 
 	// 2. Scoped enums per supertype
 	if (supertypes.length > 0) {
@@ -473,7 +474,7 @@ function emitSyntaxKindEnum(lines: string[], allKinds: readonly string[], nodeMa
 	lines.push('');
 }
 
-function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[]): void {
+function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nodeMap: NodeMap): void {
 	lines.push('export const enum TSKindId {');
 	for (const entry of entries) {
 		lines.push(`  ${entry.member} = ${entry.id},`);
@@ -555,15 +556,23 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[]): vo
 	lines.push('');
 
 	lines.push(
-		'/** Literal punctuation/keyword text for anonymous tokens — the fact KIND_DISPLAY_NAMES deliberately omits (see its comment above). Absent for named-rule kinds, which have no single literal text. */'
+		'/** Reverse of a separatedList kind\'s own separator-candidate resolution (factories.ts\'s emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter\'s raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust\'s primitive_type family), so it is deliberately not used here. Built by walking every separatedList\'s separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */'
 	);
 	lines.push('export const KIND_LITERAL_TEXT: ReadonlyMap<number, string> = new Map([');
-	for (const entry of entries) {
-		if (!entry.anon || entry.symbolName === undefined) continue;
-		lines.push(`  [${entry.id}, ${JSON.stringify(entry.symbolName)}],`);
-		if (entry.parseId !== undefined && entry.parseId !== entry.id) {
-			lines.push(`  [${entry.parseId}, ${JSON.stringify(entry.symbolName)}],`);
+	const literalTextById = new Map<number, string>();
+	for (const node of nodeMap.nodes.values()) {
+		if (node.modelType !== 'separatedList' || node.separatorRule === undefined) continue;
+		for (const candidate of collectSeparatorCandidateKindNames(node.separatorRule)) {
+			const entry = findKindEntry(entries, candidate);
+			if (entry === undefined) continue;
+			literalTextById.set(entry.id, candidate);
+			if (entry.parseId !== undefined && entry.parseId !== entry.id) {
+				literalTextById.set(entry.parseId, candidate);
+			}
 		}
+	}
+	for (const [id, text] of literalTextById) {
+		lines.push(`  [${id}, ${JSON.stringify(text)}],`);
 	}
 	lines.push(']);');
 	lines.push('');

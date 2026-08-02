@@ -1209,62 +1209,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[299, 'future_import_statement_group1']
 ]);
 
-/** Literal punctuation/keyword text for anonymous tokens — the fact KIND_DISPLAY_NAMES deliberately omits (see its comment above). Absent for named-rule kinds, which have no single literal text. */
-export const KIND_LITERAL_TEXT: ReadonlyMap<number, string> = new Map([
-	[2, ';'],
-	[4, '.'],
-	[7, '('],
-	[8, ')'],
-	[9, ','],
-	[11, '*'],
-	[12, '>>'],
-	[14, ':='],
-	[22, ':'],
-	[33, '*'],
-	[37, '**'],
-	[41, '='],
-	[43, '['],
-	[44, ']'],
-	[45, '@'],
-	[46, '|'],
-	[47, '{'],
-	[48, '}'],
-	[50, '+'],
-	[51, '-'],
-	[55, '/'],
-	[56, '%'],
-	[57, '//'],
-	[58, '&'],
-	[59, '^'],
-	[60, '<<'],
-	[61, '~'],
-	[63, 'lambda'],
-	[64, 'yield'],
-	[66, 'type'],
-	[68, '\\'],
-	[74, 'await'],
-	[80, '->'],
-	[81, '+='],
-	[82, '-='],
-	[83, '*='],
-	[84, '/='],
-	[85, '@='],
-	[86, '//='],
-	[87, '%='],
-	[88, '**='],
-	[89, '>>='],
-	[90, '<<='],
-	[91, '&='],
-	[92, '^='],
-	[93, '|='],
-	[94, '<'],
-	[95, '<='],
-	[96, '=='],
-	[97, '!='],
-	[98, '>='],
-	[99, '>'],
-	[100, '<>']
-]);
+/** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
+export const KIND_LITERAL_TEXT: ReadonlyMap<number, string> = new Map([]);
 
 export function kindIdFromName(kindName: string): TSKindId {
 	switch (kindName) {

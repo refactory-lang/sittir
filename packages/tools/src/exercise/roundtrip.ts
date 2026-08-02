@@ -2,7 +2,7 @@ import { createRenderer } from '@sittir/legacy-core';
 import type { AnyNodeData } from '@sittir/types';
 
 type GrammarName = 'rust' | 'typescript' | 'python';
-type FactoryShape = 'config' | 'spread' | 'text' | 'direct';
+type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements';
 type FactoryFn = (...args: readonly unknown[]) => unknown;
 type FactorySlotMeta = {
 	readonly unnamed: boolean;
@@ -45,6 +45,7 @@ interface CommonModule {
 	loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined>;
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
 	loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined>;
+	loadKindLiteralText(grammar: string): Promise<ReadonlyMap<number, string> | undefined>;
 	buildReadHandle(
 		grammar: string,
 		tree: unknown,
@@ -71,6 +72,7 @@ interface CommonModule {
 			factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 			polymorphVariants?: Record<string, unknown>;
 			kindNameFromId?: (id: number) => string | undefined;
+			kindLiteralText?: ReadonlyMap<number, string>;
 		}
 	): Record<string, unknown>;
 	getChildFactoryArgs(
@@ -237,7 +239,8 @@ export function buildFactoryNode(
 	handle: ReadHandle,
 	artifacts: FactoryArtifacts,
 	common: CommonModule,
-	kindNameFromId: ((id: number) => string | undefined) | undefined
+	kindNameFromId: ((id: number) => string | undefined) | undefined,
+	kindLiteralText?: ReadonlyMap<number, string>
 ): unknown {
 	const { factory, resolvedKind } = resolveFactory(artifacts.factoryMap, kind);
 	if (factory === undefined) {
@@ -255,7 +258,8 @@ export function buildFactoryNode(
 		factoryFields: artifacts.factoryFields,
 		factorySlots: artifacts.factorySlots,
 		polymorphVariants: artifacts.polymorphVariants,
-		kindNameFromId
+		kindNameFromId,
+		kindLiteralText
 	});
 	const childArgs = common.getChildFactoryArgs(resolvedKind, config, artifacts.factorySlots, artifacts.factoryFields);
 	if (shape === 'spread') {
@@ -267,6 +271,24 @@ export function buildFactoryNode(
 		const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
 		const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
 		return factory(value);
+	}
+	if (shape === 'elements') {
+		// separatedList factory: `(elements, options?: {separatorKind?, leading?, trailing?})`
+		// — distinct calling convention from 'spread's rest-param factories.
+		const separatorSourceKind = (readData as { _separator_kind?: number })._separator_kind;
+		const separatorKind = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
+		const leading = (readData as { _leading_sep?: boolean })._leading_sep === true;
+		const trailing = (readData as { _trailing_sep?: boolean })._trailing_sep === true;
+		const options: { separatorKind?: string; leading?: boolean; trailing?: boolean } = {};
+		if (separatorKind !== undefined) options.separatorKind = separatorKind;
+		if (leading) options.leading = true;
+		if (trailing) options.trailing = true;
+		return (
+			factory as (
+				elements: readonly unknown[],
+				options?: { separatorKind?: string; leading?: boolean; trailing?: boolean }
+			) => unknown
+		)(childArgs, Object.keys(options).length > 0 ? options : undefined);
 	}
 	return factory(config);
 }
@@ -331,6 +353,7 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 				};
 	const kindNameFromId = await common.loadKindNameFromId(grammar);
 	const kindNames = await common.loadKindNames(grammar);
+	const kindLiteralText = await common.loadKindLiteralText(grammar);
 	const { render } = createRenderer(new URL(TEMPLATE_DIR_PATHS[grammar], import.meta.url).pathname, {
 		kindNames
 	});
@@ -371,7 +394,15 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 		const readData = common.readNodeAt(handle, common.adaptNode(node), nativeCoords);
 		let rendered: string;
 		try {
-			const factoryNode = buildFactoryNode(exercise.kind, readData, handle, artifacts, common, kindNameFromId);
+			const factoryNode = buildFactoryNode(
+				exercise.kind,
+				readData,
+				handle,
+				artifacts,
+				common,
+				kindNameFromId,
+				kindLiteralText
+			);
 			const renderable = toRenderableNode(factoryNode);
 			if (!isAnyNodeData(renderable)) {
 				throw new Error('factory result did not materialize to NodeData');
