@@ -364,7 +364,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							factorySlots,
 							fieldAliasMap,
 							polymorphVariants: polymorphVariants as any,
-							kindNameFromId
+							kindNameFromId,
+							kindLiteralText
 						});
 						if (shape === 'direct') {
 							// Direct-call shape: use the sole field when metadata
@@ -397,7 +398,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							factorySlots,
 							fieldAliasMap,
 							polymorphVariants: polymorphVariants as any,
-							kindNameFromId
+							kindNameFromId,
+							kindLiteralText
 						});
 						const elements = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
 						const separatorSourceKind = (readData as { _separator_kind?: number })._separator_kind;
@@ -423,7 +425,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							factorySlots,
 							fieldAliasMap,
 							polymorphVariants: polymorphVariants as any,
-							kindNameFromId
+							kindNameFromId,
+							kindLiteralText
 						});
 						const childArgs = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
 						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(...childArgs);

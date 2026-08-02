@@ -515,7 +515,8 @@ function buildFactoryNodeData(
 				cstNodeKindHint,
 				firstNamedChildKindHint,
 				namedChildKindHints,
-				kindNameFromId
+				kindNameFromId,
+				kindLiteralText
 			});
 			if (shape === 'direct') {
 				// Direct-call shape: extract the sole field value when metadata
@@ -550,7 +551,8 @@ function buildFactoryNodeData(
 				cstNodeKindHint,
 				firstNamedChildKindHint,
 				namedChildKindHints,
-				kindNameFromId
+				kindNameFromId,
+				kindLiteralText
 			});
 			const elements = getChildFactoryArgs(renderedKind, config, factorySlots, factoryFields);
 			const separatorSourceKind = (referenceData as { _separator_kind?: number })._separator_kind;
@@ -579,7 +581,8 @@ function buildFactoryNodeData(
 				cstNodeKindHint,
 				firstNamedChildKindHint,
 				namedChildKindHints,
-				kindNameFromId
+				kindNameFromId,
+				kindLiteralText
 			});
 			const childArgs = getChildFactoryArgs(renderedKind, config, factorySlots, factoryFields);
 			return (factory as (...args: unknown[]) => AnyNodeData)(...childArgs);
