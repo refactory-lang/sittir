@@ -82,14 +82,65 @@ export type ValidationReportEntry = DiagnosticEntryBase & {
 	readonly source: 'grammar' | 'validator';
 	readonly grammar: string;
 	readonly backend: string;
+	readonly sClass?: SClass;
 } & (Partial<Pick<GrammarDiagnosticEntry, 'location' | 'proposal'>> | Partial<Pick<ValidatorDiagnostic, 'stage' | 'label'>>);
+
+/**
+ * Round-trip-fidelity source-class taxonomy: S1 alias-storage identity, S2
+ * marker population/representation, S3 separator possession, S4 slot
+ * arity, S5 template projection, S6 factory extras, S7 zero-width-token
+ * divergence, S8 validator/report artifacts.
+ */
+export type SClass = 'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6' | 'S7' | 'S8';
+
+/** Codes that determine their S-class unambiguously, independent of message text. */
+const DIRECT_CODE_TO_S_CLASS: Readonly<Record<string, SClass>> = {
+	'parsekind-noninjective': 'S1',
+	'seq-with-nested-seq': 'S3',
+	'union-slot-unaddressable': 'S4',
+	'union-slot-mixed-row': 'S4',
+	'accessor-throw': 'S4',
+	'coverage-missing-field': 'S5'
+};
+
+/**
+ * Message-shape fallback for codes covering more than one S-class
+ * (`from-error`, the `*-ast-mismatch`/`*-error` validator codes). A
+ * message that matches none of these known signatures is left
+ * unclassified rather than guessed — most `*-ast-mismatch` rows are
+ * genuinely ambiguous across S1/S2/S3/S5/S7 without more structure than
+ * the message string carries.
+ */
+function classifyByMessage(message: string): SClass | undefined {
+	if (/kind not found at rendered offset/.test(message)) return 'S8';
+	if (/expected u16 kind_id/.test(message)) return 'S2';
+	if (/automatic_semicolon/.test(message)) return 'S7';
+	if (/_comment|_line_continuation|Missing field _content/.test(message)) return 'S6';
+	if (/no kind-keyed child slot|unknown kind id \d+/.test(message)) return 'S1';
+	return undefined;
+}
+
+/**
+ * Maps a validation report entry to its round-trip-fidelity-restoration
+ * source class. Entries outside this initiative's scope (e.g. the
+ * kindid-invariant-restoration `kindid-*`/`desugar-divergence-*` codes)
+ * are deliberately left unclassified.
+ */
+export function classifySClass(entry: { readonly code: string; readonly message: string }): SClass | undefined {
+	const direct = DIRECT_CODE_TO_S_CLASS[entry.code];
+	if (direct) return direct;
+	if (entry.code.endsWith('-error') || entry.code.endsWith('-ast-mismatch')) return classifyByMessage(entry.message);
+	return undefined;
+}
 
 /**
  * Merge per-grammar static grammar diagnostics and per-grammar validator
  * failures into one flat array of `ValidationReportEntry` — each entry is
  * the original diagnostic object, spread as-is, tagged with only the shared
  * `source`/`grammar`/`backend` fields. No hand-picked field list to keep in
- * sync as either diagnostic shape grows.
+ * sync as either diagnostic shape grows. `sClass` is stamped once here,
+ * from the same `code`/`message` every entry already carries, rather than
+ * re-derived by each downstream consumer (`validate history`, triage tools).
  */
 export function buildValidationReportEntries(
 	grammarDiagnosticsByGrammar: Readonly<Record<string, readonly GrammarDiagnosticEntry[]>>,
@@ -98,10 +149,16 @@ export function buildValidationReportEntries(
 ): ValidationReportEntry[] {
 	const entries: ValidationReportEntry[] = [];
 	for (const [grammar, diagnostics] of Object.entries(grammarDiagnosticsByGrammar)) {
-		for (const d of diagnostics) entries.push({ source: 'grammar', grammar, backend, ...d });
+		for (const d of diagnostics) {
+			const entry = { source: 'grammar' as const, grammar, backend, ...d };
+			entries.push({ ...entry, sClass: classifySClass(entry) });
+		}
 	}
 	for (const [grammar, failures] of Object.entries(validatorFailuresByGrammar)) {
-		for (const f of failures) entries.push({ source: 'validator', grammar, backend, ...f });
+		for (const f of failures) {
+			const entry = { source: 'validator' as const, grammar, backend, ...f };
+			entries.push({ ...entry, sClass: classifySClass(entry) });
+		}
 	}
 	return entries;
 }

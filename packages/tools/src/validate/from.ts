@@ -389,7 +389,12 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						const childArgs = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
 						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(...childArgs);
 					}
-				} catch {
+				} catch (e) {
+					errors.push({
+						kind,
+						severity: 'error',
+						message: `factory build throws: ${(e as Error).message}`
+					});
 					skip++;
 					continue;
 				}

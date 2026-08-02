@@ -9,6 +9,7 @@ import { checkJinja } from './check-jinja.ts';
 import { checkPerf } from './check-perf.ts';
 import { classify } from './classify.ts';
 import { compareOverrides } from './compare-overrides.ts';
+import { corpusCoverageCensus } from './corpus-coverage-census.ts';
 import { defectHistogram } from './defect-histogram.ts';
 import { diffFailures } from './diff-failures.ts';
 import { dumpAstMismatches } from './dump-ast-mismatches.ts';
@@ -39,6 +40,7 @@ export const toolModules: readonly CommandModule[] = [
 	checkPerf,
 	classify,
 	compareOverrides,
+	corpusCoverageCensus,
 	defectHistogram,
 	diffFailures,
 	dumpAstMismatches,
