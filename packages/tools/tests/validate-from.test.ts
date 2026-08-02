@@ -9,6 +9,7 @@
  */
 import { describe, it, expect, vi } from 'vitest';
 import { fileURLToPath } from 'node:url';
+import { validateFrom } from '../src/validate/from.ts';
 
 describe('validateFrom — module load failure sentinel', () => {
 	it('surfaces a rejected from.ts import as a (from-module-load) sentinel error, not a false 0/0 pass', async () => {
@@ -33,5 +34,19 @@ describe('validateFrom — module load failure sentinel', () => {
 		// wrapper, not the thrown error verbatim — assert only that a
 		// non-empty diagnostic made it through, not its literal content.
 		expect(result.errors[0]!.message.length).toBeGreaterThan(0);
+	}, 60000);
+});
+
+describe('validateFrom — unresolved native coords diagnostic', () => {
+	it('reports one error row per unresolved-alias-target kind, reconciling exactly with total - pass', async () => {
+		// python's corpus has no other from() failure mode today (no
+		// read/wrap throws, no divergent results, no factory-build
+		// throws) — every fail is this diagnostic, so fail must equal
+		// errors.length exactly, not just be covered by it.
+		const result = await validateFrom('python', 'native');
+
+		expect(result.fail).toBe(result.errors.length);
+		expect(result.fail).toBeGreaterThan(0);
+		expect(result.errors.every((e) => e.message.includes('native coords unresolved for alias target'))).toBe(true);
 	}, 60000);
 });

@@ -4,7 +4,7 @@ import { corpusCoverageCensus as runCorpusCoverageCensus } from '@sittir/tools';
 
 export const corpusCoverageCensus: CommandModule = {
 	name: 'corpus-coverage-census',
-	describe: 'Declared rule kinds with zero corpus exposure (round-trip-fidelity Phase 0)',
+	describe: 'Declared rule kinds with zero corpus exposure',
 	register: (program) => {
 		withGrammar(defineCommand(program, corpusCoverageCensus))
 			.option('--all-grammars', 'Run all three grammars')
