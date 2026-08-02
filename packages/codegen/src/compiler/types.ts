@@ -127,6 +127,19 @@ export interface RawGrammar {
 	readonly orphanedSyntheticGroups?: readonly string[];
 
 	readonly bodyPatternZeroMatches?: readonly string[];
+	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];
+}
+
+/**
+ * A mint at an evaluate-only synthesis site (`synthesizeInlineAliasSources`,
+ * or the body-pattern-group fallback in `evaluateRulesAndInjectSynthetics`)
+ * that fired without a matching wire-side deposit for the same name — the
+ * dual-execution divergence the kindid invariant depends on these sites
+ * staying free of. See `fromDesugarDivergence` in grammar-diagnostics.ts.
+ */
+export interface DesugarDivergenceEvent {
+	readonly site: 'inline-alias-source' | 'body-pattern-group';
+	readonly name: string;
 }
 
 export interface RefineForm {

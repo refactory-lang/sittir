@@ -100,6 +100,19 @@ describe('post-evaluate invariant', () => {
 			expect(violations, violations.join('\n')).toEqual([]);
 		});
 
+		it(`${grammar}: no desugar divergences`, async () => {
+			// enrich() runs on the base grammar BEFORE this evaluate() call
+			// (grammar.sittir.ts: `enrich(base)`), so it already pre-generate
+			// hoists shapes like upstream tree-sitter-rust's
+			// `alias(choice(...), $.primitive_type)` into a real named rule —
+			// this stays 0 on the actual shipped pipeline even though the
+			// SAME check against the raw, un-enriched base grammar (see
+			// real-grammar.test.ts) is not representative of it.
+			const overridesPath = resolveOverridesPath(grammar);
+			const raw = await evaluate(overridesPath);
+			expect(raw.desugarDivergences ?? []).toEqual([]);
+		});
+
 		it(`${grammar}: top-level RawGrammar shape is the documented sidecar set`, async () => {
 			const overridesPath = resolveOverridesPath(grammar);
 			const raw = await evaluate(overridesPath);
@@ -144,7 +157,10 @@ describe('post-evaluate invariant', () => {
 				// groups: body-pattern entries referenced nowhere after pattern
 				// replacement (silently-dead elevation) — read by
 				// collectGrammarDiagnosticsForGrammar for `body-pattern-zero-match`.
-				'bodyPatternZeroMatches'
+				'bodyPatternZeroMatches',
+				// Evaluate-only mints with no wire-side deposit — read by
+				// collectGrammarDiagnosticsForGrammar for `desugar-divergence-*`.
+				'desugarDivergences'
 			]);
 			const extra = Object.keys(raw as unknown as Record<string, unknown>).filter((k) => !ALLOWED.has(k));
 			expect(extra, `unexpected RawGrammar fields: ${extra.join(', ')}`).toEqual([]);

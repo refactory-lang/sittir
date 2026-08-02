@@ -436,6 +436,25 @@ describe('Evaluate — edge cases', () => {
 			expect(Object.keys(raw.rules)).toContain('_expr');
 		});
 	});
+
+	describe('desugar-divergence — synthesizeInlineAliasSources', () => {
+		it('records a divergence event when an alias target has no declared rule or SYMBOL source', async () => {
+			const raw = await evaluate(fixture('inline-alias-divergence-grammar.js'));
+			expect(raw.rules).toHaveProperty('_orphan_target');
+			expect(raw.desugarDivergences).toEqual([{ site: 'inline-alias-source', name: '_orphan_target' }]);
+		});
+	});
+
+	describe('desugar-divergence — body-pattern-group fallback', () => {
+		it('records a divergence event when a groups: entry mints with no wire-side deposit', async () => {
+			const raw = await evaluate(fixture('body-pattern-group-divergence-grammar.js'));
+			// `_orphan_group` is referenced nowhere else in the grammar, so it's
+			// pruned from the final catalog as unreachable — the divergence
+			// event itself is the proof the fallback fired, independent of
+			// whether the minted rule survives reachability pruning.
+			expect(raw.desugarDivergences).toEqual([{ site: 'body-pattern-group', name: '_orphan_group' }]);
+		});
+	});
 });
 
 describe('Evaluate — evaluate()', () => {
