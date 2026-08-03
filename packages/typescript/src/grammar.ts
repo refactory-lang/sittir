@@ -2122,6 +2122,43 @@ export type TypescriptGrammar = {
 			];
 		};
 	};
+	readonly public_field_definition_abstract_first: {
+		type: 'public_field_definition_abstract_first';
+		named: true;
+		fields: {
+			abstract_marker: { multiple: false; required: true; types: [{ type: 'abstract'; named: false }] };
+			readonly_marker: { multiple: false; required: false; types: [{ type: 'readonly'; named: false }] };
+		};
+	};
+	readonly public_field_definition_access_first: {
+		type: 'public_field_definition_access_first';
+		named: true;
+		fields: { declare_marker: { multiple: false; required: false; types: [{ type: 'declare'; named: false }] } };
+		children: { multiple: false; required: true; types: [{ type: 'accessibility_modifier'; named: true }] };
+	};
+	readonly public_field_definition_declare_first: {
+		type: 'public_field_definition_declare_first';
+		named: true;
+		fields: {};
+		children: { multiple: false; required: false; types: [{ type: 'accessibility_modifier'; named: true }] };
+	};
+	readonly public_field_definition_readonly_first: {
+		type: 'public_field_definition_readonly_first';
+		named: true;
+		fields: {
+			abstract_marker: { multiple: false; required: false; types: [{ type: 'abstract'; named: false }] };
+			readonly_marker: { multiple: false; required: true; types: [{ type: 'readonly'; named: false }] };
+		};
+	};
+	readonly public_field_definition_static_mods: {
+		type: 'public_field_definition_static_mods';
+		named: true;
+		fields: {
+			readonly_marker: { multiple: false; required: false; types: [{ type: 'readonly'; named: false }] };
+			static_marker: { multiple: false; required: true; types: [{ type: 'static'; named: false }] };
+		};
+		children: { multiple: false; required: false; types: [{ type: 'override_modifier'; named: true }] };
+	};
 	readonly readonly_type: {
 		type: 'readonly_type';
 		named: true;

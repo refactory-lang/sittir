@@ -15010,6 +15010,46 @@
       "_class_body_member"
     ],
     [
+      "_public_field_definition_declare_first"
+    ],
+    [
+      "method_definition",
+      "_public_field_definition_readonly_first"
+    ],
+    [
+      "method_definition",
+      "_public_field_definition_static_mods"
+    ],
+    [
+      "method_definition",
+      "_public_field_definition_access_first"
+    ],
+    [
+      "_public_field_definition_static_mods"
+    ],
+    [
+      "_public_field_definition_abstract_first"
+    ],
+    [
+      "method_definition",
+      "method_signature",
+      "_public_field_definition_readonly_first"
+    ],
+    [
+      "method_definition",
+      "method_signature",
+      "_public_field_definition_static_mods"
+    ],
+    [
+      "abstract_method_signature",
+      "_public_field_definition_access_first"
+    ],
+    [
+      "method_definition",
+      "method_signature",
+      "_public_field_definition_access_first"
+    ],
+    [
       "primary_expression",
       "_for_header_lhs"
     ],
@@ -15978,11 +16018,6 @@
     "_jsx_identifier",
     "_type_identifier",
     "_jsx_start_opening_element",
-    "_public_field_definition_declare_first",
-    "_public_field_definition_access_first",
-    "_public_field_definition_static_mods",
-    "_public_field_definition_abstract_first",
-    "_public_field_definition_readonly_first",
     "_public_field_definition_accessor_opt",
     "_export_specifier_optional1",
     "_jsx_attribute_optional1",

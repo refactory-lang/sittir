@@ -936,6 +936,11 @@ const _kindIdByKind = new Map<string, number>([
 	['_for_header_lhs', TSKindId.ForHeaderLhs],
 	['_for_header_var_kind', TSKindId.ForHeaderVarKind],
 	['_for_header_let_const_kind', TSKindId.ForHeaderLetConstKind],
+	['_public_field_definition_declare_first', TSKindId.PublicFieldDefinitionDeclareFirst],
+	['_public_field_definition_access_first', TSKindId.PublicFieldDefinitionAccessFirst],
+	['_public_field_definition_static_mods', TSKindId.PublicFieldDefinitionStaticMods],
+	['_public_field_definition_abstract_first', TSKindId.PublicFieldDefinitionAbstractFirst],
+	['_public_field_definition_readonly_first', TSKindId.PublicFieldDefinitionReadonlyFirst],
 	['_parenthesized_expression_typed', TSKindId.ParenthesizedExpressionTyped],
 	['_export_statement_type_export', TSKindId.ExportStatementTypeExport],
 	['_export_statement_equals_export', TSKindId.ExportStatementEqualsExport],
@@ -947,11 +952,6 @@ const _kindIdByKind = new Map<string, number>([
 	['_string_single', TSKindId.StringSingle],
 	['_update_expression_postfix', TSKindId.UpdateExpressionPostfix],
 	['_update_expression_prefix', TSKindId.UpdateExpressionPrefix],
-	['_public_field_definition_abstract_first', TSKindId.PublicFieldDefinitionAbstractFirst],
-	['_public_field_definition_access_first', TSKindId.PublicFieldDefinitionAccessFirst],
-	['_public_field_definition_declare_first', TSKindId.PublicFieldDefinitionDeclareFirst],
-	['_public_field_definition_readonly_first', TSKindId.PublicFieldDefinitionReadonlyFirst],
-	['_public_field_definition_static_mods', TSKindId.PublicFieldDefinitionStaticMods],
 	['_reserved_identifier', TSKindId.ReservedIdentifier],
 	['_type_identifier', TSKindId.TypeIdentifier]
 ]);

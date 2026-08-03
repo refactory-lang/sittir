@@ -1421,67 +1421,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     ForHeaderLetConstKindTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _public_field_definition_declare_first (_PUBLIC_FIELD_DEFINITION_DECLARE_FIRST)
-                440 => Ok(AnyTransport::PublicFieldDefinitionDeclareFirst(
+                400 => Ok(AnyTransport::PublicFieldDefinitionDeclareFirst(
                     PublicFieldDefinitionDeclareFirstTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _public_field_definition_access_first (_PUBLIC_FIELD_DEFINITION_ACCESS_FIRST)
-                439 => Ok(AnyTransport::PublicFieldDefinitionAccessFirst(
+                401 => Ok(AnyTransport::PublicFieldDefinitionAccessFirst(
                     PublicFieldDefinitionAccessFirstTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _public_field_definition_static_mods (_PUBLIC_FIELD_DEFINITION_STATIC_MODS)
-                442 => Ok(AnyTransport::PublicFieldDefinitionStaticMods(
+                402 => Ok(AnyTransport::PublicFieldDefinitionStaticMods(
                     PublicFieldDefinitionStaticModsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _public_field_definition_abstract_first (_PUBLIC_FIELD_DEFINITION_ABSTRACT_FIRST)
-                438 => Ok(AnyTransport::PublicFieldDefinitionAbstractFirst(
+                403 => Ok(AnyTransport::PublicFieldDefinitionAbstractFirst(
                     PublicFieldDefinitionAbstractFirstTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _public_field_definition_readonly_first (_PUBLIC_FIELD_DEFINITION_READONLY_FIRST)
-                441 => Ok(AnyTransport::PublicFieldDefinitionReadonlyFirst(
+                404 => Ok(AnyTransport::PublicFieldDefinitionReadonlyFirst(
                     PublicFieldDefinitionReadonlyFirstTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _parenthesized_expression_typed (_PARENTHESIZED_EXPRESSION_TYPED)
-                400 => Ok(AnyTransport::ParenthesizedExpressionTyped(
+                405 => Ok(AnyTransport::ParenthesizedExpressionTyped(
                     ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_type_export (_EXPORT_STATEMENT_TYPE_EXPORT)
-                401 => Ok(AnyTransport::ExportStatementTypeExport(
+                406 => Ok(AnyTransport::ExportStatementTypeExport(
                     ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_equals_export (_EXPORT_STATEMENT_EQUALS_EXPORT)
-                402 => Ok(AnyTransport::ExportStatementEqualsExport(
+                407 => Ok(AnyTransport::ExportStatementEqualsExport(
                     ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_namespace_export (_EXPORT_STATEMENT_NAMESPACE_EXPORT)
-                403 => Ok(AnyTransport::ExportStatementNamespaceExport(
+                408 => Ok(AnyTransport::ExportStatementNamespaceExport(
                     ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _call_expression_call (_CALL_EXPRESSION_CALL)
-                404 => Ok(AnyTransport::CallExpressionCall(
+                409 => Ok(AnyTransport::CallExpressionCall(
                     CallExpressionCallTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _call_expression_template_call (_CALL_EXPRESSION_TEMPLATE_CALL)
-                405 => Ok(AnyTransport::CallExpressionTemplateCall(
+                410 => Ok(AnyTransport::CallExpressionTemplateCall(
                     CallExpressionTemplateCallTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _call_expression_member (_CALL_EXPRESSION_MEMBER)
-                406 => Ok(AnyTransport::CallExpressionMember(
+                411 => Ok(AnyTransport::CallExpressionMember(
                     CallExpressionMemberTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _string_double (_STRING_DOUBLE)
-                407 => Ok(AnyTransport::StringDouble(
+                412 => Ok(AnyTransport::StringDouble(
                     StringDoubleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _string_single (_STRING_SINGLE)
-                408 => Ok(AnyTransport::StringSingle(
+                413 => Ok(AnyTransport::StringSingle(
                     StringSingleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _update_expression_postfix (_UPDATE_EXPRESSION_POSTFIX)
-                409 => Ok(AnyTransport::UpdateExpressionPostfix(
+                414 => Ok(AnyTransport::UpdateExpressionPostfix(
                     UpdateExpressionPostfixTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _update_expression_prefix (_UPDATE_EXPRESSION_PREFIX)
-                410 => Ok(AnyTransport::UpdateExpressionPrefix(
+                415 => Ok(AnyTransport::UpdateExpressionPrefix(
                     UpdateExpressionPrefixTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _automatic_semicolon (_AUTOMATIC_SEMICOLON)
@@ -4349,7 +4349,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _JsxIdentifierTransport {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    437 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -4362,7 +4362,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _JsxIdentifierTransport {
                                 }
                             }
                         }
-                        Err(::napi::Error::from_reason("self-alias kind id 437 in _JsxIdentifierTransport: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("self-alias kind id 442 in _JsxIdentifierTransport: no kind-keyed child slot to unwrap"))
                     },
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
@@ -4382,7 +4382,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _JsxIdentifierTransport {
                     ::napi::Error::from_reason("$type property missing in _JsxIdentifierTransport")
                 )?;
                 match kind_id {
-                    437 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -4395,7 +4395,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _JsxIdentifierTransport {
                                 }
                             }
                         }
-                        Err(::napi::Error::from_reason("self-alias kind id 437 in _JsxIdentifierTransport: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("self-alias kind id 442 in _JsxIdentifierTransport: no kind-keyed child slot to unwrap"))
                     },
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
@@ -4654,7 +4654,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxAttributeNameTransport {
                     1 => Ok(Self::_JsxIdentifier(
                         _JsxIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => Ok(Self::_JsxIdentifier(
+                    442 => Ok(Self::_JsxIdentifier(
                         _JsxIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -4675,7 +4675,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxAttributeNameTransport {
                     1 => Ok(Self::_JsxIdentifier(
                         _JsxIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => Ok(Self::_JsxIdentifier(
+                    442 => Ok(Self::_JsxIdentifier(
                         _JsxIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5043,7 +5043,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     236 => Ok(Self::LhsExpression(
                         LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    435 => Ok(Self::LhsExpression(
+                    440 => Ok(Self::LhsExpression(
                         LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     261 => Ok(Self::RestPattern(
@@ -5072,7 +5072,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     236 => Ok(Self::LhsExpression(
                         LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    435 => Ok(Self::LhsExpression(
+                    440 => Ok(Self::LhsExpression(
                         LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     261 => Ok(Self::RestPattern(
@@ -5178,7 +5178,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertyNameTransport {
                     443 => Ok(Self::_PropertyIdentifier(
                         _PropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => Ok(Self::_PropertyIdentifier(
+                    442 => Ok(Self::_PropertyIdentifier(
                         _PropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -5304,7 +5304,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertyNameTransport {
                     443 => Ok(Self::_PropertyIdentifier(
                         _PropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => Ok(Self::_PropertyIdentifier(
+                    442 => Ok(Self::_PropertyIdentifier(
                         _PropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -5692,7 +5692,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _PropertyIdentifierTransport {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    437 => {
+                    442 => {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
@@ -5788,7 +5788,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _PropertyIdentifierTransport {
                     ::napi::Error::from_reason("$type property missing in _PropertyIdentifierTransport")
                 )?;
                 match kind_id {
-                    437 => {
+                    442 => {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
@@ -7097,13 +7097,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementContentTransportS
                     380 => Ok(Self::ExportStatementDefault(
                         ExportStatementDefaultTransport::from_napi_value(env, napi_val)?
                     )),
-                    401 => Ok(Self::ExportStatementTypeExport(
+                    406 => Ok(Self::ExportStatementTypeExport(
                         ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    402 => Ok(Self::ExportStatementEqualsExport(
+                    407 => Ok(Self::ExportStatementEqualsExport(
                         ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    403 => Ok(Self::ExportStatementNamespaceExport(
+                    408 => Ok(Self::ExportStatementNamespaceExport(
                         ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -7120,13 +7120,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementContentTransportS
                     380 => Ok(Self::ExportStatementDefault(
                         ExportStatementDefaultTransport::from_napi_value(env, napi_val)?
                     )),
-                    401 => Ok(Self::ExportStatementTypeExport(
+                    406 => Ok(Self::ExportStatementTypeExport(
                         ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    402 => Ok(Self::ExportStatementEqualsExport(
+                    407 => Ok(Self::ExportStatementEqualsExport(
                         ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    403 => Ok(Self::ExportStatementNamespaceExport(
+                    408 => Ok(Self::ExportStatementNamespaceExport(
                         ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9640,7 +9640,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    400 => Ok(Self::ParenthesizedExpressionTyped(
+                    405 => Ok(Self::ParenthesizedExpressionTyped(
                         ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     247 => Ok(Self::SequenceExpression(
@@ -9676,7 +9676,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     ::napi::Error::from_reason("$type property missing in ParenthesizedExpressionContentTransportSlot")
                 )?;
                 match kind_id {
-                    400 => Ok(Self::ParenthesizedExpressionTyped(
+                    405 => Ok(Self::ParenthesizedExpressionTyped(
                         ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     247 => Ok(Self::SequenceExpression(
@@ -14073,13 +14073,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionContentTransportSl
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    404 => Ok(Self::CallExpressionCall(
+                    409 => Ok(Self::CallExpressionCall(
                         CallExpressionCallTransport::from_napi_value(env, napi_val)?
                     )),
-                    405 => Ok(Self::CallExpressionTemplateCall(
+                    410 => Ok(Self::CallExpressionTemplateCall(
                         CallExpressionTemplateCallTransport::from_napi_value(env, napi_val)?
                     )),
-                    406 => Ok(Self::CallExpressionMember(
+                    411 => Ok(Self::CallExpressionMember(
                         CallExpressionMemberTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14093,13 +14093,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionContentTransportSl
                     ::napi::Error::from_reason("$type property missing in CallExpressionContentTransportSlot")
                 )?;
                 match kind_id {
-                    404 => Ok(Self::CallExpressionCall(
+                    409 => Ok(Self::CallExpressionCall(
                         CallExpressionCallTransport::from_napi_value(env, napi_val)?
                     )),
-                    405 => Ok(Self::CallExpressionTemplateCall(
+                    410 => Ok(Self::CallExpressionTemplateCall(
                         CallExpressionTemplateCallTransport::from_napi_value(env, napi_val)?
                     )),
-                    406 => Ok(Self::CallExpressionMember(
+                    411 => Ok(Self::CallExpressionMember(
                         CallExpressionMemberTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14847,7 +14847,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionPropertyTranspor
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => Ok(Self::Identifier(
+                    442 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14871,7 +14871,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionPropertyTranspor
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => Ok(Self::Identifier(
+                    442 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15890,7 +15890,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                     236 => Ok(Self::LhsExpression(
                         LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    435 => Ok(Self::LhsExpression(
+                    440 => Ok(Self::LhsExpression(
                         LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15910,7 +15910,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                     236 => Ok(Self::LhsExpression(
                         LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    435 => Ok(Self::LhsExpression(
+                    440 => Ok(Self::LhsExpression(
                         LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16458,10 +16458,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for UpdateExpressionContentTransport
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    409 => Ok(Self::UpdateExpressionPostfix(
+                    414 => Ok(Self::UpdateExpressionPostfix(
                         UpdateExpressionPostfixTransport::from_napi_value(env, napi_val)?
                     )),
-                    410 => Ok(Self::UpdateExpressionPrefix(
+                    415 => Ok(Self::UpdateExpressionPrefix(
                         UpdateExpressionPrefixTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16475,10 +16475,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for UpdateExpressionContentTransport
                     ::napi::Error::from_reason("$type property missing in UpdateExpressionContentTransportSlot")
                 )?;
                 match kind_id {
-                    409 => Ok(Self::UpdateExpressionPostfix(
+                    414 => Ok(Self::UpdateExpressionPostfix(
                         UpdateExpressionPostfixTransport::from_napi_value(env, napi_val)?
                     )),
-                    410 => Ok(Self::UpdateExpressionPrefix(
+                    415 => Ok(Self::UpdateExpressionPrefix(
                         UpdateExpressionPrefixTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16555,10 +16555,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransportSlot {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    407 => Ok(Self::StringDouble(
+                    412 => Ok(Self::StringDouble(
                         StringDoubleTransport::from_napi_value(env, napi_val)?
                     )),
-                    408 => Ok(Self::StringSingle(
+                    413 => Ok(Self::StringSingle(
                         StringSingleTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16572,10 +16572,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in StringContentTransportSlot")
                 )?;
                 match kind_id {
-                    407 => Ok(Self::StringDouble(
+                    412 => Ok(Self::StringDouble(
                         StringDoubleTransport::from_napi_value(env, napi_val)?
                     )),
-                    408 => Ok(Self::StringSingle(
+                    413 => Ok(Self::StringSingle(
                         StringSingleTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -18728,10 +18728,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionVisibilityP
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    440 => Ok(Self::PublicFieldDefinitionDeclareFirst(
+                    400 => Ok(Self::PublicFieldDefinitionDeclareFirst(
                         PublicFieldDefinitionDeclareFirstTransport::from_napi_value(env, napi_val)?
                     )),
-                    439 => Ok(Self::PublicFieldDefinitionAccessFirst(
+                    401 => Ok(Self::PublicFieldDefinitionAccessFirst(
                         PublicFieldDefinitionAccessFirstTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -18745,10 +18745,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionVisibilityP
                     ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionVisibilityPrefixTransportSlot")
                 )?;
                 match kind_id {
-                    440 => Ok(Self::PublicFieldDefinitionDeclareFirst(
+                    400 => Ok(Self::PublicFieldDefinitionDeclareFirst(
                         PublicFieldDefinitionDeclareFirstTransport::from_napi_value(env, napi_val)?
                     )),
-                    439 => Ok(Self::PublicFieldDefinitionAccessFirst(
+                    401 => Ok(Self::PublicFieldDefinitionAccessFirst(
                         PublicFieldDefinitionAccessFirstTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -22304,7 +22304,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionInTypeA
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => Ok(Self::Identifier(
+                    442 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -22328,7 +22328,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionInTypeA
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => Ok(Self::Identifier(
+                    442 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -23873,7 +23873,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionPropert
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => Ok(Self::Identifier(
+                    442 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -23897,7 +23897,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionPropert
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => Ok(Self::Identifier(
+                    442 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -29674,7 +29674,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                     236 => Ok(Self::LhsExpression(
                         LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    435 => Ok(Self::LhsExpression(
+                    440 => Ok(Self::LhsExpression(
                         LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     209 => Ok(Self::ParenthesizedExpression(
@@ -29694,7 +29694,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                     236 => Ok(Self::LhsExpression(
                         LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    435 => Ok(Self::LhsExpression(
+                    440 => Ok(Self::LhsExpression(
                         LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     209 => Ok(Self::ParenthesizedExpression(
