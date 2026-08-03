@@ -55423,6 +55423,157 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 227,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "\"",
+      "_content": [
+        "something"
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 48,
+        "end": 59
+      },
+      "$nodeHandle": 19
+    },
+    "expectedOutput": "\"something\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\"something\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "\"something\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \"something\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 227,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "\"",
+      "_content": [
+        "something"
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 81,
+        "end": 92
+      },
+      "$nodeHandle": 26
+    },
+    "expectedOutput": "\"something\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\"something\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "\"something\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \"something\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 227,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "\"",
+      "_content": [
+        "else"
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 93,
+        "end": 99
+      },
+      "$nodeHandle": 27
+    },
+    "expectedOutput": "\"else\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\"else\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "\"else\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \"else\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 226,
+      "$source": 0,
+      "$named": true,
+      "_string": [
+        {
+          "$type": 227,
+          "$source": 0,
+          "$named": true,
+          "_string_start": "\"",
+          "_content": [
+            "something"
+          ],
+          "_string_end": "\"",
+          "$span": {
+            "start": 81,
+            "end": 92
+          },
+          "$nodeHandle": 266
+        },
+        {
+          "$type": 227,
+          "$source": 0,
+          "$named": true,
+          "_string_start": "\"",
+          "_content": [
+            "else"
+          ],
+          "_string_end": "\"",
+          "$span": {
+            "start": 93,
+            "end": 99
+          },
+          "$nodeHandle": 267
+        }
+      ],
+      "$span": {
+        "start": 81,
+        "end": 99
+      },
+      "$nodeHandle": 25
+    },
+    "expectedOutput": "\"something\"\"else\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\"something\" \"else\"",
+    "pattern": "concatenated_string",
+    "edits": [],
+    "expectedSourceOut": "\"something\"\"else\"",
+    "expectedReparseTree": "(concatenated_string (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))",
+    "wrappedText": "_ = \"something\"\"else\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 108,
       "$source": 0,
       "$named": true,

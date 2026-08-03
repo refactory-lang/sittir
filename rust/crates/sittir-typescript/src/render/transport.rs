@@ -21655,6 +21655,7 @@ pub enum RequiredParameterPatternTransportSlot {
     LhsExpression(LhsExpressionTransport),
     RestPattern(RestPatternTransport),
     This(ThisTransport),
+    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -21679,6 +21680,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
                         "unknown kind id {other} in RequiredParameterPatternTransportSlot",
                     ))),
                 }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -21740,6 +21745,7 @@ fn required_parameter_pattern_transport_slot_to_any(t: RequiredParameterPatternT
         RequiredParameterPatternTransportSlot::LhsExpression(inner) => AnyTransport::LhsExpression(inner),
         RequiredParameterPatternTransportSlot::RestPattern(inner) => AnyTransport::RestPattern(inner),
         RequiredParameterPatternTransportSlot::This(inner) => AnyTransport::This(inner),
+        RequiredParameterPatternTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -21752,6 +21758,7 @@ impl RenderableTransport for RequiredParameterPatternTransportSlot {
             RequiredParameterPatternTransportSlot::LhsExpression(inner) => render_lhs_expression(inner, dest),
             RequiredParameterPatternTransportSlot::RestPattern(inner) => render_rest_pattern(inner, dest),
             RequiredParameterPatternTransportSlot::This(inner) => render_this(inner, dest),
+            RequiredParameterPatternTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -21845,6 +21852,7 @@ pub enum OptionalParameterPatternTransportSlot {
     LhsExpression(LhsExpressionTransport),
     RestPattern(RestPatternTransport),
     This(ThisTransport),
+    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -21869,6 +21877,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
                         "unknown kind id {other} in OptionalParameterPatternTransportSlot",
                     ))),
                 }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -21930,6 +21942,7 @@ fn optional_parameter_pattern_transport_slot_to_any(t: OptionalParameterPatternT
         OptionalParameterPatternTransportSlot::LhsExpression(inner) => AnyTransport::LhsExpression(inner),
         OptionalParameterPatternTransportSlot::RestPattern(inner) => AnyTransport::RestPattern(inner),
         OptionalParameterPatternTransportSlot::This(inner) => AnyTransport::This(inner),
+        OptionalParameterPatternTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -21942,6 +21955,7 @@ impl RenderableTransport for OptionalParameterPatternTransportSlot {
             OptionalParameterPatternTransportSlot::LhsExpression(inner) => render_lhs_expression(inner, dest),
             OptionalParameterPatternTransportSlot::RestPattern(inner) => render_rest_pattern(inner, dest),
             OptionalParameterPatternTransportSlot::This(inner) => render_this(inner, dest),
+            OptionalParameterPatternTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -22035,6 +22049,7 @@ pub enum ParameterNamePatternTransportSlot {
     LhsExpression(LhsExpressionTransport),
     RestPattern(RestPatternTransport),
     This(ThisTransport),
+    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -22059,6 +22074,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterNamePatternTransportSlo
                         "unknown kind id {other} in ParameterNamePatternTransportSlot",
                     ))),
                 }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -22120,6 +22139,7 @@ fn parameter_name_pattern_transport_slot_to_any(t: ParameterNamePatternTransport
         ParameterNamePatternTransportSlot::LhsExpression(inner) => AnyTransport::LhsExpression(inner),
         ParameterNamePatternTransportSlot::RestPattern(inner) => AnyTransport::RestPattern(inner),
         ParameterNamePatternTransportSlot::This(inner) => AnyTransport::This(inner),
+        ParameterNamePatternTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -22132,6 +22152,7 @@ impl RenderableTransport for ParameterNamePatternTransportSlot {
             ParameterNamePatternTransportSlot::LhsExpression(inner) => render_lhs_expression(inner, dest),
             ParameterNamePatternTransportSlot::RestPattern(inner) => render_rest_pattern(inner, dest),
             ParameterNamePatternTransportSlot::This(inner) => render_this(inner, dest),
+            ParameterNamePatternTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -22141,6 +22162,7 @@ pub enum TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot {
     Import(ImportTransport),
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationTransport),
     TypeQueryCallExpressionInTypeAnnotation(TypeQueryCallExpressionInTypeAnnotationTransport),
+    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -22171,6 +22193,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionInTypeA
                         "unknown kind id {other} in TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot",
                     ))),
                 }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -22238,6 +22264,7 @@ fn type_query_member_expression_in_type_annotation_object_transport_slot_to_any(
         TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::Import(inner) => AnyTransport::Import(inner),
         TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => AnyTransport::TypeQueryMemberExpressionInTypeAnnotation(inner),
         TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => AnyTransport::TypeQueryCallExpressionInTypeAnnotation(inner),
+        TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -22250,6 +22277,7 @@ impl RenderableTransport for TypeQueryMemberExpressionInTypeAnnotationObjectTran
             TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::Import(inner) => render_import(inner, dest),
             TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => render_type_query_member_expression_in_type_annotation(inner, dest),
             TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => render_type_query_call_expression_in_type_annotation(inner, dest),
+            TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -22368,6 +22396,7 @@ impl RenderableTransport for TypeQueryMemberExpressionInTypeAnnotationPropertyTr
 pub enum TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot {
     Import(ImportTransport),
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationTransport),
+    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -22392,6 +22421,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryCallExpressionInTypeAnn
                         "unknown kind id {other} in TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot",
                     ))),
                 }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -22452,6 +22485,7 @@ fn type_query_call_expression_in_type_annotation_function_transport_slot_to_any(
     match t {
         TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot::Import(inner) => AnyTransport::Import(inner),
         TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => AnyTransport::TypeQueryMemberExpressionInTypeAnnotation(inner),
+        TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -22463,6 +22497,7 @@ impl RenderableTransport for TypeQueryCallExpressionInTypeAnnotationFunctionTran
         match self {
             TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot::Import(inner) => render_import(inner, dest),
             TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => render_type_query_member_expression_in_type_annotation(inner, dest),
+            TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }

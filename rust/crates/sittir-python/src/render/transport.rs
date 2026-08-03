@@ -1571,6 +1571,7 @@ pub enum SimpleStatementTransport {
     NonlocalStatement(NonlocalStatementTransport),
     ExecStatement(ExecStatementTransport),
     TypeAliasStatement(TypeAliasStatementTransport),
+    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -1634,6 +1635,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimpleStatementTransport {
                         "unknown kind id {other} in SimpleStatementTransport",
                     ))),
                 }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -2299,6 +2304,7 @@ pub enum SimplePatternTransport {
     ComplexPattern(ComplexPatternTransport),
     DottedName(DottedNameTransport),
     WildcardPattern(WildcardPatternTransport),
+    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -2407,6 +2413,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternTransport {
                         "unknown kind id {other} in SimplePatternTransport",
                     ))),
                 }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -8670,6 +8680,7 @@ pub enum CasePatternContentTransportSlot {
     ComplexPattern(ComplexPatternTransport),
     DottedName(DottedNameTransport),
     WildcardPattern(WildcardPatternTransport),
+    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -8736,6 +8747,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                         "unknown kind id {other} in CasePatternContentTransportSlot",
                     ))),
                 }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -8853,6 +8868,7 @@ fn case_pattern_content_transport_slot_to_any(t: CasePatternContentTransportSlot
         CasePatternContentTransportSlot::ComplexPattern(inner) => AnyTransport::ComplexPattern(inner),
         CasePatternContentTransportSlot::DottedName(inner) => AnyTransport::DottedName(inner),
         CasePatternContentTransportSlot::WildcardPattern(inner) => AnyTransport::WildcardPattern(inner),
+        CasePatternContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -8879,6 +8895,7 @@ impl RenderableTransport for CasePatternContentTransportSlot {
             CasePatternContentTransportSlot::ComplexPattern(inner) => render_complex_pattern(inner, dest),
             CasePatternContentTransportSlot::DottedName(inner) => render_dotted_name(inner, dest),
             CasePatternContentTransportSlot::WildcardPattern(inner) => render_wildcard_pattern(inner, dest),
+            CasePatternContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -34019,6 +34036,7 @@ fn render_simple_statement(t: &SimpleStatementTransport, dest: &mut dyn ::std::f
         SimpleStatementTransport::NonlocalStatement(inner) => render_nonlocal_statement(inner, dest),
         SimpleStatementTransport::ExecStatement(inner) => render_exec_statement(inner, dest),
         SimpleStatementTransport::TypeAliasStatement(inner) => render_type_alias_statement(inner, dest),
+        SimpleStatementTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
@@ -34069,6 +34087,7 @@ fn render_simple_pattern(t: &SimplePatternTransport, dest: &mut dyn ::std::fmt::
         SimplePatternTransport::ComplexPattern(inner) => render_complex_pattern(inner, dest),
         SimplePatternTransport::DottedName(inner) => render_dotted_name(inner, dest),
         SimplePatternTransport::WildcardPattern(inner) => render_wildcard_pattern(inner, dest),
+        SimplePatternTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 

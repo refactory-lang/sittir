@@ -15417,6 +15417,7 @@ impl RenderableTransport for ParameterPatternTransportSlot {
 pub enum VisibilityModifierContentTransportSlot {
     Crate(CrateTransport),
     VisibilityModifierPub(VisibilityModifierPubTransport),
+    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -15438,6 +15439,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierContentTranspo
                         "unknown kind id {other} in VisibilityModifierContentTransportSlot",
                     ))),
                 }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -15495,6 +15500,7 @@ fn visibility_modifier_content_transport_slot_to_any(t: VisibilityModifierConten
     match t {
         VisibilityModifierContentTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
         VisibilityModifierContentTransportSlot::VisibilityModifierPub(inner) => AnyTransport::VisibilityModifierPub(inner),
+        VisibilityModifierContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -15506,6 +15512,7 @@ impl RenderableTransport for VisibilityModifierContentTransportSlot {
         match self {
             VisibilityModifierContentTransportSlot::Crate(inner) => render_crate(inner, dest),
             VisibilityModifierContentTransportSlot::VisibilityModifierPub(inner) => render_visibility_modifier_pub(inner, dest),
+            VisibilityModifierContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -16981,6 +16988,7 @@ impl RenderableTransport for BoundedTypeRightTransportSlot {
 pub enum PointerTypeContentTransportSlot {
     MutableSpecifier(MutableSpecifierTransport),
     Literal15_5f_70_6f_69_6e_74_65_72_5f_74_79_70_65_5f_63_6f_6e_73_74,
+    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -17000,6 +17008,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeContentTransportSlot 
                         "unknown kind id {other} in PointerTypeContentTransportSlot",
                     ))),
                 }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -17055,6 +17067,7 @@ fn pointer_type_content_transport_slot_to_any(t: PointerTypeContentTransportSlot
     match t {
         PointerTypeContentTransportSlot::MutableSpecifier(inner) => AnyTransport::MutableSpecifier(inner),
         PointerTypeContentTransportSlot::Literal15_5f_70_6f_69_6e_74_65_72_5f_74_79_70_65_5f_63_6f_6e_73_74 => AnyTransport::Literal15_5f_70_6f_69_6e_74_65_72_5f_74_79_70_65_5f_63_6f_6e_73_74,
+        PointerTypeContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -17066,6 +17079,7 @@ impl RenderableTransport for PointerTypeContentTransportSlot {
         match self {
             PointerTypeContentTransportSlot::MutableSpecifier(inner) => render_mutable_specifier(inner, dest),
             PointerTypeContentTransportSlot::Literal15_5f_70_6f_69_6e_74_65_72_5f_74_79_70_65_5f_63_6f_6e_73_74 => dest.write_str("const").map_err(::askama::Error::from),
+            PointerTypeContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -22985,6 +22999,7 @@ pub enum VisibilityModifierGroup1ContentTransportSlot {
     Super(SuperTransport),
     Crate(CrateTransport),
     InPath(InPathTransport),
+    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -23009,6 +23024,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierGroup1ContentT
                         "unknown kind id {other} in VisibilityModifierGroup1ContentTransportSlot",
                     ))),
                 }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -23071,6 +23090,7 @@ fn visibility_modifier_group1_content_transport_slot_to_any(t: VisibilityModifie
         VisibilityModifierGroup1ContentTransportSlot::Super(inner) => AnyTransport::Super(inner),
         VisibilityModifierGroup1ContentTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
         VisibilityModifierGroup1ContentTransportSlot::InPath(inner) => AnyTransport::InPath(inner),
+        VisibilityModifierGroup1ContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -23084,6 +23104,7 @@ impl RenderableTransport for VisibilityModifierGroup1ContentTransportSlot {
             VisibilityModifierGroup1ContentTransportSlot::Super(inner) => render_super(inner, dest),
             VisibilityModifierGroup1ContentTransportSlot::Crate(inner) => render_crate(inner, dest),
             VisibilityModifierGroup1ContentTransportSlot::InPath(inner) => render_in_path(inner, dest),
+            VisibilityModifierGroup1ContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }

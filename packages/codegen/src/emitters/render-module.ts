@@ -2557,7 +2557,15 @@ function admitsVerbatimCollapse(kinds: readonly string[], nodeMap: NodeMap): boo
 	const kindCollapses = (kind: string): boolean => {
 		const node = nodeMap.nodes.get(kind);
 		if (node === undefined) return false;
-		if (node.modelType === 'pattern') return true;
+		// 'keyword' (a visible fixed-text leaf, e.g. rust's `mutable_specifier`,
+		// `self`, `super`, `crate`) raw-reads as a bare string, same as a hidden
+		// 'pattern' leaf raw-reads as a bare kind_id — its own struct-level
+		// FromNapiValue already accepts ValueType::String (see e.g.
+		// MutableSpecifierTransport). A union slot mixing named keyword
+		// variants with unnamed/hidden ones (pointer_type.content:
+		// choice('const', $.mutable_specifier); visibility_modifier's
+		// self/super/crate arm) needs a String branch for its named members.
+		if (node.modelType === 'pattern' || node.modelType === 'keyword') return true;
 		if (node.modelType !== 'branch' && node.modelType !== 'group') return false;
 		const slotClass = classifyBranchSlots(node, nodeMap);
 		if (slotClass.tag !== 'singleSlot' || slotClass.arity !== 'multiple') return false;
