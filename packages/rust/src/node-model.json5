@@ -2297,15 +2297,15 @@
       "left": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       },
       "right": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
-        "multiple": false,
+        "required": false,
+        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -5746,27 +5746,27 @@
           "name": "left",
           "propertyName": "left",
           "paramName": "left",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_let_chain",
               "parseKind": "_let_chain",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "let_condition",
               "parseKind": "let_condition",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_expression",
               "parseKind": "_expression",
               "unresolved": true
@@ -5783,22 +5783,22 @@
         },
         {
           "name": "right",
-          "propertyName": "right",
-          "paramName": "right",
-          "required": true,
-          "multiple": false,
+          "propertyName": "rights",
+          "paramName": "rights",
+          "required": false,
+          "multiple": true,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "let_condition",
               "parseKind": "let_condition",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "_expression",
               "parseKind": "_expression",
               "unresolved": true

@@ -9530,9 +9530,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = LetConditionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::LetCondition(value));
                         }
-                        if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::LetChain(value));
-                        }
                         if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Expression(value));
                         }
@@ -9562,6 +9559,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         }
                         if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Block(value));
+                        }
+                        if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LetChain(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ConditionTransport"))
                     },
@@ -9686,9 +9686,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = LetConditionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::LetCondition(value));
                         }
-                        if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::LetChain(value));
-                        }
                         if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Expression(value));
                         }
@@ -9718,6 +9715,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         }
                         if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Block(value));
+                        }
+                        if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LetChain(value));
                         }
                         Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in ConditionTransport"))
                     },
@@ -10022,9 +10022,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = LetConditionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::LetCondition(value));
                         }
-                        if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::LetChain(value));
-                        }
                         if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Expression(value));
                         }
@@ -10054,6 +10051,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         }
                         if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Block(value));
+                        }
+                        if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LetChain(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ConditionTransport"))
                     },
@@ -10178,9 +10178,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = LetConditionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::LetCondition(value));
                         }
-                        if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::LetChain(value));
-                        }
                         if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Expression(value));
                         }
@@ -10210,6 +10207,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         }
                         if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Block(value));
+                        }
+                        if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LetChain(value));
                         }
                         Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in ConditionTransport"))
                     },
@@ -33200,9 +33200,9 @@ pub struct LetChainTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
-    pub left: Box<LetChainLeftTransportSlot>,
+    pub left: Option<Box<LetChainLeftTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
-    pub right: Box<LetChainRightTransportSlot>,
+    pub right: Option<Vec<LetChainRightTransportSlot>>,
 }
 
 impl RenderableTransport for LetChainTransport {
@@ -53925,9 +53925,26 @@ fn render_let_condition(node: &LetConditionTransport, dest: &mut dyn ::std::fmt:
 }
 
 fn render_let_chain(node: &LetChainTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.left.is_none() && node.right.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
+    let right_owned = node.right.as_deref().unwrap_or(&[]);
+    let right_buf: Vec<::sittir_core::filters::Renderable<'_>> = right_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = LetChainTemplate {
-        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
+        left: match &node.left {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+        right: ListNonterminalView {
+            items: right_buf.as_slice(),
+            separator: "&&",
+            leading: false,
+            trailing: false,
+        },
     };
     template.render_into(dest)
 }

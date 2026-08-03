@@ -2450,8 +2450,8 @@ export const FIELD_MAP: Record<
 	_impl_item_body: [{ name: 'declarationList', required: true, multiple: false }],
 	_in_path: [{ name: 'path', required: true, multiple: false }],
 	_let_chain: [
-		{ name: 'left', required: true, multiple: false },
-		{ name: 'right', required: true, multiple: false }
+		{ name: 'left', required: false, multiple: false },
+		{ name: 'rights', required: false, multiple: true }
 	],
 	_macro_definition_brace: [{ name: 'macroRules', required: false, multiple: true }],
 	_macro_definition_bracket: [{ name: 'macroRules', required: false, multiple: true }],

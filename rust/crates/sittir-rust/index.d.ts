@@ -1226,8 +1226,8 @@ export interface LetChainTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _left: Box<LetChainLeftTransportSlot>
-  _right: Box<LetChainRightTransportSlot>
+  _left?: Box<LetChainLeftTransportSlot>
+  _right?: Array<LetChainRightTransportSlot>
 }
 
 export interface LetConditionTransport {

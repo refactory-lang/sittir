@@ -2826,9 +2826,9 @@ export function buildLetCondition(config: T.LetCondition.Config) {
 	);
 }
 
-export function buildLetChain(config: T.LetChain.Config) {
+export function buildLetChain(config: Partial<T.LetChain.Config> = {}) {
 	const _left = config.left;
-	const _right = config.right;
+	const _right = config.right ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -2838,13 +2838,13 @@ export function buildLetChain(config: T.LetChain.Config) {
 				_left,
 				_right,
 				$with: {
-					left: (value: T.LetChain | T.LetCondition | T.Expression) => buildLetChain({ ...config, left: value }),
-					right: (value: T.LetCondition | T.Expression) => buildLetChain({ ...config, right: value })
+					left: (value?: T.LetChain | T.LetCondition | T.Expression) => buildLetChain({ ...config, left: value }),
+					rights: (...values: (T.LetCondition | T.Expression)[]) => buildLetChain({ ...config, right: values })
 				}
 			},
 			{
 				left: () => _left,
-				right: () => _right
+				rights: () => _right
 			}
 		),
 		methodsEngine

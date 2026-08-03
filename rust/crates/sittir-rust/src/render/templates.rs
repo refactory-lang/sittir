@@ -276,8 +276,8 @@ pub struct InPathTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_let_chain.jinja", escape = "none")]
 pub struct LetChainTemplate<'a> {
-    pub left: SingleNonterminalView<'a>,
-    pub right: SingleNonterminalView<'a>,
+    pub left: OptionalNonterminalView<'a>,
+    pub right: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

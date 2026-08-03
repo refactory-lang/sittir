@@ -6922,28 +6922,83 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.LetChain as const,
-			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
+			_left: normalizeSingularWrapSlot(data._left, 'left', false, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'left',
 				span: (data as _NodeData).$span
 			}),
-			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'right',
-				span: (data as _NodeData).$span
-			}),
+			_right: normalizeRepeatedWrapSlot(
+				_filterWrapChildrenByKind(data._right, [
+					'let_condition',
+					'_expression',
+					'_expression_except_range',
+					'unary_expression',
+					'reference_expression',
+					'try_expression',
+					'binary_expression',
+					'assignment_expression',
+					'compound_assignment_expr',
+					'type_cast_expression',
+					'call_expression',
+					'return_expression',
+					'yield_expression',
+					'_literal',
+					'string_literal',
+					'raw_string_literal',
+					'char_literal',
+					'boolean_literal',
+					'integer_literal',
+					'float_literal',
+					'identifier',
+					'_reserved_identifier',
+					'self',
+					'scoped_identifier',
+					'generic_function',
+					'await_expression',
+					'field_expression',
+					'array_expression',
+					'tuple_expression',
+					'macro_invocation',
+					'unit_expression',
+					'break_expression',
+					'continue_expression',
+					'index_expression',
+					'metavariable',
+					'closure_expression',
+					'parenthesized_expression',
+					'struct_expression',
+					'_expression_ending_with_block',
+					'unsafe_block',
+					'async_block',
+					'gen_block',
+					'try_block',
+					'block',
+					'if_expression',
+					'match_expression',
+					'while_expression',
+					'loop_expression',
+					'for_expression',
+					'const_block',
+					'range_expression'
+				]),
+				false,
+				'right',
+				{ tree, nodeType: data.$type, slotName: 'right', span: (data as _NodeData).$span }
+			),
 
 			left() {
-				return drillIn<T.LetChain | T.LetCondition | T.Expression>(this._left, tree);
+				return drillIn<T.LetChain | T.LetCondition | T.Expression | undefined>(this._left, tree);
 			},
-			right() {
-				return drillIn<T.LetCondition | T.Expression>(this._right, tree);
+			rights() {
+				return drillInAll<T.LetCondition | T.Expression>(
+					this._right as readonly (T.LetCondition | T.Expression)[] | undefined,
+					tree
+				);
 			},
 			$with: {
 				left: (v: NonNullable<T.LetChain['_left']>) => wrapLetChain({ ...data, _left: v }, tree),
-				right: (v: NonNullable<T.LetChain['_right']>) => wrapLetChain({ ...data, _right: v }, tree)
+				rights: (...v: NonNullable<T.LetChain['_right']>[number][]) => wrapLetChain({ ...data, _right: v }, tree)
 			}
 		},
 		methodsEngine

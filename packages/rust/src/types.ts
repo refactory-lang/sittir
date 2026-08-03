@@ -4383,10 +4383,10 @@ export interface LetCondition {
 
 export interface LetChain {
 	readonly $type: TSKindId.LetChain;
-	readonly _left: LetChain | LetCondition | Expression;
-	readonly _right: LetCondition | Expression;
-	left(): LetChain | LetCondition | Expression;
-	right(): LetCondition | Expression;
+	readonly _left?: LetChain | LetCondition | Expression;
+	readonly _right?: readonly (LetCondition | Expression)[];
+	left(): LetChain | LetCondition | Expression | undefined;
+	rights(): readonly (LetCondition | Expression)[];
 }
 
 export interface ElseClause {
