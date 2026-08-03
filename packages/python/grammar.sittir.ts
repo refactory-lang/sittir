@@ -86,7 +86,8 @@ export default grammar(
 							)
 						),
 						$.primary_expression
-					)
+					),
+				yield_from_clause: ($) => seq('from', $.expression)
 			},
 			transforms: {
 				argument_list: {

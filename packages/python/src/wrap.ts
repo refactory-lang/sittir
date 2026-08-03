@@ -5151,39 +5151,40 @@ export function wrapRightHandSide(
 
 export function wrapYield(
 	data: T.Yield & {
-		readonly _comparison_operator?: T.Expression | T.Expressions;
-		readonly _not_operator?: T.Expression | T.Expressions;
-		readonly _boolean_operator?: T.Expression | T.Expressions;
-		readonly _lambda?: T.Expression | T.Expressions;
-		readonly _await?: T.Expression | T.Expressions;
-		readonly _binary_operator?: T.Expression | T.Expressions;
-		readonly _identifier?: T.Expression | T.Expressions;
-		readonly _string?: T.Expression | T.Expressions;
-		readonly _concatenated_string?: T.Expression | T.Expressions;
-		readonly _integer?: T.Expression | T.Expressions;
-		readonly _float?: T.Expression | T.Expressions;
-		readonly _true?: T.Expression | T.Expressions;
-		readonly _false?: T.Expression | T.Expressions;
-		readonly _none?: T.Expression | T.Expressions;
-		readonly _unary_operator?: T.Expression | T.Expressions;
-		readonly _attribute?: T.Expression | T.Expressions;
-		readonly _subscript?: T.Expression | T.Expressions;
-		readonly _call?: T.Expression | T.Expressions;
-		readonly _list?: T.Expression | T.Expressions;
-		readonly _list_comprehension?: T.Expression | T.Expressions;
-		readonly _dictionary?: T.Expression | T.Expressions;
-		readonly _dictionary_comprehension?: T.Expression | T.Expressions;
-		readonly _set?: T.Expression | T.Expressions;
-		readonly _set_comprehension?: T.Expression | T.Expressions;
-		readonly _tuple?: T.Expression | T.Expressions;
-		readonly _parenthesized_expression?: T.Expression | T.Expressions;
-		readonly _generator_expression?: T.Expression | T.Expressions;
-		readonly _ellipsis?: T.Expression | T.Expressions;
-		readonly _list_splat_pattern?: T.Expression | T.Expressions;
-		readonly _conditional_expression?: T.Expression | T.Expressions;
-		readonly _named_expression?: T.Expression | T.Expressions;
-		readonly _as_pattern?: T.Expression | T.Expressions;
-		readonly _expression_list?: T.Expression | T.Expressions;
+		readonly _yield_from_clause?: T.YieldFromClause | T.Expressions;
+		readonly _comparison_operator?: T.YieldFromClause | T.Expressions;
+		readonly _not_operator?: T.YieldFromClause | T.Expressions;
+		readonly _boolean_operator?: T.YieldFromClause | T.Expressions;
+		readonly _lambda?: T.YieldFromClause | T.Expressions;
+		readonly _await?: T.YieldFromClause | T.Expressions;
+		readonly _binary_operator?: T.YieldFromClause | T.Expressions;
+		readonly _identifier?: T.YieldFromClause | T.Expressions;
+		readonly _string?: T.YieldFromClause | T.Expressions;
+		readonly _concatenated_string?: T.YieldFromClause | T.Expressions;
+		readonly _integer?: T.YieldFromClause | T.Expressions;
+		readonly _float?: T.YieldFromClause | T.Expressions;
+		readonly _true?: T.YieldFromClause | T.Expressions;
+		readonly _false?: T.YieldFromClause | T.Expressions;
+		readonly _none?: T.YieldFromClause | T.Expressions;
+		readonly _unary_operator?: T.YieldFromClause | T.Expressions;
+		readonly _attribute?: T.YieldFromClause | T.Expressions;
+		readonly _subscript?: T.YieldFromClause | T.Expressions;
+		readonly _call?: T.YieldFromClause | T.Expressions;
+		readonly _list?: T.YieldFromClause | T.Expressions;
+		readonly _list_comprehension?: T.YieldFromClause | T.Expressions;
+		readonly _dictionary?: T.YieldFromClause | T.Expressions;
+		readonly _dictionary_comprehension?: T.YieldFromClause | T.Expressions;
+		readonly _set?: T.YieldFromClause | T.Expressions;
+		readonly _set_comprehension?: T.YieldFromClause | T.Expressions;
+		readonly _tuple?: T.YieldFromClause | T.Expressions;
+		readonly _parenthesized_expression?: T.YieldFromClause | T.Expressions;
+		readonly _generator_expression?: T.YieldFromClause | T.Expressions;
+		readonly _ellipsis?: T.YieldFromClause | T.Expressions;
+		readonly _list_splat_pattern?: T.YieldFromClause | T.Expressions;
+		readonly _conditional_expression?: T.YieldFromClause | T.Expressions;
+		readonly _named_expression?: T.YieldFromClause | T.Expressions;
+		readonly _as_pattern?: T.YieldFromClause | T.Expressions;
+		readonly _expression_list?: T.YieldFromClause | T.Expressions;
 	},
 	tree: TreeHandle
 ) {
@@ -5222,11 +5223,13 @@ export function wrapYield(
 				'_subscript',
 				'_true',
 				'_tuple',
-				'_unary_operator'
+				'_unary_operator',
+				'_yield_from_clause'
 			]),
 			$type: TSKindId.Yield as const,
 			_content: normalizeSingularWrapSlot(
 				data._content ??
+					data._yield_from_clause ??
 					data._comparison_operator ??
 					data._not_operator ??
 					data._boolean_operator ??
@@ -5267,7 +5270,9 @@ export function wrapYield(
 			),
 
 			content() {
-				return drillIn<T.Expression | T.Expressions | undefined>(this._content, tree);
+				return drillAs<T.YieldFromClause | T.Expressions | undefined>(this._content, tree, [
+					{ from: 'yield_from_clause', to: '_yield_from_clause' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.Yield['_content']>) => wrapYield({ ...data, _content: v }, tree)
@@ -8507,6 +8512,133 @@ export function wrapComparisonOperatorComparator(
 	return _node;
 }
 
+export function wrapYieldFromClause(
+	data: T.YieldFromClause & {
+		readonly _comparison_operator?: T.Expression;
+		readonly _not_operator?: T.Expression;
+		readonly _boolean_operator?: T.Expression;
+		readonly _lambda?: T.Expression;
+		readonly _await?: T.Expression;
+		readonly _binary_operator?: T.Expression;
+		readonly _identifier?: T.Expression;
+		readonly _string?: T.Expression;
+		readonly _concatenated_string?: T.Expression;
+		readonly _integer?: T.Expression;
+		readonly _float?: T.Expression;
+		readonly _true?: T.Expression;
+		readonly _false?: T.Expression;
+		readonly _none?: T.Expression;
+		readonly _unary_operator?: T.Expression;
+		readonly _attribute?: T.Expression;
+		readonly _subscript?: T.Expression;
+		readonly _call?: T.Expression;
+		readonly _list?: T.Expression;
+		readonly _list_comprehension?: T.Expression;
+		readonly _dictionary?: T.Expression;
+		readonly _dictionary_comprehension?: T.Expression;
+		readonly _set?: T.Expression;
+		readonly _set_comprehension?: T.Expression;
+		readonly _tuple?: T.Expression;
+		readonly _parenthesized_expression?: T.Expression;
+		readonly _generator_expression?: T.Expression;
+		readonly _ellipsis?: T.Expression;
+		readonly _list_splat_pattern?: T.Expression;
+		readonly _conditional_expression?: T.Expression;
+		readonly _named_expression?: T.Expression;
+		readonly _as_pattern?: T.Expression;
+	},
+	tree: TreeHandle
+) {
+	const _node = withMethods(
+		{
+			..._omitWrapKeys(data, [
+				'_as_pattern',
+				'_attribute',
+				'_await',
+				'_binary_operator',
+				'_boolean_operator',
+				'_call',
+				'_comparison_operator',
+				'_concatenated_string',
+				'_conditional_expression',
+				'_dictionary',
+				'_dictionary_comprehension',
+				'_ellipsis',
+				'_false',
+				'_float',
+				'_generator_expression',
+				'_identifier',
+				'_integer',
+				'_lambda',
+				'_list',
+				'_list_comprehension',
+				'_list_splat_pattern',
+				'_named_expression',
+				'_none',
+				'_not_operator',
+				'_parenthesized_expression',
+				'_set',
+				'_set_comprehension',
+				'_string',
+				'_subscript',
+				'_true',
+				'_tuple',
+				'_unary_operator'
+			]),
+			$type: TSKindId.YieldFromClause as const,
+			_expression: normalizeSingularWrapSlot(
+				data._expression ??
+					data._comparison_operator ??
+					data._not_operator ??
+					data._boolean_operator ??
+					data._lambda ??
+					data._await ??
+					data._binary_operator ??
+					data._identifier ??
+					data._string ??
+					data._concatenated_string ??
+					data._integer ??
+					data._float ??
+					data._true ??
+					data._false ??
+					data._none ??
+					data._unary_operator ??
+					data._attribute ??
+					data._subscript ??
+					data._call ??
+					data._list ??
+					data._list_comprehension ??
+					data._dictionary ??
+					data._dictionary_comprehension ??
+					data._set ??
+					data._set_comprehension ??
+					data._tuple ??
+					data._parenthesized_expression ??
+					data._generator_expression ??
+					data._ellipsis ??
+					data._list_splat_pattern ??
+					data._conditional_expression ??
+					data._named_expression ??
+					data._as_pattern,
+				'expression',
+				true,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
+			),
+
+			expression() {
+				return drillIn<T.Expression>(this._expression, tree);
+			},
+			$with: {
+				expression: (v: NonNullable<T.YieldFromClause['_expression']>) =>
+					wrapYieldFromClause({ ...data, _expression: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
 	module: (d, t) => wrapModule(d as unknown as T.Module, t),
 	_statement: (d, t) => wrapStatement(d as unknown as T.Statement, t),
@@ -8674,6 +8806,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_except_clause_list: (d, t) => wrapExceptClauseList(d as unknown as T.ExceptClauseList, t),
 	_comparison_operator_comparator: (d, t) =>
 		wrapComparisonOperatorComparator(d as unknown as T.ComparisonOperatorComparator, t),
+	_yield_from_clause: (d, t) => wrapYieldFromClause(d as unknown as T.YieldFromClause, t),
 	_indent: (d) => ({ ...d, $type: TSKindId.Indent as const }),
 	_dedent: (d) => ({ ...d, $type: TSKindId.Dedent as const }),
 	string_start: (d) => ({ ...d, $type: TSKindId.StringStart as const }),
@@ -8731,7 +8864,8 @@ const _aliasTargetToSource: Record<string, string> = {
 	unary_operator_operator: '_unary_operator_operator',
 	wildcard_pattern: '_wildcard_pattern',
 	with_clause_bare: '_with_clause_bare',
-	with_clause_paren: '_with_clause_paren'
+	with_clause_paren: '_with_clause_paren',
+	yield_from_clause: '_yield_from_clause'
 };
 
 function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {

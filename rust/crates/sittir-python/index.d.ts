@@ -1665,6 +1665,17 @@ export interface WithStatementTransport {
   _body: WithStatementBodyTransportSlot
 }
 
+export interface YieldFromClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _expression: Box<ExpressionTransport>
+}
+
 export interface YieldTransport {
   '$source'?: Source
   '$named'?: boolean

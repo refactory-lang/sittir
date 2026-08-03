@@ -4305,6 +4305,25 @@
         {
           "type": "expression_list",
           "named": true
+        },
+        {
+          "type": "yield_from_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "yield_from_clause",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
         }
       ]
     }

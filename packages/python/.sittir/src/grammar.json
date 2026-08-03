@@ -4037,17 +4037,13 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": "from"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "expression"
-                  }
-                ]
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_yield_from_clause"
+                },
+                "named": true,
+                "value": "yield_from_clause"
               },
               {
                 "type": "CHOICE",
@@ -7463,6 +7459,19 @@
         {
           "type": "SYMBOL",
           "name": "primary_expression"
+        }
+      ]
+    },
+    "_yield_from_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "from"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expression"
         }
       ]
     }

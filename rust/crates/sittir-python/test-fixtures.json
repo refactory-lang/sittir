@@ -18353,6 +18353,862 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 108,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 113
+      },
+      "$nodeHandle": 0,
+      "_statement": [
+        {
+          "$type": 145,
+          "$source": 0,
+          "$named": true,
+          "_name": "example",
+          "_parameters": {
+            "$type": 146,
+            "$source": 0,
+            "$named": true,
+            "$text": "()",
+            "$span": {
+              "start": 11,
+              "end": 13
+            },
+            "$nodeHandle": 34
+          },
+          "_body": {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_block": {
+              "$type": 160,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 17,
+                "end": 113
+              },
+              "$nodeHandle": 36,
+              "_statement": [
+                {
+                  "$type": 110,
+                  "$source": 0,
+                  "$named": true,
+                  "_newline": 101,
+                  "$span": {
+                    "start": 17,
+                    "end": 22
+                  },
+                  "$nodeHandle": 37,
+                  "_simple_statement": [
+                    {
+                      "$type": 122,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 17,
+                        "end": 22
+                      },
+                      "$nodeHandle": 42,
+                      "_content": {
+                        "$type": 199,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "yield",
+                        "$span": {
+                          "start": 17,
+                          "end": 22
+                        },
+                        "$nodeHandle": 43
+                      }
+                    }
+                  ]
+                },
+                {
+                  "$type": 110,
+                  "$source": 0,
+                  "$named": true,
+                  "_newline": 101,
+                  "$span": {
+                    "start": 25,
+                    "end": 32
+                  },
+                  "$nodeHandle": 38,
+                  "_simple_statement": [
+                    {
+                      "$type": 122,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 25,
+                        "end": 32
+                      },
+                      "$nodeHandle": 44,
+                      "_content": {
+                        "$type": 199,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          63
+                        ],
+                        "$span": {
+                          "start": 25,
+                          "end": 32
+                        },
+                        "$nodeHandle": 45,
+                        "_content": "1"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "$type": 110,
+                  "$source": 0,
+                  "$named": true,
+                  "_newline": 101,
+                  "$span": {
+                    "start": 35,
+                    "end": 46
+                  },
+                  "$nodeHandle": 39,
+                  "_simple_statement": [
+                    {
+                      "$type": 122,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 35,
+                        "end": 46
+                      },
+                      "$nodeHandle": 46,
+                      "_content": {
+                        "$type": 195,
+                        "$source": 0,
+                        "$named": true,
+                        "_left": "x",
+                        "$span": {
+                          "start": 35,
+                          "end": 46
+                        },
+                        "$nodeHandle": 47,
+                        "_content": {
+                          "$type": 254,
+                          "$source": 0,
+                          "$named": true,
+                          "_right": {
+                            "$type": 199,
+                            "$source": 0,
+                            "$named": true,
+                            "$other": [
+                              63
+                            ],
+                            "$span": {
+                              "start": 39,
+                              "end": 46
+                            },
+                            "$nodeHandle": 49,
+                            "_content": "2"
+                          },
+                          "$other": [
+                            40
+                          ],
+                          "$span": {
+                            "start": 37,
+                            "end": 46
+                          },
+                          "$nodeHandle": 48
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "$type": 110,
+                  "$source": 0,
+                  "$named": true,
+                  "_newline": 101,
+                  "$span": {
+                    "start": 49,
+                    "end": 61
+                  },
+                  "$nodeHandle": 40,
+                  "_simple_statement": [
+                    {
+                      "$type": 122,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 49,
+                        "end": 61
+                      },
+                      "$nodeHandle": 50,
+                      "_content": {
+                        "$type": 199,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          63
+                        ],
+                        "$span": {
+                          "start": 49,
+                          "end": 61
+                        },
+                        "$nodeHandle": 51,
+                        "_content": {
+                          "$type": 266,
+                          "$source": 0,
+                          "$named": true,
+                          "$other": [
+                            5
+                          ],
+                          "$span": {
+                            "start": 55,
+                            "end": 61
+                          },
+                          "$nodeHandle": 52,
+                          "_expression": "a"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "$type": 110,
+                  "$source": 0,
+                  "$named": true,
+                  "_newline": 101,
+                  "$span": {
+                    "start": 64,
+                    "end": 113
+                  },
+                  "$nodeHandle": 41,
+                  "_simple_statement": [
+                    {
+                      "$type": 122,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 64,
+                        "end": 113
+                      },
+                      "$nodeHandle": 53,
+                      "_content": {
+                        "$type": 199,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          63
+                        ],
+                        "$span": {
+                          "start": 64,
+                          "end": 113
+                        },
+                        "$nodeHandle": 54,
+                        "_content": {
+                          "$type": 266,
+                          "$source": 0,
+                          "$named": true,
+                          "$other": [
+                            5
+                          ],
+                          "$span": {
+                            "start": 70,
+                            "end": 113
+                          },
+                          "$nodeHandle": 55,
+                          "_expression": {
+                            "$type": 221,
+                            "$source": 0,
+                            "$named": true,
+                            "$other": [
+                              7,
+                              8
+                            ],
+                            "$span": {
+                              "start": 75,
+                              "end": 113
+                            },
+                            "$nodeHandle": 56,
+                            "_content": {
+                              "$type": 199,
+                              "$source": 0,
+                              "$named": true,
+                              "$other": [
+                                63
+                              ],
+                              "$span": {
+                                "start": 76,
+                                "end": 112
+                              },
+                              "$nodeHandle": 57,
+                              "_content": {
+                                "$type": 266,
+                                "$source": 0,
+                                "$named": true,
+                                "$other": [
+                                  5
+                                ],
+                                "$span": {
+                                  "start": 82,
+                                  "end": 112
+                                },
+                                "$nodeHandle": 58,
+                                "_expression": {
+                                  "$type": 220,
+                                  "$source": 0,
+                                  "$named": true,
+                                  "_body": "x",
+                                  "_comprehension_clauses": {
+                                    "$type": 250,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "$span": {
+                                      "start": 90,
+                                      "end": 111
+                                    },
+                                    "$nodeHandle": 60,
+                                    "_content": [
+                                      {
+                                        "$type": 223,
+                                        "$source": 0,
+                                        "$named": true,
+                                        "_left": "x",
+                                        "_right": [
+                                          {
+                                            "$type": 203,
+                                            "$source": 0,
+                                            "$named": true,
+                                            "_function": "range",
+                                            "_arguments": {
+                                              "$type": 157,
+                                              "$source": 0,
+                                              "$named": true,
+                                              "_arguments": {
+                                                "$type": 238,
+                                                "$source": 0,
+                                                "$named": true,
+                                                "$other": [
+                                                  9
+                                                ],
+                                                "$span": {
+                                                  "start": 105,
+                                                  "end": 110
+                                                },
+                                                "$nodeHandle": 64,
+                                                "_content": [
+                                                  "1",
+                                                  "10"
+                                                ],
+                                                "_trailing_sep": false
+                                              },
+                                              "$other": [
+                                                7,
+                                                8
+                                              ],
+                                              "$span": {
+                                                "start": 104,
+                                                "end": 111
+                                              },
+                                              "$nodeHandle": 63
+                                            },
+                                            "$span": {
+                                              "start": 99,
+                                              "end": 111
+                                            },
+                                            "$nodeHandle": 62
+                                          }
+                                        ],
+                                        "$other": [
+                                          27,
+                                          28
+                                        ],
+                                        "$span": {
+                                          "start": 90,
+                                          "end": 111
+                                        },
+                                        "$nodeHandle": 61
+                                      }
+                                    ]
+                                  },
+                                  "$other": [
+                                    7,
+                                    8
+                                  ],
+                                  "$span": {
+                                    "start": 87,
+                                    "end": 112
+                                  },
+                                  "$nodeHandle": 59
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "$span": {
+              "start": 14,
+              "end": 113
+            },
+            "$nodeHandle": 35
+          },
+          "$other": [
+            35,
+            22
+          ],
+          "$span": {
+            "start": 0,
+            "end": 113
+          },
+          "$nodeHandle": 33
+        }
+      ]
+    },
+    "expectedOutput": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1,10)))"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "def example():\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))",
+    "pattern": "module",
+    "edits": [],
+    "expectedSourceOut": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1,10)))",
+    "expectedReparseTree": "(module (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block (statement_group1 (expression_statement (yield)) (newline)) (statement_group1 (expression_statement (yield (integer))) (newline)) (statement_group1 (expression_statement (assignment left: (identifier) (assignment_eq right: (yield (integer))))) (newline)) (statement_group1 (expression_statement (yield (yield_from_clause (identifier)))) (newline)) (statement_group1 (expression_statement (yield (yield_from_clause (parenthesized_expression (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (integer) (integer))))))))))))) (newline))))))",
+    "wrappedText": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1,10)))",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 145,
+      "$source": 0,
+      "$named": true,
+      "_name": "example",
+      "_parameters": {
+        "$type": 146,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 11,
+          "end": 13
+        },
+        "$nodeHandle": 65
+      },
+      "_body": {
+        "$type": 261,
+        "$source": 0,
+        "$named": true,
+        "_block": {
+          "$type": 160,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 17,
+            "end": 113
+          },
+          "$nodeHandle": 67,
+          "_statement": [
+            {
+              "$type": 110,
+              "$source": 0,
+              "$named": true,
+              "_newline": 101,
+              "$span": {
+                "start": 17,
+                "end": 22
+              },
+              "$nodeHandle": 68,
+              "_simple_statement": [
+                {
+                  "$type": 122,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 17,
+                    "end": 22
+                  },
+                  "$nodeHandle": 73,
+                  "_content": {
+                    "$type": 199,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "yield",
+                    "$span": {
+                      "start": 17,
+                      "end": 22
+                    },
+                    "$nodeHandle": 74
+                  }
+                }
+              ]
+            },
+            {
+              "$type": 110,
+              "$source": 0,
+              "$named": true,
+              "_newline": 101,
+              "$span": {
+                "start": 25,
+                "end": 32
+              },
+              "$nodeHandle": 69,
+              "_simple_statement": [
+                {
+                  "$type": 122,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 25,
+                    "end": 32
+                  },
+                  "$nodeHandle": 75,
+                  "_content": {
+                    "$type": 199,
+                    "$source": 0,
+                    "$named": true,
+                    "$other": [
+                      63
+                    ],
+                    "$span": {
+                      "start": 25,
+                      "end": 32
+                    },
+                    "$nodeHandle": 76,
+                    "_content": "1"
+                  }
+                }
+              ]
+            },
+            {
+              "$type": 110,
+              "$source": 0,
+              "$named": true,
+              "_newline": 101,
+              "$span": {
+                "start": 35,
+                "end": 46
+              },
+              "$nodeHandle": 70,
+              "_simple_statement": [
+                {
+                  "$type": 122,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 35,
+                    "end": 46
+                  },
+                  "$nodeHandle": 77,
+                  "_content": {
+                    "$type": 195,
+                    "$source": 0,
+                    "$named": true,
+                    "_left": "x",
+                    "$span": {
+                      "start": 35,
+                      "end": 46
+                    },
+                    "$nodeHandle": 78,
+                    "_content": {
+                      "$type": 254,
+                      "$source": 0,
+                      "$named": true,
+                      "_right": {
+                        "$type": 199,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          63
+                        ],
+                        "$span": {
+                          "start": 39,
+                          "end": 46
+                        },
+                        "$nodeHandle": 80,
+                        "_content": "2"
+                      },
+                      "$other": [
+                        40
+                      ],
+                      "$span": {
+                        "start": 37,
+                        "end": 46
+                      },
+                      "$nodeHandle": 79
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "$type": 110,
+              "$source": 0,
+              "$named": true,
+              "_newline": 101,
+              "$span": {
+                "start": 49,
+                "end": 61
+              },
+              "$nodeHandle": 71,
+              "_simple_statement": [
+                {
+                  "$type": 122,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 49,
+                    "end": 61
+                  },
+                  "$nodeHandle": 81,
+                  "_content": {
+                    "$type": 199,
+                    "$source": 0,
+                    "$named": true,
+                    "$other": [
+                      63
+                    ],
+                    "$span": {
+                      "start": 49,
+                      "end": 61
+                    },
+                    "$nodeHandle": 82,
+                    "_content": {
+                      "$type": 266,
+                      "$source": 0,
+                      "$named": true,
+                      "$other": [
+                        5
+                      ],
+                      "$span": {
+                        "start": 55,
+                        "end": 61
+                      },
+                      "$nodeHandle": 83,
+                      "_expression": "a"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "$type": 110,
+              "$source": 0,
+              "$named": true,
+              "_newline": 101,
+              "$span": {
+                "start": 64,
+                "end": 113
+              },
+              "$nodeHandle": 72,
+              "_simple_statement": [
+                {
+                  "$type": 122,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 64,
+                    "end": 113
+                  },
+                  "$nodeHandle": 84,
+                  "_content": {
+                    "$type": 199,
+                    "$source": 0,
+                    "$named": true,
+                    "$other": [
+                      63
+                    ],
+                    "$span": {
+                      "start": 64,
+                      "end": 113
+                    },
+                    "$nodeHandle": 85,
+                    "_content": {
+                      "$type": 266,
+                      "$source": 0,
+                      "$named": true,
+                      "$other": [
+                        5
+                      ],
+                      "$span": {
+                        "start": 70,
+                        "end": 113
+                      },
+                      "$nodeHandle": 86,
+                      "_expression": {
+                        "$type": 221,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          7,
+                          8
+                        ],
+                        "$span": {
+                          "start": 75,
+                          "end": 113
+                        },
+                        "$nodeHandle": 87,
+                        "_content": {
+                          "$type": 199,
+                          "$source": 0,
+                          "$named": true,
+                          "$other": [
+                            63
+                          ],
+                          "$span": {
+                            "start": 76,
+                            "end": 112
+                          },
+                          "$nodeHandle": 88,
+                          "_content": {
+                            "$type": 266,
+                            "$source": 0,
+                            "$named": true,
+                            "$other": [
+                              5
+                            ],
+                            "$span": {
+                              "start": 82,
+                              "end": 112
+                            },
+                            "$nodeHandle": 89,
+                            "_expression": {
+                              "$type": 220,
+                              "$source": 0,
+                              "$named": true,
+                              "_body": "x",
+                              "_comprehension_clauses": {
+                                "$type": 250,
+                                "$source": 0,
+                                "$named": true,
+                                "$span": {
+                                  "start": 90,
+                                  "end": 111
+                                },
+                                "$nodeHandle": 91,
+                                "_content": [
+                                  {
+                                    "$type": 223,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "_left": "x",
+                                    "_right": [
+                                      {
+                                        "$type": 203,
+                                        "$source": 0,
+                                        "$named": true,
+                                        "_function": "range",
+                                        "_arguments": {
+                                          "$type": 157,
+                                          "$source": 0,
+                                          "$named": true,
+                                          "_arguments": {
+                                            "$type": 238,
+                                            "$source": 0,
+                                            "$named": true,
+                                            "$other": [
+                                              9
+                                            ],
+                                            "$span": {
+                                              "start": 105,
+                                              "end": 110
+                                            },
+                                            "$nodeHandle": 95,
+                                            "_content": [
+                                              "1",
+                                              "10"
+                                            ],
+                                            "_trailing_sep": false
+                                          },
+                                          "$other": [
+                                            7,
+                                            8
+                                          ],
+                                          "$span": {
+                                            "start": 104,
+                                            "end": 111
+                                          },
+                                          "$nodeHandle": 94
+                                        },
+                                        "$span": {
+                                          "start": 99,
+                                          "end": 111
+                                        },
+                                        "$nodeHandle": 93
+                                      }
+                                    ],
+                                    "$other": [
+                                      27,
+                                      28
+                                    ],
+                                    "$span": {
+                                      "start": 90,
+                                      "end": 111
+                                    },
+                                    "$nodeHandle": 92
+                                  }
+                                ]
+                              },
+                              "$other": [
+                                7,
+                                8
+                              ],
+                              "$span": {
+                                "start": 87,
+                                "end": 112
+                              },
+                              "$nodeHandle": 90
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "$span": {
+          "start": 14,
+          "end": 113
+        },
+        "$nodeHandle": 66
+      },
+      "$other": [
+        35,
+        22
+      ],
+      "$span": {
+        "start": 0,
+        "end": 113
+      },
+      "$nodeHandle": 1
+    },
+    "expectedOutput": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1,10)))"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "def example():\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))",
+    "pattern": "function_definition",
+    "edits": [],
+    "expectedSourceOut": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1,10)))",
+    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block (statement_group1 (expression_statement (yield)) (newline)) (statement_group1 (expression_statement (yield (integer))) (newline)) (statement_group1 (expression_statement (assignment left: (identifier) (assignment_eq right: (yield (integer))))) (newline)) (statement_group1 (expression_statement (yield (yield_from_clause (identifier)))) (newline)) (statement_group1 (expression_statement (yield (yield_from_clause (parenthesized_expression (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (integer) (integer))))))))))))) (newline)))))",
+    "wrappedText": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1,10)))",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 146,
       "$source": 0,
       "$named": true,
@@ -18397,7 +19253,7 @@
           "start": 17,
           "end": 22
         },
-        "$nodeHandle": 112
+        "$nodeHandle": 124
       }
     },
     "expectedOutput": "yield"
@@ -18436,7 +19292,7 @@
           "start": 25,
           "end": 32
         },
-        "$nodeHandle": 113,
+        "$nodeHandle": 125,
         "_content": "1"
       }
     },
@@ -18474,7 +19330,7 @@
           "start": 35,
           "end": 46
         },
-        "$nodeHandle": 114,
+        "$nodeHandle": 126,
         "_content": {
           "$type": 254,
           "$source": 0,
@@ -18490,7 +19346,7 @@
               "start": 39,
               "end": 46
             },
-            "$nodeHandle": 116,
+            "$nodeHandle": 128,
             "_content": "2"
           },
           "$other": [
@@ -18500,7 +19356,7 @@
             "start": 37,
             "end": 46
           },
-          "$nodeHandle": 115
+          "$nodeHandle": 127
         }
       }
     },
@@ -18515,6 +19371,238 @@
     "expectedSourceOut": "x=yield 2",
     "expectedReparseTree": "(expression_statement (assignment left: (identifier) (assignment_eq right: (yield (integer)))))",
     "wrappedText": "x=yield 2",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 49,
+        "end": 61
+      },
+      "$nodeHandle": 18,
+      "_content": {
+        "$type": 199,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          63
+        ],
+        "$span": {
+          "start": 49,
+          "end": 61
+        },
+        "$nodeHandle": 129,
+        "_content": {
+          "$type": 266,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            5
+          ],
+          "$span": {
+            "start": 55,
+            "end": 61
+          },
+          "$nodeHandle": 130,
+          "_expression": "a"
+        }
+      }
+    },
+    "expectedOutput": "yield from a"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "yield from a",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "yield from a",
+    "expectedReparseTree": "(expression_statement (yield (yield_from_clause (identifier))))",
+    "wrappedText": "yield from a",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 64,
+        "end": 113
+      },
+      "$nodeHandle": 21,
+      "_content": {
+        "$type": 199,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          63
+        ],
+        "$span": {
+          "start": 64,
+          "end": 113
+        },
+        "$nodeHandle": 131,
+        "_content": {
+          "$type": 266,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            5
+          ],
+          "$span": {
+            "start": 70,
+            "end": 113
+          },
+          "$nodeHandle": 132,
+          "_expression": {
+            "$type": 221,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 75,
+              "end": 113
+            },
+            "$nodeHandle": 133,
+            "_content": {
+              "$type": 199,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                63
+              ],
+              "$span": {
+                "start": 76,
+                "end": 112
+              },
+              "$nodeHandle": 134,
+              "_content": {
+                "$type": 266,
+                "$source": 0,
+                "$named": true,
+                "$other": [
+                  5
+                ],
+                "$span": {
+                  "start": 82,
+                  "end": 112
+                },
+                "$nodeHandle": 135,
+                "_expression": {
+                  "$type": 220,
+                  "$source": 0,
+                  "$named": true,
+                  "_body": "x",
+                  "_comprehension_clauses": {
+                    "$type": 250,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 90,
+                      "end": 111
+                    },
+                    "$nodeHandle": 137,
+                    "_content": [
+                      {
+                        "$type": 223,
+                        "$source": 0,
+                        "$named": true,
+                        "_left": "x",
+                        "_right": [
+                          {
+                            "$type": 203,
+                            "$source": 0,
+                            "$named": true,
+                            "_function": "range",
+                            "_arguments": {
+                              "$type": 157,
+                              "$source": 0,
+                              "$named": true,
+                              "_arguments": {
+                                "$type": 238,
+                                "$source": 0,
+                                "$named": true,
+                                "$other": [
+                                  9
+                                ],
+                                "$span": {
+                                  "start": 105,
+                                  "end": 110
+                                },
+                                "$nodeHandle": 141,
+                                "_content": [
+                                  "1",
+                                  "10"
+                                ],
+                                "_trailing_sep": false
+                              },
+                              "$other": [
+                                7,
+                                8
+                              ],
+                              "$span": {
+                                "start": 104,
+                                "end": 111
+                              },
+                              "$nodeHandle": 140
+                            },
+                            "$span": {
+                              "start": 99,
+                              "end": 111
+                            },
+                            "$nodeHandle": 139
+                          }
+                        ],
+                        "$other": [
+                          27,
+                          28
+                        ],
+                        "$span": {
+                          "start": 90,
+                          "end": 111
+                        },
+                        "$nodeHandle": 138
+                      }
+                    ]
+                  },
+                  "$other": [
+                    7,
+                    8
+                  ],
+                  "$span": {
+                    "start": 87,
+                    "end": 112
+                  },
+                  "$nodeHandle": 136
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "expectedOutput": "yield from(yield from(x for x in range(1,10)))"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "yield from (yield from (x for x in range(1, 10)))",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "yield from(yield from(x for x in range(1,10)))",
+    "expectedReparseTree": "(expression_statement (yield (yield_from_clause (parenthesized_expression (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (integer) (integer)))))))))))))",
+    "wrappedText": "yield from(yield from(x for x in range(1,10)))",
     "wrappedOffset": 0
   },
   {
@@ -18545,7 +19633,7 @@
             "start": 39,
             "end": 46
           },
-          "$nodeHandle": 142,
+          "$nodeHandle": 161,
           "_content": "2"
         },
         "$other": [
@@ -18555,7 +19643,7 @@
           "start": 37,
           "end": 46
         },
-        "$nodeHandle": 141
+        "$nodeHandle": 160
       }
     },
     "expectedOutput": "x=yield 2"
@@ -18575,6 +19663,149 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 221,
+      "$source": 0,
+      "$named": true,
+      "$other": [
+        7,
+        8
+      ],
+      "$span": {
+        "start": 75,
+        "end": 113
+      },
+      "$nodeHandle": 24,
+      "_content": {
+        "$type": 199,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          63
+        ],
+        "$span": {
+          "start": 76,
+          "end": 112
+        },
+        "$nodeHandle": 162,
+        "_content": {
+          "$type": 266,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            5
+          ],
+          "$span": {
+            "start": 82,
+            "end": 112
+          },
+          "$nodeHandle": 163,
+          "_expression": {
+            "$type": 220,
+            "$source": 0,
+            "$named": true,
+            "_body": "x",
+            "_comprehension_clauses": {
+              "$type": 250,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 90,
+                "end": 111
+              },
+              "$nodeHandle": 165,
+              "_content": [
+                {
+                  "$type": 223,
+                  "$source": 0,
+                  "$named": true,
+                  "_left": "x",
+                  "_right": [
+                    {
+                      "$type": 203,
+                      "$source": 0,
+                      "$named": true,
+                      "_function": "range",
+                      "_arguments": {
+                        "$type": 157,
+                        "$source": 0,
+                        "$named": true,
+                        "_arguments": {
+                          "$type": 238,
+                          "$source": 0,
+                          "$named": true,
+                          "$other": [
+                            9
+                          ],
+                          "$span": {
+                            "start": 105,
+                            "end": 110
+                          },
+                          "$nodeHandle": 169,
+                          "_content": [
+                            "1",
+                            "10"
+                          ],
+                          "_trailing_sep": false
+                        },
+                        "$other": [
+                          7,
+                          8
+                        ],
+                        "$span": {
+                          "start": 104,
+                          "end": 111
+                        },
+                        "$nodeHandle": 168
+                      },
+                      "$span": {
+                        "start": 99,
+                        "end": 111
+                      },
+                      "$nodeHandle": 167
+                    }
+                  ],
+                  "$other": [
+                    27,
+                    28
+                  ],
+                  "$span": {
+                    "start": 90,
+                    "end": 111
+                  },
+                  "$nodeHandle": 166
+                }
+              ]
+            },
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 87,
+              "end": 112
+            },
+            "$nodeHandle": 164
+          }
+        }
+      }
+    },
+    "expectedOutput": "(yield from(x for x in range(1,10)))"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "(yield from (x for x in range(1, 10)))",
+    "pattern": "parenthesized_expression",
+    "edits": [],
+    "expectedSourceOut": "(yield from(x for x in range(1,10)))",
+    "expectedReparseTree": "(parenthesized_expression (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (integer) (integer))))))))))",
+    "wrappedText": "f((yield from(x for x in range(1,10))))",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 220,
       "$source": 0,
       "$named": true,
@@ -18587,7 +19818,7 @@
           "start": 90,
           "end": 111
         },
-        "$nodeHandle": 150,
+        "$nodeHandle": 170,
         "_content": [
           {
             "$type": 223,
@@ -18615,7 +19846,7 @@
                       "start": 105,
                       "end": 110
                     },
-                    "$nodeHandle": 154,
+                    "$nodeHandle": 174,
                     "_content": [
                       "1",
                       "10"
@@ -18630,13 +19861,13 @@
                     "start": 104,
                     "end": 111
                   },
-                  "$nodeHandle": 153
+                  "$nodeHandle": 173
                 },
                 "$span": {
                   "start": 99,
                   "end": 111
                 },
-                "$nodeHandle": 152
+                "$nodeHandle": 172
               }
             ],
             "$other": [
@@ -18647,7 +19878,7 @@
               "start": 90,
               "end": 111
             },
-            "$nodeHandle": 151
+            "$nodeHandle": 171
           }
         ]
       },
@@ -18659,7 +19890,7 @@
         "start": 87,
         "end": 112
       },
-      "$nodeHandle": 24
+      "$nodeHandle": 27
     },
     "expectedOutput": "(x for x in range(1,10))"
   },
@@ -18697,7 +19928,7 @@
             "start": 105,
             "end": 110
           },
-          "$nodeHandle": 163,
+          "$nodeHandle": 183,
           "_content": [
             "1",
             "10"
@@ -18712,13 +19943,13 @@
           "start": 104,
           "end": 111
         },
-        "$nodeHandle": 162
+        "$nodeHandle": 182
       },
       "$span": {
         "start": 99,
         "end": 111
       },
-      "$nodeHandle": 27
+      "$nodeHandle": 30
     },
     "expectedOutput": "range(1,10)"
   },
@@ -18751,7 +19982,7 @@
           "start": 105,
           "end": 110
         },
-        "$nodeHandle": 164,
+        "$nodeHandle": 184,
         "_content": [
           "1",
           "10"
@@ -18766,7 +19997,7 @@
         "start": 104,
         "end": 111
       },
-      "$nodeHandle": 28
+      "$nodeHandle": 31
     },
     "expectedOutput": "(1,10)"
   },

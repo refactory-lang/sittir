@@ -228,6 +228,7 @@ export const enum SyntaxKind {
 	SimplePatternNegative = '_simple_pattern_negative',
 	ExceptClauseList = '_except_clause_list',
 	ComparisonOperatorComparator = '_comparison_operator_comparator',
+	YieldFromClause = '_yield_from_clause',
 	ImportPrefix = 'import_prefix',
 	PassStatement = 'pass_statement',
 	BreakStatement = 'break_statement',
@@ -566,41 +567,42 @@ export const enum TSKindId {
 	SimplePatternNegative = 263,
 	ExceptClauseList = 264,
 	ComparisonOperatorComparator = 265,
-	ModuleRepeat1 = 266,
-	_SimpleStatementsRepeat1 = 267,
-	ImportPrefixRepeat1 = 268,
-	_ImportListRepeat1 = 269,
-	AssertStatementRepeat1 = 270,
-	IfStatementRepeat1 = 271,
-	MatchStatementRepeat1 = 272,
-	CaseClauseRepeat1 = 273,
-	TryStatementRepeat1 = 274,
-	GlobalStatementRepeat1 = 275,
-	TypeParameterRepeat1 = 276,
-	DecoratedDefinitionRepeat1 = 277,
-	DottedNameRepeat1 = 278,
-	UnionPatternRepeat1 = 279,
-	_ParametersRepeat1 = 280,
-	_PatternsRepeat1 = 281,
-	ComparisonOperatorRepeat1 = 282,
-	SubscriptRepeat1 = 283,
-	_CollectionElementsRepeat1 = 284,
-	ForInClauseRepeat1 = 285,
-	ConcatenatedStringRepeat1 = 286,
-	StringRepeat1 = 287,
-	StringContentRepeat1 = 288,
-	FormatSpecifierRepeat1 = 289,
-	_ArgumentListGroup1Repeat1 = 290,
-	_DictPatternGroup2Repeat1 = 291,
-	_DictionaryGroup1Repeat1 = 292,
-	ComprehensionClausesRepeat1 = 293,
-	PrintStatementGroup1Repeat1 = 294,
-	_WithClauseBareRepeat1 = 295,
-	_MatchBlockBlockRepeat1 = 296,
-	_ExceptClauseListRepeat1 = 297,
-	_AsPatternTarget = 298,
-	_FormatExpression = 299,
-	_FutureImportStatementGroup1 = 300
+	YieldFromClause = 266,
+	ModuleRepeat1 = 267,
+	_SimpleStatementsRepeat1 = 268,
+	ImportPrefixRepeat1 = 269,
+	_ImportListRepeat1 = 270,
+	AssertStatementRepeat1 = 271,
+	IfStatementRepeat1 = 272,
+	MatchStatementRepeat1 = 273,
+	CaseClauseRepeat1 = 274,
+	TryStatementRepeat1 = 275,
+	GlobalStatementRepeat1 = 276,
+	TypeParameterRepeat1 = 277,
+	DecoratedDefinitionRepeat1 = 278,
+	DottedNameRepeat1 = 279,
+	UnionPatternRepeat1 = 280,
+	_ParametersRepeat1 = 281,
+	_PatternsRepeat1 = 282,
+	ComparisonOperatorRepeat1 = 283,
+	SubscriptRepeat1 = 284,
+	_CollectionElementsRepeat1 = 285,
+	ForInClauseRepeat1 = 286,
+	ConcatenatedStringRepeat1 = 287,
+	StringRepeat1 = 288,
+	StringContentRepeat1 = 289,
+	FormatSpecifierRepeat1 = 290,
+	_ArgumentListGroup1Repeat1 = 291,
+	_DictPatternGroup2Repeat1 = 292,
+	_DictionaryGroup1Repeat1 = 293,
+	ComprehensionClausesRepeat1 = 294,
+	PrintStatementGroup1Repeat1 = 295,
+	_WithClauseBareRepeat1 = 296,
+	_MatchBlockBlockRepeat1 = 297,
+	_ExceptClauseListRepeat1 = 298,
+	_AsPatternTarget = 299,
+	_FormatExpression = 300,
+	_FutureImportStatementGroup1 = 301
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -714,7 +716,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[108, 'module'],
 	[109, '_statement'],
 	[110, '_simple_statements'],
-	[301, '_simple_statements'],
+	[302, '_simple_statements'],
 	[111, 'import_statement'],
 	[112, 'import_prefix'],
 	[113, 'relative_import'],
@@ -870,41 +872,42 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[263, '_simple_pattern_negative'],
 	[264, '_except_clause_list'],
 	[265, '_comparison_operator_comparator'],
-	[266, 'module_repeat1'],
-	[267, '_simple_statements_repeat1'],
-	[268, 'import_prefix_repeat1'],
-	[269, '_import_list_repeat1'],
-	[270, 'assert_statement_repeat1'],
-	[271, 'if_statement_repeat1'],
-	[272, 'match_statement_repeat1'],
-	[273, 'case_clause_repeat1'],
-	[274, 'try_statement_repeat1'],
-	[275, 'global_statement_repeat1'],
-	[276, 'type_parameter_repeat1'],
-	[277, 'decorated_definition_repeat1'],
-	[278, 'dotted_name_repeat1'],
-	[279, 'union_pattern_repeat1'],
-	[280, '_parameters_repeat1'],
-	[281, '_patterns_repeat1'],
-	[282, 'comparison_operator_repeat1'],
-	[283, 'subscript_repeat1'],
-	[284, '_collection_elements_repeat1'],
-	[285, 'for_in_clause_repeat1'],
-	[286, 'concatenated_string_repeat1'],
-	[287, 'string_repeat1'],
-	[288, 'string_content_repeat1'],
-	[289, 'format_specifier_repeat1'],
-	[290, '_argument_list_group1_repeat1'],
-	[291, '_dict_pattern_group2_repeat1'],
-	[292, '_dictionary_group1_repeat1'],
-	[293, 'comprehension_clauses_repeat1'],
-	[294, 'print_statement_group1_repeat1'],
-	[295, '_with_clause_bare_repeat1'],
-	[296, '_match_block_block_repeat1'],
-	[297, '_except_clause_list_repeat1'],
-	[298, '_as_pattern_target'],
-	[299, '_format_expression'],
-	[300, '_future_import_statement_group1']
+	[266, '_yield_from_clause'],
+	[267, 'module_repeat1'],
+	[268, '_simple_statements_repeat1'],
+	[269, 'import_prefix_repeat1'],
+	[270, '_import_list_repeat1'],
+	[271, 'assert_statement_repeat1'],
+	[272, 'if_statement_repeat1'],
+	[273, 'match_statement_repeat1'],
+	[274, 'case_clause_repeat1'],
+	[275, 'try_statement_repeat1'],
+	[276, 'global_statement_repeat1'],
+	[277, 'type_parameter_repeat1'],
+	[278, 'decorated_definition_repeat1'],
+	[279, 'dotted_name_repeat1'],
+	[280, 'union_pattern_repeat1'],
+	[281, '_parameters_repeat1'],
+	[282, '_patterns_repeat1'],
+	[283, 'comparison_operator_repeat1'],
+	[284, 'subscript_repeat1'],
+	[285, '_collection_elements_repeat1'],
+	[286, 'for_in_clause_repeat1'],
+	[287, 'concatenated_string_repeat1'],
+	[288, 'string_repeat1'],
+	[289, 'string_content_repeat1'],
+	[290, 'format_specifier_repeat1'],
+	[291, '_argument_list_group1_repeat1'],
+	[292, '_dict_pattern_group2_repeat1'],
+	[293, '_dictionary_group1_repeat1'],
+	[294, 'comprehension_clauses_repeat1'],
+	[295, 'print_statement_group1_repeat1'],
+	[296, '_with_clause_bare_repeat1'],
+	[297, '_match_block_block_repeat1'],
+	[298, '_except_clause_list_repeat1'],
+	[299, '_as_pattern_target'],
+	[300, '_format_expression'],
+	[301, '_future_import_statement_group1']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1019,7 +1022,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[108, 'module'],
 	[109, '_statement'],
 	[110, 'simple_statements'],
-	[301, 'simple_statements'],
+	[302, 'simple_statements'],
 	[111, 'import_statement'],
 	[112, 'import_prefix'],
 	[113, 'relative_import'],
@@ -1175,41 +1178,42 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[263, 'simple_pattern_negative'],
 	[264, 'except_clause_list'],
 	[265, 'comparison_operator_comparator'],
-	[266, 'module_repeat1'],
-	[267, '_simple_statements_repeat1'],
-	[268, 'import_prefix_repeat1'],
-	[269, '_import_list_repeat1'],
-	[270, 'assert_statement_repeat1'],
-	[271, 'if_statement_repeat1'],
-	[272, 'match_statement_repeat1'],
-	[273, 'case_clause_repeat1'],
-	[274, 'try_statement_repeat1'],
-	[275, 'global_statement_repeat1'],
-	[276, 'type_parameter_repeat1'],
-	[277, 'decorated_definition_repeat1'],
-	[278, 'dotted_name_repeat1'],
-	[279, 'union_pattern_repeat1'],
-	[280, '_parameters_repeat1'],
-	[281, '_patterns_repeat1'],
-	[282, 'comparison_operator_repeat1'],
-	[283, 'subscript_repeat1'],
-	[284, '_collection_elements_repeat1'],
-	[285, 'for_in_clause_repeat1'],
-	[286, 'concatenated_string_repeat1'],
-	[287, 'string_repeat1'],
-	[288, 'string_content_repeat1'],
-	[289, 'format_specifier_repeat1'],
-	[290, '_argument_list_group1_repeat1'],
-	[291, '_dict_pattern_group2_repeat1'],
-	[292, '_dictionary_group1_repeat1'],
-	[293, 'comprehension_clauses_repeat1'],
-	[294, 'print_statement_group1_repeat1'],
-	[295, '_with_clause_bare_repeat1'],
-	[296, '_match_block_block_repeat1'],
-	[297, '_except_clause_list_repeat1'],
-	[298, 'as_pattern_target'],
-	[299, 'format_expression'],
-	[300, 'future_import_statement_group1']
+	[266, 'yield_from_clause'],
+	[267, 'module_repeat1'],
+	[268, '_simple_statements_repeat1'],
+	[269, 'import_prefix_repeat1'],
+	[270, '_import_list_repeat1'],
+	[271, 'assert_statement_repeat1'],
+	[272, 'if_statement_repeat1'],
+	[273, 'match_statement_repeat1'],
+	[274, 'case_clause_repeat1'],
+	[275, 'try_statement_repeat1'],
+	[276, 'global_statement_repeat1'],
+	[277, 'type_parameter_repeat1'],
+	[278, 'decorated_definition_repeat1'],
+	[279, 'dotted_name_repeat1'],
+	[280, 'union_pattern_repeat1'],
+	[281, '_parameters_repeat1'],
+	[282, '_patterns_repeat1'],
+	[283, 'comparison_operator_repeat1'],
+	[284, 'subscript_repeat1'],
+	[285, '_collection_elements_repeat1'],
+	[286, 'for_in_clause_repeat1'],
+	[287, 'concatenated_string_repeat1'],
+	[288, 'string_repeat1'],
+	[289, 'string_content_repeat1'],
+	[290, 'format_specifier_repeat1'],
+	[291, '_argument_list_group1_repeat1'],
+	[292, '_dict_pattern_group2_repeat1'],
+	[293, '_dictionary_group1_repeat1'],
+	[294, 'comprehension_clauses_repeat1'],
+	[295, 'print_statement_group1_repeat1'],
+	[296, '_with_clause_bare_repeat1'],
+	[297, '_match_block_block_repeat1'],
+	[298, '_except_clause_list_repeat1'],
+	[299, 'as_pattern_target'],
+	[300, 'format_expression'],
+	[301, 'future_import_statement_group1']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -1747,6 +1751,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExceptClauseList;
 		case '_comparison_operator_comparator':
 			return TSKindId.ComparisonOperatorComparator;
+		case '_yield_from_clause':
+			return TSKindId.YieldFromClause;
 		case 'module_repeat1':
 			return TSKindId.ModuleRepeat1;
 		case '_simple_statements_repeat1':
@@ -1975,6 +1981,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExceptClauseList;
 		case 'comparison_operator_comparator':
 			return TSKindId.ComparisonOperatorComparator;
+		case 'yield_from_clause':
+			return TSKindId.YieldFromClause;
 		case 'as_pattern_target':
 			return TSKindId._AsPatternTarget;
 		case 'format_expression':
@@ -2819,8 +2827,8 @@ export interface PatternList {
 
 export interface Yield {
 	readonly $type: TSKindId.Yield;
-	readonly _content?: Expression | Expressions;
-	content(): Expression | Expressions | undefined;
+	readonly _content?: YieldFromClause | Expressions;
+	content(): YieldFromClause | Expressions | undefined;
 }
 
 export interface Attribute {
@@ -3273,6 +3281,12 @@ export interface ComparisonOperatorComparator {
 	primaryExpression(): PrimaryExpression;
 }
 
+export interface YieldFromClause {
+	readonly $type: TSKindId.YieldFromClause;
+	readonly _expression: Expression;
+	expression(): Expression;
+}
+
 // Leaf node types
 export type ImportPrefix = Terminal<TSKindId.ImportPrefix, string>;
 export type PassStatement = Terminal<TSKindId.PassStatement, 'pass'>;
@@ -3520,6 +3534,9 @@ export interface ExceptClauseListTree extends AnyTreeNode {
 }
 export interface ComparisonOperatorComparatorTree extends AnyTreeNode {
 	readonly type: '_comparison_operator_comparator';
+}
+export interface YieldFromClauseTree extends AnyTreeNode {
+	readonly type: '_yield_from_clause';
 }
 export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
 export interface PassStatementTree extends AnyTreeNode {
@@ -4105,7 +4122,8 @@ export type PythonNode =
 	| SuiteBlockWithIndent
 	| SimplePatternNegative
 	| ExceptClauseList
-	| ComparisonOperatorComparator;
+	| ComparisonOperatorComparator
+	| YieldFromClause;
 
 export interface KindMap {
 	module: Module;
@@ -4246,6 +4264,7 @@ export interface KindMap {
 	_simple_pattern_negative: SimplePatternNegative;
 	_except_clause_list: ExceptClauseList;
 	_comparison_operator_comparator: ComparisonOperatorComparator;
+	_yield_from_clause: YieldFromClause;
 	import_prefix: ImportPrefix;
 	pass_statement: PassStatement;
 	break_statement: BreakStatement;
@@ -4535,6 +4554,7 @@ export interface ComparisonOperatorComparatorNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
+export interface YieldFromClauseNs extends NodeNs<YieldFromClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 
 export interface NamespaceMap {
 	module: ModuleNs;
@@ -4675,6 +4695,7 @@ export interface NamespaceMap {
 	_simple_pattern_negative: SimplePatternNegativeNs;
 	_except_clause_list: ExceptClauseListNs;
 	_comparison_operator_comparator: ComparisonOperatorComparatorNs;
+	_yield_from_clause: YieldFromClauseNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -5649,4 +5670,11 @@ export namespace ComparisonOperatorComparator {
 	export type Loose = LooseFor<'_comparison_operator_comparator'>;
 	export type Tree = TreeFor<'_comparison_operator_comparator'>;
 	export type Kind = '_comparison_operator_comparator';
+}
+export namespace YieldFromClause {
+	export type Config = ConfigFor<'_yield_from_clause'>;
+	export type Fluent = FluentFor<'_yield_from_clause'>;
+	export type Loose = LooseFor<'_yield_from_clause'>;
+	export type Tree = TreeFor<'_yield_from_clause'>;
+	export type Kind = '_yield_from_clause';
 }

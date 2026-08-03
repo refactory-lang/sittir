@@ -216,6 +216,7 @@ export interface IsGuards {
 		v: T
 	): v is T & { readonly $type: TSKindId.SimplePatternNegative };
 	ExceptClauseList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExceptClauseList };
+	YieldFromClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.YieldFromClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	statement(v: { readonly $type: string | number }): v is Statement;
 	simpleStatement(v: { readonly $type: string | number }): v is SimpleStatement;
@@ -375,6 +376,7 @@ export interface AssertGuards {
 	SuiteBlockWithIndent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SuiteBlockWithIndent };
 	SimplePatternNegative(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SimplePatternNegative };
 	ExceptClauseList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseList };
+	YieldFromClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.YieldFromClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	statement(v: { readonly $type: string | number }): asserts v is Statement;
 	simpleStatement(v: { readonly $type: string | number }): asserts v is SimpleStatement;
@@ -622,7 +624,8 @@ const _kindIdByKind = new Map<string, number>([
 	['_suite_block_with_indent', TSKindId.SuiteBlockWithIndent],
 	['_simple_pattern_negative', TSKindId.SimplePatternNegative],
 	['_except_clause_list', TSKindId.ExceptClauseList],
-	['_comparison_operator_comparator', TSKindId.ComparisonOperatorComparator]
+	['_comparison_operator_comparator', TSKindId.ComparisonOperatorComparator],
+	['_yield_from_clause', TSKindId.YieldFromClause]
 ]);
 
 export const is = {
@@ -752,6 +755,7 @@ export const is = {
 	SuiteBlockWithIndent: _g(TSKindId.SuiteBlockWithIndent),
 	SimplePatternNegative: _g(TSKindId.SimplePatternNegative),
 	ExceptClauseList: _g(TSKindId.ExceptClauseList),
+	YieldFromClause: _g(TSKindId.YieldFromClause),
 	kind: (v: { readonly $type: number }, k: string): boolean => {
 		const id = _kindIdByKind.get(k);
 		return id !== undefined && v.$type === id;
@@ -923,6 +927,7 @@ export const assert = {
 	SuiteBlockWithIndent: _makeAssert('SuiteBlockWithIndent', is.SuiteBlockWithIndent as _AnyGuard),
 	SimplePatternNegative: _makeAssert('SimplePatternNegative', is.SimplePatternNegative as _AnyGuard),
 	ExceptClauseList: _makeAssert('ExceptClauseList', is.ExceptClauseList as _AnyGuard),
+	YieldFromClause: _makeAssert('YieldFromClause', is.YieldFromClause as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	statement: _makeAssert('statement', is.statement as _AnyGuard),
 	simpleStatement: _makeAssert('simpleStatement', is.simpleStatement as _AnyGuard),

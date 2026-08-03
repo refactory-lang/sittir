@@ -1625,8 +1625,18 @@ export type PythonGrammar = {
 		children: {
 			multiple: false;
 			required: false;
-			types: [{ type: 'expression'; named: true }, { type: 'expression_list'; named: true }];
+			types: [
+				{ type: 'expression'; named: true },
+				{ type: 'expression_list'; named: true },
+				{ type: 'yield_from_clause'; named: true }
+			];
 		};
+	};
+	readonly yield_from_clause: {
+		type: 'yield_from_clause';
+		named: true;
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
 	};
 	readonly '_anonymous_!=': { type: '!='; named: false };
 	readonly '_anonymous_%': { type: '%'; named: false };

@@ -1979,7 +1979,7 @@ export function buildPatternList(config: T.PatternList.Config) {
 	);
 }
 
-export function buildYield(child?: T.Expression | T.Expressions) {
+export function buildYield(child?: T.YieldFromClause | T.Expressions) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -1988,7 +1988,7 @@ export function buildYield(child?: T.Expression | T.Expressions) {
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.Expression | T.Expressions) => buildYield(v) }
+				$with: { $child: (v: T.YieldFromClause | T.Expressions) => buildYield(v) }
 			},
 			{
 				content: () => _content
@@ -3550,6 +3550,25 @@ export function buildComparisonOperatorComparator(config: T.ComparisonOperatorCo
 	);
 }
 
+export function buildYieldFromClause(child: T.Expression) {
+	const _expression = child;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.YieldFromClause as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				$with: { $child: (v: T.Expression) => buildYieldFromClause(v) }
+			},
+			{
+				expression: () => _expression
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildIndent(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_indent: text must be non-empty`);
@@ -3842,6 +3861,7 @@ export type FluentKindMap = {
 	_simple_pattern_negative: FluentNode<'_simple_pattern_negative', T.SimplePatternNegative.Config>;
 	_except_clause_list: FluentNode<'_except_clause_list', T.ExceptClauseList.Config>;
 	_comparison_operator_comparator: T.ComparisonOperatorComparator;
+	_yield_from_clause: FluentNode<'_yield_from_clause', T.YieldFromClause.Config>;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
 	string_start: T.StringStart;
@@ -4006,6 +4026,7 @@ export const _factoryMap = {
 	_simple_pattern_negative: buildSimplePatternNegative,
 	_except_clause_list: buildExceptClauseList,
 	_comparison_operator_comparator: buildComparisonOperatorComparator,
+	_yield_from_clause: buildYieldFromClause,
 	_indent: buildIndent,
 	_dedent: buildDedent,
 	string_start: buildStringStart,

@@ -753,18 +753,6 @@
     "grammar": "python",
     "backend": "native",
     "scope": "grammar",
-    "code": "union-slot-nondegenerate-arm",
-    "severity": "warning",
-    "ownerKind": "yield",
-    "message": "[collect-slots] kind 'yield': choice rule:yield:root has unnamed-nonterminal arm(s) [_expressions] but cannot union-route — offending arm(s): structured seq[2](\"from\" expression). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
-    "canProceed": true,
-    "location": "yield"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "ownerKind": "...",

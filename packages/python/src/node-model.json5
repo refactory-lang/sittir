@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 257,
+  "nodeCount": 258,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -79,6 +79,12 @@
       "definedBy": "override",
       "childKind": {
         "pattern_list_group1": "group1"
+      }
+    },
+    "yield": {
+      "definedBy": "override",
+      "childKind": {
+        "yield_from_clause": "from_clause"
       }
     },
     "string_content": {
@@ -223,6 +229,9 @@
     },
     "pattern_list.tail": {
       "pattern_list_group1": "_pattern_list_group1"
+    },
+    "yield.content": {
+      "yield_from_clause": "_yield_from_clause"
     },
     "slice.step": {
       "slice_group1": "_slice_group1"
@@ -2131,6 +2140,15 @@
         "multiple": false,
         "nonEmpty": false
       }
+    },
+    "_yield_from_clause": {
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
     }
   },
   "nodes": [
@@ -3750,6 +3768,44 @@
       "factoryShape": "spread",
       "factoryFields": [
         "with_item"
+      ]
+    },
+    {
+      "kind": "_yield_from_clause",
+      "modelType": "branch",
+      "typeName": "YieldFromClause",
+      "factoryName": "yieldFromClause",
+      "irKey": "yieldFromClause",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "expression"
       ]
     },
     {
@@ -11565,8 +11621,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "expression",
-              "parseKind": "expression",
+              "name": "_yield_from_clause",
+              "parseKind": "yield_from_clause",
               "unresolved": true
             },
             {
@@ -11580,7 +11636,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "expression",
+              "_yield_from_clause",
               "_expressions"
             ]
           }

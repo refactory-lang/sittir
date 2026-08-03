@@ -259,6 +259,12 @@ pub struct WithClauseParenTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_yield_from_clause.jinja", escape = "none")]
+pub struct YieldFromClauseTemplate<'a> {
+    pub expression: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "aliased_import.jinja", escape = "none")]
 pub struct AliasedImportTemplate<'a> {
     pub alias: SingleNonterminalView<'a>,
