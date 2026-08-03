@@ -10383,7 +10383,7 @@ export function wrapRangeExpressionBinary(data: T.RangeExpressionBinary, tree: T
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '..': 106, '...': 75, '..=': 140 }
+				{ '..': 106, '...': 75, '..=': 141 }
 			),
 			_end: normalizeSingularWrapSlot(data._end, 'end', true, data.$type, {
 				tree,
@@ -10512,7 +10512,7 @@ export function wrapRangePatternPrefix(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '..=': 140, '..': 106 }
+				{ '..=': 141, '..': 106 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -10562,7 +10562,7 @@ export function wrapRangePatternLeftWithRight(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '...': 75, '..=': 140, '..': 106 }
+				{ '...': 75, '..=': 141, '..': 106 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -10671,7 +10671,7 @@ export function wrapVisibilityModifierPub(data: T.VisibilityModifierPub, tree: T
 					slotName: 'pub',
 					span: (data as _NodeData).$span
 				}),
-				{ pub: 141 }
+				{ pub: 142 }
 			),
 			_visibility_modifier_group1: normalizeSingularWrapSlot(
 				data._visibility_modifier_group1,
@@ -12441,6 +12441,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	super: (d) => ({ ...d, $type: TSKindId.Super as const }),
 	crate: (d) => ({ ...d, $type: TSKindId.Crate as const }),
 	metavariable: (d) => ({ ...d, $type: TSKindId.Metavariable as const }),
+	_kw_ref_marker: (d) => ({ ...d, $type: TSKindId.KwRefMarker as const }),
+	_kw_move_marker: (d) => ({ ...d, $type: TSKindId.KwMoveMarker as const }),
 	_attribute_group1: (d, t) => wrapAttributeGroup1(d as unknown as T.AttributeGroup1, t),
 	_enum_variant_list_group1: (d, t) => wrapEnumVariantListGroup1(d as unknown as T.EnumVariantListGroup1, t),
 	_field_declaration_list_group1: (d, t) =>

@@ -2454,6 +2454,16 @@
             "named": true
           }
         ]
+      },
+      "ref_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "ref",
+            "named": false
+          }
+        ]
       }
     },
     "children": {

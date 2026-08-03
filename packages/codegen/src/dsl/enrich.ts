@@ -1220,6 +1220,39 @@ function peelPrec(rule: Rule): Rule {
 	return cursor;
 }
 
+// Peels an optional-shape node (sittir's own OPTIONAL wrapper, or
+// tree-sitter's native CHOICE(X, BLANK) sugar for optional()) and attempts
+// keyword-prefix promotion on its inner content. `matched: false` means the
+// node isn't optional-shaped at all — caller should try other handling.
+// `matched: true, result: null` means it IS optional-shaped but promotion
+// declined (already claimed, collision, non-keyword inner, etc).
+function tryPromoteOptionalNode(
+	ruleName: string,
+	rule: Rule,
+	claimedAtSeqLevel: Set<string>,
+	kwRules: Record<string, Rule>,
+	rulesBag: Record<string, Rule>,
+	wordMatcher: RegExp | undefined
+): { matched: boolean; result: Rule | null } {
+	const peeled = peelOptional(rule);
+	if (!peeled.isOptional) return { matched: false, result: null };
+	const replacement = tryPromoteInnerKeyword(
+		ruleName,
+		rule,
+		peeled.inner,
+		claimedAtSeqLevel,
+		kwRules,
+		rulesBag,
+		wordMatcher
+	);
+	if (replacement !== null) return { matched: true, result: replacement };
+	const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+	if (innerRewritten !== null) {
+		return { matched: true, result: rebuildOptional(rule, innerRewritten) };
+	}
+	return { matched: true, result: null };
+}
+
 function walkOptionalKeyword(
 	ruleName: string,
 	rule: Rule,
@@ -1240,6 +1273,13 @@ function walkOptionalKeyword(
 		return changed ? ({ ...rule, members: newMembers } as Rule) : null;
 	}
 	if (isChoiceType(rule.type)) {
+		// tree-sitter's native optional() is sugar for choice(rule, blank()) —
+		// it never produces a distinct OPTIONAL wrapper, so a CHOICE(X, BLANK)
+		// arriving here (as opposed to sittir's own optional(), which preserves
+		// OPTIONAL) IS an optional-shape and must be tried via peelOptional
+		// before falling back to generic per-member CHOICE recursion below.
+		const promoted = tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+		if (promoted.matched) return promoted.result;
 		const members = (rule as unknown as { members: Rule[] }).members;
 		let changed = false;
 		const newMembers = members.map((m) => {
@@ -1250,24 +1290,8 @@ function walkOptionalKeyword(
 		});
 		return changed ? ({ ...rule, members: newMembers } as Rule) : null;
 	}
-	const peeled = peelOptional(rule);
-	if (peeled.isOptional) {
-		const replacement = tryPromoteInnerKeyword(
-			ruleName,
-			rule,
-			peeled.inner,
-			claimedAtSeqLevel,
-			kwRules,
-			rulesBag,
-			wordMatcher
-		);
-		if (replacement !== null) return replacement;
-		const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
-		if (innerRewritten !== null) {
-			return rebuildOptional(rule, innerRewritten);
-		}
-		return null;
-	}
+	const promoted = tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+	if (promoted.matched) return promoted.result;
 	if (isRepeatType(rule.type) || isFieldType(rule.type)) {
 		const content = (rule as unknown as { content: Rule }).content;
 		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);

@@ -1684,6 +1684,25 @@ function peelPrec(rule) {
   }
   return cursor;
 }
+function tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher) {
+  const peeled = peelOptional(rule);
+  if (!peeled.isOptional) return { matched: false, result: null };
+  const replacement = tryPromoteInnerKeyword(
+    ruleName,
+    rule,
+    peeled.inner,
+    claimedAtSeqLevel,
+    kwRules,
+    rulesBag,
+    wordMatcher
+  );
+  if (replacement !== null) return { matched: true, result: replacement };
+  const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+  if (innerRewritten !== null) {
+    return { matched: true, result: rebuildOptional(rule, innerRewritten) };
+  }
+  return { matched: true, result: null };
+}
 function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher) {
   if (isSeqType(rule.type)) {
     const members = rule.members;
@@ -1697,6 +1716,8 @@ function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBa
     return changed ? { ...rule, members: newMembers } : null;
   }
   if (isChoiceType(rule.type)) {
+    const promoted2 = tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+    if (promoted2.matched) return promoted2.result;
     const members = rule.members;
     let changed = false;
     const newMembers = members.map((m) => {
@@ -1707,24 +1728,8 @@ function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBa
     });
     return changed ? { ...rule, members: newMembers } : null;
   }
-  const peeled = peelOptional(rule);
-  if (peeled.isOptional) {
-    const replacement = tryPromoteInnerKeyword(
-      ruleName,
-      rule,
-      peeled.inner,
-      claimedAtSeqLevel,
-      kwRules,
-      rulesBag,
-      wordMatcher
-    );
-    if (replacement !== null) return replacement;
-    const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
-    if (innerRewritten !== null) {
-      return rebuildOptional(rule, innerRewritten);
-    }
-    return null;
-  }
+  const promoted = tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+  if (promoted.matched) return promoted.result;
   if (isRepeatType(rule.type) || isFieldType(rule.type)) {
     const content = rule.content;
     const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);

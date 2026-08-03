@@ -846,6 +846,7 @@ export type PythonGrammar = {
 		named: true;
 		fields: {
 			alternative: { multiple: false; required: false; types: [{ type: 'else_clause'; named: true }] };
+			async_marker: { multiple: false; required: false; types: [{ type: 'async'; named: false }] };
 			body: {
 				multiple: false;
 				required: true;
@@ -895,6 +896,7 @@ export type PythonGrammar = {
 		type: 'function_definition';
 		named: true;
 		fields: {
+			async_marker: { multiple: false; required: false; types: [{ type: 'async'; named: false }] };
 			body: {
 				multiple: false;
 				required: true;
@@ -1601,6 +1603,7 @@ export type PythonGrammar = {
 		type: 'with_statement';
 		named: true;
 		fields: {
+			async_marker: { multiple: false; required: false; types: [{ type: 'async'; named: false }] };
 			body: {
 				multiple: false;
 				required: true;

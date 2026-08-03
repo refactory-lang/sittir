@@ -1620,23 +1620,23 @@
           "value": "static"
         },
         {
-          "type": "FIELD",
-          "name": "mutable_specifier",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "mutable_specifier",
+              "content": {
                 "type": "SYMBOL",
-                "name": "_kw_mutable_specifier"
+                "name": "_kw_ref_marker"
               },
-              {
-                "type": "BLANK"
+              "metadata": {
+                "fieldSource": "override"
               }
-            ]
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "CHOICE",
@@ -7712,8 +7712,15 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "ref"
+              "type": "FIELD",
+              "name": "ref_marker",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_ref_marker"
+              },
+              "metadata": {
+                "fieldSource": "enriched"
+              }
             },
             {
               "type": "BLANK"
@@ -8732,6 +8739,26 @@
     "metavariable": {
       "type": "PATTERN",
       "value": "\\$[a-zA-Z_]\\w*"
+    },
+    "_kw_ref_marker": {
+      "type": "STRING",
+      "value": "ref"
+    },
+    "_kw_unsafe_marker": {
+      "type": "STRING",
+      "value": "unsafe"
+    },
+    "_kw_static_marker": {
+      "type": "STRING",
+      "value": "static"
+    },
+    "_kw_async_marker": {
+      "type": "STRING",
+      "value": "async"
+    },
+    "_kw_move_marker": {
+      "type": "STRING",
+      "value": "move"
     },
     "_attribute_group1": {
       "type": "CHOICE",
@@ -11453,10 +11480,6 @@
     "_kw_last_arm": {
       "type": "BLANK"
     },
-    "_kw_move_marker": {
-      "type": "STRING",
-      "value": "move"
-    },
     "_kw_path": {
       "type": "BLANK"
     },
@@ -11468,22 +11491,6 @@
     },
     "_kw_right": {
       "type": "BLANK"
-    },
-    "_kw_static_marker": {
-      "type": "PREC",
-      "value": -1,
-      "content": {
-        "type": "STRING",
-        "value": "static"
-      }
-    },
-    "_kw_async_marker": {
-      "type": "PREC",
-      "value": -1,
-      "content": {
-        "type": "STRING",
-        "value": "async"
-      }
     },
     "_kw_modifier": {
       "type": "BLANK"
@@ -11545,12 +11552,7 @@
       "type": "BLANK"
     },
     "_kw_mutable_specifier": {
-      "type": "STRING",
-      "value": "ref"
-    },
-    "_kw_unsafe_marker": {
-      "type": "STRING",
-      "value": "unsafe"
+      "type": "BLANK"
     },
     "_kw_type": {
       "type": "BLANK"
@@ -12156,6 +12158,10 @@
       "_closure_expression_group1"
     ],
     [
+      "async_block",
+      "_kw_async_marker"
+    ],
+    [
       "scoped_identifier",
       "scoped_type_identifier",
       "_visibility_modifier_crate"
@@ -12479,15 +12485,10 @@
     "_closure_parameters_optional1",
     "_kw_operator",
     "_kw_comma",
-    "_kw_move_marker",
-    "_kw_static_marker",
-    "_kw_async_marker",
     "_kw_pub",
     "_kw_in",
     "_kw_turbofish",
-    "_kw_reference",
-    "_kw_mutable_specifier",
-    "_kw_unsafe_marker"
+    "_kw_reference"
   ],
   "supertypes": [
     "_expression",

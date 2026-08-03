@@ -811,6 +811,16 @@
     "type": "arrow_function",
     "named": true,
     "fields": {
+      "async_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "async",
+            "named": false
+          }
+        ]
+      },
       "body": {
         "multiple": false,
         "required": true,
@@ -2064,6 +2074,16 @@
     "type": "construct_signature",
     "named": true,
     "fields": {
+      "abstract_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "abstract",
+            "named": false
+          }
+        ]
+      },
       "parameters": {
         "multiple": false,
         "required": true,
@@ -3118,6 +3138,16 @@
     "type": "for_in_statement",
     "named": true,
     "fields": {
+      "await_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "await",
+            "named": false
+          }
+        ]
+      },
       "body": {
         "multiple": false,
         "required": true,
@@ -3450,6 +3480,16 @@
     "type": "function_signature",
     "named": true,
     "fields": {
+      "async_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "async",
+            "named": false
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -4901,6 +4941,16 @@
           }
         ]
       },
+      "async_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "async",
+            "named": false
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -4954,6 +5004,16 @@
           {
             "type": "formal_parameters",
             "named": true
+          }
+        ]
+      },
+      "readonly_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "readonly",
+            "named": false
           }
         ]
       },
@@ -5460,6 +5520,16 @@
           }
         ]
       },
+      "readonly_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "readonly",
+            "named": false
+          }
+        ]
+      },
       "type": {
         "multiple": false,
         "required": false,
@@ -5770,6 +5840,16 @@
           }
         ]
       },
+      "readonly_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "readonly",
+            "named": false
+          }
+        ]
+      },
       "static_marker": {
         "multiple": false,
         "required": false,
@@ -5796,6 +5876,16 @@
     "type": "public_field_definition",
     "named": true,
     "fields": {
+      "accessor_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "accessor",
+            "named": false
+          }
+        ]
+      },
       "decorator": {
         "multiple": true,
         "required": false,
@@ -5890,10 +5980,6 @@
           "named": true
         },
         {
-          "type": "public_field_definition_accessor_opt",
-          "named": true
-        },
-        {
           "type": "public_field_definition_readonly_first",
           "named": true
         },
@@ -5985,6 +6071,16 @@
           {
             "type": "this",
             "named": true
+          }
+        ]
+      },
+      "readonly_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "readonly",
+            "named": false
           }
         ]
       },
@@ -6740,6 +6836,16 @@
     "type": "type_parameter",
     "named": true,
     "fields": {
+      "const_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "const",
+            "named": false
+          }
+        ]
+      },
       "constraint": {
         "multiple": false,
         "required": false,

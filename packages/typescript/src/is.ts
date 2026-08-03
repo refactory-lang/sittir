@@ -626,7 +626,7 @@ const _supertype_expression_ids = new Set<number>([
 	275, 276, 277, 285, 274, 237, 239, 233, 245, 244, 243, 246, 232, 212
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	235, 234, 209, 106, 1, 435, 101, 102, 99, 248, 249, 251, 103, 104, 105, 213, 217, 223, 227, 225, 220, 252, 231, 269
+	235, 234, 209, 105, 1, 443, 100, 101, 98, 248, 249, 251, 102, 103, 104, 213, 217, 223, 227, 225, 220, 252, 231, 269
 ]);
 const _supertype_jsxChild_ids = new Set<number>([163]);
 const _supertype_jsxIdentifier_ids = new Set<number>([1]);
@@ -634,18 +634,18 @@ const _supertype_jsxElementName_ids = new Set<number>([1, 219]);
 const _supertype_jsxAttributeName_ids = new Set<number>([1]);
 const _supertype_formalParameter_ids = new Set<number>([297, 298]);
 const _supertype_destructuringPattern_ids = new Set<number>([214, 218]);
-const _supertype_identifier_ids = new Set<number>([106, 1]);
+const _supertype_identifier_ids = new Set<number>([105, 1]);
 const _supertype_pattern_ids = new Set<number>([236, 261]);
-const _supertype_propertyName_ids = new Set<number>([1, 435, 100, 248, 99, 266]);
-const _supertype_statementIdentifier_ids = new Set<number>([1, 435]);
-const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 435]);
-const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 435]);
-const _supertype_propertyIdentifier_ids = new Set<number>([1, 435]);
+const _supertype_propertyName_ids = new Set<number>([1, 443, 99, 248, 98, 266]);
+const _supertype_statementIdentifier_ids = new Set<number>([1, 443]);
+const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 443]);
+const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 443]);
+const _supertype_propertyIdentifier_ids = new Set<number>([1, 443]);
 const _supertype_importIdentifier_ids = new Set<number>([1]);
 const _supertype_type_ids = new Set<number>([352, 349, 314, 318, 304, 305]);
 const _supertype_tupleTypeMember_ids = new Set<number>([309, 310, 311, 312]);
 const _supertype_primaryType_ids = new Set<number>([
-	335, 336, 440, 288, 320, 338, 347, 348, 334, 327, 328, 101, 331, 329, 319, 317, 351, 350
+	335, 336, 448, 288, 320, 338, 347, 348, 334, 327, 328, 100, 331, 329, 319, 317, 351, 350
 ]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -662,7 +662,6 @@ const _kindIdByKind = new Map<string, number>([
 	['if', TSKindId.If],
 	['switch', TSKindId.Switch],
 	['for', TSKindId.For],
-	['await', TSKindId.Await],
 	['while', TSKindId.While],
 	['do', TSKindId.Do],
 	['try', TSKindId.Try],
@@ -678,8 +677,8 @@ const _kindIdByKind = new Map<string, number>([
 	['yield', TSKindId.Yield],
 	['anon_class', TSKindId.AnonClass],
 	['function', TSKindId.Function],
-	['async', TSKindId.Async],
 	['new', TSKindId.New],
+	['await', TSKindId.Await],
 	['instanceof', TSKindId.Instanceof],
 	['unescaped_double_string_fragment', TSKindId.UnescapedDoubleStringFragment],
 	['unescaped_single_string_fragment', TSKindId.UnescapedSingleStringFragment],
@@ -702,6 +701,7 @@ const _kindIdByKind = new Map<string, number>([
 	['readonly', TSKindId.Readonly],
 	['anon_module', TSKindId.AnonModule],
 	['export', TSKindId.Export],
+	['async', TSKindId.Async],
 	['abstract', TSKindId.Abstract],
 	['const', TSKindId.Const],
 	['satisfies', TSKindId.Satisfies],
@@ -715,9 +715,9 @@ const _kindIdByKind = new Map<string, number>([
 	['is', TSKindId.Is],
 	['keyof', TSKindId.Keyof],
 	['in', TSKindId.In],
-	['global', TSKindId.Global],
-	['accessor', TSKindId.Accessor],
 	['using', TSKindId.Using],
+	['accessor', TSKindId.Accessor],
+	['global', TSKindId.Global],
 	['_template_chars', TSKindId.TemplateChars],
 	['_ternary_qmark', TSKindId.TernaryQmark],
 	['html_comment', TSKindId.HtmlComment],
@@ -893,6 +893,11 @@ const _kindIdByKind = new Map<string, number>([
 	['union_type', TSKindId.UnionType],
 	['intersection_type', TSKindId.IntersectionType],
 	['function_type', TSKindId.FunctionType],
+	['_kw_async_marker', TSKindId.KwAsyncMarker],
+	['_kw_static_marker', TSKindId.KwStaticMarker],
+	['_kw_readonly_marker', TSKindId.KwReadonlyMarker],
+	['_kw_abstract_marker', TSKindId.KwAbstractMarker],
+	['_kw_const_marker', TSKindId.KwConstMarker],
 	['_export_clause_group1', TSKindId.ExportClauseGroup1],
 	['_import_statement_group1', TSKindId.ImportStatementGroup1],
 	['_import_clause_group1', TSKindId.ImportClauseGroup1],

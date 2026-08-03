@@ -2085,7 +2085,7 @@ export function wrapForInStatement(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ in: 143, of: 151 }
+				{ in: 143, of: 153 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -2161,7 +2161,7 @@ export function wrapForHeader(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ in: 143, of: 151 }
+				{ in: 143, of: 153 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -4299,7 +4299,7 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'separator', span: (data as _NodeData).$span }
 				),
-				{ '.': 40, '?.': 45 }
+				{ '.': 39, '?.': 43 }
 			),
 			_property: normalizeSingularWrapSlot(data._property, 'property', true, data.$type, {
 				tree,
@@ -4573,21 +4573,21 @@ export function wrapAugmentedAssignmentExpression(data: T.AugmentedAssignmentExp
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
 				{
-					'+=': 47,
-					'-=': 48,
-					'*=': 49,
-					'/=': 50,
-					'%=': 51,
-					'^=': 52,
-					'&=': 53,
-					'|=': 54,
-					'>>=': 55,
-					'>>>=': 56,
-					'<<=': 57,
-					'**=': 58,
-					'&&=': 59,
-					'||=': 60,
-					'??=': 61
+					'+=': 46,
+					'-=': 47,
+					'*=': 48,
+					'/=': 49,
+					'%=': 50,
+					'^=': 51,
+					'&=': 52,
+					'|=': 53,
+					'>>=': 54,
+					'>>>=': 55,
+					'<<=': 56,
+					'**=': 57,
+					'&&=': 58,
+					'||=': 59,
+					'??=': 60
 				}
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -4792,30 +4792,30 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
 				{
-					'&&': 63,
-					'||': 64,
-					'>>': 65,
-					'>>>': 66,
-					'<<': 67,
-					'&': 68,
-					'^': 69,
-					'|': 70,
-					'+': 71,
-					'-': 72,
+					'&&': 62,
+					'||': 63,
+					'>>': 64,
+					'>>>': 65,
+					'<<': 66,
+					'&': 67,
+					'^': 68,
+					'|': 69,
+					'+': 70,
+					'-': 71,
 					'*': 3,
-					'/': 73,
-					'%': 74,
-					'**': 75,
-					'<': 76,
-					'<=': 77,
-					'==': 78,
-					'===': 79,
-					'!=': 80,
-					'!==': 81,
-					'>=': 82,
-					'>': 83,
-					'??': 84,
-					instanceof: 85
+					'/': 72,
+					'%': 73,
+					'**': 74,
+					'<': 75,
+					'<=': 76,
+					'==': 77,
+					'===': 78,
+					'!=': 79,
+					'!==': 80,
+					'>=': 81,
+					'>': 82,
+					'??': 83,
+					instanceof: 84
 				}
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', false, data.$type, {
@@ -4882,7 +4882,7 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '!': 86, '~': 87, '-': 72, '+': 71, typeof: 8, void: 88, delete: 89 }
+				{ '!': 85, '~': 86, '-': 71, '+': 70, typeof: 8, void: 87, delete: 88 }
 			),
 			_argument: normalizeSingularWrapSlot(data._argument, 'argument', true, data.$type, {
 				tree,
@@ -5865,7 +5865,7 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
 				),
-				{ public: 113, private: 114, protected: 115 }
+				{ public: 112, private: 113, protected: 114 }
 			),
 			_static_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._static_marker, 'static_marker', false, data.$type, {
@@ -5907,7 +5907,7 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'accessor_kind', span: (data as _NodeData).$span }
 				),
-				{ get: 109, set: 110, '*': 3 }
+				{ get: 108, set: 109, '*': 3 }
 			),
 			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 				tree,
@@ -6324,7 +6324,7 @@ export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: T
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'optionality_marker', span: (data as _NodeData).$span }
 				),
-				{ '?': 127, '!': 86 }
+				{ '?': 127, '!': 85 }
 			),
 			_type: normalizeSingularWrapSlot(data._type, 'type', false, data.$type, {
 				tree,
@@ -6479,7 +6479,7 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
 				),
-				{ public: 113, private: 114, protected: 115 }
+				{ public: 112, private: 113, protected: 114 }
 			),
 			_static_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._static_marker, 'static_marker', false, data.$type, {
@@ -6521,7 +6521,7 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'accessor_kind', span: (data as _NodeData).$span }
 				),
-				{ get: 109, set: 110, '*': 3 }
+				{ get: 108, set: 109, '*': 3 }
 			),
 			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 				tree,
@@ -6635,7 +6635,7 @@ export function wrapAbstractMethodSignature(data: T.AbstractMethodSignature, tre
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
 				),
-				{ public: 113, private: 114, protected: 115 }
+				{ public: 112, private: 113, protected: 114 }
 			),
 			_override_modifier: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
@@ -6653,7 +6653,7 @@ export function wrapAbstractMethodSignature(data: T.AbstractMethodSignature, tre
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'accessor_kind', span: (data as _NodeData).$span }
 				),
-				{ get: 109, set: 110, '*': 3 }
+				{ get: 108, set: 109, '*': 3 }
 			),
 			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 				tree,
@@ -7931,7 +7931,7 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
 				),
-				{ public: 113, private: 114, protected: 115 }
+				{ public: 112, private: 113, protected: 114 }
 			),
 			_override_modifier: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
@@ -8029,7 +8029,7 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
 				),
-				{ public: 113, private: 114, protected: 115 }
+				{ public: 112, private: 113, protected: 114 }
 			),
 			_override_modifier: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
@@ -8127,7 +8127,7 @@ export function wrapParameterName(data: T.ParameterName, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
 				),
-				{ public: 113, private: 114, protected: 115 }
+				{ public: 112, private: 113, protected: 114 }
 			),
 			_override_modifier: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
@@ -9118,7 +9118,7 @@ export function wrapTypeQueryMemberExpression(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '.': 40, '?.': 45 }
+				{ '.': 39, '?.': 43 }
 			),
 			_property: normalizeSingularWrapSlot(data._property, 'property', true, data.$type, {
 				tree,
@@ -9561,7 +9561,7 @@ export function wrap_Number(data: T._Number, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '-': 72, '+': 71 }
+				{ '-': 71, '+': 70 }
 			),
 			_argument: normalizeSingularWrapSlot(data._argument, 'argument', true, data.$type, {
 				tree,
@@ -9905,7 +9905,7 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
 				),
-				{ public: 113, private: 114, protected: 115 }
+				{ public: 112, private: 113, protected: 114 }
 			),
 			_static_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._static_marker, 'static_marker', false, data.$type, {
@@ -10122,7 +10122,7 @@ export function wrapConstraint(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ extends: 132, ':': 31 }
+				{ extends: 132, ':': 30 }
 			),
 			_type: normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 				tree,
@@ -10228,7 +10228,7 @@ export function wrapIndexSignature(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'sign', span: (data as _NodeData).$span }
 				),
-				{ '-': 72, '+': 71 }
+				{ '-': 71, '+': 70 }
 			),
 			_content: normalizeSingularWrapSlot(
 				data._content ?? data._index_signature_colon ?? data._mapped_type_clause,
@@ -12081,7 +12081,7 @@ export function wrapPublicFieldDefinitionDeclareFirst(data: T.PublicFieldDefinit
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
 				),
-				{ public: 113, private: 114, protected: 115 }
+				{ public: 112, private: 113, protected: 114 }
 			),
 
 			accessibilityModifier() {
@@ -12111,7 +12111,7 @@ export function wrapPublicFieldDefinitionAccessFirst(data: T.PublicFieldDefiniti
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
 				),
-				{ public: 113, private: 114, protected: 115 }
+				{ public: 112, private: 113, protected: 114 }
 			),
 			_declare_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._declare_marker, 'declare_marker', false, data.$type, {
@@ -12153,7 +12153,7 @@ export function wrapPublicFieldDefinitionStaticMods(data: T.PublicFieldDefinitio
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'static_marker', span: (data as _NodeData).$span }
 				),
-				{ static: 108 }
+				{ static: 107 }
 			),
 			_override_modifier: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
@@ -12250,7 +12250,7 @@ export function wrapPublicFieldDefinitionReadonlyFirst(data: T.PublicFieldDefini
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'readonly_marker', span: (data as _NodeData).$span }
 				),
-				{ readonly: 117 }
+				{ readonly: 116 }
 			),
 			_abstract_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._abstract_marker, 'abstract_marker', false, data.$type, {
@@ -13101,6 +13101,11 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	intersection_type: (d, t) => wrapIntersectionType(d as unknown as T.IntersectionType, t),
 	function_type: (d, t) => wrapFunctionType(d as unknown as T.FunctionType, t),
 	_type_identifier: (d) => ({ ...d, $type: TSKindId.TypeIdentifier as const }),
+	_kw_async_marker: (d) => ({ ...d, $type: TSKindId.KwAsyncMarker as const }),
+	_kw_static_marker: (d) => ({ ...d, $type: TSKindId.KwStaticMarker as const }),
+	_kw_readonly_marker: (d) => ({ ...d, $type: TSKindId.KwReadonlyMarker as const }),
+	_kw_abstract_marker: (d) => ({ ...d, $type: TSKindId.KwAbstractMarker as const }),
+	_kw_const_marker: (d) => ({ ...d, $type: TSKindId.KwConstMarker as const }),
 	_export_clause_group1: (d, t) => wrapExportClauseGroup1(d as unknown as T.ExportClauseGroup1, t),
 	_import_statement_group1: (d, t) => wrapImportStatementGroup1(d as unknown as T.ImportStatementGroup1, t),
 	_import_clause_group1: (d, t) => wrapImportClauseGroup1(d as unknown as T.ImportClauseGroup1, t),

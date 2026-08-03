@@ -3077,7 +3077,7 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'type', span: (data as _NodeData).$span }
 				),
-				{ type: 66 }
+				{ type: 65 }
 			),
 			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
 				tree,
@@ -3916,7 +3916,7 @@ export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '*': 11, '**': 37 }
+				{ '*': 11, '**': 36 }
 			),
 			_identifier: normalizeSingularWrapSlot(data._identifier, 'identifier', true, data.$type, {
 				tree,
@@ -4009,7 +4009,7 @@ export function wrapComplexPattern(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '+': 50, '-': 51 }
+				{ '+': 49, '-': 50 }
 			),
 			_content: normalizeSingularWrapSlot(data._content ?? data._integer ?? data._float, 'content', true, data.$type, {
 				tree,
@@ -4648,7 +4648,7 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ and: 53, or: 54 }
+				{ and: 52, or: 53 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -4713,18 +4713,18 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
 				{
-					'+': 50,
-					'-': 51,
+					'+': 49,
+					'-': 50,
 					'*': 11,
-					'@': 45,
-					'/': 55,
-					'%': 56,
-					'//': 57,
-					'**': 37,
-					'|': 46,
-					'&': 58,
-					'^': 59,
-					'<<': 60,
+					'@': 44,
+					'/': 54,
+					'%': 55,
+					'//': 56,
+					'**': 36,
+					'|': 45,
+					'&': 57,
+					'^': 58,
+					'<<': 59,
 					'>>': 12
 				}
 			),
@@ -4769,7 +4769,7 @@ export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '+': 50, '-': 51, '~': 61 }
+				{ '+': 49, '-': 50, '~': 60 }
 			),
 			_argument: normalizeSingularWrapSlot(data._argument, 'argument', true, data.$type, {
 				tree,
@@ -8412,9 +8412,9 @@ export function wrapComparisonOperatorComparator(
 					'>=': 98,
 					'>': 99,
 					'<>': 100,
-					in: 29,
+					in: 28,
 					'not in': 190,
-					is: 62,
+					is: 61,
 					'is not': 191
 				}
 			),
@@ -8605,6 +8605,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	await: (d, t) => wrapAwait(d as unknown as T.Await, t),
 	comment: (d) => ({ ...d, $type: TSKindId.Comment as const }),
 	line_continuation: (d) => ({ ...d, $type: TSKindId.LineContinuation as const }),
+	_kw_async_marker: (d) => ({ ...d, $type: TSKindId.KwAsyncMarker as const }),
 	_except_clause_group1: (d, t) => wrapExceptClauseGroup1(d as unknown as T.ExceptClauseGroup1, t),
 	_argument_list_group1: (d, t) => wrapArgumentListGroup1(d as unknown as T.ArgumentListGroup1, t),
 	_expression_list_group1: (d, t) => wrapExpressionListGroup1(d as unknown as T.ExpressionListGroup1, t),

@@ -1007,8 +1007,15 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "async"
+              "type": "FIELD",
+              "name": "async_marker",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_async_marker"
+              },
+              "metadata": {
+                "fieldSource": "enriched"
+              }
             },
             {
               "type": "BLANK"
@@ -1278,8 +1285,15 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "async"
+              "type": "FIELD",
+              "name": "async_marker",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_async_marker"
+              },
+              "metadata": {
+                "fieldSource": "enriched"
+              }
             },
             {
               "type": "BLANK"
@@ -1376,8 +1390,15 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "async"
+              "type": "FIELD",
+              "name": "async_marker",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_async_marker"
+              },
+              "metadata": {
+                "fieldSource": "enriched"
+              }
             },
             {
               "type": "BLANK"
@@ -5878,6 +5899,10 @@
       "type": "STRING",
       "value": "*"
     },
+    "_kw_async_marker": {
+      "type": "STRING",
+      "value": "async"
+    },
     "_print_statement_group1": {
       "type": "SEQ",
       "members": [
@@ -7311,14 +7336,6 @@
     "_kw_in_clause": {
       "type": "BLANK"
     },
-    "_kw_async_marker": {
-      "type": "PREC_LEFT",
-      "value": 0,
-      "content": {
-        "type": "STRING",
-        "value": "async"
-      }
-    },
     "_kw_block": {
       "type": "BLANK"
     },
@@ -7715,7 +7732,6 @@
     "_function_definition_optional1",
     "_exec_statement_optional1",
     "_kw_real",
-    "_kw_async_marker",
     "_kw_type"
   ],
   "supertypes": [

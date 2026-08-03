@@ -117,7 +117,7 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "34 referenced kind(s) resolved no parser kindId",
+    "message": "29 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -132,16 +132,11 @@
         "_extern_crate_declaration_optional1",
         "_function_item_optional1",
         "_in_path",
-        "_kw_async_marker",
         "_kw_comma",
-        "_kw_move_marker",
         "_kw_operator",
         "_kw_pub",
-        "_kw_ref_marker",
         "_kw_reference",
-        "_kw_static_marker",
         "_kw_turbofish",
-        "_kw_unsafe_marker",
         "_let_declaration_optional1",
         "_let_declaration_optional2",
         "_match_block_optional1",
@@ -180,7 +175,7 @@
   },
   {
     "code": "kindid-inline-excluded-symbols",
-    "message": "28 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "24 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -194,15 +189,11 @@
         "_expression_ending_with_block",
         "_extern_crate_declaration_optional1",
         "_function_item_optional1",
-        "_kw_async_marker",
         "_kw_comma",
-        "_kw_move_marker",
         "_kw_operator",
         "_kw_pub",
         "_kw_reference",
-        "_kw_static_marker",
         "_kw_turbofish",
-        "_kw_unsafe_marker",
         "_let_declaration_optional1",
         "_let_declaration_optional2",
         "_match_block_optional1",
@@ -250,14 +241,13 @@
   },
   {
     "code": "kindid-unclassified-symbols",
-    "message": "5 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "message": "4 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
       "kinds": [
         "_compound_assignment_expr_operator",
         "_in_path",
-        "_kw_ref_marker",
         "_primitive_type",
         "_visibility_modifier_pub_parens"
       ]

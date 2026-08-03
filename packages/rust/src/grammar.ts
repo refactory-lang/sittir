@@ -840,6 +840,7 @@ export type RustGrammar = {
 		named: true;
 		fields: {
 			mutable_specifier: { multiple: false; required: false; types: [{ type: 'mutable_specifier'; named: true }] };
+			ref_marker: { multiple: false; required: false; types: [{ type: 'ref'; named: false }] };
 		};
 		children: {
 			multiple: false;

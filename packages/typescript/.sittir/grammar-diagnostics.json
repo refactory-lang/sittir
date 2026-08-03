@@ -252,7 +252,7 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "50 referenced kind(s) resolved no parser kindId",
+    "message": "41 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -276,18 +276,9 @@
         "_jsx_start_opening_element",
         "_jsx_start_opening_element_group1",
         "_jsx_string",
-        "_kw_abstract_marker",
-        "_kw_accessor_marker",
         "_kw_asserts",
-        "_kw_async_marker",
-        "_kw_await_marker",
-        "_kw_const_marker",
-        "_kw_declare_marker",
         "_kw_optional_marker",
-        "_kw_readonly_marker",
-        "_kw_static_marker",
         "_kw_type_predicate",
-        "_kw_using_marker",
         "_mapped_type_clause_optional1",
         "_operator",
         "_semicolon",
@@ -344,7 +335,7 @@
   },
   {
     "code": "kindid-inline-excluded-symbols",
-    "message": "24 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "18 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -364,13 +355,7 @@
         "_jsx_element_name",
         "_jsx_identifier",
         "_jsx_start_opening_element",
-        "_kw_abstract_marker",
-        "_kw_async_marker",
-        "_kw_const_marker",
         "_kw_optional_marker",
-        "_kw_readonly_marker",
-        "_kw_static_marker",
-        "_kw_using_marker",
         "_mapped_type_clause_optional1",
         "_semicolon"
       ]
@@ -439,17 +424,14 @@
   },
   {
     "code": "kindid-unclassified-symbols",
-    "message": "9 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "message": "6 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
       "kinds": [
         "__number_operator",
         "_augmented_assignment_expression_operator",
-        "_kw_accessor_marker",
         "_kw_asserts",
-        "_kw_await_marker",
-        "_kw_declare_marker",
         "_kw_type_predicate",
         "_operator",
         "_unary_expression_operator"
