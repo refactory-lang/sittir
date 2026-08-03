@@ -1023,7 +1023,15 @@ export function applyOverridePolymorphs(rules: Record<string, Rule<'link'>>, der
 		// Check whether any variant-child symbol appears in the found choice — either
 		// as a direct member or nested inside choice/seq arms at any shallow depth.
 		const symbolInNames = (r: Rule<'link'>): boolean => {
-			const inner = r.type === VARIANT ? r.content : r;
+			let inner = r.type === VARIANT ? r.content : r;
+			// Wire injects variant-child aliases as `optional(alias(...))` for
+			// some parents (e.g. public_field_definition) — unwrap OPTIONAL the
+			// same way VARIANT is unwrapped above, or the alias is invisible to
+			// this check and the parent wrongly falls into the ambient-scaffold
+			// pushdown branch below (which is a no-op for it, since the aliases
+			// ARE already present — its only effect is to rebuild the rule tree
+			// without preserving rule ids, per `rewriteSeqWithVariantAliasChoice`).
+			if (inner.type === OPTIONAL) inner = inner.content;
 			return inner.type === SYMBOL && variantChildSymbolNames.has(inner.name);
 		};
 		const symbolInRule = (r: Rule<'link'>): boolean => {
@@ -1099,11 +1107,11 @@ function rewriteSeqWithVariantAliasChoice(
 				return applyVariantScaffoldPushDown(rule, choiceIdx, rules);
 			}
 			const members = rule.members.map((m) => rewriteSeqWithVariantAliasChoice(m, rules, variantChildVisibleNames));
-			return { type: SEQ, members };
+			return { ...rule, members };
 		}
 		case CHOICE: {
 			const members = rule.members.map((m) => rewriteSeqWithVariantAliasChoice(m, rules, variantChildVisibleNames));
-			return { type: CHOICE, members };
+			return { ...rule, members };
 		}
 		case OPTIONAL:
 		case REPEAT:

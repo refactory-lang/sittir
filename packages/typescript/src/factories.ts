@@ -2769,10 +2769,7 @@ export function buildReservedIdentifier(
 export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Config) {
 	const _decorator = config.decorator ?? [];
 	const _visibility_prefix = config.visibilityPrefix;
-	const _accessor_marker = coerceBooleanKeywordStorage(config.accessorMarker);
-	const _public_field_definition_static_mods = config.publicFieldDefinitionStaticMods;
-	const _public_field_definition_abstract_first = config.publicFieldDefinitionAbstractFirst;
-	const _public_field_definition_readonly_first = config.publicFieldDefinitionReadonlyFirst;
+	const _content = config.content;
 	const _name = config.name;
 	const _optionality_marker = coerceKindEnumStorage(config.optionalityMarker, [
 		['?', TSKindId.Qmark] as const,
@@ -2788,10 +2785,7 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 				$named: true as const,
 				_decorator,
 				_visibility_prefix,
-				_accessor_marker,
-				_public_field_definition_static_mods,
-				_public_field_definition_abstract_first,
-				_public_field_definition_readonly_first,
+				_content,
 				_name,
 				_optionality_marker,
 				_type,
@@ -2800,14 +2794,13 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 					decorators: (...values: T.Decorator[]) => buildPublicFieldDefinition({ ...config, decorator: values }),
 					visibilityPrefix: (value?: T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst) =>
 						buildPublicFieldDefinition({ ...config, visibilityPrefix: value }),
-					accessorMarker: (value?: NonNullable<Parameters<typeof buildPublicFieldDefinition>[0]>['accessorMarker']) =>
-						buildPublicFieldDefinition({ ...config, accessorMarker: value }),
-					publicFieldDefinitionStaticMods: (value?: T.PublicFieldDefinitionStaticMods) =>
-						buildPublicFieldDefinition({ ...config, publicFieldDefinitionStaticMods: value }),
-					publicFieldDefinitionAbstractFirst: (value?: T.PublicFieldDefinitionAbstractFirst) =>
-						buildPublicFieldDefinition({ ...config, publicFieldDefinitionAbstractFirst: value }),
-					publicFieldDefinitionReadonlyFirst: (value?: T.PublicFieldDefinitionReadonlyFirst) =>
-						buildPublicFieldDefinition({ ...config, publicFieldDefinitionReadonlyFirst: value }),
+					content: (
+						value?:
+							| T.PublicFieldDefinitionStaticMods
+							| T.PublicFieldDefinitionAbstractFirst
+							| T.PublicFieldDefinitionReadonlyFirst
+							| 'accessor'
+					) => buildPublicFieldDefinition({ ...config, content: value }),
 					name: (value: T.PropertyName) => buildPublicFieldDefinition({ ...config, name: value }),
 					optionalityMarker: (
 						value?: NonNullable<Parameters<typeof buildPublicFieldDefinition>[0]>['optionalityMarker']
@@ -2819,10 +2812,7 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 			{
 				decorators: () => _decorator,
 				visibilityPrefix: () => _visibility_prefix,
-				accessorMarker: () => _accessor_marker,
-				publicFieldDefinitionStaticMods: () => _public_field_definition_static_mods,
-				publicFieldDefinitionAbstractFirst: () => _public_field_definition_abstract_first,
-				publicFieldDefinitionReadonlyFirst: () => _public_field_definition_readonly_first,
+				content: () => _content,
 				name: () => _name,
 				optionalityMarker: () => _optionality_marker,
 				type: () => _type,

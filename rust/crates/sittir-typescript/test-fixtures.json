@@ -13859,17 +13859,6 @@
                     "$type": 267,
                     "$source": 0,
                     "$named": true,
-                    "_public_field_definition_static_mods": {
-                      "$type": 402,
-                      "$source": 0,
-                      "$named": true,
-                      "_static_marker": 107,
-                      "$span": {
-                        "start": 27,
-                        "end": 33
-                      },
-                      "$nodeHandle": 14
-                    },
                     "_name": "findConfiguration",
                     "_type": {
                       "$type": 303,
@@ -13886,7 +13875,7 @@
                           "start": 53,
                           "end": 77
                         },
-                        "$nodeHandle": 16,
+                        "$nodeHandle": 15,
                         "_content": "findConfiguration"
                       },
                       "$other": [
@@ -13896,14 +13885,25 @@
                         "start": 51,
                         "end": 77
                       },
-                      "$nodeHandle": 15
+                      "$nodeHandle": 14
                     },
                     "$span": {
                       "start": 27,
                       "end": 77
                     },
                     "$nodeHandle": 13,
-                    "_decorator": []
+                    "_decorator": [],
+                    "_content": {
+                      "$type": 402,
+                      "$source": 0,
+                      "$named": true,
+                      "_static_marker": 107,
+                      "$span": {
+                        "start": 27,
+                        "end": 33
+                      },
+                      "$nodeHandle": 16
+                    }
                   }
                 }
               ]
@@ -13988,17 +13988,6 @@
                 "$type": 267,
                 "$source": 0,
                 "$named": true,
-                "_public_field_definition_static_mods": {
-                  "$type": 402,
-                  "$source": 0,
-                  "$named": true,
-                  "_static_marker": 107,
-                  "$span": {
-                    "start": 27,
-                    "end": 33
-                  },
-                  "$nodeHandle": 21
-                },
                 "_name": "findConfiguration",
                 "_type": {
                   "$type": 303,
@@ -14015,7 +14004,7 @@
                       "start": 53,
                       "end": 77
                     },
-                    "$nodeHandle": 23,
+                    "$nodeHandle": 22,
                     "_content": "findConfiguration"
                   },
                   "$other": [
@@ -14025,14 +14014,25 @@
                     "start": 51,
                     "end": 77
                   },
-                  "$nodeHandle": 22
+                  "$nodeHandle": 21
                 },
                 "$span": {
                   "start": 27,
                   "end": 77
                 },
                 "$nodeHandle": 20,
-                "_decorator": []
+                "_decorator": [],
+                "_content": {
+                  "$type": 402,
+                  "$source": 0,
+                  "$named": true,
+                  "_static_marker": 107,
+                  "$span": {
+                    "start": 27,
+                    "end": 33
+                  },
+                  "$nodeHandle": 23
+                }
               }
             }
           ]
@@ -14098,17 +14098,6 @@
               "$type": 267,
               "$source": 0,
               "$named": true,
-              "_public_field_definition_static_mods": {
-                "$type": 402,
-                "$source": 0,
-                "$named": true,
-                "_static_marker": 107,
-                "$span": {
-                  "start": 27,
-                  "end": 33
-                },
-                "$nodeHandle": 27
-              },
               "_name": "findConfiguration",
               "_type": {
                 "$type": 303,
@@ -14125,7 +14114,7 @@
                     "start": 53,
                     "end": 77
                   },
-                  "$nodeHandle": 29,
+                  "$nodeHandle": 28,
                   "_content": "findConfiguration"
                 },
                 "$other": [
@@ -14135,14 +14124,25 @@
                   "start": 51,
                   "end": 77
                 },
-                "$nodeHandle": 28
+                "$nodeHandle": 27
               },
               "$span": {
                 "start": 27,
                 "end": 77
               },
               "$nodeHandle": 26,
-              "_decorator": []
+              "_decorator": [],
+              "_content": {
+                "$type": 402,
+                "$source": 0,
+                "$named": true,
+                "_static_marker": 107,
+                "$span": {
+                  "start": 27,
+                  "end": 33
+                },
+                "$nodeHandle": 29
+              }
             }
           }
         ]
@@ -14202,17 +14202,6 @@
             "$type": 267,
             "$source": 0,
             "$named": true,
-            "_public_field_definition_static_mods": {
-              "$type": 402,
-              "$source": 0,
-              "$named": true,
-              "_static_marker": 107,
-              "$span": {
-                "start": 27,
-                "end": 33
-              },
-              "$nodeHandle": 32
-            },
             "_name": "findConfiguration",
             "_type": {
               "$type": 303,
@@ -14229,7 +14218,7 @@
                   "start": 53,
                   "end": 77
                 },
-                "$nodeHandle": 34,
+                "$nodeHandle": 33,
                 "_content": "findConfiguration"
               },
               "$other": [
@@ -14239,14 +14228,25 @@
                 "start": 51,
                 "end": 77
               },
-              "$nodeHandle": 33
+              "$nodeHandle": 32
             },
             "$span": {
               "start": 27,
               "end": 77
             },
             "$nodeHandle": 31,
-            "_decorator": []
+            "_decorator": [],
+            "_content": {
+              "$type": 402,
+              "$source": 0,
+              "$named": true,
+              "_static_marker": 107,
+              "$span": {
+                "start": 27,
+                "end": 33
+              },
+              "$nodeHandle": 34
+            }
           }
         }
       ]
@@ -14292,7 +14292,7 @@
         "start": 51,
         "end": 77
       },
-      "$nodeHandle": 7
+      "$nodeHandle": 6
     },
     "expectedOutput": ":typeof findConfiguration"
   },
@@ -14321,7 +14321,7 @@
         "start": 53,
         "end": 77
       },
-      "$nodeHandle": 8,
+      "$nodeHandle": 7,
       "_content": "findConfiguration"
     },
     "expectedOutput": "typeof findConfiguration"
@@ -15886,17 +15886,6 @@
                           },
                           "$nodeHandle": 39
                         },
-                        "_public_field_definition_readonly_first": {
-                          "$type": 404,
-                          "$source": 0,
-                          "$named": true,
-                          "_readonly_marker": 116,
-                          "$span": {
-                            "start": 119,
-                            "end": 127
-                          },
-                          "$nodeHandle": 40
-                        },
                         "_name": "id",
                         "_value": {
                           "$type": 246,
@@ -15906,7 +15895,7 @@
                             "start": 133,
                             "end": 154
                           },
-                          "$nodeHandle": 41,
+                          "$nodeHandle": 40,
                           "_content": {
                             "$type": 414,
                             "$source": 0,
@@ -15917,7 +15906,7 @@
                               "start": 133,
                               "end": 154
                             },
-                            "$nodeHandle": 42
+                            "$nodeHandle": 41
                           }
                         },
                         "$other": [
@@ -15928,7 +15917,18 @@
                           "end": 154
                         },
                         "$nodeHandle": 38,
-                        "_decorator": []
+                        "_decorator": [],
+                        "_content": {
+                          "$type": 404,
+                          "$source": 0,
+                          "$named": true,
+                          "_readonly_marker": 116,
+                          "$span": {
+                            "start": 119,
+                            "end": 127
+                          },
+                          "$nodeHandle": 42
+                        }
                       }
                     }
                   ]
@@ -16189,17 +16189,6 @@
                       },
                       "$nodeHandle": 58
                     },
-                    "_public_field_definition_readonly_first": {
-                      "$type": 404,
-                      "$source": 0,
-                      "$named": true,
-                      "_readonly_marker": 116,
-                      "$span": {
-                        "start": 119,
-                        "end": 127
-                      },
-                      "$nodeHandle": 59
-                    },
                     "_name": "id",
                     "_value": {
                       "$type": 246,
@@ -16209,7 +16198,7 @@
                         "start": 133,
                         "end": 154
                       },
-                      "$nodeHandle": 60,
+                      "$nodeHandle": 59,
                       "_content": {
                         "$type": 414,
                         "$source": 0,
@@ -16220,7 +16209,7 @@
                           "start": 133,
                           "end": 154
                         },
-                        "$nodeHandle": 61
+                        "$nodeHandle": 60
                       }
                     },
                     "$other": [
@@ -16231,7 +16220,18 @@
                       "end": 154
                     },
                     "$nodeHandle": 57,
-                    "_decorator": []
+                    "_decorator": [],
+                    "_content": {
+                      "$type": 404,
+                      "$source": 0,
+                      "$named": true,
+                      "_readonly_marker": 116,
+                      "$span": {
+                        "start": 119,
+                        "end": 127
+                      },
+                      "$nodeHandle": 61
+                    }
                   }
                 }
               ]
@@ -16687,17 +16687,6 @@
                 },
                 "$nodeHandle": 86
               },
-              "_public_field_definition_readonly_first": {
-                "$type": 404,
-                "$source": 0,
-                "$named": true,
-                "_readonly_marker": 116,
-                "$span": {
-                  "start": 119,
-                  "end": 127
-                },
-                "$nodeHandle": 87
-              },
               "_name": "id",
               "_value": {
                 "$type": 246,
@@ -16707,7 +16696,7 @@
                   "start": 133,
                   "end": 154
                 },
-                "$nodeHandle": 88,
+                "$nodeHandle": 87,
                 "_content": {
                   "$type": 414,
                   "$source": 0,
@@ -16718,7 +16707,7 @@
                     "start": 133,
                     "end": 154
                   },
-                  "$nodeHandle": 89
+                  "$nodeHandle": 88
                 }
               },
               "$other": [
@@ -16729,7 +16718,18 @@
                 "end": 154
               },
               "$nodeHandle": 85,
-              "_decorator": []
+              "_decorator": [],
+              "_content": {
+                "$type": 404,
+                "$source": 0,
+                "$named": true,
+                "_readonly_marker": 116,
+                "$span": {
+                  "start": 119,
+                  "end": 127
+                },
+                "$nodeHandle": 89
+              }
             }
           }
         ]
@@ -16800,17 +16800,6 @@
               },
               "$nodeHandle": 92
             },
-            "_public_field_definition_readonly_first": {
-              "$type": 404,
-              "$source": 0,
-              "$named": true,
-              "_readonly_marker": 116,
-              "$span": {
-                "start": 119,
-                "end": 127
-              },
-              "$nodeHandle": 93
-            },
             "_name": "id",
             "_value": {
               "$type": 246,
@@ -16820,7 +16809,7 @@
                 "start": 133,
                 "end": 154
               },
-              "$nodeHandle": 94,
+              "$nodeHandle": 93,
               "_content": {
                 "$type": 414,
                 "$source": 0,
@@ -16831,7 +16820,7 @@
                   "start": 133,
                   "end": 154
                 },
-                "$nodeHandle": 95
+                "$nodeHandle": 94
               }
             },
             "$other": [
@@ -16842,7 +16831,18 @@
               "end": 154
             },
             "$nodeHandle": 91,
-            "_decorator": []
+            "_decorator": [],
+            "_content": {
+              "$type": 404,
+              "$source": 0,
+              "$named": true,
+              "_readonly_marker": 116,
+              "$span": {
+                "start": 119,
+                "end": 127
+              },
+              "$nodeHandle": 95
+            }
           }
         }
       ]
@@ -16871,7 +16871,7 @@
         "start": 133,
         "end": 154
       },
-      "$nodeHandle": 20,
+      "$nodeHandle": 19,
       "_content": {
         "$type": 414,
         "$source": 0,
@@ -30677,17 +30677,6 @@
                   "$type": 267,
                   "$source": 0,
                   "$named": true,
-                  "_public_field_definition_static_mods": {
-                    "$type": 402,
-                    "$source": 0,
-                    "$named": true,
-                    "_static_marker": 107,
-                    "$span": {
-                      "start": 14,
-                      "end": 20
-                    },
-                    "$nodeHandle": 49
-                  },
                   "_name": "2",
                   "_type": {
                     "$type": 303,
@@ -30702,7 +30691,7 @@
                         "start": 24,
                         "end": 30
                       },
-                      "$nodeHandle": 51
+                      "$nodeHandle": 50
                     },
                     "$other": [
                       30
@@ -30711,14 +30700,25 @@
                       "start": 22,
                       "end": 30
                     },
-                    "$nodeHandle": 50
+                    "$nodeHandle": 49
                   },
                   "$span": {
                     "start": 14,
                     "end": 30
                   },
                   "$nodeHandle": 48,
-                  "_decorator": []
+                  "_decorator": [],
+                  "_content": {
+                    "$type": 402,
+                    "$source": 0,
+                    "$named": true,
+                    "_static_marker": 107,
+                    "$span": {
+                      "start": 14,
+                      "end": 20
+                    },
+                    "$nodeHandle": 51
+                  }
                 }
               },
               {
@@ -30746,17 +30746,6 @@
                     },
                     "$nodeHandle": 53
                   },
-                  "_public_field_definition_static_mods": {
-                    "$type": 402,
-                    "$source": 0,
-                    "$named": true,
-                    "_static_marker": 107,
-                    "$span": {
-                      "start": 41,
-                      "end": 47
-                    },
-                    "$nodeHandle": 54
-                  },
                   "_name": "2",
                   "_type": {
                     "$type": 303,
@@ -30771,7 +30760,7 @@
                         "start": 51,
                         "end": 57
                       },
-                      "$nodeHandle": 56
+                      "$nodeHandle": 55
                     },
                     "$other": [
                       30
@@ -30780,7 +30769,7 @@
                       "start": 49,
                       "end": 57
                     },
-                    "$nodeHandle": 55
+                    "$nodeHandle": 54
                   },
                   "_value": {
                     "$type": 248,
@@ -30790,7 +30779,7 @@
                       "start": 60,
                       "end": 68
                     },
-                    "$nodeHandle": 57,
+                    "$nodeHandle": 56,
                     "_content": {
                       "$type": 413,
                       "$source": 0,
@@ -30803,7 +30792,7 @@
                         "start": 60,
                         "end": 68
                       },
-                      "$nodeHandle": 58,
+                      "$nodeHandle": 57,
                       "_content": [
                         "string"
                       ]
@@ -30817,7 +30806,18 @@
                     "end": 68
                   },
                   "$nodeHandle": 52,
-                  "_decorator": []
+                  "_decorator": [],
+                  "_content": {
+                    "$type": 402,
+                    "$source": 0,
+                    "$named": true,
+                    "_static_marker": 107,
+                    "$span": {
+                      "start": 41,
+                      "end": 47
+                    },
+                    "$nodeHandle": 58
+                  }
                 }
               },
               {
@@ -30845,18 +30845,6 @@
                     },
                     "$nodeHandle": 60
                   },
-                  "_public_field_definition_static_mods": {
-                    "$type": 402,
-                    "$source": 0,
-                    "$named": true,
-                    "_static_marker": 107,
-                    "_readonly_marker": true,
-                    "$span": {
-                      "start": 79,
-                      "end": 94
-                    },
-                    "$nodeHandle": 61
-                  },
                   "_name": {
                     "$type": 248,
                     "$source": 0,
@@ -30865,7 +30853,7 @@
                       "start": 95,
                       "end": 102
                     },
-                    "$nodeHandle": 62,
+                    "$nodeHandle": 61,
                     "_content": {
                       "$type": 413,
                       "$source": 0,
@@ -30878,7 +30866,7 @@
                         "start": 95,
                         "end": 102
                       },
-                      "$nodeHandle": 63,
+                      "$nodeHandle": 62,
                       "_content": [
                         "hello"
                       ]
@@ -30897,7 +30885,7 @@
                       "start": 103,
                       "end": 108
                     },
-                    "$nodeHandle": 64
+                    "$nodeHandle": 63
                   },
                   "_value": {
                     "$type": 248,
@@ -30907,7 +30895,7 @@
                       "start": 111,
                       "end": 119
                     },
-                    "$nodeHandle": 65,
+                    "$nodeHandle": 64,
                     "_content": {
                       "$type": 413,
                       "$source": 0,
@@ -30920,7 +30908,7 @@
                         "start": 111,
                         "end": 119
                       },
-                      "$nodeHandle": 66,
+                      "$nodeHandle": 65,
                       "_content": [
                         "string"
                       ]
@@ -30934,7 +30922,19 @@
                     "end": 119
                   },
                   "$nodeHandle": 59,
-                  "_decorator": []
+                  "_decorator": [],
+                  "_content": {
+                    "$type": 402,
+                    "$source": 0,
+                    "$named": true,
+                    "_static_marker": 107,
+                    "_readonly_marker": true,
+                    "$span": {
+                      "start": 79,
+                      "end": 94
+                    },
+                    "$nodeHandle": 66
+                  }
                 }
               },
               {
@@ -30951,18 +30951,6 @@
                   "$type": 267,
                   "$source": 0,
                   "$named": true,
-                  "_public_field_definition_static_mods": {
-                    "$type": 402,
-                    "$source": 0,
-                    "$named": true,
-                    "_static_marker": 107,
-                    "_readonly_marker": true,
-                    "$span": {
-                      "start": 123,
-                      "end": 138
-                    },
-                    "$nodeHandle": 68
-                  },
                   "_name": {
                     "$type": 248,
                     "$source": 0,
@@ -30971,7 +30959,7 @@
                       "start": 139,
                       "end": 146
                     },
-                    "$nodeHandle": 69,
+                    "$nodeHandle": 68,
                     "_content": {
                       "$type": 413,
                       "$source": 0,
@@ -30984,7 +30972,7 @@
                         "start": 139,
                         "end": 146
                       },
-                      "$nodeHandle": 70,
+                      "$nodeHandle": 69,
                       "_content": [
                         "hello"
                       ]
@@ -31003,7 +30991,7 @@
                       "start": 147,
                       "end": 152
                     },
-                    "$nodeHandle": 71
+                    "$nodeHandle": 70
                   },
                   "_value": {
                     "$type": 248,
@@ -31013,7 +31001,7 @@
                       "start": 155,
                       "end": 163
                     },
-                    "$nodeHandle": 72,
+                    "$nodeHandle": 71,
                     "_content": {
                       "$type": 413,
                       "$source": 0,
@@ -31026,7 +31014,7 @@
                         "start": 155,
                         "end": 163
                       },
-                      "$nodeHandle": 73,
+                      "$nodeHandle": 72,
                       "_content": [
                         "string"
                       ]
@@ -31040,7 +31028,19 @@
                     "end": 163
                   },
                   "$nodeHandle": 67,
-                  "_decorator": []
+                  "_decorator": [],
+                  "_content": {
+                    "$type": 402,
+                    "$source": 0,
+                    "$named": true,
+                    "_static_marker": 107,
+                    "_readonly_marker": true,
+                    "$span": {
+                      "start": 123,
+                      "end": 138
+                    },
+                    "$nodeHandle": 73
+                  }
                 }
               },
               {
@@ -31057,17 +31057,6 @@
                   "$type": 267,
                   "$source": 0,
                   "$named": true,
-                  "_public_field_definition_readonly_first": {
-                    "$type": 404,
-                    "$source": 0,
-                    "$named": true,
-                    "_readonly_marker": 116,
-                    "$span": {
-                      "start": 167,
-                      "end": 175
-                    },
-                    "$nodeHandle": 75
-                  },
                   "_name": {
                     "$type": 248,
                     "$source": 0,
@@ -31076,7 +31065,7 @@
                       "start": 176,
                       "end": 183
                     },
-                    "$nodeHandle": 76,
+                    "$nodeHandle": 75,
                     "_content": {
                       "$type": 413,
                       "$source": 0,
@@ -31089,7 +31078,7 @@
                         "start": 176,
                         "end": 183
                       },
-                      "$nodeHandle": 77,
+                      "$nodeHandle": 76,
                       "_content": [
                         "hello"
                       ]
@@ -31108,7 +31097,7 @@
                       "start": 184,
                       "end": 189
                     },
-                    "$nodeHandle": 78
+                    "$nodeHandle": 77
                   },
                   "_value": {
                     "$type": 248,
@@ -31118,7 +31107,7 @@
                       "start": 192,
                       "end": 200
                     },
-                    "$nodeHandle": 79,
+                    "$nodeHandle": 78,
                     "_content": {
                       "$type": 413,
                       "$source": 0,
@@ -31131,7 +31120,7 @@
                         "start": 192,
                         "end": 200
                       },
-                      "$nodeHandle": 80,
+                      "$nodeHandle": 79,
                       "_content": [
                         "string"
                       ]
@@ -31145,7 +31134,18 @@
                     "end": 200
                   },
                   "$nodeHandle": 74,
-                  "_decorator": []
+                  "_decorator": [],
+                  "_content": {
+                    "$type": 404,
+                    "$source": 0,
+                    "$named": true,
+                    "_readonly_marker": 116,
+                    "$span": {
+                      "start": 167,
+                      "end": 175
+                    },
+                    "$nodeHandle": 80
+                  }
                 }
               }
             ]
@@ -31217,17 +31217,6 @@
               "$type": 267,
               "$source": 0,
               "$named": true,
-              "_public_field_definition_static_mods": {
-                "$type": 402,
-                "$source": 0,
-                "$named": true,
-                "_static_marker": 107,
-                "$span": {
-                  "start": 14,
-                  "end": 20
-                },
-                "$nodeHandle": 88
-              },
               "_name": "2",
               "_type": {
                 "$type": 303,
@@ -31242,7 +31231,7 @@
                     "start": 24,
                     "end": 30
                   },
-                  "$nodeHandle": 90
+                  "$nodeHandle": 89
                 },
                 "$other": [
                   30
@@ -31251,14 +31240,25 @@
                   "start": 22,
                   "end": 30
                 },
-                "$nodeHandle": 89
+                "$nodeHandle": 88
               },
               "$span": {
                 "start": 14,
                 "end": 30
               },
               "$nodeHandle": 87,
-              "_decorator": []
+              "_decorator": [],
+              "_content": {
+                "$type": 402,
+                "$source": 0,
+                "$named": true,
+                "_static_marker": 107,
+                "$span": {
+                  "start": 14,
+                  "end": 20
+                },
+                "$nodeHandle": 90
+              }
             }
           },
           {
@@ -31286,17 +31286,6 @@
                 },
                 "$nodeHandle": 92
               },
-              "_public_field_definition_static_mods": {
-                "$type": 402,
-                "$source": 0,
-                "$named": true,
-                "_static_marker": 107,
-                "$span": {
-                  "start": 41,
-                  "end": 47
-                },
-                "$nodeHandle": 93
-              },
               "_name": "2",
               "_type": {
                 "$type": 303,
@@ -31311,7 +31300,7 @@
                     "start": 51,
                     "end": 57
                   },
-                  "$nodeHandle": 95
+                  "$nodeHandle": 94
                 },
                 "$other": [
                   30
@@ -31320,7 +31309,7 @@
                   "start": 49,
                   "end": 57
                 },
-                "$nodeHandle": 94
+                "$nodeHandle": 93
               },
               "_value": {
                 "$type": 248,
@@ -31330,7 +31319,7 @@
                   "start": 60,
                   "end": 68
                 },
-                "$nodeHandle": 96,
+                "$nodeHandle": 95,
                 "_content": {
                   "$type": 413,
                   "$source": 0,
@@ -31343,7 +31332,7 @@
                     "start": 60,
                     "end": 68
                   },
-                  "$nodeHandle": 97,
+                  "$nodeHandle": 96,
                   "_content": [
                     "string"
                   ]
@@ -31357,7 +31346,18 @@
                 "end": 68
               },
               "$nodeHandle": 91,
-              "_decorator": []
+              "_decorator": [],
+              "_content": {
+                "$type": 402,
+                "$source": 0,
+                "$named": true,
+                "_static_marker": 107,
+                "$span": {
+                  "start": 41,
+                  "end": 47
+                },
+                "$nodeHandle": 97
+              }
             }
           },
           {
@@ -31385,18 +31385,6 @@
                 },
                 "$nodeHandle": 99
               },
-              "_public_field_definition_static_mods": {
-                "$type": 402,
-                "$source": 0,
-                "$named": true,
-                "_static_marker": 107,
-                "_readonly_marker": true,
-                "$span": {
-                  "start": 79,
-                  "end": 94
-                },
-                "$nodeHandle": 100
-              },
               "_name": {
                 "$type": 248,
                 "$source": 0,
@@ -31405,7 +31393,7 @@
                   "start": 95,
                   "end": 102
                 },
-                "$nodeHandle": 101,
+                "$nodeHandle": 100,
                 "_content": {
                   "$type": 413,
                   "$source": 0,
@@ -31418,7 +31406,7 @@
                     "start": 95,
                     "end": 102
                   },
-                  "$nodeHandle": 102,
+                  "$nodeHandle": 101,
                   "_content": [
                     "hello"
                   ]
@@ -31437,7 +31425,7 @@
                   "start": 103,
                   "end": 108
                 },
-                "$nodeHandle": 103
+                "$nodeHandle": 102
               },
               "_value": {
                 "$type": 248,
@@ -31447,7 +31435,7 @@
                   "start": 111,
                   "end": 119
                 },
-                "$nodeHandle": 104,
+                "$nodeHandle": 103,
                 "_content": {
                   "$type": 413,
                   "$source": 0,
@@ -31460,7 +31448,7 @@
                     "start": 111,
                     "end": 119
                   },
-                  "$nodeHandle": 105,
+                  "$nodeHandle": 104,
                   "_content": [
                     "string"
                   ]
@@ -31474,7 +31462,19 @@
                 "end": 119
               },
               "$nodeHandle": 98,
-              "_decorator": []
+              "_decorator": [],
+              "_content": {
+                "$type": 402,
+                "$source": 0,
+                "$named": true,
+                "_static_marker": 107,
+                "_readonly_marker": true,
+                "$span": {
+                  "start": 79,
+                  "end": 94
+                },
+                "$nodeHandle": 105
+              }
             }
           },
           {
@@ -31491,18 +31491,6 @@
               "$type": 267,
               "$source": 0,
               "$named": true,
-              "_public_field_definition_static_mods": {
-                "$type": 402,
-                "$source": 0,
-                "$named": true,
-                "_static_marker": 107,
-                "_readonly_marker": true,
-                "$span": {
-                  "start": 123,
-                  "end": 138
-                },
-                "$nodeHandle": 107
-              },
               "_name": {
                 "$type": 248,
                 "$source": 0,
@@ -31511,7 +31499,7 @@
                   "start": 139,
                   "end": 146
                 },
-                "$nodeHandle": 108,
+                "$nodeHandle": 107,
                 "_content": {
                   "$type": 413,
                   "$source": 0,
@@ -31524,7 +31512,7 @@
                     "start": 139,
                     "end": 146
                   },
-                  "$nodeHandle": 109,
+                  "$nodeHandle": 108,
                   "_content": [
                     "hello"
                   ]
@@ -31543,7 +31531,7 @@
                   "start": 147,
                   "end": 152
                 },
-                "$nodeHandle": 110
+                "$nodeHandle": 109
               },
               "_value": {
                 "$type": 248,
@@ -31553,7 +31541,7 @@
                   "start": 155,
                   "end": 163
                 },
-                "$nodeHandle": 111,
+                "$nodeHandle": 110,
                 "_content": {
                   "$type": 413,
                   "$source": 0,
@@ -31566,7 +31554,7 @@
                     "start": 155,
                     "end": 163
                   },
-                  "$nodeHandle": 112,
+                  "$nodeHandle": 111,
                   "_content": [
                     "string"
                   ]
@@ -31580,7 +31568,19 @@
                 "end": 163
               },
               "$nodeHandle": 106,
-              "_decorator": []
+              "_decorator": [],
+              "_content": {
+                "$type": 402,
+                "$source": 0,
+                "$named": true,
+                "_static_marker": 107,
+                "_readonly_marker": true,
+                "$span": {
+                  "start": 123,
+                  "end": 138
+                },
+                "$nodeHandle": 112
+              }
             }
           },
           {
@@ -31597,17 +31597,6 @@
               "$type": 267,
               "$source": 0,
               "$named": true,
-              "_public_field_definition_readonly_first": {
-                "$type": 404,
-                "$source": 0,
-                "$named": true,
-                "_readonly_marker": 116,
-                "$span": {
-                  "start": 167,
-                  "end": 175
-                },
-                "$nodeHandle": 114
-              },
               "_name": {
                 "$type": 248,
                 "$source": 0,
@@ -31616,7 +31605,7 @@
                   "start": 176,
                   "end": 183
                 },
-                "$nodeHandle": 115,
+                "$nodeHandle": 114,
                 "_content": {
                   "$type": 413,
                   "$source": 0,
@@ -31629,7 +31618,7 @@
                     "start": 176,
                     "end": 183
                   },
-                  "$nodeHandle": 116,
+                  "$nodeHandle": 115,
                   "_content": [
                     "hello"
                   ]
@@ -31648,7 +31637,7 @@
                   "start": 184,
                   "end": 189
                 },
-                "$nodeHandle": 117
+                "$nodeHandle": 116
               },
               "_value": {
                 "$type": 248,
@@ -31658,7 +31647,7 @@
                   "start": 192,
                   "end": 200
                 },
-                "$nodeHandle": 118,
+                "$nodeHandle": 117,
                 "_content": {
                   "$type": 413,
                   "$source": 0,
@@ -31671,7 +31660,7 @@
                     "start": 192,
                     "end": 200
                   },
-                  "$nodeHandle": 119,
+                  "$nodeHandle": 118,
                   "_content": [
                     "string"
                   ]
@@ -31685,7 +31674,18 @@
                 "end": 200
               },
               "$nodeHandle": 113,
-              "_decorator": []
+              "_decorator": [],
+              "_content": {
+                "$type": 404,
+                "$source": 0,
+                "$named": true,
+                "_readonly_marker": 116,
+                "$span": {
+                  "start": 167,
+                  "end": 175
+                },
+                "$nodeHandle": 119
+              }
             }
           }
         ]
@@ -31745,17 +31745,6 @@
             "$type": 267,
             "$source": 0,
             "$named": true,
-            "_public_field_definition_static_mods": {
-              "$type": 402,
-              "$source": 0,
-              "$named": true,
-              "_static_marker": 107,
-              "$span": {
-                "start": 14,
-                "end": 20
-              },
-              "$nodeHandle": 126
-            },
             "_name": "2",
             "_type": {
               "$type": 303,
@@ -31770,7 +31759,7 @@
                   "start": 24,
                   "end": 30
                 },
-                "$nodeHandle": 128
+                "$nodeHandle": 127
               },
               "$other": [
                 30
@@ -31779,14 +31768,25 @@
                 "start": 22,
                 "end": 30
               },
-              "$nodeHandle": 127
+              "$nodeHandle": 126
             },
             "$span": {
               "start": 14,
               "end": 30
             },
             "$nodeHandle": 125,
-            "_decorator": []
+            "_decorator": [],
+            "_content": {
+              "$type": 402,
+              "$source": 0,
+              "$named": true,
+              "_static_marker": 107,
+              "$span": {
+                "start": 14,
+                "end": 20
+              },
+              "$nodeHandle": 128
+            }
           }
         },
         {
@@ -31814,17 +31814,6 @@
               },
               "$nodeHandle": 130
             },
-            "_public_field_definition_static_mods": {
-              "$type": 402,
-              "$source": 0,
-              "$named": true,
-              "_static_marker": 107,
-              "$span": {
-                "start": 41,
-                "end": 47
-              },
-              "$nodeHandle": 131
-            },
             "_name": "2",
             "_type": {
               "$type": 303,
@@ -31839,7 +31828,7 @@
                   "start": 51,
                   "end": 57
                 },
-                "$nodeHandle": 133
+                "$nodeHandle": 132
               },
               "$other": [
                 30
@@ -31848,7 +31837,7 @@
                 "start": 49,
                 "end": 57
               },
-              "$nodeHandle": 132
+              "$nodeHandle": 131
             },
             "_value": {
               "$type": 248,
@@ -31858,7 +31847,7 @@
                 "start": 60,
                 "end": 68
               },
-              "$nodeHandle": 134,
+              "$nodeHandle": 133,
               "_content": {
                 "$type": 413,
                 "$source": 0,
@@ -31871,7 +31860,7 @@
                   "start": 60,
                   "end": 68
                 },
-                "$nodeHandle": 135,
+                "$nodeHandle": 134,
                 "_content": [
                   "string"
                 ]
@@ -31885,7 +31874,18 @@
               "end": 68
             },
             "$nodeHandle": 129,
-            "_decorator": []
+            "_decorator": [],
+            "_content": {
+              "$type": 402,
+              "$source": 0,
+              "$named": true,
+              "_static_marker": 107,
+              "$span": {
+                "start": 41,
+                "end": 47
+              },
+              "$nodeHandle": 135
+            }
           }
         },
         {
@@ -31913,18 +31913,6 @@
               },
               "$nodeHandle": 137
             },
-            "_public_field_definition_static_mods": {
-              "$type": 402,
-              "$source": 0,
-              "$named": true,
-              "_static_marker": 107,
-              "_readonly_marker": true,
-              "$span": {
-                "start": 79,
-                "end": 94
-              },
-              "$nodeHandle": 138
-            },
             "_name": {
               "$type": 248,
               "$source": 0,
@@ -31933,7 +31921,7 @@
                 "start": 95,
                 "end": 102
               },
-              "$nodeHandle": 139,
+              "$nodeHandle": 138,
               "_content": {
                 "$type": 413,
                 "$source": 0,
@@ -31946,7 +31934,7 @@
                   "start": 95,
                   "end": 102
                 },
-                "$nodeHandle": 140,
+                "$nodeHandle": 139,
                 "_content": [
                   "hello"
                 ]
@@ -31965,7 +31953,7 @@
                 "start": 103,
                 "end": 108
               },
-              "$nodeHandle": 141
+              "$nodeHandle": 140
             },
             "_value": {
               "$type": 248,
@@ -31975,7 +31963,7 @@
                 "start": 111,
                 "end": 119
               },
-              "$nodeHandle": 142,
+              "$nodeHandle": 141,
               "_content": {
                 "$type": 413,
                 "$source": 0,
@@ -31988,7 +31976,7 @@
                   "start": 111,
                   "end": 119
                 },
-                "$nodeHandle": 143,
+                "$nodeHandle": 142,
                 "_content": [
                   "string"
                 ]
@@ -32002,7 +31990,19 @@
               "end": 119
             },
             "$nodeHandle": 136,
-            "_decorator": []
+            "_decorator": [],
+            "_content": {
+              "$type": 402,
+              "$source": 0,
+              "$named": true,
+              "_static_marker": 107,
+              "_readonly_marker": true,
+              "$span": {
+                "start": 79,
+                "end": 94
+              },
+              "$nodeHandle": 143
+            }
           }
         },
         {
@@ -32019,18 +32019,6 @@
             "$type": 267,
             "$source": 0,
             "$named": true,
-            "_public_field_definition_static_mods": {
-              "$type": 402,
-              "$source": 0,
-              "$named": true,
-              "_static_marker": 107,
-              "_readonly_marker": true,
-              "$span": {
-                "start": 123,
-                "end": 138
-              },
-              "$nodeHandle": 145
-            },
             "_name": {
               "$type": 248,
               "$source": 0,
@@ -32039,7 +32027,7 @@
                 "start": 139,
                 "end": 146
               },
-              "$nodeHandle": 146,
+              "$nodeHandle": 145,
               "_content": {
                 "$type": 413,
                 "$source": 0,
@@ -32052,7 +32040,7 @@
                   "start": 139,
                   "end": 146
                 },
-                "$nodeHandle": 147,
+                "$nodeHandle": 146,
                 "_content": [
                   "hello"
                 ]
@@ -32071,7 +32059,7 @@
                 "start": 147,
                 "end": 152
               },
-              "$nodeHandle": 148
+              "$nodeHandle": 147
             },
             "_value": {
               "$type": 248,
@@ -32081,7 +32069,7 @@
                 "start": 155,
                 "end": 163
               },
-              "$nodeHandle": 149,
+              "$nodeHandle": 148,
               "_content": {
                 "$type": 413,
                 "$source": 0,
@@ -32094,7 +32082,7 @@
                   "start": 155,
                   "end": 163
                 },
-                "$nodeHandle": 150,
+                "$nodeHandle": 149,
                 "_content": [
                   "string"
                 ]
@@ -32108,7 +32096,19 @@
               "end": 163
             },
             "$nodeHandle": 144,
-            "_decorator": []
+            "_decorator": [],
+            "_content": {
+              "$type": 402,
+              "$source": 0,
+              "$named": true,
+              "_static_marker": 107,
+              "_readonly_marker": true,
+              "$span": {
+                "start": 123,
+                "end": 138
+              },
+              "$nodeHandle": 150
+            }
           }
         },
         {
@@ -32125,17 +32125,6 @@
             "$type": 267,
             "$source": 0,
             "$named": true,
-            "_public_field_definition_readonly_first": {
-              "$type": 404,
-              "$source": 0,
-              "$named": true,
-              "_readonly_marker": 116,
-              "$span": {
-                "start": 167,
-                "end": 175
-              },
-              "$nodeHandle": 152
-            },
             "_name": {
               "$type": 248,
               "$source": 0,
@@ -32144,7 +32133,7 @@
                 "start": 176,
                 "end": 183
               },
-              "$nodeHandle": 153,
+              "$nodeHandle": 152,
               "_content": {
                 "$type": 413,
                 "$source": 0,
@@ -32157,7 +32146,7 @@
                   "start": 176,
                   "end": 183
                 },
-                "$nodeHandle": 154,
+                "$nodeHandle": 153,
                 "_content": [
                   "hello"
                 ]
@@ -32176,7 +32165,7 @@
                 "start": 184,
                 "end": 189
               },
-              "$nodeHandle": 155
+              "$nodeHandle": 154
             },
             "_value": {
               "$type": 248,
@@ -32186,7 +32175,7 @@
                 "start": 192,
                 "end": 200
               },
-              "$nodeHandle": 156,
+              "$nodeHandle": 155,
               "_content": {
                 "$type": 413,
                 "$source": 0,
@@ -32199,7 +32188,7 @@
                   "start": 192,
                   "end": 200
                 },
-                "$nodeHandle": 157,
+                "$nodeHandle": 156,
                 "_content": [
                   "string"
                 ]
@@ -32213,7 +32202,18 @@
               "end": 200
             },
             "$nodeHandle": 151,
-            "_decorator": []
+            "_decorator": [],
+            "_content": {
+              "$type": 404,
+              "$source": 0,
+              "$named": true,
+              "_readonly_marker": 116,
+              "$span": {
+                "start": 167,
+                "end": 175
+              },
+              "$nodeHandle": 157
+            }
           }
         }
       ]
@@ -32256,7 +32256,7 @@
         "start": 22,
         "end": 30
       },
-      "$nodeHandle": 10
+      "$nodeHandle": 9
     },
     "expectedOutput": ":string"
   },
@@ -32296,7 +32296,7 @@
         "start": 49,
         "end": 57
       },
-      "$nodeHandle": 15
+      "$nodeHandle": 14
     },
     "expectedOutput": ":string"
   },
@@ -32326,7 +32326,7 @@
         "start": 103,
         "end": 108
       },
-      "$nodeHandle": 24
+      "$nodeHandle": 23
     },
     "expectedOutput": ":int"
   },
@@ -32356,7 +32356,7 @@
         "start": 147,
         "end": 152
       },
-      "$nodeHandle": 31
+      "$nodeHandle": 30
     },
     "expectedOutput": ":int"
   },
@@ -32386,7 +32386,7 @@
         "start": 184,
         "end": 189
       },
-      "$nodeHandle": 38
+      "$nodeHandle": 37
     },
     "expectedOutput": ":int"
   },
@@ -32412,7 +32412,7 @@
         "start": 60,
         "end": 68
       },
-      "$nodeHandle": 17,
+      "$nodeHandle": 16,
       "_content": {
         "$type": 413,
         "$source": 0,
@@ -32455,7 +32455,7 @@
         "start": 95,
         "end": 102
       },
-      "$nodeHandle": 22,
+      "$nodeHandle": 21,
       "_content": {
         "$type": 413,
         "$source": 0,
@@ -32498,7 +32498,7 @@
         "start": 111,
         "end": 119
       },
-      "$nodeHandle": 25,
+      "$nodeHandle": 24,
       "_content": {
         "$type": 413,
         "$source": 0,
@@ -32541,7 +32541,7 @@
         "start": 139,
         "end": 146
       },
-      "$nodeHandle": 29,
+      "$nodeHandle": 28,
       "_content": {
         "$type": 413,
         "$source": 0,
@@ -32584,7 +32584,7 @@
         "start": 155,
         "end": 163
       },
-      "$nodeHandle": 32,
+      "$nodeHandle": 31,
       "_content": {
         "$type": 413,
         "$source": 0,
@@ -32627,7 +32627,7 @@
         "start": 176,
         "end": 183
       },
-      "$nodeHandle": 36,
+      "$nodeHandle": 35,
       "_content": {
         "$type": 413,
         "$source": 0,
@@ -32670,7 +32670,7 @@
         "start": 192,
         "end": 200
       },
-      "$nodeHandle": 39,
+      "$nodeHandle": 38,
       "_content": {
         "$type": 413,
         "$source": 0,
@@ -33324,17 +33324,6 @@
                       "_content": "foo"
                     }
                   ],
-                  "_public_field_definition_static_mods": {
-                    "$type": 402,
-                    "$source": 0,
-                    "$named": true,
-                    "_static_marker": 107,
-                    "$span": {
-                      "start": 29,
-                      "end": 35
-                    },
-                    "$nodeHandle": 58
-                  },
                   "_name": "2",
                   "_type": {
                     "$type": 303,
@@ -33349,7 +33338,7 @@
                         "start": 39,
                         "end": 45
                       },
-                      "$nodeHandle": 60
+                      "$nodeHandle": 59
                     },
                     "$other": [
                       30
@@ -33358,13 +33347,24 @@
                       "start": 37,
                       "end": 45
                     },
-                    "$nodeHandle": 59
+                    "$nodeHandle": 58
                   },
                   "$span": {
                     "start": 24,
                     "end": 45
                   },
-                  "$nodeHandle": 56
+                  "$nodeHandle": 56,
+                  "_content": {
+                    "$type": 402,
+                    "$source": 0,
+                    "$named": true,
+                    "_static_marker": 107,
+                    "$span": {
+                      "start": 29,
+                      "end": 35
+                    },
+                    "$nodeHandle": 60
+                  }
                 }
               },
               {
@@ -33449,17 +33449,6 @@
                     },
                     "$nodeHandle": 66
                   },
-                  "_public_field_definition_static_mods": {
-                    "$type": 402,
-                    "$source": 0,
-                    "$named": true,
-                    "_static_marker": 107,
-                    "$span": {
-                      "start": 72,
-                      "end": 78
-                    },
-                    "$nodeHandle": 67
-                  },
                   "_name": "2",
                   "_type": {
                     "$type": 303,
@@ -33474,7 +33463,7 @@
                         "start": 82,
                         "end": 88
                       },
-                      "$nodeHandle": 69
+                      "$nodeHandle": 68
                     },
                     "$other": [
                       30
@@ -33483,7 +33472,7 @@
                       "start": 80,
                       "end": 88
                     },
-                    "$nodeHandle": 68
+                    "$nodeHandle": 67
                   },
                   "_value": {
                     "$type": 248,
@@ -33493,7 +33482,7 @@
                       "start": 91,
                       "end": 99
                     },
-                    "$nodeHandle": 70,
+                    "$nodeHandle": 69,
                     "_content": {
                       "$type": 413,
                       "$source": 0,
@@ -33506,7 +33495,7 @@
                         "start": 91,
                         "end": 99
                       },
-                      "$nodeHandle": 71,
+                      "$nodeHandle": 70,
                       "_content": [
                         "string"
                       ]
@@ -33519,7 +33508,18 @@
                     "start": 49,
                     "end": 99
                   },
-                  "$nodeHandle": 61
+                  "$nodeHandle": 61,
+                  "_content": {
+                    "$type": 402,
+                    "$source": 0,
+                    "$named": true,
+                    "_static_marker": 107,
+                    "$span": {
+                      "start": 72,
+                      "end": 78
+                    },
+                    "$nodeHandle": 71
+                  }
                 }
               },
               {
@@ -33552,17 +33552,6 @@
                       "_content": "readonly"
                     }
                   ],
-                  "_public_field_definition_readonly_first": {
-                    "$type": 404,
-                    "$source": 0,
-                    "$named": true,
-                    "_readonly_marker": 116,
-                    "$span": {
-                      "start": 113,
-                      "end": 121
-                    },
-                    "$nodeHandle": 74
-                  },
                   "_name": {
                     "$type": 248,
                     "$source": 0,
@@ -33571,7 +33560,7 @@
                       "start": 122,
                       "end": 129
                     },
-                    "$nodeHandle": 75,
+                    "$nodeHandle": 74,
                     "_content": {
                       "$type": 413,
                       "$source": 0,
@@ -33584,7 +33573,7 @@
                         "start": 122,
                         "end": 129
                       },
-                      "$nodeHandle": 76,
+                      "$nodeHandle": 75,
                       "_content": [
                         "hello"
                       ]
@@ -33603,7 +33592,7 @@
                       "start": 130,
                       "end": 135
                     },
-                    "$nodeHandle": 77
+                    "$nodeHandle": 76
                   },
                   "_value": {
                     "$type": 248,
@@ -33613,7 +33602,7 @@
                       "start": 138,
                       "end": 146
                     },
-                    "$nodeHandle": 78,
+                    "$nodeHandle": 77,
                     "_content": {
                       "$type": 413,
                       "$source": 0,
@@ -33626,7 +33615,7 @@
                         "start": 138,
                         "end": 146
                       },
-                      "$nodeHandle": 79,
+                      "$nodeHandle": 78,
                       "_content": [
                         "string"
                       ]
@@ -33639,7 +33628,18 @@
                     "start": 103,
                     "end": 146
                   },
-                  "$nodeHandle": 72
+                  "$nodeHandle": 72,
+                  "_content": {
+                    "$type": 404,
+                    "$source": 0,
+                    "$named": true,
+                    "_readonly_marker": 116,
+                    "$span": {
+                      "start": 113,
+                      "end": 121
+                    },
+                    "$nodeHandle": 79
+                  }
                 }
               },
               {
@@ -33945,17 +33945,6 @@
                   "_content": "foo"
                 }
               ],
-              "_public_field_definition_static_mods": {
-                "$type": 402,
-                "$source": 0,
-                "$named": true,
-                "_static_marker": 107,
-                "$span": {
-                  "start": 29,
-                  "end": 35
-                },
-                "$nodeHandle": 104
-              },
               "_name": "2",
               "_type": {
                 "$type": 303,
@@ -33970,7 +33959,7 @@
                     "start": 39,
                     "end": 45
                   },
-                  "$nodeHandle": 106
+                  "$nodeHandle": 105
                 },
                 "$other": [
                   30
@@ -33979,13 +33968,24 @@
                   "start": 37,
                   "end": 45
                 },
-                "$nodeHandle": 105
+                "$nodeHandle": 104
               },
               "$span": {
                 "start": 24,
                 "end": 45
               },
-              "$nodeHandle": 102
+              "$nodeHandle": 102,
+              "_content": {
+                "$type": 402,
+                "$source": 0,
+                "$named": true,
+                "_static_marker": 107,
+                "$span": {
+                  "start": 29,
+                  "end": 35
+                },
+                "$nodeHandle": 106
+              }
             }
           },
           {
@@ -34070,17 +34070,6 @@
                 },
                 "$nodeHandle": 112
               },
-              "_public_field_definition_static_mods": {
-                "$type": 402,
-                "$source": 0,
-                "$named": true,
-                "_static_marker": 107,
-                "$span": {
-                  "start": 72,
-                  "end": 78
-                },
-                "$nodeHandle": 113
-              },
               "_name": "2",
               "_type": {
                 "$type": 303,
@@ -34095,7 +34084,7 @@
                     "start": 82,
                     "end": 88
                   },
-                  "$nodeHandle": 115
+                  "$nodeHandle": 114
                 },
                 "$other": [
                   30
@@ -34104,7 +34093,7 @@
                   "start": 80,
                   "end": 88
                 },
-                "$nodeHandle": 114
+                "$nodeHandle": 113
               },
               "_value": {
                 "$type": 248,
@@ -34114,7 +34103,7 @@
                   "start": 91,
                   "end": 99
                 },
-                "$nodeHandle": 116,
+                "$nodeHandle": 115,
                 "_content": {
                   "$type": 413,
                   "$source": 0,
@@ -34127,7 +34116,7 @@
                     "start": 91,
                     "end": 99
                   },
-                  "$nodeHandle": 117,
+                  "$nodeHandle": 116,
                   "_content": [
                     "string"
                   ]
@@ -34140,7 +34129,18 @@
                 "start": 49,
                 "end": 99
               },
-              "$nodeHandle": 107
+              "$nodeHandle": 107,
+              "_content": {
+                "$type": 402,
+                "$source": 0,
+                "$named": true,
+                "_static_marker": 107,
+                "$span": {
+                  "start": 72,
+                  "end": 78
+                },
+                "$nodeHandle": 117
+              }
             }
           },
           {
@@ -34173,17 +34173,6 @@
                   "_content": "readonly"
                 }
               ],
-              "_public_field_definition_readonly_first": {
-                "$type": 404,
-                "$source": 0,
-                "$named": true,
-                "_readonly_marker": 116,
-                "$span": {
-                  "start": 113,
-                  "end": 121
-                },
-                "$nodeHandle": 120
-              },
               "_name": {
                 "$type": 248,
                 "$source": 0,
@@ -34192,7 +34181,7 @@
                   "start": 122,
                   "end": 129
                 },
-                "$nodeHandle": 121,
+                "$nodeHandle": 120,
                 "_content": {
                   "$type": 413,
                   "$source": 0,
@@ -34205,7 +34194,7 @@
                     "start": 122,
                     "end": 129
                   },
-                  "$nodeHandle": 122,
+                  "$nodeHandle": 121,
                   "_content": [
                     "hello"
                   ]
@@ -34224,7 +34213,7 @@
                   "start": 130,
                   "end": 135
                 },
-                "$nodeHandle": 123
+                "$nodeHandle": 122
               },
               "_value": {
                 "$type": 248,
@@ -34234,7 +34223,7 @@
                   "start": 138,
                   "end": 146
                 },
-                "$nodeHandle": 124,
+                "$nodeHandle": 123,
                 "_content": {
                   "$type": 413,
                   "$source": 0,
@@ -34247,7 +34236,7 @@
                     "start": 138,
                     "end": 146
                   },
-                  "$nodeHandle": 125,
+                  "$nodeHandle": 124,
                   "_content": [
                     "string"
                   ]
@@ -34260,7 +34249,18 @@
                 "start": 103,
                 "end": 146
               },
-              "$nodeHandle": 118
+              "$nodeHandle": 118,
+              "_content": {
+                "$type": 404,
+                "$source": 0,
+                "$named": true,
+                "_readonly_marker": 116,
+                "$span": {
+                  "start": 113,
+                  "end": 121
+                },
+                "$nodeHandle": 125
+              }
             }
           },
           {
@@ -34524,17 +34524,6 @@
                 "_content": "foo"
               }
             ],
-            "_public_field_definition_static_mods": {
-              "$type": 402,
-              "$source": 0,
-              "$named": true,
-              "_static_marker": 107,
-              "$span": {
-                "start": 29,
-                "end": 35
-              },
-              "$nodeHandle": 150
-            },
             "_name": "2",
             "_type": {
               "$type": 303,
@@ -34549,7 +34538,7 @@
                   "start": 39,
                   "end": 45
                 },
-                "$nodeHandle": 152
+                "$nodeHandle": 151
               },
               "$other": [
                 30
@@ -34558,13 +34547,24 @@
                 "start": 37,
                 "end": 45
               },
-              "$nodeHandle": 151
+              "$nodeHandle": 150
             },
             "$span": {
               "start": 24,
               "end": 45
             },
-            "$nodeHandle": 148
+            "$nodeHandle": 148,
+            "_content": {
+              "$type": 402,
+              "$source": 0,
+              "$named": true,
+              "_static_marker": 107,
+              "$span": {
+                "start": 29,
+                "end": 35
+              },
+              "$nodeHandle": 152
+            }
           }
         },
         {
@@ -34649,17 +34649,6 @@
               },
               "$nodeHandle": 158
             },
-            "_public_field_definition_static_mods": {
-              "$type": 402,
-              "$source": 0,
-              "$named": true,
-              "_static_marker": 107,
-              "$span": {
-                "start": 72,
-                "end": 78
-              },
-              "$nodeHandle": 159
-            },
             "_name": "2",
             "_type": {
               "$type": 303,
@@ -34674,7 +34663,7 @@
                   "start": 82,
                   "end": 88
                 },
-                "$nodeHandle": 161
+                "$nodeHandle": 160
               },
               "$other": [
                 30
@@ -34683,7 +34672,7 @@
                 "start": 80,
                 "end": 88
               },
-              "$nodeHandle": 160
+              "$nodeHandle": 159
             },
             "_value": {
               "$type": 248,
@@ -34693,7 +34682,7 @@
                 "start": 91,
                 "end": 99
               },
-              "$nodeHandle": 162,
+              "$nodeHandle": 161,
               "_content": {
                 "$type": 413,
                 "$source": 0,
@@ -34706,7 +34695,7 @@
                   "start": 91,
                   "end": 99
                 },
-                "$nodeHandle": 163,
+                "$nodeHandle": 162,
                 "_content": [
                   "string"
                 ]
@@ -34719,7 +34708,18 @@
               "start": 49,
               "end": 99
             },
-            "$nodeHandle": 153
+            "$nodeHandle": 153,
+            "_content": {
+              "$type": 402,
+              "$source": 0,
+              "$named": true,
+              "_static_marker": 107,
+              "$span": {
+                "start": 72,
+                "end": 78
+              },
+              "$nodeHandle": 163
+            }
           }
         },
         {
@@ -34752,17 +34752,6 @@
                 "_content": "readonly"
               }
             ],
-            "_public_field_definition_readonly_first": {
-              "$type": 404,
-              "$source": 0,
-              "$named": true,
-              "_readonly_marker": 116,
-              "$span": {
-                "start": 113,
-                "end": 121
-              },
-              "$nodeHandle": 166
-            },
             "_name": {
               "$type": 248,
               "$source": 0,
@@ -34771,7 +34760,7 @@
                 "start": 122,
                 "end": 129
               },
-              "$nodeHandle": 167,
+              "$nodeHandle": 166,
               "_content": {
                 "$type": 413,
                 "$source": 0,
@@ -34784,7 +34773,7 @@
                   "start": 122,
                   "end": 129
                 },
-                "$nodeHandle": 168,
+                "$nodeHandle": 167,
                 "_content": [
                   "hello"
                 ]
@@ -34803,7 +34792,7 @@
                 "start": 130,
                 "end": 135
               },
-              "$nodeHandle": 169
+              "$nodeHandle": 168
             },
             "_value": {
               "$type": 248,
@@ -34813,7 +34802,7 @@
                 "start": 138,
                 "end": 146
               },
-              "$nodeHandle": 170,
+              "$nodeHandle": 169,
               "_content": {
                 "$type": 413,
                 "$source": 0,
@@ -34826,7 +34815,7 @@
                   "start": 138,
                   "end": 146
                 },
-                "$nodeHandle": 171,
+                "$nodeHandle": 170,
                 "_content": [
                   "string"
                 ]
@@ -34839,7 +34828,18 @@
               "start": 103,
               "end": 146
             },
-            "$nodeHandle": 164
+            "$nodeHandle": 164,
+            "_content": {
+              "$type": 404,
+              "$source": 0,
+              "$named": true,
+              "_readonly_marker": 116,
+              "$span": {
+                "start": 113,
+                "end": 121
+              },
+              "$nodeHandle": 171
+            }
           }
         },
         {
@@ -35071,7 +35071,7 @@
         "start": 37,
         "end": 45
       },
-      "$nodeHandle": 12
+      "$nodeHandle": 11
     },
     "expectedOutput": ":string"
   },
@@ -35111,7 +35111,7 @@
         "start": 80,
         "end": 88
       },
-      "$nodeHandle": 21
+      "$nodeHandle": 20
     },
     "expectedOutput": ":string"
   },
@@ -35141,7 +35141,7 @@
         "start": 130,
         "end": 135
       },
-      "$nodeHandle": 30
+      "$nodeHandle": 29
     },
     "expectedOutput": ":int"
   },
@@ -35311,7 +35311,7 @@
         "start": 91,
         "end": 99
       },
-      "$nodeHandle": 23,
+      "$nodeHandle": 22,
       "_content": {
         "$type": 413,
         "$source": 0,
@@ -35354,7 +35354,7 @@
         "start": 122,
         "end": 129
       },
-      "$nodeHandle": 28,
+      "$nodeHandle": 27,
       "_content": {
         "$type": 413,
         "$source": 0,
@@ -35397,7 +35397,7 @@
         "start": 138,
         "end": 146
       },
-      "$nodeHandle": 31,
+      "$nodeHandle": 30,
       "_content": {
         "$type": 413,
         "$source": 0,
@@ -37568,18 +37568,6 @@
                   "$type": 267,
                   "$source": 0,
                   "$named": true,
-                  "_public_field_definition_readonly_first": {
-                    "$type": 404,
-                    "$source": 0,
-                    "$named": true,
-                    "_readonly_marker": 116,
-                    "_abstract_marker": true,
-                    "$span": {
-                      "start": 52,
-                      "end": 69
-                    },
-                    "$nodeHandle": 57
-                  },
                   "_name": "prop",
                   "_type": {
                     "$type": 303,
@@ -37594,7 +37582,7 @@
                         "start": 76,
                         "end": 82
                       },
-                      "$nodeHandle": 59
+                      "$nodeHandle": 58
                     },
                     "$other": [
                       30
@@ -37603,14 +37591,26 @@
                       "start": 74,
                       "end": 82
                     },
-                    "$nodeHandle": 58
+                    "$nodeHandle": 57
                   },
                   "$span": {
                     "start": 52,
                     "end": 82
                   },
                   "$nodeHandle": 56,
-                  "_decorator": []
+                  "_decorator": [],
+                  "_content": {
+                    "$type": 404,
+                    "$source": 0,
+                    "$named": true,
+                    "_readonly_marker": 116,
+                    "_abstract_marker": true,
+                    "$span": {
+                      "start": 52,
+                      "end": 69
+                    },
+                    "$nodeHandle": 59
+                  }
                 }
               },
               {
@@ -38160,18 +38160,6 @@
               "$type": 267,
               "$source": 0,
               "$named": true,
-              "_public_field_definition_readonly_first": {
-                "$type": 404,
-                "$source": 0,
-                "$named": true,
-                "_readonly_marker": 116,
-                "_abstract_marker": true,
-                "$span": {
-                  "start": 52,
-                  "end": 69
-                },
-                "$nodeHandle": 98
-              },
               "_name": "prop",
               "_type": {
                 "$type": 303,
@@ -38186,7 +38174,7 @@
                     "start": 76,
                     "end": 82
                   },
-                  "$nodeHandle": 100
+                  "$nodeHandle": 99
                 },
                 "$other": [
                   30
@@ -38195,14 +38183,26 @@
                   "start": 74,
                   "end": 82
                 },
-                "$nodeHandle": 99
+                "$nodeHandle": 98
               },
               "$span": {
                 "start": 52,
                 "end": 82
               },
               "$nodeHandle": 97,
-              "_decorator": []
+              "_decorator": [],
+              "_content": {
+                "$type": 404,
+                "$source": 0,
+                "$named": true,
+                "_readonly_marker": 116,
+                "_abstract_marker": true,
+                "$span": {
+                  "start": 52,
+                  "end": 69
+                },
+                "$nodeHandle": 100
+              }
             }
           },
           {
@@ -38740,18 +38740,6 @@
             "$type": 267,
             "$source": 0,
             "$named": true,
-            "_public_field_definition_readonly_first": {
-              "$type": 404,
-              "$source": 0,
-              "$named": true,
-              "_readonly_marker": 116,
-              "_abstract_marker": true,
-              "$span": {
-                "start": 52,
-                "end": 69
-              },
-              "$nodeHandle": 137
-            },
             "_name": "prop",
             "_type": {
               "$type": 303,
@@ -38766,7 +38754,7 @@
                   "start": 76,
                   "end": 82
                 },
-                "$nodeHandle": 139
+                "$nodeHandle": 138
               },
               "$other": [
                 30
@@ -38775,14 +38763,26 @@
                 "start": 74,
                 "end": 82
               },
-              "$nodeHandle": 138
+              "$nodeHandle": 137
             },
             "$span": {
               "start": 52,
               "end": 82
             },
             "$nodeHandle": 136,
-            "_decorator": []
+            "_decorator": [],
+            "_content": {
+              "$type": 404,
+              "$source": 0,
+              "$named": true,
+              "_readonly_marker": 116,
+              "_abstract_marker": true,
+              "$span": {
+                "start": 52,
+                "end": 69
+              },
+              "$nodeHandle": 139
+            }
           }
         },
         {
@@ -39245,7 +39245,7 @@
         "start": 74,
         "end": 82
       },
-      "$nodeHandle": 14
+      "$nodeHandle": 13
     },
     "expectedOutput": ":string"
   },

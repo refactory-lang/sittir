@@ -42,11 +42,11 @@
   },
   {
     "scope": "grammar",
-    "code": "union-slot-unaddressable",
+    "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "public_field_definition",
-    "message": "[collect-slots] kind 'public_field_definition': fieldless structural choice qualifies for union routing but carries no rule id (rebuilt without id preservation) — union slot would be unaddressable at emit; keeping distribution. Fix the rebuild site to preserve ids.",
+    "message": "[collect-slots] kind 'public_field_definition': choice rule:public_field_definition:root routes 3 unnamed-nonterminal arm(s) [public_field_definition_static_mods, public_field_definition_abstract_first, public_field_definition_readonly_first] into one union slot alongside 1 label-routed arm(s) [field(accessor_marker):\"accessor\"] (PR 1.5)",
     "canProceed": true
   },
   {

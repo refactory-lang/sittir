@@ -6458,10 +6458,45 @@ export function wrap_PropertyIdentifier(
 	);
 }
 
-export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: TreeHandle) {
+export function wrapPublicFieldDefinition(
+	data: T.PublicFieldDefinition & {
+		readonly _accessor_marker?:
+			| T.PublicFieldDefinitionStaticMods
+			| T.PublicFieldDefinitionAbstractFirst
+			| T.PublicFieldDefinitionReadonlyFirst
+			| 'accessor';
+		readonly _public_field_definition_static_mods?:
+			| T.PublicFieldDefinitionStaticMods
+			| T.PublicFieldDefinitionAbstractFirst
+			| T.PublicFieldDefinitionReadonlyFirst
+			| 'accessor';
+		readonly _public_field_definition_abstract_first?:
+			| T.PublicFieldDefinitionStaticMods
+			| T.PublicFieldDefinitionAbstractFirst
+			| T.PublicFieldDefinitionReadonlyFirst
+			| 'accessor';
+		readonly _public_field_definition_readonly_first?:
+			| T.PublicFieldDefinitionStaticMods
+			| T.PublicFieldDefinitionAbstractFirst
+			| T.PublicFieldDefinitionReadonlyFirst
+			| 'accessor';
+		readonly _accessor?:
+			| T.PublicFieldDefinitionStaticMods
+			| T.PublicFieldDefinitionAbstractFirst
+			| T.PublicFieldDefinitionReadonlyFirst
+			| 'accessor';
+	},
+	tree: TreeHandle
+) {
 	const _node = withMethods(
 		{
-			...data,
+			..._omitWrapKeys(data, [
+				'_accessor',
+				'_accessor_marker',
+				'_public_field_definition_abstract_first',
+				'_public_field_definition_readonly_first',
+				'_public_field_definition_static_mods'
+			]),
 			$type: TSKindId.PublicFieldDefinition as const,
 			_decorator: normalizeRepeatedWrapSlot(data._decorator, false, 'decorator', {
 				tree,
@@ -6475,44 +6510,17 @@ export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: T
 				slotName: 'visibility_prefix',
 				span: (data as _NodeData).$span
 			}),
-			_accessor_marker: coerceBooleanKeywordStorage(
-				normalizeSingularWrapSlot(data._accessor_marker, 'accessor_marker', false, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'accessor_marker',
-					span: (data as _NodeData).$span
-				})
-			),
-			_public_field_definition_static_mods: normalizeSingularWrapSlot(
-				data._public_field_definition_static_mods,
-				'public_field_definition_static_mods',
+			_content: normalizeSingularWrapSlot(
+				data._content ??
+					data._accessor_marker ??
+					data._public_field_definition_static_mods ??
+					data._public_field_definition_abstract_first ??
+					data._public_field_definition_readonly_first ??
+					data._accessor,
+				'content',
 				false,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'public_field_definition_static_mods', span: (data as _NodeData).$span }
-			),
-			_public_field_definition_abstract_first: normalizeSingularWrapSlot(
-				data._public_field_definition_abstract_first,
-				'public_field_definition_abstract_first',
-				false,
-				data.$type,
-				{
-					tree,
-					nodeType: data.$type,
-					slotName: 'public_field_definition_abstract_first',
-					span: (data as _NodeData).$span
-				}
-			),
-			_public_field_definition_readonly_first: normalizeSingularWrapSlot(
-				data._public_field_definition_readonly_first,
-				'public_field_definition_readonly_first',
-				false,
-				data.$type,
-				{
-					tree,
-					nodeType: data.$type,
-					slotName: 'public_field_definition_readonly_first',
-					span: (data as _NodeData).$span
-				}
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
 			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 				tree,
@@ -6556,27 +6564,18 @@ export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: T
 					]
 				);
 			},
-			accessorMarker() {
-				return this._accessor_marker;
-			},
-			publicFieldDefinitionStaticMods() {
-				return drillAs<T.PublicFieldDefinitionStaticMods | undefined>(this._public_field_definition_static_mods, tree, [
-					{ from: 'public_field_definition_static_mods', to: '_public_field_definition_static_mods' }
+			content() {
+				return drillAs<
+					| T.PublicFieldDefinitionStaticMods
+					| T.PublicFieldDefinitionAbstractFirst
+					| T.PublicFieldDefinitionReadonlyFirst
+					| 'accessor'
+					| undefined
+				>(this._content, tree, [
+					{ from: 'public_field_definition_static_mods', to: '_public_field_definition_static_mods' },
+					{ from: 'public_field_definition_abstract_first', to: '_public_field_definition_abstract_first' },
+					{ from: 'public_field_definition_readonly_first', to: '_public_field_definition_readonly_first' }
 				]);
-			},
-			publicFieldDefinitionAbstractFirst() {
-				return drillAs<T.PublicFieldDefinitionAbstractFirst | undefined>(
-					this._public_field_definition_abstract_first,
-					tree,
-					[{ from: 'public_field_definition_abstract_first', to: '_public_field_definition_abstract_first' }]
-				);
-			},
-			publicFieldDefinitionReadonlyFirst() {
-				return drillAs<T.PublicFieldDefinitionReadonlyFirst | undefined>(
-					this._public_field_definition_readonly_first,
-					tree,
-					[{ from: 'public_field_definition_readonly_first', to: '_public_field_definition_readonly_first' }]
-				);
 			},
 			name() {
 				return drillAs<T.PropertyName>(this._name, tree, [{ from: 'property_identifier', to: '_property_identifier' }]);
@@ -6595,17 +6594,8 @@ export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: T
 					wrapPublicFieldDefinition({ ...data, _decorator: v }, tree),
 				visibilityPrefix: (v: NonNullable<T.PublicFieldDefinition['_visibility_prefix']>) =>
 					wrapPublicFieldDefinition({ ...data, _visibility_prefix: v }, tree),
-				accessorMarker: (v: NonNullable<T.PublicFieldDefinition['_accessor_marker']>) =>
-					wrapPublicFieldDefinition({ ...data, _accessor_marker: v }, tree),
-				publicFieldDefinitionStaticMods: (
-					v: NonNullable<T.PublicFieldDefinition['_public_field_definition_static_mods']>
-				) => wrapPublicFieldDefinition({ ...data, _public_field_definition_static_mods: v }, tree),
-				publicFieldDefinitionAbstractFirst: (
-					v: NonNullable<T.PublicFieldDefinition['_public_field_definition_abstract_first']>
-				) => wrapPublicFieldDefinition({ ...data, _public_field_definition_abstract_first: v }, tree),
-				publicFieldDefinitionReadonlyFirst: (
-					v: NonNullable<T.PublicFieldDefinition['_public_field_definition_readonly_first']>
-				) => wrapPublicFieldDefinition({ ...data, _public_field_definition_readonly_first: v }, tree),
+				content: (v: NonNullable<T.PublicFieldDefinition['_content']>) =>
+					wrapPublicFieldDefinition({ ...data, _content: v }, tree),
 				name: (v: NonNullable<T.PublicFieldDefinition['_name']>) =>
 					wrapPublicFieldDefinition({ ...data, _name: v }, tree),
 				optionalityMarker: (v: NonNullable<T.PublicFieldDefinition['_optionality_marker']>) =>

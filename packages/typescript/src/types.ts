@@ -4312,24 +4312,26 @@ export interface PublicFieldDefinition {
 	readonly $type: TSKindId.PublicFieldDefinition;
 	readonly _decorator?: readonly Decorator[];
 	readonly _visibility_prefix?: PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst;
-	readonly _accessor_marker?: boolean;
-	readonly _public_field_definition_static_mods?: PublicFieldDefinitionStaticMods;
-	readonly _public_field_definition_abstract_first?: PublicFieldDefinitionAbstractFirst;
-	readonly _public_field_definition_readonly_first?: PublicFieldDefinitionReadonlyFirst;
+	readonly _content?:
+		| PublicFieldDefinitionStaticMods
+		| PublicFieldDefinitionAbstractFirst
+		| PublicFieldDefinitionReadonlyFirst
+		| 'accessor';
 	readonly _name: PropertyName;
 	readonly _optionality_marker?: number;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
 	readonly __inputHints__?: {
-		readonly accessor_marker?: BooleanKeyword<'accessor'>;
 		readonly optionality_marker?: KindEnum<'?' | '!', TSKindId.Qmark | TSKindId.Bang>;
 	};
 	decorators(): readonly Decorator[];
 	visibilityPrefix(): PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst | undefined;
-	accessorMarker(): boolean | undefined;
-	publicFieldDefinitionStaticMods(): PublicFieldDefinitionStaticMods | undefined;
-	publicFieldDefinitionAbstractFirst(): PublicFieldDefinitionAbstractFirst | undefined;
-	publicFieldDefinitionReadonlyFirst(): PublicFieldDefinitionReadonlyFirst | undefined;
+	content():
+		| PublicFieldDefinitionStaticMods
+		| PublicFieldDefinitionAbstractFirst
+		| PublicFieldDefinitionReadonlyFirst
+		| 'accessor'
+		| undefined;
 	name(): PropertyName;
 	optionalityMarker(): number | undefined;
 	type(): TypeAnnotation | undefined;

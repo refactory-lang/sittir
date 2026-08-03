@@ -1372,13 +1372,10 @@ pub struct PropertySignatureTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "public_field_definition.jinja", escape = "none")]
 pub struct PublicFieldDefinitionTemplate<'a> {
-    pub accessor_marker: OptionalNonterminalView<'a>,
+    pub content: OptionalNonterminalView<'a>,
     pub decorator: ListNonterminalView<'a>,
     pub name: SingleNonterminalView<'a>,
     pub optionality_marker: OptionalNonterminalView<'a>,
-    pub public_field_definition_abstract_first: OptionalNonterminalView<'a>,
-    pub public_field_definition_readonly_first: OptionalNonterminalView<'a>,
-    pub public_field_definition_static_mods: OptionalNonterminalView<'a>,
     pub type_: OptionalNonterminalView<'a>,
     pub value: OptionalNonterminalView<'a>,
     pub visibility_prefix: OptionalNonterminalView<'a>,

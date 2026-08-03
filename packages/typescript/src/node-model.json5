@@ -338,13 +338,9 @@
       "public_field_definition_declare_first": "_public_field_definition_declare_first",
       "public_field_definition_access_first": "_public_field_definition_access_first"
     },
-    "public_field_definition.public_field_definition_static_mods": {
-      "public_field_definition_static_mods": "_public_field_definition_static_mods"
-    },
-    "public_field_definition.public_field_definition_abstract_first": {
-      "public_field_definition_abstract_first": "_public_field_definition_abstract_first"
-    },
-    "public_field_definition.public_field_definition_readonly_first": {
+    "public_field_definition.content": {
+      "public_field_definition_static_mods": "_public_field_definition_static_mods",
+      "public_field_definition_abstract_first": "_public_field_definition_abstract_first",
       "public_field_definition_readonly_first": "_public_field_definition_readonly_first"
     },
     "_jsx_start_opening_element.jsx_opening_element_content": {
@@ -2105,28 +2101,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "accessor_marker": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "public_field_definition_static_mods": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "public_field_definition_abstract_first": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "public_field_definition_readonly_first": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -20350,29 +20325,9 @@
           }
         },
         {
-          "name": "accessor_marker",
-          "propertyName": "accessorMarker",
-          "paramName": "accessorMarker",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "accessor",
-              "parseKind": "accessor"
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
-        {
-          "name": "public_field_definition_static_mods",
-          "propertyName": "publicFieldDefinitionStaticMods",
-          "paramName": "publicFieldDefinitionStaticMods",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -20383,57 +20338,33 @@
               "name": "_public_field_definition_static_mods",
               "parseKind": "public_field_definition_static_mods",
               "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_public_field_definition_static_mods"
-            ]
-          }
-        },
-        {
-          "name": "public_field_definition_abstract_first",
-          "propertyName": "publicFieldDefinitionAbstractFirst",
-          "paramName": "publicFieldDefinitionAbstractFirst",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_public_field_definition_abstract_first",
               "parseKind": "public_field_definition_abstract_first",
               "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_public_field_definition_abstract_first"
-            ]
-          }
-        },
-        {
-          "name": "public_field_definition_readonly_first",
-          "propertyName": "publicFieldDefinitionReadonlyFirst",
-          "paramName": "publicFieldDefinitionReadonlyFirst",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_public_field_definition_readonly_first",
               "parseKind": "public_field_definition_readonly_first",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "accessor",
+              "parseKind": "accessor"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
+              "_public_field_definition_static_mods",
+              "_public_field_definition_abstract_first",
               "_public_field_definition_readonly_first"
             ]
           }
@@ -20539,9 +20470,7 @@
       "factoryFields": [
         "decorator",
         "visibility_prefix",
-        "public_field_definition_static_mods",
-        "public_field_definition_abstract_first",
-        "public_field_definition_readonly_first",
+        "content",
         "name",
         "optionality_marker",
         "type",

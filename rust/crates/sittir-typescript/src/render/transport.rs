@@ -19927,90 +19927,6 @@ impl RenderableTransport for PublicFieldDefinitionVisibilityPrefixTransportSlot 
 }
 
 #[derive(Debug, Clone)]
-pub enum PublicFieldDefinitionAccessorMarkerTransportSlot {
-    Literal39_61_63_63_65_73_73_6f_72,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionAccessorMarkerTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    150 => Ok(Self::Literal39_61_63_63_65_73_73_6f_72),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in PublicFieldDefinitionAccessorMarkerTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionAccessorMarkerTransportSlot")
-                )?;
-                match kind_id {
-                    150 => Ok(Self::Literal39_61_63_63_65_73_73_6f_72),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in PublicFieldDefinitionAccessorMarkerTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("PublicFieldDefinitionAccessorMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionAccessorMarkerTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PublicFieldDefinitionAccessorMarkerTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PublicFieldDefinitionAccessorMarkerTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        PublicFieldDefinitionAccessorMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionAccessorMarkerTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        PublicFieldDefinitionAccessorMarkerTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn public_field_definition_accessor_marker_transport_slot_to_any(t: PublicFieldDefinitionAccessorMarkerTransportSlot) -> AnyTransport {
-    match t {
-        PublicFieldDefinitionAccessorMarkerTransportSlot::Literal39_61_63_63_65_73_73_6f_72 => AnyTransport::Literal39_61_63_63_65_73_73_6f_72,
-    }
-}
-
-impl RenderableTransport for PublicFieldDefinitionAccessorMarkerTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            PublicFieldDefinitionAccessorMarkerTransportSlot::Literal39_61_63_63_65_73_73_6f_72 => dest.write_str("accessor").map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum PublicFieldDefinitionOptionalityMarkerTransportSlot {
     Literal40_3f,
     Literal41_21,
@@ -20095,6 +20011,117 @@ impl RenderableTransport for PublicFieldDefinitionOptionalityMarkerTransportSlot
         match self {
             PublicFieldDefinitionOptionalityMarkerTransportSlot::Literal40_3f => dest.write_str("?").map_err(::askama::Error::from),
             PublicFieldDefinitionOptionalityMarkerTransportSlot::Literal41_21 => dest.write_str("!").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum PublicFieldDefinitionContentTransportSlot {
+    PublicFieldDefinitionStaticMods(PublicFieldDefinitionStaticModsTransport),
+    PublicFieldDefinitionAbstractFirst(PublicFieldDefinitionAbstractFirstTransport),
+    PublicFieldDefinitionReadonlyFirst(PublicFieldDefinitionReadonlyFirstTransport),
+    Literal39_61_63_63_65_73_73_6f_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    402 => Ok(Self::PublicFieldDefinitionStaticMods(
+                        PublicFieldDefinitionStaticModsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    403 => Ok(Self::PublicFieldDefinitionAbstractFirst(
+                        PublicFieldDefinitionAbstractFirstTransport::from_napi_value(env, napi_val)?
+                    )),
+                    404 => Ok(Self::PublicFieldDefinitionReadonlyFirst(
+                        PublicFieldDefinitionReadonlyFirstTransport::from_napi_value(env, napi_val)?
+                    )),
+                    150 => Ok(Self::Literal39_61_63_63_65_73_73_6f_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionContentTransportSlot")
+                )?;
+                match kind_id {
+                    402 => Ok(Self::PublicFieldDefinitionStaticMods(
+                        PublicFieldDefinitionStaticModsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    403 => Ok(Self::PublicFieldDefinitionAbstractFirst(
+                        PublicFieldDefinitionAbstractFirstTransport::from_napi_value(env, napi_val)?
+                    )),
+                    404 => Ok(Self::PublicFieldDefinitionReadonlyFirst(
+                        PublicFieldDefinitionReadonlyFirstTransport::from_napi_value(env, napi_val)?
+                    )),
+                    150 => Ok(Self::Literal39_61_63_63_65_73_73_6f_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("PublicFieldDefinitionContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PublicFieldDefinitionContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PublicFieldDefinitionContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PublicFieldDefinitionContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PublicFieldDefinitionContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn public_field_definition_content_transport_slot_to_any(t: PublicFieldDefinitionContentTransportSlot) -> AnyTransport {
+    match t {
+        PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionStaticMods(inner) => AnyTransport::PublicFieldDefinitionStaticMods(inner),
+        PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionAbstractFirst(inner) => AnyTransport::PublicFieldDefinitionAbstractFirst(inner),
+        PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionReadonlyFirst(inner) => AnyTransport::PublicFieldDefinitionReadonlyFirst(inner),
+        PublicFieldDefinitionContentTransportSlot::Literal39_61_63_63_65_73_73_6f_72 => AnyTransport::Literal39_61_63_63_65_73_73_6f_72,
+    }
+}
+
+impl RenderableTransport for PublicFieldDefinitionContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionStaticMods(inner) => render_public_field_definition_static_mods(inner, dest),
+            PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionAbstractFirst(inner) => render_public_field_definition_abstract_first(inner, dest),
+            PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionReadonlyFirst(inner) => render_public_field_definition_readonly_first(inner, dest),
+            PublicFieldDefinitionContentTransportSlot::Literal39_61_63_63_65_73_73_6f_72 => dest.write_str("accessor").map_err(::askama::Error::from),
         }
     }
 }
@@ -41761,8 +41788,6 @@ pub struct PublicFieldDefinitionTransport {
     pub decorator: Option<Vec<DecoratorTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_prefix"))]
     pub visibility_prefix: Option<PublicFieldDefinitionVisibilityPrefixTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_marker"))]
-    pub accessor_marker: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: PropertyNameTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optionality_marker"))]
@@ -41771,18 +41796,8 @@ pub struct PublicFieldDefinitionTransport {
     pub type_: Option<TypeAnnotationTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: Option<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_public_field_definition_static_mods"))]
-    pub public_field_definition_static_mods: Option<PublicFieldDefinitionStaticModsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_public_field_definition_abstract_first"))]
-    pub public_field_definition_abstract_first: Option<PublicFieldDefinitionAbstractFirstTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_public_field_definition_readonly_first"))]
-    pub public_field_definition_readonly_first: Option<PublicFieldDefinitionReadonlyFirstTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static_marker"))]
-    pub static_marker: Option<KwStaticMarkerTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_marker"))]
-    pub readonly_marker: Option<KwReadonlyMarkerTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_marker"))]
-    pub abstract_marker: Option<KwAbstractMarkerTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Option<PublicFieldDefinitionContentTransportSlot>,
 }
 
 impl RenderableTransport for PublicFieldDefinitionTransport {
@@ -63882,10 +63897,9 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, dest: &
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = PublicFieldDefinitionTemplate {
-        accessor_marker: if node.accessor_marker.unwrap_or(false) {
-            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("accessor"))
-        } else {
-            OptionalNonterminalView::Missing
+        content: match &node.content {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
         decorator: ListNonterminalView {
             items: decorator_buf.as_slice(),
@@ -63896,18 +63910,6 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, dest: &
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         optionality_marker: match &node.optionality_marker {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
-        },
-        public_field_definition_abstract_first: match &node.public_field_definition_abstract_first {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        public_field_definition_readonly_first: match &node.public_field_definition_readonly_first {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        public_field_definition_static_mods: match &node.public_field_definition_static_mods {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
         type_: match &node.type_ {
