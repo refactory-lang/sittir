@@ -1475,7 +1475,14 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						// members with no stamped id (mixed literal/external members —
 						// the render-side string branch still accepts those). The bare
 						// `$type` id passes through for the direct, already-flattened
-						// keyword-literal case.',
+						// keyword-literal case. A bare string (not object-wrapped) is
+						// read_node\'s raw-read shape for a NAMED fixed-text keyword
+						// leaf (e.g. rust\'s mutable_specifier: "mut") — map it the
+						// same way before falling through to the object-shaped checks.',
+						'  if (typeof value === "string") {',
+						'    const mappedId = textIds?.[value];',
+						'    return typeof mappedId === "number" ? (mappedId as unknown as T) : value;',
+						'  }',
 						'  if (typeof entry.$text === "string") {',
 						'    const mappedId = textIds?.[entry.$text];',
 						'    if (typeof mappedId === "number") return mappedId as unknown as T;',

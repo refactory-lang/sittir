@@ -3917,7 +3917,7 @@ export interface MemberExpression {
 	readonly _separator: number;
 	readonly _property: PrivatePropertyIdentifier | Identifier;
 	readonly __inputHints__?: {
-		readonly separator: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.QmarkDot>;
+		readonly separator: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.OptionalChain | TSKindId.QmarkDot>;
 	};
 	object(): Expression | PrimaryExpression | Import;
 	separator(): number;
@@ -4408,16 +4408,20 @@ export interface FunctionSignature {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
-	readonly _semicolon: Semicolon | '\n';
+	readonly _semicolon: number;
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
+		readonly semicolon: KindEnum<
+			'\n' | ';',
+			TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon
+		>;
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
-	semicolon(): Semicolon | '\n';
+	semicolon(): number;
 }
 
 export interface DecoratorParenthesizedExpression {
@@ -5415,9 +5419,12 @@ export interface ClassBodyMethod {
 export interface ClassBodyMethodSig {
 	readonly $type: TSKindId.ClassBodyMethodSig;
 	readonly _method_signature: MethodSignature;
-	readonly _terminator: '\n' | ',';
+	readonly _terminator: number;
+	readonly __inputHints__?: {
+		readonly terminator: KindEnum<'\n' | ',', TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma>;
+	};
 	methodSignature(): MethodSignature;
-	terminator(): '\n' | ',';
+	terminator(): number;
 }
 
 export interface ClassBodyMember {
@@ -5497,7 +5504,7 @@ export interface PublicFieldDefinitionStaticMods {
 	readonly _override_modifier?: boolean;
 	readonly _readonly_marker?: boolean;
 	readonly __inputHints__?: {
-		readonly static_marker: AutoStamp<KindEnum<'static', TSKindId.Static>>;
+		readonly static_marker: AutoStamp<KindEnum<'static', TSKindId.KwStaticMarker | TSKindId.Static>>;
 		readonly override_modifier?: BooleanKeyword<'override'>;
 		readonly readonly_marker?: BooleanKeyword<'readonly'>;
 	};
@@ -5511,7 +5518,7 @@ export interface PublicFieldDefinitionAbstractFirst {
 	readonly _abstract_marker: AutoStamp<number>;
 	readonly _readonly_marker?: boolean;
 	readonly __inputHints__?: {
-		readonly abstract_marker: AutoStamp<KindEnum<'abstract', TSKindId.Abstract>>;
+		readonly abstract_marker: AutoStamp<KindEnum<'abstract', TSKindId.KwAbstractMarker | TSKindId.Abstract>>;
 		readonly readonly_marker?: BooleanKeyword<'readonly'>;
 	};
 	abstractMarker(): AutoStamp<number>;
@@ -5523,7 +5530,7 @@ export interface PublicFieldDefinitionReadonlyFirst {
 	readonly _readonly_marker: AutoStamp<number>;
 	readonly _abstract_marker?: boolean;
 	readonly __inputHints__?: {
-		readonly readonly_marker: AutoStamp<KindEnum<'readonly', TSKindId.Readonly>>;
+		readonly readonly_marker: AutoStamp<KindEnum<'readonly', TSKindId.KwReadonlyMarker | TSKindId.Readonly>>;
 		readonly abstract_marker?: BooleanKeyword<'abstract'>;
 	};
 	readonlyMarker(): AutoStamp<number>;

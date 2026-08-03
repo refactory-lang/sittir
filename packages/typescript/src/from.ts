@@ -1710,7 +1710,8 @@ export function coerceToMemberExpression(input: T.MemberExpression.Loose): Retur
 			'member_expression',
 			'separator',
 			coerceKindEnumStorage(_resolveOne<'.' | T.OptionalChain>(input.separator, _K0, _K0), [
-				['.', TSKindId.Dot] as const
+				['.', TSKindId.Dot] as const,
+				['?.', TSKindId.OptionalChain] as const
 			])
 		),
 		property: _requireField(
@@ -2380,7 +2381,11 @@ export function coerceToFunctionSignature(
 		semicolon: _requireField(
 			'function_signature',
 			'semicolon',
-			_resolveOneLeaf<T.Semicolon | '\n'>(input.semicolon, '_semicolon')
+			coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon | '\n'>(input.semicolon, '_semicolon'), [
+				['\n', TSKindId.AutomaticSemicolon] as const,
+				[';', TSKindId.Semi] as const,
+				['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const
+			])
 		)
 	});
 }

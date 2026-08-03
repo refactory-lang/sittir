@@ -707,7 +707,7 @@ export function buildOrderedFieldDeclarationList(attributes?: T.OrderedFieldDecl
 
 export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Config) {
 	const _visibility_modifier = config.visibilityModifier;
-	const _crate = coerceKindEnumStorage('crate' as const, []);
+	const _crate = coerceKindEnumStorage('crate' as const, [['crate', TSKindId.Crate] as const]);
 	const _name = config.name;
 	const _alias = config.alias;
 	return withMethods(
@@ -1507,7 +1507,7 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 	const _reference = coerceBooleanKeywordStorage(config.reference);
 	const _lifetime = config.lifetime;
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
-	const _self = coerceKindEnumStorage('self' as const, []);
+	const _self = coerceKindEnumStorage('self' as const, [['self', TSKindId.Self] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -2022,7 +2022,10 @@ export function buildReferenceType(config: T.ReferenceType.Config) {
 }
 
 export function buildPointerType(config: T.PointerType.Config) {
-	const _content = config.content;
+	const _content = coerceKindEnumStorage(config.content, [
+		['const', TSKindId.PointerTypeConst] as const,
+		['mut', TSKindId.MutableSpecifier] as const
+	]);
 	const _type = config.type;
 	return withMethods(
 		withAccessors(
@@ -2033,7 +2036,8 @@ export function buildPointerType(config: T.PointerType.Config) {
 				_content,
 				_type,
 				$with: {
-					content: (value: 'const' | T.MutableSpecifier) => buildPointerType({ ...config, content: value }),
+					content: (value: NonNullable<Parameters<typeof buildPointerType>[0]>['content']) =>
+						buildPointerType({ ...config, content: value }),
 					type: (value: T._Type) => buildPointerType({ ...config, type: value })
 				}
 			},
@@ -3570,7 +3574,7 @@ export function buildFieldPattern(child?: 'ref' | T.MutableSpecifier | T.Identif
 }
 
 export function buildMutPattern(pattern: T.MutPattern.Config['pattern']) {
-	const _mutable_specifier = 'mut' as const;
+	const _mutable_specifier = coerceKindEnumStorage('mut' as const, [['mut', TSKindId.MutableSpecifier] as const]);
 	const _pattern = pattern;
 	return withMethods(
 		withAccessors(
@@ -4571,7 +4575,7 @@ export function buildReferenceExpressionRawConst(text: string) {
 }
 
 export function buildReferenceExpressionRawMut(_config?: T.ReferenceExpressionRawMut.Config) {
-	const _mutable_specifier = 'mut' as const;
+	const _mutable_specifier = coerceKindEnumStorage('mut' as const, [['mut', TSKindId.MutableSpecifier] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -4955,7 +4959,7 @@ export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Confi
 
 export function buildRangeExpressionPostfix(config: T.RangeExpressionPostfix.Config) {
 	const _start = config.start;
-	const _operator = coerceKindEnumStorage('..' as const, []);
+	const _operator = coerceKindEnumStorage('..' as const, [['..', TSKindId.DotDot] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -4978,7 +4982,7 @@ export function buildRangeExpressionPostfix(config: T.RangeExpressionPostfix.Con
 }
 
 export function buildRangeExpressionPrefix(config: T.RangeExpressionPrefix.Config) {
-	const _operator = coerceKindEnumStorage('..' as const, []);
+	const _operator = coerceKindEnumStorage('..' as const, [['..', TSKindId.DotDot] as const]);
 	const _end = config.end;
 	return withMethods(
 		withAccessors(

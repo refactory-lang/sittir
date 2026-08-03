@@ -1255,7 +1255,7 @@ export function coerceToExternCrateDeclaration(
 		crate: _requireField(
 			'extern_crate_declaration',
 			'crate',
-			coerceKindEnumStorage(_resolveOneLeaf<T.Crate>(input.crate, 'crate'), [])
+			coerceKindEnumStorage(_resolveOneLeaf<T.Crate>(input.crate, 'crate'), [['crate', TSKindId.Crate] as const])
 		),
 		name: _requireField('extern_crate_declaration', 'name', _resolveOneLeaf<T.Identifier>(input.name, 'identifier')),
 		alias: _resolveOneLeaf<T.Identifier>(input.alias, 'identifier')
@@ -1568,7 +1568,7 @@ export function coerceToSelfParameter(input?: T.SelfParameter.Loose): ReturnType
 		self: _requireField(
 			'self_parameter',
 			'self',
-			coerceKindEnumStorage(_resolveOneLeaf<T.Self>(input?.self, 'self'), [])
+			coerceKindEnumStorage(_resolveOneLeaf<T.Self>(input?.self, 'self'), [['self', TSKindId.Self] as const])
 		)
 	});
 }
@@ -1801,7 +1801,10 @@ export function coerceToPointerType(input: T.PointerType.Loose): ReturnType<type
 		content: _requireField(
 			'pointer_type',
 			'content',
-			_resolveOne<'const' | T.MutableSpecifier>(input.content, _K29, _K0)
+			coerceKindEnumStorage(_resolveOne<'const' | T.MutableSpecifier>(input.content, _K29, _K0), [
+				['const', TSKindId.PointerTypeConst] as const,
+				['mut', TSKindId.MutableSpecifier] as const
+			])
 		),
 		type: _requireField('pointer_type', 'type', _resolveOne<T._Type>(input.type, _K12, _K13))
 	});

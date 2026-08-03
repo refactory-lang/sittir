@@ -23,7 +23,9 @@ import {
 	type AssembledNode,
 	type AssembledNonterminal,
 	type AssembledSeparatedList,
-	AssembledGroup
+	AssembledGroup,
+	AssembledKeyword,
+	AssembledToken
 } from '../compiler/model/node-map.ts';
 import { isNodeRef, isTerminalValue, allSlotsOf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import {
@@ -440,6 +442,28 @@ export function kindEnumTextMapExpr(
 		if (isNodeRef(value)) {
 			const kind = storageKindOfRef(value.node);
 			const resolved = nodeMap.nodes.get(kind);
+			if (resolved instanceof AssembledKeyword || resolved instanceof AssembledToken) {
+				// Same per-occurrence stamp preference as kindEnumTextIdPairs/
+				// classifyFieldStorageInfo (shared.ts): value.parseKind/
+				// parseKindId/storageKindId know about THIS reference site's
+				// alias target (e.g. rust's `_pointer_type_const`, aliased to
+				// visible `pointer_type_const`); the shared AssembledKeyword/
+				// Token instance's own resolvedKind/resolvedKindId don't.
+				const text = resolved.text;
+				if (text === undefined) continue;
+				const kindName = value.parseKind?.name ?? resolved.resolvedKind;
+				const kindId = value.parseKindId ?? value.storageKindId ?? resolved.resolvedKindId;
+				const discriminant =
+					(kindId !== undefined ? kindDiscriminantExprForId(kindId, kindEntries) : undefined) ??
+					(kindName !== undefined && hasCatalogEntry(kindEntries, kindName)
+						? kindDiscriminantExpr(kindName, nodeMap, kindEntries)
+						: findKindEntryForLiteral(kindEntries, text) !== undefined
+							? kindDiscriminantExprForLiteral(text, kindEntries)
+							: undefined);
+				if (discriminant === undefined) continue;
+				byText.push([text, discriminant]);
+				continue;
+			}
 			if (!resolved || resolved.modelType !== 'enum') continue;
 			for (const text of resolved.values) {
 				// PR-K3a: the enum node's construction-time literal-chain

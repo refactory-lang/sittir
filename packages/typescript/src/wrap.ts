@@ -267,6 +267,10 @@ function projectKindEnumStorage<T>(value: T, textIds?: Readonly<Record<string, n
 	if (!value) return value;
 	if (Array.isArray(value)) return value.map((entry) => projectKindEnumStorage(entry, textIds)) as unknown as T;
 	const entry = value as unknown as _NodeData;
+	if (typeof value === 'string') {
+		const mappedId = textIds?.[value];
+		return typeof mappedId === 'number' ? (mappedId as unknown as T) : value;
+	}
 	if (typeof entry.$text === 'string') {
 		const mappedId = textIds?.[entry.$text];
 		if (typeof mappedId === 'number') return mappedId as unknown as T;
@@ -4293,13 +4297,13 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 			}),
 			_separator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._separator ?? readTerminalFromOther(data, [TSKindId.Dot, TSKindId.QmarkDot]),
+					data._separator ?? readTerminalFromOther(data, [TSKindId.Dot, TSKindId.OptionalChain]),
 					'separator',
 					true,
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'separator', span: (data as _NodeData).$span }
 				),
-				{ '.': 39, '?.': 43 }
+				{ '.': 39, '?.': 230 }
 			),
 			_property: normalizeSingularWrapSlot(data._property, 'property', true, data.$type, {
 				tree,
@@ -6776,12 +6780,21 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
 				slotName: 'return_type',
 				span: (data as _NodeData).$span
 			}),
-			_semicolon: normalizeSingularWrapSlot(data._semicolon, 'semicolon', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'semicolon',
-				span: (data as _NodeData).$span
-			}),
+			_semicolon: projectKindEnumStorage(
+				normalizeSingularWrapSlot(
+					data._semicolon ??
+						readTerminalFromOther(data, [
+							TSKindId.AutomaticSemicolon,
+							TSKindId.Semi,
+							TSKindId.FunctionSignatureAutomaticSemicolon
+						]),
+					'semicolon',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
+				),
+				{ '\n': 159, ';': 20 }
+			),
 
 			asyncMarker() {
 				return this._async_marker;
@@ -6802,9 +6815,7 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
 				);
 			},
 			semicolon() {
-				return drillAs<T.Semicolon | '\n'>(this._semicolon, tree, [
-					{ from: 'function_signature_automatic_semicolon', to: '_function_signature_automatic_semicolon' }
-				]);
+				return this._semicolon;
 			},
 			$with: {
 				asyncMarker: (v: NonNullable<T.FunctionSignature['_async_marker']>) =>
@@ -11838,20 +11849,23 @@ export function wrapClassBodyMethodSig(data: T.ClassBodyMethodSig, tree: TreeHan
 				slotName: 'method_signature',
 				span: (data as _NodeData).$span
 			}),
-			_terminator: normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'terminator',
-				span: (data as _NodeData).$span
-			}),
+			_terminator: projectKindEnumStorage(
+				normalizeSingularWrapSlot(
+					data._terminator ??
+						readTerminalFromOther(data, [TSKindId.FunctionSignatureAutomaticSemicolon, TSKindId.Comma]),
+					'terminator',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
+				),
+				{ '\n': 164, ',': 14 }
+			),
 
 			methodSignature() {
 				return drillIn<T.MethodSignature>(this._method_signature, tree);
 			},
 			terminator() {
-				return drillAs<'\n' | ','>(this._terminator, tree, [
-					{ from: 'function_signature_automatic_semicolon', to: '_function_signature_automatic_semicolon' }
-				]);
+				return this._terminator;
 			},
 			$with: {
 				methodSignature: (v: NonNullable<T.ClassBodyMethodSig['_method_signature']>) =>
@@ -12147,13 +12161,13 @@ export function wrapPublicFieldDefinitionStaticMods(data: T.PublicFieldDefinitio
 			$type: TSKindId.PublicFieldDefinitionStaticMods as const,
 			_static_marker: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._static_marker ?? readTerminalFromOther(data, [TSKindId.Static]),
+					data._static_marker ?? readTerminalFromOther(data, [TSKindId.KwStaticMarker]),
 					'static_marker',
 					true,
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'static_marker', span: (data as _NodeData).$span }
 				),
-				{ static: 107 }
+				{ static: 356 }
 			),
 			_override_modifier: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
@@ -12202,13 +12216,13 @@ export function wrapPublicFieldDefinitionAbstractFirst(data: T.PublicFieldDefini
 			$type: TSKindId.PublicFieldDefinitionAbstractFirst as const,
 			_abstract_marker: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._abstract_marker ?? readTerminalFromOther(data, [TSKindId.Abstract]),
+					data._abstract_marker ?? readTerminalFromOther(data, [TSKindId.KwAbstractMarker]),
 					'abstract_marker',
 					true,
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'abstract_marker', span: (data as _NodeData).$span }
 				),
-				{ abstract: 128 }
+				{ abstract: 359 }
 			),
 			_readonly_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
@@ -12244,13 +12258,13 @@ export function wrapPublicFieldDefinitionReadonlyFirst(data: T.PublicFieldDefini
 			$type: TSKindId.PublicFieldDefinitionReadonlyFirst as const,
 			_readonly_marker: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._readonly_marker ?? readTerminalFromOther(data, [TSKindId.Readonly]),
+					data._readonly_marker ?? readTerminalFromOther(data, [TSKindId.KwReadonlyMarker]),
 					'readonly_marker',
 					true,
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'readonly_marker', span: (data as _NodeData).$span }
 				),
-				{ readonly: 116 }
+				{ readonly: 357 }
 			),
 			_abstract_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._abstract_marker, 'abstract_marker', false, data.$type, {

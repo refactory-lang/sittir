@@ -1679,7 +1679,7 @@ describe('function_signature', () => {
 		const node = ir.functionSignature({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			semicolon: { $type: TSKindId.FunctionSignatureAutomaticSemicolon, $text: '\n', $source: 2, $named: true } as any
+			semicolon: '\n'
 		});
 		expect(node.$type).toBe(TSKindId.FunctionSignature);
 		expect(node.$source).toBe(2);
@@ -1688,7 +1688,7 @@ describe('function_signature', () => {
 		const node = ir.functionSignature({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			semicolon: { $type: TSKindId.FunctionSignatureAutomaticSemicolon, $text: '\n', $source: 2, $named: true } as any
+			semicolon: '\n'
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});

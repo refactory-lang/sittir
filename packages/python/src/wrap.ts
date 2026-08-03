@@ -267,6 +267,10 @@ function projectKindEnumStorage<T>(value: T, textIds?: Readonly<Record<string, n
 	if (!value) return value;
 	if (Array.isArray(value)) return value.map((entry) => projectKindEnumStorage(entry, textIds)) as unknown as T;
 	const entry = value as unknown as _NodeData;
+	if (typeof value === 'string') {
+		const mappedId = textIds?.[value];
+		return typeof mappedId === 'number' ? (mappedId as unknown as T) : value;
+	}
 	if (typeof entry.$text === 'string') {
 		const mappedId = textIds?.[entry.$text];
 		if (typeof mappedId === 'number') return mappedId as unknown as T;
@@ -946,18 +950,22 @@ export function wrapSimpleStatements(
 				'simple_statement',
 				{ tree, nodeType: data.$type, slotName: 'simple_statement', span: (data as _NodeData).$span }
 			),
-			_newline: normalizeSingularWrapSlot(data._newline, 'newline', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'newline',
-				span: (data as _NodeData).$span
-			}),
+			_newline: projectKindEnumStorage(
+				normalizeSingularWrapSlot(
+					data._newline ?? readTerminalFromOther(data, [TSKindId.Newline]),
+					'newline',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'newline', span: (data as _NodeData).$span }
+				),
+				{ '\n': 101 }
+			),
 
 			simpleStatements() {
 				return drillInAll<T.SimpleStatement>(this._simple_statement as readonly T.SimpleStatement[] | undefined, tree);
 			},
 			newline() {
-				return drillAs<'\n'>(this._newline, tree, [{ from: 'newline', to: '_newline' }]);
+				return this._newline;
 			},
 			$with: {
 				simpleStatements: (...v: NonEmptyArray<NonNullable<T.SimpleStatements['_simple_statement']>[number]>) =>
@@ -3304,18 +3312,22 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
 				slotName: 'expression',
 				span: (data as _NodeData).$span
 			}),
-			_newline: normalizeSingularWrapSlot(data._newline, 'newline', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'newline',
-				span: (data as _NodeData).$span
-			}),
+			_newline: projectKindEnumStorage(
+				normalizeSingularWrapSlot(
+					data._newline ?? readTerminalFromOther(data, [TSKindId.Newline]),
+					'newline',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'newline', span: (data as _NodeData).$span }
+				),
+				{ '\n': 101 }
+			),
 
 			expression() {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			newline() {
-				return drillAs<'\n'>(this._newline, tree, [{ from: 'newline', to: '_newline' }]);
+				return this._newline;
 			},
 			$with: {
 				expression: (v: NonNullable<T.Decorator['_expression']>) => wrapDecorator({ ...data, _expression: v }, tree),

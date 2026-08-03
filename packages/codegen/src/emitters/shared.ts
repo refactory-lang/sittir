@@ -484,11 +484,21 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 			}
 			if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
 				const text = node.text;
-				if (node.resolvedKind === undefined || text === undefined) return verbatim();
-				if (!seenKinds.has(node.resolvedKind)) {
-					seenKinds.add(node.resolvedKind);
-					enumKinds.push(node.resolvedKind);
-					if (node.resolvedKindId !== undefined) enumKindsById.set(node.resolvedKind, node.resolvedKindId);
+				// Prefer this reference SITE's own stamped id/name over the
+				// shared node's `resolvedKind`/`resolvedKindId` — the latter is
+				// derived once from the rule's own catalog-text/name lookup and
+				// has no way to know this occurrence is an alias (e.g. rust's
+				// `_pointer_type_const`, aliased to visible `pointer_type_const`
+				// at link time — its correct wire id lives on `value.parseKind`/
+				// `value.parseKindId`, stamped per-occurrence, not on the
+				// canonical AssembledKeyword instance shared across all sites).
+				const kindName = value.parseKind?.name ?? node.resolvedKind;
+				const kindId = value.parseKindId ?? value.storageKindId ?? node.resolvedKindId;
+				if (kindName === undefined || text === undefined) return verbatim();
+				if (!seenKinds.has(kindName)) {
+					seenKinds.add(kindName);
+					enumKinds.push(kindName);
+					if (kindId !== undefined) enumKindsById.set(kindName, kindId);
 				}
 				if (!seenTexts.has(text)) {
 					seenTexts.add(text);
@@ -547,8 +557,14 @@ export function kindEnumTextIdPairs(
 				continue;
 			}
 			if ((node instanceof AssembledKeyword || node instanceof AssembledToken) && node.text !== undefined) {
-				const entry = kindEntries?.find((e) => e.kind === node.resolvedKind);
-				push(node.text, entry?.id);
+				// Same per-occurrence-stamp preference as classifyFieldStorageInfo
+				// — value.parseKind/parseKindId know about this specific
+				// reference site's alias target; the shared node's own
+				// resolvedKind/resolvedKindId don't.
+				const kindName = value.parseKind?.name ?? node.resolvedKind;
+				const stampedId = value.parseKindId ?? value.storageKindId;
+				const entry = kindEntries?.find((e) => e.kind === kindName);
+				push(node.text, stampedId ?? entry?.id);
 			}
 			continue;
 		}

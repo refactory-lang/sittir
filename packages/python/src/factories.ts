@@ -1152,7 +1152,7 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config) {
 
 export function buildDecorator(expression: T.Decorator.Config['expression']) {
 	const _expression = expression;
-	const _newline = '\n' as const;
+	const _newline = coerceKindEnumStorage('\n' as const, [['\n', TSKindId.Newline] as const]);
 	return withMethods(
 		withAccessors(
 			{

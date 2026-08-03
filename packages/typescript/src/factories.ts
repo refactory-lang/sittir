@@ -1722,7 +1722,10 @@ export function buildAwaitExpression(expression: T.AwaitExpression.Config['expre
 
 export function buildMemberExpression(config: T.MemberExpression.Config) {
 	const _object = config.object;
-	const _separator = coerceKindEnumStorage(config.separator, [['.', TSKindId.Dot] as const]);
+	const _separator = coerceKindEnumStorage(config.separator, [
+		['.', TSKindId.Dot] as const,
+		['?.', TSKindId.OptionalChain] as const
+	]);
 	const _property = config.property;
 	return withMethods(
 		withAccessors(
@@ -3045,7 +3048,11 @@ export function buildFunctionSignature(config: T.FunctionSignature.Config) {
 	const _type_parameters = config.typeParameters;
 	const _parameters = config.parameters;
 	const _return_type = config.returnType;
-	const _semicolon = config.semicolon;
+	const _semicolon = coerceKindEnumStorage(config.semicolon, [
+		['\n', TSKindId.AutomaticSemicolon] as const,
+		[';', TSKindId.Semi] as const,
+		['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -3066,7 +3073,8 @@ export function buildFunctionSignature(config: T.FunctionSignature.Config) {
 					parameters: (value: T.FormalParameters) => buildFunctionSignature({ ...config, parameters: value }),
 					returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
 						buildFunctionSignature({ ...config, returnType: value }),
-					semicolon: (value: T.Semicolon | '\n') => buildFunctionSignature({ ...config, semicolon: value })
+					semicolon: (value: NonNullable<Parameters<typeof buildFunctionSignature>[0]>['semicolon']) =>
+						buildFunctionSignature({ ...config, semicolon: value })
 				}
 			},
 			{
@@ -6037,7 +6045,10 @@ export function buildClassBodyMethod(config: T.ClassBodyMethod.Config) {
 
 export function buildClassBodyMethodSig(config: T.ClassBodyMethodSig.Config) {
 	const _method_signature = config.methodSignature;
-	const _terminator = config.terminator;
+	const _terminator = coerceKindEnumStorage(config.terminator, [
+		['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const,
+		[',', TSKindId.Comma] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -6048,7 +6059,8 @@ export function buildClassBodyMethodSig(config: T.ClassBodyMethodSig.Config) {
 				_terminator,
 				$with: {
 					methodSignature: (value: T.MethodSignature) => buildClassBodyMethodSig({ ...config, methodSignature: value }),
-					terminator: (value: '\n' | ',') => buildClassBodyMethodSig({ ...config, terminator: value })
+					terminator: (value: NonNullable<Parameters<typeof buildClassBodyMethodSig>[0]>['terminator']) =>
+						buildClassBodyMethodSig({ ...config, terminator: value })
 				}
 			},
 			{
@@ -6230,7 +6242,7 @@ export function buildPublicFieldDefinitionAccessFirst(config: T.PublicFieldDefin
 }
 
 export function buildPublicFieldDefinitionStaticMods(config: Partial<T.PublicFieldDefinitionStaticMods.Config> = {}) {
-	const _static_marker = coerceKindEnumStorage('static' as const, []);
+	const _static_marker = coerceKindEnumStorage('static' as const, [['static', TSKindId.KwStaticMarker] as const]);
 	const _override_modifier = coerceBooleanKeywordStorage(config.overrideModifier);
 	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
 	return withMethods(
@@ -6264,7 +6276,9 @@ export function buildPublicFieldDefinitionStaticMods(config: Partial<T.PublicFie
 export function buildPublicFieldDefinitionAbstractFirst(
 	config: Partial<T.PublicFieldDefinitionAbstractFirst.Config> = {}
 ) {
-	const _abstract_marker = coerceKindEnumStorage('abstract' as const, []);
+	const _abstract_marker = coerceKindEnumStorage('abstract' as const, [
+		['abstract', TSKindId.KwAbstractMarker] as const
+	]);
 	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
 	return withMethods(
 		withAccessors(
@@ -6292,7 +6306,9 @@ export function buildPublicFieldDefinitionAbstractFirst(
 export function buildPublicFieldDefinitionReadonlyFirst(
 	config: Partial<T.PublicFieldDefinitionReadonlyFirst.Config> = {}
 ) {
-	const _readonly_marker = coerceKindEnumStorage('readonly' as const, []);
+	const _readonly_marker = coerceKindEnumStorage('readonly' as const, [
+		['readonly', TSKindId.KwReadonlyMarker] as const
+	]);
 	const _abstract_marker = coerceBooleanKeywordStorage(config.abstractMarker);
 	return withMethods(
 		withAccessors(

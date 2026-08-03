@@ -2167,9 +2167,12 @@ export interface Module {
 export interface SimpleStatements {
 	readonly $type: TSKindId.SimpleStatements;
 	readonly _simple_statement: NonEmptyArray<SimpleStatement>;
-	readonly _newline: AutoStamp<'\n'>;
+	readonly _newline: AutoStamp<number>;
+	readonly __inputHints__?: {
+		readonly newline: AutoStamp<KindEnum<'\n', TSKindId.Newline>>;
+	};
 	simpleStatements(): NonEmptyArray<SimpleStatement>;
-	newline(): AutoStamp<'\n'>;
+	newline(): AutoStamp<number>;
 }
 
 export interface ImportStatement {
@@ -2518,9 +2521,12 @@ export interface DecoratedDefinition {
 export interface Decorator {
 	readonly $type: TSKindId.Decorator;
 	readonly _expression: Expression;
-	readonly _newline: AutoStamp<'\n'>;
+	readonly _newline: AutoStamp<number>;
+	readonly __inputHints__?: {
+		readonly newline: AutoStamp<KindEnum<'\n', TSKindId.Newline>>;
+	};
 	expression(): Expression;
-	newline(): AutoStamp<'\n'>;
+	newline(): AutoStamp<number>;
 }
 
 export interface Suite {

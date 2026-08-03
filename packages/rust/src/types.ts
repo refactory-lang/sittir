@@ -4106,9 +4106,12 @@ export interface ReferenceType {
 
 export interface PointerType {
 	readonly $type: TSKindId.PointerType;
-	readonly _content: 'const' | MutableSpecifier;
+	readonly _content: number;
 	readonly _type: _Type;
-	content(): 'const' | MutableSpecifier;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<'const' | 'mut', TSKindId.PointerTypeConst | TSKindId.MutableSpecifier | TSKindId.Const>;
+	};
+	content(): number;
 	type(): _Type;
 }
 
@@ -4638,9 +4641,12 @@ export interface FieldPattern {
 
 export interface MutPattern {
 	readonly $type: TSKindId.MutPattern;
-	readonly _mutable_specifier: MutableSpecifier;
+	readonly _mutable_specifier: number;
 	readonly _pattern: Pattern;
-	mutableSpecifier(): MutableSpecifier;
+	readonly __inputHints__?: {
+		readonly mutable_specifier: KindEnum<'mut', TSKindId.MutableSpecifier>;
+	};
+	mutableSpecifier(): number;
 	pattern(): Pattern;
 }
 
@@ -4913,8 +4919,11 @@ export interface UseWildcardClause {
 
 export interface ReferenceExpressionRawMut {
 	readonly $type: TSKindId.ReferenceExpressionRawMut;
-	readonly _mutable_specifier: MutableSpecifier;
-	mutableSpecifier(): MutableSpecifier;
+	readonly _mutable_specifier: number;
+	readonly __inputHints__?: {
+		readonly mutable_specifier: KindEnum<'mut', TSKindId.MutableSpecifier>;
+	};
+	mutableSpecifier(): number;
 }
 
 export interface ImplItemBody {
