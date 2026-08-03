@@ -885,7 +885,7 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 		// include FIELD wrappers would fail to match because the FIELD is written
 		// back to baseGrammar.rules DURING evaluateRuleFunctions, but the sittir
 		// fork (rules) doesn't see it until adoptFinalBaseRules runs.
-		adoptFinalBaseRules(rules, ctx);
+		adoptFinalBaseRules(rules, ctx, wireCtx);
 		// Evaluate body-pattern group fns and inject hidden rule bodies into
 		// `rules` so that `applyPatternReplacement` Path B can find them. The wire
 		// path registers these via `applyWirePatternReplacement`, but the sittir
@@ -916,7 +916,11 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 	}
 }
 
-function adoptFinalBaseRules(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
+function adoptFinalBaseRules(
+	rules: Record<string, Rule<'evaluate'>>,
+	ctx: EvaluateCtx,
+	wireCtx: WireContext | undefined
+): void {
 	const { baseGrammar, baseRules } = ctx;
 	if (baseGrammar === null || baseGrammar === undefined) return;
 	const finalBase = (baseGrammar as { rules: Record<string, Rule<'evaluate'>> }).rules;
@@ -924,7 +928,17 @@ function adoptFinalBaseRules(rules: Record<string, Rule<'evaluate'>>, ctx: Evalu
 		const finalRule = finalBase[name];
 		const entry = baseRules[name];
 		if (finalRule === entry) continue; // no write-back touched this base rule
-		if (rules[name] !== entry) continue; // authored / injected / pattern-replaced — keep it
+		// `rules[name] !== entry` alone doesn't mean `rules[name]` is authored,
+		// injected, or pattern-replaced — a rule with its own wire rule-fn (e.g. a
+		// group-lift host like `_visibility_modifier_group1`) is ALSO re-evaluated
+		// from the fn during `evaluateRuleFunctions`, landing a DIFFERENT object in
+		// `rules[name]` that is stale relative to the group-lift write-back that
+		// happened concurrently in `finalBase`/`baseGrammar.rules` (the SAME bag
+		// `groupLiftRuleMap` writes through). Only a genuinely user-authored
+		// `rules:` override should veto the write-back — anything else re-deriving
+		// `rules[name]` independently must lose to the write-back, matching what
+		// the wire/parser side already does.
+		if (rules[name] !== entry && wireCtx?.authoredRuleNames.has(name)) continue;
 		rules[name] = normalize(finalRule as Input);
 	}
 }
