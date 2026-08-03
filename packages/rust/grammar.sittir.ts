@@ -272,10 +272,6 @@ export default grammar(
 					1: field('statements')
 				},
 
-				static_item: {
-					2: field('mutable_specifier')
-				},
-
 				trait_item: {
 					'1/0': field('unsafe_marker')
 				},

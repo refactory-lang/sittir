@@ -1960,7 +1960,8 @@ export interface StaticItemTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _visibility_modifier?: VisibilityModifierTransport
-  _mutable_specifier?: StaticItemMutableSpecifierTransportSlot
+  _ref_marker?: KwRefMarkerTransport
+  _mutable_specifier?: MutableSpecifierTransport
   _name: IdentifierTransport
   _type: _TypeTransport
   _value?: ExpressionTransport

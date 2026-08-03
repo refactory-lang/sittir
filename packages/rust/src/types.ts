@@ -3649,12 +3649,18 @@ export interface ConstItem {
 export interface StaticItem {
 	readonly $type: TSKindId.StaticItem;
 	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _mutable_specifier?: 'ref' | MutableSpecifier;
+	readonly _ref_marker?: boolean;
+	readonly _mutable_specifier?: boolean;
 	readonly _name: Identifier;
 	readonly _type: _Type;
 	readonly _value?: Expression;
+	readonly __inputHints__?: {
+		readonly ref_marker?: BooleanKeyword<'ref'>;
+		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+	};
 	visibilityModifier(): VisibilityModifier | undefined;
-	mutableSpecifier(): 'ref' | MutableSpecifier | undefined;
+	refMarker(): boolean | undefined;
+	mutableSpecifier(): boolean | undefined;
 	name(): Identifier;
 	type(): _Type;
 	value(): Expression | undefined;

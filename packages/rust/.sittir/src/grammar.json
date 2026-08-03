@@ -1624,13 +1624,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "mutable_specifier",
+              "name": "ref_marker",
               "content": {
                 "type": "SYMBOL",
                 "name": "_kw_ref_marker"
               },
               "metadata": {
-                "fieldSource": "override"
+                "fieldSource": "enriched"
               }
             },
             {
@@ -11549,9 +11549,6 @@
       "value": "&"
     },
     "_kw_statements": {
-      "type": "BLANK"
-    },
-    "_kw_mutable_specifier": {
       "type": "BLANK"
     },
     "_kw_type": {

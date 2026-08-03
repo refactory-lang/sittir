@@ -28178,6 +28178,90 @@
       "$named": true,
       "_statements": [
         {
+          "$type": 187,
+          "$source": 0,
+          "$named": true,
+          "_ref_marker": true,
+          "_name": "ONE",
+          "_type": "usize",
+          "_value": "0",
+          "$other": [
+            57,
+            5,
+            59,
+            2
+          ],
+          "$span": {
+            "start": 0,
+            "end": 26
+          },
+          "$nodeHandle": 2
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 26
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "static ref ONE:usize=0;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "static ref ONE: usize = 0;",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "static ref ONE:usize=0;",
+    "expectedReparseTree": "(source_file statements: (static_item name: (identifier) type: (primitive_type) value: (integer_literal)))",
+    "wrappedText": "static ref ONE:usize=0;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 187,
+      "$source": 0,
+      "$named": true,
+      "_ref_marker": true,
+      "_name": "ONE",
+      "_type": "usize",
+      "_value": "0",
+      "$other": [
+        57,
+        5,
+        59,
+        2
+      ],
+      "$span": {
+        "start": 0,
+        "end": 26
+      },
+      "$nodeHandle": 1
+    },
+    "expectedOutput": "static ref ONE:usize=0;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "static ref ONE: usize = 0;",
+    "pattern": "static_item",
+    "edits": [],
+    "expectedSourceOut": "static ref ONE:usize=0;",
+    "expectedReparseTree": "(static_item name: (identifier) type: (primitive_type) value: (integer_literal))",
+    "wrappedText": "static ref ONE:usize=0;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
           "$type": 188,
           "$source": 0,
           "$named": true,

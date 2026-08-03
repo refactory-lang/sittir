@@ -3983,9 +3983,6 @@ var grammar_sittir_default = grammar(
         source_file: {
           1: field2("statements")
         },
-        static_item: {
-          2: field2("mutable_specifier")
-        },
         trait_item: {
           "1/0": field2("unsafe_marker")
         },

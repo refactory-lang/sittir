@@ -3163,12 +3163,22 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle) {
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'visibility_modifier', span: (data as _NodeData).$span }
 			),
-			_mutable_specifier: normalizeSingularWrapSlot(data._mutable_specifier, 'mutable_specifier', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'mutable_specifier',
-				span: (data as _NodeData).$span
-			}),
+			_ref_marker: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._ref_marker, 'ref_marker', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'ref_marker',
+					span: (data as _NodeData).$span
+				})
+			),
+			_mutable_specifier: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._mutable_specifier, 'mutable_specifier', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'mutable_specifier',
+					span: (data as _NodeData).$span
+				})
+			),
 			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -3191,8 +3201,11 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle) {
 			visibilityModifier() {
 				return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree);
 			},
+			refMarker() {
+				return this._ref_marker;
+			},
 			mutableSpecifier() {
-				return drillIn<'ref' | T.MutableSpecifier | undefined>(this._mutable_specifier, tree);
+				return this._mutable_specifier;
 			},
 			name() {
 				return drillIn<T.Identifier>(this._name, tree);
@@ -3206,6 +3219,7 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle) {
 			$with: {
 				visibilityModifier: (v: NonNullable<T.StaticItem['_visibility_modifier']>) =>
 					wrapStaticItem({ ...data, _visibility_modifier: v }, tree),
+				refMarker: (v: NonNullable<T.StaticItem['_ref_marker']>) => wrapStaticItem({ ...data, _ref_marker: v }, tree),
 				mutableSpecifier: (v: NonNullable<T.StaticItem['_mutable_specifier']>) =>
 					wrapStaticItem({ ...data, _mutable_specifier: v }, tree),
 				name: (v: NonNullable<T.StaticItem['_name']>) => wrapStaticItem({ ...data, _name: v }, tree),

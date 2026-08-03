@@ -1234,6 +1234,7 @@ pub struct SourceFileTemplate<'a> {
 pub struct StaticItemTemplate<'a> {
     pub mutable_specifier: OptionalNonterminalView<'a>,
     pub name: SingleNonterminalView<'a>,
+    pub ref_marker: OptionalNonterminalView<'a>,
     pub type_: SingleNonterminalView<'a>,
     pub value: OptionalNonterminalView<'a>,
     pub visibility_modifier: OptionalNonterminalView<'a>,

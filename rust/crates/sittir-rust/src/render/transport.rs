@@ -13418,13 +13418,12 @@ impl RenderableTransport for EnumVariantBodyTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum StaticItemMutableSpecifierTransportSlot {
-    MutableSpecifier(MutableSpecifierTransport),
+pub enum StaticItemRefMarkerTransportSlot {
     Literal7_5f_6b_77_5f_72_65_66_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for StaticItemMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for StaticItemRefMarkerTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -13432,80 +13431,72 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticItemMutableSpecifierTransp
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    80 => Ok(Self::MutableSpecifier(
-                        MutableSpecifierTransport::from_napi_value(env, napi_val)?
-                    )),
                     321 => Ok(Self::Literal7_5f_6b_77_5f_72_65_66_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StaticItemMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in StaticItemRefMarkerTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in StaticItemMutableSpecifierTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in StaticItemRefMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    80 => Ok(Self::MutableSpecifier(
-                        MutableSpecifierTransport::from_napi_value(env, napi_val)?
-                    )),
                     321 => Ok(Self::Literal7_5f_6b_77_5f_72_65_66_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StaticItemMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in StaticItemRefMarkerTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("StaticItemMutableSpecifierTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("StaticItemRefMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StaticItemMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for StaticItemRefMarkerTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("StaticItemMutableSpecifierTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("StaticItemRefMarkerTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StaticItemMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StaticItemRefMarkerTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        StaticItemMutableSpecifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        StaticItemRefMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StaticItemMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StaticItemRefMarkerTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        StaticItemMutableSpecifierTransportSlot::to_napi_value(env, *val)
+        StaticItemRefMarkerTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn static_item_mutable_specifier_transport_slot_to_any(t: StaticItemMutableSpecifierTransportSlot) -> AnyTransport {
+fn static_item_ref_marker_transport_slot_to_any(t: StaticItemRefMarkerTransportSlot) -> AnyTransport {
     match t {
-        StaticItemMutableSpecifierTransportSlot::MutableSpecifier(inner) => AnyTransport::MutableSpecifier(inner),
-        StaticItemMutableSpecifierTransportSlot::Literal7_5f_6b_77_5f_72_65_66_5f_6d_61_72_6b_65_72 => AnyTransport::Literal7_5f_6b_77_5f_72_65_66_5f_6d_61_72_6b_65_72,
+        StaticItemRefMarkerTransportSlot::Literal7_5f_6b_77_5f_72_65_66_5f_6d_61_72_6b_65_72 => AnyTransport::Literal7_5f_6b_77_5f_72_65_66_5f_6d_61_72_6b_65_72,
     }
 }
 
-impl RenderableTransport for StaticItemMutableSpecifierTransportSlot {
+impl RenderableTransport for StaticItemRefMarkerTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            StaticItemMutableSpecifierTransportSlot::MutableSpecifier(inner) => render_mutable_specifier(inner, dest),
-            StaticItemMutableSpecifierTransportSlot::Literal7_5f_6b_77_5f_72_65_66_5f_6d_61_72_6b_65_72 => dest.write_str("ref").map_err(::askama::Error::from),
+            StaticItemRefMarkerTransportSlot::Literal7_5f_6b_77_5f_72_65_66_5f_6d_61_72_6b_65_72 => dest.write_str("ref").map_err(::askama::Error::from),
         }
     }
 }
@@ -28850,8 +28841,10 @@ pub struct StaticItemTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_modifier"))]
     pub visibility_modifier: Option<VisibilityModifierTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ref_marker"))]
+    pub ref_marker: Option<KwRefMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
-    pub mutable_specifier: Option<StaticItemMutableSpecifierTransportSlot>,
+    pub mutable_specifier: Option<MutableSpecifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
@@ -52901,6 +52894,10 @@ fn render_static_item(node: &StaticItemTransport, dest: &mut dyn ::std::fmt::Wri
             None => OptionalNonterminalView::Missing,
         },
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
+        ref_marker: match &node.ref_marker {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
         value: match &node.value {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),

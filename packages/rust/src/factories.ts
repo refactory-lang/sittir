@@ -774,7 +774,8 @@ export function buildConstItem(config: T.ConstItem.Config) {
 
 export function buildStaticItem(config: T.StaticItem.Config) {
 	const _visibility_modifier = config.visibilityModifier;
-	const _mutable_specifier = config.mutableSpecifier;
+	const _ref_marker = coerceBooleanKeywordStorage(config.refMarker);
+	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _name = config.name;
 	const _type = config.type;
 	const _value = config.value;
@@ -785,6 +786,7 @@ export function buildStaticItem(config: T.StaticItem.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_visibility_modifier,
+				_ref_marker,
 				_mutable_specifier,
 				_name,
 				_type,
@@ -792,7 +794,9 @@ export function buildStaticItem(config: T.StaticItem.Config) {
 				$with: {
 					visibilityModifier: (value?: T.VisibilityModifier) =>
 						buildStaticItem({ ...config, visibilityModifier: value }),
-					mutableSpecifier: (value?: 'ref' | T.MutableSpecifier) =>
+					refMarker: (value?: NonNullable<Parameters<typeof buildStaticItem>[0]>['refMarker']) =>
+						buildStaticItem({ ...config, refMarker: value }),
+					mutableSpecifier: (value?: NonNullable<Parameters<typeof buildStaticItem>[0]>['mutableSpecifier']) =>
 						buildStaticItem({ ...config, mutableSpecifier: value }),
 					name: (value: T.Identifier) => buildStaticItem({ ...config, name: value }),
 					type: (value: T._Type) => buildStaticItem({ ...config, type: value }),
@@ -801,6 +805,7 @@ export function buildStaticItem(config: T.StaticItem.Config) {
 			},
 			{
 				visibilityModifier: () => _visibility_modifier,
+				refMarker: () => _ref_marker,
 				mutableSpecifier: () => _mutable_specifier,
 				name: () => _name,
 				type: () => _type,

@@ -2824,6 +2824,7 @@ export const FIELD_MAP: Record<
 	],
 	static_item: [
 		{ name: 'visibilityModifier', required: false, multiple: false },
+		{ name: 'refMarker', required: false, multiple: false },
 		{ name: 'mutableSpecifier', required: false, multiple: false },
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'type', required: true, multiple: false },

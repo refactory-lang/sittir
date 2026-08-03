@@ -970,6 +970,13 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "ref_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "mutable_specifier": {
         "unnamed": false,
         "slotCount": 1,
@@ -16502,9 +16509,9 @@
           }
         },
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "ref_marker",
+          "propertyName": "refMarker",
+          "paramName": "refMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -16515,7 +16522,23 @@
               "name": "_kw_ref_marker",
               "parseKind": "_kw_ref_marker",
               "unresolved": true
-            },
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_ref_marker"
+            ]
+          }
+        },
+        {
+          "name": "mutable_specifier",
+          "propertyName": "mutableSpecifier",
+          "paramName": "mutableSpecifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -16527,7 +16550,6 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_ref_marker",
               "mutable_specifier"
             ]
           }
@@ -16606,7 +16628,6 @@
       "factoryShape": "config",
       "factoryFields": [
         "visibility_modifier",
-        "mutable_specifier",
         "name",
         "type",
         "value"

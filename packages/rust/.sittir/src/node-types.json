@@ -5108,16 +5108,12 @@
     "named": true,
     "fields": {
       "mutable_specifier": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
           {
             "type": "mutable_specifier",
             "named": true
-          },
-          {
-            "type": "ref",
-            "named": false
           }
         ]
       },
@@ -5128,6 +5124,16 @@
           {
             "type": "identifier",
             "named": true
+          }
+        ]
+      },
+      "ref_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "ref",
+            "named": false
           }
         ]
       },
