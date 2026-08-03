@@ -209,6 +209,39 @@ export const formalParameter = {
 	})
 } as const;
 
+export const lhsExpression = {
+	member: _attach(FR.coerceToMemberExpression, { from: FR.coerceToMemberExpression, strict: F.buildMemberExpression }),
+	subscript: _attach(FR.coerceToSubscriptExpression, {
+		from: FR.coerceToSubscriptExpression,
+		strict: F.buildSubscriptExpression
+	}),
+	undefined: F.buildUndefined,
+	identifier: F.buildIdentifier,
+	object: _attach(FR.coerceToObjectPattern, { from: FR.coerceToObjectPattern, strict: F.buildObjectPattern }),
+	array: _attach(FR.coerceToArrayPattern, { from: FR.coerceToArrayPattern, strict: F.buildArrayPattern }),
+	nonNull: _attach(FR.coerceToNonNullExpression, {
+		from: FR.coerceToNonNullExpression,
+		strict: F.buildNonNullExpression
+	})
+} as const;
+
+export const augmentedAssignmentLhs = {
+	member: _attach(FR.coerceToMemberExpression, { from: FR.coerceToMemberExpression, strict: F.buildMemberExpression }),
+	subscript: _attach(FR.coerceToSubscriptExpression, {
+		from: FR.coerceToSubscriptExpression,
+		strict: F.buildSubscriptExpression
+	}),
+	identifier: F.buildIdentifier,
+	parenthesized: _attach(FR.coerceToParenthesizedExpression, {
+		from: FR.coerceToParenthesizedExpression,
+		strict: F.buildParenthesizedExpression
+	}),
+	nonNull: _attach(FR.coerceToNonNullExpression, {
+		from: FR.coerceToNonNullExpression,
+		strict: F.buildNonNullExpression
+	})
+} as const;
+
 export const destructuringPattern = {
 	object: _attach(FR.coerceToObjectPattern, { from: FR.coerceToObjectPattern, strict: F.buildObjectPattern }),
 	array: _attach(FR.coerceToArrayPattern, { from: FR.coerceToArrayPattern, strict: F.buildArrayPattern })
@@ -220,6 +253,19 @@ export const identifier = {
 } as const;
 
 export const pattern = {
+	member: _attach(FR.coerceToMemberExpression, { from: FR.coerceToMemberExpression, strict: F.buildMemberExpression }),
+	subscript: _attach(FR.coerceToSubscriptExpression, {
+		from: FR.coerceToSubscriptExpression,
+		strict: F.buildSubscriptExpression
+	}),
+	undefined: F.buildUndefined,
+	identifier: F.buildIdentifier,
+	object: _attach(FR.coerceToObjectPattern, { from: FR.coerceToObjectPattern, strict: F.buildObjectPattern }),
+	array: _attach(FR.coerceToArrayPattern, { from: FR.coerceToArrayPattern, strict: F.buildArrayPattern }),
+	nonNull: _attach(FR.coerceToNonNullExpression, {
+		from: FR.coerceToNonNullExpression,
+		strict: F.buildNonNullExpression
+	}),
 	rest: _attach(FR.coerceToRestPattern, { from: FR.coerceToRestPattern, strict: F.buildRestPattern })
 } as const;
 
@@ -307,6 +353,22 @@ export const primaryType = {
 		strict: F.buildIntersectionType
 	}),
 	union: _attach(FR.coerceToUnionType, { from: FR.coerceToUnionType, strict: F.buildUnionType })
+} as const;
+
+export const forHeaderGroup1 = {
+	member: _attach(FR.coerceToMemberExpression, { from: FR.coerceToMemberExpression, strict: F.buildMemberExpression }),
+	subscript: _attach(FR.coerceToSubscriptExpression, {
+		from: FR.coerceToSubscriptExpression,
+		strict: F.buildSubscriptExpression
+	}),
+	undefined: F.buildUndefined,
+	identifier: F.buildIdentifier,
+	object: _attach(FR.coerceToObjectPattern, { from: FR.coerceToObjectPattern, strict: F.buildObjectPattern }),
+	array: _attach(FR.coerceToArrayPattern, { from: FR.coerceToArrayPattern, strict: F.buildArrayPattern }),
+	nonNull: _attach(FR.coerceToNonNullExpression, {
+		from: FR.coerceToNonNullExpression,
+		strict: F.buildNonNullExpression
+	})
 } as const;
 
 // Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
@@ -975,6 +1037,8 @@ export const ir = {
 	jsxElementName,
 	jsxAttributeName,
 	formalParameter,
+	lhsExpression,
+	augmentedAssignmentLhs,
 	destructuringPattern,
 	identifier,
 	pattern,
@@ -987,5 +1051,6 @@ export const ir = {
 	type,
 	tupleTypeMember,
 	primaryType,
+	forHeaderGroup1,
 	from
 } as const;

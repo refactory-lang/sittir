@@ -623,9 +623,114 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'jsx_self_closing_element'
 	]),
 	_formal_parameter: new Set(['required_parameter', 'optional_parameter']),
+	_lhs_expression: new Set([
+		'member_expression',
+		'subscript_expression',
+		'_identifier',
+		'identifier',
+		'undefined',
+		'_reserved_identifier',
+		'reserved_identifier',
+		'declare',
+		'namespace',
+		'anon_type',
+		'public',
+		'private',
+		'protected',
+		'override',
+		'readonly',
+		'anon_module',
+		'any',
+		'anon_number',
+		'boolean',
+		'anon_string',
+		'symbol',
+		'export',
+		'anon_object',
+		'new',
+		'get',
+		'set',
+		'async',
+		'static',
+		'let',
+		'_destructuring_pattern',
+		'destructuring_pattern',
+		'object_pattern',
+		'array_pattern',
+		'non_null_expression'
+	]),
+	_augmented_assignment_lhs: new Set([
+		'member_expression',
+		'subscript_expression',
+		'_reserved_identifier',
+		'reserved_identifier',
+		'declare',
+		'namespace',
+		'anon_type',
+		'public',
+		'private',
+		'protected',
+		'override',
+		'readonly',
+		'anon_module',
+		'any',
+		'anon_number',
+		'boolean',
+		'anon_string',
+		'symbol',
+		'export',
+		'anon_object',
+		'new',
+		'get',
+		'set',
+		'async',
+		'static',
+		'let',
+		'identifier',
+		'parenthesized_expression',
+		'non_null_expression'
+	]),
 	_destructuring_pattern: new Set(['object_pattern', 'array_pattern']),
 	_identifier: new Set(['undefined', 'identifier']),
-	pattern: new Set(['_lhs_expression', 'lhs_expression', 'rest_pattern']),
+	pattern: new Set([
+		'_lhs_expression',
+		'lhs_expression',
+		'member_expression',
+		'subscript_expression',
+		'_identifier',
+		'identifier',
+		'undefined',
+		'_reserved_identifier',
+		'reserved_identifier',
+		'declare',
+		'namespace',
+		'anon_type',
+		'public',
+		'private',
+		'protected',
+		'override',
+		'readonly',
+		'anon_module',
+		'any',
+		'anon_number',
+		'boolean',
+		'anon_string',
+		'symbol',
+		'export',
+		'anon_object',
+		'new',
+		'get',
+		'set',
+		'async',
+		'static',
+		'let',
+		'_destructuring_pattern',
+		'destructuring_pattern',
+		'object_pattern',
+		'array_pattern',
+		'non_null_expression',
+		'rest_pattern'
+	]),
 	_property_name: new Set([
 		'_property_identifier',
 		'property_identifier',
@@ -887,7 +992,43 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'intersection_type',
 		'union_type'
 	]),
-	property_identifier: new Set(['jsx_identifier', 'identifier'])
+	property_identifier: new Set(['jsx_identifier', 'identifier']),
+	for_header_group1: new Set([
+		'member_expression',
+		'subscript_expression',
+		'_identifier',
+		'identifier',
+		'undefined',
+		'_reserved_identifier',
+		'reserved_identifier',
+		'declare',
+		'namespace',
+		'anon_type',
+		'public',
+		'private',
+		'protected',
+		'override',
+		'readonly',
+		'anon_module',
+		'any',
+		'anon_number',
+		'boolean',
+		'anon_string',
+		'symbol',
+		'export',
+		'anon_object',
+		'new',
+		'get',
+		'set',
+		'async',
+		'static',
+		'let',
+		'_destructuring_pattern',
+		'destructuring_pattern',
+		'object_pattern',
+		'array_pattern',
+		'non_null_expression'
+	])
 };
 
 function _wrapKindNameOf(entry: unknown): string | undefined {
@@ -3438,7 +3579,22 @@ export function wrapArrayPattern(data: T.ArrayPattern, tree: TreeHandle) {
 			...data,
 			$type: TSKindId.ArrayPattern as const,
 			_elements: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._elements, ['pattern', '_lhs_expression', 'rest_pattern', 'assignment_pattern']),
+				_filterWrapChildrenByKind(data._elements, [
+					'pattern',
+					'_lhs_expression',
+					'member_expression',
+					'subscript_expression',
+					'_identifier',
+					'undefined',
+					'identifier',
+					'_reserved_identifier',
+					'_destructuring_pattern',
+					'object_pattern',
+					'array_pattern',
+					'non_null_expression',
+					'rest_pattern',
+					'assignment_pattern'
+				]),
 				false,
 				'elements',
 				{ tree, nodeType: data.$type, slotName: 'elements', span: (data as _NodeData).$span }
@@ -4390,103 +4546,51 @@ export function wrapSubscriptExpression(data: T.SubscriptExpression, tree: TreeH
 }
 
 export function wrapLhsExpression(
-	data: T.LhsExpression & {
-		readonly _member_expression?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| T._Identifier
-			| T.ReservedIdentifier
-			| T.DestructuringPattern
-			| T.NonNullExpression;
-		readonly _subscript_expression?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| T._Identifier
-			| T.ReservedIdentifier
-			| T.DestructuringPattern
-			| T.NonNullExpression;
-		readonly _undefined?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| T._Identifier
-			| T.ReservedIdentifier
-			| T.DestructuringPattern
-			| T.NonNullExpression;
-		readonly _identifier?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| T._Identifier
-			| T.ReservedIdentifier
-			| T.DestructuringPattern
-			| T.NonNullExpression;
-		readonly _object_pattern?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| T._Identifier
-			| T.ReservedIdentifier
-			| T.DestructuringPattern
-			| T.NonNullExpression;
-		readonly _array_pattern?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| T._Identifier
-			| T.ReservedIdentifier
-			| T.DestructuringPattern
-			| T.NonNullExpression;
-		readonly _non_null_expression?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| T._Identifier
-			| T.ReservedIdentifier
-			| T.DestructuringPattern
-			| T.NonNullExpression;
-	},
+	data: T.LhsExpression & { readonly $other?: T.LhsExpression | readonly T.LhsExpression[] },
 	tree: TreeHandle
 ) {
-	const _node = withMethods(
-		{
-			..._omitWrapKeys(data, [
-				'_array_pattern',
-				'_identifier',
-				'_member_expression',
-				'_non_null_expression',
-				'_object_pattern',
-				'_subscript_expression',
-				'_undefined'
-			]),
-			$type: TSKindId.LhsExpression as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ??
-					data._member_expression ??
-					data._subscript_expression ??
-					data._undefined ??
-					data._identifier ??
-					data._object_pattern ??
-					data._array_pattern ??
-					data._non_null_expression,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
-
-			content() {
-				return drillAs<
-					| T.MemberExpression
-					| T.SubscriptExpression
-					| T._Identifier
-					| T.ReservedIdentifier
-					| T.DestructuringPattern
-					| T.NonNullExpression
-				>(this._content, tree, [{ from: 'identifier', to: '_reserved_identifier' }]);
-			},
-			$with: {
-				content: (v: NonNullable<T.LhsExpression['_content']>) => wrapLhsExpression({ ...data, _content: v }, tree)
-			}
-		},
-		methodsEngine
+	const kindKeyed = _firstKindKeyedWrapChild(data, [
+		'member_expression',
+		'subscript_expression',
+		'_identifier',
+		'identifier',
+		'undefined',
+		'_reserved_identifier',
+		'reserved_identifier',
+		'_destructuring_pattern',
+		'destructuring_pattern',
+		'object_pattern',
+		'array_pattern',
+		'non_null_expression'
+	]) as T.LhsExpression | readonly T.LhsExpression[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'member_expression',
+			'subscript_expression',
+			'_identifier',
+			'identifier',
+			'undefined',
+			'_reserved_identifier',
+			'reserved_identifier',
+			'_destructuring_pattern',
+			'destructuring_pattern',
+			'object_pattern',
+			'array_pattern',
+			'non_null_expression'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.LhsExpression>(data as T.LhsExpression, tree);
+	}
+	return drillIn<T.LhsExpression>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
 	);
-	return _node;
 }
 
 export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: TreeHandle) {
@@ -4520,7 +4624,8 @@ export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: Tre
 			},
 			left() {
 				return drillAs<T.ParenthesizedExpression | T.LhsExpression>(this._left, tree, [
-					{ from: 'for_header_group1', to: '_lhs_expression' }
+					{ from: 'for_header_group1', to: '_lhs_expression' },
+					{ from: 'identifier', to: '_reserved_identifier' }
 				]);
 			},
 			right() {
@@ -4538,6 +4643,44 @@ export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: Tre
 		methodsEngine
 	);
 	return _node;
+}
+
+export function wrapAugmentedAssignmentLhs(
+	data: T.AugmentedAssignmentLhs & { readonly $other?: T.AugmentedAssignmentLhs | readonly T.AugmentedAssignmentLhs[] },
+	tree: TreeHandle
+) {
+	const kindKeyed = _firstKindKeyedWrapChild(data, [
+		'member_expression',
+		'subscript_expression',
+		'_reserved_identifier',
+		'reserved_identifier',
+		'identifier',
+		'parenthesized_expression',
+		'non_null_expression'
+	]) as T.AugmentedAssignmentLhs | readonly T.AugmentedAssignmentLhs[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'member_expression',
+			'subscript_expression',
+			'_reserved_identifier',
+			'reserved_identifier',
+			'identifier',
+			'parenthesized_expression',
+			'non_null_expression'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.AugmentedAssignmentLhs>(data as T.AugmentedAssignmentLhs, tree);
+	}
+	return drillIn<T.AugmentedAssignmentLhs>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
 }
 
 export function wrapAugmentedAssignmentExpression(data: T.AugmentedAssignmentExpression, tree: TreeHandle) {
@@ -4602,14 +4745,9 @@ export function wrapAugmentedAssignmentExpression(data: T.AugmentedAssignmentExp
 			}),
 
 			left() {
-				return drillAs<
-					| T.MemberExpression
-					| T.SubscriptExpression
-					| T.ReservedIdentifier
-					| T.Identifier
-					| T.ParenthesizedExpression
-					| T.NonNullExpression
-				>(this._left, tree, [{ from: 'reserved_identifier', to: '_reserved_identifier' }]);
+				return drillAs<T.AugmentedAssignmentLhs>(this._left, tree, [
+					{ from: 'reserved_identifier', to: '_reserved_identifier' }
+				]);
 			},
 			operator() {
 				return this._operator;
@@ -5810,12 +5948,42 @@ export function wrapPattern(
 	data: T.Pattern & { readonly $other?: T.Pattern | readonly T.Pattern[] },
 	tree: TreeHandle
 ) {
-	const kindKeyed = _firstKindKeyedWrapChild(data, ['_lhs_expression', 'lhs_expression', 'rest_pattern']) as
-		| T.Pattern
-		| readonly T.Pattern[]
-		| undefined;
+	const kindKeyed = _firstKindKeyedWrapChild(data, [
+		'_lhs_expression',
+		'lhs_expression',
+		'member_expression',
+		'subscript_expression',
+		'_identifier',
+		'identifier',
+		'undefined',
+		'_reserved_identifier',
+		'reserved_identifier',
+		'_destructuring_pattern',
+		'destructuring_pattern',
+		'object_pattern',
+		'array_pattern',
+		'non_null_expression',
+		'rest_pattern'
+	]) as T.Pattern | readonly T.Pattern[] | undefined;
 	const filtered =
-		kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['_lhs_expression', 'lhs_expression', 'rest_pattern']);
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'_lhs_expression',
+			'lhs_expression',
+			'member_expression',
+			'subscript_expression',
+			'_identifier',
+			'identifier',
+			'undefined',
+			'_reserved_identifier',
+			'reserved_identifier',
+			'_destructuring_pattern',
+			'destructuring_pattern',
+			'object_pattern',
+			'array_pattern',
+			'non_null_expression',
+			'rest_pattern'
+		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
 		return drillIn<T.Pattern>(data as T.Pattern, tree);
 	}
@@ -5830,20 +5998,52 @@ export function wrapPattern(
 	);
 }
 
-export function wrapRestPattern(data: T.RestPattern, tree: TreeHandle) {
+export function wrapRestPattern(
+	data: T.RestPattern & {
+		readonly _identifier?: T.LhsExpression;
+		readonly _member_expression?: T.LhsExpression;
+		readonly _subscript_expression?: T.LhsExpression;
+		readonly _undefined?: T.LhsExpression;
+		readonly _reserved_identifier?: T.LhsExpression;
+		readonly _object_pattern?: T.LhsExpression;
+		readonly _array_pattern?: T.LhsExpression;
+		readonly _non_null_expression?: T.LhsExpression;
+	},
+	tree: TreeHandle
+) {
 	const _node = withMethods(
 		{
-			...data,
+			..._omitWrapKeys(data, [
+				'_array_pattern',
+				'_identifier',
+				'_member_expression',
+				'_non_null_expression',
+				'_object_pattern',
+				'_reserved_identifier',
+				'_subscript_expression',
+				'_undefined'
+			]),
 			$type: TSKindId.RestPattern as const,
-			_lhs_expression: normalizeSingularWrapSlot(data._lhs_expression, 'lhs_expression', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'lhs_expression',
-				span: (data as _NodeData).$span
-			}),
+			_lhs_expression: normalizeSingularWrapSlot(
+				data._lhs_expression ??
+					data._identifier ??
+					data._member_expression ??
+					data._subscript_expression ??
+					data._undefined ??
+					data._reserved_identifier ??
+					data._object_pattern ??
+					data._array_pattern ??
+					data._non_null_expression,
+				'lhs_expression',
+				true,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'lhs_expression', span: (data as _NodeData).$span }
+			),
 
 			lhsExpression() {
-				return drillIn<T.LhsExpression>(this._lhs_expression, tree);
+				return drillAs<T.LhsExpression>(this._lhs_expression, tree, [
+					{ from: 'identifier', to: '_reserved_identifier' }
+				]);
 			},
 			$with: {
 				lhsExpression: (v: NonNullable<T.RestPattern['_lhs_expression']>) =>
@@ -11969,7 +12169,8 @@ export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle) {
 
 			left() {
 				return drillAs<T.LhsExpression | T.ParenthesizedExpression>(this._left, tree, [
-					{ from: 'for_header_group1', to: '_lhs_expression' }
+					{ from: 'for_header_group1', to: '_lhs_expression' },
+					{ from: 'identifier', to: '_reserved_identifier' }
 				]);
 			},
 			$with: {
@@ -12899,6 +13100,54 @@ export function wrapPropertyIdentifier(
 	);
 }
 
+export function wrapForHeaderGroup1(
+	data: T.ForHeaderGroup1 & { readonly $other?: T.ForHeaderGroup1 | readonly T.ForHeaderGroup1[] },
+	tree: TreeHandle
+) {
+	const kindKeyed = _firstKindKeyedWrapChild(data, [
+		'member_expression',
+		'subscript_expression',
+		'_identifier',
+		'identifier',
+		'undefined',
+		'_reserved_identifier',
+		'reserved_identifier',
+		'_destructuring_pattern',
+		'destructuring_pattern',
+		'object_pattern',
+		'array_pattern',
+		'non_null_expression'
+	]) as T.ForHeaderGroup1 | readonly T.ForHeaderGroup1[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'member_expression',
+			'subscript_expression',
+			'_identifier',
+			'identifier',
+			'undefined',
+			'_reserved_identifier',
+			'reserved_identifier',
+			'_destructuring_pattern',
+			'destructuring_pattern',
+			'object_pattern',
+			'array_pattern',
+			'non_null_expression'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.ForHeaderGroup1>(data as T.ForHeaderGroup1, tree);
+	}
+	return drillIn<T.ForHeaderGroup1>(
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
+		tree
+	);
+}
+
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
 	program: (d, t) => wrapProgram(d as unknown as T.Program, t),
 	hash_bang_line: (d) => ({ ...d, $type: TSKindId.HashBangLine as const }),
@@ -12972,6 +13221,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	subscript_expression: (d, t) => wrapSubscriptExpression(d as unknown as T.SubscriptExpression, t),
 	_lhs_expression: (d, t) => wrapLhsExpression(d as unknown as T.LhsExpression, t),
 	assignment_expression: (d, t) => wrapAssignmentExpression(d as unknown as T.AssignmentExpression, t),
+	_augmented_assignment_lhs: (d, t) => wrapAugmentedAssignmentLhs(d as unknown as T.AugmentedAssignmentLhs, t),
 	augmented_assignment_expression: (d, t) =>
 		wrapAugmentedAssignmentExpression(d as unknown as T.AugmentedAssignmentExpression, t),
 	_initializer: (d, t) => wrapInitializer(d as unknown as T.Initializer, t),
@@ -13200,7 +13450,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	'||': (d) => d,
 	jsx_text: (d) => ({ ...d, $type: TSKindId.JsxText as const }),
 	__error_recovery: (d) => ({ ...d, $type: TSKindId.ErrorRecovery as const }),
-	property_identifier: (d, t) => wrapPropertyIdentifier(d as unknown as T.PropertyIdentifier, t)
+	property_identifier: (d, t) => wrapPropertyIdentifier(d as unknown as T.PropertyIdentifier, t),
+	for_header_group1: (d, t) => wrapForHeaderGroup1(d as unknown as T.ForHeaderGroup1, t)
 };
 
 const _aliasTargetToSource: Record<string, string> = {
@@ -13217,6 +13468,7 @@ const _aliasTargetToSource: Record<string, string> = {
 	arrow_function__call_signature: '_arrow_function__call_signature',
 	arrow_function_parameter: '_arrow_function_parameter',
 	augmented_assignment_expression_operator: '_augmented_assignment_expression_operator',
+	augmented_assignment_lhs: '_augmented_assignment_lhs',
 	binary_expression_group1: '_binary_expression_group1',
 	call_expression_call: '_call_expression_call',
 	call_expression_member: '_call_expression_member',
@@ -13241,7 +13493,6 @@ const _aliasTargetToSource: Record<string, string> = {
 	export_statement_namespace_export: '_export_statement_namespace_export',
 	export_statement_type_export: '_export_statement_type_export',
 	expressions: '_expressions',
-	for_header_group1: '_lhs_expression',
 	for_header_let_const_kind: '_for_header_let_const_kind',
 	for_header_lhs: '_for_header_lhs',
 	for_header_operator: '__for_header_operator',

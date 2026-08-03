@@ -1539,6 +1539,23 @@ function classifyHiddenRule(
 	return { rule };
 }
 
+// Grammar-inheritance idioms (`choice(previous, $.new_arm)`) nest a CHOICE
+// inside a CHOICE's own members. Tree-sitter erases the nesting at parse
+// time — choice-of-choice is parse-equivalent to one flat choice — so
+// supertype-compatibility and variant-arm extraction must see the flat leaf
+// list, not the authored nesting.
+function flattenNestedChoiceMembers(members: readonly Rule<'link'>[]): Rule<'link'>[] {
+	const flat: Rule<'link'>[] = [];
+	for (const m of members) {
+		if (m.type === CHOICE) {
+			flat.push(...flattenNestedChoiceMembers(m.members));
+		} else {
+			flat.push(m);
+		}
+	}
+	return flat;
+}
+
 function classifyHiddenChoiceRule(
 	rule: ChoiceRule<'link'>,
 	ctx: LinkCtx,
@@ -1596,9 +1613,19 @@ function classifyHiddenChoiceRule(
 		return { rule };
 	}
 
+	// Grammar inheritance idioms author a hidden union as `choice(previous,
+	// $.new_arm)` — a CHOICE member that is ITSELF a CHOICE, not a leaf. Since
+	// choice-of-choice is parse-equivalent (tree-sitter erases the nesting),
+	// flatten before checking supertype-compatibility and before computing
+	// variantArms below; otherwise a single nested-CHOICE member fails
+	// `supertypeCompatible` outright and blocks promotion for the WHOLE
+	// hidden union, even though every actual leaf arm qualifies (confirmed
+	// case: typescript's `_lhs_expression`, authored as
+	// `choice(previous, $.non_null_expression)`).
+	const flatMembers = flattenNestedChoiceMembers(rule.members);
 	const supertypeCompatible = (m: Rule<'link'>): boolean =>
 		m.type === SYMBOL || isEnumChoiceRule(m) || m.type === STRING;
-	const allCompatible = rule.members.every(supertypeCompatible);
+	const allCompatible = flatMembers.every(supertypeCompatible);
 	if (allCompatible || supertypes.has(name)) {
 		const subtypes = collectSubtypeRefs(rule, ctx);
 		// Only promote if we actually resolved subtype names. An empty
@@ -1634,7 +1661,7 @@ function classifyHiddenChoiceRule(
 			// `polymorphs:`/`variant()` registration); Task 3's probe
 			// exceptions table enumerates the SUPERTYPE-parent instances the
 			// same way.
-			const variantArms = rule.members
+			const variantArms = flatMembers
 				.map((m): string | null => {
 					const core = m.type === VARIANT ? m.content : m;
 					if (!isAliasMintedRef(core, rules)) return null;

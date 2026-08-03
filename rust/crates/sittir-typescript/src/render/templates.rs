@@ -348,12 +348,6 @@ pub struct JsxStartOpeningElementGroup1Template<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_lhs_expression.jinja", escape = "none")]
-pub struct LhsExpressionTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_named_imports_group1.jinja", escape = "none")]
 pub struct NamedImportsGroup1Template<'a> {
     pub import_specifier: ListNonterminalView<'a>,
@@ -1418,7 +1412,7 @@ pub struct RequiredParameterTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "rest_pattern.jinja", escape = "none")]
 pub struct RestPatternTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
+    pub lhs_expression: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

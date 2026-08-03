@@ -1785,43 +1785,6 @@ export function buildSubscriptExpression(config: T.SubscriptExpression.Config) {
 	);
 }
 
-export function buildLhsExpression(
-	child:
-		| T.MemberExpression
-		| T.SubscriptExpression
-		| T._Identifier
-		| T.ReservedIdentifier
-		| T.DestructuringPattern
-		| T.NonNullExpression
-) {
-	const _content = child;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.LhsExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					$child: (
-						v:
-							| T.MemberExpression
-							| T.SubscriptExpression
-							| T._Identifier
-							| T.ReservedIdentifier
-							| T.DestructuringPattern
-							| T.NonNullExpression
-					) => buildLhsExpression(v)
-				}
-			},
-			{
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildAssignmentExpression(config: T.AssignmentExpression.Config) {
 	const _using_marker = coerceBooleanKeywordStorage(config.usingMarker);
 	const _left = config.left;
@@ -1883,15 +1846,7 @@ export function buildAugmentedAssignmentExpression(config: T.AugmentedAssignment
 				_operator,
 				_right,
 				$with: {
-					left: (
-						value:
-							| T.MemberExpression
-							| T.SubscriptExpression
-							| T.ReservedIdentifier
-							| T.Identifier
-							| T.ParenthesizedExpression
-							| T.NonNullExpression
-					) => buildAugmentedAssignmentExpression({ ...config, left: value }),
+					left: (value: T.AugmentedAssignmentLhs) => buildAugmentedAssignmentExpression({ ...config, left: value }),
 					operator: (value: NonNullable<Parameters<typeof buildAugmentedAssignmentExpression>[0]>['operator']) =>
 						buildAugmentedAssignmentExpression({ ...config, operator: value }),
 					right: (value: T.Expression) => buildAugmentedAssignmentExpression({ ...config, right: value })
@@ -6781,7 +6736,6 @@ export type FluentKindMap = {
 	await_expression: FluentNode<'await_expression', T.AwaitExpression.Config>;
 	member_expression: FluentNode<'member_expression', T.MemberExpression.Config>;
 	subscript_expression: FluentNode<'subscript_expression', T.SubscriptExpression.Config>;
-	_lhs_expression: FluentNode<'_lhs_expression', T.LhsExpression.Config>;
 	assignment_expression: FluentNode<'assignment_expression', T.AssignmentExpression.Config>;
 	augmented_assignment_expression: FluentNode<
 		'augmented_assignment_expression',
@@ -7053,7 +7007,6 @@ export const _factoryMap = {
 	await_expression: buildAwaitExpression,
 	member_expression: buildMemberExpression,
 	subscript_expression: buildSubscriptExpression,
-	_lhs_expression: buildLhsExpression,
 	assignment_expression: buildAssignmentExpression,
 	augmented_assignment_expression: buildAugmentedAssignmentExpression,
 	_initializer: buildInitializer,

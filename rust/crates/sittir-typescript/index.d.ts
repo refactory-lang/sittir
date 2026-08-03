@@ -275,7 +275,7 @@ export interface AugmentedAssignmentExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _left: Box<AugmentedAssignmentExpressionLeftTransportSlot>
+  _left: Box<AugmentedAssignmentLhsTransport>
   _operator: AugmentedAssignmentExpressionOperatorEnum
   _right: Box<ExpressionTransport>
 }
@@ -1690,17 +1690,6 @@ export interface LexicalDeclarationTransport {
   _kind: KindEnum
   _declarators: Array<VariableDeclaratorTransport>
   _semicolon: SemicolonEnum
-}
-
-export interface LhsExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _content: Box<LhsExpressionContentTransportSlot>
 }
 
 export interface LiteralTypeTransport {

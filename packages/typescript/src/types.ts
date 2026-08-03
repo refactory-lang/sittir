@@ -219,7 +219,6 @@ export const enum SyntaxKind {
 	AwaitExpression = 'await_expression',
 	MemberExpression = 'member_expression',
 	SubscriptExpression = 'subscript_expression',
-	LhsExpression = '_lhs_expression',
 	AssignmentExpression = 'assignment_expression',
 	AugmentedAssignmentExpression = 'augmented_assignment_expression',
 	Initializer = '_initializer',
@@ -721,7 +720,7 @@ export const enum TSKindId {
 	SubscriptExpression = 235,
 	LhsExpression = 236,
 	AssignmentExpression = 237,
-	_AugmentedAssignmentLhs = 238,
+	AugmentedAssignmentLhs = 238,
 	AugmentedAssignmentExpression = 239,
 	Initializer = 240,
 	DestructuringPattern = 241,
@@ -2320,7 +2319,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'assignment_expression':
 			return TSKindId.AssignmentExpression;
 		case '_augmented_assignment_lhs':
-			return TSKindId._AugmentedAssignmentLhs;
+			return TSKindId.AugmentedAssignmentLhs;
 		case 'augmented_assignment_expression':
 			return TSKindId.AugmentedAssignmentExpression;
 		case '_initializer':
@@ -3157,6 +3156,28 @@ export const enum FormalParameterKind {
 	OptionalParameter = 'optional_parameter'
 }
 
+export const enum LhsExpressionKind {
+	MemberExpression = 'member_expression',
+	SubscriptExpression = 'subscript_expression',
+	_Identifier = '_identifier',
+	Undefined = 'undefined',
+	Identifier = 'identifier',
+	ReservedIdentifier = '_reserved_identifier',
+	DestructuringPattern = '_destructuring_pattern',
+	ObjectPattern = 'object_pattern',
+	ArrayPattern = 'array_pattern',
+	NonNullExpression = 'non_null_expression'
+}
+
+export const enum AugmentedAssignmentLhsKind {
+	MemberExpression = 'member_expression',
+	SubscriptExpression = 'subscript_expression',
+	ReservedIdentifier = '_reserved_identifier',
+	Identifier = 'identifier',
+	ParenthesizedExpression = 'parenthesized_expression',
+	NonNullExpression = 'non_null_expression'
+}
+
 export const enum DestructuringPatternKind {
 	ObjectPattern = 'object_pattern',
 	ArrayPattern = 'array_pattern'
@@ -3169,6 +3190,16 @@ export const enum _IdentifierKind {
 
 export const enum PatternKind {
 	LhsExpression = '_lhs_expression',
+	MemberExpression = 'member_expression',
+	SubscriptExpression = 'subscript_expression',
+	_Identifier = '_identifier',
+	Undefined = 'undefined',
+	Identifier = 'identifier',
+	ReservedIdentifier = '_reserved_identifier',
+	DestructuringPattern = '_destructuring_pattern',
+	ObjectPattern = 'object_pattern',
+	ArrayPattern = 'array_pattern',
+	NonNullExpression = 'non_null_expression',
 	RestPattern = 'rest_pattern'
 }
 
@@ -3249,6 +3280,19 @@ export const enum PrimaryTypeKind {
 export const enum PropertyIdentifierKind {
 	JsxIdentifier = 'jsx_identifier',
 	Identifier = 'identifier'
+}
+
+export const enum ForHeaderGroup1Kind {
+	MemberExpression = 'member_expression',
+	SubscriptExpression = 'subscript_expression',
+	_Identifier = '_identifier',
+	Undefined = 'undefined',
+	Identifier = 'identifier',
+	ReservedIdentifier = '_reserved_identifier',
+	DestructuringPattern = '_destructuring_pattern',
+	ObjectPattern = 'object_pattern',
+	ArrayPattern = 'array_pattern',
+	NonNullExpression = 'non_null_expression'
 }
 
 // Node types — concrete interfaces
@@ -3937,24 +3981,6 @@ export interface SubscriptExpression {
 	index(): Expressions;
 }
 
-export interface LhsExpression {
-	readonly $type: TSKindId.LhsExpression;
-	readonly _content:
-		| MemberExpression
-		| SubscriptExpression
-		| _Identifier
-		| ReservedIdentifier
-		| DestructuringPattern
-		| NonNullExpression;
-	content():
-		| MemberExpression
-		| SubscriptExpression
-		| _Identifier
-		| ReservedIdentifier
-		| DestructuringPattern
-		| NonNullExpression;
-}
-
 export interface AssignmentExpression {
 	readonly $type: TSKindId.AssignmentExpression;
 	readonly _using_marker?: boolean;
@@ -3970,13 +3996,7 @@ export interface AssignmentExpression {
 
 export interface AugmentedAssignmentExpression {
 	readonly $type: TSKindId.AugmentedAssignmentExpression;
-	readonly _left:
-		| MemberExpression
-		| SubscriptExpression
-		| ReservedIdentifier
-		| Identifier
-		| ParenthesizedExpression
-		| NonNullExpression;
+	readonly _left: AugmentedAssignmentLhs;
 	readonly _operator: number;
 	readonly _right: Expression;
 	readonly __inputHints__?: {
@@ -3999,13 +4019,7 @@ export interface AugmentedAssignmentExpression {
 			| TSKindId.QmarkQmarkEq
 		>;
 	};
-	left():
-		| MemberExpression
-		| SubscriptExpression
-		| ReservedIdentifier
-		| Identifier
-		| ParenthesizedExpression
-		| NonNullExpression;
+	left(): AugmentedAssignmentLhs;
 	operator(): number;
 	right(): Expression;
 }
@@ -5867,9 +5881,6 @@ export interface NewExpressionTree extends TreeNode<'new_expression'> {}
 export interface AwaitExpressionTree extends TreeNode<'await_expression'> {}
 export interface MemberExpressionTree extends TreeNode<'member_expression'> {}
 export interface SubscriptExpressionTree extends TreeNode<'subscript_expression'> {}
-export interface LhsExpressionTree extends AnyTreeNode {
-	readonly type: '_lhs_expression';
-}
 export interface AssignmentExpressionTree extends TreeNode<'assignment_expression'> {}
 export interface AugmentedAssignmentExpressionTree extends TreeNode<'augmented_assignment_expression'> {}
 export interface InitializerTree extends AnyTreeNode {
@@ -6660,6 +6671,42 @@ export type FormalParameter = RequiredParameter | OptionalParameter;
 
 export type FormalParameterTree = RequiredParameterTree | OptionalParameterTree;
 
+export type LhsExpression =
+	| MemberExpression
+	| SubscriptExpression
+	| Undefined
+	| Identifier
+	| ReservedIdentifier
+	| ObjectPattern
+	| ArrayPattern
+	| NonNullExpression;
+
+export type LhsExpressionTree =
+	| MemberExpressionTree
+	| SubscriptExpressionTree
+	| UndefinedTree
+	| IdentifierTree
+	| ReservedIdentifierTree
+	| ObjectPatternTree
+	| ArrayPatternTree
+	| NonNullExpressionTree;
+
+export type AugmentedAssignmentLhs =
+	| MemberExpression
+	| SubscriptExpression
+	| ReservedIdentifier
+	| Identifier
+	| ParenthesizedExpression
+	| NonNullExpression;
+
+export type AugmentedAssignmentLhsTree =
+	| MemberExpressionTree
+	| SubscriptExpressionTree
+	| ReservedIdentifierTree
+	| IdentifierTree
+	| ParenthesizedExpressionTree
+	| NonNullExpressionTree;
+
 export type DestructuringPattern = ObjectPattern | ArrayPattern;
 
 export type DestructuringPatternTree = ObjectPatternTree | ArrayPatternTree;
@@ -6668,9 +6715,33 @@ export type _Identifier = Undefined | Identifier;
 
 export type _IdentifierTree = UndefinedTree | IdentifierTree;
 
-export type Pattern = LhsExpression | RestPattern;
+export type Pattern =
+	| LhsExpression
+	| MemberExpression
+	| SubscriptExpression
+	| _Identifier
+	| Undefined
+	| Identifier
+	| ReservedIdentifier
+	| DestructuringPattern
+	| ObjectPattern
+	| ArrayPattern
+	| NonNullExpression
+	| RestPattern;
 
-export type PatternTree = LhsExpressionTree | RestPatternTree;
+export type PatternTree =
+	| LhsExpressionTree
+	| MemberExpressionTree
+	| SubscriptExpressionTree
+	| _IdentifierTree
+	| UndefinedTree
+	| IdentifierTree
+	| ReservedIdentifierTree
+	| DestructuringPatternTree
+	| ObjectPatternTree
+	| ArrayPatternTree
+	| NonNullExpressionTree
+	| RestPatternTree;
 
 export type PropertyName =
 	| Identifier
@@ -6777,6 +6848,30 @@ export type PropertyIdentifier = JsxIdentifier | Identifier;
 
 export type PropertyIdentifierTree = JsxIdentifierTree | IdentifierTree;
 
+export type ForHeaderGroup1 =
+	| MemberExpression
+	| SubscriptExpression
+	| _Identifier
+	| Undefined
+	| Identifier
+	| ReservedIdentifier
+	| DestructuringPattern
+	| ObjectPattern
+	| ArrayPattern
+	| NonNullExpression;
+
+export type ForHeaderGroup1Tree =
+	| MemberExpressionTree
+	| SubscriptExpressionTree
+	| _IdentifierTree
+	| UndefinedTree
+	| IdentifierTree
+	| ReservedIdentifierTree
+	| DestructuringPatternTree
+	| ObjectPatternTree
+	| ArrayPatternTree
+	| NonNullExpressionTree;
+
 // Token type aliases (only tokens referenced in field/child unions)
 export type EmptyStatement = Terminal<TSKindId.EmptyStatement>;
 export interface EmptyStatementTree extends AnyTreeNode {
@@ -6861,7 +6956,6 @@ export type TypescriptNode =
 	| AwaitExpression
 	| MemberExpression
 	| SubscriptExpression
-	| LhsExpression
 	| AssignmentExpression
 	| AugmentedAssignmentExpression
 	| Initializer
@@ -7095,7 +7189,6 @@ export interface KindMap {
 	await_expression: AwaitExpression;
 	member_expression: MemberExpression;
 	subscript_expression: SubscriptExpression;
-	_lhs_expression: LhsExpression;
 	assignment_expression: AssignmentExpression;
 	augmented_assignment_expression: AugmentedAssignmentExpression;
 	_initializer: Initializer;
@@ -7411,7 +7504,6 @@ export interface SubscriptExpressionNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface LhsExpressionNs extends NodeNs<LhsExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentExpressionNs extends NodeNs<
 	AssignmentExpression,
 	LeafScalarMap,
@@ -7990,7 +8082,6 @@ export interface NamespaceMap {
 	await_expression: AwaitExpressionNs;
 	member_expression: MemberExpressionNs;
 	subscript_expression: SubscriptExpressionNs;
-	_lhs_expression: LhsExpressionNs;
 	assignment_expression: AssignmentExpressionNs;
 	augmented_assignment_expression: AugmentedAssignmentExpressionNs;
 	_initializer: InitializerNs;
@@ -8644,13 +8735,6 @@ export namespace SubscriptExpression {
 	export type Loose = LooseFor<'subscript_expression'>;
 	export type Tree = TreeFor<'subscript_expression'>;
 	export type Kind = 'subscript_expression';
-}
-export namespace LhsExpression {
-	export type Config = ConfigFor<'_lhs_expression'>;
-	export type Fluent = FluentFor<'_lhs_expression'>;
-	export type Loose = LooseFor<'_lhs_expression'>;
-	export type Tree = TreeFor<'_lhs_expression'>;
-	export type Kind = '_lhs_expression';
 }
 export namespace AssignmentExpression {
 	export type Config = ConfigFor<'assignment_expression'>;

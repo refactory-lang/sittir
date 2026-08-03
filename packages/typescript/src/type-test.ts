@@ -232,8 +232,6 @@ import type {
 	LabeledStatementTree,
 	LexicalDeclaration,
 	LexicalDeclarationTree,
-	LhsExpression,
-	LhsExpressionTree,
 	LiteralType,
 	LiteralTypeTree,
 	LookupType,
@@ -539,7 +537,6 @@ export type _Type_MemberExpression = _TypeAssert<_TypeExtends<MemberExpression['
 export type _Type_SubscriptExpression = _TypeAssert<
 	_TypeExtends<SubscriptExpression['$type'], TSKindId.SubscriptExpression>
 >;
-export type _Type_LhsExpression = _TypeAssert<_TypeExtends<LhsExpression['$type'], TSKindId.LhsExpression>>;
 export type _Type_AssignmentExpression = _TypeAssert<
 	_TypeExtends<AssignmentExpression['$type'], TSKindId.AssignmentExpression>
 >;
@@ -940,7 +937,6 @@ export type _Tree_MemberExpression = _TypeAssert<_TypeExtends<MemberExpressionTr
 export type _Tree_SubscriptExpression = _TypeAssert<
 	_TypeExtends<SubscriptExpressionTree['type'], 'subscript_expression'>
 >;
-export type _Tree_LhsExpression = _TypeAssert<_TypeExtends<LhsExpressionTree['type'], '_lhs_expression'>>;
 export type _Tree_AssignmentExpression = _TypeAssert<
 	_TypeExtends<AssignmentExpressionTree['type'], 'assignment_expression'>
 >;
