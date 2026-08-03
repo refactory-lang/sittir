@@ -718,7 +718,7 @@ export type PythonGrammar = {
 	readonly except_clause: {
 		type: 'except_clause';
 		named: true;
-		fields: {};
+		fields: { star_marker: { multiple: false; required: false; types: [{ type: '*'; named: false }] } };
 		children: {
 			multiple: true;
 			required: true;
@@ -872,6 +872,7 @@ export type PythonGrammar = {
 		type: 'format_expression';
 		named: true;
 		fields: {
+			eq_marker: { multiple: false; required: false; types: [{ type: '='; named: false }] };
 			expression: {
 				multiple: false;
 				required: true;
@@ -1015,6 +1016,7 @@ export type PythonGrammar = {
 		type: 'interpolation';
 		named: true;
 		fields: {
+			eq_marker: { multiple: false; required: false; types: [{ type: '='; named: false }] };
 			expression: {
 				multiple: false;
 				required: true;

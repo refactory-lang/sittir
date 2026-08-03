@@ -1205,14 +1205,21 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "TOKEN",
+              "type": "FIELD",
+              "name": "star_marker",
               "content": {
-                "type": "PREC",
-                "value": 1,
+                "type": "TOKEN",
                 "content": {
-                  "type": "STRING",
-                  "value": "*"
+                  "type": "PREC",
+                  "value": 1,
+                  "content": {
+                    "type": "STRING",
+                    "value": "*"
+                  }
                 }
+              },
+              "metadata": {
+                "fieldSource": "override"
               }
             },
             {
@@ -5253,8 +5260,15 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "="
+              "type": "FIELD",
+              "name": "eq_marker",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_eq_marker"
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "BLANK"
@@ -7333,6 +7347,9 @@
     "_kw_entries": {
       "type": "BLANK"
     },
+    "_kw_star_marker": {
+      "type": "BLANK"
+    },
     "_kw_in_clause": {
       "type": "BLANK"
     },
@@ -7344,6 +7361,10 @@
     },
     "_kw_wildcard_import": {
       "type": "BLANK"
+    },
+    "_kw_eq_marker": {
+      "type": "STRING",
+      "value": "="
     },
     "_kw_simple_pattern": {
       "type": "BLANK"
@@ -7732,6 +7753,7 @@
     "_function_definition_optional1",
     "_exec_statement_optional1",
     "_kw_real",
+    "_kw_eq_marker",
     "_kw_type"
   ],
   "supertypes": [

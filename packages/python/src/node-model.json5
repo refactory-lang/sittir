@@ -657,6 +657,13 @@
       }
     },
     "except_clause": {
+      "star_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "except_clause_group1": {
         "unnamed": false,
         "slotCount": 1,
@@ -1815,6 +1822,13 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "eq_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       },
@@ -6505,6 +6519,26 @@
       "hidden": false,
       "fields": [
         {
+          "name": "star_marker",
+          "propertyName": "starMarker",
+          "paramName": "starMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "*",
+              "parseKind": "star"
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
           "name": "except_clause_group1",
           "propertyName": "exceptClauseGroup1",
           "paramName": "exceptClauseGroup1",
@@ -8030,6 +8064,26 @@
             "kinds": [
               "_f_expression"
             ]
+          }
+        },
+        {
+          "name": "eq_marker",
+          "propertyName": "eqMarker",
+          "paramName": "eqMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "=",
+              "parseKind": "eq"
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": []
           }
         },
         {

@@ -31933,6 +31933,558 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 108,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 113
+      },
+      "$nodeHandle": 0,
+      "_statement": [
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 0,
+            "end": 19
+          },
+          "$nodeHandle": 39,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 0,
+                "end": 19
+              },
+              "$nodeHandle": 45,
+              "_content": {
+                "$type": 227,
+                "$source": 0,
+                "$named": true,
+                "_string_start": "f\"",
+                "_content": [
+                  {
+                    "$type": 228,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "a ",
+                    "$span": {
+                      "start": 2,
+                      "end": 4
+                    }
+                  },
+                  {
+                    "$type": 229,
+                    "$source": 0,
+                    "$named": true,
+                    "_expression": "b",
+                    "_format_specifier": {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 6,
+                        "end": 8
+                      },
+                      "$nodeHandle": 49,
+                      "_content": []
+                    },
+                    "$other": [
+                      46,
+                      47
+                    ],
+                    "$span": {
+                      "start": 4,
+                      "end": 9
+                    },
+                    "$nodeHandle": 47
+                  },
+                  {
+                    "$type": 228,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": " ",
+                    "$span": {
+                      "start": 9,
+                      "end": 10
+                    }
+                  },
+                  {
+                    "$type": 229,
+                    "$source": 0,
+                    "$named": true,
+                    "_expression": "c",
+                    "_format_specifier": {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 12,
+                        "end": 17
+                      },
+                      "$nodeHandle": 50,
+                      "_content": []
+                    },
+                    "$other": [
+                      46,
+                      47
+                    ],
+                    "$span": {
+                      "start": 10,
+                      "end": 18
+                    },
+                    "$nodeHandle": 48
+                  }
+                ],
+                "_string_end": "\"",
+                "$span": {
+                  "start": 0,
+                  "end": 19
+                },
+                "$nodeHandle": 46
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 20,
+            "end": 38
+          },
+          "$nodeHandle": 40,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 20,
+                "end": 38
+              },
+              "$nodeHandle": 51,
+              "_content": {
+                "$type": 227,
+                "$source": 0,
+                "$named": true,
+                "_string_start": "f\"",
+                "_content": [
+                  {
+                    "$type": 229,
+                    "$source": 0,
+                    "$named": true,
+                    "_expression": "b",
+                    "_format_specifier": {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "$other": [
+                        22
+                      ],
+                      "$span": {
+                        "start": 24,
+                        "end": 36
+                      },
+                      "$nodeHandle": 54,
+                      "_content": [
+                        {
+                          "$type": 229,
+                          "$source": 0,
+                          "$named": true,
+                          "_expression": {
+                            "$type": 200,
+                            "$source": 0,
+                            "$named": true,
+                            "_object": "c",
+                            "_attribute": "d",
+                            "$other": [
+                              4
+                            ],
+                            "$span": {
+                              "start": 26,
+                              "end": 29
+                            },
+                            "$nodeHandle": 57
+                          },
+                          "$other": [
+                            46,
+                            47
+                          ],
+                          "$span": {
+                            "start": 25,
+                            "end": 30
+                          },
+                          "$nodeHandle": 55
+                        },
+                        {
+                          "$type": 229,
+                          "$source": 0,
+                          "$named": true,
+                          "_expression": {
+                            "$type": 200,
+                            "$source": 0,
+                            "$named": true,
+                            "_object": "d",
+                            "_attribute": "e",
+                            "$other": [
+                              4
+                            ],
+                            "$span": {
+                              "start": 32,
+                              "end": 35
+                            },
+                            "$nodeHandle": 58
+                          },
+                          "$other": [
+                            46,
+                            47
+                          ],
+                          "$span": {
+                            "start": 31,
+                            "end": 36
+                          },
+                          "$nodeHandle": 56
+                        }
+                      ]
+                    },
+                    "$other": [
+                      46,
+                      47
+                    ],
+                    "$span": {
+                      "start": 22,
+                      "end": 37
+                    },
+                    "$nodeHandle": 53
+                  }
+                ],
+                "_string_end": "\"",
+                "$span": {
+                  "start": 20,
+                  "end": 38
+                },
+                "$nodeHandle": 52
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 39,
+            "end": 50
+          },
+          "$nodeHandle": 41,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 39,
+                "end": 50
+              },
+              "$nodeHandle": 59,
+              "_content": {
+                "$type": 227,
+                "$source": 0,
+                "$named": true,
+                "_string_start": "f\"",
+                "_content": [
+                  {
+                    "$type": 229,
+                    "$source": 0,
+                    "$named": true,
+                    "_expression": "a",
+                    "_format_specifier": {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 43,
+                        "end": 48
+                      },
+                      "$nodeHandle": 62,
+                      "_content": []
+                    },
+                    "$other": [
+                      46,
+                      47
+                    ],
+                    "$span": {
+                      "start": 41,
+                      "end": 49
+                    },
+                    "$nodeHandle": 61
+                  }
+                ],
+                "_string_end": "\"",
+                "$span": {
+                  "start": 39,
+                  "end": 50
+                },
+                "$nodeHandle": 60
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 51,
+            "end": 58
+          },
+          "$nodeHandle": 42,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 51,
+                "end": 58
+              },
+              "$nodeHandle": 63,
+              "_content": {
+                "$type": 227,
+                "$source": 0,
+                "$named": true,
+                "_string_start": "f\"",
+                "_content": [
+                  {
+                    "$type": 229,
+                    "$source": 0,
+                    "$named": true,
+                    "_expression": "a",
+                    "_eq_marker": true,
+                    "$other": [
+                      46,
+                      47
+                    ],
+                    "$span": {
+                      "start": 53,
+                      "end": 57
+                    },
+                    "$nodeHandle": 65
+                  }
+                ],
+                "_string_end": "\"",
+                "$span": {
+                  "start": 51,
+                  "end": 58
+                },
+                "$nodeHandle": 64
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 59,
+            "end": 70
+          },
+          "$nodeHandle": 43,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 59,
+                "end": 70
+              },
+              "$nodeHandle": 66,
+              "_content": {
+                "$type": 227,
+                "$source": 0,
+                "$named": true,
+                "_string_start": "f\"",
+                "_content": [
+                  {
+                    "$type": 229,
+                    "$source": 0,
+                    "$named": true,
+                    "_expression": "a",
+                    "_eq_marker": true,
+                    "_format_specifier": {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 64,
+                        "end": 68
+                      },
+                      "$nodeHandle": 69,
+                      "_content": []
+                    },
+                    "$other": [
+                      46,
+                      47
+                    ],
+                    "$span": {
+                      "start": 61,
+                      "end": 69
+                    },
+                    "$nodeHandle": 68
+                  }
+                ],
+                "_string_end": "\"",
+                "$span": {
+                  "start": 59,
+                  "end": 70
+                },
+                "$nodeHandle": 67
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 71,
+            "end": 113
+          },
+          "$nodeHandle": 44,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 71,
+                "end": 113
+              },
+              "$nodeHandle": 70,
+              "_content": {
+                "$type": 227,
+                "$source": 0,
+                "$named": true,
+                "_string_start": "f\"",
+                "_content": [
+                  {
+                    "$type": 229,
+                    "$source": 0,
+                    "$named": true,
+                    "_expression": "value",
+                    "_format_specifier": {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "$other": [
+                        22
+                      ],
+                      "$span": {
+                        "start": 79,
+                        "end": 111
+                      },
+                      "$nodeHandle": 73,
+                      "_content": [
+                        {
+                          "$type": 229,
+                          "$source": 0,
+                          "$named": true,
+                          "_expression": {
+                            "$type": 188,
+                            "$source": 0,
+                            "$named": true,
+                            "_left": "width",
+                            "_operator": 49,
+                            "_right": "padding",
+                            "$span": {
+                              "start": 81,
+                              "end": 96
+                            },
+                            "$nodeHandle": 76
+                          },
+                          "_type_conversion": "!r",
+                          "$other": [
+                            46,
+                            47
+                          ],
+                          "$span": {
+                            "start": 80,
+                            "end": 99
+                          },
+                          "$nodeHandle": 74
+                        },
+                        {
+                          "$type": 229,
+                          "$source": 0,
+                          "$named": true,
+                          "_expression": "precision",
+                          "$other": [
+                            46,
+                            47
+                          ],
+                          "$span": {
+                            "start": 100,
+                            "end": 111
+                          },
+                          "$nodeHandle": 75
+                        }
+                      ]
+                    },
+                    "$other": [
+                      46,
+                      47
+                    ],
+                    "$span": {
+                      "start": 73,
+                      "end": 112
+                    },
+                    "$nodeHandle": 72
+                  }
+                ],
+                "_string_end": "\"",
+                "$span": {
+                  "start": 71,
+                  "end": 113
+                },
+                "$nodeHandle": 71
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "expectedOutput": "f\"a { b: } { c: }\"\nf\"{ b:{ c.d }{ d.e } }\"\nf\"{ a: }\"\nf\"{ a= }\"\nf\"{ a=: }\"\nf\"{ value:{ width+padding!r }{ precision } }\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {b:2} {c:34.5}\"\nf\"{b:{c.d}.{d.e}}\"\nf\"{a:#06x}\"\nf\"{a=}\"\nf\"{a=:.2f}\"\nf\"{value:{width + padding!r}.{precision}}\"",
+    "pattern": "module",
+    "edits": [],
+    "expectedSourceOut": "f\"a { b: } { c: }\"\nf\"{ b:{ c.d }{ d.e } }\"\nf\"{ a: }\"\nf\"{ a= }\"\nf\"{ a=: }\"\nf\"{ value:{ width+padding!r }{ precision } }\"",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier (format_expression expression: (attribute object: (identifier) attribute: (identifier))) (format_expression expression: (attribute object: (identifier) attribute: (identifier))))) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier)) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier (format_expression expression: (binary_operator left: (identifier) right: (identifier)) type_conversion: (type_conversion)) (format_expression expression: (identifier)))) string_end: (string_end))) (newline)))",
+    "wrappedText": "f\"a { b: } { c: }\"\nf\"{ b:{ c.d }{ d.e } }\"\nf\"{ a: }\"\nf\"{ a= }\"\nf\"{ a=: }\"\nf\"{ value:{ width+padding!r }{ precision } }\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 122,
       "$source": 0,
       "$named": true,
@@ -32233,6 +32785,129 @@
     "expectedSourceOut": "f\"{ a: }\"",
     "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end)))",
     "wrappedText": "f\"{ a: }\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 51,
+        "end": 58
+      },
+      "$nodeHandle": 25,
+      "_content": {
+        "$type": 227,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"",
+        "_content": [
+          {
+            "$type": 229,
+            "$source": 0,
+            "$named": true,
+            "_expression": "a",
+            "_eq_marker": true,
+            "$other": [
+              46,
+              47
+            ],
+            "$span": {
+              "start": 53,
+              "end": 57
+            },
+            "$nodeHandle": 93
+          }
+        ],
+        "_string_end": "\"",
+        "$span": {
+          "start": 51,
+          "end": 58
+        },
+        "$nodeHandle": 92
+      }
+    },
+    "expectedOutput": "f\"{ a= }\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{a=}\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "f\"{ a= }\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier)) string_end: (string_end)))",
+    "wrappedText": "f\"{ a= }\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 59,
+        "end": 70
+      },
+      "$nodeHandle": 28,
+      "_content": {
+        "$type": 227,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"",
+        "_content": [
+          {
+            "$type": 229,
+            "$source": 0,
+            "$named": true,
+            "_expression": "a",
+            "_eq_marker": true,
+            "_format_specifier": {
+              "$type": 232,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 64,
+                "end": 68
+              },
+              "$nodeHandle": 96,
+              "_content": []
+            },
+            "$other": [
+              46,
+              47
+            ],
+            "$span": {
+              "start": 61,
+              "end": 69
+            },
+            "$nodeHandle": 95
+          }
+        ],
+        "_string_end": "\"",
+        "$span": {
+          "start": 59,
+          "end": 70
+        },
+        "$nodeHandle": 94
+      }
+    },
+    "expectedOutput": "f\"{ a=: }\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{a=:.2f}\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "f\"{ a=: }\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end)))",
+    "wrappedText": "f\"{ a=: }\"",
     "wrappedOffset": 0
   },
   {
@@ -32622,6 +33297,109 @@
     "expectedSourceOut": "f\"{ a: }\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))",
     "wrappedText": "_ = f\"{ a: }\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 227,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 229,
+          "$source": 0,
+          "$named": true,
+          "_expression": "a",
+          "_eq_marker": true,
+          "$other": [
+            46,
+            47
+          ],
+          "$span": {
+            "start": 53,
+            "end": 57
+          },
+          "$nodeHandle": 115
+        }
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 51,
+        "end": 58
+      },
+      "$nodeHandle": 26
+    },
+    "expectedOutput": "f\"{ a= }\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{a=}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{ a= }\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (identifier)) string_end: (string_end))",
+    "wrappedText": "_ = f\"{ a= }\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 227,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 229,
+          "$source": 0,
+          "$named": true,
+          "_expression": "a",
+          "_eq_marker": true,
+          "_format_specifier": {
+            "$type": 232,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 64,
+              "end": 68
+            },
+            "$nodeHandle": 117,
+            "_content": []
+          },
+          "$other": [
+            46,
+            47
+          ],
+          "$span": {
+            "start": 61,
+            "end": 69
+          },
+          "$nodeHandle": 116
+        }
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 59,
+        "end": 70
+      },
+      "$nodeHandle": 29
+    },
+    "expectedOutput": "f\"{ a=: }\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{a=:.2f}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{ a=: }\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))",
+    "wrappedText": "_ = f\"{ a=: }\"",
     "wrappedOffset": 4
   },
   {
@@ -69911,6 +70689,1052 @@
     "expectedSourceOut": "x",
     "expectedReparseTree": "(expression_statement (identifier))",
     "wrappedText": "x",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 108,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 189
+      },
+      "$nodeHandle": 0,
+      "_statement": [
+        {
+          "$type": 139,
+          "$source": 0,
+          "$named": true,
+          "_body": {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_block": {
+              "$type": 160,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 7,
+                "end": 8
+              },
+              "$nodeHandle": 89,
+              "_statement": [
+                {
+                  "$type": 110,
+                  "$source": 0,
+                  "$named": true,
+                  "_newline": 101,
+                  "$span": {
+                    "start": 7,
+                    "end": 8
+                  },
+                  "$nodeHandle": 90,
+                  "_simple_statement": [
+                    {
+                      "$type": 122,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 7,
+                        "end": 8
+                      },
+                      "$nodeHandle": 91,
+                      "_content": "a"
+                    }
+                  ]
+                }
+              ]
+            },
+            "$span": {
+              "start": 4,
+              "end": 8
+            },
+            "$nodeHandle": 88
+          },
+          "_except_clauses": [
+            {
+              "$type": 140,
+              "$source": 0,
+              "$named": true,
+              "_except_clause_group1": {
+                "$type": 237,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 16,
+                  "end": 17
+                },
+                "$nodeHandle": 96,
+                "_content": {
+                  "$type": 264,
+                  "$source": 0,
+                  "$named": true,
+                  "_value": [
+                    "b"
+                  ],
+                  "$span": {
+                    "start": 16,
+                    "end": 17
+                  },
+                  "$nodeHandle": 97
+                }
+              },
+              "$other": [
+                31,
+                22
+              ],
+              "$span": {
+                "start": 9,
+                "end": 22
+              },
+              "$nodeHandle": 92,
+              "_content": {
+                "$type": 261,
+                "$source": 0,
+                "$named": true,
+                "_block": {
+                  "$type": 160,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 21,
+                    "end": 22
+                  },
+                  "$nodeHandle": 99,
+                  "_statement": [
+                    {
+                      "$type": 110,
+                      "$source": 0,
+                      "$named": true,
+                      "_newline": 101,
+                      "$span": {
+                        "start": 21,
+                        "end": 22
+                      },
+                      "$nodeHandle": 100,
+                      "_simple_statement": [
+                        {
+                          "$type": 122,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 21,
+                            "end": 22
+                          },
+                          "$nodeHandle": 101,
+                          "_content": "c"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "$span": {
+                  "start": 18,
+                  "end": 22
+                },
+                "$nodeHandle": 98
+              }
+            },
+            {
+              "$type": 140,
+              "$source": 0,
+              "$named": true,
+              "_except_clause_group1": {
+                "$type": 237,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 30,
+                  "end": 36
+                },
+                "$nodeHandle": 102,
+                "_content": {
+                  "$type": 246,
+                  "$source": 0,
+                  "$named": true,
+                  "_value": "d",
+                  "_alias": "e",
+                  "$other": [
+                    10
+                  ],
+                  "$span": {
+                    "start": 30,
+                    "end": 36
+                  },
+                  "$nodeHandle": 103
+                }
+              },
+              "$other": [
+                31,
+                22
+              ],
+              "$span": {
+                "start": 23,
+                "end": 41
+              },
+              "$nodeHandle": 93,
+              "_content": {
+                "$type": 261,
+                "$source": 0,
+                "$named": true,
+                "_block": {
+                  "$type": 160,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 40,
+                    "end": 41
+                  },
+                  "$nodeHandle": 105,
+                  "_statement": [
+                    {
+                      "$type": 110,
+                      "$source": 0,
+                      "$named": true,
+                      "_newline": 101,
+                      "$span": {
+                        "start": 40,
+                        "end": 41
+                      },
+                      "$nodeHandle": 106,
+                      "_simple_statement": [
+                        {
+                          "$type": 122,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 40,
+                            "end": 41
+                          },
+                          "$nodeHandle": 107,
+                          "_content": "f"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "$span": {
+                  "start": 37,
+                  "end": 41
+                },
+                "$nodeHandle": 104
+              }
+            },
+            {
+              "$type": 140,
+              "$source": 0,
+              "$named": true,
+              "_except_clause_group1": {
+                "$type": 237,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 49,
+                  "end": 53
+                },
+                "$nodeHandle": 108,
+                "_content": {
+                  "$type": 264,
+                  "$source": 0,
+                  "$named": true,
+                  "_value": [
+                    "g",
+                    "h"
+                  ],
+                  "$other": [
+                    9
+                  ],
+                  "$span": {
+                    "start": 49,
+                    "end": 53
+                  },
+                  "$nodeHandle": 109
+                }
+              },
+              "$other": [
+                31,
+                22
+              ],
+              "$span": {
+                "start": 42,
+                "end": 58
+              },
+              "$nodeHandle": 94,
+              "_content": {
+                "$type": 261,
+                "$source": 0,
+                "$named": true,
+                "_block": {
+                  "$type": 160,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 57,
+                    "end": 58
+                  },
+                  "$nodeHandle": 111,
+                  "_statement": [
+                    {
+                      "$type": 110,
+                      "$source": 0,
+                      "$named": true,
+                      "_newline": 101,
+                      "$span": {
+                        "start": 57,
+                        "end": 58
+                      },
+                      "$nodeHandle": 112,
+                      "_simple_statement": [
+                        {
+                          "$type": 122,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 57,
+                            "end": 58
+                          },
+                          "$nodeHandle": 113,
+                          "_content": "i"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "$span": {
+                  "start": 54,
+                  "end": 58
+                },
+                "$nodeHandle": 110
+              }
+            },
+            {
+              "$type": 140,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                31,
+                22
+              ],
+              "$span": {
+                "start": 59,
+                "end": 70
+              },
+              "$nodeHandle": 95,
+              "_content": {
+                "$type": 261,
+                "$source": 0,
+                "$named": true,
+                "_block": {
+                  "$type": 160,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 69,
+                    "end": 70
+                  },
+                  "$nodeHandle": 115,
+                  "_statement": [
+                    {
+                      "$type": 110,
+                      "$source": 0,
+                      "$named": true,
+                      "_newline": 101,
+                      "$span": {
+                        "start": 69,
+                        "end": 70
+                      },
+                      "$nodeHandle": 116,
+                      "_simple_statement": [
+                        {
+                          "$type": 122,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 69,
+                            "end": 70
+                          },
+                          "$nodeHandle": 117,
+                          "_content": "j"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "$span": {
+                  "start": 66,
+                  "end": 70
+                },
+                "$nodeHandle": 114
+              }
+            }
+          ],
+          "$other": [
+            30,
+            22
+          ],
+          "$span": {
+            "start": 0,
+            "end": 70
+          },
+          "$nodeHandle": 85
+        },
+        {
+          "$type": 139,
+          "$source": 0,
+          "$named": true,
+          "_body": {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_block": {
+              "$type": 160,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 79,
+                "end": 80
+              },
+              "$nodeHandle": 119,
+              "_statement": [
+                {
+                  "$type": 110,
+                  "$source": 0,
+                  "$named": true,
+                  "_newline": 101,
+                  "$span": {
+                    "start": 79,
+                    "end": 80
+                  },
+                  "$nodeHandle": 120,
+                  "_simple_statement": [
+                    {
+                      "$type": 122,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 79,
+                        "end": 80
+                      },
+                      "$nodeHandle": 121,
+                      "_content": "a"
+                    }
+                  ]
+                }
+              ]
+            },
+            "$span": {
+              "start": 76,
+              "end": 80
+            },
+            "$nodeHandle": 118
+          },
+          "_except_clauses": [
+            {
+              "$type": 140,
+              "$source": 0,
+              "$named": true,
+              "_except_clause_group1": {
+                "$type": 237,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 88,
+                  "end": 89
+                },
+                "$nodeHandle": 123,
+                "_content": {
+                  "$type": 264,
+                  "$source": 0,
+                  "$named": true,
+                  "_value": [
+                    "b"
+                  ],
+                  "$span": {
+                    "start": 88,
+                    "end": 89
+                  },
+                  "$nodeHandle": 124
+                }
+              },
+              "$other": [
+                31,
+                22
+              ],
+              "$span": {
+                "start": 81,
+                "end": 98
+              },
+              "$nodeHandle": 122,
+              "_content": {
+                "$type": 261,
+                "$source": 0,
+                "$named": true,
+                "_block": {
+                  "$type": 160,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 93,
+                    "end": 98
+                  },
+                  "$nodeHandle": 126,
+                  "_statement": [
+                    {
+                      "$type": 110,
+                      "$source": 0,
+                      "$named": true,
+                      "_newline": 101,
+                      "$span": {
+                        "start": 93,
+                        "end": 94
+                      },
+                      "$nodeHandle": 127,
+                      "_simple_statement": [
+                        {
+                          "$type": 122,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 93,
+                            "end": 94
+                          },
+                          "$nodeHandle": 129,
+                          "_content": "c"
+                        }
+                      ]
+                    },
+                    {
+                      "$type": 110,
+                      "$source": 0,
+                      "$named": true,
+                      "_newline": 101,
+                      "$span": {
+                        "start": 97,
+                        "end": 98
+                      },
+                      "$nodeHandle": 128,
+                      "_simple_statement": [
+                        {
+                          "$type": 122,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 97,
+                            "end": 98
+                          },
+                          "$nodeHandle": 130,
+                          "_content": "d"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "$span": {
+                  "start": 90,
+                  "end": 98
+                },
+                "$nodeHandle": 125
+              }
+            }
+          ],
+          "_else_clause": {
+            "$type": 133,
+            "$source": 0,
+            "$named": true,
+            "_body": {
+              "$type": 261,
+              "$source": 0,
+              "$named": true,
+              "_block": {
+                "$type": 160,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 107,
+                  "end": 108
+                },
+                "$nodeHandle": 133,
+                "_statement": [
+                  {
+                    "$type": 110,
+                    "$source": 0,
+                    "$named": true,
+                    "_newline": 101,
+                    "$span": {
+                      "start": 107,
+                      "end": 108
+                    },
+                    "$nodeHandle": 134,
+                    "_simple_statement": [
+                      {
+                        "$type": 122,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 107,
+                          "end": 108
+                        },
+                        "$nodeHandle": 135,
+                        "_content": "e"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "$span": {
+                "start": 104,
+                "end": 108
+              },
+              "$nodeHandle": 132
+            },
+            "$other": [
+              24,
+              22
+            ],
+            "$span": {
+              "start": 99,
+              "end": 108
+            },
+            "$nodeHandle": 131
+          },
+          "_finally_clause": {
+            "$type": 141,
+            "$source": 0,
+            "$named": true,
+            "_block": {
+              "$type": 261,
+              "$source": 0,
+              "$named": true,
+              "_block": {
+                "$type": 160,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 120,
+                  "end": 121
+                },
+                "$nodeHandle": 138,
+                "_statement": [
+                  {
+                    "$type": 110,
+                    "$source": 0,
+                    "$named": true,
+                    "_newline": 101,
+                    "$span": {
+                      "start": 120,
+                      "end": 121
+                    },
+                    "$nodeHandle": 139,
+                    "_simple_statement": [
+                      {
+                        "$type": 122,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 120,
+                          "end": 121
+                        },
+                        "$nodeHandle": 140,
+                        "_content": "f"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "$span": {
+                "start": 117,
+                "end": 121
+              },
+              "$nodeHandle": 137
+            },
+            "$other": [
+              33,
+              22
+            ],
+            "$span": {
+              "start": 109,
+              "end": 121
+            },
+            "$nodeHandle": 136
+          },
+          "$other": [
+            30,
+            22
+          ],
+          "$span": {
+            "start": 72,
+            "end": 121
+          },
+          "$nodeHandle": 86
+        },
+        {
+          "$type": 139,
+          "$source": 0,
+          "$named": true,
+          "_body": {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_block": {
+              "$type": 160,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 130,
+                "end": 131
+              },
+              "$nodeHandle": 142,
+              "_statement": [
+                {
+                  "$type": 110,
+                  "$source": 0,
+                  "$named": true,
+                  "_newline": 101,
+                  "$span": {
+                    "start": 130,
+                    "end": 131
+                  },
+                  "$nodeHandle": 143,
+                  "_simple_statement": [
+                    {
+                      "$type": 122,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 130,
+                        "end": 131
+                      },
+                      "$nodeHandle": 144,
+                      "_content": "a"
+                    }
+                  ]
+                }
+              ]
+            },
+            "$span": {
+              "start": 127,
+              "end": 131
+            },
+            "$nodeHandle": 141
+          },
+          "_except_clauses": [
+            {
+              "$type": 140,
+              "$source": 0,
+              "$named": true,
+              "_star_marker": true,
+              "_except_clause_group1": {
+                "$type": 237,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 140,
+                  "end": 141
+                },
+                "$nodeHandle": 147,
+                "_content": {
+                  "$type": 264,
+                  "$source": 0,
+                  "$named": true,
+                  "_value": [
+                    "b"
+                  ],
+                  "$span": {
+                    "start": 140,
+                    "end": 141
+                  },
+                  "$nodeHandle": 148
+                }
+              },
+              "$other": [
+                31,
+                22
+              ],
+              "$span": {
+                "start": 132,
+                "end": 146
+              },
+              "$nodeHandle": 145,
+              "_content": {
+                "$type": 261,
+                "$source": 0,
+                "$named": true,
+                "_block": {
+                  "$type": 160,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 145,
+                    "end": 146
+                  },
+                  "$nodeHandle": 150,
+                  "_statement": [
+                    {
+                      "$type": 110,
+                      "$source": 0,
+                      "$named": true,
+                      "_newline": 101,
+                      "$span": {
+                        "start": 145,
+                        "end": 146
+                      },
+                      "$nodeHandle": 151,
+                      "_simple_statement": [
+                        {
+                          "$type": 122,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 145,
+                            "end": 146
+                          },
+                          "$nodeHandle": 152,
+                          "_content": "c"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "$span": {
+                  "start": 142,
+                  "end": 146
+                },
+                "$nodeHandle": 149
+              }
+            },
+            {
+              "$type": 140,
+              "$source": 0,
+              "$named": true,
+              "_star_marker": true,
+              "_except_clause_group1": {
+                "$type": 237,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 155,
+                  "end": 161
+                },
+                "$nodeHandle": 153,
+                "_content": {
+                  "$type": 246,
+                  "$source": 0,
+                  "$named": true,
+                  "_value": "d",
+                  "_alias": "e",
+                  "$other": [
+                    10
+                  ],
+                  "$span": {
+                    "start": 155,
+                    "end": 161
+                  },
+                  "$nodeHandle": 154
+                }
+              },
+              "$other": [
+                31,
+                22
+              ],
+              "$span": {
+                "start": 147,
+                "end": 166
+              },
+              "$nodeHandle": 146,
+              "_content": {
+                "$type": 261,
+                "$source": 0,
+                "$named": true,
+                "_block": {
+                  "$type": 160,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 165,
+                    "end": 166
+                  },
+                  "$nodeHandle": 156,
+                  "_statement": [
+                    {
+                      "$type": 110,
+                      "$source": 0,
+                      "$named": true,
+                      "_newline": 101,
+                      "$span": {
+                        "start": 165,
+                        "end": 166
+                      },
+                      "$nodeHandle": 157,
+                      "_simple_statement": [
+                        {
+                          "$type": 122,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 165,
+                            "end": 166
+                          },
+                          "$nodeHandle": 158,
+                          "_content": "f"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "$span": {
+                  "start": 162,
+                  "end": 166
+                },
+                "$nodeHandle": 155
+              }
+            }
+          ],
+          "_else_clause": {
+            "$type": 133,
+            "$source": 0,
+            "$named": true,
+            "_body": {
+              "$type": 261,
+              "$source": 0,
+              "$named": true,
+              "_block": {
+                "$type": 160,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 175,
+                  "end": 176
+                },
+                "$nodeHandle": 161,
+                "_statement": [
+                  {
+                    "$type": 110,
+                    "$source": 0,
+                    "$named": true,
+                    "_newline": 101,
+                    "$span": {
+                      "start": 175,
+                      "end": 176
+                    },
+                    "$nodeHandle": 162,
+                    "_simple_statement": [
+                      {
+                        "$type": 122,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 175,
+                          "end": 176
+                        },
+                        "$nodeHandle": 163,
+                        "_content": "g"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "$span": {
+                "start": 172,
+                "end": 176
+              },
+              "$nodeHandle": 160
+            },
+            "$other": [
+              24,
+              22
+            ],
+            "$span": {
+              "start": 167,
+              "end": 176
+            },
+            "$nodeHandle": 159
+          },
+          "_finally_clause": {
+            "$type": 141,
+            "$source": 0,
+            "$named": true,
+            "_block": {
+              "$type": 261,
+              "$source": 0,
+              "$named": true,
+              "_block": {
+                "$type": 160,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 188,
+                  "end": 189
+                },
+                "$nodeHandle": 166,
+                "_statement": [
+                  {
+                    "$type": 110,
+                    "$source": 0,
+                    "$named": true,
+                    "_newline": 101,
+                    "$span": {
+                      "start": 188,
+                      "end": 189
+                    },
+                    "$nodeHandle": 167,
+                    "_simple_statement": [
+                      {
+                        "$type": 122,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 188,
+                          "end": 189
+                        },
+                        "$nodeHandle": 168,
+                        "_content": "h"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "$span": {
+                "start": 185,
+                "end": 189
+              },
+              "$nodeHandle": 165
+            },
+            "$other": [
+              33,
+              22
+            ],
+            "$span": {
+              "start": 177,
+              "end": 189
+            },
+            "$nodeHandle": 164
+          },
+          "$other": [
+            30,
+            22
+          ],
+          "$span": {
+            "start": 123,
+            "end": 189
+          },
+          "$nodeHandle": 87
+        }
+      ]
+    },
+    "expectedOutput": "try:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g,h:\n  i\nexcept:\n  j\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\ntry:\n  a\nexcept*b:\n  c\nexcept*d as e:\n  f\nelse:\n  g\nfinally:\n  h"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "try:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\n\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\n\ntry:\n  a\nexcept* b:\n  c\nexcept* d as e:\n  f\nelse:\n  g\nfinally:\n  h",
+    "pattern": "module",
+    "edits": [],
+    "expectedSourceOut": "try:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g,h:\n  i\nexcept:\n  j\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\ntry:\n  a\nexcept*b:\n  c\nexcept*d as e:\n  f\nelse:\n  g\nfinally:\n  h",
+    "expectedReparseTree": "(module (try_statement body: (suite_block_with_indent (block (statement_group1 (expression_statement (identifier)) (newline)))) except_clauses: (except_clause (except_clause_group1 (except_clause_list value: (identifier))) (suite_block_with_indent (block (statement_group1 (expression_statement (identifier)) (newline))))) except_clauses: (except_clause (except_clause_group1 (except_clause_as value: (identifier) alias: (identifier))) (suite_block_with_indent (block (statement_group1 (expression_statement (identifier)) (newline))))) except_clauses: (except_clause (except_clause_group1 (except_clause_list value: (identifier) value: (identifier))) (suite_block_with_indent (block (statement_group1 (expression_statement (identifier)) (newline))))) except_clauses: (except_clause (suite_block_with_indent (block (statement_group1 (expression_statement (identifier)) (newline)))))) (try_statement body: (suite_block_with_indent (block (statement_group1 (expression_statement (identifier)) (newline)))) except_clauses: (except_clause (except_clause_group1 (except_clause_list value: (identifier))) (suite_block_with_indent (block (statement_group1 (expression_statement (identifier)) (newline)) (statement_group1 (expression_statement (identifier)) (newline))))) else_clause: (else_clause body: (suite_block_with_indent (block (statement_group1 (expression_statement (identifier)) (newline))))) finally_clause: (finally_clause block: (suite_block_with_indent (block (statement_group1 (expression_statement (identifier)) (newline)))))) (try_statement body: (suite_block_with_indent (block (statement_group1 (expression_statement (identifier)) (newline)))) except_clauses: (except_clause (except_clause_group1 (except_clause_list value: (identifier))) (suite_block_with_indent (block (statement_group1 (expression_statement (identifier)) (newline))))) except_clauses: (except_clause (except_clause_group1 (except_clause_as value: (identifier) alias: (identifier))) (suite_block_with_indent (block (statement_group1 (expression_statement (identifier)) (newline))))) else_clause: (else_clause body: (suite_block_with_indent (block (statement_group1 (expression_statement (identifier)) (newline))))) finally_clause: (finally_clause block: (suite_block_with_indent (block (statement_group1 (expression_statement (identifier)) (newline)))))))",
+    "wrappedText": "try:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g,h:\n  i\nexcept:\n  j\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\ntry:\n  a\nexcept*b:\n  c\nexcept*d as e:\n  f\nelse:\n  g\nfinally:\n  h",
     "wrappedOffset": 0
   },
   {

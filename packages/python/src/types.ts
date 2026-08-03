@@ -2367,8 +2367,13 @@ export interface TryStatement {
 
 export interface ExceptClause {
 	readonly $type: TSKindId.ExceptClause;
+	readonly _star_marker?: boolean;
 	readonly _except_clause_group1?: ExceptClauseGroup1;
 	readonly _content: SimpleStatements | SuiteBlockWithIndent | '\n';
+	readonly __inputHints__?: {
+		readonly star_marker?: BooleanKeyword<'*'>;
+	};
+	starMarker(): boolean | undefined;
 	exceptClauseGroup1(): ExceptClauseGroup1 | undefined;
 	content(): SimpleStatements | SuiteBlockWithIndent | '\n';
 }
@@ -3042,9 +3047,14 @@ export interface StringContent {
 export interface Interpolation {
 	readonly $type: TSKindId.Interpolation;
 	readonly _expression: FExpression;
+	readonly _eq_marker?: boolean;
 	readonly _type_conversion?: TypeConversion;
 	readonly _format_specifier?: FormatSpecifier;
+	readonly __inputHints__?: {
+		readonly eq_marker?: BooleanKeyword<'='>;
+	};
 	expression(): FExpression;
+	eqMarker(): boolean | undefined;
 	typeConversion(): TypeConversion | undefined;
 	formatSpecifier(): FormatSpecifier | undefined;
 }

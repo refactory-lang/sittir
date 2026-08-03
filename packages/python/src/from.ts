@@ -1040,6 +1040,7 @@ export function coerceToTryStatement(input: T.TryStatement.Loose): ReturnType<ty
 export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<typeof F.buildExceptClause> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExceptClause>;
 	return F.buildExceptClause({
+		starMarker: _resolveBooleanKeyword(input.starMarker),
 		exceptClauseGroup1: _resolveOneBranch<T.ExceptClauseGroup1>(input.exceptClauseGroup1, '_except_clause_group1'),
 		content: _requireField(
 			'except_clause',
@@ -2041,6 +2042,7 @@ export function coerceToInterpolation(input: T.Interpolation.Loose): ReturnType<
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildInterpolation>;
 	return F.buildInterpolation({
 		expression: _requireField('interpolation', 'expression', _resolveOne<T.FExpression>(input.expression, _K3, _K24)),
+		eqMarker: _resolveBooleanKeyword(input.eqMarker),
 		typeConversion: _resolveOneLeaf<T.TypeConversion>(input.typeConversion, 'type_conversion'),
 		formatSpecifier: _resolveOneBranch<T.FormatSpecifier>(input.formatSpecifier, 'format_specifier')
 	});

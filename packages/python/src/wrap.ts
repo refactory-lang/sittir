@@ -2587,6 +2587,14 @@ export function wrapExceptClause(
 		{
 			..._omitWrapKeys(data, ['_newline', '_simple_statements', '_suite_block_with_indent']),
 			$type: TSKindId.ExceptClause as const,
+			_star_marker: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._star_marker, 'star_marker', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'star_marker',
+					span: (data as _NodeData).$span
+				})
+			),
 			_except_clause_group1: normalizeSingularWrapSlot(
 				data._except_clause_group1,
 				'except_clause_group1',
@@ -2602,6 +2610,9 @@ export function wrapExceptClause(
 				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
 
+			starMarker() {
+				return this._star_marker;
+			},
 			exceptClauseGroup1() {
 				return drillAs<T.ExceptClauseGroup1 | undefined>(this._except_clause_group1, tree, [
 					{ from: 'except_clause_group1', to: '_except_clause_group1' }
@@ -2615,6 +2626,8 @@ export function wrapExceptClause(
 				]);
 			},
 			$with: {
+				starMarker: (v: NonNullable<T.ExceptClause['_star_marker']>) =>
+					wrapExceptClause({ ...data, _star_marker: v }, tree),
 				exceptClauseGroup1: (v: NonNullable<T.ExceptClause['_except_clause_group1']>) =>
 					wrapExceptClause({ ...data, _except_clause_group1: v }, tree),
 				content: (v: NonNullable<T.ExceptClause['_content']>) => wrapExceptClause({ ...data, _content: v }, tree)
@@ -6806,6 +6819,14 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle) {
 				slotName: 'expression',
 				span: (data as _NodeData).$span
 			}),
+			_eq_marker: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._eq_marker, 'eq_marker', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'eq_marker',
+					span: (data as _NodeData).$span
+				})
+			),
 			_type_conversion: normalizeSingularWrapSlot(data._type_conversion, 'type_conversion', false, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -6822,6 +6843,9 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle) {
 			expression() {
 				return drillIn<T.FExpression>(this._expression, tree);
 			},
+			eqMarker() {
+				return this._eq_marker;
+			},
 			typeConversion() {
 				return drillIn<T.TypeConversion | undefined>(this._type_conversion, tree);
 			},
@@ -6831,6 +6855,8 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle) {
 			$with: {
 				expression: (v: NonNullable<T.Interpolation['_expression']>) =>
 					wrapInterpolation({ ...data, _expression: v }, tree),
+				eqMarker: (v: NonNullable<T.Interpolation['_eq_marker']>) =>
+					wrapInterpolation({ ...data, _eq_marker: v }, tree),
 				typeConversion: (v: NonNullable<T.Interpolation['_type_conversion']>) =>
 					wrapInterpolation({ ...data, _type_conversion: v }, tree),
 				formatSpecifier: (v: NonNullable<T.Interpolation['_format_specifier']>) =>

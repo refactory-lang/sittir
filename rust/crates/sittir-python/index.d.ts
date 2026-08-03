@@ -647,6 +647,7 @@ export interface ExceptClauseTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _star_marker?: boolean
   _except_clause_group1?: ExceptClauseGroup1Transport
   _content: ExceptClauseContentTransportSlot
 }
@@ -903,6 +904,7 @@ export interface InterpolationTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _expression: FExpressionTransport
+  _eq_marker?: boolean
   _type_conversion?: TypeConversionTransport
   _format_specifier?: FormatSpecifierTransport
 }

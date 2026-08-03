@@ -134,6 +134,10 @@ export default grammar(
 					1: field('entries')
 				},
 
+				except_clause: {
+					'1/0': field('star_marker')
+				},
+
 				exec_statement: {
 					2: field('in_clause')
 				},
@@ -161,6 +165,10 @@ export default grammar(
 				// requires at least one value" for `from a import (b, c)`.
 				import_from_statement: {
 					'3/0': field('wildcard_import') // wildcard_import [struct=0]
+				},
+
+				interpolation: {
+					'2/0': field('eq_marker')
 				},
 
 				keyword_pattern: {

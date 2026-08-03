@@ -695,6 +695,7 @@ export function buildTryStatement(config: T.TryStatement.Config) {
 }
 
 export function buildExceptClause(config: T.ExceptClause.Config) {
+	const _star_marker = coerceBooleanKeywordStorage(config.starMarker);
 	const _except_clause_group1 = config.exceptClauseGroup1;
 	const _content = config.content;
 	return withMethods(
@@ -703,9 +704,12 @@ export function buildExceptClause(config: T.ExceptClause.Config) {
 				$type: TSKindId.ExceptClause as const,
 				$source: 2 as const,
 				$named: true as const,
+				_star_marker,
 				_except_clause_group1,
 				_content,
 				$with: {
+					starMarker: (value?: NonNullable<Parameters<typeof buildExceptClause>[0]>['starMarker']) =>
+						buildExceptClause({ ...config, starMarker: value }),
 					exceptClauseGroup1: (value?: T.ExceptClauseGroup1) =>
 						buildExceptClause({ ...config, exceptClauseGroup1: value }),
 					content: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
@@ -713,6 +717,7 @@ export function buildExceptClause(config: T.ExceptClause.Config) {
 				}
 			},
 			{
+				starMarker: () => _star_marker,
 				exceptClauseGroup1: () => _except_clause_group1,
 				content: () => _content
 			}
@@ -2708,6 +2713,7 @@ export function buildStringContent(
 
 export function buildInterpolation(config: T.Interpolation.Config) {
 	const _expression = config.expression;
+	const _eq_marker = coerceBooleanKeywordStorage(config.eqMarker);
 	const _type_conversion = config.typeConversion;
 	const _format_specifier = config.formatSpecifier;
 	return withMethods(
@@ -2717,16 +2723,20 @@ export function buildInterpolation(config: T.Interpolation.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
+				_eq_marker,
 				_type_conversion,
 				_format_specifier,
 				$with: {
 					expression: (value: T.FExpression) => buildInterpolation({ ...config, expression: value }),
+					eqMarker: (value?: NonNullable<Parameters<typeof buildInterpolation>[0]>['eqMarker']) =>
+						buildInterpolation({ ...config, eqMarker: value }),
 					typeConversion: (value?: T.TypeConversion) => buildInterpolation({ ...config, typeConversion: value }),
 					formatSpecifier: (value?: T.FormatSpecifier) => buildInterpolation({ ...config, formatSpecifier: value })
 				}
 			},
 			{
 				expression: () => _expression,
+				eqMarker: () => _eq_marker,
 				typeConversion: () => _type_conversion,
 				formatSpecifier: () => _format_specifier
 			}
