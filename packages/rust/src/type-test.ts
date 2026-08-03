@@ -172,8 +172,6 @@ import type {
 	ImplItemBody,
 	ImplItemBodyTree,
 	ImplItemTree,
-	InPath,
-	InPathTree,
 	IndexExpression,
 	IndexExpressionTree,
 	InnerAttributeItem,
@@ -407,6 +405,8 @@ import type {
 	VisibilityModifier,
 	VisibilityModifierGroup1,
 	VisibilityModifierGroup1Tree,
+	VisibilityModifierInPath,
+	VisibilityModifierInPathTree,
 	VisibilityModifierTree,
 	WhereClause,
 	WhereClauseGroup1,
@@ -664,6 +664,9 @@ export type _Type_MacroDefinitionBracket = _TypeAssert<
 export type _Type_MacroDefinitionBrace = _TypeAssert<
 	_TypeExtends<MacroDefinitionBrace['$type'], TSKindId.MacroDefinitionBrace>
 >;
+export type _Type_VisibilityModifierInPath = _TypeAssert<
+	_TypeExtends<VisibilityModifierInPath['$type'], TSKindId.VisibilityModifierInPath>
+>;
 export type _Type_TokenTreePatternParen = _TypeAssert<
 	_TypeExtends<TokenTreePatternParen['$type'], TSKindId.TokenTreePatternParen>
 >;
@@ -685,7 +688,6 @@ export type _Type_DelimTokenTreeBracket = _TypeAssert<
 export type _Type_DelimTokenTreeBrace = _TypeAssert<
 	_TypeExtends<DelimTokenTreeBrace['$type'], TSKindId.DelimTokenTreeBrace>
 >;
-export type _Type_InPath = _TypeAssert<_TypeExtends<InPath['$type'], '_in_path'>>;
 export type _Type_AttributedFieldDeclaration = _TypeAssert<
 	_TypeExtends<AttributedFieldDeclaration['$type'], TSKindId.AttributedFieldDeclaration>
 >;
@@ -1113,6 +1115,9 @@ export type _Tree_MacroDefinitionBracket = _TypeAssert<
 export type _Tree_MacroDefinitionBrace = _TypeAssert<
 	_TypeExtends<MacroDefinitionBraceTree['type'], '_macro_definition_brace'>
 >;
+export type _Tree_VisibilityModifierInPath = _TypeAssert<
+	_TypeExtends<VisibilityModifierInPathTree['type'], '_visibility_modifier_in_path'>
+>;
 export type _Tree_TokenTreePatternParen = _TypeAssert<
 	_TypeExtends<TokenTreePatternParenTree['type'], '_token_tree_pattern_paren'>
 >;
@@ -1134,7 +1139,6 @@ export type _Tree_DelimTokenTreeBracket = _TypeAssert<
 export type _Tree_DelimTokenTreeBrace = _TypeAssert<
 	_TypeExtends<DelimTokenTreeBraceTree['type'], '_delim_token_tree_brace'>
 >;
-export type _Tree_InPath = _TypeAssert<_TypeExtends<InPathTree['type'], '_in_path'>>;
 export type _Tree_AttributedFieldDeclaration = _TypeAssert<
 	_TypeExtends<AttributedFieldDeclarationTree['type'], '_attributed_field_declaration'>
 >;

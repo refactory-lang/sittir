@@ -280,6 +280,9 @@ export interface IsGuards {
 	MacroDefinitionBrace<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.MacroDefinitionBrace };
+	VisibilityModifierInPath<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.VisibilityModifierInPath };
 	TokenTreePatternParen<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.TokenTreePatternParen };
@@ -532,6 +535,9 @@ export interface AssertGuards {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.MacroDefinitionBracket };
 	MacroDefinitionBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinitionBrace };
+	VisibilityModifierInPath(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.VisibilityModifierInPath };
 	TokenTreePatternParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePatternParen };
 	TokenTreePatternBracket(v: {
 		readonly $type: number;
@@ -872,6 +878,7 @@ const _kindIdByKind = new Map<string, number>([
 	['_struct_item_brace', TSKindId.StructItemBrace],
 	['_struct_item_tuple', TSKindId.StructItemTuple],
 	['_visibility_modifier_pub', TSKindId.VisibilityModifierPub],
+	['_visibility_modifier_in_path', TSKindId.VisibilityModifierInPath],
 	['_pointer_type_const', TSKindId.PointerTypeConst],
 	['_expression_statement_with_semi', TSKindId.ExpressionStatementWithSemi],
 	['_match_arm_with_comma', TSKindId.MatchArmWithComma],
@@ -1061,6 +1068,7 @@ export const is = {
 	MacroDefinitionParen: _g(TSKindId.MacroDefinitionParen),
 	MacroDefinitionBracket: _g(TSKindId.MacroDefinitionBracket),
 	MacroDefinitionBrace: _g(TSKindId.MacroDefinitionBrace),
+	VisibilityModifierInPath: _g(TSKindId.VisibilityModifierInPath),
 	TokenTreePatternParen: _g(TSKindId.TokenTreePatternParen),
 	TokenTreePatternBracket: _g(TSKindId.TokenTreePatternBracket),
 	TokenTreePatternBrace: _g(TSKindId.TokenTreePatternBrace),
@@ -1291,6 +1299,7 @@ export const assert = {
 	MacroDefinitionParen: _makeAssert('MacroDefinitionParen', is.MacroDefinitionParen as _AnyGuard),
 	MacroDefinitionBracket: _makeAssert('MacroDefinitionBracket', is.MacroDefinitionBracket as _AnyGuard),
 	MacroDefinitionBrace: _makeAssert('MacroDefinitionBrace', is.MacroDefinitionBrace as _AnyGuard),
+	VisibilityModifierInPath: _makeAssert('VisibilityModifierInPath', is.VisibilityModifierInPath as _AnyGuard),
 	TokenTreePatternParen: _makeAssert('TokenTreePatternParen', is.TokenTreePatternParen as _AnyGuard),
 	TokenTreePatternBracket: _makeAssert('TokenTreePatternBracket', is.TokenTreePatternBracket as _AnyGuard),
 	TokenTreePatternBrace: _makeAssert('TokenTreePatternBrace', is.TokenTreePatternBrace as _AnyGuard),

@@ -117,7 +117,7 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "29 referenced kind(s) resolved no parser kindId",
+    "message": "27 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -131,7 +131,6 @@
         "_expression_ending_with_block",
         "_extern_crate_declaration_optional1",
         "_function_item_optional1",
-        "_in_path",
         "_kw_comma",
         "_kw_operator",
         "_kw_pub",
@@ -148,8 +147,7 @@
         "_type_parameter_optional1",
         "_variadic_parameter_optional1",
         "_visibility_modifier_pub_parens",
-        "_while_expression_optional1",
-        "in_path"
+        "_while_expression_optional1"
       ]
     },
     "severity": "warning",
@@ -210,19 +208,6 @@
     "grammar": "rust"
   },
   {
-    "code": "kindid-vaporized-symbols",
-    "message": "1 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "in_path"
-      ]
-    },
-    "scope": "grammar",
-    "grammar": "rust"
-  },
-  {
     "code": "kindid-vaporized-literals",
     "message": "5 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
@@ -241,13 +226,12 @@
   },
   {
     "code": "kindid-unclassified-symbols",
-    "message": "4 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "message": "3 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
       "kinds": [
         "_compound_assignment_expr_operator",
-        "_in_path",
         "_primitive_type",
         "_visibility_modifier_pub_parens"
       ]

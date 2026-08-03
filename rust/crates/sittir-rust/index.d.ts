@@ -1182,17 +1182,6 @@ export interface InnerAttributeItemTransport {
   _attribute: AttributeTransport
 }
 
-export interface InPathTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _path: PathTransport
-}
-
 export interface LabelTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2547,6 +2536,17 @@ export interface VisibilityModifierGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content: VisibilityModifierGroup1ContentTransportSlot
+}
+
+export interface VisibilityModifierInPathTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _path: PathTransport
 }
 
 export interface VisibilityModifierPubParensTransport {

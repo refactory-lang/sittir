@@ -4170,7 +4170,7 @@ export function buildParametersGroup1(
 	);
 }
 
-export function buildVisibilityModifierGroup1(child: T.Self | T.Super | T.Crate | T.InPath) {
+export function buildVisibilityModifierGroup1(child: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -4179,7 +4179,9 @@ export function buildVisibilityModifierGroup1(child: T.Self | T.Super | T.Crate 
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.Self | T.Super | T.Crate | T.InPath) => buildVisibilityModifierGroup1(v) }
+				$with: {
+					$child: (v: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath) => buildVisibilityModifierGroup1(v)
+				}
 			},
 			{
 				content: () => _content
@@ -5139,6 +5141,25 @@ export function buildVisibilityModifierPub(config: Partial<T.VisibilityModifierP
 	);
 }
 
+export function buildVisibilityModifierInPath(child: T.Path) {
+	const _path = child;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.VisibilityModifierInPath as const,
+				$source: 2 as const,
+				$named: true as const,
+				_path,
+				$with: { $child: (v: T.Path) => buildVisibilityModifierInPath(v) }
+			},
+			{
+				path: () => _path
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildExpressionStatementWithSemi(config: T.ExpressionStatementWithSemi.Config) {
 	const _expression = config.expression;
 	return withMethods(
@@ -5905,6 +5926,7 @@ export type FluentKindMap = {
 	_struct_item_brace: T.StructItemBrace;
 	_struct_item_tuple: T.StructItemTuple;
 	_visibility_modifier_pub: T.VisibilityModifierPub;
+	_visibility_modifier_in_path: FluentNode<'_visibility_modifier_in_path', T.VisibilityModifierInPath.Config>;
 	_expression_statement_with_semi: T.ExpressionStatementWithSemi;
 	_match_arm_with_comma: T.MatchArmWithComma;
 	_line_comment_regular_dslash: T.LineCommentRegularDslash;
@@ -6136,6 +6158,7 @@ export const _factoryMap = {
 	_struct_item_brace: buildStructItemBrace,
 	_struct_item_tuple: buildStructItemTuple,
 	_visibility_modifier_pub: buildVisibilityModifierPub,
+	_visibility_modifier_in_path: buildVisibilityModifierInPath,
 	_expression_statement_with_semi: buildExpressionStatementWithSemi,
 	_match_arm_with_comma: buildMatchArmWithComma,
 	_line_comment_regular_dslash: buildLineCommentRegularDslash,

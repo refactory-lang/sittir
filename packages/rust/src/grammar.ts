@@ -2374,7 +2374,7 @@ export type RustGrammar = {
 	readonly visibility_modifier_in_path: {
 		type: 'visibility_modifier_in_path';
 		named: true;
-		fields: { in: { multiple: false; required: true; types: [{ type: 'in'; named: false }] } };
+		fields: {};
 		children: {
 			multiple: false;
 			required: true;

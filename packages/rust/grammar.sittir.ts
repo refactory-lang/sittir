@@ -76,7 +76,7 @@ export default grammar(
 					'1': 'parens'
 				},
 
-				in_path: ($) => seq('in', $._path),
+				visibility_modifier_in_path: ($) => seq('in', $._path),
 
 				attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
 

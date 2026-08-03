@@ -3856,7 +3856,7 @@ var grammar_sittir_default = grammar(
         _visibility_modifier_pub: {
           "1": "parens"
         },
-        in_path: ($) => seq("in", $._path),
+        visibility_modifier_in_path: ($) => seq("in", $._path),
         attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
         attributed_enum_variant: ($) => seq(repeat($.attribute_item), $.enum_variant),
         attributed_parameter: ($) => seq(optional($.attribute_item), choice($.parameter, $.self_parameter, $.variadic_parameter, "_", $._type)),

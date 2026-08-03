@@ -53759,6 +53759,1431 @@
           "$type": 189,
           "$source": 0,
           "$named": true,
+          "_visibility_modifier": {
+            "$type": 216,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 0,
+              "end": 3
+            },
+            "$nodeHandle": 37,
+            "_content": {
+              "$type": 377,
+              "$source": 0,
+              "$named": true,
+              "_pub": 142,
+              "$span": {
+                "start": 0,
+                "end": 3
+              },
+              "$nodeHandle": 38
+            }
+          },
+          "_name": "a",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "$text": "()",
+            "$span": {
+              "start": 8,
+              "end": 10
+            },
+            "$nodeHandle": 39
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 11,
+              "end": 13
+            },
+            "$nodeHandle": 40,
+            "_statement": []
+          },
+          "$other": [
+            60
+          ],
+          "$span": {
+            "start": 0,
+            "end": 13
+          },
+          "$nodeHandle": 32
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_visibility_modifier": {
+            "$type": 216,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 14,
+              "end": 24
+            },
+            "$nodeHandle": 41,
+            "_content": {
+              "$type": 377,
+              "$source": 0,
+              "$named": true,
+              "_pub": 142,
+              "_visibility_modifier_group1": {
+                "$type": 333,
+                "$source": 0,
+                "$named": true,
+                "$other": [
+                  7,
+                  8
+                ],
+                "$span": {
+                  "start": 17,
+                  "end": 24
+                },
+                "$nodeHandle": 43,
+                "_content": "super"
+              },
+              "$span": {
+                "start": 14,
+                "end": 24
+              },
+              "$nodeHandle": 42
+            }
+          },
+          "_name": "b",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "$text": "()",
+            "$span": {
+              "start": 29,
+              "end": 31
+            },
+            "$nodeHandle": 44
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 32,
+              "end": 34
+            },
+            "$nodeHandle": 45,
+            "_statement": []
+          },
+          "$other": [
+            60
+          ],
+          "$span": {
+            "start": 14,
+            "end": 34
+          },
+          "$nodeHandle": 33
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_visibility_modifier": {
+            "$type": 216,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 35,
+              "end": 44
+            },
+            "$nodeHandle": 46,
+            "_content": {
+              "$type": 377,
+              "$source": 0,
+              "$named": true,
+              "_pub": 142,
+              "_visibility_modifier_group1": {
+                "$type": 333,
+                "$source": 0,
+                "$named": true,
+                "$other": [
+                  7,
+                  8
+                ],
+                "$span": {
+                  "start": 38,
+                  "end": 44
+                },
+                "$nodeHandle": 48,
+                "_content": "self"
+              },
+              "$span": {
+                "start": 35,
+                "end": 44
+              },
+              "$nodeHandle": 47
+            }
+          },
+          "_name": "c",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "$text": "()",
+            "$span": {
+              "start": 49,
+              "end": 51
+            },
+            "$nodeHandle": 49
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 52,
+              "end": 54
+            },
+            "$nodeHandle": 50,
+            "_statement": []
+          },
+          "$other": [
+            60
+          ],
+          "$span": {
+            "start": 35,
+            "end": 54
+          },
+          "$nodeHandle": 34
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_visibility_modifier": {
+            "$type": 216,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 55,
+              "end": 65
+            },
+            "$nodeHandle": 51,
+            "_content": {
+              "$type": 377,
+              "$source": 0,
+              "$named": true,
+              "_pub": 142,
+              "_visibility_modifier_group1": {
+                "$type": 333,
+                "$source": 0,
+                "$named": true,
+                "$other": [
+                  7,
+                  8
+                ],
+                "$span": {
+                  "start": 58,
+                  "end": 65
+                },
+                "$nodeHandle": 53,
+                "_content": "crate"
+              },
+              "$span": {
+                "start": 55,
+                "end": 65
+              },
+              "$nodeHandle": 52
+            }
+          },
+          "_name": "c",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "$text": "()",
+            "$span": {
+              "start": 70,
+              "end": 72
+            },
+            "$nodeHandle": 54
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 73,
+              "end": 75
+            },
+            "$nodeHandle": 55,
+            "_statement": []
+          },
+          "$other": [
+            60
+          ],
+          "$span": {
+            "start": 55,
+            "end": 75
+          },
+          "$nodeHandle": 35
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_visibility_modifier": {
+            "$type": 216,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 76,
+              "end": 92
+            },
+            "$nodeHandle": 56,
+            "_content": {
+              "$type": 377,
+              "$source": 0,
+              "$named": true,
+              "_pub": 142,
+              "_visibility_modifier_group1": {
+                "$type": 333,
+                "$source": 0,
+                "$named": true,
+                "$other": [
+                  7,
+                  8
+                ],
+                "$span": {
+                  "start": 79,
+                  "end": 92
+                },
+                "$nodeHandle": 58,
+                "_content": {
+                  "$type": 378,
+                  "$source": 0,
+                  "$named": true,
+                  "$other": [
+                    112
+                  ],
+                  "$span": {
+                    "start": 80,
+                    "end": 91
+                  },
+                  "$nodeHandle": 59,
+                  "_path": {
+                    "$type": 244,
+                    "$source": 0,
+                    "$named": true,
+                    "_path": "crate",
+                    "_name": "d",
+                    "$other": [
+                      73
+                    ],
+                    "$span": {
+                      "start": 83,
+                      "end": 91
+                    },
+                    "$nodeHandle": 60
+                  }
+                }
+              },
+              "$span": {
+                "start": 76,
+                "end": 92
+              },
+              "$nodeHandle": 57
+            }
+          },
+          "_name": "e",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "$text": "()",
+            "$span": {
+              "start": 97,
+              "end": 99
+            },
+            "$nodeHandle": 61
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 100,
+              "end": 102
+            },
+            "$nodeHandle": 62,
+            "_statement": []
+          },
+          "$other": [
+            60
+          ],
+          "$span": {
+            "start": 76,
+            "end": 102
+          },
+          "$nodeHandle": 36
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 102
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "pub fn a(){  }pub(super)fn b(){  }pub(self)fn c(){  }pub(crate)fn c(){  }pub(in crate::d)fn e(){  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub fn a() {}\npub(super) fn b() {}\npub(self) fn c() {}\npub(crate) fn c() {}\npub(in crate::d) fn e() {}",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "pub fn a(){  }pub(super)fn b(){  }pub(self)fn c(){  }pub(crate)fn c(){  }pub(in crate::d)fn e(){  }",
+    "expectedReparseTree": "(source_file statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group1 (super)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group1 (self)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group1 (crate)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group1 (visibility_modifier_in_path (scoped_identifier path: (crate) name: (identifier)))))) name: (identifier) parameters: (parameters) body: (block)))",
+    "wrappedText": "pub fn a(){  }pub(super)fn b(){  }pub(self)fn c(){  }pub(crate)fn c(){  }pub(in crate::d)fn e(){  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 189,
+      "$source": 0,
+      "$named": true,
+      "_visibility_modifier": {
+        "$type": 216,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 0,
+          "end": 3
+        },
+        "$nodeHandle": 63,
+        "_content": {
+          "$type": 377,
+          "$source": 0,
+          "$named": true,
+          "_pub": 142,
+          "$span": {
+            "start": 0,
+            "end": 3
+          },
+          "$nodeHandle": 64
+        }
+      },
+      "_name": "a",
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 8,
+          "end": 10
+        },
+        "$nodeHandle": 65
+      },
+      "_body": {
+        "$type": 294,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 11,
+          "end": 13
+        },
+        "$nodeHandle": 66,
+        "_statement": []
+      },
+      "$other": [
+        60
+      ],
+      "$span": {
+        "start": 0,
+        "end": 13
+      },
+      "$nodeHandle": 1
+    },
+    "expectedOutput": "pub fn a(){  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub fn a() {}",
+    "pattern": "function_item",
+    "edits": [],
+    "expectedSourceOut": "pub fn a(){  }",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) parameters: (parameters) body: (block))",
+    "wrappedText": "pub fn a(){  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 189,
+      "$source": 0,
+      "$named": true,
+      "_visibility_modifier": {
+        "$type": 216,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 14,
+          "end": 24
+        },
+        "$nodeHandle": 67,
+        "_content": {
+          "$type": 377,
+          "$source": 0,
+          "$named": true,
+          "_pub": 142,
+          "_visibility_modifier_group1": {
+            "$type": 333,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 17,
+              "end": 24
+            },
+            "$nodeHandle": 69,
+            "_content": "super"
+          },
+          "$span": {
+            "start": 14,
+            "end": 24
+          },
+          "$nodeHandle": 68
+        }
+      },
+      "_name": "b",
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 29,
+          "end": 31
+        },
+        "$nodeHandle": 70
+      },
+      "_body": {
+        "$type": 294,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 32,
+          "end": 34
+        },
+        "$nodeHandle": 71,
+        "_statement": []
+      },
+      "$other": [
+        60
+      ],
+      "$span": {
+        "start": 14,
+        "end": 34
+      },
+      "$nodeHandle": 2
+    },
+    "expectedOutput": "pub(super)fn b(){  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub(super) fn b() {}",
+    "pattern": "function_item",
+    "edits": [],
+    "expectedSourceOut": "pub(super)fn b(){  }",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group1 (super)))) name: (identifier) parameters: (parameters) body: (block))",
+    "wrappedText": "pub(super)fn b(){  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 189,
+      "$source": 0,
+      "$named": true,
+      "_visibility_modifier": {
+        "$type": 216,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 35,
+          "end": 44
+        },
+        "$nodeHandle": 72,
+        "_content": {
+          "$type": 377,
+          "$source": 0,
+          "$named": true,
+          "_pub": 142,
+          "_visibility_modifier_group1": {
+            "$type": 333,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 38,
+              "end": 44
+            },
+            "$nodeHandle": 74,
+            "_content": "self"
+          },
+          "$span": {
+            "start": 35,
+            "end": 44
+          },
+          "$nodeHandle": 73
+        }
+      },
+      "_name": "c",
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 49,
+          "end": 51
+        },
+        "$nodeHandle": 75
+      },
+      "_body": {
+        "$type": 294,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 52,
+          "end": 54
+        },
+        "$nodeHandle": 76,
+        "_statement": []
+      },
+      "$other": [
+        60
+      ],
+      "$span": {
+        "start": 35,
+        "end": 54
+      },
+      "$nodeHandle": 3
+    },
+    "expectedOutput": "pub(self)fn c(){  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub(self) fn c() {}",
+    "pattern": "function_item",
+    "edits": [],
+    "expectedSourceOut": "pub(self)fn c(){  }",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group1 (self)))) name: (identifier) parameters: (parameters) body: (block))",
+    "wrappedText": "pub(self)fn c(){  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 189,
+      "$source": 0,
+      "$named": true,
+      "_visibility_modifier": {
+        "$type": 216,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 55,
+          "end": 65
+        },
+        "$nodeHandle": 77,
+        "_content": {
+          "$type": 377,
+          "$source": 0,
+          "$named": true,
+          "_pub": 142,
+          "_visibility_modifier_group1": {
+            "$type": 333,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 58,
+              "end": 65
+            },
+            "$nodeHandle": 79,
+            "_content": "crate"
+          },
+          "$span": {
+            "start": 55,
+            "end": 65
+          },
+          "$nodeHandle": 78
+        }
+      },
+      "_name": "c",
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 70,
+          "end": 72
+        },
+        "$nodeHandle": 80
+      },
+      "_body": {
+        "$type": 294,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 73,
+          "end": 75
+        },
+        "$nodeHandle": 81,
+        "_statement": []
+      },
+      "$other": [
+        60
+      ],
+      "$span": {
+        "start": 55,
+        "end": 75
+      },
+      "$nodeHandle": 4
+    },
+    "expectedOutput": "pub(crate)fn c(){  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub(crate) fn c() {}",
+    "pattern": "function_item",
+    "edits": [],
+    "expectedSourceOut": "pub(crate)fn c(){  }",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group1 (crate)))) name: (identifier) parameters: (parameters) body: (block))",
+    "wrappedText": "pub(crate)fn c(){  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 189,
+      "$source": 0,
+      "$named": true,
+      "_visibility_modifier": {
+        "$type": 216,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 76,
+          "end": 92
+        },
+        "$nodeHandle": 82,
+        "_content": {
+          "$type": 377,
+          "$source": 0,
+          "$named": true,
+          "_pub": 142,
+          "_visibility_modifier_group1": {
+            "$type": 333,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 79,
+              "end": 92
+            },
+            "$nodeHandle": 84,
+            "_content": {
+              "$type": 378,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                112
+              ],
+              "$span": {
+                "start": 80,
+                "end": 91
+              },
+              "$nodeHandle": 85,
+              "_path": {
+                "$type": 244,
+                "$source": 0,
+                "$named": true,
+                "_path": "crate",
+                "_name": "d",
+                "$other": [
+                  73
+                ],
+                "$span": {
+                  "start": 83,
+                  "end": 91
+                },
+                "$nodeHandle": 86
+              }
+            }
+          },
+          "$span": {
+            "start": 76,
+            "end": 92
+          },
+          "$nodeHandle": 83
+        }
+      },
+      "_name": "e",
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 97,
+          "end": 99
+        },
+        "$nodeHandle": 87
+      },
+      "_body": {
+        "$type": 294,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 100,
+          "end": 102
+        },
+        "$nodeHandle": 88,
+        "_statement": []
+      },
+      "$other": [
+        60
+      ],
+      "$span": {
+        "start": 76,
+        "end": 102
+      },
+      "$nodeHandle": 5
+    },
+    "expectedOutput": "pub(in crate::d)fn e(){  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub(in crate::d) fn e() {}",
+    "pattern": "function_item",
+    "edits": [],
+    "expectedSourceOut": "pub(in crate::d)fn e(){  }",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group1 (visibility_modifier_in_path (scoped_identifier path: (crate) name: (identifier)))))) name: (identifier) parameters: (parameters) body: (block))",
+    "wrappedText": "pub(in crate::d)fn e(){  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 216,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 3
+      },
+      "$nodeHandle": 6,
+      "_content": {
+        "$type": 377,
+        "$source": 0,
+        "$named": true,
+        "_pub": 142,
+        "$span": {
+          "start": 0,
+          "end": 3
+        },
+        "$nodeHandle": 89
+      }
+    },
+    "expectedOutput": "pub"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub",
+    "pattern": "visibility_modifier",
+    "edits": [],
+    "expectedSourceOut": "pub",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub))",
+    "wrappedText": "pub fn _f() {}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 216,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 14,
+        "end": 24
+      },
+      "$nodeHandle": 10,
+      "_content": {
+        "$type": 377,
+        "$source": 0,
+        "$named": true,
+        "_pub": 142,
+        "_visibility_modifier_group1": {
+          "$type": 333,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            7,
+            8
+          ],
+          "$span": {
+            "start": 17,
+            "end": 24
+          },
+          "$nodeHandle": 91,
+          "_content": "super"
+        },
+        "$span": {
+          "start": 14,
+          "end": 24
+        },
+        "$nodeHandle": 90
+      }
+    },
+    "expectedOutput": "pub(super)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub(super)",
+    "pattern": "visibility_modifier",
+    "edits": [],
+    "expectedSourceOut": "pub(super)",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub (visibility_modifier_group1 (super))))",
+    "wrappedText": "pub(super) fn _f() {}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 216,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 35,
+        "end": 44
+      },
+      "$nodeHandle": 15,
+      "_content": {
+        "$type": 377,
+        "$source": 0,
+        "$named": true,
+        "_pub": 142,
+        "_visibility_modifier_group1": {
+          "$type": 333,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            7,
+            8
+          ],
+          "$span": {
+            "start": 38,
+            "end": 44
+          },
+          "$nodeHandle": 93,
+          "_content": "self"
+        },
+        "$span": {
+          "start": 35,
+          "end": 44
+        },
+        "$nodeHandle": 92
+      }
+    },
+    "expectedOutput": "pub(self)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub(self)",
+    "pattern": "visibility_modifier",
+    "edits": [],
+    "expectedSourceOut": "pub(self)",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub (visibility_modifier_group1 (self))))",
+    "wrappedText": "pub(self) fn _f() {}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 216,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 55,
+        "end": 65
+      },
+      "$nodeHandle": 20,
+      "_content": {
+        "$type": 377,
+        "$source": 0,
+        "$named": true,
+        "_pub": 142,
+        "_visibility_modifier_group1": {
+          "$type": 333,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            7,
+            8
+          ],
+          "$span": {
+            "start": 58,
+            "end": 65
+          },
+          "$nodeHandle": 95,
+          "_content": "crate"
+        },
+        "$span": {
+          "start": 55,
+          "end": 65
+        },
+        "$nodeHandle": 94
+      }
+    },
+    "expectedOutput": "pub(crate)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub(crate)",
+    "pattern": "visibility_modifier",
+    "edits": [],
+    "expectedSourceOut": "pub(crate)",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub (visibility_modifier_group1 (crate))))",
+    "wrappedText": "pub(crate) fn _f() {}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 216,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 76,
+        "end": 92
+      },
+      "$nodeHandle": 25,
+      "_content": {
+        "$type": 377,
+        "$source": 0,
+        "$named": true,
+        "_pub": 142,
+        "_visibility_modifier_group1": {
+          "$type": 333,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            7,
+            8
+          ],
+          "$span": {
+            "start": 79,
+            "end": 92
+          },
+          "$nodeHandle": 97,
+          "_content": {
+            "$type": 378,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              112
+            ],
+            "$span": {
+              "start": 80,
+              "end": 91
+            },
+            "$nodeHandle": 98,
+            "_path": {
+              "$type": 244,
+              "$source": 0,
+              "$named": true,
+              "_path": "crate",
+              "_name": "d",
+              "$other": [
+                73
+              ],
+              "$span": {
+                "start": 83,
+                "end": 91
+              },
+              "$nodeHandle": 99
+            }
+          }
+        },
+        "$span": {
+          "start": 76,
+          "end": 92
+        },
+        "$nodeHandle": 96
+      }
+    },
+    "expectedOutput": "pub(in crate::d)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub(in crate::d)",
+    "pattern": "visibility_modifier",
+    "edits": [],
+    "expectedSourceOut": "pub(in crate::d)",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub (visibility_modifier_group1 (visibility_modifier_in_path (scoped_identifier path: (crate) name: (identifier))))))",
+    "wrappedText": "pub(in crate::d) fn _f() {}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 8,
+        "end": 10
+      },
+      "$nodeHandle": 8
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "()",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(parameters)",
+    "wrappedText": "fn _f() {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 29,
+        "end": 31
+      },
+      "$nodeHandle": 13
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "()",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(parameters)",
+    "wrappedText": "fn _f() {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 49,
+        "end": 51
+      },
+      "$nodeHandle": 18
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "()",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(parameters)",
+    "wrappedText": "fn _f() {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 70,
+        "end": 72
+      },
+      "$nodeHandle": 23
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "()",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(parameters)",
+    "wrappedText": "fn _f() {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 97,
+        "end": 99
+      },
+      "$nodeHandle": 30
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "()",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(parameters)",
+    "wrappedText": "fn _f() {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 294,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 11,
+        "end": 13
+      },
+      "$nodeHandle": 9,
+      "_statement": []
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{}",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(block)",
+    "wrappedText": "fn _f() { let _ = {  }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 294,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 32,
+        "end": 34
+      },
+      "$nodeHandle": 14,
+      "_statement": []
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{}",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(block)",
+    "wrappedText": "fn _f() { let _ = {  }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 294,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 52,
+        "end": 54
+      },
+      "$nodeHandle": 19,
+      "_statement": []
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{}",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(block)",
+    "wrappedText": "fn _f() { let _ = {  }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 294,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 73,
+        "end": 75
+      },
+      "$nodeHandle": 24,
+      "_statement": []
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{}",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(block)",
+    "wrappedText": "fn _f() { let _ = {  }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 294,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 100,
+        "end": 102
+      },
+      "$nodeHandle": 31,
+      "_statement": []
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{}",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(block)",
+    "wrappedText": "fn _f() { let _ = {  }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 244,
+      "$source": 0,
+      "$named": true,
+      "_path": "crate",
+      "_name": "d",
+      "$other": [
+        73
+      ],
+      "$span": {
+        "start": 83,
+        "end": 91
+      },
+      "$nodeHandle": 29
+    },
+    "expectedOutput": "crate::d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "crate::d",
+    "pattern": "scoped_identifier",
+    "edits": [],
+    "expectedSourceOut": "crate::d",
+    "expectedReparseTree": "(scoped_identifier path: (crate) name: (identifier))",
+    "wrappedText": "fn _f() { let _ = crate::d; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
           "_name": "foo",
           "_parameters": {
             "$type": 211,

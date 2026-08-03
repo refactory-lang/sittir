@@ -436,7 +436,7 @@
       "attributed_parameter": "_attributed_parameter"
     },
     "_visibility_modifier_group1.content": {
-      "in_path": "_in_path"
+      "visibility_modifier_in_path": "_visibility_modifier_in_path"
     },
     "_use_bounds_group1.content": {
       "type_identifier": "identifier"
@@ -3404,6 +3404,15 @@
         "nonEmpty": false
       }
     },
+    "_visibility_modifier_in_path": {
+      "path": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "_expression_statement_with_semi": {
       "expression": {
         "unnamed": false,
@@ -3523,15 +3532,6 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "_in_path": {
-      "path": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -5641,44 +5641,6 @@
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "text": ";"
-    },
-    {
-      "kind": "_in_path",
-      "modelType": "branch",
-      "typeName": "InPath",
-      "factoryName": "inPath",
-      "irKey": "inPath",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "path",
-          "propertyName": "path",
-          "paramName": "path",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_path",
-              "parseKind": "_path",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_path"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "path"
-      ]
     },
     {
       "kind": "_inner_block_doc_comment_marker",
@@ -8088,8 +8050,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_in_path",
-              "parseKind": "in_path",
+              "name": "_visibility_modifier_in_path",
+              "parseKind": "visibility_modifier_in_path",
               "unresolved": true
             }
           ],
@@ -8099,7 +8061,7 @@
               "self",
               "super",
               "crate",
-              "_in_path"
+              "_visibility_modifier_in_path"
             ]
           }
         }
@@ -8108,6 +8070,44 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ]
+    },
+    {
+      "kind": "_visibility_modifier_in_path",
+      "modelType": "branch",
+      "typeName": "VisibilityModifierInPath",
+      "factoryName": "visibilityModifierInPath",
+      "irKey": "visibilityModifierInPath",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "path",
+          "propertyName": "path",
+          "paramName": "path",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_path",
+              "parseKind": "_path",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_path"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "path"
       ]
     },
     {

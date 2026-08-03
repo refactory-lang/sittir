@@ -253,6 +253,7 @@ pub enum AnyTransport {
     StructItemTuple(StructItemTupleTransport),
     StructItemUnit(StructItemUnitTransport),
     VisibilityModifierPub(VisibilityModifierPubTransport),
+    VisibilityModifierInPath(VisibilityModifierInPathTransport),
     KwOperator(KwOperatorTransport),
     PointerTypeConst(PointerTypeConstTransport),
     ExpressionStatementWithSemi(ExpressionStatementWithSemiTransport),
@@ -270,7 +271,6 @@ pub enum AnyTransport {
     DelimTokenTreeParen(DelimTokenTreeParenTransport),
     DelimTokenTreeBracket(DelimTokenTreeBracketTransport),
     DelimTokenTreeBrace(DelimTokenTreeBraceTransport),
-    InPath(InPathTransport),
     AttributedFieldDeclaration(AttributedFieldDeclarationTransport),
     AttributedEnumVariant(AttributedEnumVariantTransport),
     AttributedParameter(AttributedParameterTransport),
@@ -1287,6 +1287,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: _visibility_modifier_pub (_VISIBILITY_MODIFIER_PUB)
                 377 => Ok(AnyTransport::VisibilityModifierPub(
                     VisibilityModifierPubTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _visibility_modifier_in_path (_VISIBILITY_MODIFIER_IN_PATH)
+                378 => Ok(AnyTransport::VisibilityModifierInPath(
+                    VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _pointer_type_const (_POINTER_TYPE_CONST)
                 379 => Ok(AnyTransport::PointerTypeConst(
@@ -22998,7 +23002,7 @@ pub enum VisibilityModifierGroup1ContentTransportSlot {
     Self_(Self_Transport),
     Super(SuperTransport),
     Crate(CrateTransport),
-    InPath(InPathTransport),
+    VisibilityModifierInPath(VisibilityModifierInPathTransport),
     Verbatim(VerbatimTransport),
 }
 
@@ -23019,6 +23023,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierGroup1ContentT
                     )),
                     136 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
+                    )),
+                    378 => Ok(Self::VisibilityModifierInPath(
+                        VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in VisibilityModifierGroup1ContentTransportSlot",
@@ -23043,6 +23050,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierGroup1ContentT
                     )),
                     136 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
+                    )),
+                    378 => Ok(Self::VisibilityModifierInPath(
+                        VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in VisibilityModifierGroup1ContentTransportSlot",
@@ -23089,7 +23099,7 @@ fn visibility_modifier_group1_content_transport_slot_to_any(t: VisibilityModifie
         VisibilityModifierGroup1ContentTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
         VisibilityModifierGroup1ContentTransportSlot::Super(inner) => AnyTransport::Super(inner),
         VisibilityModifierGroup1ContentTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
-        VisibilityModifierGroup1ContentTransportSlot::InPath(inner) => AnyTransport::InPath(inner),
+        VisibilityModifierGroup1ContentTransportSlot::VisibilityModifierInPath(inner) => AnyTransport::VisibilityModifierInPath(inner),
         VisibilityModifierGroup1ContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -23103,7 +23113,7 @@ impl RenderableTransport for VisibilityModifierGroup1ContentTransportSlot {
             VisibilityModifierGroup1ContentTransportSlot::Self_(inner) => render_self(inner, dest),
             VisibilityModifierGroup1ContentTransportSlot::Super(inner) => render_super(inner, dest),
             VisibilityModifierGroup1ContentTransportSlot::Crate(inner) => render_crate(inner, dest),
-            VisibilityModifierGroup1ContentTransportSlot::InPath(inner) => render_in_path(inner, dest),
+            VisibilityModifierGroup1ContentTransportSlot::VisibilityModifierInPath(inner) => render_visibility_modifier_in_path(inner, dest),
             VisibilityModifierGroup1ContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -41869,6 +41879,56 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierPubTransport
     }
 }
 
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct VisibilityModifierInPathTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_path"))]
+    pub path: PathTransport,
+}
+
+impl RenderableTransport for VisibilityModifierInPathTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_visibility_modifier_in_path(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<VisibilityModifierInPathTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        VisibilityModifierInPathTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierInPathTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        VisibilityModifierInPathTransport::to_napi_value(env, *val)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct KwOperatorTransport {
     pub transport_source: Option<Source>,
@@ -42981,56 +43041,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DelimTokenTreeBraceTransport> 
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         DelimTokenTreeBraceTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct InPathTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_path"))]
-    pub path: PathTransport,
-}
-
-impl RenderableTransport for InPathTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_in_path(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<InPathTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        InPathTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<InPathTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        InPathTransport::to_napi_value(env, *val)
     }
 }
 
@@ -55193,6 +55203,13 @@ fn render_visibility_modifier_pub(node: &VisibilityModifierPubTransport, dest: &
     template.render_into(dest)
 }
 
+fn render_visibility_modifier_in_path(node: &VisibilityModifierInPathTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = VisibilityModifierInPathTemplate {
+        path: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.path)),
+    };
+    template.render_into(dest)
+}
+
 fn render_kw_operator(t: &KwOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -55427,13 +55444,6 @@ fn render_delim_token_tree_brace(node: &DelimTokenTreeBraceTransport, dest: &mut
             leading: false,
             trailing: false,
         },
-    };
-    template.render_into(dest)
-}
-
-fn render_in_path(node: &InPathTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = InPathTemplate {
-        path: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.path)),
     };
     template.render_into(dest)
 }
@@ -56625,6 +56635,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::StructItemTuple(t) => render_struct_item_tuple(t, dest),
             AnyTransport::StructItemUnit(t) => t.render_into(dest),
             AnyTransport::VisibilityModifierPub(t) => render_visibility_modifier_pub(t, dest),
+            AnyTransport::VisibilityModifierInPath(t) => render_visibility_modifier_in_path(t, dest),
             AnyTransport::KwOperator(t) => t.render_into(dest),
             AnyTransport::PointerTypeConst(t) => t.render_into(dest),
             AnyTransport::ExpressionStatementWithSemi(t) => render_expression_statement_with_semi(t, dest),
@@ -56642,7 +56653,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::DelimTokenTreeParen(t) => render_delim_token_tree_paren(t, dest),
             AnyTransport::DelimTokenTreeBracket(t) => render_delim_token_tree_bracket(t, dest),
             AnyTransport::DelimTokenTreeBrace(t) => render_delim_token_tree_brace(t, dest),
-            AnyTransport::InPath(t) => render_in_path(t, dest),
             AnyTransport::AttributedFieldDeclaration(t) => render_attributed_field_declaration(t, dest),
             AnyTransport::AttributedEnumVariant(t) => render_attributed_enum_variant(t, dest),
             AnyTransport::AttributedParameter(t) => render_attributed_parameter(t, dest),
@@ -57018,6 +57028,7 @@ impl AnyTransport {
             Self::StructItemTuple(t) => t.transport_named,
             Self::StructItemUnit(t) => t.transport_named,
             Self::VisibilityModifierPub(t) => t.transport_named,
+            Self::VisibilityModifierInPath(t) => t.transport_named,
             Self::KwOperator(t) => t.transport_named,
             Self::PointerTypeConst(t) => t.transport_named,
             Self::ExpressionStatementWithSemi(t) => t.transport_named,
@@ -57035,7 +57046,6 @@ impl AnyTransport {
             Self::DelimTokenTreeParen(t) => t.transport_named,
             Self::DelimTokenTreeBracket(t) => t.transport_named,
             Self::DelimTokenTreeBrace(t) => t.transport_named,
-            Self::InPath(t) => t.transport_named,
             Self::AttributedFieldDeclaration(t) => t.transport_named,
             Self::AttributedEnumVariant(t) => t.transport_named,
             Self::AttributedParameter(t) => t.transport_named,

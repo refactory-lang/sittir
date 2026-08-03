@@ -9285,19 +9285,19 @@ export function wrapParametersGroup1(
 
 export function wrapVisibilityModifierGroup1(
 	data: T.VisibilityModifierGroup1 & {
-		readonly _self?: T.Self | T.Super | T.Crate | T.InPath;
-		readonly _super?: T.Self | T.Super | T.Crate | T.InPath;
-		readonly _crate?: T.Self | T.Super | T.Crate | T.InPath;
-		readonly _in_path?: T.Self | T.Super | T.Crate | T.InPath;
+		readonly _self?: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath;
+		readonly _super?: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath;
+		readonly _crate?: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath;
+		readonly _visibility_modifier_in_path?: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath;
 	},
 	tree: TreeHandle
 ) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_crate', '_in_path', '_self', '_super']),
+			..._omitWrapKeys(data, ['_crate', '_self', '_super', '_visibility_modifier_in_path']),
 			$type: TSKindId.VisibilityModifierGroup1 as const,
 			_content: normalizeSingularWrapSlot(
-				data._content ?? data._self ?? data._super ?? data._crate ?? data._in_path,
+				data._content ?? data._self ?? data._super ?? data._crate ?? data._visibility_modifier_in_path,
 				'content',
 				true,
 				data.$type,
@@ -9305,8 +9305,8 @@ export function wrapVisibilityModifierGroup1(
 			),
 
 			content() {
-				return drillAs<T.Self | T.Super | T.Crate | T.InPath>(this._content, tree, [
-					{ from: 'in_path', to: '_in_path' }
+				return drillAs<T.Self | T.Super | T.Crate | T.VisibilityModifierInPath>(this._content, tree, [
+					{ from: 'visibility_modifier_in_path', to: '_visibility_modifier_in_path' }
 				]);
 			},
 			$with: {
@@ -10776,6 +10776,58 @@ export function wrapVisibilityModifierPub(data: T.VisibilityModifierPub, tree: T
 				pub: (v: NonNullable<T.VisibilityModifierPub['_pub']>) => wrapVisibilityModifierPub({ ...data, _pub: v }, tree),
 				visibilityModifierGroup1: (v: NonNullable<T.VisibilityModifierPub['_visibility_modifier_group1']>) =>
 					wrapVisibilityModifierPub({ ...data, _visibility_modifier_group1: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
+export function wrapVisibilityModifierInPath(
+	data: T.VisibilityModifierInPath & {
+		readonly _self?: T.Path;
+		readonly _identifier?: T.Path;
+		readonly _metavariable?: T.Path;
+		readonly _super?: T.Path;
+		readonly _crate?: T.Path;
+		readonly _scoped_identifier?: T.Path;
+		readonly _reserved_identifier?: T.Path;
+	},
+	tree: TreeHandle
+) {
+	const _node = withMethods(
+		{
+			..._omitWrapKeys(data, [
+				'_crate',
+				'_identifier',
+				'_metavariable',
+				'_reserved_identifier',
+				'_scoped_identifier',
+				'_self',
+				'_super'
+			]),
+			$type: TSKindId.VisibilityModifierInPath as const,
+			_path: normalizeSingularWrapSlot(
+				data._path ??
+					data._self ??
+					data._identifier ??
+					data._metavariable ??
+					data._super ??
+					data._crate ??
+					data._scoped_identifier ??
+					data._reserved_identifier,
+				'path',
+				true,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'path', span: (data as _NodeData).$span }
+			),
+
+			path() {
+				return drillIn<T.Path>(this._path, tree);
+			},
+			$with: {
+				path: (v: NonNullable<T.VisibilityModifierInPath['_path']>) =>
+					wrapVisibilityModifierInPath({ ...data, _path: v }, tree)
 			}
 		},
 		methodsEngine
@@ -12577,6 +12629,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_struct_item_brace: (d, t) => wrapStructItemBrace(d as unknown as T.StructItemBrace, t),
 	_struct_item_tuple: (d, t) => wrapStructItemTuple(d as unknown as T.StructItemTuple, t),
 	_visibility_modifier_pub: (d, t) => wrapVisibilityModifierPub(d as unknown as T.VisibilityModifierPub, t),
+	_visibility_modifier_in_path: (d, t) => wrapVisibilityModifierInPath(d as unknown as T.VisibilityModifierInPath, t),
 	_pointer_type_const: (d) => ({ ...d, $type: TSKindId.PointerTypeConst as const }),
 	_expression_statement_with_semi: (d, t) =>
 		wrapExpressionStatementWithSemi(d as unknown as T.ExpressionStatementWithSemi, t),
@@ -12647,7 +12700,6 @@ const _aliasTargetToSource: Record<string, string> = {
 	impl_item_body: '_impl_item_body',
 	impl_item_negative_clause: '_impl_item_negative_clause',
 	impl_item_positive_clause: '_impl_item_positive_clause',
-	in_path: '_in_path',
 	kw_move_marker: '_kw_move_marker',
 	kw_ref_marker: '_kw_ref_marker',
 	let_chain: '_let_chain',
@@ -12699,6 +12751,7 @@ const _aliasTargetToSource: Record<string, string> = {
 	use_clause: '_use_clause',
 	use_list_group1: '_use_list_group1',
 	visibility_modifier_group1: '_visibility_modifier_group1',
+	visibility_modifier_in_path: '_visibility_modifier_in_path',
 	visibility_modifier_pub: '_visibility_modifier_pub',
 	where_clause_group1: '_where_clause_group1',
 	wildcard_pattern: '_wildcard_pattern'

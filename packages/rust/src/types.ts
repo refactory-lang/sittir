@@ -380,6 +380,7 @@ export const enum SyntaxKind {
 	StructItemBrace = '_struct_item_brace',
 	StructItemTuple = '_struct_item_tuple',
 	VisibilityModifierPub = '_visibility_modifier_pub',
+	VisibilityModifierInPath = '_visibility_modifier_in_path',
 	ExpressionStatementWithSemi = '_expression_statement_with_semi',
 	MatchArmWithComma = '_match_arm_with_comma',
 	LineCommentDoc = '_line_comment_doc',
@@ -392,7 +393,6 @@ export const enum SyntaxKind {
 	DelimTokenTreeParen = '_delim_token_tree_paren',
 	DelimTokenTreeBracket = '_delim_token_tree_bracket',
 	DelimTokenTreeBrace = '_delim_token_tree_brace',
-	InPath = '_in_path',
 	AttributedFieldDeclaration = '_attributed_field_declaration',
 	AttributedEnumVariant = '_attributed_enum_variant',
 	AttributedParameter = '_attributed_parameter',
@@ -853,7 +853,7 @@ export const enum TSKindId {
 	StructItemTuple = 375,
 	StructItemUnit = 376,
 	VisibilityModifierPub = 377,
-	_VisibilityModifierInPath = 378,
+	VisibilityModifierInPath = 378,
 	PointerTypeConst = 379,
 	ExpressionStatementWithSemi = 380,
 	ForeignModItemSemi = 381,
@@ -2549,7 +2549,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '_visibility_modifier_pub':
 			return TSKindId.VisibilityModifierPub;
 		case '_visibility_modifier_in_path':
-			return TSKindId._VisibilityModifierInPath;
+			return TSKindId.VisibilityModifierInPath;
 		case '_pointer_type_const':
 			return TSKindId.PointerTypeConst;
 		case '_expression_statement_with_semi':
@@ -2887,7 +2887,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'visibility_modifier_pub':
 			return TSKindId.VisibilityModifierPub;
 		case 'visibility_modifier_in_path':
-			return TSKindId._VisibilityModifierInPath;
+			return TSKindId.VisibilityModifierInPath;
 		case 'pointer_type_const':
 			return TSKindId.PointerTypeConst;
 		case 'expression_statement_with_semi':
@@ -4817,8 +4817,8 @@ export interface VariadicParameterOptional1 {
 
 export interface VisibilityModifierGroup1 {
 	readonly $type: TSKindId.VisibilityModifierGroup1;
-	readonly _content: Self | Super | Crate | InPath;
-	content(): Self | Super | Crate | InPath;
+	readonly _content: Self | Super | Crate | VisibilityModifierInPath;
+	content(): Self | Super | Crate | VisibilityModifierInPath;
 }
 
 export interface ArrayTypeOptional1 {
@@ -5110,6 +5110,12 @@ export interface VisibilityModifierPub {
 	visibilityModifierGroup1(): VisibilityModifierGroup1 | undefined;
 }
 
+export interface VisibilityModifierInPath {
+	readonly $type: TSKindId.VisibilityModifierInPath;
+	readonly _path: Path;
+	path(): Path;
+}
+
 export interface ExpressionStatementWithSemi {
 	readonly $type: TSKindId.ExpressionStatementWithSemi;
 	readonly _expression: Expression;
@@ -5188,12 +5194,6 @@ export interface DelimTokenTreeBrace {
 	readonly $type: TSKindId.DelimTokenTreeBrace;
 	readonly _delim_tokens?: readonly DelimTokens[];
 	delimTokens(): readonly DelimTokens[];
-}
-
-export interface InPath {
-	readonly $type: '_in_path';
-	readonly _path: Path;
-	path(): Path;
 }
 
 export interface AttributedFieldDeclaration {
@@ -5842,6 +5842,9 @@ export interface StructItemTupleTree extends AnyTreeNode {
 export interface VisibilityModifierPubTree extends AnyTreeNode {
 	readonly type: '_visibility_modifier_pub';
 }
+export interface VisibilityModifierInPathTree extends AnyTreeNode {
+	readonly type: '_visibility_modifier_in_path';
+}
 export interface ExpressionStatementWithSemiTree extends AnyTreeNode {
 	readonly type: '_expression_statement_with_semi';
 }
@@ -5877,9 +5880,6 @@ export interface DelimTokenTreeBracketTree extends AnyTreeNode {
 }
 export interface DelimTokenTreeBraceTree extends AnyTreeNode {
 	readonly type: '_delim_token_tree_brace';
-}
-export interface InPathTree extends AnyTreeNode {
-	readonly type: '_in_path';
 }
 export interface AttributedFieldDeclarationTree extends AnyTreeNode {
 	readonly type: '_attributed_field_declaration';
@@ -7045,6 +7045,7 @@ export type RustNode =
 	| StructItemBrace
 	| StructItemTuple
 	| VisibilityModifierPub
+	| VisibilityModifierInPath
 	| ExpressionStatementWithSemi
 	| MatchArmWithComma
 	| LineCommentDoc
@@ -7057,7 +7058,6 @@ export type RustNode =
 	| DelimTokenTreeParen
 	| DelimTokenTreeBracket
 	| DelimTokenTreeBrace
-	| InPath
 	| AttributedFieldDeclaration
 	| AttributedEnumVariant
 	| AttributedParameter
@@ -7264,6 +7264,7 @@ export interface KindMap {
 	_struct_item_brace: StructItemBrace;
 	_struct_item_tuple: StructItemTuple;
 	_visibility_modifier_pub: VisibilityModifierPub;
+	_visibility_modifier_in_path: VisibilityModifierInPath;
 	_expression_statement_with_semi: ExpressionStatementWithSemi;
 	_match_arm_with_comma: MatchArmWithComma;
 	_line_comment_doc: LineCommentDoc;
@@ -7276,7 +7277,6 @@ export interface KindMap {
 	_delim_token_tree_paren: DelimTokenTreeParen;
 	_delim_token_tree_bracket: DelimTokenTreeBracket;
 	_delim_token_tree_brace: DelimTokenTreeBrace;
-	_in_path: InPath;
 	_attributed_field_declaration: AttributedFieldDeclaration;
 	_attributed_enum_variant: AttributedEnumVariant;
 	_attributed_parameter: AttributedParameter;
@@ -7773,6 +7773,12 @@ export interface VisibilityModifierPubNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
+export interface VisibilityModifierInPathNs extends NodeNs<
+	VisibilityModifierInPath,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
 export interface ExpressionStatementWithSemiNs extends NodeNs<
 	ExpressionStatementWithSemi,
 	LeafScalarMap,
@@ -7820,7 +7826,6 @@ export interface DelimTokenTreeBraceNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface InPathNs extends NodeNs<InPath, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AttributedFieldDeclarationNs extends NodeNs<
 	AttributedFieldDeclaration,
 	LeafScalarMap,
@@ -8057,6 +8062,7 @@ export interface NamespaceMap {
 	_struct_item_brace: StructItemBraceNs;
 	_struct_item_tuple: StructItemTupleNs;
 	_visibility_modifier_pub: VisibilityModifierPubNs;
+	_visibility_modifier_in_path: VisibilityModifierInPathNs;
 	_expression_statement_with_semi: ExpressionStatementWithSemiNs;
 	_match_arm_with_comma: MatchArmWithCommaNs;
 	_line_comment_doc: LineCommentDocNs;
@@ -8069,7 +8075,6 @@ export interface NamespaceMap {
 	_delim_token_tree_paren: DelimTokenTreeParenNs;
 	_delim_token_tree_bracket: DelimTokenTreeBracketNs;
 	_delim_token_tree_brace: DelimTokenTreeBraceNs;
-	_in_path: InPathNs;
 	_attributed_field_declaration: AttributedFieldDeclarationNs;
 	_attributed_enum_variant: AttributedEnumVariantNs;
 	_attributed_parameter: AttributedParameterNs;
@@ -9453,6 +9458,13 @@ export namespace VisibilityModifierPub {
 	export type Tree = TreeFor<'_visibility_modifier_pub'>;
 	export type Kind = '_visibility_modifier_pub';
 }
+export namespace VisibilityModifierInPath {
+	export type Config = ConfigFor<'_visibility_modifier_in_path'>;
+	export type Fluent = FluentFor<'_visibility_modifier_in_path'>;
+	export type Loose = LooseFor<'_visibility_modifier_in_path'>;
+	export type Tree = TreeFor<'_visibility_modifier_in_path'>;
+	export type Kind = '_visibility_modifier_in_path';
+}
 export namespace ExpressionStatementWithSemi {
 	export type Config = ConfigFor<'_expression_statement_with_semi'>;
 	export type Fluent = FluentFor<'_expression_statement_with_semi'>;
@@ -9536,13 +9548,6 @@ export namespace DelimTokenTreeBrace {
 	export type Loose = LooseFor<'_delim_token_tree_brace'>;
 	export type Tree = TreeFor<'_delim_token_tree_brace'>;
 	export type Kind = '_delim_token_tree_brace';
-}
-export namespace InPath {
-	export type Config = ConfigFor<'_in_path'>;
-	export type Fluent = FluentFor<'_in_path'>;
-	export type Loose = LooseFor<'_in_path'>;
-	export type Tree = TreeFor<'_in_path'>;
-	export type Kind = '_in_path';
 }
 export namespace AttributedFieldDeclaration {
 	export type Config = ConfigFor<'_attributed_field_declaration'>;

@@ -360,6 +360,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_macro_definition_paren: TSKindId.MacroDefinitionParen,
 	_macro_definition_bracket: TSKindId.MacroDefinitionBracket,
 	_macro_definition_brace: TSKindId.MacroDefinitionBrace,
+	_visibility_modifier_in_path: TSKindId.VisibilityModifierInPath,
 	_token_tree_pattern_paren: TSKindId.TokenTreePatternParen,
 	_token_tree_pattern_bracket: TSKindId.TokenTreePatternBracket,
 	_token_tree_pattern_brace: TSKindId.TokenTreePatternBrace,
@@ -465,6 +466,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildMacroDefinitionBracket(...(children as Parameters<typeof F.buildMacroDefinitionBracket>));
 		case '_macro_definition_brace':
 			return F.buildMacroDefinitionBrace(...(children as Parameters<typeof F.buildMacroDefinitionBrace>));
+		case '_visibility_modifier_in_path':
+			return F.buildVisibilityModifierInPath(children[0] as Parameters<typeof F.buildVisibilityModifierInPath>[0]);
 		case '_token_tree_pattern_paren':
 			return F.buildTokenTreePatternParen(...(children as Parameters<typeof F.buildTokenTreePatternParen>));
 		case '_token_tree_pattern_bracket':

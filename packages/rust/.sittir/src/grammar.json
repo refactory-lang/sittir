@@ -11428,15 +11428,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "FIELD",
-          "name": "in",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_kw_in"
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
+          "type": "STRING",
+          "value": "in"
         },
         {
           "type": "SYMBOL",
@@ -11847,19 +11840,6 @@
         {
           "type": "STRING",
           "value": "}"
-        }
-      ]
-    },
-    "_in_path": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "in"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_path"
         }
       ]
     },
