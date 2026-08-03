@@ -210,6 +210,10 @@
         "named": true
       },
       {
+        "type": "reserved_identifier",
+        "named": true
+      },
+      {
         "type": "string",
         "named": true
       },
@@ -3009,6 +3013,10 @@
         },
         {
           "type": "object_pattern",
+          "named": true
+        },
+        {
+          "type": "reserved_identifier",
           "named": true
         },
         {
@@ -6275,6 +6283,10 @@
         },
         {
           "type": "object_pattern",
+          "named": true
+        },
+        {
+          "type": "reserved_identifier",
           "named": true
         },
         {

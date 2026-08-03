@@ -1060,7 +1060,14 @@ function enrich(baseInput) {
   for (const groupName of Object.keys(clauseGroupRules)) {
     const groupBody = clauseGroupRules[groupName];
     if (!groupBody) continue;
-    const groupUnaliasResult = applyUnaliasDistinct(groupName, groupBody, rulesBag, kwRules, clauseGroupRules);
+    const groupUnaliasResult = applyUnaliasDistinct(
+      groupName,
+      groupBody,
+      rulesBag,
+      kwRules,
+      clauseGroupRules,
+      supertypeNames
+    );
     clauseGroupRules[groupName] = groupUnaliasResult.rule;
     for (const diagnostic of groupUnaliasResult.diagnostics) {
       recordUnaliasDiagnostic(unaliasSink, diagnostic);
@@ -1161,7 +1168,7 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     visibleGroupHiddenNames,
     clauseGroupOwners
   );
-  const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules);
+  const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules, supertypeNames);
   r = unaliasResult.rule;
   for (const diagnostic of unaliasResult.diagnostics) {
     recordUnaliasDiagnostic(unaliasSink, diagnostic);
@@ -2112,7 +2119,7 @@ function recordUnaliasDiagnostic(sink, diagnostic) {
   sink.seen.add(key);
   sink.diagnostics.push(diagnostic);
 }
-function collectUnaliasCandidates(node, path, slotKey, rulesBag, out, walker) {
+function collectUnaliasCandidates(node, path, slotKey, rulesBag, out, walker, visited = /* @__PURE__ */ new Set(), supertypeNames = /* @__PURE__ */ new Set(), rewritable = true) {
   const t = node.type;
   if (!t) return;
   if (t === "ALIAS") {
@@ -2126,21 +2133,38 @@ function collectUnaliasCandidates(node, path, slotKey, rulesBag, out, walker) {
       slotKey,
       storageKind,
       resolvedBody,
-      aliasSite: { path, content: aliasRule.content, named: aliasRule.named }
+      aliasSite: rewritable ? { path, content: aliasRule.content, named: aliasRule.named } : void 0
     });
     return;
   }
   if (isSymbolType(t)) {
     const name = node.name;
     if (typeof name === "string") {
-      const resolvedBody = normalizeMember(rulesBag[name] ?? node);
+      const target = rulesBag[name];
+      const resolvedBody = normalizeMember(target ?? node);
+      const erasesToArms = name.startsWith("_") || supertypeNames.has(name);
+      if (target !== void 0 && erasesToArms && isChoiceType(resolvedBody.type) && !visited.has(name)) {
+        visited.add(name);
+        collectUnaliasCandidates(target, path, slotKey, rulesBag, out, walker, visited, supertypeNames, false);
+        return;
+      }
       out.push({ targetName: name, slotKey, storageKind: name, resolvedBody });
     }
     return;
   }
   const nextSlotKey = isFieldType(t) ? node.name ?? slotKey : slotKey;
   for (const { segment, child } of walker.childEdgesOf(node)) {
-    collectUnaliasCandidates(child, [...path, ...segment], nextSlotKey, rulesBag, out, walker);
+    collectUnaliasCandidates(
+      child,
+      [...path, ...segment],
+      nextSlotKey,
+      rulesBag,
+      out,
+      walker,
+      visited,
+      supertypeNames,
+      rewritable
+    );
   }
 }
 function rewriteUnaliasAt(node, path, replacement) {
@@ -2156,9 +2180,9 @@ function rewriteUnaliasAt(node, path, replacement) {
   const child = node[k];
   return { ...node, [k]: rest.length > 0 ? rewriteUnaliasAt(child, rest, replacement) : replacement };
 }
-function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRules) {
+function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRules, supertypeNames) {
   const candidates = [];
-  collectUnaliasCandidates(rule, [], void 0, rulesBag, candidates, new RuleWalker());
+  collectUnaliasCandidates(rule, [], void 0, rulesBag, candidates, new RuleWalker(), /* @__PURE__ */ new Set(), supertypeNames);
   if (candidates.length === 0) return { rule, diagnostics: [] };
   const byBucket = /* @__PURE__ */ new Map();
   for (const candidate of candidates) {

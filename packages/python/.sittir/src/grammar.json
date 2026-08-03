@@ -2996,13 +2996,8 @@
           "name": "expression"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "lambda_within_for_in_clause"
-          },
-          "named": true,
-          "value": "lambda"
+          "type": "SYMBOL",
+          "name": "lambda_within_for_in_clause"
         }
       ]
     },
@@ -6225,13 +6220,8 @@
               "name": "dictionary_splat"
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "parenthesized_list_splat"
-              },
-              "named": true,
-              "value": "parenthesized_expression"
+              "type": "SYMBOL",
+              "name": "parenthesized_list_splat"
             },
             {
               "type": "SYMBOL",
@@ -6264,13 +6254,8 @@
                     "name": "dictionary_splat"
                   },
                   {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "parenthesized_list_splat"
-                    },
-                    "named": true,
-                    "value": "parenthesized_expression"
+                    "type": "SYMBOL",
+                    "name": "parenthesized_list_splat"
                   },
                   {
                     "type": "SYMBOL",

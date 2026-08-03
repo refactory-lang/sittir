@@ -136,7 +136,7 @@ export type PythonGrammar = {
 				{ type: 'expression'; named: true },
 				{ type: 'keyword_argument'; named: true },
 				{ type: 'list_splat'; named: true },
-				{ type: 'parenthesized_expression'; named: true }
+				{ type: 'parenthesized_list_splat'; named: true }
 			];
 		};
 	};
@@ -837,7 +837,11 @@ export type PythonGrammar = {
 			right: {
 				multiple: true;
 				required: true;
-				types: [{ type: ','; named: false }, { type: 'expression'; named: true }];
+				types: [
+					{ type: ','; named: false },
+					{ type: 'expression'; named: true },
+					{ type: 'lambda_within_for_in_clause'; named: true }
+				];
 			};
 		};
 	};
@@ -1082,6 +1086,18 @@ export type PythonGrammar = {
 		named: true;
 		fields: {};
 		children: { multiple: false; required: true; types: [{ type: 'parameter_list'; named: true }] };
+	};
+	readonly lambda_within_for_in_clause: {
+		type: 'lambda_within_for_in_clause';
+		named: true;
+		fields: {
+			body: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'expression'; named: true }, { type: 'lambda_within_for_in_clause'; named: true }];
+			};
+			parameters: { multiple: false; required: false; types: [{ type: 'lambda_parameters'; named: true }] };
+		};
 	};
 	readonly list: {
 		type: 'list';

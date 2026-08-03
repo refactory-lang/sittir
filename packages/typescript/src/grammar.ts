@@ -68,6 +68,7 @@ export type TypescriptGrammar = {
 			{ type: 'object'; named: true },
 			{ type: 'parenthesized_expression'; named: true },
 			{ type: 'regex'; named: true },
+			{ type: 'reserved_identifier'; named: true },
 			{ type: 'string'; named: true },
 			{ type: 'subscript_expression'; named: true },
 			{ type: 'super'; named: true },
@@ -1071,6 +1072,7 @@ export type TypescriptGrammar = {
 				{ type: 'member_expression'; named: true },
 				{ type: 'non_null_expression'; named: true },
 				{ type: 'object_pattern'; named: true },
+				{ type: 'reserved_identifier'; named: true },
 				{ type: 'subscript_expression'; named: true },
 				{ type: 'undefined'; named: true }
 			];
@@ -2210,6 +2212,7 @@ export type TypescriptGrammar = {
 				{ type: 'member_expression'; named: true },
 				{ type: 'non_null_expression'; named: true },
 				{ type: 'object_pattern'; named: true },
+				{ type: 'reserved_identifier'; named: true },
 				{ type: 'subscript_expression'; named: true },
 				{ type: 'undefined'; named: true }
 			];

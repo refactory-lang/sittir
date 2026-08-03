@@ -327,5 +327,41 @@
         "_newline"
       ]
     }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "_expression_within_for_in_clause",
+    "slotName": "lambda",
+    "message": "Slot 'lambda' of kind '_expression_within_for_in_clause' collapses [lambda, lambda_within_for_in_clause] onto parse kind 'lambda'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
+    "proposal": "Already resolved by enrich() — no action needed.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "lambda",
+      "storageKinds": [
+        "lambda",
+        "lambda_within_for_in_clause"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "_argument_list_group1",
+    "slotName": "parenthesized_expression",
+    "message": "Slot 'parenthesized_expression' of kind '_argument_list_group1' collapses [parenthesized_expression, parenthesized_list_splat] onto parse kind 'parenthesized_expression'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
+    "proposal": "Already resolved by enrich() — no action needed.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "parenthesized_expression",
+      "storageKinds": [
+        "parenthesized_expression",
+        "parenthesized_list_splat"
+      ]
+    }
   }
 ]

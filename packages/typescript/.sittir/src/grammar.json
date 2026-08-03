@@ -1920,7 +1920,7 @@
                 "name": "_reserved_identifier"
               },
               "named": true,
-              "value": "identifier"
+              "value": "reserved_identifier"
             },
             {
               "type": "SYMBOL",
@@ -3946,7 +3946,7 @@
                 "name": "_reserved_identifier"
               },
               "named": true,
-              "value": "identifier"
+              "value": "reserved_identifier"
             },
             {
               "type": "SYMBOL",

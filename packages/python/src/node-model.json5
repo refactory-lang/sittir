@@ -261,9 +261,6 @@
       "except_clause_as": "_except_clause_as",
       "except_clause_list": "_except_clause_list"
     },
-    "_argument_list_group1.content": {
-      "parenthesized_expression": "parenthesized_list_splat"
-    },
     "_dict_pattern_group2.dict_pattern_kv": {
       "dict_pattern_kv": "_dict_pattern_kv"
     },
@@ -2248,7 +2245,7 @@
         "expression",
         "list_splat",
         "dictionary_splat",
-        "parenthesized_expression",
+        "parenthesized_list_splat",
         "keyword_argument"
       ],
       "factoryShape": "elements",

@@ -39850,7 +39850,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "[a+b for(a,b)in items]\n[a for b in c for a in b]\n[(x,y)for x in[1,2,3]for y in[1,2,3]if True]\n[a for a in lambda:True,lambda:False if a()]",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (list_comprehension body: (binary_operator left: (identifier) right: (identifier)) (comprehension_clauses (for_in_clause left: (tuple_pattern (pattern_group (identifier) (identifier))) right: (identifier))))) (newline)) (statement_group1 (expression_statement (list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (identifier)) (for_in_clause left: (identifier) right: (identifier))))) (newline)) (statement_group1 (expression_statement (list_comprehension body: (tuple (element_list (identifier) (identifier))) (comprehension_clauses (for_in_clause left: (identifier) right: (list (element_list (integer) (integer) (integer)))) (for_in_clause left: (identifier) right: (list (element_list (integer) (integer) (integer)))) (if_clause expression: (true))))) (newline)) (statement_group1 (expression_statement (list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (lambda body: (true)) right: (lambda body: (false))) (if_clause expression: (call function: (identifier) arguments: (argument_list)))))) (newline)))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (list_comprehension body: (binary_operator left: (identifier) right: (identifier)) (comprehension_clauses (for_in_clause left: (tuple_pattern (pattern_group (identifier) (identifier))) right: (identifier))))) (newline)) (statement_group1 (expression_statement (list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (identifier)) (for_in_clause left: (identifier) right: (identifier))))) (newline)) (statement_group1 (expression_statement (list_comprehension body: (tuple (element_list (identifier) (identifier))) (comprehension_clauses (for_in_clause left: (identifier) right: (list (element_list (integer) (integer) (integer)))) (for_in_clause left: (identifier) right: (list (element_list (integer) (integer) (integer)))) (if_clause expression: (true))))) (newline)) (statement_group1 (expression_statement (list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) (if_clause expression: (call function: (identifier) arguments: (argument_list)))))) (newline)))",
     "wrappedText": "[a+b for(a,b)in items]\n[a for b in c for a in b]\n[(x,y)for x in[1,2,3]for y in[1,2,3]if True]\n[a for a in lambda:True,lambda:False if a()]",
     "wrappedOffset": 0
   },
@@ -40388,7 +40388,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "[a for a in lambda:True,lambda:False if a()]",
-    "expectedReparseTree": "(expression_statement (list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (lambda body: (true)) right: (lambda body: (false))) (if_clause expression: (call function: (identifier) arguments: (argument_list))))))",
+    "expectedReparseTree": "(expression_statement (list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) (if_clause expression: (call function: (identifier) arguments: (argument_list))))))",
     "wrappedText": "[a for a in lambda:True,lambda:False if a()]",
     "wrappedOffset": 0
   },
@@ -40886,7 +40886,7 @@
     "pattern": "list_comprehension",
     "edits": [],
     "expectedSourceOut": "[a for a in lambda:True,lambda:False if a()]",
-    "expectedReparseTree": "(list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (lambda body: (true)) right: (lambda body: (false))) (if_clause expression: (call function: (identifier) arguments: (argument_list)))))",
+    "expectedReparseTree": "(list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) (if_clause expression: (call function: (identifier) arguments: (argument_list)))))",
     "wrappedText": "_ = [a for a in lambda:True,lambda:False if a()]",
     "wrappedOffset": 4
   },

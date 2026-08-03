@@ -1106,7 +1106,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[191, 'is not'],
 	[192, 'comparison_operator'],
 	[193, 'lambda'],
-	[194, 'lambda'],
+	[194, 'lambda_within_for_in_clause'],
 	[195, 'assignment'],
 	[196, 'augmented_assignment'],
 	[197, 'pattern_list'],
@@ -3419,9 +3419,7 @@ export interface BinaryOperatorTree extends TreeNode<'binary_operator'> {}
 export interface UnaryOperatorTree extends TreeNode<'unary_operator'> {}
 export interface ComparisonOperatorTree extends TreeNode<'comparison_operator'> {}
 export interface LambdaTree extends TreeNode<'lambda'> {}
-export interface LambdaWithinForInClauseTree extends AnyTreeNode {
-	readonly type: 'lambda_within_for_in_clause';
-}
+export interface LambdaWithinForInClauseTree extends TreeNode<'lambda_within_for_in_clause'> {}
 export interface AssignmentTree extends TreeNode<'assignment'> {}
 export interface AugmentedAssignmentTree extends TreeNode<'augmented_assignment'> {}
 export interface PatternListTree extends TreeNode<'pattern_list'> {}

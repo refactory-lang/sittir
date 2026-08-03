@@ -445,6 +445,24 @@
     "code": "parsekind-noninjective",
     "severity": "info",
     "grammar": "typescript",
+    "ownerKind": "primary_expression",
+    "slotName": "identifier",
+    "message": "Slot 'identifier' of kind 'primary_expression' collapses [identifier, _reserved_identifier] onto parse kind 'identifier'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
+    "proposal": "Already resolved by enrich() — no action needed.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "identifier",
+      "storageKinds": [
+        "identifier",
+        "_reserved_identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "grammar": "typescript",
     "ownerKind": "_jsx_identifier",
     "slotName": "identifier",
     "message": "Slot 'identifier' of kind '_jsx_identifier' collapses [jsx_identifier, identifier] onto parse kind 'identifier'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
@@ -491,6 +509,24 @@
       "storageKinds": [
         "_reserved_identifier",
         "identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_lhs_expression",
+    "slotName": "identifier",
+    "message": "Slot 'identifier' of kind '_lhs_expression' collapses [identifier, _reserved_identifier] onto parse kind 'identifier'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
+    "proposal": "Already resolved by enrich() — no action needed.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "identifier",
+      "storageKinds": [
+        "identifier",
+        "_reserved_identifier"
       ]
     }
   },

@@ -234,7 +234,14 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	for (const groupName of Object.keys(clauseGroupRules)) {
 		const groupBody = clauseGroupRules[groupName];
 		if (!groupBody) continue;
-		const groupUnaliasResult = applyUnaliasDistinct(groupName, groupBody, rulesBag, kwRules, clauseGroupRules);
+		const groupUnaliasResult = applyUnaliasDistinct(
+			groupName,
+			groupBody,
+			rulesBag,
+			kwRules,
+			clauseGroupRules,
+			supertypeNames
+		);
 		clauseGroupRules[groupName] = groupUnaliasResult.rule;
 		for (const diagnostic of groupUnaliasResult.diagnostics) {
 			recordUnaliasDiagnostic(unaliasSink, diagnostic);
@@ -434,7 +441,7 @@ function applyEnrichPasses(
 	// alias($.X, $.Y) sites where X's storage kind is structurally distinct
 	// from the other value(s) sharing parse kind Y (parsekind-noninjective).
 	// Runs after clause-hoist has settled so it sees the final member shape.
-	const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules);
+	const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules, supertypeNames);
 	r = unaliasResult.rule;
 	for (const diagnostic of unaliasResult.diagnostics) {
 		recordUnaliasDiagnostic(unaliasSink, diagnostic);
@@ -1929,7 +1936,22 @@ function collectUnaliasCandidates(
 	slotKey: string | undefined,
 	rulesBag: Record<string, Rule>,
 	out: UnaliasCandidate[],
-	walker: RuleWalker
+	walker: RuleWalker,
+	visited: Set<string> = new Set(),
+	supertypeNames: ReadonlySet<string> = new Set(),
+	// `path` addresses a real, editable location in the TOP-LEVEL rule passed
+	// to `applyUnaliasDistinct` only while every ancestor call stayed within
+	// that rule's own tree. Once a bare-symbol expansion (below) descends into
+	// a REFERENCED rule's body instead, `path` keeps accumulating segments
+	// relative to that OTHER rule's structure — segments `rewriteUnaliasAt`
+	// cannot follow, since the top-level rule's tree has only a bare SYMBOL at
+	// that point, not the referenced rule's expanded shape. `rewritable`
+	// tracks whether we're still inside the original rule's own tree; once
+	// false (set the moment expansion crosses into a referenced rule), it
+	// stays false for every deeper call, and any ALIAS found from then on is
+	// witness-only (contributes to collision detection / signature voting)
+	// and must never be handed to `rewriteUnaliasAt`.
+	rewritable = true
 ): void {
 	const t = (node as { type?: string }).type;
 	if (!t) return;
@@ -1946,21 +1968,58 @@ function collectUnaliasCandidates(
 			slotKey,
 			storageKind,
 			resolvedBody,
-			aliasSite: { path, content: aliasRule.content, named: aliasRule.named }
+			aliasSite: rewritable ? { path, content: aliasRule.content, named: aliasRule.named } : undefined
 		});
 		return; // do not descend into the alias's own content
 	}
 	if (isSymbolType(t)) {
 		const name = (node as unknown as { name?: string }).name;
 		if (typeof name === 'string') {
-			const resolvedBody = normalizeMember(rulesBag[name] ?? node);
+			const target = rulesBag[name];
+			const resolvedBody = normalizeMember(target ?? node);
+			// A bare reference to a rule whose OWN body is a pure CHOICE gets
+			// its own display identity UNLESS the rule is hidden (leading `_`)
+			// or a declared supertype — those are the only two mechanisms
+			// that make tree-sitter collapse straight through to whichever
+			// arm matched (the same fact this compiler's supertype
+			// classification already relies on elsewhere); a plain visible,
+			// non-supertype CHOICE-shaped rule still emits its OWN wrapper
+			// node, so expanding into it here would be checking the wrong
+			// question. When the erasure condition holds, expand into the
+			// rule instead of registering ONE leaf candidate named after the
+			// union itself, so a sibling alias whose target is only reachable
+			// through one of THIS union's arms — not the union's own name —
+			// is still caught as a genuine parsekind-noninjective collision
+			// (confirmed case: python's argument_list, whose bare `expression`
+			// arm — a declared supertype — reaches `parenthesized_expression`
+			// several levels down, colliding with a sibling
+			// `alias($.parenthesized_list_splat, $.parenthesized_expression)`
+			// arm). `visited` guards against infinite recursion through
+			// self/mutually-recursive union grammars (e.g. `expression`
+			// referencing itself).
+			const erasesToArms = name.startsWith('_') || supertypeNames.has(name);
+			if (target !== undefined && erasesToArms && isChoiceType(resolvedBody.type) && !visited.has(name)) {
+				visited.add(name);
+				collectUnaliasCandidates(target, path, slotKey, rulesBag, out, walker, visited, supertypeNames, false);
+				return;
+			}
 			out.push({ targetName: name, slotKey, storageKind: name, resolvedBody });
 		}
 		return;
 	}
 	const nextSlotKey = isFieldType(t) ? ((node as unknown as { name?: string }).name ?? slotKey) : slotKey;
 	for (const { segment, child } of walker.childEdgesOf(node as unknown as AnyRule)) {
-		collectUnaliasCandidates(child as unknown as Rule, [...path, ...segment], nextSlotKey, rulesBag, out, walker);
+		collectUnaliasCandidates(
+			child as unknown as Rule,
+			[...path, ...segment],
+			nextSlotKey,
+			rulesBag,
+			out,
+			walker,
+			visited,
+			supertypeNames,
+			rewritable
+		);
 	}
 }
 
@@ -1983,10 +2042,11 @@ function applyUnaliasDistinct(
 	rule: Rule,
 	rulesBag: Record<string, Rule>,
 	kwRules: Record<string, Rule>,
-	clauseGroupRules: Record<string, Rule>
+	clauseGroupRules: Record<string, Rule>,
+	supertypeNames: ReadonlySet<string>
 ): { rule: Rule; diagnostics: ParseKindCollisionDiagnostic[] } {
 	const candidates: UnaliasCandidate[] = [];
-	collectUnaliasCandidates(rule, [], undefined, rulesBag, candidates, new RuleWalker());
+	collectUnaliasCandidates(rule, [], undefined, rulesBag, candidates, new RuleWalker(), new Set(), supertypeNames);
 	if (candidates.length === 0) return { rule, diagnostics: [] };
 
 	// Bucket by `(slotKey ?? targetName, targetName)` — NOT `targetName` alone.

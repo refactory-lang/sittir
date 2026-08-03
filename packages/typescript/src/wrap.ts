@@ -1710,12 +1710,12 @@ export function wrapExpressionStatement(
 		readonly _instantiation_expression?: T.Expressions;
 		readonly _internal_module?: T.Expressions;
 		readonly _type_assertion?: T.Expressions;
-		readonly _identifier?: T.Expressions;
+		readonly _reserved_identifier?: T.Expressions;
 		readonly _subscript_expression?: T.Expressions;
 		readonly _member_expression?: T.Expressions;
 		readonly _parenthesized_expression?: T.Expressions;
 		readonly _undefined?: T.Expressions;
-		readonly _reserved_identifier?: T.Expressions;
+		readonly _identifier?: T.Expressions;
 		readonly _this?: T.Expressions;
 		readonly _super?: T.Expressions;
 		readonly _number?: T.Expressions;
@@ -1798,12 +1798,12 @@ export function wrapExpressionStatement(
 					data._instantiation_expression ??
 					data._internal_module ??
 					data._type_assertion ??
-					data._identifier ??
+					data._reserved_identifier ??
 					data._subscript_expression ??
 					data._member_expression ??
 					data._parenthesized_expression ??
 					data._undefined ??
-					data._reserved_identifier ??
+					data._identifier ??
 					data._this ??
 					data._super ??
 					data._number ??
@@ -2618,12 +2618,12 @@ export function wrapReturnStatement(
 		readonly _instantiation_expression?: T.Expressions;
 		readonly _internal_module?: T.Expressions;
 		readonly _type_assertion?: T.Expressions;
-		readonly _identifier?: T.Expressions;
+		readonly _reserved_identifier?: T.Expressions;
 		readonly _subscript_expression?: T.Expressions;
 		readonly _member_expression?: T.Expressions;
 		readonly _parenthesized_expression?: T.Expressions;
 		readonly _undefined?: T.Expressions;
-		readonly _reserved_identifier?: T.Expressions;
+		readonly _identifier?: T.Expressions;
 		readonly _this?: T.Expressions;
 		readonly _super?: T.Expressions;
 		readonly _number?: T.Expressions;
@@ -2706,12 +2706,12 @@ export function wrapReturnStatement(
 					data._instantiation_expression ??
 					data._internal_module ??
 					data._type_assertion ??
-					data._identifier ??
+					data._reserved_identifier ??
 					data._subscript_expression ??
 					data._member_expression ??
 					data._parenthesized_expression ??
 					data._undefined ??
-					data._reserved_identifier ??
+					data._identifier ??
 					data._this ??
 					data._super ??
 					data._number ??
@@ -2781,12 +2781,12 @@ export function wrapThrowStatement(
 		readonly _instantiation_expression?: T.Expressions;
 		readonly _internal_module?: T.Expressions;
 		readonly _type_assertion?: T.Expressions;
-		readonly _identifier?: T.Expressions;
+		readonly _reserved_identifier?: T.Expressions;
 		readonly _subscript_expression?: T.Expressions;
 		readonly _member_expression?: T.Expressions;
 		readonly _parenthesized_expression?: T.Expressions;
 		readonly _undefined?: T.Expressions;
-		readonly _reserved_identifier?: T.Expressions;
+		readonly _identifier?: T.Expressions;
 		readonly _this?: T.Expressions;
 		readonly _super?: T.Expressions;
 		readonly _number?: T.Expressions;
@@ -2869,12 +2869,12 @@ export function wrapThrowStatement(
 					data._instantiation_expression ??
 					data._internal_module ??
 					data._type_assertion ??
-					data._identifier ??
+					data._reserved_identifier ??
 					data._subscript_expression ??
 					data._member_expression ??
 					data._parenthesized_expression ??
 					data._undefined ??
-					data._reserved_identifier ??
+					data._identifier ??
 					data._this ??
 					data._super ??
 					data._number ??
@@ -4392,7 +4392,7 @@ export function wrapNewExpression(data: T.NewExpression, tree: TreeHandle) {
 
 			constructor_() {
 				return drillAs<T.PrimaryExpression>(this._constructor, tree, [
-					{ from: 'identifier', to: '_reserved_identifier' }
+					{ from: 'reserved_identifier', to: '_reserved_identifier' }
 				]);
 			},
 			typeArguments() {
@@ -4470,7 +4470,7 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 
 			object() {
 				return drillAs<T.Expression | T.PrimaryExpression | T.Import>(this._object, tree, [
-					{ from: 'identifier', to: '_reserved_identifier' }
+					{ from: 'reserved_identifier', to: '_reserved_identifier' }
 				]);
 			},
 			separator() {
@@ -4522,7 +4522,7 @@ export function wrapSubscriptExpression(data: T.SubscriptExpression, tree: TreeH
 
 			object() {
 				return drillAs<T.Expression | T.PrimaryExpression>(this._object, tree, [
-					{ from: 'identifier', to: '_reserved_identifier' }
+					{ from: 'reserved_identifier', to: '_reserved_identifier' }
 				]);
 			},
 			optionalChain() {
@@ -4625,7 +4625,7 @@ export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: Tre
 			left() {
 				return drillAs<T.ParenthesizedExpression | T.LhsExpression>(this._left, tree, [
 					{ from: 'for_header_group1', to: '_lhs_expression' },
-					{ from: 'identifier', to: '_reserved_identifier' }
+					{ from: 'reserved_identifier', to: '_reserved_identifier' }
 				]);
 			},
 			right() {
@@ -5093,12 +5093,12 @@ export function wrapSequenceExpression(
 		readonly _instantiation_expression?: T.Expression | readonly T.Expression[];
 		readonly _internal_module?: T.Expression | readonly T.Expression[];
 		readonly _type_assertion?: T.Expression | readonly T.Expression[];
-		readonly _identifier?: T.Expression | readonly T.Expression[];
+		readonly _reserved_identifier?: T.Expression | readonly T.Expression[];
 		readonly _subscript_expression?: T.Expression | readonly T.Expression[];
 		readonly _member_expression?: T.Expression | readonly T.Expression[];
 		readonly _parenthesized_expression?: T.Expression | readonly T.Expression[];
 		readonly _undefined?: T.Expression | readonly T.Expression[];
-		readonly _reserved_identifier?: T.Expression | readonly T.Expression[];
+		readonly _identifier?: T.Expression | readonly T.Expression[];
 		readonly _this?: T.Expression | readonly T.Expression[];
 		readonly _super?: T.Expression | readonly T.Expression[];
 		readonly _number?: T.Expression | readonly T.Expression[];
@@ -5182,12 +5182,12 @@ export function wrapSequenceExpression(
 								data._instantiation_expression,
 								data._internal_module,
 								data._type_assertion,
-								data._identifier,
+								data._reserved_identifier,
 								data._subscript_expression,
 								data._member_expression,
 								data._parenthesized_expression,
 								data._undefined,
-								data._reserved_identifier,
+								data._identifier,
 								data._this,
 								data._super,
 								data._number,
@@ -5367,12 +5367,12 @@ export function wrapTemplateSubstitution(
 		readonly _instantiation_expression?: T.Expressions;
 		readonly _internal_module?: T.Expressions;
 		readonly _type_assertion?: T.Expressions;
-		readonly _identifier?: T.Expressions;
+		readonly _reserved_identifier?: T.Expressions;
 		readonly _subscript_expression?: T.Expressions;
 		readonly _member_expression?: T.Expressions;
 		readonly _parenthesized_expression?: T.Expressions;
 		readonly _undefined?: T.Expressions;
-		readonly _reserved_identifier?: T.Expressions;
+		readonly _identifier?: T.Expressions;
 		readonly _this?: T.Expressions;
 		readonly _super?: T.Expressions;
 		readonly _number?: T.Expressions;
@@ -5455,12 +5455,12 @@ export function wrapTemplateSubstitution(
 					data._instantiation_expression ??
 					data._internal_module ??
 					data._type_assertion ??
-					data._identifier ??
+					data._reserved_identifier ??
 					data._subscript_expression ??
 					data._member_expression ??
 					data._parenthesized_expression ??
 					data._undefined ??
-					data._reserved_identifier ??
+					data._identifier ??
 					data._this ??
 					data._super ??
 					data._number ??
@@ -6000,11 +6000,11 @@ export function wrapPattern(
 
 export function wrapRestPattern(
 	data: T.RestPattern & {
-		readonly _identifier?: T.LhsExpression;
+		readonly _reserved_identifier?: T.LhsExpression;
 		readonly _member_expression?: T.LhsExpression;
 		readonly _subscript_expression?: T.LhsExpression;
 		readonly _undefined?: T.LhsExpression;
-		readonly _reserved_identifier?: T.LhsExpression;
+		readonly _identifier?: T.LhsExpression;
 		readonly _object_pattern?: T.LhsExpression;
 		readonly _array_pattern?: T.LhsExpression;
 		readonly _non_null_expression?: T.LhsExpression;
@@ -6026,11 +6026,11 @@ export function wrapRestPattern(
 			$type: TSKindId.RestPattern as const,
 			_lhs_expression: normalizeSingularWrapSlot(
 				data._lhs_expression ??
-					data._identifier ??
+					data._reserved_identifier ??
 					data._member_expression ??
 					data._subscript_expression ??
 					data._undefined ??
-					data._reserved_identifier ??
+					data._identifier ??
 					data._object_pattern ??
 					data._array_pattern ??
 					data._non_null_expression,
@@ -6042,7 +6042,7 @@ export function wrapRestPattern(
 
 			lhsExpression() {
 				return drillAs<T.LhsExpression>(this._lhs_expression, tree, [
-					{ from: 'identifier', to: '_reserved_identifier' }
+					{ from: 'reserved_identifier', to: '_reserved_identifier' }
 				]);
 			},
 			$with: {
@@ -12170,7 +12170,7 @@ export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle) {
 			left() {
 				return drillAs<T.LhsExpression | T.ParenthesizedExpression>(this._left, tree, [
 					{ from: 'for_header_group1', to: '_lhs_expression' },
-					{ from: 'identifier', to: '_reserved_identifier' }
+					{ from: 'reserved_identifier', to: '_reserved_identifier' }
 				]);
 			},
 			$with: {
@@ -12501,12 +12501,12 @@ export function wrapParenthesizedExpressionTyped(
 		readonly _instantiation_expression?: T.Expression;
 		readonly _internal_module?: T.Expression;
 		readonly _type_assertion?: T.Expression;
-		readonly _identifier?: T.Expression;
+		readonly _reserved_identifier?: T.Expression;
 		readonly _subscript_expression?: T.Expression;
 		readonly _member_expression?: T.Expression;
 		readonly _parenthesized_expression?: T.Expression;
 		readonly _undefined?: T.Expression;
-		readonly _reserved_identifier?: T.Expression;
+		readonly _identifier?: T.Expression;
 		readonly _this?: T.Expression;
 		readonly _super?: T.Expression;
 		readonly _number?: T.Expression;
@@ -12587,12 +12587,12 @@ export function wrapParenthesizedExpressionTyped(
 					data._instantiation_expression ??
 					data._internal_module ??
 					data._type_assertion ??
-					data._identifier ??
+					data._reserved_identifier ??
 					data._subscript_expression ??
 					data._member_expression ??
 					data._parenthesized_expression ??
 					data._undefined ??
-					data._reserved_identifier ??
+					data._identifier ??
 					data._this ??
 					data._super ??
 					data._number ??
@@ -12848,7 +12848,7 @@ export function wrapCallExpressionTemplateCall(data: T.CallExpressionTemplateCal
 
 			function() {
 				return drillAs<T.PrimaryExpression | T.NewExpression>(this._function, tree, [
-					{ from: 'identifier', to: '_reserved_identifier' }
+					{ from: 'reserved_identifier', to: '_reserved_identifier' }
 				]);
 			},
 			arguments() {
@@ -12891,7 +12891,9 @@ export function wrapCallExpressionMember(data: T.CallExpressionMember, tree: Tre
 			}),
 
 			function() {
-				return drillAs<T.PrimaryExpression>(this._function, tree, [{ from: 'identifier', to: '_reserved_identifier' }]);
+				return drillAs<T.PrimaryExpression>(this._function, tree, [
+					{ from: 'reserved_identifier', to: '_reserved_identifier' }
+				]);
 			},
 			typeArguments() {
 				return drillIn<T.TypeArguments | undefined>(this._type_arguments, tree);

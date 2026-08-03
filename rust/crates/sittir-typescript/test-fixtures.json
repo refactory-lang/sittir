@@ -49039,7 +49039,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "typeof class{  }===\"function\";typeof module===\"object\"&&typeof module.exports===\"object\"",
-    "expectedReparseTree": "(program statements: (expression_statement (binary_expression left: (unary_expression argument: (class body: (class_body))) right: (string (string_double (unescaped_double_string_fragment))))) statements: (expression_statement (binary_expression left: (binary_expression left: (unary_expression argument: (identifier)) right: (string (string_double (unescaped_double_string_fragment)))) right: (binary_expression left: (unary_expression argument: (member_expression object: (identifier) property: (property_identifier))) right: (string (string_double (unescaped_double_string_fragment))))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (expression_statement (binary_expression left: (unary_expression argument: (class body: (class_body))) right: (string (string_double (unescaped_double_string_fragment))))) statements: (expression_statement (binary_expression left: (binary_expression left: (unary_expression argument: (reserved_identifier)) right: (string (string_double (unescaped_double_string_fragment)))) right: (binary_expression left: (unary_expression argument: (member_expression object: (reserved_identifier) property: (property_identifier))) right: (string (string_double (unescaped_double_string_fragment))))) semicolon: (automatic_semicolon)))",
     "wrappedText": "typeof class{  }===\"function\";typeof module===\"object\"&&typeof module.exports===\"object\"",
     "wrappedOffset": 0
   },
@@ -49290,7 +49290,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "typeof module===\"object\"&&typeof module.exports===\"object\"",
-    "expectedReparseTree": "(expression_statement (binary_expression left: (binary_expression left: (unary_expression argument: (identifier)) right: (string (string_double (unescaped_double_string_fragment)))) right: (binary_expression left: (unary_expression argument: (member_expression object: (identifier) property: (property_identifier))) right: (string (string_double (unescaped_double_string_fragment))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(expression_statement (binary_expression left: (binary_expression left: (unary_expression argument: (reserved_identifier)) right: (string (string_double (unescaped_double_string_fragment)))) right: (binary_expression left: (unary_expression argument: (member_expression object: (reserved_identifier) property: (property_identifier))) right: (string (string_double (unescaped_double_string_fragment))))) semicolon: (automatic_semicolon))",
     "wrappedText": "typeof module===\"object\"&&typeof module.exports===\"object\"",
     "wrappedOffset": 0
   },
@@ -49519,7 +49519,7 @@
     "pattern": "binary_expression",
     "edits": [],
     "expectedSourceOut": "typeof module===\"object\"&&typeof module.exports===\"object\"",
-    "expectedReparseTree": "(binary_expression left: (binary_expression left: (unary_expression argument: (identifier)) right: (string (string_double (unescaped_double_string_fragment)))) right: (binary_expression left: (unary_expression argument: (member_expression object: (identifier) property: (property_identifier))) right: (string (string_double (unescaped_double_string_fragment)))))",
+    "expectedReparseTree": "(binary_expression left: (binary_expression left: (unary_expression argument: (reserved_identifier)) right: (string (string_double (unescaped_double_string_fragment)))) right: (binary_expression left: (unary_expression argument: (member_expression object: (reserved_identifier) property: (property_identifier))) right: (string (string_double (unescaped_double_string_fragment)))))",
     "wrappedText": "let _ = typeof module===\"object\"&&typeof module.exports===\"object\";",
     "wrappedOffset": 8
   },
@@ -49585,7 +49585,7 @@
     "pattern": "binary_expression",
     "edits": [],
     "expectedSourceOut": "typeof module===\"object\"",
-    "expectedReparseTree": "(binary_expression left: (unary_expression argument: (identifier)) right: (string (string_double (unescaped_double_string_fragment))))",
+    "expectedReparseTree": "(binary_expression left: (unary_expression argument: (reserved_identifier)) right: (string (string_double (unescaped_double_string_fragment))))",
     "wrappedText": "let _ = typeof module===\"object\";",
     "wrappedOffset": 8
   },
@@ -49663,7 +49663,7 @@
     "pattern": "binary_expression",
     "edits": [],
     "expectedSourceOut": "typeof module.exports===\"object\"",
-    "expectedReparseTree": "(binary_expression left: (unary_expression argument: (member_expression object: (identifier) property: (property_identifier))) right: (string (string_double (unescaped_double_string_fragment))))",
+    "expectedReparseTree": "(binary_expression left: (unary_expression argument: (member_expression object: (reserved_identifier) property: (property_identifier))) right: (string (string_double (unescaped_double_string_fragment))))",
     "wrappedText": "let _ = typeof module.exports===\"object\";",
     "wrappedOffset": 8
   },
@@ -49743,7 +49743,7 @@
     "pattern": "unary_expression",
     "edits": [],
     "expectedSourceOut": "typeof module",
-    "expectedReparseTree": "(unary_expression argument: (identifier))",
+    "expectedReparseTree": "(unary_expression argument: (reserved_identifier))",
     "wrappedText": "let _ = typeof module;",
     "wrappedOffset": 8
   },
@@ -49783,7 +49783,7 @@
     "pattern": "unary_expression",
     "edits": [],
     "expectedSourceOut": "typeof module.exports",
-    "expectedReparseTree": "(unary_expression argument: (member_expression object: (identifier) property: (property_identifier)))",
+    "expectedReparseTree": "(unary_expression argument: (member_expression object: (reserved_identifier) property: (property_identifier)))",
     "wrappedText": "let _ = typeof module.exports;",
     "wrappedOffset": 8
   },
@@ -50009,7 +50009,7 @@
     "pattern": "member_expression",
     "edits": [],
     "expectedSourceOut": "module.exports",
-    "expectedReparseTree": "(member_expression object: (identifier) property: (property_identifier))",
+    "expectedReparseTree": "(member_expression object: (reserved_identifier) property: (property_identifier))",
     "wrappedText": "let _ = module.exports;",
     "wrappedOffset": 8
   },
@@ -50086,7 +50086,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "var module;module;",
-    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier)))) statements: (expression_statement (identifier)))",
+    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier)))) statements: (expression_statement (reserved_identifier)))",
     "wrappedText": "var module;module;",
     "wrappedOffset": 0
   },
@@ -50204,7 +50204,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "module;",
-    "expectedReparseTree": "(expression_statement (identifier))",
+    "expectedReparseTree": "(expression_statement (reserved_identifier))",
     "wrappedText": "module;",
     "wrappedOffset": 0
   },
@@ -50689,7 +50689,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "i<foo.length;i<type.length;i<string.length;",
-    "expectedReparseTree": "(program statements: (expression_statement (binary_expression left: (identifier) right: (member_expression object: (identifier) property: (property_identifier)))) statements: (expression_statement (binary_expression left: (identifier) right: (member_expression object: (identifier) property: (property_identifier)))) statements: (expression_statement (binary_expression left: (identifier) right: (member_expression object: (identifier) property: (property_identifier)))))",
+    "expectedReparseTree": "(program statements: (expression_statement (binary_expression left: (identifier) right: (member_expression object: (identifier) property: (property_identifier)))) statements: (expression_statement (binary_expression left: (identifier) right: (member_expression object: (reserved_identifier) property: (property_identifier)))) statements: (expression_statement (binary_expression left: (identifier) right: (member_expression object: (reserved_identifier) property: (property_identifier)))))",
     "wrappedText": "i<foo.length;i<type.length;i<string.length;",
     "wrappedOffset": 0
   },
@@ -50793,7 +50793,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "i<type.length;",
-    "expectedReparseTree": "(expression_statement (binary_expression left: (identifier) right: (member_expression object: (identifier) property: (property_identifier))))",
+    "expectedReparseTree": "(expression_statement (binary_expression left: (identifier) right: (member_expression object: (reserved_identifier) property: (property_identifier))))",
     "wrappedText": "i<type.length;",
     "wrappedOffset": 0
   },
@@ -50845,7 +50845,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "i<string.length;",
-    "expectedReparseTree": "(expression_statement (binary_expression left: (identifier) right: (member_expression object: (identifier) property: (property_identifier))))",
+    "expectedReparseTree": "(expression_statement (binary_expression left: (identifier) right: (member_expression object: (reserved_identifier) property: (property_identifier))))",
     "wrappedText": "i<string.length;",
     "wrappedOffset": 0
   },
@@ -50927,7 +50927,7 @@
     "pattern": "binary_expression",
     "edits": [],
     "expectedSourceOut": "i<type.length",
-    "expectedReparseTree": "(binary_expression left: (identifier) right: (member_expression object: (identifier) property: (property_identifier)))",
+    "expectedReparseTree": "(binary_expression left: (identifier) right: (member_expression object: (reserved_identifier) property: (property_identifier)))",
     "wrappedText": "let _ = i<type.length;",
     "wrappedOffset": 8
   },
@@ -50968,7 +50968,7 @@
     "pattern": "binary_expression",
     "edits": [],
     "expectedSourceOut": "i<string.length",
-    "expectedReparseTree": "(binary_expression left: (identifier) right: (member_expression object: (identifier) property: (property_identifier)))",
+    "expectedReparseTree": "(binary_expression left: (identifier) right: (member_expression object: (reserved_identifier) property: (property_identifier)))",
     "wrappedText": "let _ = i<string.length;",
     "wrappedOffset": 8
   },
@@ -51026,7 +51026,7 @@
     "pattern": "member_expression",
     "edits": [],
     "expectedSourceOut": "type.length",
-    "expectedReparseTree": "(member_expression object: (identifier) property: (property_identifier))",
+    "expectedReparseTree": "(member_expression object: (reserved_identifier) property: (property_identifier))",
     "wrappedText": "let _ = type.length;",
     "wrappedOffset": 8
   },
@@ -51055,7 +51055,7 @@
     "pattern": "member_expression",
     "edits": [],
     "expectedSourceOut": "string.length",
-    "expectedReparseTree": "(member_expression object: (identifier) property: (property_identifier))",
+    "expectedReparseTree": "(member_expression object: (reserved_identifier) property: (property_identifier))",
     "wrappedText": "let _ = string.length;",
     "wrappedOffset": 8
   },
@@ -51208,7 +51208,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "if(foo){ set[1].apply()\n }",
-    "expectedReparseTree": "(program statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (identifier))) consequence: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (subscript_expression object: (identifier) index: (number)) property: (property_identifier)) arguments: (arguments))) semicolon: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(program statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (identifier))) consequence: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (subscript_expression object: (reserved_identifier) index: (number)) property: (property_identifier)) arguments: (arguments))) semicolon: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "if(foo){ set[1].apply()\n }",
     "wrappedOffset": 0
   },
@@ -51349,7 +51349,7 @@
     "pattern": "if_statement",
     "edits": [],
     "expectedSourceOut": "if(foo){ set[1].apply()\n }",
-    "expectedReparseTree": "(if_statement condition: (parenthesized_expression (parenthesized_expression_typed (identifier))) consequence: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (subscript_expression object: (identifier) index: (number)) property: (property_identifier)) arguments: (arguments))) semicolon: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(if_statement condition: (parenthesized_expression (parenthesized_expression_typed (identifier))) consequence: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (subscript_expression object: (reserved_identifier) index: (number)) property: (property_identifier)) arguments: (arguments))) semicolon: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "if(foo){ set[1].apply()\n }",
     "wrappedOffset": 0
   },
@@ -51493,7 +51493,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{ set[1].apply()\n }",
-    "expectedReparseTree": "(statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (subscript_expression object: (identifier) index: (number)) property: (property_identifier)) arguments: (arguments))) semicolon: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (subscript_expression object: (reserved_identifier) index: (number)) property: (property_identifier)) arguments: (arguments))) semicolon: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{ set[1].apply()\n }",
     "wrappedOffset": 0
   },
@@ -51579,7 +51579,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "set[1].apply()",
-    "expectedReparseTree": "(expression_statement (call_expression (call_expression_call function: (member_expression object: (subscript_expression object: (identifier) index: (number)) property: (property_identifier)) arguments: (arguments))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(expression_statement (call_expression (call_expression_call function: (member_expression object: (subscript_expression object: (reserved_identifier) index: (number)) property: (property_identifier)) arguments: (arguments))) semicolon: (automatic_semicolon))",
     "wrappedText": "set[1].apply()",
     "wrappedOffset": 0
   },
@@ -51654,7 +51654,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "set[1].apply()",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (member_expression object: (subscript_expression object: (identifier) index: (number)) property: (property_identifier)) arguments: (arguments)))",
+    "expectedReparseTree": "(call_expression (call_expression_call function: (member_expression object: (subscript_expression object: (reserved_identifier) index: (number)) property: (property_identifier)) arguments: (arguments)))",
     "wrappedText": "let _ = set[1].apply();",
     "wrappedOffset": 8
   },
@@ -51698,7 +51698,7 @@
     "pattern": "member_expression",
     "edits": [],
     "expectedSourceOut": "set[1].apply",
-    "expectedReparseTree": "(member_expression object: (subscript_expression object: (identifier) index: (number)) property: (property_identifier))",
+    "expectedReparseTree": "(member_expression object: (subscript_expression object: (reserved_identifier) index: (number)) property: (property_identifier))",
     "wrappedText": "let _ = set[1].apply;",
     "wrappedOffset": 8
   },
@@ -51730,7 +51730,7 @@
     "pattern": "subscript_expression",
     "edits": [],
     "expectedSourceOut": "set[1]",
-    "expectedReparseTree": "(subscript_expression object: (identifier) index: (number))",
+    "expectedReparseTree": "(subscript_expression object: (reserved_identifier) index: (number))",
     "wrappedText": "let _ = set[1];",
     "wrappedOffset": 8
   },
@@ -60775,7 +60775,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "<A>(amount,interestRate,duration):number=>2\nfunction*foo<A>(amount,interestRate,duration):number{ yield amount*interestRate*duration/12\n }(module:any):number=>2",
-    "expectedReparseTree": "(program statements: (expression_statement (arrow_function (arrow_function__call_signature type_parameters: (type_parameters (type_parameter name: (type_identifier))) parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier))) (required_parameter pattern: (for_header_group1 (identifier))) (required_parameter pattern: (for_header_group1 (identifier))))) return_type: (type_annotation type: (predefined_type))) body: (number)) semicolon: (automatic_semicolon)) statements: (generator_function_declaration name: (identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier))) (required_parameter pattern: (for_header_group1 (identifier))) (required_parameter pattern: (for_header_group1 (identifier))))) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement (yield_expression expression: (binary_expression left: (binary_expression left: (binary_expression left: (identifier) right: (identifier)) right: (identifier)) right: (number))) semicolon: (automatic_semicolon)))) statements: (expression_statement (arrow_function (arrow_function__call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) body: (number)) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (expression_statement (arrow_function (arrow_function__call_signature type_parameters: (type_parameters (type_parameter name: (type_identifier))) parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier))) (required_parameter pattern: (for_header_group1 (identifier))) (required_parameter pattern: (for_header_group1 (identifier))))) return_type: (type_annotation type: (predefined_type))) body: (number)) semicolon: (automatic_semicolon)) statements: (generator_function_declaration name: (identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier))) (required_parameter pattern: (for_header_group1 (identifier))) (required_parameter pattern: (for_header_group1 (identifier))))) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement (yield_expression expression: (binary_expression left: (binary_expression left: (binary_expression left: (identifier) right: (identifier)) right: (identifier)) right: (number))) semicolon: (automatic_semicolon)))) statements: (expression_statement (arrow_function (arrow_function__call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) body: (number)) semicolon: (automatic_semicolon)))",
     "wrappedText": "<A>(amount,interestRate,duration):number=>2\nfunction*foo<A>(amount,interestRate,duration):number{ yield amount*interestRate*duration/12\n }(module:any):number=>2",
     "wrappedOffset": 0
   },
@@ -61159,7 +61159,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "(module:any):number=>2",
-    "expectedReparseTree": "(expression_statement (arrow_function (arrow_function__call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) body: (number)) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(expression_statement (arrow_function (arrow_function__call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) body: (number)) semicolon: (automatic_semicolon))",
     "wrappedText": "(module:any):number=>2",
     "wrappedOffset": 0
   },
@@ -61444,7 +61444,7 @@
     "pattern": "arrow_function",
     "edits": [],
     "expectedSourceOut": "(module:any):number=>2",
-    "expectedReparseTree": "(arrow_function (arrow_function__call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) body: (number))",
+    "expectedReparseTree": "(arrow_function (arrow_function__call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) body: (number))",
     "wrappedText": "let _ = (module:any):number=>2;",
     "wrappedOffset": 8
   },
@@ -61775,7 +61775,7 @@
     "pattern": "formal_parameters",
     "edits": [],
     "expectedSourceOut": "(module:any)",
-    "expectedReparseTree": "(formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type)))))",
+    "expectedReparseTree": "(formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier)) type: (type_annotation type: (predefined_type)))))",
     "wrappedText": "function _f(module:any) {}",
     "wrappedOffset": 11
   },
@@ -61995,7 +61995,7 @@
     "pattern": "required_parameter",
     "edits": [],
     "expectedSourceOut": "module:any",
-    "expectedReparseTree": "(required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type)))",
+    "expectedReparseTree": "(required_parameter pattern: (for_header_group1 (reserved_identifier)) type: (type_annotation type: (predefined_type)))",
     "wrappedText": "function _f(module:any) {}",
     "wrappedOffset": 12
   },
@@ -62435,7 +62435,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "const x=async=>async;",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (arrow_function (arrow_function_parameter parameter: (reserved_identifier)) body: (identifier))))))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (arrow_function (arrow_function_parameter parameter: (reserved_identifier)) body: (reserved_identifier))))))",
     "wrappedText": "const x=async=>async;",
     "wrappedOffset": 0
   },
@@ -62514,7 +62514,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const x=async=>async;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (arrow_function (arrow_function_parameter parameter: (reserved_identifier)) body: (identifier)))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (arrow_function (arrow_function_parameter parameter: (reserved_identifier)) body: (reserved_identifier)))))",
     "wrappedText": "const x=async=>async;",
     "wrappedOffset": 0
   },
@@ -62579,7 +62579,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x=async=>async",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (arrow_function (arrow_function_parameter parameter: (reserved_identifier)) body: (identifier))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (arrow_function (arrow_function_parameter parameter: (reserved_identifier)) body: (reserved_identifier))))",
     "wrappedText": "let x=async=>async;",
     "wrappedOffset": 4
   },
@@ -62620,7 +62620,7 @@
     "pattern": "arrow_function",
     "edits": [],
     "expectedSourceOut": "async=>async",
-    "expectedReparseTree": "(arrow_function (arrow_function_parameter parameter: (reserved_identifier)) body: (identifier))",
+    "expectedReparseTree": "(arrow_function (arrow_function_parameter parameter: (reserved_identifier)) body: (reserved_identifier))",
     "wrappedText": "let _ = async=>async;",
     "wrappedOffset": 8
   },
@@ -73630,7 +73630,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "let MyFunction:{(string):string,length:number};",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))))",
     "wrappedText": "let MyFunction:{(string):string,length:number};",
     "wrappedOffset": 0
   },
@@ -73832,7 +73832,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let MyFunction:{(string):string,length:number};",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))))",
     "wrappedText": "let MyFunction:{(string):string,length:number};",
     "wrappedOffset": 0
   },
@@ -74020,7 +74020,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "MyFunction:{(string):string,length:number}",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))",
     "wrappedText": "let MyFunction:{(string):string,length:number};",
     "wrappedOffset": 4
   },
@@ -74187,7 +74187,7 @@
     "pattern": "type_annotation",
     "edits": [],
     "expectedSourceOut": ":{(string):string,length:number}",
-    "expectedReparseTree": "(type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))",
+    "expectedReparseTree": "(type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))",
     "wrappedText": "let _:{(string):string,length:number};",
     "wrappedOffset": 5
   },
@@ -74421,7 +74421,7 @@
     "pattern": "object_type",
     "edits": [],
     "expectedSourceOut": "{(string):string,length:number}",
-    "expectedReparseTree": "(object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
+    "expectedReparseTree": "(object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
     "wrappedText": "type _X = {(string):string,length:number};",
     "wrappedOffset": 10
   },
@@ -74476,7 +74476,7 @@
     "pattern": "formal_parameters",
     "edits": [],
     "expectedSourceOut": "(string)",
-    "expectedReparseTree": "(formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier)))))",
+    "expectedReparseTree": "(formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier)))))",
     "wrappedText": "function _f(string) {}",
     "wrappedOffset": 11
   },
@@ -74504,7 +74504,7 @@
     "pattern": "required_parameter",
     "edits": [],
     "expectedSourceOut": "string",
-    "expectedReparseTree": "(required_parameter pattern: (for_header_group1 (identifier)))",
+    "expectedReparseTree": "(required_parameter pattern: (for_header_group1 (reserved_identifier)))",
     "wrappedText": "function _f(string) {}",
     "wrappedOffset": 12
   },
@@ -94509,7 +94509,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "let score:(string:string,query:string)=>number",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))))) semicolon: (automatic_semicolon)))",
     "wrappedText": "let score:(string:string,query:string)=>number",
     "wrappedOffset": 0
   },
@@ -94699,7 +94699,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let score:(string:string,query:string)=>number",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))))) semicolon: (automatic_semicolon))",
     "wrappedText": "let score:(string:string,query:string)=>number",
     "wrappedOffset": 0
   },
@@ -94875,7 +94875,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "score:(string:string,query:string)=>number",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))))",
     "wrappedText": "let score:(string:string,query:string)=>number;",
     "wrappedOffset": 4
   },
@@ -95030,7 +95030,7 @@
     "pattern": "type_annotation",
     "edits": [],
     "expectedSourceOut": ":(string:string,query:string)=>number",
-    "expectedReparseTree": "(type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))",
+    "expectedReparseTree": "(type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))",
     "wrappedText": "let _:(string:string,query:string)=>number;",
     "wrappedOffset": 5
   },
@@ -95252,7 +95252,7 @@
     "pattern": "function_type",
     "edits": [],
     "expectedSourceOut": "(string:string,query:string)=>number",
-    "expectedReparseTree": "(function_type parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))",
+    "expectedReparseTree": "(function_type parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))",
     "wrappedText": "type _X = (string:string,query:string)=>number;",
     "wrappedOffset": 10
   },
@@ -95370,7 +95370,7 @@
     "pattern": "formal_parameters",
     "edits": [],
     "expectedSourceOut": "(string:string,query:string)",
-    "expectedReparseTree": "(formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type)))))",
+    "expectedReparseTree": "(formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (reserved_identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type)))))",
     "wrappedText": "function _f(string:string,query:string) {}",
     "wrappedOffset": 11
   },
@@ -95422,7 +95422,7 @@
     "pattern": "required_parameter",
     "edits": [],
     "expectedSourceOut": "string:string",
-    "expectedReparseTree": "(required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type)))",
+    "expectedReparseTree": "(required_parameter pattern: (for_header_group1 (reserved_identifier)) type: (type_annotation type: (predefined_type)))",
     "wrappedText": "function _f(string:string) {}",
     "wrappedOffset": 12
   },

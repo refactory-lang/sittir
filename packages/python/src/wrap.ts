@@ -4912,9 +4912,7 @@ export function wrapLambdaWithinForInClause(data: T.LambdaWithinForInClause, tre
 				return drillIn<T.LambdaParameters | undefined>(this._parameters, tree);
 			},
 			body() {
-				return drillAs<T.ExpressionWithinForInClause>(this._body, tree, [
-					{ from: 'lambda', to: 'lambda_within_for_in_clause' }
-				]);
+				return drillIn<T.ExpressionWithinForInClause>(this._body, tree);
 			},
 			$with: {
 				parameters: (v: NonNullable<T.LambdaWithinForInClause['_parameters']>) =>
@@ -6586,9 +6584,10 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle) {
 				return drillIn<T.LeftHandSide>(this._left, tree);
 			},
 			rights() {
-				return drillAsAll<T.ExpressionWithinForInClause>(this._right, tree, [
-					{ from: 'lambda', to: 'lambda_within_for_in_clause' }
-				]);
+				return drillInAll<T.ExpressionWithinForInClause>(
+					this._right as readonly T.ExpressionWithinForInClause[] | undefined,
+					tree
+				);
 			},
 			$with: {
 				asyncMarker: (v: NonNullable<T.ForInClause['_async_marker']>) =>
@@ -7120,6 +7119,12 @@ export function wrapArgumentListGroup1(
 			| T.DictionarySplat
 			| T.ParenthesizedListSplat
 			| T.KeywordArgument;
+		readonly _parenthesized_list_splat?:
+			| T.Expression
+			| T.ListSplat
+			| T.DictionarySplat
+			| T.ParenthesizedListSplat
+			| T.KeywordArgument;
 		readonly _keyword_argument?:
 			| T.Expression
 			| T.ListSplat
@@ -7169,6 +7174,7 @@ export function wrapArgumentListGroup1(
 					data._as_pattern,
 					data._list_splat,
 					data._dictionary_splat,
+					data._parenthesized_list_splat,
 					data._keyword_argument
 				]),
 		true,
@@ -7206,6 +7212,7 @@ export function wrapArgumentListGroup1(
 				'_none',
 				'_not_operator',
 				'_parenthesized_expression',
+				'_parenthesized_list_splat',
 				'_set',
 				'_set_comprehension',
 				'_string',
@@ -7219,9 +7226,14 @@ export function wrapArgumentListGroup1(
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			contents() {
-				return drillAsAll<
+				return drillInAll<
 					T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
-				>(this._content, tree, [{ from: 'parenthesized_expression', to: 'parenthesized_list_splat' }]);
+				>(
+					this._content as
+						| readonly (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)[]
+						| undefined,
+					tree
+				);
 			},
 			$with: {}
 		},
@@ -8821,7 +8833,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 
 const _aliasTargetToSource: Record<string, string> = {
 	_dict_pattern_group1: '_key_value_pattern',
-	_lambda: 'lambda_within_for_in_clause',
 	_statement_group1: '_simple_statements',
 	argument_list_group1: '_argument_list_group1',
 	assignment_eq: '_assignment_eq',

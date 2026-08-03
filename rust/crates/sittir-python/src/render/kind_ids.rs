@@ -507,7 +507,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         191 => "is not", // "_is_not"
         192 => "comparison_operator", // "comparison_operator"
         193 => "lambda", // "lambda"
-        194 => "lambda", // "lambda_within_for_in_clause"
+        194 => "lambda_within_for_in_clause", // "lambda_within_for_in_clause"
         195 => "assignment", // "assignment"
         196 => "augmented_assignment", // "augmented_assignment"
         197 => "pattern_list", // "pattern_list"
