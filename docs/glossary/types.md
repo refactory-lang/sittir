@@ -654,6 +654,47 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 */
 ```
 
+### `TransitiveSubtypeRef` (`packages/codegen/src/types/rule.ts:290`)
+
+```text
+One transitively-reachable subtype: its storage (render/source) identity
+alongside its parse (`$type`) identity — the same two-sided reference shape
+`compiler/model/node-map.ts`'s `NodeOrTerminal` uses for `.node`/`.parseKind`
+plus `.storageKindId`/`.parseKindId`. Kept as this narrower pair here (not
+`NodeOrTerminal` itself) because `types/` sits below `compiler/` in the
+module layering and cannot import it; model-layer callers
+(`emitters/shared.ts::computeSupertypeTransitiveParseKinds`) build real
+`NodeOrTerminal` entries from this where needed.
+```
+
+### `transitiveParseKinds` (`packages/codegen/src/types/rule.ts:297`)
+
+```text
+Transitive parse-kind closure of a supertype's subtypes — recurses through
+nested supertypes (e.g. python's `expression → primary_expression →
+parenthesized_expression`) via `lookup`, so callers only supply how to
+resolve a name to its `SupertypeRule` in whatever raw-rule representation
+they hold (a rule bag pre-hydration; NOT a hydrated `NodeMap` — see
+`compiler/model/node-map.ts::existingSupertypeClosureOf`, the pre-hydration
+caller, and contrast with `emitters/shared.ts::computeSupertypeTransitiveParseKinds`,
+which walks the assemble-time-resolved `AssembledSupertype.subtypes` instead
+and does NOT call this helper — `AssembledSupertype`'s own doc comment
+explains why the two representations diverge and can't share one walk).
+Keyed by parse name (what `$type` reports); values carry stamped ids, never
+re-derived by name downstream.
+
+Two-pass per supertype, matching declaration order: pass 1 records every
+ALIASED arm's parse (display) identity unconditionally, regardless of
+whether its storage side is itself a nested supertype; pass 2 recurses into
+each subtype's own storage identity — a nested supertype expands to its
+leaves only (never its own name), a plain leaf (aliased or not) lands in the
+output under its bare storage name. Splitting into two passes (rather than
+one pass per subtype) mirrors the order the previous implementation
+(deleted `emitters/factory-map.ts::expandRuntimeDiscriminatorKinds` +
+`pushAliasMintedArmParseNames`) produced — verified by diffing all 3
+grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
+```
+
 ### `SymbolRule` (`packages/codegen/src/types/rule.ts:573`)
 
 ```text

@@ -2991,8 +2991,8 @@ export interface GeneratorExpression {
 
 export interface ParenthesizedExpression {
 	readonly $type: TSKindId.ParenthesizedExpression;
-	readonly _content: Expression | Yield | ParenthesizedListSplat | ListSplat;
-	content(): Expression | Yield | ParenthesizedListSplat | ListSplat;
+	readonly _content: Expression | Yield | ListSplat;
+	content(): Expression | Yield | ListSplat;
 }
 
 export interface CollectionElements {

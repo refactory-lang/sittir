@@ -285,6 +285,57 @@ export function subtypeParseNamesOf<T extends PhaseName>(rule: SupertypeRule<T>)
 	return pairs;
 }
 
+// Narrower pair than `NodeOrTerminal` because `types/` sits below `compiler/`
+// in the module layering and cannot import it — see glossary.
+export interface TransitiveSubtypeRef {
+	readonly storageKind: string;
+	readonly storageKindId?: number;
+	readonly kindId?: number;
+}
+
+// See glossary — full contract.
+export function transitiveParseKinds<T extends PhaseName>(
+	startName: string,
+	lookup: (name: string) => SupertypeRule<T> | undefined
+): ReadonlyMap<string, TransitiveSubtypeRef> {
+	const kinds = new Map<string, TransitiveSubtypeRef>();
+	const visited = new Set<string>();
+	function add(name: string, storageKind: string, storageKindId: number | undefined, kindId: number | undefined): void {
+		if (kinds.has(name)) return;
+		kinds.set(name, { storageKind, storageKindId, kindId });
+	}
+	function visit(name: string): void {
+		if (visited.has(name)) return;
+		visited.add(name);
+		const rule = lookup(name);
+		if (!rule) return;
+		// Pass 1: every ALIASED arm's parse (display) identity is reachable
+		// here regardless of whether its storage side is itself a nested
+		// supertype — in declaration order, before any recursion below.
+		for (const s of rule.subtypes) {
+			if (s.aliasedFrom !== undefined && s.aliasedFrom !== s.name) {
+				add(s.name, s.aliasedFrom, s.aliasedFromId, s.kindId);
+			}
+		}
+		// Pass 2: recurse into every subtype's OWN storage identity, in
+		// declaration order — a nested supertype expands to its leaves
+		// (never its own name); a plain leaf (aliased or not) lands in the
+		// output under its bare storage name.
+		for (const s of rule.subtypes) {
+			const aliased = s.aliasedFrom !== undefined && s.aliasedFrom !== s.name;
+			const storageKind = aliased ? s.aliasedFrom! : s.name;
+			if (lookup(storageKind)) {
+				visit(storageKind);
+			} else {
+				const id = aliased ? s.aliasedFromId : s.kindId;
+				add(storageKind, storageKind, id, id);
+			}
+		}
+	}
+	visit(startName);
+	return kinds;
+}
+
 export type GroupRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof GROUP;
 	readonly name: string;

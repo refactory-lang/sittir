@@ -248,9 +248,6 @@
     "dictionary.entries": {
       "dictionary_group1": "_dictionary_group1"
     },
-    "parenthesized_expression.content": {
-      "parenthesized_expression": "parenthesized_list_splat"
-    },
     "string_content.content": {
       "string_content_group1": "_not_escape_sequence"
     },
@@ -9302,13 +9299,6 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "parenthesized_list_splat",
-              "parseKind": "parenthesized_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
               "name": "list_splat",
               "parseKind": "list_splat",
               "unresolved": true
@@ -9319,7 +9309,6 @@
             "kinds": [
               "expression",
               "yield",
-              "parenthesized_list_splat",
               "list_splat"
             ]
           }

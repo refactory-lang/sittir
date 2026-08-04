@@ -52,7 +52,31 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
-import { expandRuntimeDiscriminatorKinds } from './factory-map.ts';
+// Reads the stamp `emitters/shared.ts::computeSupertypeTransitiveParseKinds`
+// computes once, post-assemble — see glossary.
+function expandToConcreteParseKinds(names: readonly string[], nodeMap: NodeMap): string[] {
+	const expanded: string[] = [];
+	const seen = new Set<string>();
+	function add(name: string): void {
+		const normalized = name.startsWith('_') ? name.slice(1) : name;
+		if (seen.has(normalized)) return;
+		seen.add(normalized);
+		expanded.push(normalized);
+	}
+	for (const name of names) {
+		const normalized = name.startsWith('_') ? name.slice(1) : name;
+		const node = nodeMap.nodes.get(name) ?? nodeMap.nodes.get(normalized);
+		if (node?.modelType !== 'supertype') {
+			add(name);
+			continue;
+		}
+		for (const v of node.transitiveParseKinds ?? []) {
+			const parseName = v.parseKind?.name;
+			if (parseName !== undefined) add(parseName);
+		}
+	}
+	return expanded;
+}
 
 // Local view-layer slot descriptor: the minimal `{ name, storageKey, arity }`
 // surface wrap.ts consumes. `AssembledNonterminal` structurally satisfies it
@@ -392,7 +416,7 @@ function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap
 	const labelNames = valueParseLabelsOf(slot);
 	const kindNames = valueParseKindsOf(slot).filter((k) => !labelNames.includes(k));
 	if (labelNames.length === 0 && kindNames.length === 0) return undefined;
-	const concrete = kindNames.length > 0 ? expandRuntimeDiscriminatorKinds(kindNames, nodeMap) : [];
+	const concrete = kindNames.length > 0 ? expandToConcreteParseKinds(kindNames, nodeMap) : [];
 	if (labelNames.length === 0 && concrete.length === 0) return undefined;
 	const storageKeys = [...new Set([...labelNames, ...concrete].map((k) => `_${k}`))];
 	const legacyKey = `_${slot.name}`;
@@ -623,7 +647,7 @@ function collectSeparatedListContentStorageKeys(
 ): readonly string[] {
 	const parseKinds = valueParseKindsOf(contentSlot);
 	if (parseKinds.length === 0) return [];
-	const concrete = expandRuntimeDiscriminatorKinds(parseKinds, nodeMap);
+	const concrete = expandToConcreteParseKinds(parseKinds, nodeMap);
 	return [...new Set(concrete.map((k) => `_${k}`))];
 }
 

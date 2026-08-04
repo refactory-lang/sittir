@@ -72,7 +72,15 @@ import type {
 	RuleId,
 	SeparatorFlankMode
 } from '../../types/rule.ts';
-import { isSeq, isField, literalTextOf, isEnumChoiceRule, isLinkSymbol, subtypeParseNamesOf } from '../../types/rule.ts';
+import {
+	isSeq,
+	isField,
+	literalTextOf,
+	isEnumChoiceRule,
+	isLinkSymbol,
+	subtypeParseNamesOf,
+	transitiveParseKinds
+} from '../../types/rule.ts';
 import { isStringType } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
@@ -1906,6 +1914,9 @@ function expandSlotWithVisibleAliasSources(slot: AssembledNonterminal, ctx: Kind
 		return acc;
 	}, 'single');
 
+	// Guards against re-widening a collision this expansion already erased once — see glossary.
+	const existingSupertypeClosure = existingSupertypeClosureOf(slot, ctx);
+
 	const extraValues: NodeOrTerminal[] = [];
 	for (const sourceKind of sources) {
 		const sourceRule = ctx.simplifiedRules?.[sourceKind];
@@ -1925,16 +1936,37 @@ function expandSlotWithVisibleAliasSources(slot: AssembledNonterminal, ctx: Kind
 		for (const d of derived) {
 			const dpk = d.parseKind?.name;
 			if (dpk === undefined) continue;
-			// Only add if this parseKind is not already present.
+			// Only add if this parseKind is not already present, directly OR
+			// through an existing value's supertype erasure closure.
 			const alreadyPresent =
 				slot.values.some((existing) => existing.parseKind?.name === dpk) ||
-				extraValues.some((existing) => existing.parseKind?.name === dpk);
+				extraValues.some((existing) => existing.parseKind?.name === dpk) ||
+				existingSupertypeClosure.has(dpk);
 			if (!alreadyPresent) extraValues.push(d);
 		}
 	}
 	if (extraValues.length === 0) return slot;
 
 	return slot.with({ values: dedupeValues([...slot.values, ...extraValues]) });
+}
+
+// See glossary — full rationale.
+function existingSupertypeClosureOf(slot: AssembledNonterminal, ctx: KindedDeriveCtx): ReadonlySet<string> {
+	const closure = new Set<string>();
+	for (const existing of slot.values) {
+		const name = existing.parseKind?.name;
+		if (name === undefined) continue;
+		for (const n of transitiveParseKinds(
+			name,
+			(n) => {
+				const r = ctx.simplifiedRules?.[n];
+				return r?.type === SUPERTYPE ? r : undefined;
+			}
+		).keys()) {
+			closure.add(n);
+		}
+	}
+	return closure;
 }
 
 function buildSlotsRecord(
@@ -2581,6 +2613,18 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 	// assemble.ts's resolution helpers stamp it once, at discovery; this
 	// constructor never re-derives it.
 	readonly #subtypes: readonly NodeOrTerminal[];
+	// Transitive parse-kind closure through nested supertypes — e.g. python's
+	// `expression → primary_expression → parenthesized_expression`. Stamped
+	// once, post-hydration (`computeSupertypeTransitiveParseKinds`), since a
+	// nested supertype's own subtypes aren't resolvable until every kind's
+	// forward references exist. `undefined` before that pass runs. Each
+	// entry is a plain `NodeOrTerminal` — `.parseKind.name`/`.node`'s name
+	// carry the parse (`$type`) and storage identity respectively, the same
+	// shape `.subtypes` already uses, so downstream readers don't need a
+	// second reference vocabulary for the same kind of fact. No stamped ids
+	// (`storageKindId`/`parseKindId` absent) — this closure only needs to
+	// answer "is this parse kind reachable here", by name.
+	transitiveParseKinds?: readonly NodeOrTerminal[];
 
 	constructor(kind: string, rule: SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes: readonly SubtypeRef[]) {
 		// Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
