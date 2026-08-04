@@ -11866,7 +11866,6 @@ pub enum ParenthesizedExpressionContentTransportSlot {
     NamedExpression(NamedExpressionTransport),
     AsPattern(AsPatternTransport),
     Yield(YieldTransport),
-    ParenthesizedListSplat(ParenthesizedListSplatTransport),
     ListSplat(ListSplatTransport),
     Verbatim(VerbatimTransport),
 }
@@ -11978,9 +11977,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     )),
                     199 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
-                    )),
-                    156 => Ok(Self::ParenthesizedListSplat(
-                        ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
                     )),
                     148 => Ok(Self::ListSplat(
                         ListSplatTransport::from_napi_value(env, napi_val)?
@@ -12099,9 +12095,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     199 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
-                    156 => Ok(Self::ParenthesizedListSplat(
-                        ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
-                    )),
                     148 => Ok(Self::ListSplat(
                         ListSplatTransport::from_napi_value(env, napi_val)?
                     )),
@@ -12180,7 +12173,6 @@ fn parenthesized_expression_content_transport_slot_to_any(t: ParenthesizedExpres
         ParenthesizedExpressionContentTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
         ParenthesizedExpressionContentTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
         ParenthesizedExpressionContentTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
-        ParenthesizedExpressionContentTransportSlot::ParenthesizedListSplat(inner) => AnyTransport::ParenthesizedListSplat(inner),
         ParenthesizedExpressionContentTransportSlot::ListSplat(inner) => AnyTransport::ListSplat(inner),
         ParenthesizedExpressionContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
@@ -12225,7 +12217,6 @@ impl RenderableTransport for ParenthesizedExpressionContentTransportSlot {
             ParenthesizedExpressionContentTransportSlot::NamedExpression(inner) => render_named_expression(inner, dest),
             ParenthesizedExpressionContentTransportSlot::AsPattern(inner) => render_as_pattern(inner, dest),
             ParenthesizedExpressionContentTransportSlot::Yield(inner) => render_yield(inner, dest),
-            ParenthesizedExpressionContentTransportSlot::ParenthesizedListSplat(inner) => render_parenthesized_list_splat(inner, dest),
             ParenthesizedExpressionContentTransportSlot::ListSplat(inner) => render_list_splat(inner, dest),
             ParenthesizedExpressionContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }

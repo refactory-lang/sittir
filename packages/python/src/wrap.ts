@@ -6239,40 +6239,40 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
 
 export function wrapParenthesizedExpression(
 	data: T.ParenthesizedExpression & {
-		readonly _comparison_operator?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _not_operator?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _boolean_operator?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _lambda?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _await?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _binary_operator?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _identifier?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _string?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _concatenated_string?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _integer?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _float?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _true?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _false?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _none?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _unary_operator?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _attribute?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _subscript?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _call?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _list?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _list_comprehension?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _dictionary?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _dictionary_comprehension?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _set?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _set_comprehension?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _tuple?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _parenthesized_expression?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _generator_expression?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _ellipsis?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _list_splat_pattern?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _conditional_expression?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _named_expression?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _as_pattern?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _yield?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _list_splat?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
+		readonly _comparison_operator?: T.Expression | T.Yield | T.ListSplat;
+		readonly _not_operator?: T.Expression | T.Yield | T.ListSplat;
+		readonly _boolean_operator?: T.Expression | T.Yield | T.ListSplat;
+		readonly _lambda?: T.Expression | T.Yield | T.ListSplat;
+		readonly _await?: T.Expression | T.Yield | T.ListSplat;
+		readonly _binary_operator?: T.Expression | T.Yield | T.ListSplat;
+		readonly _identifier?: T.Expression | T.Yield | T.ListSplat;
+		readonly _string?: T.Expression | T.Yield | T.ListSplat;
+		readonly _concatenated_string?: T.Expression | T.Yield | T.ListSplat;
+		readonly _integer?: T.Expression | T.Yield | T.ListSplat;
+		readonly _float?: T.Expression | T.Yield | T.ListSplat;
+		readonly _true?: T.Expression | T.Yield | T.ListSplat;
+		readonly _false?: T.Expression | T.Yield | T.ListSplat;
+		readonly _none?: T.Expression | T.Yield | T.ListSplat;
+		readonly _unary_operator?: T.Expression | T.Yield | T.ListSplat;
+		readonly _attribute?: T.Expression | T.Yield | T.ListSplat;
+		readonly _subscript?: T.Expression | T.Yield | T.ListSplat;
+		readonly _call?: T.Expression | T.Yield | T.ListSplat;
+		readonly _list?: T.Expression | T.Yield | T.ListSplat;
+		readonly _list_comprehension?: T.Expression | T.Yield | T.ListSplat;
+		readonly _dictionary?: T.Expression | T.Yield | T.ListSplat;
+		readonly _dictionary_comprehension?: T.Expression | T.Yield | T.ListSplat;
+		readonly _set?: T.Expression | T.Yield | T.ListSplat;
+		readonly _set_comprehension?: T.Expression | T.Yield | T.ListSplat;
+		readonly _tuple?: T.Expression | T.Yield | T.ListSplat;
+		readonly _parenthesized_expression?: T.Expression | T.Yield | T.ListSplat;
+		readonly _generator_expression?: T.Expression | T.Yield | T.ListSplat;
+		readonly _ellipsis?: T.Expression | T.Yield | T.ListSplat;
+		readonly _list_splat_pattern?: T.Expression | T.Yield | T.ListSplat;
+		readonly _conditional_expression?: T.Expression | T.Yield | T.ListSplat;
+		readonly _named_expression?: T.Expression | T.Yield | T.ListSplat;
+		readonly _as_pattern?: T.Expression | T.Yield | T.ListSplat;
+		readonly _yield?: T.Expression | T.Yield | T.ListSplat;
+		readonly _list_splat?: T.Expression | T.Yield | T.ListSplat;
 	},
 	tree: TreeHandle
 ) {
@@ -6358,9 +6358,7 @@ export function wrapParenthesizedExpression(
 			),
 
 			content() {
-				return drillAs<T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat>(this._content, tree, [
-					{ from: 'parenthesized_expression', to: 'parenthesized_list_splat' }
-				]);
+				return drillIn<T.Expression | T.Yield | T.ListSplat>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.ParenthesizedExpression['_content']>) =>

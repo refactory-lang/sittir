@@ -285,6 +285,74 @@ export function subtypeParseNamesOf<T extends PhaseName>(rule: SupertypeRule<T>)
 	return pairs;
 }
 
+/**
+ * One transitively-reachable subtype: its storage (render/source) identity
+ * alongside its parse (`$type`) identity — the same two-sided reference
+ * shape `compiler/model/node-map.ts`'s `NodeOrTerminal` uses for `.node`/
+ * `.parseKind` plus `.storageKindId`/`.parseKindId`. Kept as this narrower
+ * pair here (not `NodeOrTerminal` itself) because `types/` sits below
+ * `compiler/` in the module layering and cannot import it; model-layer
+ * callers (`computeSupertypeTransitiveParseKinds`) build real
+ * `NodeOrTerminal` entries from this.
+ */
+export interface TransitiveSubtypeRef {
+	readonly storageKind: string;
+	readonly storageKindId?: number;
+	readonly kindId?: number;
+}
+
+/**
+ * Transitive parse-kind closure of a supertype's subtypes — recurses through
+ * nested supertypes (e.g. python's `expression → primary_expression →
+ * parenthesized_expression`) via `lookup`, so callers only supply how to
+ * resolve a name to its `SupertypeRule` in whatever representation they hold
+ * (a raw rule bag pre-hydration, or a hydrated `NodeMap` post-hydration) —
+ * the recursion and cycle guard live here once, not once per representation.
+ * Keyed by parse name (what `$type` reports) — stamped ids carried in the
+ * value, never re-derived by name downstream.
+ */
+export function transitiveParseKinds<T extends PhaseName>(
+	startName: string,
+	lookup: (name: string) => SupertypeRule<T> | undefined
+): ReadonlyMap<string, TransitiveSubtypeRef> {
+	const kinds = new Map<string, TransitiveSubtypeRef>();
+	const visited = new Set<string>();
+	function add(name: string, storageKind: string, storageKindId: number | undefined, kindId: number | undefined): void {
+		if (kinds.has(name)) return;
+		kinds.set(name, { storageKind, storageKindId, kindId });
+	}
+	function visit(name: string): void {
+		if (visited.has(name)) return;
+		visited.add(name);
+		const rule = lookup(name);
+		if (!rule) return;
+		// Pass 1: every ALIASED arm's parse (display) identity is reachable
+		// here regardless of whether its storage side is itself a nested
+		// supertype — in declaration order, before any recursion below.
+		for (const s of rule.subtypes) {
+			if (s.aliasedFrom !== undefined && s.aliasedFrom !== s.name) {
+				add(s.name, s.aliasedFrom, s.aliasedFromId, s.kindId);
+			}
+		}
+		// Pass 2: recurse into every subtype's OWN storage identity, in
+		// declaration order — a nested supertype expands to its leaves
+		// (never its own name); a plain leaf (aliased or not) lands in the
+		// output under its bare storage name.
+		for (const s of rule.subtypes) {
+			const aliased = s.aliasedFrom !== undefined && s.aliasedFrom !== s.name;
+			const storageKind = aliased ? s.aliasedFrom! : s.name;
+			if (lookup(storageKind)) {
+				visit(storageKind);
+			} else {
+				const id = aliased ? s.aliasedFromId : s.kindId;
+				add(storageKind, storageKind, id, id);
+			}
+		}
+	}
+	visit(startName);
+	return kinds;
+}
+
 export type GroupRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof GROUP;
 	readonly name: string;

@@ -1942,7 +1942,7 @@ export function coerceToGeneratorExpression(
 }
 
 export function coerceToParenthesizedExpression(
-	input?: (T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat) | T.ParenthesizedExpression
+	input?: (T.Expression | T.Yield | T.ListSplat) | T.ParenthesizedExpression
 ): ReturnType<typeof F.buildParenthesizedExpression> {
 	if (isNodeData(input) && input.$type === TSKindId.ParenthesizedExpression) {
 		const data = input;

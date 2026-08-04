@@ -72,7 +72,15 @@ import type {
 	RuleId,
 	SeparatorFlankMode
 } from '../../types/rule.ts';
-import { isSeq, isField, literalTextOf, isEnumChoiceRule, isLinkSymbol, subtypeParseNamesOf } from '../../types/rule.ts';
+import {
+	isSeq,
+	isField,
+	literalTextOf,
+	isEnumChoiceRule,
+	isLinkSymbol,
+	subtypeParseNamesOf,
+	transitiveParseKinds
+} from '../../types/rule.ts';
 import { isStringType } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
@@ -1906,6 +1914,31 @@ function expandSlotWithVisibleAliasSources(slot: AssembledNonterminal, ctx: Kind
 		return acc;
 	}, 'single');
 
+	// A slot value referencing a declared supertype (e.g. `expression`) is
+	// stored as ONE opaque entry — the supertype's own parse name — with the
+	// per-arm names it actually erases to (potentially several levels down,
+	// e.g. `expression → primary_expression → parenthesized_expression`) not
+	// directly visible in `slot.values` at all. Without expanding through
+	// that closure, a source kind whose alias target is ALREADY reachable
+	// this way (python's `parenthesized_list_splat`, self-aliased to
+	// `parenthesized_expression`, which `expression` already reaches) looks
+	// "not present" and gets unioned in anyway — reintroducing, inside this
+	// one slot, exactly the parsekind-noninjective collision this expansion
+	// exists to avoid. Compute the closure once per slot, from its EXISTING
+	// values only (not `extraValues` — those are new arms from a possibly
+	// different source kind this same call, not yet part of the slot).
+	const existingSupertypeClosure = new Set<string>();
+	for (const existing of slot.values) {
+		const name = existing.parseKind?.name;
+		if (name === undefined) continue;
+		for (const n of transitiveParseKinds(name, (n) => {
+			const r = ctx.simplifiedRules?.[n];
+			return r?.type === SUPERTYPE ? r : undefined;
+		}).keys()) {
+			existingSupertypeClosure.add(n);
+		}
+	}
+
 	const extraValues: NodeOrTerminal[] = [];
 	for (const sourceKind of sources) {
 		const sourceRule = ctx.simplifiedRules?.[sourceKind];
@@ -1925,10 +1958,12 @@ function expandSlotWithVisibleAliasSources(slot: AssembledNonterminal, ctx: Kind
 		for (const d of derived) {
 			const dpk = d.parseKind?.name;
 			if (dpk === undefined) continue;
-			// Only add if this parseKind is not already present.
+			// Only add if this parseKind is not already present, directly OR
+			// through an existing value's supertype erasure closure.
 			const alreadyPresent =
 				slot.values.some((existing) => existing.parseKind?.name === dpk) ||
-				extraValues.some((existing) => existing.parseKind?.name === dpk);
+				extraValues.some((existing) => existing.parseKind?.name === dpk) ||
+				existingSupertypeClosure.has(dpk);
 			if (!alreadyPresent) extraValues.push(d);
 		}
 	}
@@ -2581,6 +2616,18 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 	// assemble.ts's resolution helpers stamp it once, at discovery; this
 	// constructor never re-derives it.
 	readonly #subtypes: readonly NodeOrTerminal[];
+	// Transitive parse-kind closure through nested supertypes — e.g. python's
+	// `expression → primary_expression → parenthesized_expression`. Stamped
+	// once, post-hydration (`computeSupertypeTransitiveParseKinds`), since a
+	// nested supertype's own subtypes aren't resolvable until every kind's
+	// forward references exist. `undefined` before that pass runs. Each
+	// entry is a plain `NodeOrTerminal` — `.parseKind.name`/`.node`'s name
+	// carry the parse (`$type`) and storage identity respectively, the same
+	// shape `.subtypes` already uses, so downstream readers don't need a
+	// second reference vocabulary for the same kind of fact. No stamped ids
+	// (`storageKindId`/`parseKindId` absent) — this closure only needs to
+	// answer "is this parse kind reachable here", by name.
+	transitiveParseKinds?: readonly NodeOrTerminal[];
 
 	constructor(kind: string, rule: SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes: readonly SubtypeRef[]) {
 		// Supertypes are always hidden — they're dispatch points, not user-constructable nodes.

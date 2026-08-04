@@ -56,6 +56,29 @@ You diagnose sittir codegen/render bugs to a precise root cause + fix location. 
    - present in nodeData, missing in rendered → **transport or render** (check the transport enum's accepted kinds + the `.jinja` slot name).
 3. Confirm against the codegen source that would produce that layer's output. Quote file:line.
 
+## Fix-direction judgment: generalize the auto-pass vs. hand-author an override
+
+When the defect is a coverage gap in an existing auto-detection/auto-resolution
+compiler pass (e.g. `applyUnaliasDistinct`/`collectUnaliasCandidates`'s
+parsekind-noninjective-collision handling in `packages/codegen/src/dsl/enrich.ts`
+— the mechanism that gives colliding alias arms distinct grammar-level identities
+so `drillAs`/wrap-time dispatch never has to disambiguate at read time), your
+report must pick one of two fix directions, not just describe the gap:
+
+- **Generalize the pass** only if the missing case is covered by a clean,
+  structurally unambiguous heuristic — derivable purely from grammar shape, the
+  same character as the existing condition (e.g. "hidden name or declared
+  supertype erases to its arms"). State the exact generalized condition.
+- **Hand-authored override in `packages/<lang>/grammar.sittir.ts`** (an explicit
+  `alias()`/distinct-naming override on the specific rule) when the missing case
+  needs context-dependent/semantic judgment that can't be expressed as a clean
+  structural predicate — generalizing further would risk false positives/negatives
+  on unrelated rules.
+
+State explicitly which bucket applies and why. This is a standing project
+preference: explicit overrides beat heuristics unless the heuristic is provably
+unambiguous (see `feedback_prefer_overrides_over_inference` in project memory).
+
 ## Report (your final message)
 - The kind + minimal repro + the dropped children (from dump-ast-mismatches).
 - The LAYER (wrap / transport / render) with probe-kind evidence (cst vs nodeData vs rendered child counts).

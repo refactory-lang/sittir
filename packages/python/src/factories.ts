@@ -2506,7 +2506,7 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config) {
 	);
 }
 
-export function buildParenthesizedExpression(child: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat) {
+export function buildParenthesizedExpression(child: T.Expression | T.Yield | T.ListSplat) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -2515,10 +2515,7 @@ export function buildParenthesizedExpression(child: T.Expression | T.Yield | T.P
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: {
-					$child: (v: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat) =>
-						buildParenthesizedExpression(v)
-				}
+				$with: { $child: (v: T.Expression | T.Yield | T.ListSplat) => buildParenthesizedExpression(v) }
 			},
 			{
 				content: () => _content
