@@ -97,8 +97,13 @@ function jinjaInterpolationsToLegacy(body: string): string {
 	);
 }
 
-function loadRulesFromPath(templatesPath: string): Record<string, TemplateRule> {
-	return loadRulesFromTemplatesPath(templatesPath, (_kind, body) => jinjaBodyToLegacyRule(body));
+function loadRulesFromPath(templatesPath: string): { rules: Record<string, TemplateRule>; rawByKind: Record<string, string> } {
+	const rawByKind: Record<string, string> = {};
+	const rules = loadRulesFromTemplatesPath(templatesPath, (kind, body) => {
+		rawByKind[kind] = body;
+		return jinjaBodyToLegacyRule(body);
+	});
+	return { rules, rawByKind };
 }
 import type { TemplateRule, TemplateRuleObject } from '@sittir/types';
 
@@ -130,7 +135,7 @@ export interface CoverageIssue {
 
 export function validateTemplateCoverage(grammar: string, templatesPath: string): TemplateCoverageResult {
 	const entries = loadRawEntries(grammar);
-	const rules = loadRulesFromPath(templatesPath);
+	const { rules, rawByKind } = loadRulesFromPath(templatesPath);
 	// Tree-sitter's `node-types.json` flattens nested-field-paths to the
 	// top level: `field('outer', wrapper(seq(literals?, field('inner',
 	// X))))` declares BOTH `outer` (whose runtime value is the
@@ -168,11 +173,20 @@ export function validateTemplateCoverage(grammar: string, templatesPath: string)
 		// hidden alias-source kinds. Fall back to the underscore form
 		// when the visible name has no direct rule — `wrapNode` and
 		// `render.ts` perform the same remap on the runtime side.
-		const rule = rules[entry.type] ?? rules[`_${entry.type}`];
+		const resolvedKind = entry.type in rules ? entry.type : `_${entry.type}`;
+		const rule = rules[resolvedKind];
 		if (rule === undefined) continue; // validate-renderable catches this.
+		const rawTemplate = rawByKind[resolvedKind];
+		const templatePath = `packages/${grammar}/templates/${resolvedKind}.jinja`;
 
 		total++;
-		const kindIssues = checkRule(entry, rule, hoistedOuterByKind.get(entry.type) ?? new Set());
+		const kindIssues = checkRule(
+			entry,
+			rule,
+			hoistedOuterByKind.get(entry.type) ?? new Set(),
+			rawTemplate,
+			templatePath
+		);
 		if (kindIssues.length === 0) {
 			pass++;
 		} else {
@@ -243,7 +257,13 @@ function checkVariantsForLiteralLeaks(entry: RawNodeEntry, variants: NamedTempla
 	return issues;
 }
 
-function checkRule(entry: RawNodeEntry, rule: TemplateRule, hoistedOuterFields: Set<string>): CoverageIssue[] {
+function checkRule(
+	entry: RawNodeEntry,
+	rule: TemplateRule,
+	hoistedOuterFields: Set<string>,
+	rawTemplate: string | undefined,
+	templatePath: string
+): CoverageIssue[] {
 	const fields = entry.fields ?? {};
 	const fieldNames = Object.keys(fields);
 	const issues: CoverageIssue[] = [];
@@ -279,15 +299,23 @@ function checkRule(entry: RawNodeEntry, rule: TemplateRule, hoistedOuterFields: 
 		// surrounding template text. See `hoistInnerFieldsForTemplate`
 		// in `compiler/simplify.ts`.
 		if (hoistedOuterFields.has(fname)) continue;
-		// Show all variant bodies so the caller can see which one(s) to patch.
+		// Quote the real jinja source so the message points at what's
+		// actually on disk — `variants[].template` is this checker's own
+		// `$NAME`/`$$$NAME` placeholder DSL (see `jinjaBodyToLegacyRule`),
+		// not jinja syntax, and showing it verbatim reads as a broken
+		// template reference. Fall back to the legacy DSL only when no
+		// raw source was captured for this kind (rule came from a
+		// non-jinja-file source).
 		const bodies =
-			variants.length === 1
-				? JSON.stringify(variants[0]!.template)
-				: variants.map((v) => `${v.label}=${JSON.stringify(v.template)}`).join(' | ');
+			rawTemplate !== undefined
+				? JSON.stringify(rawTemplate.trim())
+				: variants.length === 1
+					? JSON.stringify(variants[0]!.template)
+					: variants.map((v) => `${v.label}=${JSON.stringify(v.template)}`).join(' | ');
 		issues.push({
 			kind: entry.type,
 			type: 'missing-field',
-			message: `field '${fname}' declared but not referenced in any template: ${bodies}`
+			message: `${templatePath}: field '${fname}' declared but not referenced: ${bodies}`
 		});
 	}
 
