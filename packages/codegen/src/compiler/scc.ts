@@ -53,7 +53,6 @@
 
 import type { NodeMap } from './types.ts';
 import {
-	isMultiple,
 	kindsOf,
 	type AssembledNode,
 	type AssembledNonterminal,
@@ -160,14 +159,21 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 	return adjacency;
 }
 
+// Despite the name, this no longer filters out `multiple` (Vec-typed) slots —
+// a Vec field doesn't itself need `Box<T>` (Vec is heap-indirect regardless
+// of T's size), but excluding it from the graph meant a kind reachable ONLY
+// through a Vec edge never joined its ancestors' SCC, even when that kind's
+// OWN singular fields close a real cycle back through them (e.g. a list
+// element whose own field references the same supertype its container's
+// ancestor chain passes through). SCC membership needs the full reachability
+// graph; `rustTransportSlotType`'s separate `!multiple` check is what
+// actually decides whether to box a given field, so Vec fields still never
+// get boxed themselves.
 function structuralSingularSlots(node: AssembledNode): readonly AssembledNonterminal[] {
-	let slots: readonly AssembledNonterminal[];
 	if (node.modelType === 'branch' || node.modelType === 'group') {
-		slots = Object.values(node.slots);
-	} else {
-		return [];
+		return Object.values(node.slots);
 	}
-	return slots.filter((slot) => !isMultiple(slot));
+	return [];
 }
 
 function tarjanSCC(adjacency: ReadonlyMap<string, ReadonlySet<string>>): {

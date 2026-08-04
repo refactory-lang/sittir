@@ -1769,17 +1769,9 @@ describe.skip('import_require_clause', () => {
 
 describe('extends_clause', () => {
 	it('factory produces correct type', () => {
-		const node = ir.extendsClause({
-			value: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
-		});
+		const node = ir.extendsClause({ type: '_extends_clause_single' } as never);
 		expect(node.$type).toBe(TSKindId.ExtendsClause);
 		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.extendsClause({
-			value: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
-		});
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

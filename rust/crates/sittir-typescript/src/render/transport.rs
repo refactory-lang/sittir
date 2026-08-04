@@ -34188,7 +34188,7 @@ pub struct ExportStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ExportStatementContentTransportSlot,
+    pub content: Box<ExportStatementContentTransportSlot>,
 }
 
 impl RenderableTransport for ExportStatementTransport {
@@ -34499,7 +34499,7 @@ pub struct ImportStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_clause"))]
     pub from_clause: ImportStatementFromClauseTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_attribute"))]
-    pub import_attribute: Option<ImportAttributeTransport>,
+    pub import_attribute: Option<Box<ImportAttributeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: SemicolonEnum,
 }
@@ -34803,7 +34803,7 @@ pub struct ImportAttributeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
-    pub object: ImportAttributeObjectTransportSlot,
+    pub object: Box<ImportAttributeObjectTransportSlot>,
 }
 
 impl RenderableTransport for ImportAttributeTransport {
@@ -34855,7 +34855,7 @@ pub struct ExpressionStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: SemicolonEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
-    pub expressions: ExpressionsTransport,
+    pub expressions: Box<ExpressionsTransport>,
 }
 
 impl RenderableTransport for ExpressionStatementTransport {
@@ -35011,7 +35011,7 @@ pub struct VariableDeclaratorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: VariableDeclaratorContentTransportSlot,
+    pub content: Box<VariableDeclaratorContentTransportSlot>,
 }
 
 impl RenderableTransport for VariableDeclaratorTransport {
@@ -35163,7 +35163,7 @@ pub struct IfStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
-    pub condition: ParenthesizedExpressionTransport,
+    pub condition: Box<ParenthesizedExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
     pub consequence: Box<StatementTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
@@ -35217,9 +35217,9 @@ pub struct SwitchStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ParenthesizedExpressionTransport,
+    pub value: Box<ParenthesizedExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: SwitchBodyTransport,
+    pub body: Box<SwitchBodyTransport>,
 }
 
 impl RenderableTransport for SwitchStatementTransport {
@@ -35269,11 +35269,11 @@ pub struct ForStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_initializer"))]
-    pub initializer: ForStatementInitializerTransportSlot,
+    pub initializer: Box<ForStatementInitializerTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
-    pub condition: ForStatementConditionTransportSlot,
+    pub condition: Box<ForStatementConditionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_increment"))]
-    pub increment: Option<ExpressionsTransport>,
+    pub increment: Option<Box<ExpressionsTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Box<StatementTransport>,
 }
@@ -35329,11 +35329,11 @@ pub struct ForInStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: ForHeaderOperatorEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
-    pub right: ExpressionsTransport,
+    pub right: Box<ExpressionsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Box<StatementTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ForInStatementContentTransportSlot,
+    pub content: Box<ForInStatementContentTransportSlot>,
 }
 
 impl RenderableTransport for ForInStatementTransport {
@@ -35437,7 +35437,7 @@ pub struct WhileStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
-    pub condition: ParenthesizedExpressionTransport,
+    pub condition: Box<ParenthesizedExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Box<StatementTransport>,
 }
@@ -35491,7 +35491,7 @@ pub struct DoStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Box<StatementTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
-    pub condition: ParenthesizedExpressionTransport,
+    pub condition: Box<ParenthesizedExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: Option<SemicolonEnum>,
 }
@@ -35543,11 +35543,11 @@ pub struct TryStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: StatementBlockTransport,
+    pub body: Box<StatementBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_handler"))]
-    pub handler: Option<CatchClauseTransport>,
+    pub handler: Option<Box<CatchClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finalizer"))]
-    pub finalizer: Option<FinallyClauseTransport>,
+    pub finalizer: Option<Box<FinallyClauseTransport>>,
 }
 
 impl RenderableTransport for TryStatementTransport {
@@ -35597,7 +35597,7 @@ pub struct WithStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
-    pub object: ParenthesizedExpressionTransport,
+    pub object: Box<ParenthesizedExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Box<StatementTransport>,
 }
@@ -35805,7 +35805,7 @@ pub struct ReturnStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: SemicolonEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
-    pub expressions: Option<ExpressionsTransport>,
+    pub expressions: Option<Box<ExpressionsTransport>>,
 }
 
 impl RenderableTransport for ReturnStatementTransport {
@@ -35857,7 +35857,7 @@ pub struct ThrowStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: SemicolonEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
-    pub expressions: ExpressionsTransport,
+    pub expressions: Box<ExpressionsTransport>,
 }
 
 impl RenderableTransport for ThrowStatementTransport {
@@ -36112,7 +36112,7 @@ pub struct SwitchCaseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionsTransport,
+    pub value: Box<ExpressionsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Option<Vec<StatementTransport>>,
 }
@@ -36214,13 +36214,13 @@ pub struct CatchClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: StatementBlockTransport,
+    pub body: Box<StatementBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_catch_clause_group1"))]
-    pub catch_clause_group1: Option<CatchClauseGroup1Transport>,
+    pub catch_clause_group1: Option<Box<CatchClauseGroup1Transport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter"))]
-    pub parameter: Option<CatchClauseGroup1ParameterTransportSlot>,
+    pub parameter: Option<Box<CatchClauseGroup1ParameterTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: Option<TypeAnnotationTransport>,
+    pub type_: Option<Box<TypeAnnotationTransport>>,
 }
 
 impl RenderableTransport for CatchClauseTransport {
@@ -36270,7 +36270,7 @@ pub struct FinallyClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: StatementBlockTransport,
+    pub body: Box<StatementBlockTransport>,
 }
 
 impl RenderableTransport for FinallyClauseTransport {
@@ -36520,9 +36520,9 @@ pub struct AssignmentPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
-    pub left: PatternTransport,
+    pub left: Box<PatternTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
-    pub right: ExpressionTransport,
+    pub right: Box<ExpressionTransport>,
 }
 
 impl RenderableTransport for AssignmentPatternTransport {
@@ -36572,9 +36572,9 @@ pub struct ObjectAssignmentPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
-    pub left: ObjectAssignmentPatternLeftTransportSlot,
+    pub left: Box<ObjectAssignmentPatternLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
-    pub right: ExpressionTransport,
+    pub right: Box<ExpressionTransport>,
 }
 
 impl RenderableTransport for ObjectAssignmentPatternTransport {
@@ -36724,7 +36724,7 @@ pub struct JsxElementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_open_tag"))]
-    pub open_tag: JsxOpeningElementTransport,
+    pub open_tag: Box<JsxOpeningElementTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_close_tag"))]
     pub close_tag: JsxClosingElementTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_child"))]
@@ -36929,7 +36929,7 @@ pub struct JsxOpeningElementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_opening_element_content"))]
-    pub jsx_opening_element_content: Option<JsxOpeningElementContentTransport>,
+    pub jsx_opening_element_content: Option<Box<JsxOpeningElementContentTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: Option<JsxOpeningElementContentNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
@@ -37238,7 +37238,7 @@ pub struct JsxSelfClosingElementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_opening_element_content"))]
-    pub jsx_opening_element_content: Option<JsxOpeningElementContentTransport>,
+    pub jsx_opening_element_content: Option<Box<JsxOpeningElementContentTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: Option<JsxOpeningElementContentNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
@@ -37294,7 +37294,7 @@ pub struct JsxAttributeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_attribute_name"))]
     pub jsx_attribute_name: JsxAttributeNameTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_attribute_value"))]
-    pub jsx_attribute_value: Option<JsxAttributeValueTransport>,
+    pub jsx_attribute_value: Option<Box<JsxAttributeValueTransport>>,
 }
 
 impl RenderableTransport for JsxAttributeTransport {
@@ -37600,11 +37600,11 @@ pub struct ClassTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: Option<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_heritage"))]
-    pub class_heritage: Option<ClassHeritageTransport>,
+    pub class_heritage: Option<Box<ClassHeritageTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: ClassBodyTransport,
+    pub body: Box<ClassBodyTransport>,
 }
 
 impl RenderableTransport for ClassTransport {
@@ -37658,11 +37658,11 @@ pub struct ClassDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_heritage"))]
-    pub class_heritage: Option<ClassHeritageTransport>,
+    pub class_heritage: Option<Box<ClassHeritageTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: ClassBodyTransport,
+    pub body: Box<ClassBodyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
     pub automatic_semicolon: Option<AutomaticSemicolonTransport>,
 }
@@ -37714,7 +37714,7 @@ pub struct ClassHeritageTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ClassHeritageContentTransportSlot,
+    pub content: Box<ClassHeritageContentTransportSlot>,
 }
 
 impl RenderableTransport for ClassHeritageTransport {
@@ -37768,13 +37768,13 @@ pub struct FunctionExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: Option<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: FormalParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<FunctionExpressionReturnTypeTransportSlot>,
+    pub return_type: Option<Box<FunctionExpressionReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: StatementBlockTransport,
+    pub body: Box<StatementBlockTransport>,
 }
 
 impl RenderableTransport for FunctionExpressionTransport {
@@ -37828,13 +37828,13 @@ pub struct FunctionDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: FormalParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<FunctionDeclarationReturnTypeTransportSlot>,
+    pub return_type: Option<Box<FunctionDeclarationReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: StatementBlockTransport,
+    pub body: Box<StatementBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
     pub automatic_semicolon: Option<AutomaticSemicolonTransport>,
 }
@@ -37890,13 +37890,13 @@ pub struct GeneratorFunctionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: Option<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: FormalParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<GeneratorFunctionReturnTypeTransportSlot>,
+    pub return_type: Option<Box<GeneratorFunctionReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: StatementBlockTransport,
+    pub body: Box<StatementBlockTransport>,
 }
 
 impl RenderableTransport for GeneratorFunctionTransport {
@@ -37950,13 +37950,13 @@ pub struct GeneratorFunctionDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: FormalParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<GeneratorFunctionDeclarationReturnTypeTransportSlot>,
+    pub return_type: Option<Box<GeneratorFunctionDeclarationReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: StatementBlockTransport,
+    pub body: Box<StatementBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
     pub automatic_semicolon: Option<AutomaticSemicolonTransport>,
 }
@@ -38012,7 +38012,7 @@ pub struct ArrowFunctionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Box<ArrowFunctionBodyTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ArrowFunctionContentTransportSlot,
+    pub content: Box<ArrowFunctionContentTransportSlot>,
 }
 
 impl RenderableTransport for ArrowFunctionTransport {
@@ -38306,9 +38306,9 @@ pub struct NewExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constructor"))]
     pub constructor: Box<PrimaryExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
-    pub type_arguments: Option<TypeArgumentsTransport>,
+    pub type_arguments: Option<Box<TypeArgumentsTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
-    pub arguments: Option<ArgumentsTransport>,
+    pub arguments: Option<Box<ArgumentsTransport>>,
 }
 
 impl RenderableTransport for NewExpressionTransport {
@@ -38674,7 +38674,7 @@ pub struct SpreadElementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: ExpressionTransport,
+    pub expression: Box<ExpressionTransport>,
 }
 
 impl RenderableTransport for SpreadElementTransport {
@@ -39490,7 +39490,7 @@ pub struct TemplateSubstitutionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
-    pub expressions: ExpressionsTransport,
+    pub expressions: Box<ExpressionsTransport>,
 }
 
 impl RenderableTransport for TemplateSubstitutionTransport {
@@ -40815,7 +40815,7 @@ pub struct DecoratorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: DecoratorContentTransportSlot,
+    pub content: Box<DecoratorContentTransportSlot>,
 }
 
 impl RenderableTransport for DecoratorTransport {
@@ -40919,9 +40919,9 @@ pub struct DecoratorCallExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
     pub function: DecoratorCallExpressionFunctionTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
-    pub type_arguments: Option<TypeArgumentsTransport>,
+    pub type_arguments: Option<Box<TypeArgumentsTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
-    pub arguments: ArgumentsTransport,
+    pub arguments: Box<ArgumentsTransport>,
 }
 
 impl RenderableTransport for DecoratorCallExpressionTransport {
@@ -41127,7 +41127,7 @@ pub struct ClassStaticBlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: StatementBlockTransport,
+    pub body: Box<StatementBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
     pub automatic_semicolon: Option<AutomaticSemicolonTransport>,
 }
@@ -41179,7 +41179,7 @@ pub struct RestPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lhs_expression"))]
-    pub lhs_expression: LhsExpressionTransport,
+    pub lhs_expression: Box<LhsExpressionTransport>,
 }
 
 impl RenderableTransport for RestPatternTransport {
@@ -41241,17 +41241,17 @@ pub struct MethodDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind"))]
     pub accessor_kind: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: PropertyNameTransport,
+    pub name: Box<PropertyNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker"))]
     pub optional_marker: Option<KwOptionalMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: FormalParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<MethodDefinitionReturnTypeTransportSlot>,
+    pub return_type: Option<Box<MethodDefinitionReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: StatementBlockTransport,
+    pub body: Box<StatementBlockTransport>,
 }
 
 impl RenderableTransport for MethodDefinitionTransport {
@@ -41301,9 +41301,9 @@ pub struct PairTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_key"))]
-    pub key: PropertyNameTransport,
+    pub key: Box<PropertyNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
+    pub value: Box<ExpressionTransport>,
 }
 
 impl RenderableTransport for PairTransport {
@@ -41353,9 +41353,9 @@ pub struct PairPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_key"))]
-    pub key: PropertyNameTransport,
+    pub key: Box<PropertyNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: PairPatternValueTransportSlot,
+    pub value: Box<PairPatternValueTransportSlot>,
 }
 
 impl RenderableTransport for PairPatternTransport {
@@ -41405,7 +41405,7 @@ pub struct ComputedPropertyNameTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: ExpressionTransport,
+    pub expression: Box<ExpressionTransport>,
 }
 
 impl RenderableTransport for ComputedPropertyNameTransport {
@@ -41789,13 +41789,13 @@ pub struct PublicFieldDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_prefix"))]
     pub visibility_prefix: Option<PublicFieldDefinitionVisibilityPrefixTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: PropertyNameTransport,
+    pub name: Box<PropertyNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optionality_marker"))]
     pub optionality_marker: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: Option<TypeAnnotationTransport>,
+    pub type_: Option<Box<TypeAnnotationTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ExpressionTransport>,
+    pub value: Option<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<PublicFieldDefinitionContentTransportSlot>,
 }
@@ -41963,15 +41963,15 @@ pub struct MethodSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind"))]
     pub accessor_kind: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: PropertyNameTransport,
+    pub name: Box<PropertyNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker"))]
     pub optional_marker: Option<KwOptionalMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: FormalParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<MethodSignatureReturnTypeTransportSlot>,
+    pub return_type: Option<Box<MethodSignatureReturnTypeTransportSlot>>,
 }
 
 impl RenderableTransport for MethodSignatureTransport {
@@ -42027,15 +42027,15 @@ pub struct AbstractMethodSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind"))]
     pub accessor_kind: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: PropertyNameTransport,
+    pub name: Box<PropertyNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker"))]
     pub optional_marker: Option<KwOptionalMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: FormalParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<AbstractMethodSignatureReturnTypeTransportSlot>,
+    pub return_type: Option<Box<AbstractMethodSignatureReturnTypeTransportSlot>>,
 }
 
 impl RenderableTransport for AbstractMethodSignatureTransport {
@@ -42089,11 +42089,11 @@ pub struct FunctionSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: FormalParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<FunctionSignatureReturnTypeTransportSlot>,
+    pub return_type: Option<Box<FunctionSignatureReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: FunctionSignatureSemicolonTransportSlot,
 }
@@ -42145,7 +42145,7 @@ pub struct DecoratorParenthesizedExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: DecoratorParenthesizedExpressionContentTransportSlot,
+    pub content: Box<DecoratorParenthesizedExpressionContentTransportSlot>,
 }
 
 impl RenderableTransport for DecoratorParenthesizedExpressionTransport {
@@ -42195,7 +42195,7 @@ pub struct TypeAssertionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
-    pub type_arguments: TypeArgumentsTransport,
+    pub type_arguments: Box<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Box<ExpressionTransport>,
 }
@@ -42249,7 +42249,7 @@ pub struct AsExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_annotation"))]
-    pub type_annotation: AsExpressionTypeAnnotationTransportSlot,
+    pub type_annotation: Box<AsExpressionTypeAnnotationTransportSlot>,
 }
 
 impl RenderableTransport for AsExpressionTransport {
@@ -42301,7 +42301,7 @@ pub struct SatisfiesExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_annotation"))]
-    pub type_annotation: TypeTransport,
+    pub type_annotation: Box<TypeTransport>,
 }
 
 impl RenderableTransport for SatisfiesExpressionTransport {
@@ -42353,7 +42353,7 @@ pub struct InstantiationExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
-    pub type_arguments: TypeArgumentsTransport,
+    pub type_arguments: Box<TypeArgumentsTransport>,
 }
 
 impl RenderableTransport for InstantiationExpressionTransport {
@@ -42454,10 +42454,12 @@ pub struct ExtendsClauseTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single"))]
+    pub extends_clause_single: Vec<ExtendsClauseSingleTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Vec<ExpressionTransport>,
+    pub value: Option<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
-    pub type_arguments: Option<Vec<TypeArgumentsTransport>>,
+    pub type_arguments: Option<Box<TypeArgumentsTransport>>,
 }
 
 impl RenderableTransport for ExtendsClauseTransport {
@@ -42507,9 +42509,9 @@ pub struct ExtendsClauseSingleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
+    pub value: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
-    pub type_arguments: Option<TypeArgumentsTransport>,
+    pub type_arguments: Option<Box<TypeArgumentsTransport>>,
 }
 
 impl RenderableTransport for ExtendsClauseSingleTransport {
@@ -42663,11 +42665,11 @@ pub struct AbstractClassDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_heritage"))]
-    pub class_heritage: Option<ClassHeritageTransport>,
+    pub class_heritage: Option<Box<ClassHeritageTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: ClassBodyTransport,
+    pub body: Box<ClassBodyTransport>,
 }
 
 impl RenderableTransport for AbstractClassDeclarationTransport {
@@ -42719,7 +42721,7 @@ pub struct ModuleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ModuleNameTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: Option<StatementBlockTransport>,
+    pub body: Option<Box<StatementBlockTransport>>,
 }
 
 impl RenderableTransport for ModuleTransport {
@@ -42771,7 +42773,7 @@ pub struct InternalModuleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: InternalModuleNameTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: Option<StatementBlockTransport>,
+    pub body: Option<Box<StatementBlockTransport>>,
 }
 
 impl RenderableTransport for InternalModuleTransport {
@@ -42981,9 +42983,9 @@ pub struct InterfaceDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_type_clause"))]
-    pub extends_type_clause: Option<ExtendsTypeClauseTransport>,
+    pub extends_type_clause: Option<Box<ExtendsTypeClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ObjectTypeTransport,
 }
@@ -43089,7 +43091,7 @@ pub struct EnumDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: EnumBodyTransport,
+    pub body: Box<EnumBodyTransport>,
 }
 
 impl RenderableTransport for EnumDeclarationTransport {
@@ -43139,7 +43141,7 @@ pub struct EnumBodyTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_body_group1"))]
-    pub enum_body_group1: Option<EnumBodyGroup1Transport>,
+    pub enum_body_group1: Option<Box<EnumBodyGroup1Transport>>,
 }
 
 impl RenderableTransport for EnumBodyTransport {
@@ -43189,9 +43191,9 @@ pub struct EnumAssignmentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: PropertyNameTransport,
+    pub name: Box<PropertyNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
+    pub value: Box<ExpressionTransport>,
 }
 
 impl RenderableTransport for EnumAssignmentTransport {
@@ -43243,9 +43245,9 @@ pub struct TypeAliasDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: TypeTransport,
+    pub value: Box<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: SemicolonEnum,
 }
@@ -43710,7 +43712,7 @@ pub struct OmittingTypeAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: TypeTransport,
+    pub type_: Box<TypeTransport>,
 }
 
 impl RenderableTransport for OmittingTypeAnnotationTransport {
@@ -43760,7 +43762,7 @@ pub struct AddingTypeAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: TypeTransport,
+    pub type_: Box<TypeTransport>,
 }
 
 impl RenderableTransport for AddingTypeAnnotationTransport {
@@ -43810,7 +43812,7 @@ pub struct OptingTypeAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: TypeTransport,
+    pub type_: Box<TypeTransport>,
 }
 
 impl RenderableTransport for OptingTypeAnnotationTransport {
@@ -43860,7 +43862,7 @@ pub struct TypeAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: TypeTransport,
+    pub type_: Box<TypeTransport>,
 }
 
 impl RenderableTransport for TypeAnnotationTransport {
@@ -43964,7 +43966,7 @@ pub struct TypeQueryCallExpressionInTypeAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
     pub function: Box<TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
-    pub arguments: ArgumentsTransport,
+    pub arguments: Box<ArgumentsTransport>,
 }
 
 impl RenderableTransport for TypeQueryCallExpressionInTypeAnnotationTransport {
@@ -44064,7 +44066,7 @@ pub struct AssertsAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_asserts"))]
-    pub asserts: AssertsAnnotationAssertsTransportSlot,
+    pub asserts: Box<AssertsAnnotationAssertsTransportSlot>,
 }
 
 impl RenderableTransport for AssertsAnnotationTransport {
@@ -44320,7 +44322,7 @@ pub struct ConstructorTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_marker"))]
     pub abstract_marker: Option<KwAbstractMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: FormalParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
@@ -44374,7 +44376,7 @@ pub struct TemplateTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: TemplateTypeContentTransportSlot,
+    pub content: Box<TemplateTypeContentTransportSlot>,
 }
 
 impl RenderableTransport for TemplateTypeTransport {
@@ -44584,7 +44586,7 @@ pub struct GenericTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: GenericTypeNameTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
-    pub type_arguments: TypeArgumentsTransport,
+    pub type_arguments: Box<TypeArgumentsTransport>,
 }
 
 impl RenderableTransport for GenericTypeTransport {
@@ -44686,7 +44688,7 @@ pub struct TypePredicateAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_predicate"))]
-    pub type_predicate: TypePredicateAnnotationTypePredicateTransportSlot,
+    pub type_predicate: Box<TypePredicateAnnotationTypePredicateTransportSlot>,
 }
 
 impl RenderableTransport for TypePredicateAnnotationTransport {
@@ -44844,7 +44846,7 @@ pub struct TypeQueryCallExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
     pub function: Box<TypeQueryCallExpressionFunctionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
-    pub arguments: ArgumentsTransport,
+    pub arguments: Box<ArgumentsTransport>,
 }
 
 impl RenderableTransport for TypeQueryCallExpressionTransport {
@@ -44894,9 +44896,9 @@ pub struct TypeQueryInstantiationExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
-    pub function: TypeQueryInstantiationExpressionFunctionTransportSlot,
+    pub function: Box<TypeQueryInstantiationExpressionFunctionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
-    pub type_arguments: TypeArgumentsTransport,
+    pub type_arguments: Box<TypeArgumentsTransport>,
 }
 
 impl RenderableTransport for TypeQueryInstantiationExpressionTransport {
@@ -44946,7 +44948,7 @@ pub struct TypeQueryTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: TypeQueryContentTransportSlot,
+    pub content: Box<TypeQueryContentTransportSlot>,
 }
 
 impl RenderableTransport for TypeQueryTransport {
@@ -45100,9 +45102,9 @@ pub struct MappedTypeClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: TypeTransport,
+    pub type_: Box<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
-    pub alias: Option<TypeTransport>,
+    pub alias: Option<Box<TypeTransport>>,
 }
 
 impl RenderableTransport for MappedTypeClauseTransport {
@@ -45884,9 +45886,9 @@ pub struct TypeParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constraint"))]
-    pub constraint: Option<ConstraintTransport>,
+    pub constraint: Option<Box<ConstraintTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<DefaultTypeTransport>,
+    pub value: Option<Box<DefaultTypeTransport>>,
 }
 
 impl RenderableTransport for TypeParameterTransport {
@@ -45936,7 +45938,7 @@ pub struct DefaultTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: TypeTransport,
+    pub type_: Box<TypeTransport>,
 }
 
 impl RenderableTransport for DefaultTypeTransport {
@@ -45986,7 +45988,7 @@ pub struct ConstraintTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: TypeTransport,
+    pub type_: Box<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Box<AnyTransport>,
 }
@@ -46096,9 +46098,9 @@ pub struct IndexSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign"))]
     pub sign: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: IndexSignatureTypeTransportSlot,
+    pub type_: Box<IndexSignatureTypeTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: IndexSignatureContentTransportSlot,
+    pub content: Box<IndexSignatureContentTransportSlot>,
 }
 
 impl RenderableTransport for IndexSignatureTransport {
@@ -46402,7 +46404,7 @@ pub struct FunctionTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: FormalParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
@@ -47507,11 +47509,11 @@ pub struct VariableDeclaratorGroup1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: VariableDeclaratorGroup1NameTransportSlot,
+    pub name: Box<VariableDeclaratorGroup1NameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: Option<TypeAnnotationTransport>,
+    pub type_: Option<Box<TypeAnnotationTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ExpressionTransport>,
+    pub value: Option<Box<ExpressionTransport>>,
 }
 
 impl RenderableTransport for VariableDeclaratorGroup1Transport {
@@ -47563,7 +47565,7 @@ pub struct VariableDeclaratorGroup2Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: TypeAnnotationTransport,
+    pub type_: Box<TypeAnnotationTransport>,
 }
 
 impl RenderableTransport for VariableDeclaratorGroup2Transport {
@@ -47613,9 +47615,9 @@ pub struct CatchClauseGroup1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter"))]
-    pub parameter: CatchClauseGroup1ParameterTransportSlot,
+    pub parameter: Box<CatchClauseGroup1ParameterTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: Option<TypeAnnotationTransport>,
+    pub type_: Option<Box<TypeAnnotationTransport>>,
 }
 
 impl RenderableTransport for CatchClauseGroup1Transport {
@@ -48941,7 +48943,7 @@ pub struct AmbientDeclarationGlobalTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: StatementBlockTransport,
+    pub body: Box<StatementBlockTransport>,
 }
 
 impl RenderableTransport for AmbientDeclarationGlobalTransport {
@@ -48993,7 +48995,7 @@ pub struct AmbientDeclarationModuleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: TypeTransport,
+    pub type_: Box<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: Option<SemicolonEnum>,
 }
@@ -49105,7 +49107,7 @@ pub struct ExportStatementDefaultTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ExportStatementDefaultContentTransportSlot,
+    pub content: Box<ExportStatementDefaultContentTransportSlot>,
 }
 
 impl RenderableTransport for ExportStatementDefaultTransport {
@@ -49205,11 +49207,11 @@ pub struct ArrowFunctionUCallSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: Option<Box<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: FormalParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<ArrowFunctionUCallSignatureReturnTypeTransportSlot>,
+    pub return_type: Option<Box<ArrowFunctionUCallSignatureReturnTypeTransportSlot>>,
 }
 
 impl RenderableTransport for ArrowFunctionUCallSignatureTransport {
@@ -49259,9 +49261,9 @@ pub struct ClassHeritageExtendsClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause"))]
-    pub extends_clause: ExtendsClauseTransport,
+    pub extends_clause: Box<ExtendsClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_implements_clause"))]
-    pub implements_clause: Option<ImplementsClauseTransport>,
+    pub implements_clause: Option<Box<ImplementsClauseTransport>>,
 }
 
 impl RenderableTransport for ClassHeritageExtendsClauseTransport {
@@ -49417,7 +49419,7 @@ pub struct IndexSignatureColonTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IndexSignatureColonNameTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_type"))]
-    pub index_type: TypeTransport,
+    pub index_type: Box<TypeTransport>,
 }
 
 impl RenderableTransport for IndexSignatureColonTransport {
@@ -49521,7 +49523,7 @@ pub struct ExportStatementDefaultDeclArmTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<DecoratorTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ExportStatementDefaultDeclArmContentTransportSlot,
+    pub content: Box<ExportStatementDefaultDeclArmContentTransportSlot>,
 }
 
 impl RenderableTransport for ExportStatementDefaultDeclArmTransport {
@@ -49725,7 +49727,7 @@ pub struct ExportStatementDefaultDefaultKwTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ExportStatementDefaultDefaultKwContentTransportSlot,
+    pub content: Box<ExportStatementDefaultDefaultKwContentTransportSlot>,
 }
 
 impl RenderableTransport for ExportStatementDefaultDefaultKwTransport {
@@ -49775,7 +49777,7 @@ pub struct ExportStatementDefaultValueTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
+    pub value: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: SemicolonEnum,
 }
@@ -49829,7 +49831,7 @@ pub struct ClassBodyMethodTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<DecoratorTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_definition"))]
-    pub method_definition: MethodDefinitionTransport,
+    pub method_definition: Box<MethodDefinitionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: Option<SemicolonEnum>,
 }
@@ -49883,7 +49885,7 @@ pub struct ClassBodyMethodSigTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ClassBodyMethodSigTerminatorTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_signature"))]
-    pub method_signature: MethodSignatureTransport,
+    pub method_signature: Box<MethodSignatureTransport>,
 }
 
 impl RenderableTransport for ClassBodyMethodSigTransport {
@@ -49935,7 +49937,7 @@ pub struct ClassBodyMemberTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ClassBodyMemberTerminatorTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ClassBodyMemberContentTransportSlot,
+    pub content: Box<ClassBodyMemberContentTransportSlot>,
 }
 
 impl RenderableTransport for ClassBodyMemberTransport {
@@ -49985,7 +49987,7 @@ pub struct ForHeaderLhsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
-    pub left: ForHeaderLhsLeftTransportSlot,
+    pub left: Box<ForHeaderLhsLeftTransportSlot>,
 }
 
 impl RenderableTransport for ForHeaderLhsTransport {
@@ -50037,9 +50039,9 @@ pub struct ForHeaderVarKindTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind"))]
     pub kind: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
-    pub left: ForHeaderVarKindLeftTransportSlot,
+    pub left: Box<ForHeaderVarKindLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ExpressionTransport>,
+    pub value: Option<Box<ExpressionTransport>>,
 }
 
 impl RenderableTransport for ForHeaderVarKindTransport {
@@ -50091,7 +50093,7 @@ pub struct ForHeaderLetConstKindTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind"))]
     pub kind: KindEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
-    pub left: ForHeaderLetConstKindLeftTransportSlot,
+    pub left: Box<ForHeaderLetConstKindLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
     pub automatic_semicolon: Option<AutomaticSemicolonTransport>,
 }
@@ -50541,7 +50543,7 @@ pub struct ParenthesizedExpressionTypedTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: Option<TypeAnnotationTransport>,
+    pub type_: Option<Box<TypeAnnotationTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Box<ExpressionTransport>,
 }
@@ -50647,7 +50649,7 @@ pub struct ExportStatementEqualsExportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: ExpressionTransport,
+    pub expression: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: SemicolonEnum,
 }
@@ -50753,9 +50755,9 @@ pub struct CallExpressionCallTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
     pub function: Box<CallExpressionCallFunctionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
-    pub type_arguments: Option<TypeArgumentsTransport>,
+    pub type_arguments: Option<Box<TypeArgumentsTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
-    pub arguments: ArgumentsTransport,
+    pub arguments: Box<ArgumentsTransport>,
 }
 
 impl RenderableTransport for CallExpressionCallTransport {
@@ -50807,7 +50809,7 @@ pub struct CallExpressionTemplateCallTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
     pub function: Box<CallExpressionTemplateCallFunctionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
-    pub arguments: TemplateStringTransport,
+    pub arguments: Box<TemplateStringTransport>,
 }
 
 impl RenderableTransport for CallExpressionTemplateCallTransport {
@@ -50859,9 +50861,9 @@ pub struct CallExpressionMemberTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
     pub function: Box<PrimaryExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
-    pub type_arguments: Option<TypeArgumentsTransport>,
+    pub type_arguments: Option<Box<TypeArgumentsTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
-    pub arguments: ArgumentsTransport,
+    pub arguments: Box<ArgumentsTransport>,
 }
 
 impl RenderableTransport for CallExpressionMemberTransport {
@@ -64105,27 +64107,17 @@ fn render_import_require_clause(node: &ImportRequireClauseTransport, dest: &mut 
 }
 
 fn render_extends_clause(node: &ExtendsClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.value.is_empty() && node.type_arguments.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.extends_clause_single.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let type_arguments_owned = node.type_arguments.as_deref().unwrap_or(&[]);
-    let type_arguments_buf: Vec<::sittir_core::filters::Renderable<'_>> = type_arguments_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let value_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.value.iter()
+    let extends_clause_single_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.extends_clause_single.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ExtendsClauseTemplate {
-        type_arguments: ListNonterminalView {
-            items: type_arguments_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        value: ListNonterminalView {
-            items: value_buf.as_slice(),
+        extends_clause_single: ListNonterminalView {
+            items: extends_clause_single_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -64135,11 +64127,14 @@ fn render_extends_clause(node: &ExtendsClauseTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_extends_clause_single(node: &ExtendsClauseSingleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_expression(&node.value, dest)?;
-    if let Some(child) = &node.type_arguments {
-        render_type_arguments(child, dest)?;
-    }
-    Ok(())
+    let template = ExtendsClauseSingleTemplate {
+        type_arguments: match &node.type_arguments {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+    };
+    template.render_into(dest)
 }
 
 fn render_implements_clause(node: &ImplementsClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {

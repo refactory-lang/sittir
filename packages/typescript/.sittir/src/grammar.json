@@ -7828,8 +7828,13 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_extends_clause_single"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_extends_clause_single"
+              },
+              "named": true,
+              "value": "extends_clause_single"
             },
             {
               "type": "REPEAT",
@@ -7841,8 +7846,13 @@
                     "value": ","
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "_extends_clause_single"
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_extends_clause_single"
+                    },
+                    "named": true,
+                    "value": "extends_clause_single"
                   }
                 ]
               }

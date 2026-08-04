@@ -332,6 +332,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	formal_parameters: TSKindId.FormalParameters,
 	rest_pattern: TSKindId.RestPattern,
 	decorator_parenthesized_expression: TSKindId.DecoratorParenthesizedExpression,
+	extends_clause: TSKindId.ExtendsClause,
 	implements_clause: TSKindId.ImplementsClause,
 	ambient_declaration: TSKindId.AmbientDeclaration,
 	enum_body: TSKindId.EnumBody,
@@ -399,6 +400,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildDecoratorParenthesizedExpression(
 				children[0] as Parameters<typeof F.buildDecoratorParenthesizedExpression>[0]
 			);
+		case 'extends_clause':
+			return F.buildExtendsClause(...(children as Parameters<typeof F.buildExtendsClause>));
 		case 'implements_clause':
 			return F.buildImplementsClause(...(children as Parameters<typeof F.buildImplementsClause>));
 		case 'ambient_declaration':
@@ -2482,14 +2485,16 @@ export function coerceToImportRequireClause(
 	});
 }
 
-export function coerceToExtendsClause(input: T.ExtendsClause.Loose): ReturnType<typeof F.buildExtendsClause> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExtendsClause>;
-	const _ne_values = _resolveMany<T.Expression>(input.value, _K5, _K10);
-	_assertNonEmpty(_ne_values, 'extends_clause.values');
-	return F.buildExtendsClause({
-		value: _ne_values,
-		typeArguments: _resolveManyBranch<T.TypeArguments>(input.typeArguments, 'type_arguments')
-	});
+export function coerceToExtendsClause(
+	...input: readonly (T.ExtendsClauseSingle | T.ExtendsClause)[]
+): ReturnType<typeof F.buildExtendsClause> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExtendsClause) {
+		const data = input[0];
+		const stored = (data as unknown as { _extends_clause_single?: unknown })._extends_clause_single;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildExtendsClause(...(children as unknown as Parameters<typeof F.buildExtendsClause>));
+	}
+	return F.buildExtendsClause(...(input as unknown as Parameters<typeof F.buildExtendsClause>));
 }
 
 export function coerceToImplementsClause(

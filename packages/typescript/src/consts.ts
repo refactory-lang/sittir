@@ -2724,10 +2724,7 @@ export const FIELD_MAP: Record<
 		{ name: 'expressions', required: true, multiple: false },
 		{ name: 'semicolon', required: true, multiple: false }
 	],
-	extends_clause: [
-		{ name: 'values', required: true, multiple: true },
-		{ name: 'typeArguments', required: false, multiple: true }
-	],
+	extends_clause: [{ name: 'extendsClauseSingles', required: true, multiple: true }],
 	extends_type_clause: [{ name: 'types', required: true, multiple: true }],
 	field_definition: [
 		{ name: 'decorators', required: false, multiple: true },

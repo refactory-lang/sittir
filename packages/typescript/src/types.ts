@@ -1665,7 +1665,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[277, 'instantiation_expression'],
 	[278, 'import_require_clause'],
 	[279, 'extends_clause'],
-	[280, '_extends_clause_single'],
+	[280, 'extends_clause_single'],
 	[281, 'implements_clause'],
 	[282, 'ambient_declaration'],
 	[283, 'abstract_class_declaration'],
@@ -2882,6 +2882,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TemplateChars;
 		case 'function_signature_automatic_semicolon':
 			return TSKindId.FunctionSignatureAutomaticSemicolon;
+		case 'extends_clause_single':
+			return TSKindId.ExtendsClauseSingle;
 		case 'export_clause_group1':
 			return TSKindId.ExportClauseGroup1;
 		case 'import_statement_group1':
@@ -4488,10 +4490,8 @@ export interface ImportRequireClause {
 
 export interface ExtendsClause {
 	readonly $type: TSKindId.ExtendsClause;
-	readonly _value: NonEmptyArray<Expression>;
-	readonly _type_arguments?: readonly TypeArguments[];
-	values(): NonEmptyArray<Expression>;
-	typeArguments(): readonly TypeArguments[];
+	readonly _extends_clause_single: NonEmptyArray<ExtendsClauseSingle>;
+	extendsClauseSingles(): NonEmptyArray<ExtendsClauseSingle>;
 }
 
 export interface ExtendsClauseSingle {

@@ -353,6 +353,9 @@
       "member_expression": "decorator_member_expression",
       "call_expression": "decorator_call_expression"
     },
+    "extends_clause.extends_clause_single": {
+      "extends_clause_single": "_extends_clause_single"
+    },
     "ambient_declaration.content": {
       "ambient_declaration_global": "_ambient_declaration_global",
       "ambient_declaration_module": "_ambient_declaration_module"
@@ -2417,18 +2420,27 @@
       }
     },
     "extends_clause": {
-      "value": {
+      "extends_clause_single": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
         "nonEmpty": true
+      }
+    },
+    "_extends_clause_single": {
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
       },
       "type_arguments": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -6400,7 +6412,12 @@
           }
         }
       ],
-      "children": []
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "value",
+        "type_arguments"
+      ]
     },
     {
       "kind": "_for_header",
@@ -13689,9 +13706,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "value",
-          "propertyName": "values",
-          "paramName": "values",
+          "name": "extends_clause_single",
+          "propertyName": "extendsClauseSingles",
+          "paramName": "extendsClauseSingles",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -13699,47 +13716,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "expression",
-              "parseKind": "expression",
+              "name": "_extends_clause_single",
+              "parseKind": "extends_clause_single",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "expression"
-            ]
-          }
-        },
-        {
-          "name": "type_arguments",
-          "propertyName": "typeArguments",
-          "paramName": "typeArguments",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "type_arguments",
-              "parseKind": "type_arguments",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "type_arguments"
+              "_extends_clause_single"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
-        "value",
-        "type_arguments"
+        "extends_clause_single"
       ]
     },
     {

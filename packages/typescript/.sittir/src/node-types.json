@@ -2908,9 +2908,24 @@
   {
     "type": "extends_clause",
     "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "extends_clause_single",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "extends_clause_single",
+    "named": true,
     "fields": {
       "type_arguments": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
           {
@@ -2920,7 +2935,7 @@
         ]
       },
       "value": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
           {

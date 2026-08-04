@@ -1029,9 +1029,15 @@ export type TypescriptGrammar = {
 	readonly extends_clause: {
 		type: 'extends_clause';
 		named: true;
+		fields: {};
+		children: { multiple: true; required: true; types: [{ type: 'extends_clause_single'; named: true }] };
+	};
+	readonly extends_clause_single: {
+		type: 'extends_clause_single';
+		named: true;
 		fields: {
-			type_arguments: { multiple: true; required: false; types: [{ type: 'type_arguments'; named: true }] };
-			value: { multiple: true; required: true; types: [{ type: 'expression'; named: true }] };
+			type_arguments: { multiple: false; required: false; types: [{ type: 'type_arguments'; named: true }] };
+			value: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
 		};
 	};
 	readonly extends_type_clause: {

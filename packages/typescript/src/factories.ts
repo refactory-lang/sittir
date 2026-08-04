@@ -3184,25 +3184,20 @@ export function buildImportRequireClause(config: T.ImportRequireClause.Config) {
 	);
 }
 
-export function buildExtendsClause(config: T.ExtendsClause.Config) {
-	const _value = config.value ?? [];
-	const _type_arguments = config.typeArguments ?? [];
+export function buildExtendsClause(...children: T.ExtendsClauseSingle[]) {
+	_assertNonEmpty(children, 'extends_clause.children');
+	const _extends_clause_single = children;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ExtendsClause as const,
 				$source: 2 as const,
 				$named: true as const,
-				_value,
-				_type_arguments,
-				$with: {
-					values: (...values: NonEmptyArray<T.Expression>) => buildExtendsClause({ ...config, value: values }),
-					typeArguments: (...values: T.TypeArguments[]) => buildExtendsClause({ ...config, typeArguments: values })
-				}
+				_extends_clause_single,
+				$with: { $children: (...vs: T.ExtendsClauseSingle[]) => buildExtendsClause(...vs) }
 			},
 			{
-				values: () => _value,
-				typeArguments: () => _type_arguments
+				extendsClauseSingles: () => _extends_clause_single
 			}
 		),
 		methodsEngine
