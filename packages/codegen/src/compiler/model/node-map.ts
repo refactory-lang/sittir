@@ -1914,30 +1914,8 @@ function expandSlotWithVisibleAliasSources(slot: AssembledNonterminal, ctx: Kind
 		return acc;
 	}, 'single');
 
-	// A slot value referencing a declared supertype (e.g. `expression`) is
-	// stored as ONE opaque entry — the supertype's own parse name — with the
-	// per-arm names it actually erases to (potentially several levels down,
-	// e.g. `expression → primary_expression → parenthesized_expression`) not
-	// directly visible in `slot.values` at all. Without expanding through
-	// that closure, a source kind whose alias target is ALREADY reachable
-	// this way (python's `parenthesized_list_splat`, self-aliased to
-	// `parenthesized_expression`, which `expression` already reaches) looks
-	// "not present" and gets unioned in anyway — reintroducing, inside this
-	// one slot, exactly the parsekind-noninjective collision this expansion
-	// exists to avoid. Compute the closure once per slot, from its EXISTING
-	// values only (not `extraValues` — those are new arms from a possibly
-	// different source kind this same call, not yet part of the slot).
-	const existingSupertypeClosure = new Set<string>();
-	for (const existing of slot.values) {
-		const name = existing.parseKind?.name;
-		if (name === undefined) continue;
-		for (const n of transitiveParseKinds(name, (n) => {
-			const r = ctx.simplifiedRules?.[n];
-			return r?.type === SUPERTYPE ? r : undefined;
-		}).keys()) {
-			existingSupertypeClosure.add(n);
-		}
-	}
+	// Guards against re-widening a collision this expansion already erased once — see glossary.
+	const existingSupertypeClosure = existingSupertypeClosureOf(slot, ctx);
 
 	const extraValues: NodeOrTerminal[] = [];
 	for (const sourceKind of sources) {
@@ -1970,6 +1948,25 @@ function expandSlotWithVisibleAliasSources(slot: AssembledNonterminal, ctx: Kind
 	if (extraValues.length === 0) return slot;
 
 	return slot.with({ values: dedupeValues([...slot.values, ...extraValues]) });
+}
+
+// See glossary — full rationale.
+function existingSupertypeClosureOf(slot: AssembledNonterminal, ctx: KindedDeriveCtx): ReadonlySet<string> {
+	const closure = new Set<string>();
+	for (const existing of slot.values) {
+		const name = existing.parseKind?.name;
+		if (name === undefined) continue;
+		for (const n of transitiveParseKinds(
+			name,
+			(n) => {
+				const r = ctx.simplifiedRules?.[n];
+				return r?.type === SUPERTYPE ? r : undefined;
+			}
+		).keys()) {
+			closure.add(n);
+		}
+	}
+	return closure;
 }
 
 function buildSlotsRecord(

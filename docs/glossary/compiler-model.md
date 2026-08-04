@@ -654,6 +654,34 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `existingSupertypeClosureOf` (`packages/codegen/src/compiler/model/node-map.ts:1954`)
+
+```text
+A slot value referencing a declared supertype (e.g. `expression`) is stored
+as ONE opaque entry — the supertype's own parse name — with the per-arm
+names it actually erases to (potentially several levels down, e.g.
+`expression → primary_expression → parenthesized_expression`) not directly
+visible in `slot.values` at all. Without expanding through that closure, a
+source kind whose alias target is ALREADY reachable this way (python's
+`parenthesized_list_splat`, self-aliased to `parenthesized_expression`,
+which `expression` already reaches) looks "not present" to
+`expandSlotWithVisibleAliasSources`'s `alreadyPresent` guard and gets
+unioned in anyway — reintroducing, inside this one slot, exactly the
+parsekind-noninjective collision that expansion exists to avoid.
+
+Computed once per slot, from its EXISTING values only (not the caller's
+`extraValues` — those are new arms from a possibly different source kind
+the same call is still assembling, not yet part of the slot). Delegates the
+recursive closure walk to `types/rule.ts::transitiveParseKinds`, over
+`ctx.simplifiedRules` (the raw, pre-hydration rule bag — the only
+representation available at this point in the pipeline; `AssembledNode`
+objects for other kinds may not exist yet during this same construction
+pass). Contrast with `emitters/shared.ts::computeSupertypeTransitiveParseKinds`,
+a POST-hydration pass that walks the assemble-time-resolved `NodeMap`
+instead and does not share this walk — see that entry for why the two
+can't be unified.
+```
+
 ### `buildSlotsRecord` (`packages/codegen/src/compiler/model/node-map.ts:2391`)
 
 ```text

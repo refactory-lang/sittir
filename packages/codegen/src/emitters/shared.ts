@@ -36,15 +36,7 @@ export function isSlotBearingCompound(
 	return node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList';
 }
 
-/**
- * Stamp each supertype's transitive parse-kind closure once, post-hydration.
- * Walks the assemble-time-RESOLVED `AssembledSupertype.subtypes`/
- * `.subtypeParseNames` (hidden names already expanded to concrete kinds —
- * `AssembledSupertype`'s own doc comment: do not substitute the raw
- * `rule.subtypes`, which is less complete). `wrap.ts`'s storage-key routing
- * (`expandToConcreteParseKinds`) reads this stamp instead of re-walking the
- * closure per call site.
- */
+// Walks assemble-time-RESOLVED subtypes, not raw `rule.subtypes` — see glossary.
 export function computeSupertypeTransitiveParseKinds(nodeMap: NodeMap): void {
 	for (const [, root] of nodeMap.nodes) {
 		if (root.modelType !== 'supertype') continue;

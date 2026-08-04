@@ -285,32 +285,15 @@ export function subtypeParseNamesOf<T extends PhaseName>(rule: SupertypeRule<T>)
 	return pairs;
 }
 
-/**
- * One transitively-reachable subtype: its storage (render/source) identity
- * alongside its parse (`$type`) identity — the same two-sided reference
- * shape `compiler/model/node-map.ts`'s `NodeOrTerminal` uses for `.node`/
- * `.parseKind` plus `.storageKindId`/`.parseKindId`. Kept as this narrower
- * pair here (not `NodeOrTerminal` itself) because `types/` sits below
- * `compiler/` in the module layering and cannot import it; model-layer
- * callers (`computeSupertypeTransitiveParseKinds`) build real
- * `NodeOrTerminal` entries from this.
- */
+// Narrower pair than `NodeOrTerminal` because `types/` sits below `compiler/`
+// in the module layering and cannot import it — see glossary.
 export interface TransitiveSubtypeRef {
 	readonly storageKind: string;
 	readonly storageKindId?: number;
 	readonly kindId?: number;
 }
 
-/**
- * Transitive parse-kind closure of a supertype's subtypes — recurses through
- * nested supertypes (e.g. python's `expression → primary_expression →
- * parenthesized_expression`) via `lookup`, so callers only supply how to
- * resolve a name to its `SupertypeRule` in whatever representation they hold
- * (a raw rule bag pre-hydration, or a hydrated `NodeMap` post-hydration) —
- * the recursion and cycle guard live here once, not once per representation.
- * Keyed by parse name (what `$type` reports) — stamped ids carried in the
- * value, never re-derived by name downstream.
- */
+// See glossary — full contract.
 export function transitiveParseKinds<T extends PhaseName>(
 	startName: string,
 	lookup: (name: string) => SupertypeRule<T> | undefined

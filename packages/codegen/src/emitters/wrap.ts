@@ -52,14 +52,8 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
-/**
- * Expand each name to the parser's actual emittable leaf kinds: a plain
- * (non-supertype) name passes through as-is; a supertype name expands to its
- * stamped `transitiveParseKinds` closure (`computeSupertypeTransitiveParseKinds`,
- * emitters/shared.ts — computed once, post-assemble; this reads the stamp
- * rather than re-walking the closure per call site). Dedupes by normalized
- * (hidden-prefix-stripped) name across the whole input list.
- */
+// Reads the stamp `emitters/shared.ts::computeSupertypeTransitiveParseKinds`
+// computes once, post-assemble — see glossary.
 function expandToConcreteParseKinds(names: readonly string[], nodeMap: NodeMap): string[] {
 	const expanded: string[] = [];
 	const seen = new Set<string>();

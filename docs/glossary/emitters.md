@@ -4290,10 +4290,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *   ...). Accessing `data._expression` always returns undefined.
  *
  *   This helper expands each value's referenced kind through
- *   `expandRuntimeDiscriminatorKinds`, which normalizes the leading
- *   underscore on supertype names and walks the supertype tree to enumerate
- *   concrete subtypes. The result is a list of concrete `_<kind>` keys —
- *   exactly one of which will be populated on the data object at runtime.
+ *   `expandToConcreteParseKinds`, which normalizes the leading underscore on
+ *   supertype names and reads each supertype's stamped `transitiveParseKinds`
+ *   closure (`computeSupertypeTransitiveParseKinds`, computed once
+ *   post-assemble — see that entry) to enumerate concrete subtypes. The
+ *   result is a list of concrete `_<kind>` keys — exactly one of which will
+ *   be populated on the data object at runtime.
  *
  * Returns undefined when expansion produces a single key that already
  * matches the slot's nominal `_<slot.name>` — the legacy single-key access
@@ -4411,7 +4413,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * separatedList node's `elements` as a positional (unnamed) repeated
  * slot — routes through the SAME storage-info / concrete-kind-expansion
  * machinery real 'branch' repeated content fields use (`resolveFieldStorageInfo`,
- * `expandRuntimeDiscriminatorKinds`), so `_content`'s READ SOURCE matches
+ * `expandToConcreteParseKinds`), so `_content`'s READ SOURCE matches
  * whatever kind-named wire keys the native reader actually populates for
  * these elements (verified empirically — see `collectSeparatedListContentStorageKeys`).
  * `fieldName` is intentionally left `undefined` (positional/unnamed) so
@@ -5881,17 +5883,37 @@ parent's, per `polymorphVisibleName`'s convention — `_match_block` yields
 only for the (currently unobserved) shape where the target doesn't prefix-match
 at all.
 
-### `pushAliasMintedArmParseNames` (`packages/codegen/src/emitters/factory-map.ts`)
+### `expandToConcreteParseKinds` (`packages/codegen/src/emitters/wrap.ts:57`)
 
-`alias($._hidden, $.visible)` ALWAYS materializes a real node under its PARSE
-name at the arm's position — tree-sitter never splices through an aliased
-symbol — so the runtime child is keyed by that name. It is emitted ALONGSIDE
-the leaf expansion, because a slot may also reference the storage kind at
-un-aliased positions.
+Expands each name to the parser's actual emittable leaf kinds: a plain
+(non-supertype) name passes through as-is; a supertype name expands to its
+stamped `transitiveParseKinds` closure (`computeSupertypeTransitiveParseKinds`,
+below — computed once, post-assemble; this reads the stamp rather than
+re-walking the closure per call site, as the deleted `factory-map.ts::
+expandRuntimeDiscriminatorKinds`/`pushAliasMintedArmParseNames` did on every
+call). Dedupes by normalized (hidden-prefix-stripped) name across the whole
+input list.
 
-The pair is the DECLARED `aliasedFrom` fact stamped at the link flatten
-(`SupertypeRule.subtypeParseNames`). Twin association is keyed on that fact and
-is never derived by adding or stripping an underscore.
+### `computeSupertypeTransitiveParseKinds` (`packages/codegen/src/emitters/shared.ts:40`)
+
+Stamps each supertype's transitive parse-kind closure once, post-hydration,
+onto `AssembledSupertype.transitiveParseKinds` (a plain `NodeOrTerminal[]` —
+the same reference shape `.subtypes` already uses). Walks the assemble-time-
+RESOLVED `AssembledSupertype.subtypes`/`.subtypeParseNames` — hidden names
+already expanded to concrete kinds — NOT the raw `rule.subtypes`, which is
+less complete (`AssembledSupertype`'s own doc comment: do not substitute
+it). This is why this function does its own closure walk instead of calling
+`types/rule.ts::transitiveParseKinds` (the pre-hydration raw-rule helper
+`compiler/model/node-map.ts::existingSupertypeClosureOf` uses) — the two
+representations diverge (assemble does additional hidden-name resolution
+between link and itself) and a shared walk over either one would be wrong,
+or stale, for the other's caller. Confirmed empirically: reusing the
+raw-rule path here silently dropped a real typescript discriminator kind
+(`_statement_identifier_group1`) until caught by diffing regenerated
+`wrap.ts` byte-for-byte against pre-refactor HEAD for all 3 grammars.
+
+`wrap.ts`'s storage-key routing (`expandToConcreteParseKinds`, above) reads
+this stamp instead of re-walking the closure per call site.
 
 ### `coversExactly` (`packages/codegen/src/emitters/transport-common.ts`)
 
