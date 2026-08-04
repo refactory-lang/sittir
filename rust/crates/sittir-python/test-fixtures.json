@@ -70,7 +70,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -236,6 +237,168 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 108,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 21
+      },
+      "$nodeHandle": 0,
+      "_statement": [
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 0,
+            "end": 4
+          },
+          "$nodeHandle": 10,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 0,
+                "end": 4
+              },
+              "$nodeHandle": 13,
+              "_content": {
+                "$type": 201,
+                "$source": 0,
+                "$named": true,
+                "_value": "a",
+                "_subscript": [
+                  "1"
+                ],
+                "$other": [
+                  42,
+                  43
+                ],
+                "$span": {
+                  "start": 0,
+                  "end": 4
+                },
+                "$nodeHandle": 14,
+                "_subscript_trailing_sep": false
+              }
+            }
+          ],
+          "_simple_statement_trailing_sep": false
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 5,
+            "end": 12
+          },
+          "$nodeHandle": 11,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 5,
+                "end": 12
+              },
+              "$nodeHandle": 15,
+              "_content": {
+                "$type": 201,
+                "$source": 0,
+                "$named": true,
+                "_value": "b",
+                "_subscript": [
+                  "2",
+                  "3"
+                ],
+                "$other": [
+                  42,
+                  9,
+                  43
+                ],
+                "$span": {
+                  "start": 5,
+                  "end": 12
+                },
+                "$nodeHandle": 16,
+                "_subscript_trailing_sep": false
+              }
+            }
+          ],
+          "_simple_statement_trailing_sep": false
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 13,
+            "end": 21
+          },
+          "$nodeHandle": 12,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 13,
+                "end": 21
+              },
+              "$nodeHandle": 17,
+              "_content": {
+                "$type": 201,
+                "$source": 0,
+                "$named": true,
+                "_value": "c",
+                "_subscript": [
+                  "4",
+                  "5"
+                ],
+                "$other": [
+                  42,
+                  9,
+                  9,
+                  43
+                ],
+                "$span": {
+                  "start": 13,
+                  "end": 21
+                },
+                "$nodeHandle": 18,
+                "_subscript_trailing_sep": true
+              }
+            }
+          ],
+          "_simple_statement_trailing_sep": false
+        }
+      ]
+    },
+    "expectedOutput": "a[1]\nb[2,3]\nc[4,5,]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a[1]\nb[2, 3]\nc[4, 5,]",
+    "pattern": "module",
+    "edits": [],
+    "expectedSourceOut": "a[1]\nb[2,3]\nc[4,5,]",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (subscript value: (identifier) subscript: (integer))) (newline)) (statement_group1 (expression_statement (subscript value: (identifier) subscript: (integer) subscript: (integer))) (newline)) (statement_group1 (expression_statement (subscript value: (identifier) subscript: (integer) subscript: (integer))) (newline)))",
+    "wrappedText": "a[1]\nb[2,3]\nc[4,5,]",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 122,
       "$source": 0,
       "$named": true,
@@ -260,7 +423,8 @@
           "start": 0,
           "end": 4
         },
-        "$nodeHandle": 19
+        "$nodeHandle": 19,
+        "_subscript_trailing_sep": false
       }
     },
     "expectedOutput": "a[1]"
@@ -306,7 +470,8 @@
           "start": 5,
           "end": 12
         },
-        "$nodeHandle": 20
+        "$nodeHandle": 20,
+        "_subscript_trailing_sep": false
       }
     },
     "expectedOutput": "b[2,3]"
@@ -320,6 +485,54 @@
     "expectedSourceOut": "b[2,3]",
     "expectedReparseTree": "(expression_statement (subscript value: (identifier) subscript: (integer) subscript: (integer)))",
     "wrappedText": "b[2,3]",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 13,
+        "end": 21
+      },
+      "$nodeHandle": 8,
+      "_content": {
+        "$type": 201,
+        "$source": 0,
+        "$named": true,
+        "_value": "c",
+        "_subscript": [
+          "4",
+          "5"
+        ],
+        "$other": [
+          42,
+          9,
+          9,
+          43
+        ],
+        "$span": {
+          "start": 13,
+          "end": 21
+        },
+        "$nodeHandle": 21,
+        "_subscript_trailing_sep": true
+      }
+    },
+    "expectedOutput": "c[4,5,]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "c[4, 5,]",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "c[4,5,]",
+    "expectedReparseTree": "(expression_statement (subscript value: (identifier) subscript: (integer) subscript: (integer)))",
+    "wrappedText": "c[4,5,]",
     "wrappedOffset": 0
   },
   {
@@ -341,7 +554,8 @@
         "start": 0,
         "end": 4
       },
-      "$nodeHandle": 5
+      "$nodeHandle": 5,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "a[1]"
   },
@@ -377,7 +591,8 @@
         "start": 5,
         "end": 12
       },
-      "$nodeHandle": 7
+      "$nodeHandle": 7,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "b[2,3]"
   },
@@ -390,6 +605,44 @@
     "expectedSourceOut": "b[2,3]",
     "expectedReparseTree": "(subscript value: (identifier) subscript: (integer) subscript: (integer))",
     "wrappedText": "[b[2,3]]",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 201,
+      "$source": 0,
+      "$named": true,
+      "_value": "c",
+      "_subscript": [
+        "4",
+        "5"
+      ],
+      "$other": [
+        42,
+        9,
+        9,
+        43
+      ],
+      "$span": {
+        "start": 13,
+        "end": 21
+      },
+      "$nodeHandle": 9,
+      "_subscript_trailing_sep": true
+    },
+    "expectedOutput": "c[4,5,]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "c[4, 5,]",
+    "pattern": "subscript",
+    "edits": [],
+    "expectedSourceOut": "c[4,5,]",
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (integer) subscript: (integer))",
+    "wrappedText": "[c[4,5,]]",
     "wrappedOffset": 1
   },
   {
@@ -451,10 +704,12 @@
                   "start": 0,
                   "end": 4
                 },
-                "$nodeHandle": 23
+                "$nodeHandle": 23,
+                "_subscript_trailing_sep": false
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -505,10 +760,12 @@
                   "start": 5,
                   "end": 10
                 },
-                "$nodeHandle": 26
+                "$nodeHandle": 26,
+                "_subscript_trailing_sep": false
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -571,10 +828,12 @@
                   "start": 11,
                   "end": 22
                 },
-                "$nodeHandle": 29
+                "$nodeHandle": 29,
+                "_subscript_trailing_sep": false
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -635,10 +894,12 @@
                   "start": 23,
                   "end": 28
                 },
-                "$nodeHandle": 32
+                "$nodeHandle": 32,
+                "_subscript_trailing_sep": false
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -693,7 +954,8 @@
           "start": 0,
           "end": 4
         },
-        "$nodeHandle": 35
+        "$nodeHandle": 35,
+        "_subscript_trailing_sep": false
       }
     },
     "expectedOutput": "a[:]"
@@ -750,7 +1012,8 @@
           "start": 5,
           "end": 10
         },
-        "$nodeHandle": 37
+        "$nodeHandle": 37,
+        "_subscript_trailing_sep": false
       }
     },
     "expectedOutput": "b[5:]"
@@ -819,7 +1082,8 @@
           "start": 11,
           "end": 22
         },
-        "$nodeHandle": 39
+        "$nodeHandle": 39,
+        "_subscript_trailing_sep": false
       }
     },
     "expectedOutput": "b[5:6,...]"
@@ -886,7 +1150,8 @@
           "start": 23,
           "end": 28
         },
-        "$nodeHandle": 41
+        "$nodeHandle": 41,
+        "_subscript_trailing_sep": false
       }
     },
     "expectedOutput": "c[::]"
@@ -931,7 +1196,8 @@
         "start": 0,
         "end": 4
       },
-      "$nodeHandle": 6
+      "$nodeHandle": 6,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "a[:]"
   },
@@ -978,7 +1244,8 @@
         "start": 5,
         "end": 10
       },
-      "$nodeHandle": 9
+      "$nodeHandle": 9,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "b[5:]"
   },
@@ -1037,7 +1304,8 @@
         "start": 11,
         "end": 22
       },
-      "$nodeHandle": 12
+      "$nodeHandle": 12,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "b[5:6,...]"
   },
@@ -1094,7 +1362,8 @@
         "start": 23,
         "end": 28
       },
-      "$nodeHandle": 15
+      "$nodeHandle": 15,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "c[::]"
   },
@@ -1172,7 +1441,8 @@
                 "$nodeHandle": 7
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -1410,7 +1680,8 @@
                 "$nodeHandle": 41
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -1492,7 +1763,8 @@
                 "$nodeHandle": 46
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 145,
@@ -1660,7 +1932,8 @@
                         "$nodeHandle": 59
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -1783,7 +2056,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -2692,7 +2966,8 @@
                     "$nodeHandle": 114
                   }
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -3553,7 +3828,8 @@
                       "$nodeHandle": 48,
                       "_content": "b"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -3656,7 +3932,8 @@
                       "$nodeHandle": 55,
                       "_content": "c"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -3758,7 +4035,8 @@
                       "$nodeHandle": 62,
                       "_content": "b"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -3860,7 +4138,8 @@
                       "$nodeHandle": 69,
                       "_content": "b"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -3932,7 +4211,8 @@
                       "$nodeHandle": 74,
                       "_content": "a"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -4039,7 +4319,8 @@
                   "$nodeHandle": 80,
                   "_content": "b"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -4158,7 +4439,8 @@
                   "$nodeHandle": 87,
                   "_content": "c"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -4276,7 +4558,8 @@
                   "$nodeHandle": 94,
                   "_content": "b"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -4394,7 +4677,8 @@
                   "$nodeHandle": 101,
                   "_content": "b"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -4482,7 +4766,8 @@
                   "$nodeHandle": 106,
                   "_content": "a"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -5084,7 +5369,8 @@
                 "$nodeHandle": 21
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -5160,7 +5446,8 @@
                 "$nodeHandle": 31
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -6048,7 +6335,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -6096,7 +6384,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -6134,10 +6423,12 @@
                   "start": 20,
                   "end": 38
                 },
-                "$nodeHandle": 22
+                "$nodeHandle": 22,
+                "_argument_trailing_sep": false
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -7226,7 +7517,8 @@
                 "$nodeHandle": 26
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -7262,7 +7554,8 @@
                 "$nodeHandle": 32
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -7297,7 +7590,8 @@
                 "$nodeHandle": 34
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -7332,7 +7626,8 @@
                 "$nodeHandle": 36
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -7367,7 +7662,8 @@
                 "$nodeHandle": 38
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -8013,7 +8309,8 @@
                 "$nodeHandle": 26
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -8049,7 +8346,8 @@
                 "$nodeHandle": 28
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -8085,7 +8383,8 @@
                 "$nodeHandle": 30
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -8121,7 +8420,8 @@
                 "$nodeHandle": 32
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -8157,7 +8457,8 @@
                 "$nodeHandle": 34
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -8193,7 +8494,8 @@
                 "$nodeHandle": 36
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -8677,7 +8979,8 @@
                 "$nodeHandle": 12
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -8724,7 +9027,8 @@
                 "$nodeHandle": 15
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -9061,7 +9365,8 @@
                       "start": 6,
                       "end": 10
                     },
-                    "$nodeHandle": 16
+                    "$nodeHandle": 16,
+                    "_subscript_trailing_sep": false
                   },
                   "_operator": 11,
                   "_right": {
@@ -9106,7 +9411,8 @@
                 "$nodeHandle": 12
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -9182,7 +9488,8 @@
               "start": 6,
               "end": 10
             },
-            "$nodeHandle": 23
+            "$nodeHandle": 23,
+            "_subscript_trailing_sep": false
           },
           "_operator": 11,
           "_right": {
@@ -9290,7 +9597,8 @@
             "start": 6,
             "end": 10
           },
-          "$nodeHandle": 29
+          "$nodeHandle": 29,
+          "_subscript_trailing_sep": false
         },
         "_operator": 11,
         "_right": {
@@ -9370,7 +9678,8 @@
           "start": 6,
           "end": 10
         },
-        "$nodeHandle": 32
+        "$nodeHandle": 32,
+        "_subscript_trailing_sep": false
       },
       "_operator": 11,
       "_right": {
@@ -9505,7 +9814,8 @@
         "start": 6,
         "end": 10
       },
-      "$nodeHandle": 7
+      "$nodeHandle": 7,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "b[c]"
   },
@@ -9691,7 +10001,8 @@
                 "$nodeHandle": 10
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -10071,7 +10382,8 @@
                 "$nodeHandle": 23
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -10108,7 +10420,8 @@
                 "$nodeHandle": 26
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -10169,7 +10482,8 @@
                 "$nodeHandle": 28
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -10230,7 +10544,8 @@
                 "$nodeHandle": 32
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -10925,7 +11240,8 @@
                 "$nodeHandle": 43
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -11022,7 +11338,8 @@
                 "$nodeHandle": 50
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -11070,7 +11387,8 @@
                 "$nodeHandle": 57
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -11118,7 +11436,8 @@
                 "$nodeHandle": 60
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -11202,7 +11521,8 @@
                 "$nodeHandle": 63
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -11250,7 +11570,8 @@
                 "$nodeHandle": 69
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -12362,7 +12683,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -12464,7 +12786,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -12581,7 +12904,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -12667,7 +12991,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -12709,7 +13034,8 @@
                     "start": 44,
                     "end": 48
                   },
-                  "$nodeHandle": 76
+                  "$nodeHandle": 76,
+                  "_subscript_trailing_sep": false
                 },
                 "$span": {
                   "start": 44,
@@ -12756,7 +13082,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -12858,7 +13185,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -13272,7 +13600,8 @@
             "start": 44,
             "end": 48
           },
-          "$nodeHandle": 108
+          "$nodeHandle": 108,
+          "_subscript_trailing_sep": false
         },
         "$span": {
           "start": 44,
@@ -13785,7 +14114,8 @@
           "start": 44,
           "end": 48
         },
-        "$nodeHandle": 134
+        "$nodeHandle": 134,
+        "_subscript_trailing_sep": false
       },
       "$span": {
         "start": 44,
@@ -14029,7 +14359,8 @@
         "start": 44,
         "end": 48
       },
-      "$nodeHandle": 33
+      "$nodeHandle": 33,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "a[b]"
   },
@@ -14161,7 +14492,8 @@
                           "start": 17,
                           "end": 23
                         },
-                        "$nodeHandle": 16
+                        "$nodeHandle": 16,
+                        "_type_trailing_sep": false
                       },
                       "$span": {
                         "start": 13,
@@ -14193,7 +14525,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -14275,7 +14608,8 @@
                   "start": 17,
                   "end": 23
                 },
-                "$nodeHandle": 23
+                "$nodeHandle": 23,
+                "_type_trailing_sep": false
               },
               "$span": {
                 "start": 13,
@@ -14376,7 +14710,8 @@
                 "start": 17,
                 "end": 23
               },
-              "$nodeHandle": 29
+              "$nodeHandle": 29,
+              "_type_trailing_sep": false
             },
             "$span": {
               "start": 13,
@@ -14462,7 +14797,8 @@
             "start": 17,
             "end": 23
           },
-          "$nodeHandle": 33
+          "$nodeHandle": 33,
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 13,
@@ -14585,7 +14921,8 @@
                 "$nodeHandle": 54
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -14621,7 +14958,8 @@
                 "$nodeHandle": 56
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -14657,7 +14995,8 @@
                 "$nodeHandle": 58
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -14693,7 +15032,8 @@
                 "$nodeHandle": 60
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -14729,7 +15069,8 @@
                 "$nodeHandle": 62
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -14765,7 +15106,8 @@
                 "$nodeHandle": 64
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -14801,7 +15143,8 @@
                 "$nodeHandle": 66
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -14837,7 +15180,8 @@
                 "$nodeHandle": 68
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -14873,7 +15217,8 @@
                 "$nodeHandle": 70
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -14909,7 +15254,8 @@
                 "$nodeHandle": 72
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -14945,7 +15291,8 @@
                 "$nodeHandle": 74
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -14981,7 +15328,8 @@
                 "$nodeHandle": 76
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -15017,7 +15365,8 @@
                 "$nodeHandle": 78
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -18424,7 +18773,8 @@
                         "$nodeHandle": 43
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 },
                 {
                   "$type": 110,
@@ -18461,7 +18811,8 @@
                         "_content": "1"
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 },
                 {
                   "$type": 110,
@@ -18522,7 +18873,8 @@
                         }
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 },
                 {
                   "$type": 110,
@@ -18572,7 +18924,8 @@
                         }
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 },
                 {
                   "$type": 110,
@@ -18748,7 +19101,8 @@
                         }
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -18848,7 +19202,8 @@
                     "$nodeHandle": 74
                   }
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             },
             {
               "$type": 110,
@@ -18885,7 +19240,8 @@
                     "_content": "1"
                   }
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             },
             {
               "$type": 110,
@@ -18946,7 +19302,8 @@
                     }
                   }
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             },
             {
               "$type": 110,
@@ -18996,7 +19353,8 @@
                     }
                   }
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             },
             {
               "$type": 110,
@@ -19172,7 +19530,8 @@
                     }
                   }
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -21027,7 +21386,8 @@
                         "_expression": "a"
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -21240,7 +21600,8 @@
                     "_expression": "a"
                   }
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -21468,7 +21829,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -21529,7 +21891,8 @@
                 "$nodeHandle": 25
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -21613,7 +21976,8 @@
                 "$nodeHandle": 29
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -22413,7 +22777,8 @@
                                 "$nodeHandle": 30
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -22739,7 +23104,8 @@
                         "$nodeHandle": 23
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 },
                 {
                   "$type": 110,
@@ -22814,7 +23180,8 @@
                         }
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -22946,7 +23313,8 @@
                     "$nodeHandle": 37
                   }
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             },
             {
               "$type": 110,
@@ -23021,7 +23389,8 @@
                     }
                   }
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -23591,7 +23960,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -23712,7 +24082,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -24386,7 +24757,8 @@
                 "$nodeHandle": 8
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -24684,7 +25056,8 @@
                               "start": 4,
                               "end": 7
                             },
-                            "$nodeHandle": 29
+                            "$nodeHandle": 29,
+                            "_type_trailing_sep": false
                           },
                           "$span": {
                             "start": 3,
@@ -24725,7 +25098,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -24800,7 +25174,8 @@
                           "start": 19,
                           "end": 24
                         },
-                        "$nodeHandle": 37
+                        "$nodeHandle": 37,
+                        "_type_trailing_sep": false
                       },
                       "$span": {
                         "start": 15,
@@ -24822,7 +25197,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -24917,7 +25293,8 @@
                       "start": 4,
                       "end": 7
                     },
-                    "$nodeHandle": 45
+                    "$nodeHandle": 45,
+                    "_type_trailing_sep": false
                   },
                   "$span": {
                     "start": 3,
@@ -25036,7 +25413,8 @@
                   "start": 19,
                   "end": 24
                 },
-                "$nodeHandle": 52
+                "$nodeHandle": 52,
+                "_type_trailing_sep": false
               },
               "$span": {
                 "start": 15,
@@ -25140,7 +25518,8 @@
                     "start": 4,
                     "end": 7
                   },
-                  "$nodeHandle": 59
+                  "$nodeHandle": 59,
+                  "_type_trailing_sep": false
                 },
                 "$span": {
                   "start": 3,
@@ -25249,7 +25628,8 @@
                 "start": 19,
                 "end": 24
               },
-              "$nodeHandle": 65
+              "$nodeHandle": 65,
+              "_type_trailing_sep": false
             },
             "$span": {
               "start": 15,
@@ -25338,7 +25718,8 @@
                 "start": 4,
                 "end": 7
               },
-              "$nodeHandle": 70
+              "$nodeHandle": 70,
+              "_type_trailing_sep": false
             },
             "$span": {
               "start": 3,
@@ -25423,7 +25804,8 @@
             "start": 4,
             "end": 7
           },
-          "$nodeHandle": 74
+          "$nodeHandle": 74,
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 3,
@@ -25541,7 +25923,8 @@
             "start": 19,
             "end": 24
           },
-          "$nodeHandle": 77
+          "$nodeHandle": 77,
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 15,
@@ -25636,7 +26019,8 @@
                 "$nodeHandle": 43
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -25660,7 +26044,8 @@
               "$nodeHandle": 44,
               "_content": "0xDEAD"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -25684,7 +26069,8 @@
               "$nodeHandle": 45,
               "_content": "0XDEAD"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -25708,7 +26094,8 @@
               "$nodeHandle": 46,
               "_content": "1j"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -25743,7 +26130,8 @@
                 "$nodeHandle": 48
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -25767,7 +26155,8 @@
               "$nodeHandle": 49,
               "_content": "0o123"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -25791,7 +26180,8 @@
               "$nodeHandle": 50,
               "_content": "0O123"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -25815,7 +26205,8 @@
               "$nodeHandle": 51,
               "_content": "0b001"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -25839,7 +26230,8 @@
               "$nodeHandle": 52,
               "_content": "0B001"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -25863,7 +26255,8 @@
               "$nodeHandle": 53,
               "_content": "1_1"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -25887,7 +26280,8 @@
               "$nodeHandle": 54,
               "_content": "0B1_1"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -25911,7 +26305,8 @@
               "$nodeHandle": 55,
               "_content": "0O1_1"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -25935,7 +26330,8 @@
               "$nodeHandle": 56,
               "_content": "0L"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -26427,7 +26823,8 @@
                 "$nodeHandle": 28
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -26462,7 +26859,8 @@
                 "$nodeHandle": 30
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -26486,7 +26884,8 @@
               "$nodeHandle": 31,
               "_content": "123.4123"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -26510,7 +26909,8 @@
               "$nodeHandle": 32,
               "_content": "123.123J"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -26534,7 +26934,8 @@
               "$nodeHandle": 33,
               "_content": "1_1.3_1"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -26558,7 +26959,8 @@
               "$nodeHandle": 34,
               "_content": "1_1."
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -26582,7 +26984,8 @@
               "$nodeHandle": 35,
               "_content": "1e+3_4j"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -26606,7 +27009,8 @@
               "$nodeHandle": 36,
               "_content": ".3e1_4"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -26952,7 +27356,8 @@
               "$nodeHandle": 20,
               "_content": "1e322"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -26976,7 +27381,8 @@
               "$nodeHandle": 21,
               "_content": "1e-3"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -27000,7 +27406,8 @@
               "$nodeHandle": 22,
               "_content": "1e+3"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -27024,7 +27431,8 @@
               "$nodeHandle": 23,
               "_content": "1.8e10"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -27048,7 +27456,8 @@
               "$nodeHandle": 24,
               "_content": "1.e10"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -27083,7 +27492,8 @@
                 "$nodeHandle": 26
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -27366,7 +27776,8 @@
                 "$nodeHandle": 35
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -27416,7 +27827,8 @@
                 "$nodeHandle": 38
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -27454,7 +27866,8 @@
                 "$nodeHandle": 41
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -27492,7 +27905,8 @@
                 "$nodeHandle": 43
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -27567,7 +27981,8 @@
                 "$nodeHandle": 45
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -27603,7 +28018,8 @@
                 "_content": []
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -27641,7 +28057,8 @@
                 "$nodeHandle": 52
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -28408,7 +28825,8 @@
                 "$nodeHandle": 12
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -29061,7 +29479,8 @@
                 "$nodeHandle": 97
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -29133,7 +29552,8 @@
                 "$nodeHandle": 105
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -29205,7 +29625,8 @@
                 "$nodeHandle": 108
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -29256,7 +29677,8 @@
                 "$nodeHandle": 111
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -29331,7 +29753,8 @@
                 "$nodeHandle": 114
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -29396,7 +29819,8 @@
                 "$nodeHandle": 118
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -29447,7 +29871,8 @@
                 "$nodeHandle": 122
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -29525,7 +29950,8 @@
                 "$nodeHandle": 125
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -29588,7 +30014,8 @@
                 "$nodeHandle": 130
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -29653,7 +30080,8 @@
                 "$nodeHandle": 134
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -29729,7 +30157,8 @@
                 "$nodeHandle": 138
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 145,
@@ -29868,7 +30297,8 @@
                         "$nodeHandle": 147
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -30066,7 +30496,8 @@
                         "$nodeHandle": 158
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -32750,7 +33181,8 @@
                     "$nodeHandle": 272
                   }
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -32964,7 +33396,8 @@
                     "$nodeHandle": 283
                   }
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -33280,7 +33713,8 @@
                 "$nodeHandle": 46
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -33405,7 +33839,8 @@
                 "$nodeHandle": 52
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -33468,7 +33903,8 @@
                 "$nodeHandle": 60
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -33521,7 +33957,8 @@
                 "$nodeHandle": 64
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -33585,7 +34022,8 @@
                 "$nodeHandle": 67
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -33695,7 +34133,8 @@
                 "$nodeHandle": 71
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -34935,7 +35374,8 @@
                 "$nodeHandle": 37
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -35044,7 +35484,8 @@
                 "$nodeHandle": 41
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -35116,7 +35557,8 @@
                 "$nodeHandle": 47
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -35188,7 +35630,8 @@
                 "$nodeHandle": 50
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -35239,7 +35682,8 @@
                 "$nodeHandle": 53
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -35313,7 +35757,8 @@
                 "$nodeHandle": 56
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -36348,7 +36793,8 @@
                 "$nodeHandle": 7
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -36500,7 +36946,8 @@
               "$nodeHandle": 10,
               "_content": "True"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -36524,7 +36971,8 @@
               "$nodeHandle": 11,
               "_content": "False"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -36548,7 +36996,8 @@
               "$nodeHandle": 12,
               "_content": "None"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -36737,7 +37186,8 @@
                 "$nodeHandle": 9
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -37052,7 +37502,8 @@
                 "$nodeHandle": 31
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -37090,7 +37541,8 @@
                 "$nodeHandle": 33
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -37128,7 +37580,8 @@
                 "$nodeHandle": 35
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -37166,7 +37619,8 @@
                 "$nodeHandle": 37
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -37204,7 +37658,8 @@
                 "$nodeHandle": 39
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -37242,7 +37697,8 @@
                 "$nodeHandle": 41
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -37297,7 +37753,8 @@
                 "$nodeHandle": 43
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -38222,7 +38679,8 @@
                   "start": 40,
                   "end": 45
                 },
-                "$nodeHandle": 109
+                "$nodeHandle": 109,
+                "_subscript_trailing_sep": false
               },
               "_attribute": "c",
               "$other": [
@@ -38736,7 +39194,8 @@
                 "start": 40,
                 "end": 45
               },
-              "$nodeHandle": 133
+              "$nodeHandle": 133,
+              "_subscript_trailing_sep": false
             },
             "_attribute": "c",
             "$other": [
@@ -39150,7 +39609,8 @@
           "start": 40,
           "end": 45
         },
-        "$nodeHandle": 142
+        "$nodeHandle": 142,
+        "_subscript_trailing_sep": false
       },
       "_attribute": "c",
       "$other": [
@@ -39207,7 +39667,8 @@
         "start": 40,
         "end": 45
       },
-      "$nodeHandle": 36
+      "$nodeHandle": 36,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "*a[b]"
   },
@@ -39422,7 +39883,8 @@
                 "$nodeHandle": 43
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -39508,7 +39970,8 @@
                 "$nodeHandle": 50
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -39705,7 +40168,8 @@
                 "$nodeHandle": 55
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -39837,7 +40301,8 @@
                 "$nodeHandle": 67
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -41013,7 +41478,8 @@
                 "$nodeHandle": 49
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -41047,7 +41513,8 @@
                 "$nodeHandle": 54
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -41121,7 +41588,8 @@
                 "$nodeHandle": 56
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -41185,7 +41653,8 @@
                 "$nodeHandle": 61
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -41263,7 +41732,8 @@
                 "$nodeHandle": 65
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -41323,7 +41793,8 @@
                             "start": 40,
                             "end": 44
                           },
-                          "$nodeHandle": 74
+                          "$nodeHandle": 74,
+                          "_subscript_trailing_sep": false
                         },
                         "_attribute": "c",
                         "$other": [
@@ -41358,7 +41829,8 @@
                 "$nodeHandle": 70
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -41443,7 +41915,8 @@
                 "$nodeHandle": 76
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -41858,7 +42331,8 @@
                     "start": 40,
                     "end": 44
                   },
-                  "$nodeHandle": 101
+                  "$nodeHandle": 101,
+                  "_subscript_trailing_sep": false
                 },
                 "_attribute": "c",
                 "$other": [
@@ -42360,7 +42834,8 @@
                   "start": 40,
                   "end": 44
                 },
-                "$nodeHandle": 121
+                "$nodeHandle": 121,
+                "_subscript_trailing_sep": false
               },
               "_attribute": "c",
               "$other": [
@@ -42539,7 +43014,8 @@
           "start": 40,
           "end": 44
         },
-        "$nodeHandle": 132
+        "$nodeHandle": 132,
+        "_subscript_trailing_sep": false
       },
       "_attribute": "c",
       "$other": [
@@ -42583,7 +43059,8 @@
         "start": 40,
         "end": 44
       },
-      "$nodeHandle": 34
+      "$nodeHandle": 34,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "a[b]"
   },
@@ -42783,7 +43260,8 @@
                 "$nodeHandle": 19
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -42883,7 +43361,8 @@
                 "$nodeHandle": 26
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -43379,7 +43858,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -43453,7 +43933,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -43850,7 +44331,8 @@
                       "start": 1,
                       "end": 5
                     },
-                    "$nodeHandle": 21
+                    "$nodeHandle": 21,
+                    "_subscript_trailing_sep": false
                   },
                   "_subscript": [
                     "c"
@@ -43863,7 +44345,8 @@
                     "start": 1,
                     "end": 8
                   },
-                  "$nodeHandle": 20
+                  "$nodeHandle": 20,
+                  "_subscript_trailing_sep": false
                 },
                 "_comprehension_clauses": {
                   "$type": 250,
@@ -43935,7 +44418,8 @@
                 "$nodeHandle": 19
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -44021,7 +44505,8 @@
                 "$nodeHandle": 27
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -44074,7 +44559,8 @@
               "start": 1,
               "end": 5
             },
-            "$nodeHandle": 33
+            "$nodeHandle": 33,
+            "_subscript_trailing_sep": false
           },
           "_subscript": [
             "c"
@@ -44087,7 +44573,8 @@
             "start": 1,
             "end": 8
           },
-          "$nodeHandle": 32
+          "$nodeHandle": 32,
+          "_subscript_trailing_sep": false
         },
         "_comprehension_clauses": {
           "$type": 250,
@@ -44288,7 +44775,8 @@
             "start": 1,
             "end": 5
           },
-          "$nodeHandle": 43
+          "$nodeHandle": 43,
+          "_subscript_trailing_sep": false
         },
         "_subscript": [
           "c"
@@ -44301,7 +44789,8 @@
           "start": 1,
           "end": 8
         },
-        "$nodeHandle": 42
+        "$nodeHandle": 42,
+        "_subscript_trailing_sep": false
       },
       "_comprehension_clauses": {
         "$type": 250,
@@ -44487,7 +44976,8 @@
           "start": 1,
           "end": 5
         },
-        "$nodeHandle": 51
+        "$nodeHandle": 51,
+        "_subscript_trailing_sep": false
       },
       "_subscript": [
         "c"
@@ -44500,7 +44990,8 @@
         "start": 1,
         "end": 8
       },
-      "$nodeHandle": 5
+      "$nodeHandle": 5,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "a[b][c]"
   },
@@ -44534,7 +45025,8 @@
         "start": 1,
         "end": 5
       },
-      "$nodeHandle": 6
+      "$nodeHandle": 6,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "a[b]"
   },
@@ -44594,7 +45086,8 @@
                 "$nodeHandle": 21
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -44649,7 +45142,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -44707,7 +45201,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -44762,7 +45257,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -45203,7 +45699,8 @@
               "start": 1,
               "end": 5
             },
-            "$nodeHandle": 69
+            "$nodeHandle": 69,
+            "_subscript_trailing_sep": false
           },
           "_subscript": [
             "c"
@@ -45216,7 +45713,8 @@
             "start": 1,
             "end": 8
           },
-          "$nodeHandle": 68
+          "$nodeHandle": 68,
+          "_subscript_trailing_sep": false
         },
         "_comprehension_clauses": {
           "$type": 250,
@@ -45581,7 +46079,8 @@
             "start": 1,
             "end": 5
           },
-          "$nodeHandle": 93
+          "$nodeHandle": 93,
+          "_subscript_trailing_sep": false
         },
         "_subscript": [
           "c"
@@ -45594,7 +46093,8 @@
           "start": 1,
           "end": 8
         },
-        "$nodeHandle": 92
+        "$nodeHandle": 92,
+        "_subscript_trailing_sep": false
       },
       "_comprehension_clauses": {
         "$type": 250,
@@ -45923,7 +46423,8 @@
           "start": 1,
           "end": 5
         },
-        "$nodeHandle": 112
+        "$nodeHandle": 112,
+        "_subscript_trailing_sep": false
       },
       "_subscript": [
         "c"
@@ -45936,7 +46437,8 @@
         "start": 1,
         "end": 8
       },
-      "$nodeHandle": 7
+      "$nodeHandle": 7,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "a[b][c]"
   },
@@ -45970,7 +46472,8 @@
         "start": 1,
         "end": 5
       },
-      "$nodeHandle": 8
+      "$nodeHandle": 8,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "a[b]"
   },
@@ -46392,7 +46895,8 @@
                           "start": 32,
                           "end": 40
                         },
-                        "$nodeHandle": 78
+                        "$nodeHandle": 78,
+                        "_case_pattern_trailing_sep": false
                       }
                     }
                   ],
@@ -46472,10 +46976,12 @@
                                   "start": 50,
                                   "end": 67
                                 },
-                                "$nodeHandle": 86
+                                "$nodeHandle": 86,
+                                "_argument_trailing_sep": false
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         },
                         {
                           "$type": 110,
@@ -46520,7 +47026,8 @@
                                 "$nodeHandle": 90
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -46538,7 +47045,8 @@
                     "start": 27,
                     "end": 87
                   },
-                  "$nodeHandle": 73
+                  "$nodeHandle": 73,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -46593,7 +47101,8 @@
                           "start": 97,
                           "end": 105
                         },
-                        "$nodeHandle": 93
+                        "$nodeHandle": 93,
+                        "_case_pattern_trailing_sep": false
                       }
                     }
                   ],
@@ -46668,7 +47177,8 @@
                                 "$nodeHandle": 100
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -46686,7 +47196,8 @@
                     "start": 92,
                     "end": 138
                   },
-                  "$nodeHandle": 74
+                  "$nodeHandle": 74,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -46765,7 +47276,8 @@
                           "start": 148,
                           "end": 160
                         },
-                        "$nodeHandle": 104
+                        "$nodeHandle": 104,
+                        "_case_pattern_trailing_sep": false
                       }
                     }
                   ],
@@ -46861,7 +47373,8 @@
                                 "$nodeHandle": 113
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -46879,7 +47392,8 @@
                     "start": 143,
                     "end": 202
                   },
-                  "$nodeHandle": 75
+                  "$nodeHandle": 75,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -46958,7 +47472,8 @@
                           "start": 212,
                           "end": 229
                         },
-                        "$nodeHandle": 118
+                        "$nodeHandle": 118,
+                        "_case_pattern_trailing_sep": false
                       }
                     }
                   ],
@@ -47074,7 +47589,8 @@
                                 }
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -47092,7 +47608,8 @@
                     "start": 207,
                     "end": 286
                   },
-                  "$nodeHandle": 76
+                  "$nodeHandle": 76,
+                  "_case_pattern_trailing_sep": false
                 }
               ],
               "_comment": "# The rest of your commands go here",
@@ -47111,7 +47628,8 @@
             "start": 0,
             "end": 326
           },
-          "$nodeHandle": 67
+          "$nodeHandle": 67,
+          "_subject_trailing_sep": false
         }
       ]
     },
@@ -48501,7 +49019,8 @@
                           "start": 32,
                           "end": 50
                         },
-                        "$nodeHandle": 33
+                        "$nodeHandle": 33,
+                        "_case_pattern_trailing_sep": false
                       }
                     }
                   ],
@@ -48617,7 +49136,8 @@
                                         "$nodeHandle": 45
                                       }
                                     }
-                                  ]
+                                  ],
+                                  "_simple_statement_trailing_sep": false
                                 }
                               ]
                             },
@@ -48654,7 +49174,8 @@
                     "start": 27,
                     "end": 125
                   },
-                  "$nodeHandle": 31
+                  "$nodeHandle": 31,
+                  "_case_pattern_trailing_sep": false
                 }
               ],
               "$span": {
@@ -48672,7 +49193,8 @@
             "start": 0,
             "end": 125
           },
-          "$nodeHandle": 25
+          "$nodeHandle": 25,
+          "_subject_trailing_sep": false
         }
       ]
     },
@@ -49188,7 +49710,8 @@
                           "start": 48,
                           "end": 56
                         },
-                        "$nodeHandle": 54
+                        "$nodeHandle": 54,
+                        "_case_pattern_trailing_sep": false
                       }
                     }
                   ],
@@ -49215,7 +49738,8 @@
                         "$nodeHandle": 58,
                         "_content": "..."
                       }
-                    ]
+                    ],
+                    "_simple_statement_trailing_sep": false
                   },
                   "$other": [
                     26,
@@ -49225,7 +49749,8 @@
                     "start": 43,
                     "end": 88
                   },
-                  "$nodeHandle": 49
+                  "$nodeHandle": 49,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -49304,7 +49829,8 @@
                           "start": 98,
                           "end": 115
                         },
-                        "$nodeHandle": 60
+                        "$nodeHandle": 60,
+                        "_case_pattern_trailing_sep": false
                       }
                     }
                   ],
@@ -49330,7 +49856,8 @@
                         },
                         "$nodeHandle": 66
                       }
-                    ]
+                    ],
+                    "_simple_statement_trailing_sep": false
                   },
                   "$other": [
                     26,
@@ -49340,7 +49867,8 @@
                     "start": 93,
                     "end": 121
                   },
-                  "$nodeHandle": 50
+                  "$nodeHandle": 50,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -49418,7 +49946,8 @@
                           "start": 131,
                           "end": 149
                         },
-                        "$nodeHandle": 68
+                        "$nodeHandle": 68,
+                        "_case_pattern_trailing_sep": false
                       }
                     }
                   ],
@@ -49444,7 +49973,8 @@
                         },
                         "$nodeHandle": 74
                       }
-                    ]
+                    ],
+                    "_simple_statement_trailing_sep": false
                   },
                   "$other": [
                     26,
@@ -49454,7 +49984,8 @@
                     "start": 126,
                     "end": 155
                   },
-                  "$nodeHandle": 51
+                  "$nodeHandle": 51,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -49584,10 +50115,12 @@
                                   "start": 176,
                                   "end": 226
                                 },
-                                "$nodeHandle": 81
+                                "$nodeHandle": 81,
+                                "_argument_trailing_sep": false
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -49605,7 +50138,8 @@
                     "start": 160,
                     "end": 226
                   },
-                  "$nodeHandle": 52
+                  "$nodeHandle": 52,
+                  "_case_pattern_trailing_sep": false
                 }
               ],
               "$span": {
@@ -49623,7 +50157,8 @@
             "start": 0,
             "end": 226
           },
-          "$nodeHandle": 43
+          "$nodeHandle": 43,
+          "_subject_trailing_sep": false
         }
       ]
     },
@@ -50160,7 +50695,8 @@
                               "start": 32,
                               "end": 41
                             },
-                            "$nodeHandle": 65
+                            "$nodeHandle": 65,
+                            "_case_pattern_trailing_sep": false
                           },
                           {
                             "$type": 248,
@@ -50227,7 +50763,8 @@
                               "start": 44,
                               "end": 59
                             },
-                            "$nodeHandle": 66
+                            "$nodeHandle": 66,
+                            "_case_pattern_trailing_sep": false
                           }
                         ]
                       }
@@ -50359,7 +50896,8 @@
                                 }
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -50377,7 +50915,8 @@
                     "start": 27,
                     "end": 114
                   },
-                  "$nodeHandle": 61
+                  "$nodeHandle": 61,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -50470,7 +51009,8 @@
                               "start": 124,
                               "end": 136
                             },
-                            "$nodeHandle": 86
+                            "$nodeHandle": 86,
+                            "_case_pattern_trailing_sep": false
                           },
                           {
                             "$type": 248,
@@ -50561,7 +51101,8 @@
                               "start": 139,
                               "end": 158
                             },
-                            "$nodeHandle": 87
+                            "$nodeHandle": 87,
+                            "_case_pattern_trailing_sep": false
                           },
                           {
                             "$type": 248,
@@ -50652,7 +51193,8 @@
                               "start": 161,
                               "end": 180
                             },
-                            "$nodeHandle": 88
+                            "$nodeHandle": 88,
+                            "_case_pattern_trailing_sep": false
                           }
                         ]
                       }
@@ -50694,7 +51236,8 @@
                               },
                               "$nodeHandle": 108
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -50712,7 +51255,8 @@
                     "start": 119,
                     "end": 194
                   },
-                  "$nodeHandle": 62
+                  "$nodeHandle": 62,
+                  "_case_pattern_trailing_sep": false
                 }
               ],
               "$span": {
@@ -50730,7 +51274,8 @@
             "start": 0,
             "end": 194
           },
-          "$nodeHandle": 55
+          "$nodeHandle": 55,
+          "_subject_trailing_sep": false
         }
       ]
     },
@@ -51855,7 +52400,8 @@
                                     "start": 39,
                                     "end": 76
                                   },
-                                  "$nodeHandle": 46
+                                  "$nodeHandle": 46,
+                                  "_case_pattern_trailing_sep": false
                                 }
                               },
                               "_identifier": "direction",
@@ -51879,7 +52425,8 @@
                           "start": 32,
                           "end": 90
                         },
-                        "$nodeHandle": 40
+                        "$nodeHandle": 40,
+                        "_case_pattern_trailing_sep": false
                       }
                     }
                   ],
@@ -51995,7 +52542,8 @@
                                 }
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -52013,7 +52561,8 @@
                     "start": 27,
                     "end": 147
                   },
-                  "$nodeHandle": 38
+                  "$nodeHandle": 38,
+                  "_case_pattern_trailing_sep": false
                 }
               ],
               "$span": {
@@ -52031,7 +52580,8 @@
             "start": 0,
             "end": 147
           },
-          "$nodeHandle": 32
+          "$nodeHandle": 32,
+          "_subject_trailing_sep": false
         }
       ]
     },
@@ -52712,7 +53262,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -52814,7 +53365,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -52874,7 +53426,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -52990,7 +53543,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -53111,7 +53665,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 145,
@@ -53181,7 +53736,8 @@
                 },
                 "$nodeHandle": 82
               }
-            ]
+            ],
+            "_simple_statement_trailing_sep": false
           },
           "$other": [
             35,
@@ -54291,7 +54847,8 @@
             },
             "$nodeHandle": 140
           }
-        ]
+        ],
+        "_simple_statement_trailing_sep": false
       },
       "$other": [
         35,
@@ -54459,7 +55016,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -54534,7 +55092,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -55056,7 +55615,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -55598,7 +56158,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -56040,7 +56601,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -56115,7 +56677,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -56215,7 +56778,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -57070,7 +57634,8 @@
                                 }
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -57088,7 +57653,8 @@
                     "start": 13,
                     "end": 47
                   },
-                  "$nodeHandle": 27
+                  "$nodeHandle": 27,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -57191,7 +57757,8 @@
                                 }
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -57209,7 +57776,8 @@
                     "start": 52,
                     "end": 84
                   },
-                  "$nodeHandle": 28
+                  "$nodeHandle": 28,
+                  "_case_pattern_trailing_sep": false
                 }
               ],
               "$span": {
@@ -57227,7 +57795,8 @@
             "start": 0,
             "end": 84
           },
-          "$nodeHandle": 24
+          "$nodeHandle": 24,
+          "_subject_trailing_sep": false
         }
       ]
     },
@@ -57754,7 +58323,8 @@
                                 }
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -57773,7 +58343,8 @@
                     "start": 21,
                     "end": 44
                   },
-                  "$nodeHandle": 33
+                  "$nodeHandle": 33,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -57884,7 +58455,8 @@
                                 }
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -57903,7 +58475,8 @@
                     "start": 49,
                     "end": 74
                   },
-                  "$nodeHandle": 34
+                  "$nodeHandle": 34,
+                  "_case_pattern_trailing_sep": false
                 }
               ],
               "$span": {
@@ -57921,7 +58494,8 @@
             "start": 0,
             "end": 74
           },
-          "$nodeHandle": 28
+          "$nodeHandle": 28,
+          "_subject_trailing_sep": false
         }
       ]
     },
@@ -58411,7 +58985,8 @@
                                 "$nodeHandle": 27
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -58430,7 +59005,8 @@
                     "start": 20,
                     "end": 54
                   },
-                  "$nodeHandle": 18
+                  "$nodeHandle": 18,
+                  "_case_pattern_trailing_sep": false
                 }
               ],
               "$span": {
@@ -58449,7 +59025,8 @@
             "start": 0,
             "end": 54
           },
-          "$nodeHandle": 15
+          "$nodeHandle": 15,
+          "_subject_trailing_sep": false
         }
       ]
     },
@@ -58672,7 +59249,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 134,
@@ -58784,7 +59362,8 @@
                                 }
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -58802,7 +59381,8 @@
                     "start": 34,
                     "end": 58
                   },
-                  "$nodeHandle": 28
+                  "$nodeHandle": 28,
+                  "_case_pattern_trailing_sep": false
                 }
               ],
               "$span": {
@@ -58820,7 +59400,8 @@
             "start": 17,
             "end": 58
           },
-          "$nodeHandle": 20
+          "$nodeHandle": 20,
+          "_subject_trailing_sep": false
         }
       ]
     },
@@ -59412,7 +59993,8 @@
                                     "start": 43,
                                     "end": 49
                                   },
-                                  "$nodeHandle": 98
+                                  "$nodeHandle": 98,
+                                  "_case_pattern_trailing_sep": false
                                 },
                                 "$other": [
                                   40
@@ -59522,7 +60104,8 @@
                                 "$nodeHandle": 107
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -59540,7 +60123,8 @@
                     "start": 23,
                     "end": 81
                   },
-                  "$nodeHandle": 87
+                  "$nodeHandle": 87,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -59750,7 +60334,8 @@
                                 "$nodeHandle": 124
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -59768,7 +60353,8 @@
                     "start": 86,
                     "end": 143
                   },
-                  "$nodeHandle": 88
+                  "$nodeHandle": 88,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -59936,7 +60522,8 @@
                                 "$nodeHandle": 139
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         },
                         {
                           "$type": 110,
@@ -59960,7 +60547,8 @@
                               "$nodeHandle": 142,
                               "_content": "..."
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -59978,7 +60566,8 @@
                     "start": 148,
                     "end": 219
                   },
-                  "$nodeHandle": 89
+                  "$nodeHandle": 89,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -60060,7 +60649,8 @@
                               },
                               "$nodeHandle": 149
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -60078,7 +60668,8 @@
                     "start": 224,
                     "end": 279
                   },
-                  "$nodeHandle": 90
+                  "$nodeHandle": 90,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -60224,7 +60815,8 @@
                                 "$nodeHandle": 156
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -60242,7 +60834,8 @@
                     "start": 284,
                     "end": 364
                   },
-                  "$nodeHandle": 91
+                  "$nodeHandle": 91,
+                  "_case_pattern_trailing_sep": false
                 }
               ],
               "$span": {
@@ -60260,7 +60853,8 @@
             "start": 0,
             "end": 364
           },
-          "$nodeHandle": 81
+          "$nodeHandle": 81,
+          "_subject_trailing_sep": false
         }
       ]
     },
@@ -61633,7 +62227,8 @@
                                   "start": 34,
                                   "end": 40
                                 },
-                                "$nodeHandle": 37
+                                "$nodeHandle": 37,
+                                "_case_pattern_trailing_sep": false
                               }
                             }
                           ],
@@ -61734,7 +62329,8 @@
                                 "$nodeHandle": 46
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -61752,7 +62348,8 @@
                     "start": 23,
                     "end": 72
                   },
-                  "$nodeHandle": 31
+                  "$nodeHandle": 31,
+                  "_case_pattern_trailing_sep": false
                 }
               ],
               "$span": {
@@ -61770,7 +62367,8 @@
             "start": 0,
             "end": 72
           },
-          "$nodeHandle": 25
+          "$nodeHandle": 25,
+          "_subject_trailing_sep": false
         }
       ]
     },
@@ -62335,7 +62933,8 @@
                                   "start": 34,
                                   "end": 40
                                 },
-                                "$nodeHandle": 50
+                                "$nodeHandle": 50,
+                                "_case_pattern_trailing_sep": false
                               }
                             },
                             {
@@ -62481,7 +63080,8 @@
                                 "$nodeHandle": 61
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -62499,7 +63099,8 @@
                     "start": 23,
                     "end": 116
                   },
-                  "$nodeHandle": 42
+                  "$nodeHandle": 42,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -62581,7 +63182,8 @@
                               },
                               "$nodeHandle": 70
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -62599,7 +63201,8 @@
                     "start": 121,
                     "end": 170
                   },
-                  "$nodeHandle": 43
+                  "$nodeHandle": 43,
+                  "_case_pattern_trailing_sep": false
                 }
               ],
               "$span": {
@@ -62617,7 +63220,8 @@
             "start": 0,
             "end": 170
           },
-          "$nodeHandle": 36
+          "$nodeHandle": 36,
+          "_subject_trailing_sep": false
         }
       ]
     },
@@ -63204,7 +63808,8 @@
                                 "$nodeHandle": 160
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -63222,7 +63827,8 @@
                     "start": 13,
                     "end": 55
                   },
-                  "$nodeHandle": 145
+                  "$nodeHandle": 145,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -63329,7 +63935,8 @@
                                 "$nodeHandle": 169
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -63347,7 +63954,8 @@
                     "start": 60,
                     "end": 123
                   },
-                  "$nodeHandle": 146
+                  "$nodeHandle": 146,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -63530,7 +64138,8 @@
                                 "$nodeHandle": 185
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -63548,7 +64157,8 @@
                     "start": 128,
                     "end": 178
                   },
-                  "$nodeHandle": 147
+                  "$nodeHandle": 147,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -63773,7 +64383,8 @@
                                 "$nodeHandle": 204
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -63791,7 +64402,8 @@
                     "start": 183,
                     "end": 236
                   },
-                  "$nodeHandle": 148
+                  "$nodeHandle": 148,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -64038,7 +64650,8 @@
                                 "$nodeHandle": 225
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -64056,7 +64669,8 @@
                     "start": 241,
                     "end": 311
                   },
-                  "$nodeHandle": 149
+                  "$nodeHandle": 149,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -64240,7 +64854,8 @@
                                 "$nodeHandle": 241
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -64258,7 +64873,8 @@
                     "start": 316,
                     "end": 381
                   },
-                  "$nodeHandle": 150
+                  "$nodeHandle": 150,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -64484,7 +65100,8 @@
                                 "$nodeHandle": 260
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -64502,7 +65119,8 @@
                     "start": 386,
                     "end": 454
                   },
-                  "$nodeHandle": 151
+                  "$nodeHandle": 151,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -64750,7 +65368,8 @@
                                 "$nodeHandle": 281
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -64768,7 +65387,8 @@
                     "start": 459,
                     "end": 544
                   },
-                  "$nodeHandle": 152
+                  "$nodeHandle": 152,
+                  "_case_pattern_trailing_sep": false
                 }
               ],
               "$span": {
@@ -64786,7 +65406,8 @@
             "start": 0,
             "end": 544
           },
-          "$nodeHandle": 142
+          "$nodeHandle": 142,
+          "_subject_trailing_sep": false
         }
       ]
     },
@@ -66043,7 +66664,8 @@
                               },
                               "$nodeHandle": 60
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -66061,7 +66683,8 @@
                     "start": 13,
                     "end": 40
                   },
-                  "$nodeHandle": 50
+                  "$nodeHandle": 50,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -66153,7 +66776,8 @@
                               },
                               "$nodeHandle": 68
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -66171,7 +66795,8 @@
                     "start": 45,
                     "end": 78
                   },
-                  "$nodeHandle": 51
+                  "$nodeHandle": 51,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -66308,7 +66933,8 @@
                               },
                               "$nodeHandle": 80
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -66327,7 +66953,8 @@
                     "start": 83,
                     "end": 125
                   },
-                  "$nodeHandle": 52
+                  "$nodeHandle": 52,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -66395,7 +67022,8 @@
                               },
                               "$nodeHandle": 86
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -66413,7 +67041,8 @@
                     "start": 130,
                     "end": 158
                   },
-                  "$nodeHandle": 53
+                  "$nodeHandle": 53,
+                  "_case_pattern_trailing_sep": false
                 },
                 {
                   "$type": 136,
@@ -66480,7 +67109,8 @@
                               },
                               "$nodeHandle": 92
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -66498,7 +67128,8 @@
                     "start": 163,
                     "end": 190
                   },
-                  "$nodeHandle": 54
+                  "$nodeHandle": 54,
+                  "_case_pattern_trailing_sep": false
                 }
               ],
               "$span": {
@@ -66516,7 +67147,8 @@
             "start": 0,
             "end": 190
           },
-          "$nodeHandle": 47
+          "$nodeHandle": 47,
+          "_subject_trailing_sep": false
         }
       ]
     },
@@ -66677,7 +67309,8 @@
                               },
                               "$nodeHandle": 28
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -66697,7 +67330,8 @@
                     "start": 13,
                     "end": 43
                   },
-                  "$nodeHandle": 18
+                  "$nodeHandle": 18,
+                  "_case_pattern_trailing_sep": false
                 }
               ],
               "$span": {
@@ -66715,7 +67349,8 @@
             "start": 0,
             "end": 43
           },
-          "$nodeHandle": 15
+          "$nodeHandle": 15,
+          "_subject_trailing_sep": false
         }
       ]
     },
@@ -66854,9 +67489,11 @@
                 "start": 0,
                 "end": 11
               },
-              "$nodeHandle": 15
+              "$nodeHandle": 15,
+              "_name_trailing_sep": false
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -66913,9 +67550,11 @@
                 "start": 12,
                 "end": 27
               },
-              "$nodeHandle": 18
+              "$nodeHandle": 18,
+              "_name_trailing_sep": false
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -66960,9 +67599,11 @@
                 "start": 28,
                 "end": 40
               },
-              "$nodeHandle": 21
+              "$nodeHandle": 21,
+              "_name_trailing_sep": false
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -67179,10 +67820,13 @@
                   "start": 14,
                   "end": 15
                 },
-                "$nodeHandle": 55
-              }
+                "$nodeHandle": 55,
+                "_name_trailing_sep": false
+              },
+              "_name_trailing_sep": false
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -67222,9 +67866,11 @@
                 "end": 31
               },
               "$nodeHandle": 57,
-              "_name": []
+              "_name": [],
+              "_name_trailing_sep": false
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -67293,9 +67939,11 @@
                 "start": 32,
                 "end": 52
               },
-              "$nodeHandle": 59
+              "$nodeHandle": 59,
+              "_name_trailing_sep": false
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -67362,10 +68010,13 @@
                   "start": 69,
                   "end": 70
                 },
-                "$nodeHandle": 65
-              }
+                "$nodeHandle": 65,
+                "_name_trailing_sep": false
+              },
+              "_name_trailing_sep": false
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -67436,10 +68087,13 @@
                   "start": 85,
                   "end": 86
                 },
-                "$nodeHandle": 70
-              }
+                "$nodeHandle": 70,
+                "_name_trailing_sep": false
+              },
+              "_name_trailing_sep": false
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -67510,10 +68164,13 @@
                   "start": 102,
                   "end": 103
                 },
-                "$nodeHandle": 75
-              }
+                "$nodeHandle": 75,
+                "_name_trailing_sep": false
+              },
+              "_name_trailing_sep": false
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -67597,10 +68254,13 @@
                   "start": 119,
                   "end": 120
                 },
-                "$nodeHandle": 81
-              }
+                "$nodeHandle": 81,
+                "_name_trailing_sep": false
+              },
+              "_name_trailing_sep": false
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -67684,10 +68344,13 @@
                   "start": 137,
                   "end": 138
                 },
-                "$nodeHandle": 87
-              }
+                "$nodeHandle": 87,
+                "_name_trailing_sep": false
+              },
+              "_name_trailing_sep": false
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -68176,10 +68839,13 @@
                   "start": 23,
                   "end": 38
                 },
-                "$nodeHandle": 19
-              }
+                "$nodeHandle": 19,
+                "_name_trailing_sep": false
+              },
+              "_name_trailing_sep": false
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -68230,10 +68896,13 @@
                   "start": 62,
                   "end": 69
                 },
-                "$nodeHandle": 22
-              }
+                "$nodeHandle": 22,
+                "_name_trailing_sep": false
+              },
+              "_name_trailing_sep": false
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -68318,9 +68987,11 @@
                 "start": 70,
                 "end": 178
               },
-              "$nodeHandle": 24
+              "$nodeHandle": 24,
+              "_name_trailing_sep": false
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -68515,6 +69186,293 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 108,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 68
+      },
+      "$nodeHandle": 0,
+      "_statement": [
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 0,
+            "end": 7
+          },
+          "$nodeHandle": 20,
+          "_simple_statement": [
+            {
+              "$type": 119,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 0,
+                "end": 7
+              },
+              "$nodeHandle": 25,
+              "_content": {
+                "$type": 252,
+                "$source": 0,
+                "$named": true,
+                "_argument": [
+                  "a"
+                ],
+                "$other": [
+                  72
+                ],
+                "$span": {
+                  "start": 0,
+                  "end": 7
+                },
+                "$nodeHandle": 26,
+                "_argument_trailing_sep": false
+              }
+            }
+          ],
+          "_simple_statement_trailing_sep": false
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 8,
+            "end": 18
+          },
+          "$nodeHandle": 21,
+          "_simple_statement": [
+            {
+              "$type": 119,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 8,
+                "end": 18
+              },
+              "$nodeHandle": 27,
+              "_content": {
+                "$type": 252,
+                "$source": 0,
+                "$named": true,
+                "_argument": [
+                  "b",
+                  "c"
+                ],
+                "$other": [
+                  72,
+                  9
+                ],
+                "$span": {
+                  "start": 8,
+                  "end": 18
+                },
+                "$nodeHandle": 28,
+                "_argument_trailing_sep": false
+              }
+            }
+          ],
+          "_simple_statement_trailing_sep": false
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 19,
+            "end": 40
+          },
+          "$nodeHandle": 22,
+          "_simple_statement": [
+            {
+              "$type": 119,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 19,
+                "end": 40
+              },
+              "$nodeHandle": 29,
+              "_content": {
+                "$type": 252,
+                "$source": 0,
+                "$named": true,
+                "_argument": [
+                  {
+                    "$type": 187,
+                    "$source": 0,
+                    "$named": true,
+                    "_left": "0",
+                    "_operator": 53,
+                    "_right": "1",
+                    "$span": {
+                      "start": 25,
+                      "end": 31
+                    },
+                    "$nodeHandle": 31
+                  },
+                  {
+                    "$type": 187,
+                    "$source": 0,
+                    "$named": true,
+                    "_left": "1",
+                    "_operator": 53,
+                    "_right": "0",
+                    "$span": {
+                      "start": 33,
+                      "end": 39
+                    },
+                    "$nodeHandle": 32
+                  }
+                ],
+                "$other": [
+                  72,
+                  9,
+                  9
+                ],
+                "$span": {
+                  "start": 19,
+                  "end": 40
+                },
+                "$nodeHandle": 30,
+                "_argument_trailing_sep": true
+              }
+            }
+          ],
+          "_simple_statement_trailing_sep": false
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 41,
+            "end": 53
+          },
+          "$nodeHandle": 23,
+          "_simple_statement": [
+            {
+              "$type": 119,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 41,
+                "end": 53
+              },
+              "$nodeHandle": 33,
+              "_content": {
+                "$type": 252,
+                "$source": 0,
+                "$named": true,
+                "_argument": [
+                  {
+                    "$type": 187,
+                    "$source": 0,
+                    "$named": true,
+                    "_left": "0",
+                    "_operator": 53,
+                    "_right": "1",
+                    "$span": {
+                      "start": 47,
+                      "end": 53
+                    },
+                    "$nodeHandle": 35
+                  }
+                ],
+                "$other": [
+                  72
+                ],
+                "$span": {
+                  "start": 41,
+                  "end": 53
+                },
+                "$nodeHandle": 34,
+                "_argument_trailing_sep": false
+              }
+            }
+          ],
+          "_simple_statement_trailing_sep": false
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 54,
+            "end": 68
+          },
+          "$nodeHandle": 24,
+          "_simple_statement": [
+            {
+              "$type": 119,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 54,
+                "end": 68
+              },
+              "$nodeHandle": 36,
+              "_content": {
+                "$type": 252,
+                "$source": 0,
+                "$named": true,
+                "_argument": [
+                  {
+                    "$type": 186,
+                    "$source": 0,
+                    "$named": true,
+                    "_argument": "True",
+                    "$other": [
+                      51
+                    ],
+                    "$span": {
+                      "start": 60,
+                      "end": 68
+                    },
+                    "$nodeHandle": 38
+                  }
+                ],
+                "$other": [
+                  72
+                ],
+                "$span": {
+                  "start": 54,
+                  "end": 68
+                },
+                "$nodeHandle": 37,
+                "_argument_trailing_sep": false
+              }
+            }
+          ],
+          "_simple_statement_trailing_sep": false
+        }
+      ]
+    },
+    "expectedOutput": "print a\nprint b,c\nprint 0 or 1,1 or 0,\nprint 0 or 1\nprint not True"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "print a\nprint b, c\nprint 0 or 1, 1 or 0,\nprint 0 or 1\nprint not True",
+    "pattern": "module",
+    "edits": [],
+    "expectedSourceOut": "print a\nprint b,c\nprint 0 or 1,1 or 0,\nprint 0 or 1\nprint not True",
+    "expectedReparseTree": "(module (statement_group1 (print_statement (print_statement_group2 argument: (identifier))) (newline)) (statement_group1 (print_statement (print_statement_group2 argument: (identifier) argument: (identifier))) (newline)) (statement_group1 (print_statement (print_statement_group2 argument: (boolean_operator left: (integer) right: (integer)) argument: (boolean_operator left: (integer) right: (integer)))) (newline)) (statement_group1 (print_statement (print_statement_group2 argument: (boolean_operator left: (integer) right: (integer)))) (newline)) (statement_group1 (print_statement (print_statement_group2 argument: (not_operator argument: (true)))) (newline)))",
+    "wrappedText": "print a\nprint b,c\nprint 0 or 1,1 or 0,\nprint 0 or 1\nprint not True",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 187,
       "$source": 0,
       "$named": true,
@@ -68668,7 +69626,8 @@
                 "a"
               ]
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -68699,7 +69658,8 @@
                 "c"
               ]
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -68751,7 +69711,8 @@
               "$nodeHandle": 16,
               "_content": "a"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -68787,7 +69748,8 @@
                 "$nodeHandle": 18
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -68830,7 +69792,8 @@
                 "_trailing_sep": false
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -68874,7 +69837,8 @@
                 "_trailing_sep": true
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -69148,7 +70112,8 @@
                         "start": 10,
                         "end": 14
                       },
-                      "$nodeHandle": 11
+                      "$nodeHandle": 11,
+                      "_subscript_trailing_sep": false
                     }
                   ],
                   "_trailing_sep": false
@@ -69174,11 +70139,13 @@
                     "start": 4,
                     "end": 8
                   },
-                  "$nodeHandle": 12
+                  "$nodeHandle": 12,
+                  "_subscript_trailing_sep": false
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -69214,7 +70181,8 @@
         "start": 10,
         "end": 14
       },
-      "$nodeHandle": 5
+      "$nodeHandle": 5,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "b[2]"
   },
@@ -69248,7 +70216,8 @@
         "start": 4,
         "end": 8
       },
-      "$nodeHandle": 6
+      "$nodeHandle": 6,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "a[1]"
   },
@@ -69317,7 +70286,8 @@
                       },
                       "$nodeHandle": 16
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 },
                 {
                   "$type": 110,
@@ -69341,7 +70311,8 @@
                       },
                       "$nodeHandle": 17
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 },
                 {
                   "$type": 110,
@@ -69365,7 +70336,8 @@
                       },
                       "$nodeHandle": 18
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -69435,7 +70407,8 @@
               },
               "$nodeHandle": 14
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -69501,7 +70474,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -69541,7 +70515,8 @@
                 "$nodeHandle": 20
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -69671,7 +70646,8 @@
                       "$nodeHandle": 13,
                       "_content": "b"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 },
                 {
                   "$type": 110,
@@ -69695,7 +70671,8 @@
                       "$nodeHandle": 14,
                       "_content": "c"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -69839,7 +70816,8 @@
                       "$nodeHandle": 40,
                       "_content": "b"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -69891,7 +70869,8 @@
                           "$nodeHandle": 46,
                           "_content": "d"
                         }
-                      ]
+                      ],
+                      "_simple_statement_trailing_sep": false
                     }
                   ]
                 },
@@ -69951,7 +70930,8 @@
                           "$nodeHandle": 50,
                           "_content": "f"
                         }
-                      ]
+                      ],
+                      "_simple_statement_trailing_sep": false
                     }
                   ]
                 },
@@ -70023,7 +71003,8 @@
                       "$nodeHandle": 54,
                       "_content": "b"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -70074,7 +71055,8 @@
                           "$nodeHandle": 59,
                           "_content": "f"
                         }
-                      ]
+                      ],
+                      "_simple_statement_trailing_sep": false
                     }
                   ]
                 },
@@ -70132,7 +71114,8 @@
                 "$nodeHandle": 61,
                 "_content": "b"
               }
-            ]
+            ],
+            "_simple_statement_trailing_sep": false
           },
           "$other": [
             21,
@@ -70186,7 +71169,8 @@
                 "$nodeHandle": 64,
                 "_content": "c"
               }
-            ]
+            ],
+            "_simple_statement_trailing_sep": true
           },
           "$other": [
             21,
@@ -70503,7 +71487,8 @@
                               "$nodeHandle": 27,
                               "_content": "c"
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -70573,7 +71558,8 @@
                                           "$nodeHandle": 35,
                                           "_content": "f"
                                         }
-                                      ]
+                                      ],
+                                      "_simple_statement_trailing_sep": false
                                     }
                                   ]
                                 },
@@ -70664,7 +71650,8 @@
               "$nodeHandle": 36,
               "_content": "g"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -70816,7 +71803,8 @@
                       "$nodeHandle": 23,
                       "_content": "b"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -70877,7 +71865,8 @@
                       "$nodeHandle": 27,
                       "_content": "d"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -70927,7 +71916,8 @@
                         "$nodeHandle": 33,
                         "_content": "e"
                       }
-                    ]
+                    ],
+                    "_simple_statement_trailing_sep": false
                   },
                   {
                     "$type": 110,
@@ -70951,7 +71941,8 @@
                         "$nodeHandle": 34,
                         "_content": "f"
                       }
-                    ]
+                    ],
+                    "_simple_statement_trailing_sep": false
                   }
                 ]
               },
@@ -71198,10 +72189,12 @@
                           "start": 24,
                           "end": 34
                         },
-                        "$nodeHandle": 46
+                        "$nodeHandle": 46,
+                        "_argument_trailing_sep": false
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 },
                 {
                   "$type": 137,
@@ -71284,10 +72277,12 @@
                                   "start": 67,
                                   "end": 82
                                 },
-                                "$nodeHandle": 53
+                                "$nodeHandle": 53,
+                                "_argument_trailing_sep": false
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -71368,10 +72363,12 @@
                             "start": 91,
                             "end": 98
                           },
-                          "$nodeHandle": 59
+                          "$nodeHandle": 59,
+                          "_argument_trailing_sep": false
                         }
                       }
-                    ]
+                    ],
+                    "_simple_statement_trailing_sep": false
                   }
                 ]
               },
@@ -71578,7 +72575,8 @@
                       "$nodeHandle": 72,
                       "_content": "x"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -71975,7 +72973,8 @@
                       "$nodeHandle": 91,
                       "_content": "a"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -72058,7 +73057,8 @@
                           "$nodeHandle": 101,
                           "_content": "c"
                         }
-                      ]
+                      ],
+                      "_simple_statement_trailing_sep": false
                     }
                   ]
                 },
@@ -72143,7 +73143,8 @@
                           "$nodeHandle": 107,
                           "_content": "f"
                         }
-                      ]
+                      ],
+                      "_simple_statement_trailing_sep": false
                     }
                   ]
                 },
@@ -72230,7 +73231,8 @@
                           "$nodeHandle": 113,
                           "_content": "i"
                         }
-                      ]
+                      ],
+                      "_simple_statement_trailing_sep": false
                     }
                   ]
                 },
@@ -72290,7 +73292,8 @@
                           "$nodeHandle": 117,
                           "_content": "j"
                         }
-                      ]
+                      ],
+                      "_simple_statement_trailing_sep": false
                     }
                   ]
                 },
@@ -72352,7 +73355,8 @@
                       "$nodeHandle": 121,
                       "_content": "a"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -72435,7 +73439,8 @@
                           "$nodeHandle": 129,
                           "_content": "c"
                         }
-                      ]
+                      ],
+                      "_simple_statement_trailing_sep": false
                     },
                     {
                       "$type": 110,
@@ -72459,7 +73464,8 @@
                           "$nodeHandle": 130,
                           "_content": "d"
                         }
-                      ]
+                      ],
+                      "_simple_statement_trailing_sep": false
                     }
                   ]
                 },
@@ -72511,7 +73517,8 @@
                         "$nodeHandle": 135,
                         "_content": "e"
                       }
-                    ]
+                    ],
+                    "_simple_statement_trailing_sep": false
                   }
                 ]
               },
@@ -72571,7 +73578,8 @@
                         "$nodeHandle": 140,
                         "_content": "f"
                       }
-                    ]
+                    ],
+                    "_simple_statement_trailing_sep": false
                   }
                 ]
               },
@@ -72641,7 +73649,8 @@
                       "$nodeHandle": 144,
                       "_content": "a"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -72725,7 +73734,8 @@
                           "$nodeHandle": 152,
                           "_content": "c"
                         }
-                      ]
+                      ],
+                      "_simple_statement_trailing_sep": false
                     }
                   ]
                 },
@@ -72811,7 +73821,8 @@
                           "$nodeHandle": 158,
                           "_content": "f"
                         }
-                      ]
+                      ],
+                      "_simple_statement_trailing_sep": false
                     }
                   ]
                 },
@@ -72863,7 +73874,8 @@
                         "$nodeHandle": 163,
                         "_content": "g"
                       }
-                    ]
+                    ],
+                    "_simple_statement_trailing_sep": false
                   }
                 ]
               },
@@ -72923,7 +73935,8 @@
                         "$nodeHandle": 168,
                         "_content": "h"
                       }
-                    ]
+                    ],
+                    "_simple_statement_trailing_sep": false
                   }
                 ]
               },
@@ -73474,7 +74487,8 @@
                       "$nodeHandle": 56,
                       "_content": "c"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -73676,7 +74690,8 @@
                 "start": 23,
                 "end": 61
               },
-              "$nodeHandle": 58
+              "$nodeHandle": 58,
+              "_with_item_trailing_sep": false
             }
           },
           "_body": {
@@ -73715,7 +74730,8 @@
                       "$nodeHandle": 76,
                       "_content": "f"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -73852,7 +74868,8 @@
                       "$nodeHandle": 88,
                       "_content": "i"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -74599,7 +75616,8 @@
                   "$nodeHandle": 173,
                   "_content": "b"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -74705,7 +75723,8 @@
                   "$nodeHandle": 179,
                   "_content": "e"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -74816,7 +75835,8 @@
                   "$nodeHandle": 185,
                   "_content": "i"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -74946,7 +75966,8 @@
                   "$nodeHandle": 193,
                   "_content": "a"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -75090,7 +76111,8 @@
                   "$nodeHandle": 202,
                   "_content": "a"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -75198,7 +76220,8 @@
                       "start": 141,
                       "end": 144
                     },
-                    "$nodeHandle": 208
+                    "$nodeHandle": 208,
+                    "_type_trailing_sep": false
                   },
                   "$span": {
                     "start": 133,
@@ -75268,7 +76291,8 @@
                   "$nodeHandle": 214,
                   "_content": "a"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -75413,7 +76437,8 @@
                   "$nodeHandle": 232,
                   "_expressions": "None"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -75592,7 +76617,8 @@
                   "$nodeHandle": 243,
                   "_expressions": "None"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -75965,7 +76991,8 @@
                     "start": 141,
                     "end": 144
                   },
-                  "$nodeHandle": 257
+                  "$nodeHandle": 257,
+                  "_type_trailing_sep": false
                 },
                 "$span": {
                   "start": 133,
@@ -76470,7 +77497,8 @@
             "start": 141,
             "end": 144
           },
-          "$nodeHandle": 299
+          "$nodeHandle": 299,
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 133,
@@ -76883,7 +77911,8 @@
                     }
                   }
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -77025,7 +78054,8 @@
                   },
                   "$nodeHandle": 173
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -77167,7 +78197,8 @@
                   },
                   "$nodeHandle": 182
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -77260,7 +78291,8 @@
                   },
                   "$nodeHandle": 187
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -77443,7 +78475,8 @@
                     "$nodeHandle": 208
                   }
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             },
             {
               "$type": 110,
@@ -77546,7 +78579,8 @@
                     "$nodeHandle": 214
                   }
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -77634,7 +78668,8 @@
                   },
                   "$nodeHandle": 224
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -78135,10 +79170,12 @@
                           "start": 203,
                           "end": 210
                         },
-                        "$nodeHandle": 22
+                        "$nodeHandle": 22,
+                        "_argument_trailing_sep": false
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 },
                 {
                   "$type": 138,
@@ -78463,7 +79500,8 @@
                   "$nodeHandle": 157,
                   "_expressions": "c"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -78568,7 +79606,8 @@
                   },
                   "$nodeHandle": 163
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -78795,7 +79834,8 @@
               "start": 151,
               "end": 165
             },
-            "$nodeHandle": 170
+            "$nodeHandle": 170,
+            "_subscript_trailing_sep": false
           }
         ],
         "_trailing_sep": false
@@ -78842,7 +79882,8 @@
         "start": 122,
         "end": 133
       },
-      "$nodeHandle": 33
+      "$nodeHandle": 33,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "Sequence[T]"
   },
@@ -78878,7 +79919,8 @@
         "start": 151,
         "end": 165
       },
-      "$nodeHandle": 40
+      "$nodeHandle": 40,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "Sequence[T,U]"
   },
@@ -79009,7 +80051,8 @@
                               "$nodeHandle": 22,
                               "_content": "e"
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -79165,7 +80208,8 @@
                   "$nodeHandle": 46,
                   "_content": "e"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -79405,7 +80449,8 @@
                                 "start": 25,
                                 "end": 29
                               },
-                              "$nodeHandle": 59
+                              "$nodeHandle": 59,
+                              "_subscript_trailing_sep": false
                             },
                             "_attribute": "f",
                             "$other": [
@@ -79490,7 +80535,8 @@
                                   "$nodeHandle": 65,
                                   "_content": "g"
                                 }
-                              ]
+                              ],
+                              "_simple_statement_trailing_sep": false
                             }
                           ]
                         },
@@ -79611,7 +80657,8 @@
                                   "$nodeHandle": 74,
                                   "_content": "g"
                                 }
-                              ]
+                              ],
+                              "_simple_statement_trailing_sep": false
                             }
                           ]
                         },
@@ -79694,7 +80741,8 @@
                       "start": 84,
                       "end": 94
                     },
-                    "$nodeHandle": 78
+                    "$nodeHandle": 78,
+                    "_subscript_trailing_sep": false
                   },
                   "_attribute": "clicked",
                   "$other": [
@@ -79779,7 +80827,8 @@
                         "$nodeHandle": 84,
                         "_content": "..."
                       }
-                    ]
+                    ],
+                    "_simple_statement_trailing_sep": false
                   }
                 ]
               },
@@ -79878,7 +80927,8 @@
             "start": 25,
             "end": 29
           },
-          "$nodeHandle": 161
+          "$nodeHandle": 161,
+          "_subscript_trailing_sep": false
         },
         "_attribute": "f",
         "$other": [
@@ -79936,7 +80986,8 @@
           "start": 25,
           "end": 29
         },
-        "$nodeHandle": 162
+        "$nodeHandle": 162,
+        "_subscript_trailing_sep": false
       },
       "_attribute": "f",
       "$other": [
@@ -79988,7 +81039,8 @@
             "start": 84,
             "end": 94
           },
-          "$nodeHandle": 164
+          "$nodeHandle": 164,
+          "_subscript_trailing_sep": false
         },
         "_attribute": "clicked",
         "$other": [
@@ -80046,7 +81098,8 @@
           "start": 84,
           "end": 94
         },
-        "$nodeHandle": 165
+        "$nodeHandle": 165,
+        "_subscript_trailing_sep": false
       },
       "_attribute": "clicked",
       "$other": [
@@ -80254,7 +81307,8 @@
         "start": 25,
         "end": 29
       },
-      "$nodeHandle": 17
+      "$nodeHandle": 17,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "e[2]"
   },
@@ -80288,7 +81342,8 @@
         "start": 84,
         "end": 94
       },
-      "$nodeHandle": 36
+      "$nodeHandle": 36,
+      "_subscript_trailing_sep": false
     },
     "expectedOutput": "buttons[0]"
   },
@@ -80358,7 +81413,8 @@
                   "$nodeHandle": 232,
                   "_content": "g"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -80447,7 +81503,8 @@
                   "$nodeHandle": 237,
                   "_content": "g"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -80535,7 +81592,8 @@
                   "$nodeHandle": 242,
                   "_content": "..."
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -80765,7 +81823,8 @@
               },
               "$nodeHandle": 18
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -80844,7 +81903,8 @@
                 "$nodeHandle": 20
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -80925,7 +81985,8 @@
                 "$nodeHandle": 25
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -81306,10 +82367,12 @@
                   "start": 0,
                   "end": 7
                 },
-                "$nodeHandle": 14
+                "$nodeHandle": 14,
+                "_argument_trailing_sep": false
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -81346,10 +82409,12 @@
                   "start": 13,
                   "end": 20
                 },
-                "$nodeHandle": 16
+                "$nodeHandle": 16,
+                "_argument_trailing_sep": false
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -81385,10 +82450,12 @@
                   "start": 27,
                   "end": 34
                 },
-                "$nodeHandle": 18
+                "$nodeHandle": 18,
+                "_argument_trailing_sep": false
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -81465,7 +82532,8 @@
                       "$nodeHandle": 13,
                       "_content": "b"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 },
                 {
                   "$type": 110,
@@ -81489,7 +82557,8 @@
                       "$nodeHandle": 14,
                       "_content": "c"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -81634,7 +82703,8 @@
                       "$nodeHandle": 13,
                       "_content": "b"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -81677,7 +82747,8 @@
               "$nodeHandle": 14,
               "_content": "c"
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -81807,7 +82878,8 @@
                       "$nodeHandle": 28,
                       "_content": "b"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -81873,7 +82945,8 @@
                       "$nodeHandle": 32,
                       "_content": "d"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -81966,7 +83039,8 @@
                               "$nodeHandle": 41,
                               "_content": "b"
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -82010,7 +83084,8 @@
                       "$nodeHandle": 42,
                       "_content": "b"
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -82228,7 +83303,8 @@
                           "$nodeHandle": 76,
                           "_content": "b"
                         }
-                      ]
+                      ],
+                      "_simple_statement_trailing_sep": false
                     }
                   ]
                 },
@@ -82272,7 +83348,8 @@
                   "$nodeHandle": 77,
                   "_content": "b"
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -82394,10 +83471,12 @@
                   "start": 0,
                   "end": 9
                 },
-                "$nodeHandle": 7
+                "$nodeHandle": 7,
+                "_argument_trailing_sep": false
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -82485,7 +83564,8 @@
               },
               "$nodeHandle": 7
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -82516,7 +83596,8 @@
               },
               "$nodeHandle": 8
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -82586,7 +83667,8 @@
               "$nodeHandle": 23,
               "_in_clause": []
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -82630,7 +83712,8 @@
               },
               "$nodeHandle": 25
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -82675,7 +83758,8 @@
               },
               "$nodeHandle": 27
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -82737,7 +83821,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         },
         {
           "$type": 110,
@@ -82777,7 +83862,8 @@
               },
               "$nodeHandle": 33
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },
@@ -83140,7 +84226,8 @@
                         "$nodeHandle": 32
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 },
                 {
                   "$type": 110,
@@ -83185,7 +84272,8 @@
                         "$nodeHandle": 35
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 },
                 {
                   "$type": 145,
@@ -83260,7 +84348,8 @@
                                 "$nodeHandle": 42
                               }
                             }
-                          ]
+                          ],
+                          "_simple_statement_trailing_sep": false
                         }
                       ]
                     },
@@ -83323,7 +84412,8 @@
                         "$nodeHandle": 45
                       }
                     }
-                  ]
+                  ],
+                  "_simple_statement_trailing_sep": false
                 }
               ]
             },
@@ -83887,7 +84977,8 @@
                     "$nodeHandle": 110
                   }
                 }
-              ]
+              ],
+              "_simple_statement_trailing_sep": false
             }
           ]
         },
@@ -84099,7 +85190,8 @@
                 "$nodeHandle": 14
               }
             }
-          ]
+          ],
+          "_simple_statement_trailing_sep": false
         }
       ]
     },

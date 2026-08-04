@@ -337,11 +337,11 @@ pub enum AnyTransport {
     Caret(CaretTransport),
     Return(ReturnTransport),
     Yield(YieldTransport),
-    Comma(CommaTransport),
     DotDot(DotDotTransport),
     If(IfTransport),
     Else(ElseTransport),
     Match(MatchTransport),
+    Comma(CommaTransport),
     While(WhileTransport),
     Loop(LoopTransport),
     In(InTransport),
@@ -1612,10 +1612,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 105 => Ok(AnyTransport::Yield(
                     YieldTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: comma (COMMA)
-                69 => Ok(AnyTransport::Comma(
-                    CommaTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: dot_dot (DOT_DOT)
                 106 => Ok(AnyTransport::DotDot(
                     DotDotTransport::from_napi_value(env, napi_val)?
@@ -1631,6 +1627,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: match (MATCH)
                 109 => Ok(AnyTransport::Match(
                     MatchTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: comma (COMMA)
+                69 => Ok(AnyTransport::Comma(
+                    CommaTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: while (WHILE)
                 110 => Ok(AnyTransport::While(
@@ -6004,6 +6004,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                         if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayExpression(value));
                         }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
                         if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MacroInvocation(value));
                         }
@@ -6063,9 +6066,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                         }
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StringLiteral(value));
-                        }
-                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TupleExpression(value));
                         }
                         if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::BreakExpression(value));
@@ -6145,6 +6145,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                         if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayExpression(value));
                         }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
                         if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MacroInvocation(value));
                         }
@@ -6204,9 +6207,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                         }
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StringLiteral(value));
-                        }
-                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TupleExpression(value));
                         }
                         if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::BreakExpression(value));
@@ -6448,6 +6448,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                         if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayExpression(value));
                         }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
                         if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MacroInvocation(value));
                         }
@@ -6507,9 +6510,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                         }
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StringLiteral(value));
-                        }
-                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TupleExpression(value));
                         }
                         if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::BreakExpression(value));
@@ -6589,6 +6589,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                         if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayExpression(value));
                         }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
                         if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MacroInvocation(value));
                         }
@@ -6648,9 +6651,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                         }
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StringLiteral(value));
-                        }
-                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TupleExpression(value));
                         }
                         if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::BreakExpression(value));
@@ -7040,6 +7040,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayExpression(value));
                         }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
                         if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MacroInvocation(value));
                         }
@@ -7105,9 +7108,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         }
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StringLiteral(value));
-                        }
-                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TupleExpression(value));
                         }
                         if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::BreakExpression(value));
@@ -7187,6 +7187,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayExpression(value));
                         }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
                         if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MacroInvocation(value));
                         }
@@ -7252,9 +7255,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         }
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StringLiteral(value));
-                        }
-                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TupleExpression(value));
                         }
                         if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::BreakExpression(value));
@@ -7502,6 +7502,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayExpression(value));
                         }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
                         if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MacroInvocation(value));
                         }
@@ -7567,9 +7570,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         }
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StringLiteral(value));
-                        }
-                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TupleExpression(value));
                         }
                         if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::BreakExpression(value));
@@ -7649,6 +7649,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayExpression(value));
                         }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
                         if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MacroInvocation(value));
                         }
@@ -7714,9 +7717,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         }
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StringLiteral(value));
-                        }
-                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TupleExpression(value));
                         }
                         if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::BreakExpression(value));
@@ -9477,6 +9477,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayExpression(value));
                         }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
                         if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MacroInvocation(value));
                         }
@@ -9548,9 +9551,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         }
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StringLiteral(value));
-                        }
-                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TupleExpression(value));
                         }
                         if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::BreakExpression(value));
@@ -9633,6 +9633,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayExpression(value));
                         }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
                         if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MacroInvocation(value));
                         }
@@ -9704,9 +9707,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         }
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StringLiteral(value));
-                        }
-                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TupleExpression(value));
                         }
                         if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::BreakExpression(value));
@@ -9969,6 +9969,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayExpression(value));
                         }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
                         if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MacroInvocation(value));
                         }
@@ -10040,9 +10043,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         }
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StringLiteral(value));
-                        }
-                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TupleExpression(value));
                         }
                         if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::BreakExpression(value));
@@ -10125,6 +10125,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayExpression(value));
                         }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
                         if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MacroInvocation(value));
                         }
@@ -10196,9 +10199,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         }
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StringLiteral(value));
-                        }
-                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TupleExpression(value));
                         }
                         if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::BreakExpression(value));
@@ -29600,6 +29600,8 @@ pub struct TypeParametersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_type_parameter"))]
     pub attributed_type_parameter: Vec<AttributedTypeParameterTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_type_parameter_trailing_sep"))]
+    pub attributed_type_parameter_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for TypeParametersTransport {
@@ -30640,6 +30642,8 @@ pub struct ForLifetimesTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime"))]
     pub lifetime: Vec<LifetimeTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime_trailing_sep"))]
+    pub lifetime_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for ForLifetimesTransport {
@@ -30750,6 +30754,8 @@ pub struct TupleTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Vec<_TypeTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_trailing_sep"))]
+    pub type__trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for TupleTypeTransport {
@@ -31163,6 +31169,8 @@ pub struct TypeArgumentsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_argument"))]
     pub type_argument: Vec<TypeArgumentTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_argument_trailing_sep"))]
+    pub type_argument_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for TypeArgumentsTransport {
@@ -32693,7 +32701,9 @@ pub struct TupleExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
     pub attributes: Option<Vec<AttributeItemTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
-    pub elements: Option<Vec<ExpressionTransport>>,
+    pub elements: Vec<ExpressionTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_trailing_sep"))]
+    pub elements_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for TupleExpressionTransport {
@@ -37592,6 +37602,8 @@ pub struct EnumVariantListGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_enum_variant"))]
     pub attributed_enum_variant: Vec<AttributedEnumVariantTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_enum_variant_trailing_sep"))]
+    pub attributed_enum_variant_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -37694,6 +37706,8 @@ pub struct FieldDeclarationListGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_field_declaration"))]
     pub attributed_field_declaration: Vec<AttributedFieldDeclarationTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_field_declaration_trailing_sep"))]
+    pub attributed_field_declaration_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -37746,6 +37760,8 @@ pub struct OrderedFieldDeclarationListGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_ordered_field"))]
     pub attributed_ordered_field: Vec<AttributedOrderedFieldTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_ordered_field_trailing_sep"))]
+    pub attributed_ordered_field_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<_TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
@@ -37900,6 +37916,8 @@ pub struct WhereClauseGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate"))]
     pub where_predicate: Vec<WherePredicateTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate_trailing_sep"))]
+    pub where_predicate_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38152,6 +38170,8 @@ pub struct UseListGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause"))]
     pub use_clause: Vec<UseClauseTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause_trailing_sep"))]
+    pub use_clause_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38204,6 +38224,8 @@ pub struct ParametersGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_parameter"))]
     pub attributed_parameter: Vec<AttributedParameterTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_parameter_trailing_sep"))]
+    pub attributed_parameter_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38406,6 +38428,8 @@ pub struct UseBoundsGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<UseBoundsGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_trailing_sep"))]
+    pub content_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38508,6 +38532,8 @@ pub struct ArgumentsGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_argument"))]
     pub attributed_argument: Vec<AttributedArgumentTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_argument_trailing_sep"))]
+    pub attributed_argument_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38612,6 +38638,8 @@ pub struct FieldInitializerListGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<FieldInitializerListGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_trailing_sep"))]
+    pub content_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38764,6 +38792,8 @@ pub struct TuplePatternGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<TuplePatternGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_trailing_sep"))]
+    pub content_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38816,6 +38846,8 @@ pub struct SlicePatternGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: Vec<PatternTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_trailing_sep"))]
+    pub pattern_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38868,6 +38900,8 @@ pub struct StructPatternGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<StructPatternGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_trailing_sep"))]
+    pub content_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -40919,6 +40953,8 @@ pub struct MacroDefinitionParenTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule"))]
     pub macro_rule: Option<Vec<MacroRuleTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule_trailing_sep"))]
+    pub macro_rule_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for MacroDefinitionParenTransport {
@@ -40969,6 +41005,8 @@ pub struct MacroDefinitionBracketTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule"))]
     pub macro_rule: Option<Vec<MacroRuleTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule_trailing_sep"))]
+    pub macro_rule_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for MacroDefinitionBracketTransport {
@@ -41019,6 +41057,8 @@ pub struct MacroDefinitionBraceTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule"))]
     pub macro_rule: Option<Vec<MacroRuleTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule_trailing_sep"))]
+    pub macro_rule_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for MacroDefinitionBraceTransport {
@@ -49444,109 +49484,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<YieldTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct CommaTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for CommaTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => ",".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_else(|| ",".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(false),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| ",".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CommaTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CommaTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CommaTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CommaTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CommaTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct DotDotTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -49955,6 +49892,109 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         MatchTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct CommaTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for CommaTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => ",".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                obj.get("$text")?.unwrap_or_else(|| ",".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ",".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for CommaTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<CommaTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        CommaTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<CommaTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        CommaTransport::to_napi_value(env, *val)
     }
 }
 
@@ -53493,7 +53533,7 @@ fn render_tuple_type(node: &TupleTypeTransport, dest: &mut dyn ::std::fmt::Write
             items: type__buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: false,
+            trailing: node.type__trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -53815,7 +53855,7 @@ fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, dest
 }
 
 fn render_tuple_expression(node: &TupleExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.attributes.as_deref().is_none_or(<[_]>::is_empty) && node.elements.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.attributes.as_deref().is_none_or(<[_]>::is_empty) && node.elements.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
@@ -53824,8 +53864,7 @@ fn render_tuple_expression(node: &TupleExpressionTransport, dest: &mut dyn ::std
     let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributes_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
-    let elements_owned = node.elements.as_deref().unwrap_or(&[]);
-    let elements_buf: Vec<::sittir_core::filters::Renderable<'_>> = elements_owned.iter()
+    let elements_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.elements.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TupleExpressionTemplate {
@@ -53839,7 +53878,7 @@ fn render_tuple_expression(node: &TupleExpressionTransport, dest: &mut dyn ::std
             items: elements_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: false,
+            trailing: node.elements_trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -55809,10 +55848,6 @@ fn render_yield(t: &YieldTransport, dest: &mut dyn ::std::fmt::Write) -> Result<
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_comma(t: &CommaTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
 fn render_dot_dot(t: &DotDotTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -55826,6 +55861,10 @@ fn render_else(t: &ElseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
 }
 
 fn render_match(t: &MatchTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_comma(t: &CommaTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -56719,11 +56758,11 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Caret(t) => t.render_into(dest),
             AnyTransport::Return(t) => t.render_into(dest),
             AnyTransport::Yield(t) => t.render_into(dest),
-            AnyTransport::Comma(t) => t.render_into(dest),
             AnyTransport::DotDot(t) => t.render_into(dest),
             AnyTransport::If(t) => t.render_into(dest),
             AnyTransport::Else(t) => t.render_into(dest),
             AnyTransport::Match(t) => t.render_into(dest),
+            AnyTransport::Comma(t) => t.render_into(dest),
             AnyTransport::While(t) => t.render_into(dest),
             AnyTransport::Loop(t) => t.render_into(dest),
             AnyTransport::In(t) => t.render_into(dest),
@@ -57112,11 +57151,11 @@ impl AnyTransport {
             Self::Caret(t) => t.transport_named,
             Self::Return(t) => t.transport_named,
             Self::Yield(t) => t.transport_named,
-            Self::Comma(t) => t.transport_named,
             Self::DotDot(t) => t.transport_named,
             Self::If(t) => t.transport_named,
             Self::Else(t) => t.transport_named,
             Self::Match(t) => t.transport_named,
+            Self::Comma(t) => t.transport_named,
             Self::While(t) => t.transport_named,
             Self::Loop(t) => t.transport_named,
             Self::In(t) => t.transport_named,

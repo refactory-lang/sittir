@@ -30,6 +30,7 @@ import {
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, RenderRule, Rule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule } from '../types/rule.ts';
+import { isSpliceableBareSeq } from '../types/rule.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { withAttrsFrom, sharedArmAttrs } from '../dsl/rule-attrs.ts';
@@ -741,16 +742,13 @@ function simplifySeqRule(rule: SeqRule, _ctx: SimplifyCtx = makeDefaultCtx()): A
 		return true;
 	});
 	const members: AnyRule[] = filtered.flatMap((m): AnyRule[] => {
-		if (m.type !== SEQ) return [m];
 		// Keep a nested seq that carries its OWN cardinality as one member:
 		// splicing would lose that cardinality and hoist an inner choice to
 		// the parent's seq position (a non-canonical choice-at-seq). A bare
-		// seq (no own attrs) is spliced/flattened.
-		const sm = m as SeqRule & { multiplicity?: LeafMultiplicity; separator?: unknown; fieldName?: string };
-		if (sm.multiplicity !== undefined || sm.separator !== undefined || sm.fieldName !== undefined) {
-			return [m];
-		}
-		return sm.members;
+		// seq (no own attrs) is spliced/flattened — shared predicate with
+		// wrapper-deletion.ts's SEQ case (see isSpliceableBareSeq's doc).
+		if (!isSpliceableBareSeq(m)) return [m];
+		return (m as SeqRule).members;
 	});
 	if (members.length === 0) return withAttrsFrom(rule, { type: SEQ, members: [] });
 	if (members.length === 1) {

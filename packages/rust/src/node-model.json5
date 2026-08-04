@@ -2176,9 +2176,9 @@
       "elements": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "struct_expression": {
@@ -17748,20 +17748,13 @@
           "name": "elements",
           "propertyName": "elements",
           "paramName": "elements",
-          "required": false,
+          "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_expression",
-              "parseKind": "_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "nonEmptyArray",
               "name": "_expression",
               "parseKind": "_expression",
               "unresolved": true

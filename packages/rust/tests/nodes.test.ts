@@ -1573,13 +1573,17 @@ describe('parenthesized_expression', () => {
 
 describe('tuple_expression', () => {
 	it('factory produces correct type', () => {
-		const node = ir.tupleExpression({});
+		const node = ir.tupleExpression({
+			elements: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
+		});
 		expect(node.$type).toBe(TSKindId.TupleExpression);
 		expect(node.$source).toBe(2);
 	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.tupleExpression({});
-		expect(() => node.$render!()).not.toThrow();
+	it('render produces non-empty string', () => {
+		const node = ir.tupleExpression({
+			elements: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

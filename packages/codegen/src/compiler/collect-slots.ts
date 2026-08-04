@@ -55,6 +55,7 @@ import {
 	deriveValuesForRule,
 	dedupeValues,
 	extractSeparatorString,
+	mergeFlankMode,
 	mergeSourceRuleIds,
 	recordAssembleWarning,
 	stampSeparatorOnValues
@@ -261,6 +262,8 @@ function mergeByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
 			values: dedupeValues([...prev.values, ...s.values]),
 			hasTrailing: prev.hasTrailing || s.hasTrailing,
 			hasLeading: prev.hasLeading || s.hasLeading,
+			trailingMode: mergeFlankMode([prev.trailingMode, s.trailingMode]),
+			leadingMode: mergeFlankMode([prev.leadingMode, s.leadingMode]),
 			sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, s.sourceRuleIds)
 		});
 	}
@@ -305,6 +308,8 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 					values: dedupeValues([...prev.values, ...slot.values]),
 					hasTrailing: prev.hasTrailing || slot.hasTrailing,
 					hasLeading: prev.hasLeading || slot.hasLeading,
+					trailingMode: mergeFlankMode([prev.trailingMode, slot.trailingMode]),
+					leadingMode: mergeFlankMode([prev.leadingMode, slot.leadingMode]),
 					sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, slot.sourceRuleIds)
 				})
 			);
@@ -471,15 +476,26 @@ function buildSlot(
 	// undefined) post-PR-S — no more string/array shapes to type-dispatch on.
 	// OR with `findRepeatFlag`'s full-tree walk as a fallback for shapes `sep`
 	// (own separator ?? inheritedSeparator ?? nested-arm scan) didn't reach.
-	// Checks flank PRESENCE (`!== undefined`), not a specific
-	// `SeparatorFlankMode` value: a rule reaching this (non-`'separatedList'`-
-	// classified, see `isSeparatedListShape`, assemble.ts) can only carry a
-	// `'mandatory'` flank here — a genuinely `'optional'` one would already
-	// have routed the whole rule to `'separatedList'` classification instead,
-	// so this presence check and an explicit `=== 'mandatory'` check are
-	// equivalent for any rule that actually reaches this code path.
-	const hasTrailing = isMultiSlot && (sep?.trailing !== undefined || findRepeatFlag(rule, 'trailing'));
-	const hasLeading = isMultiSlot && (sep?.leading !== undefined || findRepeatFlag(rule, 'leading'));
+	// `isSeparatedListShape` (assemble.ts) only routes a rule to
+	// `'separatedList'` classification when the rule's OWN top-level
+	// structure IS the array (the kind's whole identity is a list) — a slot
+	// that is merely ONE array-multiplicity field among several in a larger
+	// branch/seq (e.g. a paren-wrapped tuple's inner repeat field) never
+	// reaches that check, so `sep?.trailing`/`.leading` here can genuinely be
+	// `'optional'`, not just `'mandatory'`. Preserve that tri-state via
+	// `trailingMode`/`leadingMode` (mirrors `AssembledSeparatedList`'s own
+	// fields) instead of collapsing straight to a presence boolean — the
+	// `findRepeatFlag` fallback has no mode granularity of its own, so a flag
+	// found only that way is treated as `'mandatory'` (preserves prior
+	// behavior for that path; no known case needs `'optional'` there).
+	const trailingMode: 'mandatory' | 'optional' | 'none' = !isMultiSlot
+		? 'none'
+		: (sep?.trailing ?? (findRepeatFlag(rule, 'trailing') ? 'mandatory' : 'none'));
+	const leadingMode: 'mandatory' | 'optional' | 'none' = !isMultiSlot
+		? 'none'
+		: (sep?.leading ?? (findRepeatFlag(rule, 'leading') ? 'mandatory' : 'none'));
+	const hasTrailing = trailingMode !== 'none';
+	const hasLeading = leadingMode !== 'none';
 
 	const separatorStr = isMultiSlot ? extractSeparatorString(sep) : undefined;
 	// A NESTED-SCAN separator (the fanOutSeqChoices/factorChoiceBranches rebuild
@@ -514,6 +530,8 @@ function buildSlot(
 		fieldName: (rule as { fieldName?: string }).fieldName,
 		hasTrailing,
 		hasLeading,
+		trailingMode,
+		leadingMode,
 		sourceRuleIds: rule.id ? [rule.id] : [],
 		// Blind opaque passthrough — never read/branched
 		// on here or by any compiler consumer. Only a dsl-sanctioned reader

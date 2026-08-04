@@ -4320,9 +4320,9 @@ export interface ParenthesizedExpression {
 export interface TupleExpression {
 	readonly $type: TSKindId.TupleExpression;
 	readonly _attributes?: readonly AttributeItem[];
-	readonly _elements?: readonly Expression[];
+	readonly _elements: NonEmptyArray<Expression>;
 	attributes(): readonly AttributeItem[];
-	elements(): readonly Expression[];
+	elements(): NonEmptyArray<Expression>;
 }
 
 export interface StructExpression {

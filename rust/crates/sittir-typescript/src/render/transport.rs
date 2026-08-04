@@ -45607,6 +45607,8 @@ pub struct TypeArgumentsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Vec<TypeTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_trailing_sep"))]
+    pub type__trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for TypeArgumentsTransport {
@@ -45827,6 +45829,8 @@ pub struct TypeParametersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter"))]
     pub type_parameter: Vec<TypeParameterTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_trailing_sep"))]
+    pub type_parameter_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for TypeParametersTransport {
@@ -47244,6 +47248,8 @@ pub struct ExportClauseGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier"))]
     pub export_specifier: Vec<ExportSpecifierTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_trailing_sep"))]
+    pub export_specifier_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -47448,6 +47454,8 @@ pub struct NamedImportsGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier"))]
     pub import_specifier: Vec<ImportSpecifierTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_trailing_sep"))]
+    pub import_specifier_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -47918,6 +47926,8 @@ pub struct FormalParametersGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter"))]
     pub formal_parameter: Vec<FormalParameterTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_trailing_sep"))]
+    pub formal_parameter_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -48022,6 +48032,8 @@ pub struct EnumBodyGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<EnumBodyGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_trailing_sep"))]
+    pub content_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for EnumBodyGroup1Transport {
@@ -48222,6 +48234,8 @@ pub struct TupleTypeGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member"))]
     pub tuple_type_member: Vec<TupleTypeMemberTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member_trailing_sep"))]
+    pub tuple_type_member_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -49032,6 +49046,10 @@ pub struct ObjectTypeContentTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<ObjectTypeContentContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_trailing_sep"))]
+    pub content_trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_leading_sep"))]
+    pub content_leading_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_leading_sep"))]
     pub leading_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
