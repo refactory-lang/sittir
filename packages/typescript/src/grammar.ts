@@ -1462,8 +1462,12 @@ export type TypescriptGrammar = {
 		fields: {
 			from_clause: {
 				multiple: false;
-				required: false;
-				types: [{ type: 'import_require_clause'; named: true }, { type: 'import_statement_group1'; named: true }];
+				required: true;
+				types: [
+					{ type: 'import_require_clause'; named: true },
+					{ type: 'import_statement_group1'; named: true },
+					{ type: 'string'; named: true }
+				];
 			};
 			import_attribute: { multiple: false; required: false; types: [{ type: 'import_attribute'; named: true }] };
 			import_clause: {
@@ -1476,7 +1480,6 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
 			};
-			source: { multiple: false; required: false; types: [{ type: 'string'; named: true }] };
 		};
 	};
 	readonly import_statement_group1: {

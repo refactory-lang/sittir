@@ -3667,7 +3667,7 @@ function unifyChoiceArmFieldNames(content, unifiedName) {
   if (!Array.isArray(members)) return content;
   let anyChanged = false;
   const newMembers = members.map((m) => {
-    if (isEnrichShapedFieldWrapper(m) && m.name !== unifiedName) {
+    if (isFieldLike(m) && m.name !== unifiedName) {
       anyChanged = true;
       return { ...m, name: unifiedName, metadata: makeRuleMetadata({ fieldSource: "override" }) };
     }

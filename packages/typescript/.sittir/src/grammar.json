@@ -384,10 +384,13 @@
               },
               {
                 "type": "FIELD",
-                "name": "source",
+                "name": "from_clause",
                 "content": {
                   "type": "SYMBOL",
                   "name": "string"
+                },
+                "metadata": {
+                  "fieldSource": "override"
                 }
               }
             ]

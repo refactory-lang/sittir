@@ -634,7 +634,13 @@ function unifyChoiceArmFieldNames(content: unknown, unifiedName: string): unknow
 	if (!Array.isArray(members)) return content;
 	let anyChanged = false;
 	const newMembers = members.map((m) => {
-		if (isEnrichShapedFieldWrapper(m) && m.name !== unifiedName) {
+		// Any field-wrapped arm gets unified, not just enrich-shaped ones
+		// (name === symbol name) — a hand-authored, meaningfully-named field
+		// from the base grammar (e.g. `field('source', $.string)`) is just as
+		// much "already fielded under its own differing name" as an
+		// enrich-numbered one, and this function's whole job (per its
+		// callers) is to unify those under the override's chosen name.
+		if (isFieldLike(m) && m.name !== unifiedName) {
 			anyChanged = true;
 			return { ...m, name: unifiedName, metadata: makeRuleMetadata({ fieldSource: 'override' }) };
 		}

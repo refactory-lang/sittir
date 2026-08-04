@@ -4079,7 +4079,7 @@
     "fields": {
       "from_clause": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "import_require_clause",
@@ -4087,6 +4087,10 @@
           },
           {
             "type": "import_statement_group1",
+            "named": true
+          },
+          {
+            "type": "string",
             "named": true
           }
         ]
@@ -4125,16 +4129,6 @@
           },
           {
             "type": "automatic_semicolon",
-            "named": true
-          }
-        ]
-      },
-      "source": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "string",
             "named": true
           }
         ]

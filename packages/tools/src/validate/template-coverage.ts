@@ -153,6 +153,7 @@ export function validateTemplateCoverage(grammar: string, templatesPath: string)
 	// before.
 	const grammarJson = loadGrammarJson(grammar);
 	const hoistedOuterByKind = grammarJson ? computeHoistedOuterFields(grammarJson) : new Map<string, Set<string>>();
+	const unionSlotRoutedByKind = loadUnionSlotRoutedFields(grammar);
 
 	const issues: CoverageIssue[] = [];
 	let total = 0;
@@ -184,6 +185,7 @@ export function validateTemplateCoverage(grammar: string, templatesPath: string)
 			entry,
 			rule,
 			hoistedOuterByKind.get(entry.type) ?? new Set(),
+			unionSlotRoutedByKind.get(entry.type),
 			rawTemplate,
 			templatePath
 		);
@@ -261,6 +263,7 @@ function checkRule(
 	entry: RawNodeEntry,
 	rule: TemplateRule,
 	hoistedOuterFields: Set<string>,
+	unionSlotRouted: { unionSlot: string; fields: Set<string> } | undefined,
 	rawTemplate: string | undefined,
 	templatePath: string
 ): CoverageIssue[] {
@@ -299,6 +302,15 @@ function checkRule(
 		// surrounding template text. See `hoistInnerFieldsForTemplate`
 		// in `compiler/simplify.ts`.
 		if (hoistedOuterFields.has(fname)) continue;
+		// Union-slot routing (collect-slots.ts): `fname`'s arm was folded
+		// into a shared union slot alongside unnamed-nonterminal arms —
+		// its data flows through that slot at render/read time even
+		// though the template only names the slot, not `fname` itself.
+		// Exempt ONLY when the stamped fact says THIS field's arm is
+		// actually a member of the union slot AND the template references
+		// that slot (a template that dropped the slot placeholder while
+		// still routing a field into it is a real bug, not exempt).
+		if (unionSlotRouted?.fields.has(fname) && unionPlaceholders.has(unionSlotRouted.unionSlot)) continue;
 		// Quote the real jinja source so the message points at what's
 		// actually on disk — `variants[].template` is this checker's own
 		// `$NAME`/`$$$NAME` placeholder DSL (see `jinjaBodyToLegacyRule`),
@@ -703,4 +715,43 @@ function loadGrammarJson(grammar: string): GrammarJson | null {
 	const path = join(packagesDir, grammar, '.sittir', 'src', 'grammar.json');
 	if (!existsSync(path)) return null;
 	return JSON.parse(readFileSync(path, 'utf8')) as GrammarJson;
+}
+
+interface UnionSlotRoutedDiagnostic {
+	code: string;
+	ownerKind?: string;
+	details?: { unionSlot?: string; degenerateFields?: string[] };
+}
+
+/**
+ * Load `union-slot-routed` diagnostics from `packages/<grammar>/.sittir/grammar-diagnostics.json`
+ * and index them by (visible) kind name → the union slot name + the set of
+ * field-labeled arm names collect-slots folded into it.
+ *
+ * @remarks
+ * This is the stamped fact `collect-slots.ts` computes when a field-labeled
+ * CHOICE arm merges into a shared union slot (rendered as `{{ content }}`)
+ * alongside unnamed-nonterminal arms — the field's data is not lost, just
+ * routed through the union slot instead of its own named placeholder. Only a
+ * field name present in THIS map for THIS kind is exempt from the
+ * missing-field check; a field absent from the map (e.g. `call_expression`'s
+ * fields, which have no slot anywhere, union or otherwise) gets no exemption.
+ * `ownerKind` in the diagnostic carries the internal (possibly `_`-prefixed
+ * hidden) rule name; strip the leading underscore to match node-types.json's
+ * visible kind names.
+ */
+function loadUnionSlotRoutedFields(grammar: string): Map<string, { unionSlot: string; fields: Set<string> }> {
+	const out = new Map<string, { unionSlot: string; fields: Set<string> }>();
+	const path = join(packagesDir, grammar, '.sittir', 'grammar-diagnostics.json');
+	if (!existsSync(path)) return out;
+	const diagnostics = JSON.parse(readFileSync(path, 'utf8')) as UnionSlotRoutedDiagnostic[];
+	for (const d of diagnostics) {
+		if (d.code !== 'union-slot-routed') continue;
+		const unionSlot = d.details?.unionSlot;
+		const fields = d.details?.degenerateFields;
+		if (d.ownerKind === undefined || unionSlot === undefined || fields === undefined || fields.length === 0) continue;
+		const kind = d.ownerKind.replace(/^_+/, '');
+		out.set(kind, { unionSlot, fields: new Set(fields) });
+	}
+	return out;
 }
