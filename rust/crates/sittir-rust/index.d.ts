@@ -2226,7 +2226,7 @@ export interface TupleExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributes?: Array<AttributeItemTransport>
-  _elements?: Array<ExpressionTransport>
+  _elements: Array<ExpressionTransport>
 }
 
 export interface TuplePatternGroup1Transport {

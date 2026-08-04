@@ -4388,6 +4388,1461 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_name": "main",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "$text": "()",
+            "$span": {
+              "start": 7,
+              "end": 9
+            },
+            "$nodeHandle": 123
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 10,
+              "end": 12
+            },
+            "$nodeHandle": 124,
+            "_statement": []
+          },
+          "$other": [
+            60
+          ],
+          "$span": {
+            "start": 0,
+            "end": 12
+          },
+          "$nodeHandle": 113
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_name": "add",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "_parameters_group1": {
+              "$type": 332,
+              "$source": 0,
+              "$named": true,
+              "_attributed_parameter": [
+                {
+                  "$type": 396,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 21,
+                    "end": 27
+                  },
+                  "$nodeHandle": 127,
+                  "_content": {
+                    "$type": 214,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": "x",
+                    "_type": "i32",
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 21,
+                      "end": 27
+                    },
+                    "$nodeHandle": 129
+                  }
+                },
+                {
+                  "$type": 396,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 29,
+                    "end": 35
+                  },
+                  "$nodeHandle": 128,
+                  "_content": {
+                    "$type": 214,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": "y",
+                    "_type": "i32",
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 29,
+                      "end": 35
+                    },
+                    "$nodeHandle": 130
+                  }
+                }
+              ],
+              "$other": [
+                69
+              ],
+              "$span": {
+                "start": 21,
+                "end": 35
+              },
+              "$nodeHandle": 126,
+              "_trailing_sep": false
+            },
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 20,
+              "end": 36
+            },
+            "$nodeHandle": 125
+          },
+          "_return_type": "i32",
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              50,
+              51
+            ],
+            "$span": {
+              "start": 44,
+              "end": 65
+            },
+            "$nodeHandle": 131,
+            "_statement": [
+              {
+                "$type": 160,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 50,
+                  "end": 63
+                },
+                "$nodeHandle": 132,
+                "_content": {
+                  "$type": 380,
+                  "$source": 0,
+                  "$named": true,
+                  "_expression": {
+                    "$type": 255,
+                    "$source": 0,
+                    "$named": true,
+                    "_expression": {
+                      "$type": 251,
+                      "$source": 0,
+                      "$named": true,
+                      "_left": "x",
+                      "_operator": 10,
+                      "_right": "y",
+                      "$span": {
+                        "start": 57,
+                        "end": 62
+                      },
+                      "$nodeHandle": 135
+                    },
+                    "$other": [
+                      104
+                    ],
+                    "$span": {
+                      "start": 50,
+                      "end": 62
+                    },
+                    "$nodeHandle": 134
+                  },
+                  "$other": [
+                    2
+                  ],
+                  "$span": {
+                    "start": 50,
+                    "end": 63
+                  },
+                  "$nodeHandle": 133
+                }
+              }
+            ]
+          },
+          "$other": [
+            60,
+            139
+          ],
+          "$span": {
+            "start": 14,
+            "end": 65
+          },
+          "$nodeHandle": 114
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_name": "takes_slice",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "_parameters_group1": {
+              "$type": 332,
+              "$source": 0,
+              "$named": true,
+              "_attributed_parameter": [
+                {
+                  "$type": 396,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 82,
+                    "end": 93
+                  },
+                  "$nodeHandle": 138,
+                  "_content": {
+                    "$type": 214,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": "slice",
+                    "_type": {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_type": "str",
+                      "$other": [
+                        78
+                      ],
+                      "$span": {
+                        "start": 89,
+                        "end": 93
+                      },
+                      "$nodeHandle": 140
+                    },
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 82,
+                      "end": 93
+                    },
+                    "$nodeHandle": 139
+                  }
+                }
+              ],
+              "$span": {
+                "start": 82,
+                "end": 93
+              },
+              "$nodeHandle": 137,
+              "_trailing_sep": false
+            },
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 81,
+              "end": 94
+            },
+            "$nodeHandle": 136
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              50,
+              51
+            ],
+            "$span": {
+              "start": 95,
+              "end": 130
+            },
+            "$nodeHandle": 141,
+            "_statement": [
+              {
+                "$type": 160,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 101,
+                  "end": 128
+                },
+                "$nodeHandle": 142,
+                "_content": {
+                  "$type": 380,
+                  "$source": 0,
+                  "$named": true,
+                  "_expression": {
+                    "$type": 240,
+                    "$source": 0,
+                    "$named": true,
+                    "_macro": "println",
+                    "_token_tree": {
+                      "$type": 241,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 109,
+                        "end": 127
+                      },
+                      "$nodeHandle": 145,
+                      "_content": {
+                        "$type": 391,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          7,
+                          8
+                        ],
+                        "$span": {
+                          "start": 109,
+                          "end": 127
+                        },
+                        "$nodeHandle": 146,
+                        "_delim_tokens": [
+                          {
+                            "$type": 312,
+                            "$source": 0,
+                            "$named": true,
+                            "$other": [
+                              123,
+                              123
+                            ],
+                            "$span": {
+                              "start": 110,
+                              "end": 119
+                            },
+                            "$nodeHandle": 148,
+                            "_content": [
+                              "Got: {}"
+                            ]
+                          },
+                          {
+                            "$type": 343,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": ",",
+                            "$span": {
+                              "start": 119,
+                              "end": 120
+                            },
+                            "$nodeHandle": 150
+                          },
+                          "slice"
+                        ]
+                      }
+                    },
+                    "$other": [
+                      48
+                    ],
+                    "$span": {
+                      "start": 101,
+                      "end": 127
+                    },
+                    "$nodeHandle": 144
+                  },
+                  "$other": [
+                    2
+                  ],
+                  "$span": {
+                    "start": 101,
+                    "end": 128
+                  },
+                  "$nodeHandle": 143
+                }
+              }
+            ]
+          },
+          "$other": [
+            60
+          ],
+          "$span": {
+            "start": 67,
+            "end": 130
+          },
+          "$nodeHandle": 115
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_name": "foo",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "$text": "()",
+            "$span": {
+              "start": 138,
+              "end": 140
+            },
+            "$nodeHandle": 152
+          },
+          "_return_type": {
+            "$type": 221,
+            "$source": 0,
+            "$named": true,
+            "_element": "u32",
+            "_length": "2",
+            "$other": [
+              46,
+              2,
+              47
+            ],
+            "$span": {
+              "start": 144,
+              "end": 152
+            },
+            "$nodeHandle": 153
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              50,
+              51
+            ],
+            "$span": {
+              "start": 153,
+              "end": 175
+            },
+            "$nodeHandle": 154,
+            "_statement": [
+              {
+                "$type": 160,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 159,
+                  "end": 173
+                },
+                "$nodeHandle": 155,
+                "_content": {
+                  "$type": 380,
+                  "$source": 0,
+                  "$named": true,
+                  "_expression": {
+                    "$type": 255,
+                    "$source": 0,
+                    "$named": true,
+                    "_expression": {
+                      "$type": 259,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 166,
+                        "end": 172
+                      },
+                      "$nodeHandle": 158,
+                      "_content": {
+                        "$type": 356,
+                        "$source": 0,
+                        "$named": true,
+                        "_arguments_group1": {
+                          "$type": 335,
+                          "$source": 0,
+                          "$named": true,
+                          "_attributed_argument": [
+                            {
+                              "$type": 398,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 167,
+                                "end": 168
+                              },
+                              "$nodeHandle": 161,
+                              "_attribute_item": [],
+                              "_expression": "1"
+                            },
+                            {
+                              "$type": 398,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 170,
+                                "end": 171
+                              },
+                              "$nodeHandle": 162,
+                              "_attribute_item": [],
+                              "_expression": "2"
+                            }
+                          ],
+                          "$other": [
+                            69
+                          ],
+                          "$span": {
+                            "start": 167,
+                            "end": 171
+                          },
+                          "$nodeHandle": 160,
+                          "_trailing_sep": false
+                        },
+                        "$other": [
+                          46,
+                          47
+                        ],
+                        "$span": {
+                          "start": 166,
+                          "end": 172
+                        },
+                        "$nodeHandle": 159,
+                        "_attributes": []
+                      }
+                    },
+                    "$other": [
+                      104
+                    ],
+                    "$span": {
+                      "start": 159,
+                      "end": 172
+                    },
+                    "$nodeHandle": 157
+                  },
+                  "$other": [
+                    2
+                  ],
+                  "$span": {
+                    "start": 159,
+                    "end": 173
+                  },
+                  "$nodeHandle": 156
+                }
+              }
+            ]
+          },
+          "$other": [
+            60,
+            139
+          ],
+          "$span": {
+            "start": 132,
+            "end": 175
+          },
+          "$nodeHandle": 116
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_name": "foo",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "$text": "()",
+            "$span": {
+              "start": 183,
+              "end": 185
+            },
+            "$nodeHandle": 163
+          },
+          "_return_type": {
+            "$type": 224,
+            "$source": 0,
+            "$named": true,
+            "_type": [
+              "u32",
+              "u16"
+            ],
+            "$other": [
+              7,
+              69,
+              8
+            ],
+            "$span": {
+              "start": 189,
+              "end": 199
+            },
+            "$nodeHandle": 164
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              50,
+              51
+            ],
+            "$span": {
+              "start": 200,
+              "end": 222
+            },
+            "$nodeHandle": 165,
+            "_statement": [
+              {
+                "$type": 160,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 206,
+                  "end": 220
+                },
+                "$nodeHandle": 166,
+                "_content": {
+                  "$type": 380,
+                  "$source": 0,
+                  "$named": true,
+                  "_expression": {
+                    "$type": 255,
+                    "$source": 0,
+                    "$named": true,
+                    "_expression": {
+                      "$type": 261,
+                      "$source": 0,
+                      "$named": true,
+                      "_elements": [
+                        "1",
+                        "2"
+                      ],
+                      "$other": [
+                        7,
+                        69,
+                        8
+                      ],
+                      "$span": {
+                        "start": 213,
+                        "end": 219
+                      },
+                      "$nodeHandle": 169,
+                      "_attributes": []
+                    },
+                    "$other": [
+                      104
+                    ],
+                    "$span": {
+                      "start": 206,
+                      "end": 219
+                    },
+                    "$nodeHandle": 168
+                  },
+                  "$other": [
+                    2
+                  ],
+                  "$span": {
+                    "start": 206,
+                    "end": 220
+                  },
+                  "$nodeHandle": 167
+                }
+              }
+            ]
+          },
+          "$other": [
+            60,
+            139
+          ],
+          "$span": {
+            "start": 177,
+            "end": 222
+          },
+          "$nodeHandle": 117
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_name": "foo",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "$text": "()",
+            "$span": {
+              "start": 230,
+              "end": 232
+            },
+            "$nodeHandle": 170
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "_trailing_expression": {
+              "$type": 255,
+              "$source": 0,
+              "$named": true,
+              "$text": "return",
+              "$span": {
+                "start": 239,
+                "end": 245
+              },
+              "$nodeHandle": 172
+            },
+            "$other": [
+              50,
+              51
+            ],
+            "$span": {
+              "start": 233,
+              "end": 247
+            },
+            "$nodeHandle": 171,
+            "_statement": []
+          },
+          "$other": [
+            60
+          ],
+          "$span": {
+            "start": 224,
+            "end": 247
+          },
+          "$nodeHandle": 118
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_name": "foo",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "_parameters_group1": {
+              "$type": 332,
+              "$source": 0,
+              "$named": true,
+              "_attributed_parameter": [
+                {
+                  "$type": 396,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 256,
+                    "end": 296
+                  },
+                  "$nodeHandle": 175,
+                  "_content": {
+                    "$type": 214,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": "x",
+                    "_type": {
+                      "$type": 236,
+                      "$source": 0,
+                      "$named": true,
+                      "_trait": {
+                        "$type": 223,
+                        "$source": 0,
+                        "$named": true,
+                        "_function_type_trait_form": {
+                          "$type": 360,
+                          "$source": 0,
+                          "$named": true,
+                          "_trait": "FnOnce",
+                          "$span": {
+                            "start": 264,
+                            "end": 270
+                          },
+                          "$nodeHandle": 179
+                        },
+                        "_parameters": {
+                          "$type": 211,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "()",
+                          "$span": {
+                            "start": 270,
+                            "end": 272
+                          },
+                          "$nodeHandle": 180
+                        },
+                        "_return_type": {
+                          "$type": 227,
+                          "$source": 0,
+                          "$named": true,
+                          "_type": {
+                            "$type": 246,
+                            "$source": 0,
+                            "$named": true,
+                            "_path": "result",
+                            "_name": "Result",
+                            "$other": [
+                              73
+                            ],
+                            "$span": {
+                              "start": 276,
+                              "end": 290
+                            },
+                            "$nodeHandle": 182
+                          },
+                          "_type_arguments": {
+                            "$type": 231,
+                            "$source": 0,
+                            "$named": true,
+                            "_type_argument": [
+                              {
+                                "$type": 400,
+                                "$source": 0,
+                                "$named": true,
+                                "$span": {
+                                  "start": 291,
+                                  "end": 292
+                                },
+                                "$nodeHandle": 184,
+                                "_content": "T"
+                              },
+                              {
+                                "$type": 400,
+                                "$source": 0,
+                                "$named": true,
+                                "$span": {
+                                  "start": 294,
+                                  "end": 295
+                                },
+                                "$nodeHandle": 185,
+                                "_content": "E"
+                              }
+                            ],
+                            "$other": [
+                              68,
+                              69,
+                              70
+                            ],
+                            "$span": {
+                              "start": 290,
+                              "end": 296
+                            },
+                            "$nodeHandle": 183
+                          },
+                          "$span": {
+                            "start": 276,
+                            "end": 296
+                          },
+                          "$nodeHandle": 181
+                        },
+                        "$other": [
+                          139
+                        ],
+                        "$span": {
+                          "start": 264,
+                          "end": 296
+                        },
+                        "$nodeHandle": 178
+                      },
+                      "$other": [
+                        65
+                      ],
+                      "$span": {
+                        "start": 259,
+                        "end": 296
+                      },
+                      "$nodeHandle": 177
+                    },
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 256,
+                      "end": 296
+                    },
+                    "$nodeHandle": 176
+                  }
+                }
+              ],
+              "$span": {
+                "start": 256,
+                "end": 296
+              },
+              "$nodeHandle": 174,
+              "_trailing_sep": false
+            },
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 255,
+              "end": 297
+            },
+            "$nodeHandle": 173
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 298,
+              "end": 300
+            },
+            "$nodeHandle": 186,
+            "_statement": []
+          },
+          "$other": [
+            60
+          ],
+          "$span": {
+            "start": 249,
+            "end": 300
+          },
+          "$nodeHandle": 119
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_name": "foo",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "_parameters_group1": {
+              "$type": 332,
+              "$source": 0,
+              "$named": true,
+              "_attributed_parameter": [
+                {
+                  "$type": 396,
+                  "$source": 0,
+                  "$named": true,
+                  "_attribute_item": {
+                    "$type": 171,
+                    "$source": 0,
+                    "$named": true,
+                    "_attribute": {
+                      "$type": 173,
+                      "$source": 0,
+                      "$named": true,
+                      "_path": "attr",
+                      "$span": {
+                        "start": 311,
+                        "end": 315
+                      },
+                      "$nodeHandle": 192
+                    },
+                    "$other": [
+                      45,
+                      46,
+                      47
+                    ],
+                    "$span": {
+                      "start": 309,
+                      "end": 316
+                    },
+                    "$nodeHandle": 191
+                  },
+                  "$span": {
+                    "start": 309,
+                    "end": 323
+                  },
+                  "$nodeHandle": 189,
+                  "_content": {
+                    "$type": 214,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": "x",
+                    "_type": "i32",
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 317,
+                      "end": 323
+                    },
+                    "$nodeHandle": 193
+                  }
+                },
+                {
+                  "$type": 396,
+                  "$source": 0,
+                  "$named": true,
+                  "_attribute_item": {
+                    "$type": 171,
+                    "$source": 0,
+                    "$named": true,
+                    "_attribute": {
+                      "$type": 173,
+                      "$source": 0,
+                      "$named": true,
+                      "_path": "attr",
+                      "$span": {
+                        "start": 327,
+                        "end": 331
+                      },
+                      "$nodeHandle": 195
+                    },
+                    "$other": [
+                      45,
+                      46,
+                      47
+                    ],
+                    "$span": {
+                      "start": 325,
+                      "end": 332
+                    },
+                    "$nodeHandle": 194
+                  },
+                  "$span": {
+                    "start": 325,
+                    "end": 339
+                  },
+                  "$nodeHandle": 190,
+                  "_content": {
+                    "$type": 214,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": "x",
+                    "_type": "i64",
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 333,
+                      "end": 339
+                    },
+                    "$nodeHandle": 196
+                  }
+                }
+              ],
+              "$other": [
+                69
+              ],
+              "$span": {
+                "start": 309,
+                "end": 339
+              },
+              "$nodeHandle": 188,
+              "_trailing_sep": false
+            },
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 308,
+              "end": 340
+            },
+            "$nodeHandle": 187
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 341,
+              "end": 343
+            },
+            "$nodeHandle": 197,
+            "_statement": []
+          },
+          "$other": [
+            60
+          ],
+          "$span": {
+            "start": 302,
+            "end": 343
+          },
+          "$nodeHandle": 120
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_name": "accumulate",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "_parameters_group1": {
+              "$type": 332,
+              "$source": 0,
+              "$named": true,
+              "_attributed_parameter": [
+                {
+                  "$type": 396,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 359,
+                    "end": 363
+                  },
+                  "$nodeHandle": 200,
+                  "_content": {
+                    "$type": 212,
+                    "$source": 0,
+                    "$named": true,
+                    "_self": 134,
+                    "$span": {
+                      "start": 359,
+                      "end": 363
+                    },
+                    "$nodeHandle": 201
+                  }
+                }
+              ],
+              "$span": {
+                "start": 359,
+                "end": 363
+              },
+              "$nodeHandle": 199,
+              "_trailing_sep": false
+            },
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 358,
+              "end": 364
+            },
+            "$nodeHandle": 198
+          },
+          "_return_type": {
+            "$type": 227,
+            "$source": 0,
+            "$named": true,
+            "_type": "Machine",
+            "_type_arguments": {
+              "$type": 231,
+              "$source": 0,
+              "$named": true,
+              "_type_argument": [
+                {
+                  "$type": 400,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 376,
+                    "end": 395
+                  },
+                  "$nodeHandle": 204,
+                  "_content": {
+                    "$type": 294,
+                    "$source": 0,
+                    "$named": true,
+                    "_trailing_expression": {
+                      "$type": 244,
+                      "$source": 0,
+                      "$named": true,
+                      "_path": "State",
+                      "_name": "Accumulate",
+                      "$other": [
+                        73
+                      ],
+                      "$span": {
+                        "start": 377,
+                        "end": 394
+                      },
+                      "$nodeHandle": 206
+                    },
+                    "$other": [
+                      50,
+                      51
+                    ],
+                    "$span": {
+                      "start": 376,
+                      "end": 395
+                    },
+                    "$nodeHandle": 205,
+                    "_statement": []
+                  }
+                }
+              ],
+              "$other": [
+                68,
+                70
+              ],
+              "$span": {
+                "start": 375,
+                "end": 396
+              },
+              "$nodeHandle": 203
+            },
+            "$span": {
+              "start": 368,
+              "end": 396
+            },
+            "$nodeHandle": 202
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 397,
+              "end": 399
+            },
+            "$nodeHandle": 207,
+            "_statement": []
+          },
+          "$other": [
+            60,
+            139
+          ],
+          "$span": {
+            "start": 345,
+            "end": 399
+          },
+          "$nodeHandle": 121
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_name": "foo",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "_parameters_group1": {
+              "$type": 332,
+              "$source": 0,
+              "$named": true,
+              "_attributed_parameter": [
+                {
+                  "$type": 396,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 408,
+                    "end": 439
+                  },
+                  "$nodeHandle": 210,
+                  "_content": {
+                    "$type": 214,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": "bar",
+                    "_type": {
+                      "$type": 236,
+                      "$source": 0,
+                      "$named": true,
+                      "_type_parameters": {
+                        "$type": 200,
+                        "$source": 0,
+                        "$named": true,
+                        "_attributed_type_parameter": [
+                          {
+                            "$type": 397,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 422,
+                              "end": 424
+                            },
+                            "$nodeHandle": 214,
+                            "_attribute_item": [],
+                            "_content": {
+                              "$type": 203,
+                              "$source": 0,
+                              "$named": true,
+                              "_name": {
+                                "$type": 220,
+                                "$source": 0,
+                                "$named": true,
+                                "_identifier": "a",
+                                "$other": [
+                                  76
+                                ],
+                                "$span": {
+                                  "start": 422,
+                                  "end": 424
+                                },
+                                "$nodeHandle": 216
+                              },
+                              "$span": {
+                                "start": 422,
+                                "end": 424
+                              },
+                              "$nodeHandle": 215
+                            }
+                          }
+                        ],
+                        "$other": [
+                          68,
+                          70
+                        ],
+                        "$span": {
+                          "start": 421,
+                          "end": 425
+                        },
+                        "$nodeHandle": 213
+                      },
+                      "_trait": {
+                        "$type": 227,
+                        "$source": 0,
+                        "$named": true,
+                        "_type": "Baz",
+                        "_type_arguments": {
+                          "$type": 231,
+                          "$source": 0,
+                          "$named": true,
+                          "_type_argument": [
+                            {
+                              "$type": 400,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 430,
+                                "end": 438
+                              },
+                              "$nodeHandle": 219,
+                              "_content": {
+                                "$type": 227,
+                                "$source": 0,
+                                "$named": true,
+                                "_type": "Quux",
+                                "_type_arguments": {
+                                  "$type": 231,
+                                  "$source": 0,
+                                  "$named": true,
+                                  "_type_argument": [
+                                    {
+                                      "$type": 400,
+                                      "$source": 0,
+                                      "$named": true,
+                                      "$span": {
+                                        "start": 435,
+                                        "end": 437
+                                      },
+                                      "$nodeHandle": 222,
+                                      "_content": {
+                                        "$type": 220,
+                                        "$source": 0,
+                                        "$named": true,
+                                        "_identifier": "a",
+                                        "$other": [
+                                          76
+                                        ],
+                                        "$span": {
+                                          "start": 435,
+                                          "end": 437
+                                        },
+                                        "$nodeHandle": 223
+                                      }
+                                    }
+                                  ],
+                                  "$other": [
+                                    68,
+                                    70
+                                  ],
+                                  "$span": {
+                                    "start": 434,
+                                    "end": 438
+                                  },
+                                  "$nodeHandle": 221
+                                },
+                                "$span": {
+                                  "start": 430,
+                                  "end": 438
+                                },
+                                "$nodeHandle": 220
+                              }
+                            }
+                          ],
+                          "$other": [
+                            68,
+                            70
+                          ],
+                          "$span": {
+                            "start": 429,
+                            "end": 439
+                          },
+                          "$nodeHandle": 218
+                        },
+                        "$span": {
+                          "start": 426,
+                          "end": 439
+                        },
+                        "$nodeHandle": 217
+                      },
+                      "$other": [
+                        65,
+                        67
+                      ],
+                      "$span": {
+                        "start": 413,
+                        "end": 439
+                      },
+                      "$nodeHandle": 212
+                    },
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 408,
+                      "end": 439
+                    },
+                    "$nodeHandle": 211
+                  }
+                }
+              ],
+              "$span": {
+                "start": 408,
+                "end": 439
+              },
+              "$nodeHandle": 209,
+              "_trailing_sep": false
+            },
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 407,
+              "end": 440
+            },
+            "$nodeHandle": 208
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 441,
+              "end": 443
+            },
+            "$nodeHandle": 224,
+            "_statement": []
+          },
+          "$other": [
+            60
+          ],
+          "$span": {
+            "start": 401,
+            "end": 443
+          },
+          "$nodeHandle": 122
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 443
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "fn main(){  }fn add(x:i32,y:i32)->i32{ return x+y; }fn takes_slice(slice:&str){ println!(\"Got: {}\",slice); }fn foo()->[u32;2]{ return[1,2]; }fn foo()->(u32,u16){ return(1,2); }fn foo(){ return }fn foo(x:impl FnOnce()->result::Result<T,E>){  }fn foo(#[attr]x:i32,#[attr]x:i64){  }fn accumulate(self)->Machine<{ State::Accumulate }>{  }fn foo(bar:impl for<'a>Baz<Quux<'a>>){  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "fn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{State::Accumulate}> {}\n\nfn foo(bar: impl for<'a> Baz<Quux<'a>>) {}",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "fn main(){  }fn add(x:i32,y:i32)->i32{ return x+y; }fn takes_slice(slice:&str){ println!(\"Got: {}\",slice); }fn foo()->[u32;2]{ return[1,2]; }fn foo()->(u32,u16){ return(1,2); }fn foo(){ return }fn foo(x:impl FnOnce()->result::Result<T,E>){  }fn foo(#[attr]x:i32,#[attr]x:i64){  }fn accumulate(self)->Machine<{ State::Accumulate }>{  }fn foo(bar:impl for<'a>Baz<Quux<'a>>){  }",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))))) return_type: (primitive_type) body: (block (expression_statement (expression_statement_with_semi expression: (return_expression expression: (binary_expression left: (identifier) right: (identifier))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (primitive_type)))))) body: (block (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal (string_content))) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier))))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (array_type element: (primitive_type) length: (integer_literal)) body: (block (expression_statement (expression_statement_with_semi expression: (return_expression expression: (array_expression (array_expression_list (arguments_group1 (attributed_argument (integer_literal)) (attributed_argument (integer_literal)))))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (tuple_type type: (primitive_type) type: (primitive_type)) body: (block (expression_statement (expression_statement_with_semi expression: (return_expression expression: (tuple_expression elements: (integer_literal) elements: (integer_literal))))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block trailing_expression: (return_expression))) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_argument (type_identifier)) (type_argument (type_identifier)))))))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter pattern: (identifier) type: (primitive_type))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))))) return_type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier)))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (abstract_type type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))))))))))))) body: (block)))",
+    "wrappedText": "fn main(){  }fn add(x:i32,y:i32)->i32{ return x+y; }fn takes_slice(slice:&str){ println!(\"Got: {}\",slice); }fn foo()->[u32;2]{ return[1,2]; }fn foo()->(u32,u16){ return(1,2); }fn foo(){ return }fn foo(x:impl FnOnce()->result::Result<T,E>){  }fn foo(#[attr]x:i32,#[attr]x:i64){  }fn accumulate(self)->Machine<{ State::Accumulate }>{  }fn foo(bar:impl for<'a>Baz<Quux<'a>>){  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 189,
       "$source": 0,
       "$named": true,
@@ -4990,6 +6445,139 @@
     "expectedSourceOut": "fn foo()->[u32;2]{ return[1,2]; }",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) return_type: (array_type element: (primitive_type) length: (integer_literal)) body: (block (expression_statement (expression_statement_with_semi expression: (return_expression expression: (array_expression (array_expression_list (arguments_group1 (attributed_argument (integer_literal)) (attributed_argument (integer_literal))))))))))",
     "wrappedText": "fn foo()->[u32;2]{ return[1,2]; }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 189,
+      "$source": 0,
+      "$named": true,
+      "_name": "foo",
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 183,
+          "end": 185
+        },
+        "$nodeHandle": 265
+      },
+      "_return_type": {
+        "$type": 224,
+        "$source": 0,
+        "$named": true,
+        "_type": [
+          "u32",
+          "u16"
+        ],
+        "$other": [
+          7,
+          69,
+          8
+        ],
+        "$span": {
+          "start": 189,
+          "end": 199
+        },
+        "$nodeHandle": 266
+      },
+      "_body": {
+        "$type": 294,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          50,
+          51
+        ],
+        "$span": {
+          "start": 200,
+          "end": 222
+        },
+        "$nodeHandle": 267,
+        "_statement": [
+          {
+            "$type": 160,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 206,
+              "end": 220
+            },
+            "$nodeHandle": 268,
+            "_content": {
+              "$type": 380,
+              "$source": 0,
+              "$named": true,
+              "_expression": {
+                "$type": 255,
+                "$source": 0,
+                "$named": true,
+                "_expression": {
+                  "$type": 261,
+                  "$source": 0,
+                  "$named": true,
+                  "_elements": [
+                    "1",
+                    "2"
+                  ],
+                  "$other": [
+                    7,
+                    69,
+                    8
+                  ],
+                  "$span": {
+                    "start": 213,
+                    "end": 219
+                  },
+                  "$nodeHandle": 271,
+                  "_attributes": []
+                },
+                "$other": [
+                  104
+                ],
+                "$span": {
+                  "start": 206,
+                  "end": 219
+                },
+                "$nodeHandle": 270
+              },
+              "$other": [
+                2
+              ],
+              "$span": {
+                "start": 206,
+                "end": 220
+              },
+              "$nodeHandle": 269
+            }
+          }
+        ]
+      },
+      "$other": [
+        60,
+        139
+      ],
+      "$span": {
+        "start": 177,
+        "end": 222
+      },
+      "$nodeHandle": 5
+    },
+    "expectedOutput": "fn foo()->(u32,u16){ return(1,2); }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "fn foo() -> (u32, u16) {\n    return (1, 2);\n}",
+    "pattern": "function_item",
+    "edits": [],
+    "expectedSourceOut": "fn foo()->(u32,u16){ return(1,2); }",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) return_type: (tuple_type type: (primitive_type) type: (primitive_type)) body: (block (expression_statement (expression_statement_with_semi expression: (return_expression expression: (tuple_expression elements: (integer_literal) elements: (integer_literal)))))))",
+    "wrappedText": "fn foo()->(u32,u16){ return(1,2); }",
     "wrappedOffset": 0
   },
   {
@@ -7133,6 +8721,94 @@
       "$type": 294,
       "$source": 0,
       "$named": true,
+      "$other": [
+        50,
+        51
+      ],
+      "$span": {
+        "start": 200,
+        "end": 222
+      },
+      "$nodeHandle": 53,
+      "_statement": [
+        {
+          "$type": 160,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 206,
+            "end": 220
+          },
+          "$nodeHandle": 397,
+          "_content": {
+            "$type": 380,
+            "$source": 0,
+            "$named": true,
+            "_expression": {
+              "$type": 255,
+              "$source": 0,
+              "$named": true,
+              "_expression": {
+                "$type": 261,
+                "$source": 0,
+                "$named": true,
+                "_elements": [
+                  "1",
+                  "2"
+                ],
+                "$other": [
+                  7,
+                  69,
+                  8
+                ],
+                "$span": {
+                  "start": 213,
+                  "end": 219
+                },
+                "$nodeHandle": 400,
+                "_attributes": []
+              },
+              "$other": [
+                104
+              ],
+              "$span": {
+                "start": 206,
+                "end": 219
+              },
+              "$nodeHandle": 399
+            },
+            "$other": [
+              2
+            ],
+            "$span": {
+              "start": 206,
+              "end": 220
+            },
+            "$nodeHandle": 398
+          }
+        }
+      ]
+    },
+    "expectedOutput": "{ return(1,2); }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{\n    return (1, 2);\n}",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "{ return(1,2); }",
+    "expectedReparseTree": "(block (expression_statement (expression_statement_with_semi expression: (return_expression expression: (tuple_expression elements: (integer_literal) elements: (integer_literal))))))",
+    "wrappedText": "fn _f() { let _ = { return(1,2); }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 294,
+      "$source": 0,
+      "$named": true,
       "_trailing_expression": {
         "$type": 255,
         "$source": 0,
@@ -7958,6 +9634,55 @@
       "$type": 255,
       "$source": 0,
       "$named": true,
+      "_expression": {
+        "$type": 261,
+        "$source": 0,
+        "$named": true,
+        "_elements": [
+          "1",
+          "2"
+        ],
+        "$other": [
+          7,
+          69,
+          8
+        ],
+        "$span": {
+          "start": 213,
+          "end": 219
+        },
+        "$nodeHandle": 453,
+        "_attributes": []
+      },
+      "$other": [
+        104
+      ],
+      "$span": {
+        "start": 206,
+        "end": 219
+      },
+      "$nodeHandle": 56
+    },
+    "expectedOutput": "return(1,2)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "return (1, 2)",
+    "pattern": "return_expression",
+    "edits": [],
+    "expectedSourceOut": "return(1,2)",
+    "expectedReparseTree": "(return_expression expression: (tuple_expression elements: (integer_literal) elements: (integer_literal)))",
+    "wrappedText": "fn _f() { let _ = return(1,2); }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 255,
+      "$source": 0,
+      "$named": true,
       "$text": "return",
       "$span": {
         "start": 239,
@@ -8374,6 +10099,42 @@
     "expectedReparseTree": "(tuple_type type: (primitive_type) type: (primitive_type))",
     "wrappedText": "type _X = (u32,u16);",
     "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 261,
+      "$source": 0,
+      "$named": true,
+      "_elements": [
+        "1",
+        "2"
+      ],
+      "$other": [
+        7,
+        69,
+        8
+      ],
+      "$span": {
+        "start": 213,
+        "end": 219
+      },
+      "$nodeHandle": 57,
+      "_attributes": []
+    },
+    "expectedOutput": "(1,2)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(1, 2)",
+    "pattern": "tuple_expression",
+    "edits": [],
+    "expectedSourceOut": "(1,2)",
+    "expectedReparseTree": "(tuple_expression elements: (integer_literal) elements: (integer_literal))",
+    "wrappedText": "fn _f() { let _ = (1,2); }",
+    "wrappedOffset": 18
   },
   {
     "kind": "render",
@@ -36199,6 +37960,864 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_name": "foo",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "$text": "()",
+            "$span": {
+              "start": 6,
+              "end": 8
+            },
+            "$nodeHandle": 35
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              50,
+              51
+            ],
+            "$span": {
+              "start": 9,
+              "end": 122
+            },
+            "$nodeHandle": 36,
+            "_statement": [
+              {
+                "$type": 160,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 14,
+                  "end": 58
+                },
+                "$nodeHandle": 37,
+                "_content": {
+                  "$type": 380,
+                  "$source": 0,
+                  "$named": true,
+                  "_expression": {
+                    "$type": 257,
+                    "$source": 0,
+                    "$named": true,
+                    "_function": "bar",
+                    "_arguments": {
+                      "$type": 258,
+                      "$source": 0,
+                      "$named": true,
+                      "_arguments_group1": {
+                        "$type": 335,
+                        "$source": 0,
+                        "$named": true,
+                        "_attributed_argument": [
+                          {
+                            "$type": 398,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 18,
+                              "end": 19
+                            },
+                            "$nodeHandle": 44,
+                            "_attribute_item": [],
+                            "_expression": "x"
+                          },
+                          {
+                            "$type": 398,
+                            "$source": 0,
+                            "$named": true,
+                            "_attribute_item": [
+                              {
+                                "$type": 171,
+                                "$source": 0,
+                                "$named": true,
+                                "_attribute": {
+                                  "$type": 173,
+                                  "$source": 0,
+                                  "$named": true,
+                                  "_path": "cfg",
+                                  "_attribute_group1": {
+                                    "$type": 326,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "_arguments": {
+                                      "$type": 241,
+                                      "$source": 0,
+                                      "$named": true,
+                                      "$span": {
+                                        "start": 33,
+                                        "end": 46
+                                      },
+                                      "$nodeHandle": 49,
+                                      "_content": {
+                                        "$type": 391,
+                                        "$source": 0,
+                                        "$named": true,
+                                        "$other": [
+                                          7,
+                                          8
+                                        ],
+                                        "$span": {
+                                          "start": 33,
+                                          "end": 46
+                                        },
+                                        "$nodeHandle": 50,
+                                        "_delim_tokens": [
+                                          "foo",
+                                          {
+                                            "$type": 343,
+                                            "$source": 0,
+                                            "$named": true,
+                                            "$text": "=",
+                                            "$span": {
+                                              "start": 38,
+                                              "end": 39
+                                            },
+                                            "$nodeHandle": 53
+                                          },
+                                          {
+                                            "$type": 312,
+                                            "$source": 0,
+                                            "$named": true,
+                                            "$other": [
+                                              123,
+                                              123
+                                            ],
+                                            "$span": {
+                                              "start": 40,
+                                              "end": 45
+                                            },
+                                            "$nodeHandle": 55,
+                                            "_content": [
+                                              "bar"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "$span": {
+                                      "start": 33,
+                                      "end": 46
+                                    },
+                                    "$nodeHandle": 48
+                                  },
+                                  "$span": {
+                                    "start": 30,
+                                    "end": 46
+                                  },
+                                  "$nodeHandle": 47
+                                },
+                                "$other": [
+                                  45,
+                                  46,
+                                  47
+                                ],
+                                "$span": {
+                                  "start": 28,
+                                  "end": 47
+                                },
+                                "$nodeHandle": 46
+                              }
+                            ],
+                            "$span": {
+                              "start": 28,
+                              "end": 56
+                            },
+                            "$nodeHandle": 45,
+                            "_expression": "y"
+                          }
+                        ],
+                        "$other": [
+                          69
+                        ],
+                        "$span": {
+                          "start": 18,
+                          "end": 56
+                        },
+                        "$nodeHandle": 43,
+                        "_trailing_sep": false
+                      },
+                      "$other": [
+                        7,
+                        8
+                      ],
+                      "$span": {
+                        "start": 17,
+                        "end": 57
+                      },
+                      "$nodeHandle": 42
+                    },
+                    "$span": {
+                      "start": 14,
+                      "end": 57
+                    },
+                    "$nodeHandle": 41
+                  },
+                  "$other": [
+                    2
+                  ],
+                  "$span": {
+                    "start": 14,
+                    "end": 58
+                  },
+                  "$nodeHandle": 40
+                }
+              },
+              {
+                "$type": 204,
+                "$source": 0,
+                "$named": true,
+                "_pattern": "z",
+                "_value": {
+                  "$type": 259,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 70,
+                    "end": 88
+                  },
+                  "$nodeHandle": 56,
+                  "_content": {
+                    "$type": 356,
+                    "$source": 0,
+                    "$named": true,
+                    "_attributes": [
+                      {
+                        "$type": 171,
+                        "$source": 0,
+                        "$named": true,
+                        "_attribute": {
+                          "$type": 173,
+                          "$source": 0,
+                          "$named": true,
+                          "_path": "hello",
+                          "$span": {
+                            "start": 73,
+                            "end": 78
+                          },
+                          "$nodeHandle": 59
+                        },
+                        "$other": [
+                          45,
+                          46,
+                          47
+                        ],
+                        "$span": {
+                          "start": 71,
+                          "end": 79
+                        },
+                        "$nodeHandle": 58
+                      }
+                    ],
+                    "_arguments_group1": {
+                      "$type": 335,
+                      "$source": 0,
+                      "$named": true,
+                      "_attributed_argument": [
+                        {
+                          "$type": 398,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 80,
+                            "end": 81
+                          },
+                          "$nodeHandle": 61,
+                          "_attribute_item": [],
+                          "_expression": "2"
+                        },
+                        {
+                          "$type": 398,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 83,
+                            "end": 84
+                          },
+                          "$nodeHandle": 62,
+                          "_attribute_item": [],
+                          "_expression": "7"
+                        },
+                        {
+                          "$type": 398,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 86,
+                            "end": 87
+                          },
+                          "$nodeHandle": 63,
+                          "_attribute_item": [],
+                          "_expression": "8"
+                        }
+                      ],
+                      "$other": [
+                        69,
+                        69
+                      ],
+                      "$span": {
+                        "start": 80,
+                        "end": 87
+                      },
+                      "$nodeHandle": 60,
+                      "_trailing_sep": false
+                    },
+                    "$other": [
+                      46,
+                      47
+                    ],
+                    "$span": {
+                      "start": 70,
+                      "end": 88
+                    },
+                    "$nodeHandle": 57
+                  }
+                },
+                "$other": [
+                  71,
+                  59,
+                  2
+                ],
+                "$span": {
+                  "start": 62,
+                  "end": 89
+                },
+                "$nodeHandle": 38
+              },
+              {
+                "$type": 204,
+                "$source": 0,
+                "$named": true,
+                "_pattern": "t",
+                "_value": {
+                  "$type": 261,
+                  "$source": 0,
+                  "$named": true,
+                  "_attributes": [
+                    {
+                      "$type": 171,
+                      "$source": 0,
+                      "$named": true,
+                      "_attribute": {
+                        "$type": 173,
+                        "$source": 0,
+                        "$named": true,
+                        "_path": "hello",
+                        "$span": {
+                          "start": 104,
+                          "end": 109
+                        },
+                        "$nodeHandle": 66
+                      },
+                      "$other": [
+                        45,
+                        46,
+                        47
+                      ],
+                      "$span": {
+                        "start": 102,
+                        "end": 110
+                      },
+                      "$nodeHandle": 65
+                    }
+                  ],
+                  "_elements": [
+                    "2",
+                    "7",
+                    "8"
+                  ],
+                  "$other": [
+                    7,
+                    69,
+                    69,
+                    8
+                  ],
+                  "$span": {
+                    "start": 101,
+                    "end": 119
+                  },
+                  "$nodeHandle": 64
+                },
+                "$other": [
+                  71,
+                  59,
+                  2
+                ],
+                "$span": {
+                  "start": 93,
+                  "end": 120
+                },
+                "$nodeHandle": 39
+              }
+            ]
+          },
+          "$other": [
+            60
+          ],
+          "$span": {
+            "start": 0,
+            "end": 122
+          },
+          "$nodeHandle": 34
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 122
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "fn foo() {\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)) (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (string_literal (string_content)))))))) (identifier))))))) (let_declaration pattern: (identifier) value: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_group1 (attributed_argument (integer_literal)) (attributed_argument (integer_literal)) (attributed_argument (integer_literal)))))) (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))))))",
+    "wrappedText": "fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 189,
+      "$source": 0,
+      "$named": true,
+      "_name": "foo",
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 6,
+          "end": 8
+        },
+        "$nodeHandle": 67
+      },
+      "_body": {
+        "$type": 294,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          50,
+          51
+        ],
+        "$span": {
+          "start": 9,
+          "end": 122
+        },
+        "$nodeHandle": 68,
+        "_statement": [
+          {
+            "$type": 160,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 14,
+              "end": 58
+            },
+            "$nodeHandle": 69,
+            "_content": {
+              "$type": 380,
+              "$source": 0,
+              "$named": true,
+              "_expression": {
+                "$type": 257,
+                "$source": 0,
+                "$named": true,
+                "_function": "bar",
+                "_arguments": {
+                  "$type": 258,
+                  "$source": 0,
+                  "$named": true,
+                  "_arguments_group1": {
+                    "$type": 335,
+                    "$source": 0,
+                    "$named": true,
+                    "_attributed_argument": [
+                      {
+                        "$type": 398,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 18,
+                          "end": 19
+                        },
+                        "$nodeHandle": 76,
+                        "_attribute_item": [],
+                        "_expression": "x"
+                      },
+                      {
+                        "$type": 398,
+                        "$source": 0,
+                        "$named": true,
+                        "_attribute_item": [
+                          {
+                            "$type": 171,
+                            "$source": 0,
+                            "$named": true,
+                            "_attribute": {
+                              "$type": 173,
+                              "$source": 0,
+                              "$named": true,
+                              "_path": "cfg",
+                              "_attribute_group1": {
+                                "$type": 326,
+                                "$source": 0,
+                                "$named": true,
+                                "_arguments": {
+                                  "$type": 241,
+                                  "$source": 0,
+                                  "$named": true,
+                                  "$span": {
+                                    "start": 33,
+                                    "end": 46
+                                  },
+                                  "$nodeHandle": 81,
+                                  "_content": {
+                                    "$type": 391,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "$other": [
+                                      7,
+                                      8
+                                    ],
+                                    "$span": {
+                                      "start": 33,
+                                      "end": 46
+                                    },
+                                    "$nodeHandle": 82,
+                                    "_delim_tokens": [
+                                      "foo",
+                                      {
+                                        "$type": 343,
+                                        "$source": 0,
+                                        "$named": true,
+                                        "$text": "=",
+                                        "$span": {
+                                          "start": 38,
+                                          "end": 39
+                                        },
+                                        "$nodeHandle": 85
+                                      },
+                                      {
+                                        "$type": 312,
+                                        "$source": 0,
+                                        "$named": true,
+                                        "$other": [
+                                          123,
+                                          123
+                                        ],
+                                        "$span": {
+                                          "start": 40,
+                                          "end": 45
+                                        },
+                                        "$nodeHandle": 87,
+                                        "_content": [
+                                          "bar"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                },
+                                "$span": {
+                                  "start": 33,
+                                  "end": 46
+                                },
+                                "$nodeHandle": 80
+                              },
+                              "$span": {
+                                "start": 30,
+                                "end": 46
+                              },
+                              "$nodeHandle": 79
+                            },
+                            "$other": [
+                              45,
+                              46,
+                              47
+                            ],
+                            "$span": {
+                              "start": 28,
+                              "end": 47
+                            },
+                            "$nodeHandle": 78
+                          }
+                        ],
+                        "$span": {
+                          "start": 28,
+                          "end": 56
+                        },
+                        "$nodeHandle": 77,
+                        "_expression": "y"
+                      }
+                    ],
+                    "$other": [
+                      69
+                    ],
+                    "$span": {
+                      "start": 18,
+                      "end": 56
+                    },
+                    "$nodeHandle": 75,
+                    "_trailing_sep": false
+                  },
+                  "$other": [
+                    7,
+                    8
+                  ],
+                  "$span": {
+                    "start": 17,
+                    "end": 57
+                  },
+                  "$nodeHandle": 74
+                },
+                "$span": {
+                  "start": 14,
+                  "end": 57
+                },
+                "$nodeHandle": 73
+              },
+              "$other": [
+                2
+              ],
+              "$span": {
+                "start": 14,
+                "end": 58
+              },
+              "$nodeHandle": 72
+            }
+          },
+          {
+            "$type": 204,
+            "$source": 0,
+            "$named": true,
+            "_pattern": "z",
+            "_value": {
+              "$type": 259,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 70,
+                "end": 88
+              },
+              "$nodeHandle": 88,
+              "_content": {
+                "$type": 356,
+                "$source": 0,
+                "$named": true,
+                "_attributes": [
+                  {
+                    "$type": 171,
+                    "$source": 0,
+                    "$named": true,
+                    "_attribute": {
+                      "$type": 173,
+                      "$source": 0,
+                      "$named": true,
+                      "_path": "hello",
+                      "$span": {
+                        "start": 73,
+                        "end": 78
+                      },
+                      "$nodeHandle": 91
+                    },
+                    "$other": [
+                      45,
+                      46,
+                      47
+                    ],
+                    "$span": {
+                      "start": 71,
+                      "end": 79
+                    },
+                    "$nodeHandle": 90
+                  }
+                ],
+                "_arguments_group1": {
+                  "$type": 335,
+                  "$source": 0,
+                  "$named": true,
+                  "_attributed_argument": [
+                    {
+                      "$type": 398,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 80,
+                        "end": 81
+                      },
+                      "$nodeHandle": 93,
+                      "_attribute_item": [],
+                      "_expression": "2"
+                    },
+                    {
+                      "$type": 398,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 83,
+                        "end": 84
+                      },
+                      "$nodeHandle": 94,
+                      "_attribute_item": [],
+                      "_expression": "7"
+                    },
+                    {
+                      "$type": 398,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 86,
+                        "end": 87
+                      },
+                      "$nodeHandle": 95,
+                      "_attribute_item": [],
+                      "_expression": "8"
+                    }
+                  ],
+                  "$other": [
+                    69,
+                    69
+                  ],
+                  "$span": {
+                    "start": 80,
+                    "end": 87
+                  },
+                  "$nodeHandle": 92,
+                  "_trailing_sep": false
+                },
+                "$other": [
+                  46,
+                  47
+                ],
+                "$span": {
+                  "start": 70,
+                  "end": 88
+                },
+                "$nodeHandle": 89
+              }
+            },
+            "$other": [
+              71,
+              59,
+              2
+            ],
+            "$span": {
+              "start": 62,
+              "end": 89
+            },
+            "$nodeHandle": 70
+          },
+          {
+            "$type": 204,
+            "$source": 0,
+            "$named": true,
+            "_pattern": "t",
+            "_value": {
+              "$type": 261,
+              "$source": 0,
+              "$named": true,
+              "_attributes": [
+                {
+                  "$type": 171,
+                  "$source": 0,
+                  "$named": true,
+                  "_attribute": {
+                    "$type": 173,
+                    "$source": 0,
+                    "$named": true,
+                    "_path": "hello",
+                    "$span": {
+                      "start": 104,
+                      "end": 109
+                    },
+                    "$nodeHandle": 98
+                  },
+                  "$other": [
+                    45,
+                    46,
+                    47
+                  ],
+                  "$span": {
+                    "start": 102,
+                    "end": 110
+                  },
+                  "$nodeHandle": 97
+                }
+              ],
+              "_elements": [
+                "2",
+                "7",
+                "8"
+              ],
+              "$other": [
+                7,
+                69,
+                69,
+                8
+              ],
+              "$span": {
+                "start": 101,
+                "end": 119
+              },
+              "$nodeHandle": 96
+            },
+            "$other": [
+              71,
+              59,
+              2
+            ],
+            "$span": {
+              "start": 93,
+              "end": 120
+            },
+            "$nodeHandle": 71
+          }
+        ]
+      },
+      "$other": [
+        60
+      ],
+      "$span": {
+        "start": 0,
+        "end": 122
+      },
+      "$nodeHandle": 1
+    },
+    "expectedOutput": "fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "fn foo() {\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}",
+    "pattern": "function_item",
+    "edits": [],
+    "expectedSourceOut": "fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)) (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (string_literal (string_content)))))))) (identifier))))))) (let_declaration pattern: (identifier) value: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_group1 (attributed_argument (integer_literal)) (attributed_argument (integer_literal)) (attributed_argument (integer_literal)))))) (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))))",
+    "wrappedText": "fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 211,
       "$source": 0,
       "$named": true,
@@ -36221,6 +38840,404 @@
     "expectedReparseTree": "(parameters)",
     "wrappedText": "fn _f() {}",
     "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 294,
+      "$source": 0,
+      "$named": true,
+      "$other": [
+        50,
+        51
+      ],
+      "$span": {
+        "start": 9,
+        "end": 122
+      },
+      "$nodeHandle": 3,
+      "_statement": [
+        {
+          "$type": 160,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 14,
+            "end": 58
+          },
+          "$nodeHandle": 99,
+          "_content": {
+            "$type": 380,
+            "$source": 0,
+            "$named": true,
+            "_expression": {
+              "$type": 257,
+              "$source": 0,
+              "$named": true,
+              "_function": "bar",
+              "_arguments": {
+                "$type": 258,
+                "$source": 0,
+                "$named": true,
+                "_arguments_group1": {
+                  "$type": 335,
+                  "$source": 0,
+                  "$named": true,
+                  "_attributed_argument": [
+                    {
+                      "$type": 398,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 18,
+                        "end": 19
+                      },
+                      "$nodeHandle": 106,
+                      "_attribute_item": [],
+                      "_expression": "x"
+                    },
+                    {
+                      "$type": 398,
+                      "$source": 0,
+                      "$named": true,
+                      "_attribute_item": [
+                        {
+                          "$type": 171,
+                          "$source": 0,
+                          "$named": true,
+                          "_attribute": {
+                            "$type": 173,
+                            "$source": 0,
+                            "$named": true,
+                            "_path": "cfg",
+                            "_attribute_group1": {
+                              "$type": 326,
+                              "$source": 0,
+                              "$named": true,
+                              "_arguments": {
+                                "$type": 241,
+                                "$source": 0,
+                                "$named": true,
+                                "$span": {
+                                  "start": 33,
+                                  "end": 46
+                                },
+                                "$nodeHandle": 111,
+                                "_content": {
+                                  "$type": 391,
+                                  "$source": 0,
+                                  "$named": true,
+                                  "$other": [
+                                    7,
+                                    8
+                                  ],
+                                  "$span": {
+                                    "start": 33,
+                                    "end": 46
+                                  },
+                                  "$nodeHandle": 112,
+                                  "_delim_tokens": [
+                                    "foo",
+                                    {
+                                      "$type": 343,
+                                      "$source": 0,
+                                      "$named": true,
+                                      "$text": "=",
+                                      "$span": {
+                                        "start": 38,
+                                        "end": 39
+                                      },
+                                      "$nodeHandle": 115
+                                    },
+                                    {
+                                      "$type": 312,
+                                      "$source": 0,
+                                      "$named": true,
+                                      "$other": [
+                                        123,
+                                        123
+                                      ],
+                                      "$span": {
+                                        "start": 40,
+                                        "end": 45
+                                      },
+                                      "$nodeHandle": 117,
+                                      "_content": [
+                                        "bar"
+                                      ]
+                                    }
+                                  ]
+                                }
+                              },
+                              "$span": {
+                                "start": 33,
+                                "end": 46
+                              },
+                              "$nodeHandle": 110
+                            },
+                            "$span": {
+                              "start": 30,
+                              "end": 46
+                            },
+                            "$nodeHandle": 109
+                          },
+                          "$other": [
+                            45,
+                            46,
+                            47
+                          ],
+                          "$span": {
+                            "start": 28,
+                            "end": 47
+                          },
+                          "$nodeHandle": 108
+                        }
+                      ],
+                      "$span": {
+                        "start": 28,
+                        "end": 56
+                      },
+                      "$nodeHandle": 107,
+                      "_expression": "y"
+                    }
+                  ],
+                  "$other": [
+                    69
+                  ],
+                  "$span": {
+                    "start": 18,
+                    "end": 56
+                  },
+                  "$nodeHandle": 105,
+                  "_trailing_sep": false
+                },
+                "$other": [
+                  7,
+                  8
+                ],
+                "$span": {
+                  "start": 17,
+                  "end": 57
+                },
+                "$nodeHandle": 104
+              },
+              "$span": {
+                "start": 14,
+                "end": 57
+              },
+              "$nodeHandle": 103
+            },
+            "$other": [
+              2
+            ],
+            "$span": {
+              "start": 14,
+              "end": 58
+            },
+            "$nodeHandle": 102
+          }
+        },
+        {
+          "$type": 204,
+          "$source": 0,
+          "$named": true,
+          "_pattern": "z",
+          "_value": {
+            "$type": 259,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 70,
+              "end": 88
+            },
+            "$nodeHandle": 118,
+            "_content": {
+              "$type": 356,
+              "$source": 0,
+              "$named": true,
+              "_attributes": [
+                {
+                  "$type": 171,
+                  "$source": 0,
+                  "$named": true,
+                  "_attribute": {
+                    "$type": 173,
+                    "$source": 0,
+                    "$named": true,
+                    "_path": "hello",
+                    "$span": {
+                      "start": 73,
+                      "end": 78
+                    },
+                    "$nodeHandle": 121
+                  },
+                  "$other": [
+                    45,
+                    46,
+                    47
+                  ],
+                  "$span": {
+                    "start": 71,
+                    "end": 79
+                  },
+                  "$nodeHandle": 120
+                }
+              ],
+              "_arguments_group1": {
+                "$type": 335,
+                "$source": 0,
+                "$named": true,
+                "_attributed_argument": [
+                  {
+                    "$type": 398,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 80,
+                      "end": 81
+                    },
+                    "$nodeHandle": 123,
+                    "_attribute_item": [],
+                    "_expression": "2"
+                  },
+                  {
+                    "$type": 398,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 83,
+                      "end": 84
+                    },
+                    "$nodeHandle": 124,
+                    "_attribute_item": [],
+                    "_expression": "7"
+                  },
+                  {
+                    "$type": 398,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 86,
+                      "end": 87
+                    },
+                    "$nodeHandle": 125,
+                    "_attribute_item": [],
+                    "_expression": "8"
+                  }
+                ],
+                "$other": [
+                  69,
+                  69
+                ],
+                "$span": {
+                  "start": 80,
+                  "end": 87
+                },
+                "$nodeHandle": 122,
+                "_trailing_sep": false
+              },
+              "$other": [
+                46,
+                47
+              ],
+              "$span": {
+                "start": 70,
+                "end": 88
+              },
+              "$nodeHandle": 119
+            }
+          },
+          "$other": [
+            71,
+            59,
+            2
+          ],
+          "$span": {
+            "start": 62,
+            "end": 89
+          },
+          "$nodeHandle": 100
+        },
+        {
+          "$type": 204,
+          "$source": 0,
+          "$named": true,
+          "_pattern": "t",
+          "_value": {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_attributes": [
+              {
+                "$type": 171,
+                "$source": 0,
+                "$named": true,
+                "_attribute": {
+                  "$type": 173,
+                  "$source": 0,
+                  "$named": true,
+                  "_path": "hello",
+                  "$span": {
+                    "start": 104,
+                    "end": 109
+                  },
+                  "$nodeHandle": 128
+                },
+                "$other": [
+                  45,
+                  46,
+                  47
+                ],
+                "$span": {
+                  "start": 102,
+                  "end": 110
+                },
+                "$nodeHandle": 127
+              }
+            ],
+            "_elements": [
+              "2",
+              "7",
+              "8"
+            ],
+            "$other": [
+              7,
+              69,
+              69,
+              8
+            ],
+            "$span": {
+              "start": 101,
+              "end": 119
+            },
+            "$nodeHandle": 126
+          },
+          "$other": [
+            71,
+            59,
+            2
+          ],
+          "$span": {
+            "start": 93,
+            "end": 120
+          },
+          "$nodeHandle": 101
+        }
+      ]
+    },
+    "expectedOutput": "{ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "{ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }",
+    "expectedReparseTree": "(block (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)) (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (string_literal (string_content)))))))) (identifier))))))) (let_declaration pattern: (identifier) value: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_group1 (attributed_argument (integer_literal)) (attributed_argument (integer_literal)) (attributed_argument (integer_literal)))))) (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))))",
+    "wrappedText": "fn _f() { let _ = { bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }; }",
+    "wrappedOffset": 18
   },
   {
     "kind": "render",
@@ -36993,6 +40010,87 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 204,
+      "$source": 0,
+      "$named": true,
+      "_pattern": "t",
+      "_value": {
+        "$type": 261,
+        "$source": 0,
+        "$named": true,
+        "_attributes": [
+          {
+            "$type": 171,
+            "$source": 0,
+            "$named": true,
+            "_attribute": {
+              "$type": 173,
+              "$source": 0,
+              "$named": true,
+              "_path": "hello",
+              "$span": {
+                "start": 104,
+                "end": 109
+              },
+              "$nodeHandle": 207
+            },
+            "$other": [
+              45,
+              46,
+              47
+            ],
+            "$span": {
+              "start": 102,
+              "end": 110
+            },
+            "$nodeHandle": 206
+          }
+        ],
+        "_elements": [
+          "2",
+          "7",
+          "8"
+        ],
+        "$other": [
+          7,
+          69,
+          69,
+          8
+        ],
+        "$span": {
+          "start": 101,
+          "end": 119
+        },
+        "$nodeHandle": 205
+      },
+      "$other": [
+        71,
+        59,
+        2
+      ],
+      "$span": {
+        "start": 93,
+        "end": 120
+      },
+      "$nodeHandle": 6
+    },
+    "expectedOutput": "let t=(#[hello]2,7,8);"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "let t = (#[hello] 2, 7, 8);",
+    "pattern": "let_declaration",
+    "edits": [],
+    "expectedSourceOut": "let t=(#[hello]2,7,8);",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))",
+    "wrappedText": "let t=(#[hello]2,7,8);",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 259,
       "$source": 0,
       "$named": true,
@@ -37108,6 +40206,71 @@
     "expectedSourceOut": "[#[hello]2,7,8]",
     "expectedReparseTree": "(array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_group1 (attributed_argument (integer_literal)) (attributed_argument (integer_literal)) (attributed_argument (integer_literal)))))",
     "wrappedText": "fn _f() { let _ = [#[hello]2,7,8]; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 261,
+      "$source": 0,
+      "$named": true,
+      "_attributes": [
+        {
+          "$type": 171,
+          "$source": 0,
+          "$named": true,
+          "_attribute": {
+            "$type": 173,
+            "$source": 0,
+            "$named": true,
+            "_path": "hello",
+            "$span": {
+              "start": 104,
+              "end": 109
+            },
+            "$nodeHandle": 216
+          },
+          "$other": [
+            45,
+            46,
+            47
+          ],
+          "$span": {
+            "start": 102,
+            "end": 110
+          },
+          "$nodeHandle": 215
+        }
+      ],
+      "_elements": [
+        "2",
+        "7",
+        "8"
+      ],
+      "$other": [
+        7,
+        69,
+        69,
+        8
+      ],
+      "$span": {
+        "start": 101,
+        "end": 119
+      },
+      "$nodeHandle": 31
+    },
+    "expectedOutput": "(#[hello]2,7,8)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(#[hello] 2, 7, 8)",
+    "pattern": "tuple_expression",
+    "edits": [],
+    "expectedSourceOut": "(#[hello]2,7,8)",
+    "expectedReparseTree": "(tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))",
+    "wrappedText": "fn _f() { let _ = (#[hello]2,7,8); }",
     "wrappedOffset": 18
   },
   {
@@ -72917,32 +76080,122 @@
       "$source": 0,
       "$named": true,
       "_elements": [
-        "0"
+        "1",
+        "2",
+        "3"
       ],
       "$other": [
         7,
         69,
+        69,
         8
       ],
       "$span": {
-        "start": 4,
-        "end": 8
+        "start": 26,
+        "end": 35
       },
-      "$nodeHandle": 7,
+      "$nodeHandle": 10,
       "_attributes": []
     },
-    "expectedOutput": "(0,)"
+    "expectedOutput": "(1,2,3)"
   },
   {
     "kind": "roundtrip",
     "grammar": "rust",
-    "sourceIn": "(0,)",
+    "sourceIn": "(1, 2, 3)",
     "pattern": "tuple_expression",
     "edits": [],
-    "expectedSourceOut": "(0,)",
-    "expectedReparseTree": "(tuple_expression elements: (integer_literal))",
-    "wrappedText": "fn _f() { let _ = (0,); }",
+    "expectedSourceOut": "(1,2,3)",
+    "expectedReparseTree": "(tuple_expression elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))",
+    "wrappedText": "fn _f() { let _ = (1,2,3); }",
     "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 204,
+      "$source": 0,
+      "$named": true,
+      "_pattern": {
+        "$type": 297,
+        "$source": 0,
+        "$named": true,
+        "_elements": {
+          "$type": 338,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            69,
+            69
+          ],
+          "$span": {
+            "start": 15,
+            "end": 22
+          },
+          "$nodeHandle": 26,
+          "_content": [
+            "x",
+            "y",
+            "z"
+          ],
+          "_trailing_sep": false
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 14,
+          "end": 23
+        },
+        "$nodeHandle": 25
+      },
+      "_value": {
+        "$type": 261,
+        "$source": 0,
+        "$named": true,
+        "_elements": [
+          "1",
+          "2",
+          "3"
+        ],
+        "$other": [
+          7,
+          69,
+          69,
+          8
+        ],
+        "$span": {
+          "start": 26,
+          "end": 35
+        },
+        "$nodeHandle": 27,
+        "_attributes": []
+      },
+      "$other": [
+        71,
+        59,
+        2
+      ],
+      "$span": {
+        "start": 10,
+        "end": 36
+      },
+      "$nodeHandle": 3
+    },
+    "expectedOutput": "let(x,y,z)=(1,2,3);"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "let (x, y, z) = (1, 2, 3);",
+    "pattern": "let_declaration",
+    "edits": [],
+    "expectedSourceOut": "let(x,y,z)=(1,2,3);",
+    "expectedReparseTree": "(let_declaration pattern: (tuple_pattern elements: (tuple_pattern_group1 (identifier) (identifier) (identifier))) value: (tuple_expression elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))",
+    "wrappedText": "let(x,y,z)=(1,2,3);",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -105132,6 +108385,1018 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 160,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 0,
+            "end": 125
+          },
+          "$nodeHandle": 46,
+          "_content": {
+            "$type": 273,
+            "$source": 0,
+            "$named": true,
+            "_value": "x",
+            "_body": {
+              "$type": 274,
+              "$source": 0,
+              "$named": true,
+              "_match_block_arms": {
+                "$type": 401,
+                "$source": 0,
+                "$named": true,
+                "_match_arm": [
+                  {
+                    "$type": 275,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": {
+                      "$type": 277,
+                      "$source": 0,
+                      "$named": true,
+                      "_pattern": {
+                        "$type": 300,
+                        "$source": 0,
+                        "$named": true,
+                        "_type": "Person",
+                        "_fields": {
+                          "$type": 340,
+                          "$source": 0,
+                          "$named": true,
+                          "$other": [
+                            69
+                          ],
+                          "$span": {
+                            "start": 19,
+                            "end": 28
+                          },
+                          "$nodeHandle": 54,
+                          "_content": [
+                            {
+                              "$type": 301,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 19,
+                                "end": 23
+                              },
+                              "$nodeHandle": 55,
+                              "_content": "name"
+                            },
+                            {
+                              "$type": 301,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 25,
+                                "end": 28
+                              },
+                              "$nodeHandle": 56,
+                              "_content": "age"
+                            }
+                          ],
+                          "_trailing_sep": false
+                        },
+                        "$other": [
+                          50,
+                          51
+                        ],
+                        "$span": {
+                          "start": 12,
+                          "end": 29
+                        },
+                        "$nodeHandle": 53
+                      },
+                      "_condition": {
+                        "$type": 251,
+                        "$source": 0,
+                        "$named": true,
+                        "_left": "age",
+                        "_operator": 68,
+                        "_right": "5",
+                        "$span": {
+                          "start": 33,
+                          "end": 40
+                        },
+                        "$nodeHandle": 57
+                      },
+                      "$other": [
+                        107
+                      ],
+                      "$span": {
+                        "start": 12,
+                        "end": 40
+                      },
+                      "$nodeHandle": 52
+                    },
+                    "$other": [
+                      4
+                    ],
+                    "$span": {
+                      "start": 12,
+                      "end": 62
+                    },
+                    "$nodeHandle": 51,
+                    "_attributes": [],
+                    "_content": {
+                      "$type": 382,
+                      "$source": 0,
+                      "$named": true,
+                      "_value": {
+                        "$type": 261,
+                        "$source": 0,
+                        "$named": true,
+                        "_elements": [
+                          {
+                            "$type": 312,
+                            "$source": 0,
+                            "$named": true,
+                            "$other": [
+                              123,
+                              123
+                            ],
+                            "$span": {
+                              "start": 45,
+                              "end": 54
+                            },
+                            "$nodeHandle": 60,
+                            "_content": [
+                              "toddler"
+                            ]
+                          },
+                          {
+                            "$type": 1,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "name",
+                            "$span": {
+                              "start": 56,
+                              "end": 60
+                            }
+                          }
+                        ],
+                        "$other": [
+                          7,
+                          69,
+                          8
+                        ],
+                        "$span": {
+                          "start": 44,
+                          "end": 61
+                        },
+                        "$nodeHandle": 59,
+                        "_attributes": []
+                      },
+                      "$other": [
+                        69
+                      ],
+                      "$span": {
+                        "start": 44,
+                        "end": 62
+                      },
+                      "$nodeHandle": 58
+                    }
+                  }
+                ],
+                "_last_arm": {
+                  "$type": 276,
+                  "$source": 0,
+                  "$named": true,
+                  "_pattern": {
+                    "$type": 277,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": {
+                      "$type": 300,
+                      "$source": 0,
+                      "$named": true,
+                      "_type": "Person",
+                      "_fields": {
+                        "$type": 340,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          69
+                        ],
+                        "$span": {
+                          "start": 72,
+                          "end": 96
+                        },
+                        "$nodeHandle": 64,
+                        "_content": [
+                          {
+                            "$type": 301,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 72,
+                              "end": 88
+                            },
+                            "$nodeHandle": 65,
+                            "_content": {
+                              "$type": 359,
+                              "$source": 0,
+                              "$named": true,
+                              "_name": "name",
+                              "_pattern": "adult_name",
+                              "$other": [
+                                5
+                              ],
+                              "$span": {
+                                "start": 72,
+                                "end": 88
+                              },
+                              "$nodeHandle": 67
+                            }
+                          },
+                          {
+                            "$type": 301,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 90,
+                              "end": 96
+                            },
+                            "$nodeHandle": 66,
+                            "_content": {
+                              "$type": 359,
+                              "$source": 0,
+                              "$named": true,
+                              "_name": "age",
+                              "_pattern": {
+                                "$type": 346,
+                                "$source": 0,
+                                "$named": true,
+                                "$text": "_",
+                                "$span": {
+                                  "start": 95,
+                                  "end": 96
+                                },
+                                "$nodeHandle": 69
+                              },
+                              "$other": [
+                                5
+                              ],
+                              "$span": {
+                                "start": 90,
+                                "end": 96
+                              },
+                              "$nodeHandle": 68
+                            }
+                          }
+                        ],
+                        "_trailing_sep": false
+                      },
+                      "$other": [
+                        50,
+                        51
+                      ],
+                      "$span": {
+                        "start": 65,
+                        "end": 97
+                      },
+                      "$nodeHandle": 63
+                    },
+                    "$span": {
+                      "start": 65,
+                      "end": 97
+                    },
+                    "$nodeHandle": 62
+                  },
+                  "_value": {
+                    "$type": 261,
+                    "$source": 0,
+                    "$named": true,
+                    "_elements": [
+                      {
+                        "$type": 312,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          123,
+                          123
+                        ],
+                        "$span": {
+                          "start": 102,
+                          "end": 109
+                        },
+                        "$nodeHandle": 71,
+                        "_content": [
+                          "adult"
+                        ]
+                      },
+                      {
+                        "$type": 1,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "adult_name",
+                        "$span": {
+                          "start": 111,
+                          "end": 121
+                        }
+                      }
+                    ],
+                    "$other": [
+                      7,
+                      69,
+                      8
+                    ],
+                    "$span": {
+                      "start": 101,
+                      "end": 122
+                    },
+                    "$nodeHandle": 70,
+                    "_attributes": []
+                  },
+                  "_comma": true,
+                  "$other": [
+                    4
+                  ],
+                  "$span": {
+                    "start": 65,
+                    "end": 123
+                  },
+                  "$nodeHandle": 61,
+                  "_attributes": []
+                },
+                "$span": {
+                  "start": 12,
+                  "end": 123
+                },
+                "$nodeHandle": 50
+              },
+              "$other": [
+                50,
+                51
+              ],
+              "$span": {
+                "start": 8,
+                "end": 125
+              },
+              "$nodeHandle": 49
+            },
+            "$other": [
+              109
+            ],
+            "$span": {
+              "start": 0,
+              "end": 125
+            },
+            "$nodeHandle": 48
+          }
+        },
+        {
+          "$type": 160,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 127,
+            "end": 189
+          },
+          "$nodeHandle": 47,
+          "_content": {
+            "$type": 273,
+            "$source": 0,
+            "$named": true,
+            "_value": "y",
+            "_body": {
+              "$type": 274,
+              "$source": 0,
+              "$named": true,
+              "_match_block_arms": {
+                "$type": 401,
+                "$source": 0,
+                "$named": true,
+                "_last_arm": {
+                  "$type": 276,
+                  "$source": 0,
+                  "$named": true,
+                  "_pattern": {
+                    "$type": 277,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": {
+                      "$type": 299,
+                      "$source": 0,
+                      "$named": true,
+                      "_type": {
+                        "$type": 244,
+                        "$source": 0,
+                        "$named": true,
+                        "_path": "Bar",
+                        "_name": "T1",
+                        "$other": [
+                          73
+                        ],
+                        "$span": {
+                          "start": 139,
+                          "end": 146
+                        },
+                        "$nodeHandle": 78
+                      },
+                      "_slice_pattern_group1": {
+                        "$type": 339,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          69
+                        ],
+                        "$span": {
+                          "start": 147,
+                          "end": 166
+                        },
+                        "$nodeHandle": 79,
+                        "_pattern": [
+                          {
+                            "$type": 346,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "_",
+                            "$span": {
+                              "start": 147,
+                              "end": 148
+                            },
+                            "$nodeHandle": 80
+                          },
+                          {
+                            "$type": 299,
+                            "$source": 0,
+                            "$named": true,
+                            "_type": {
+                              "$type": 228,
+                              "$source": 0,
+                              "$named": true,
+                              "_type": "Some",
+                              "_turbofish": 73,
+                              "_type_arguments": {
+                                "$type": 231,
+                                "$source": 0,
+                                "$named": true,
+                                "_type_argument": [
+                                  {
+                                    "$type": 400,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "$span": {
+                                      "start": 157,
+                                      "end": 162
+                                    },
+                                    "$nodeHandle": 84,
+                                    "_content": "isize"
+                                  }
+                                ],
+                                "$other": [
+                                  68,
+                                  70
+                                ],
+                                "$span": {
+                                  "start": 156,
+                                  "end": 163
+                                },
+                                "$nodeHandle": 83
+                              },
+                              "$span": {
+                                "start": 150,
+                                "end": 163
+                              },
+                              "$nodeHandle": 82
+                            },
+                            "_slice_pattern_group1": {
+                              "$type": 339,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 164,
+                                "end": 165
+                              },
+                              "$nodeHandle": 85,
+                              "_pattern": [
+                                "x"
+                              ],
+                              "_trailing_sep": false
+                            },
+                            "$other": [
+                              7,
+                              8
+                            ],
+                            "$span": {
+                              "start": 150,
+                              "end": 166
+                            },
+                            "$nodeHandle": 81
+                          }
+                        ],
+                        "_trailing_sep": false
+                      },
+                      "$other": [
+                        7,
+                        8
+                      ],
+                      "$span": {
+                        "start": 139,
+                        "end": 167
+                      },
+                      "$nodeHandle": 77
+                    },
+                    "$span": {
+                      "start": 139,
+                      "end": 167
+                    },
+                    "$nodeHandle": 76
+                  },
+                  "_value": {
+                    "$type": 240,
+                    "$source": 0,
+                    "$named": true,
+                    "_macro": "println",
+                    "_token_tree": {
+                      "$type": 241,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 179,
+                        "end": 186
+                      },
+                      "$nodeHandle": 87,
+                      "_content": {
+                        "$type": 391,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          7,
+                          8
+                        ],
+                        "$span": {
+                          "start": 179,
+                          "end": 186
+                        },
+                        "$nodeHandle": 88,
+                        "_delim_tokens": [
+                          {
+                            "$type": 312,
+                            "$source": 0,
+                            "$named": true,
+                            "$other": [
+                              123,
+                              123
+                            ],
+                            "$span": {
+                              "start": 180,
+                              "end": 185
+                            },
+                            "$nodeHandle": 90,
+                            "_content": [
+                              "{x}"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "$other": [
+                      48
+                    ],
+                    "$span": {
+                      "start": 171,
+                      "end": 186
+                    },
+                    "$nodeHandle": 86
+                  },
+                  "_comma": true,
+                  "$other": [
+                    4
+                  ],
+                  "$span": {
+                    "start": 139,
+                    "end": 187
+                  },
+                  "$nodeHandle": 75,
+                  "_attributes": []
+                },
+                "$span": {
+                  "start": 139,
+                  "end": 187
+                },
+                "$nodeHandle": 74,
+                "_match_arm": []
+              },
+              "$other": [
+                50,
+                51
+              ],
+              "$span": {
+                "start": 135,
+                "end": 189
+              },
+              "$nodeHandle": 73
+            },
+            "$other": [
+              109
+            ],
+            "$span": {
+              "start": 127,
+              "end": 189
+            },
+            "$nodeHandle": 72
+          }
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 189
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "match x{ Person{ name,age }if age<5=>(\"toddler\",name),Person{ name:adult_name,age:_ }=>(\"adult\",adult_name), }match y{ Bar::T1(_,Some::<isize>(x))=>println!(\"{x}\"), }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "match x {\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}\n\nmatch y {\n  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "match x{ Person{ name,age }if age<5=>(\"toddler\",name),Person{ name:adult_name,age:_ }=>(\"adult\",adult_name), }match y{ Bar::T1(_,Some::<isize>(x))=>println!(\"{x}\"), }",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_group1 (field_pattern (shorthand_field_identifier)) (field_pattern (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_with_comma value: (tuple_expression elements: (string_literal (string_content)) elements: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_group1 (field_pattern (field_pattern_named name: (field_identifier) pattern: (identifier))) (field_pattern (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern)))))) value: (tuple_expression elements: (string_literal (string_content)) elements: (identifier))))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)) (slice_pattern_group1 (wildcard_pattern) (tuple_struct_pattern type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type)))) (slice_pattern_group1 (identifier)))))) value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal (string_content))))))))))))",
+    "wrappedText": "match x{ Person{ name,age }if age<5=>(\"toddler\",name),Person{ name:adult_name,age:_ }=>(\"adult\",adult_name), }match y{ Bar::T1(_,Some::<isize>(x))=>println!(\"{x}\"), }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 273,
+      "$source": 0,
+      "$named": true,
+      "_value": "x",
+      "_body": {
+        "$type": 274,
+        "$source": 0,
+        "$named": true,
+        "_match_block_arms": {
+          "$type": 401,
+          "$source": 0,
+          "$named": true,
+          "_match_arm": [
+            {
+              "$type": 275,
+              "$source": 0,
+              "$named": true,
+              "_pattern": {
+                "$type": 277,
+                "$source": 0,
+                "$named": true,
+                "_pattern": {
+                  "$type": 300,
+                  "$source": 0,
+                  "$named": true,
+                  "_type": "Person",
+                  "_fields": {
+                    "$type": 340,
+                    "$source": 0,
+                    "$named": true,
+                    "$other": [
+                      69
+                    ],
+                    "$span": {
+                      "start": 19,
+                      "end": 28
+                    },
+                    "$nodeHandle": 139,
+                    "_content": [
+                      {
+                        "$type": 301,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 19,
+                          "end": 23
+                        },
+                        "$nodeHandle": 140,
+                        "_content": "name"
+                      },
+                      {
+                        "$type": 301,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 25,
+                          "end": 28
+                        },
+                        "$nodeHandle": 141,
+                        "_content": "age"
+                      }
+                    ],
+                    "_trailing_sep": false
+                  },
+                  "$other": [
+                    50,
+                    51
+                  ],
+                  "$span": {
+                    "start": 12,
+                    "end": 29
+                  },
+                  "$nodeHandle": 138
+                },
+                "_condition": {
+                  "$type": 251,
+                  "$source": 0,
+                  "$named": true,
+                  "_left": "age",
+                  "_operator": 68,
+                  "_right": "5",
+                  "$span": {
+                    "start": 33,
+                    "end": 40
+                  },
+                  "$nodeHandle": 142
+                },
+                "$other": [
+                  107
+                ],
+                "$span": {
+                  "start": 12,
+                  "end": 40
+                },
+                "$nodeHandle": 137
+              },
+              "$other": [
+                4
+              ],
+              "$span": {
+                "start": 12,
+                "end": 62
+              },
+              "$nodeHandle": 136,
+              "_attributes": [],
+              "_content": {
+                "$type": 382,
+                "$source": 0,
+                "$named": true,
+                "_value": {
+                  "$type": 261,
+                  "$source": 0,
+                  "$named": true,
+                  "_elements": [
+                    {
+                      "$type": 312,
+                      "$source": 0,
+                      "$named": true,
+                      "$other": [
+                        123,
+                        123
+                      ],
+                      "$span": {
+                        "start": 45,
+                        "end": 54
+                      },
+                      "$nodeHandle": 145,
+                      "_content": [
+                        "toddler"
+                      ]
+                    },
+                    {
+                      "$type": 1,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "name",
+                      "$span": {
+                        "start": 56,
+                        "end": 60
+                      }
+                    }
+                  ],
+                  "$other": [
+                    7,
+                    69,
+                    8
+                  ],
+                  "$span": {
+                    "start": 44,
+                    "end": 61
+                  },
+                  "$nodeHandle": 144,
+                  "_attributes": []
+                },
+                "$other": [
+                  69
+                ],
+                "$span": {
+                  "start": 44,
+                  "end": 62
+                },
+                "$nodeHandle": 143
+              }
+            }
+          ],
+          "_last_arm": {
+            "$type": 276,
+            "$source": 0,
+            "$named": true,
+            "_pattern": {
+              "$type": 277,
+              "$source": 0,
+              "$named": true,
+              "_pattern": {
+                "$type": 300,
+                "$source": 0,
+                "$named": true,
+                "_type": "Person",
+                "_fields": {
+                  "$type": 340,
+                  "$source": 0,
+                  "$named": true,
+                  "$other": [
+                    69
+                  ],
+                  "$span": {
+                    "start": 72,
+                    "end": 96
+                  },
+                  "$nodeHandle": 149,
+                  "_content": [
+                    {
+                      "$type": 301,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 72,
+                        "end": 88
+                      },
+                      "$nodeHandle": 150,
+                      "_content": {
+                        "$type": 359,
+                        "$source": 0,
+                        "$named": true,
+                        "_name": "name",
+                        "_pattern": "adult_name",
+                        "$other": [
+                          5
+                        ],
+                        "$span": {
+                          "start": 72,
+                          "end": 88
+                        },
+                        "$nodeHandle": 152
+                      }
+                    },
+                    {
+                      "$type": 301,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 90,
+                        "end": 96
+                      },
+                      "$nodeHandle": 151,
+                      "_content": {
+                        "$type": 359,
+                        "$source": 0,
+                        "$named": true,
+                        "_name": "age",
+                        "_pattern": {
+                          "$type": 346,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "_",
+                          "$span": {
+                            "start": 95,
+                            "end": 96
+                          },
+                          "$nodeHandle": 154
+                        },
+                        "$other": [
+                          5
+                        ],
+                        "$span": {
+                          "start": 90,
+                          "end": 96
+                        },
+                        "$nodeHandle": 153
+                      }
+                    }
+                  ],
+                  "_trailing_sep": false
+                },
+                "$other": [
+                  50,
+                  51
+                ],
+                "$span": {
+                  "start": 65,
+                  "end": 97
+                },
+                "$nodeHandle": 148
+              },
+              "$span": {
+                "start": 65,
+                "end": 97
+              },
+              "$nodeHandle": 147
+            },
+            "_value": {
+              "$type": 261,
+              "$source": 0,
+              "$named": true,
+              "_elements": [
+                {
+                  "$type": 312,
+                  "$source": 0,
+                  "$named": true,
+                  "$other": [
+                    123,
+                    123
+                  ],
+                  "$span": {
+                    "start": 102,
+                    "end": 109
+                  },
+                  "$nodeHandle": 156,
+                  "_content": [
+                    "adult"
+                  ]
+                },
+                {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "adult_name",
+                  "$span": {
+                    "start": 111,
+                    "end": 121
+                  }
+                }
+              ],
+              "$other": [
+                7,
+                69,
+                8
+              ],
+              "$span": {
+                "start": 101,
+                "end": 122
+              },
+              "$nodeHandle": 155,
+              "_attributes": []
+            },
+            "_comma": true,
+            "$other": [
+              4
+            ],
+            "$span": {
+              "start": 65,
+              "end": 123
+            },
+            "$nodeHandle": 146,
+            "_attributes": []
+          },
+          "$span": {
+            "start": 12,
+            "end": 123
+          },
+          "$nodeHandle": 135
+        },
+        "$other": [
+          50,
+          51
+        ],
+        "$span": {
+          "start": 8,
+          "end": 125
+        },
+        "$nodeHandle": 134
+      },
+      "$other": [
+        109
+      ],
+      "$span": {
+        "start": 0,
+        "end": 125
+      },
+      "$nodeHandle": 3
+    },
+    "expectedOutput": "match x{ Person{ name,age }if age<5=>(\"toddler\",name),Person{ name:adult_name,age:_ }=>(\"adult\",adult_name), }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "match x {\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}",
+    "pattern": "match_expression",
+    "edits": [],
+    "expectedSourceOut": "match x{ Person{ name,age }if age<5=>(\"toddler\",name),Person{ name:adult_name,age:_ }=>(\"adult\",adult_name), }",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_group1 (field_pattern (shorthand_field_identifier)) (field_pattern (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_with_comma value: (tuple_expression elements: (string_literal (string_content)) elements: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_group1 (field_pattern (field_pattern_named name: (field_identifier) pattern: (identifier))) (field_pattern (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern)))))) value: (tuple_expression elements: (string_literal (string_content)) elements: (identifier))))))",
+    "wrappedText": "fn _f() { let _ = match x{ Person{ name,age }if age<5=>(\"toddler\",name),Person{ name:adult_name,age:_ }=>(\"adult\",adult_name), }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 273,
       "$source": 0,
       "$named": true,
@@ -105591,6 +109856,128 @@
     "expectedSourceOut": "age<5",
     "expectedReparseTree": "(binary_expression left: (identifier) right: (integer_literal))",
     "wrappedText": "fn _f() { let _ = age<5; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 261,
+      "$source": 0,
+      "$named": true,
+      "_elements": [
+        {
+          "$type": 312,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            123,
+            123
+          ],
+          "$span": {
+            "start": 45,
+            "end": 54
+          },
+          "$nodeHandle": 256,
+          "_content": [
+            "toddler"
+          ]
+        },
+        {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "name",
+          "$span": {
+            "start": 56,
+            "end": 60
+          }
+        }
+      ],
+      "$other": [
+        7,
+        69,
+        8
+      ],
+      "$span": {
+        "start": 44,
+        "end": 61
+      },
+      "$nodeHandle": 14,
+      "_attributes": []
+    },
+    "expectedOutput": "(\"toddler\",name)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(\"toddler\", name)",
+    "pattern": "tuple_expression",
+    "edits": [],
+    "expectedSourceOut": "(\"toddler\",name)",
+    "expectedReparseTree": "(tuple_expression elements: (string_literal (string_content)) elements: (identifier))",
+    "wrappedText": "fn _f() { let _ = (\"toddler\",name); }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 261,
+      "$source": 0,
+      "$named": true,
+      "_elements": [
+        {
+          "$type": 312,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            123,
+            123
+          ],
+          "$span": {
+            "start": 102,
+            "end": 109
+          },
+          "$nodeHandle": 257,
+          "_content": [
+            "adult"
+          ]
+        },
+        {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "adult_name",
+          "$span": {
+            "start": 111,
+            "end": 121
+          }
+        }
+      ],
+      "$other": [
+        7,
+        69,
+        8
+      ],
+      "$span": {
+        "start": 101,
+        "end": 122
+      },
+      "$nodeHandle": 25,
+      "_attributes": []
+    },
+    "expectedOutput": "(\"adult\",adult_name)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(\"adult\", adult_name)",
+    "pattern": "tuple_expression",
+    "edits": [],
+    "expectedSourceOut": "(\"adult\",adult_name)",
+    "expectedReparseTree": "(tuple_expression elements: (string_literal (string_content)) elements: (identifier))",
+    "wrappedText": "fn _f() { let _ = (\"adult\",adult_name); }",
     "wrappedOffset": 18
   },
   {

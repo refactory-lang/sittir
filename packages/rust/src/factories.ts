@@ -2610,7 +2610,7 @@ export function buildParenthesizedExpression(expression: T.ParenthesizedExpressi
 	);
 }
 
-export function buildTupleExpression(config: Partial<T.TupleExpression.Config> = {}) {
+export function buildTupleExpression(config: T.TupleExpression.Config) {
 	const _attributes = config.attributes ?? [];
 	const _elements = config.elements ?? [];
 	return withMethods(
@@ -2623,7 +2623,7 @@ export function buildTupleExpression(config: Partial<T.TupleExpression.Config> =
 				_elements,
 				$with: {
 					attributes: (...values: T.AttributeItem[]) => buildTupleExpression({ ...config, attributes: values }),
-					elements: (...values: T.Expression[]) => buildTupleExpression({ ...config, elements: values })
+					elements: (...values: NonEmptyArray<T.Expression>) => buildTupleExpression({ ...config, elements: values })
 				}
 			},
 			{

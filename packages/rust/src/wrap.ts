@@ -6638,7 +6638,7 @@ export function wrapTupleExpression(data: T.TupleExpression, tree: TreeHandle) {
 					'const_block',
 					'range_expression'
 				]),
-				false,
+				true,
 				'elements',
 				{ tree, nodeType: data.$type, slotName: 'elements', span: (data as _NodeData).$span }
 			),
@@ -6652,7 +6652,7 @@ export function wrapTupleExpression(data: T.TupleExpression, tree: TreeHandle) {
 			$with: {
 				attributes: (...v: NonNullable<T.TupleExpression['_attributes']>[number][]) =>
 					wrapTupleExpression({ ...data, _attributes: v }, tree),
-				elements: (...v: NonNullable<T.TupleExpression['_elements']>[number][]) =>
+				elements: (...v: NonEmptyArray<NonNullable<T.TupleExpression['_elements']>[number]>) =>
 					wrapTupleExpression({ ...data, _elements: v }, tree)
 			}
 		},

@@ -1954,6 +1954,82 @@ function suggestSharedName(kinds: readonly string[]): string {
  * `null`.
  */
 
+/**
+ * Merge a SUFFIX-style separated list (`(x sep)+ x?` — each element trails
+ * its own separator, with an optional final unterminated element) into one
+ * `repeat`/`repeat1` node. Mirrors `liftCommaSep`'s PREFIX-style cases
+ * (`x (sep x)*`) for the opposite separator orientation; `detectRepeatSeparator`
+ * already stamps a bare `repeat(seq(x, sep))` as `repeat(x){separator:{value:sep,
+ * trailing:'mandatory'}}` during this same bottom-up walk — this pass only
+ * needs to recognize the two windows that ALSO carry a standalone head and/or
+ * an unterminated final element beside that already-stamped repeat:
+ *
+ *  - `[seq(x, sep), repeat(x){sep, trailing:'mandatory'}, optional(x)]` — a
+ *    mandatory first element (needed to disambiguate the construct, e.g.
+ *    rust's `(x,)` single-element tuple) absorbs into the repeat's own
+ *    minimum, promoting it to `repeat1`.
+ *  - `[repeat(x){sep, trailing:'mandatory'}, optional(x)]` — no standalone
+ *    head (the construct is valid with zero elements, e.g. an empty
+ *    `macro_rules! m {}` body); stays a plain `repeat`.
+ *
+ * Both windows relax `trailing` from `'mandatory'` (true only of the repeat's
+ * OWN body in isolation) to `'optional'` (true of the whole merged list, once
+ * the trailing unterminated element is accounted for) — the same relaxation
+ * `liftCommaSep`'s prefix Case 2 performs for the mirror-image shape.
+ */
+export function absorbSuffixSeparatedList(members: Rule<'link'>[]): Rule<'link'>[] | null {
+	let changed = false;
+	const out: Rule<'link'>[] = [];
+	let i = 0;
+	while (i < members.length) {
+		const cur = members[i]!;
+		const repeatAt = (idx: number): RepeatRule<'link'> | Repeat1Rule<'link'> | undefined => {
+			const m = members[idx];
+			return m && (m.type === REPEAT || m.type === REPEAT1) && m.separator?.trailing === 'mandatory'
+				? (m as RepeatRule<'link'> | Repeat1Rule<'link'>)
+				: undefined;
+		};
+		const tailMatches = (repeat: RepeatRule<'link'> | Repeat1Rule<'link'>, idx: number): boolean => {
+			const tail = members[idx];
+			return tail !== undefined && tail.type === OPTIONAL && rulesEqual(tail.content, repeat.content);
+		};
+		// 3-window: standalone head + repeat + optional tail.
+		if (cur.type === SEQ && cur.members.length === 2) {
+			const [head, headSep] = cur.members;
+			const repeat = repeatAt(i + 1);
+			if (
+				repeat &&
+				head !== undefined &&
+				headSep !== undefined &&
+				headSep.type === STRING &&
+				rulesEqual(head, repeat.content) &&
+				rulesEqual(headSep, repeat.separator!.value) &&
+				tailMatches(repeat, i + 2)
+			) {
+				out.push({
+					type: REPEAT1,
+					content: repeat.content,
+					separator: { ...repeat.separator!, trailing: 'optional' }
+				});
+				i += 3;
+				changed = true;
+				continue;
+			}
+		}
+		// 2-window: repeat + optional tail, no standalone head.
+		const repeat = repeatAt(i);
+		if (repeat && tailMatches(repeat, i + 1)) {
+			out.push({ ...repeat, separator: { ...repeat.separator!, trailing: 'optional' } });
+			i += 2;
+			changed = true;
+			continue;
+		}
+		out.push(cur);
+		i++;
+	}
+	return changed ? out : null;
+}
+
 export function absorbTrailingSeparator(members: Rule<'link'>[]): Rule<'link'>[] | null {
 	let changed = false;
 	const out: Rule<'link'>[] = [];
@@ -2054,8 +2130,9 @@ function findRepeatWithSeparator(members: Rule<'link'>[]): number {
 function liftSeqMembers(seq: SeqRule<'link'>, members: Rule<'link'>[]): Rule<'link'> {
 	const lifted = liftCommaSep(members);
 	if (lifted) return { ...carrySeqAttrs(seq), ...lifted };
-	const absorbed = absorbTrailingSeparator(members);
-	return { ...seq, members: absorbed ?? members };
+	const suffixLifted = absorbSuffixSeparatedList(members);
+	const absorbed = absorbTrailingSeparator(suffixLifted ?? members);
+	return { ...seq, members: absorbed ?? suffixLifted ?? members };
 }
 function carrySeqAttrs(seq: SeqRule<'link'>): Partial<SeqRule<'link'>> {
 	const { members: _members, ...rest } = seq;
