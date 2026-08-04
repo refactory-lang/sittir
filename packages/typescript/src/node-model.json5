@@ -626,6 +626,13 @@
       }
     },
     "import_attribute": {
+      "attribute_kind": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "object": {
         "unnamed": false,
         "slotCount": 1,
@@ -10564,12 +10571,6 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": ":",
-              "parseKind": "colon"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "asserts",
@@ -15816,9 +15817,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "object",
-          "propertyName": "object",
-          "paramName": "object",
+          "name": "attribute_kind",
+          "propertyName": "attributeKind",
+          "paramName": "attributeKind",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -15834,7 +15835,21 @@
               "multiplicity": "single",
               "value": "assert",
               "parseKind": "assert"
-            },
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "object",
+          "propertyName": "object",
+          "paramName": "object",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -15852,8 +15867,9 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
+        "attribute_kind",
         "object"
       ]
     },
@@ -22765,12 +22781,6 @@
           "multiple": false,
           "nonEmpty": false,
           "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": ":",
-              "parseKind": "colon"
-            },
             {
               "kind": "node-ref",
               "multiplicity": "single",

@@ -610,7 +610,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "object",
+          "name": "attribute_kind",
           "content": {
             "type": "CHOICE",
             "members": [
@@ -8887,24 +8887,17 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "FIELD",
-          "name": "asserts",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "STRING",
-                "value": ":"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "asserts"
-              }
-            ]
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ":"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "asserts"
+            }
+          ]
         }
       ]
     },
@@ -9483,24 +9476,17 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "FIELD",
-          "name": "type_predicate",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "STRING",
-                "value": ":"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "type_predicate"
-              }
-            ]
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ":"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "type_predicate"
+            }
+          ]
         }
       ]
     },
@@ -13740,9 +13726,6 @@
     "_kw_type_annotation": {
       "type": "BLANK"
     },
-    "_kw_asserts": {
-      "type": "BLANK"
-    },
     "_kw_automatic_semicolon": {
       "type": "BLANK"
     },
@@ -13755,7 +13738,7 @@
     "_kw_semicolon": {
       "type": "BLANK"
     },
-    "_kw_object": {
+    "_kw_attribute_kind": {
       "type": "BLANK"
     },
     "_kw_import_clause": {
@@ -13789,9 +13772,6 @@
       "type": "BLANK"
     },
     "_kw_statements": {
-      "type": "BLANK"
-    },
-    "_kw_type_predicate": {
       "type": "BLANK"
     },
     "_kw_export_kind": {

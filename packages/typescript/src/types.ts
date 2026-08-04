@@ -3398,8 +3398,13 @@ export interface ImportSpecifier {
 
 export interface ImportAttribute {
 	readonly $type: TSKindId.ImportAttribute;
-	readonly _object: 'with' | 'assert' | Object;
-	object(): 'with' | 'assert' | Object;
+	readonly _attribute_kind: number;
+	readonly _object: Object;
+	readonly __inputHints__?: {
+		readonly attribute_kind: KindEnum<'with' | 'assert', TSKindId.With | TSKindId.Assert>;
+	};
+	attributeKind(): number;
+	object(): Object;
 }
 
 export interface ExpressionStatement {
@@ -4755,8 +4760,8 @@ export interface Asserts {
 
 export interface AssertsAnnotation {
 	readonly $type: TSKindId.AssertsAnnotation;
-	readonly _asserts: ':' | Asserts;
-	asserts(): ':' | Asserts;
+	readonly _asserts: Asserts;
+	asserts(): Asserts;
 }
 
 export interface TupleParameter {
@@ -4852,8 +4857,8 @@ export interface TypePredicate {
 
 export interface TypePredicateAnnotation {
 	readonly $type: TSKindId.TypePredicateAnnotation;
-	readonly _type_predicate: ':' | TypePredicate;
-	typePredicate(): ':' | TypePredicate;
+	readonly _type_predicate: TypePredicate;
+	typePredicate(): TypePredicate;
 }
 
 export interface TypeQueryMemberExpression {

@@ -1620,6 +1620,16 @@ export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.ImportAttribute as const,
+			_attribute_kind: projectKindEnumStorage(
+				normalizeSingularWrapSlot(
+					data._attribute_kind ?? readTerminalFromOther(data, [TSKindId.With, TSKindId.Assert]),
+					'attribute_kind',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'attribute_kind', span: (data as _NodeData).$span }
+				),
+				{ with: 11, assert: 12 }
+			),
 			_object: normalizeSingularWrapSlot(data._object, 'object', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -1627,10 +1637,15 @@ export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle) {
 				span: (data as _NodeData).$span
 			}),
 
+			attributeKind() {
+				return this._attribute_kind;
+			},
 			object() {
-				return drillIn<'with' | 'assert' | T.Object>(this._object, tree);
+				return drillIn<T.Object>(this._object, tree);
 			},
 			$with: {
+				attributeKind: (v: NonNullable<T.ImportAttribute['_attribute_kind']>) =>
+					wrapImportAttribute({ ...data, _attribute_kind: v }, tree),
 				object: (v: NonNullable<T.ImportAttribute['_object']>) => wrapImportAttribute({ ...data, _object: v }, tree)
 			}
 		},
@@ -8575,7 +8590,7 @@ export function wrapAssertsAnnotation(data: T.AssertsAnnotation, tree: TreeHandl
 			}),
 
 			asserts() {
-				return drillIn<':' | T.Asserts>(this._asserts, tree);
+				return drillIn<T.Asserts>(this._asserts, tree);
 			},
 			$with: {
 				asserts: (v: NonNullable<T.AssertsAnnotation['_asserts']>) =>
@@ -9231,7 +9246,7 @@ export function wrapTypePredicateAnnotation(data: T.TypePredicateAnnotation, tre
 			}),
 
 			typePredicate() {
-				return drillIn<':' | T.TypePredicate>(this._type_predicate, tree);
+				return drillIn<T.TypePredicate>(this._type_predicate, tree);
 			},
 			$with: {
 				typePredicate: (v: NonNullable<T.TypePredicateAnnotation['_type_predicate']>) =>

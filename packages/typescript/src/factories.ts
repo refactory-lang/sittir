@@ -336,20 +336,28 @@ export function buildImportSpecifier(config: T.ImportSpecifier.Config) {
 	);
 }
 
-export function buildImportAttribute(object: T.ImportAttribute.Config['object']) {
-	const _object = object;
+export function buildImportAttribute(config: T.ImportAttribute.Config) {
+	const _attribute_kind = coerceKindEnumStorage(config.attributeKind, [
+		['with', TSKindId.With] as const,
+		['assert', TSKindId.Assert] as const
+	]);
+	const _object = config.object;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ImportAttribute as const,
 				$source: 2 as const,
 				$named: true as const,
+				_attribute_kind,
 				_object,
 				$with: {
-					object: (value: T.ImportAttribute.Config['object']) => buildImportAttribute(value)
+					attributeKind: (value: NonNullable<Parameters<typeof buildImportAttribute>[0]>['attributeKind']) =>
+						buildImportAttribute({ ...config, attributeKind: value }),
+					object: (value: T.Object) => buildImportAttribute({ ...config, object: value })
 				}
 			},
 			{
+				attributeKind: () => _attribute_kind,
 				object: () => _object
 			}
 		),

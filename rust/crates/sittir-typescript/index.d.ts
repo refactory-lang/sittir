@@ -228,7 +228,7 @@ export interface AssertsAnnotationTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _asserts: Box<AssertsAnnotationAssertsTransportSlot>
+  _asserts: Box<AssertsTransport>
 }
 
 export interface AssertsTransport {
@@ -1306,7 +1306,8 @@ export interface ImportAttributeTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _object: Box<ImportAttributeObjectTransportSlot>
+  _attribute_kind: Box<AnyTransport>
+  _object: Box<ObjectTransport>
 }
 
 export interface ImportClauseDefaultImportTransport {
@@ -2657,7 +2658,7 @@ export interface TypePredicateAnnotationTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type_predicate: Box<TypePredicateAnnotationTypePredicateTransportSlot>
+  _type_predicate: Box<TypePredicateTransport>
 }
 
 export interface TypePredicateTransport {

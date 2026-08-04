@@ -359,13 +359,8 @@ export type TypescriptGrammar = {
 	readonly asserts_annotation: {
 		type: 'asserts_annotation';
 		named: true;
-		fields: {
-			asserts: {
-				multiple: true;
-				required: true;
-				types: [{ type: ':'; named: false }, { type: 'asserts'; named: true }];
-			};
-		};
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'asserts'; named: true }] };
 	};
 	readonly assignment_expression: {
 		type: 'assignment_expression';
@@ -1385,11 +1380,12 @@ export type TypescriptGrammar = {
 		type: 'import_attribute';
 		named: true;
 		fields: {
-			object: {
-				multiple: true;
+			attribute_kind: {
+				multiple: false;
 				required: true;
-				types: [{ type: 'assert'; named: false }, { type: 'object'; named: true }, { type: 'with'; named: false }];
+				types: [{ type: 'assert'; named: false }, { type: 'with'; named: false }];
 			};
+			object: { multiple: false; required: true; types: [{ type: 'object'; named: true }] };
 		};
 	};
 	readonly import_clause: {
@@ -2528,13 +2524,8 @@ export type TypescriptGrammar = {
 	readonly type_predicate_annotation: {
 		type: 'type_predicate_annotation';
 		named: true;
-		fields: {
-			type_predicate: {
-				multiple: true;
-				required: true;
-				types: [{ type: ':'; named: false }, { type: 'type_predicate'; named: true }];
-			};
-		};
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'type_predicate'; named: true }] };
 	};
 	readonly type_query: {
 		type: 'type_query';

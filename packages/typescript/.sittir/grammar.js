@@ -4076,7 +4076,6 @@ var grammar_sittir_default = grammar(
           "1/0/1/1": field("terminator"),
           "1/0/3/1": field("terminator")
         },
-        abstract_class_declaration: {},
         abstract_method_signature: {
           "3/0": field("accessor_kind"),
           "5/0": field("optional_marker")
@@ -4086,43 +4085,29 @@ var grammar_sittir_default = grammar(
           "1/1": variant("global"),
           "1/2": variant("module")
         }),
-        array_type: {},
         as_expression: {
           2: field("type_annotation")
         },
-        asserts_annotation: {
-          0: field("asserts")
-        },
-        await_expression: {},
-        class: {},
         class_declaration: {
           6: field("automatic_semicolon")
         },
-        computed_property_name: {},
-        else_clause: {},
-        enum_body: {},
-        flow_maybe_type: {},
         import_alias: {
           1: field("name"),
           3: field("value"),
           4: field("semicolon")
         },
         import_attribute: {
-          0: field("object")
+          0: field("attribute_kind")
         },
-        import_require_clause: {},
         import_statement: {
           1: field("import_clause"),
           2: field("from_clause"),
           4: field("semicolon")
         },
-        index_type_query: {},
         infer_type: {
           1: field("type_identifier"),
           2: field("constraint")
         },
-        instantiation_expression: {},
-        interface_declaration: {},
         intersection_type: {
           0: field("left"),
           2: field("right")
@@ -4149,8 +4134,6 @@ var grammar_sittir_default = grammar(
           "5/0": field("accessor_kind"),
           "7/0": field("optional_marker")
         },
-        namespace_import: {},
-        non_null_expression: {},
         program: {
           0: field("hash_bang_line"),
           1: field("statements")
@@ -4162,14 +4145,9 @@ var grammar_sittir_default = grammar(
         satisfies_expression: {
           2: field("type_annotation")
         },
-        spread_element: {},
         statement_block: {
           1: field("statements"),
           3: field("automatic_semicolon")
-        },
-        type_assertion: {},
-        type_predicate_annotation: {
-          0: field("type_predicate")
         },
         union_type: {
           0: field("left"),

@@ -174,8 +174,6 @@ export default grammar(
 					'2/0': field('move_marker')
 				},
 
-				extern_modifier: {},
-
 				function_modifiers: {
 					_: field('modifier')
 				},
@@ -258,8 +256,6 @@ export default grammar(
 					2: field('pattern')
 				},
 
-				reference_type: {},
-
 				self_parameter: {
 					0: field('reference')
 				},
@@ -298,8 +294,6 @@ export default grammar(
 					0: field('operator'),
 					1: field('operand')
 				},
-
-				variadic_parameter: {},
 
 				expression_statement: {
 					0: variant('with_semi'),

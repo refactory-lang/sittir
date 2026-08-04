@@ -3930,7 +3930,6 @@ var grammar_sittir_default = grammar(
           "1/0": field2("async_marker"),
           "2/0": field2("move_marker")
         },
-        extern_modifier: {},
         function_modifiers: {
           _: field2("modifier")
         },
@@ -3997,7 +3996,6 @@ var grammar_sittir_default = grammar(
         reference_pattern: {
           2: field2("pattern")
         },
-        reference_type: {},
         self_parameter: {
           0: field2("reference")
         },
@@ -4028,7 +4026,6 @@ var grammar_sittir_default = grammar(
           0: field2("operator"),
           1: field2("operand")
         },
-        variadic_parameter: {},
         expression_statement: {
           0: variant("with_semi"),
           1: variant("block_ending")

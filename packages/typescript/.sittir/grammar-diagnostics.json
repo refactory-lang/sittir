@@ -244,7 +244,7 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "41 referenced kind(s) resolved no parser kindId",
+    "message": "39 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -268,9 +268,7 @@
         "_jsx_start_opening_element",
         "_jsx_start_opening_element_group1",
         "_jsx_string",
-        "_kw_asserts",
         "_kw_optional_marker",
-        "_kw_type_predicate",
         "_mapped_type_clause_optional1",
         "_operator",
         "_semicolon",
@@ -416,15 +414,13 @@
   },
   {
     "code": "kindid-unclassified-symbols",
-    "message": "6 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "message": "4 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
       "kinds": [
         "__number_operator",
         "_augmented_assignment_expression_operator",
-        "_kw_asserts",
-        "_kw_type_predicate",
         "_operator",
         "_unary_expression_operator"
       ]

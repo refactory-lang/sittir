@@ -994,6 +994,7 @@ pub struct ImportAliasTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "import_attribute.jinja", escape = "none")]
 pub struct ImportAttributeTemplate<'a> {
+    pub attribute_kind: SingleNonterminalView<'a>,
     pub object: SingleNonterminalView<'a>,
 }
 
