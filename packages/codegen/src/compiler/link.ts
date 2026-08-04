@@ -1023,7 +1023,15 @@ export function applyOverridePolymorphs(rules: Record<string, Rule<'link'>>, der
 		// Check whether any variant-child symbol appears in the found choice — either
 		// as a direct member or nested inside choice/seq arms at any shallow depth.
 		const symbolInNames = (r: Rule<'link'>): boolean => {
-			const inner = r.type === VARIANT ? r.content : r;
+			let inner = r.type === VARIANT ? r.content : r;
+			// Wire injects variant-child aliases as `optional(alias(...))` for
+			// some parents (e.g. public_field_definition) — unwrap OPTIONAL the
+			// same way VARIANT is unwrapped above, or the alias is invisible to
+			// this check and the parent wrongly falls into the ambient-scaffold
+			// pushdown branch below (which is a no-op for it, since the aliases
+			// ARE already present — its only effect is to rebuild the rule tree
+			// without preserving rule ids, per `rewriteSeqWithVariantAliasChoice`).
+			if (inner.type === OPTIONAL) inner = inner.content;
 			return inner.type === SYMBOL && variantChildSymbolNames.has(inner.name);
 		};
 		const symbolInRule = (r: Rule<'link'>): boolean => {
@@ -1099,11 +1107,11 @@ function rewriteSeqWithVariantAliasChoice(
 				return applyVariantScaffoldPushDown(rule, choiceIdx, rules);
 			}
 			const members = rule.members.map((m) => rewriteSeqWithVariantAliasChoice(m, rules, variantChildVisibleNames));
-			return { type: SEQ, members };
+			return { ...rule, members };
 		}
 		case CHOICE: {
 			const members = rule.members.map((m) => rewriteSeqWithVariantAliasChoice(m, rules, variantChildVisibleNames));
-			return { type: CHOICE, members };
+			return { ...rule, members };
 		}
 		case OPTIONAL:
 		case REPEAT:
@@ -1539,6 +1547,23 @@ function classifyHiddenRule(
 	return { rule };
 }
 
+// Grammar-inheritance idioms (`choice(previous, $.new_arm)`) nest a CHOICE
+// inside a CHOICE's own members. Tree-sitter erases the nesting at parse
+// time — choice-of-choice is parse-equivalent to one flat choice — so
+// supertype-compatibility and variant-arm extraction must see the flat leaf
+// list, not the authored nesting.
+function flattenNestedChoiceMembers(members: readonly Rule<'link'>[]): Rule<'link'>[] {
+	const flat: Rule<'link'>[] = [];
+	for (const m of members) {
+		if (m.type === CHOICE) {
+			flat.push(...flattenNestedChoiceMembers(m.members));
+		} else {
+			flat.push(m);
+		}
+	}
+	return flat;
+}
+
 function classifyHiddenChoiceRule(
 	rule: ChoiceRule<'link'>,
 	ctx: LinkCtx,
@@ -1596,9 +1621,19 @@ function classifyHiddenChoiceRule(
 		return { rule };
 	}
 
+	// Grammar inheritance idioms author a hidden union as `choice(previous,
+	// $.new_arm)` — a CHOICE member that is ITSELF a CHOICE, not a leaf. Since
+	// choice-of-choice is parse-equivalent (tree-sitter erases the nesting),
+	// flatten before checking supertype-compatibility and before computing
+	// variantArms below; otherwise a single nested-CHOICE member fails
+	// `supertypeCompatible` outright and blocks promotion for the WHOLE
+	// hidden union, even though every actual leaf arm qualifies (confirmed
+	// case: typescript's `_lhs_expression`, authored as
+	// `choice(previous, $.non_null_expression)`).
+	const flatMembers = flattenNestedChoiceMembers(rule.members);
 	const supertypeCompatible = (m: Rule<'link'>): boolean =>
 		m.type === SYMBOL || isEnumChoiceRule(m) || m.type === STRING;
-	const allCompatible = rule.members.every(supertypeCompatible);
+	const allCompatible = flatMembers.every(supertypeCompatible);
 	if (allCompatible || supertypes.has(name)) {
 		const subtypes = collectSubtypeRefs(rule, ctx);
 		// Only promote if we actually resolved subtype names. An empty
@@ -1634,7 +1669,7 @@ function classifyHiddenChoiceRule(
 			// `polymorphs:`/`variant()` registration); Task 3's probe
 			// exceptions table enumerates the SUPERTYPE-parent instances the
 			// same way.
-			const variantArms = rule.members
+			const variantArms = flatMembers
 				.map((m): string | null => {
 					const core = m.type === VARIANT ? m.content : m;
 					if (!isAliasMintedRef(core, rules)) return null;

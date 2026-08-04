@@ -1223,7 +1223,7 @@ describe('reference_type', () => {
 describe('pointer_type', () => {
 	it('factory produces correct type', () => {
 		const node = ir.pointerType({
-			content: { $type: TSKindId.PointerTypeConst, $text: 'const', $source: 2, $named: true } as any,
+			content: 'const',
 			type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.PointerType);
@@ -1231,7 +1231,7 @@ describe('pointer_type', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.pointerType({
-			content: { $type: TSKindId.PointerTypeConst, $text: 'const', $source: 2, $named: true } as any,
+			content: 'const',
 			type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);

@@ -22,7 +22,7 @@ import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitEngine } from '../emitters/engine.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
-import { computeFieldStorageInfo, computeSlotClasses } from '../emitters/shared.ts';
+import { computeFieldStorageInfo, computeSlotClasses, computeSupertypeTransitiveParseKinds } from '../emitters/shared.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
@@ -245,6 +245,11 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// branch/group node. Runs after hydration so stampExpressionFor can
 	// resolve parameterless-kind refs through the hydrated slot graph.
 	computeSlotClasses(nodeMap);
+
+	// Phase 5b⅔: Stamp each supertype's transitive parse-kind closure once
+	// (`node.transitiveParseKinds`), so `wrap.ts`'s storage-key routing reads
+	// a stamped fact instead of re-walking the closure per call site.
+	computeSupertypeTransitiveParseKinds(nodeMap);
 
 	// Phase 5b¾: Compute SCC over the singular transport-reference graph.
 	// Render-module's per-slot and supertype enum emitters consult

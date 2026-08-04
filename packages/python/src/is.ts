@@ -216,6 +216,7 @@ export interface IsGuards {
 		v: T
 	): v is T & { readonly $type: TSKindId.SimplePatternNegative };
 	ExceptClauseList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExceptClauseList };
+	YieldFromClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.YieldFromClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	statement(v: { readonly $type: string | number }): v is Statement;
 	simpleStatement(v: { readonly $type: string | number }): v is SimpleStatement;
@@ -375,6 +376,7 @@ export interface AssertGuards {
 	SuiteBlockWithIndent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SuiteBlockWithIndent };
 	SimplePatternNegative(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SimplePatternNegative };
 	ExceptClauseList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseList };
+	YieldFromClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.YieldFromClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	statement(v: { readonly $type: string | number }): asserts v is Statement;
 	simpleStatement(v: { readonly $type: string | number }): asserts v is SimpleStatement;
@@ -410,14 +412,14 @@ const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
 const _supertype_expressions_ids = new Set<number>([161]);
 const _supertype_compoundStatement_ids = new Set<number>([131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_simplePattern_ids = new Set<number>([
-	170, 169, 165, 247, 246, 166, 227, 226, 75, 76, 77, 262, 171, 162, 252
+	170, 169, 165, 248, 247, 166, 227, 226, 75, 76, 77, 263, 171, 162, 253
 ]);
 const _supertype_parameter_ids = new Set<number>([1, 204, 178, 179, 180, 176, 181]);
 const _supertype_pattern_ids = new Set<number>([1, 201, 200, 180, 176, 177]);
 const _supertype_expressionWithinForInClause_ids = new Set<number>([194]);
 const _supertype_expression_ids = new Set<number>([192, 186, 187, 193, 225, 123, 182]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	233, 188, 1, 227, 226, 71, 72, 75, 76, 77, 189, 200, 201, 203, 212, 217, 215, 218, 213, 219, 214, 221, 220, 180
+	233, 188, 1, 227, 226, 70, 71, 75, 76, 77, 189, 200, 201, 203, 212, 217, 215, 218, 213, 219, 214, 221, 220, 180
 ]);
 const _supertype_leftHandSide_ids = new Set<number>([197]);
 const _supertype_rightHandSide_ids = new Set<number>([161, 195, 196, 197, 199]);
@@ -443,7 +445,6 @@ const _kindIdByKind = new Map<string, number>([
 	['else', TSKindId.Else],
 	['match', TSKindId.Match],
 	['case', TSKindId.Case],
-	['async', TSKindId.Async],
 	['for', TSKindId.For],
 	['in', TSKindId.In],
 	['while', TSKindId.While],
@@ -468,6 +469,7 @@ const _kindIdByKind = new Map<string, number>([
 	['integer', TSKindId.Integer],
 	['float', TSKindId.Float],
 	['print', TSKindId.Print],
+	['async', TSKindId.Async],
 	['anon_await', TSKindId.AnonAwait],
 	['true', TSKindId.True],
 	['false', TSKindId.False],
@@ -594,6 +596,7 @@ const _kindIdByKind = new Map<string, number>([
 	['interpolation', TSKindId.Interpolation],
 	['format_specifier', TSKindId.FormatSpecifier],
 	['await', TSKindId.Await],
+	['_kw_async_marker', TSKindId.KwAsyncMarker],
 	['_except_clause_group1', TSKindId.ExceptClauseGroup1],
 	['_argument_list_group1', TSKindId.ArgumentListGroup1],
 	['_expression_list_group1', TSKindId.ExpressionListGroup1],
@@ -621,7 +624,8 @@ const _kindIdByKind = new Map<string, number>([
 	['_suite_block_with_indent', TSKindId.SuiteBlockWithIndent],
 	['_simple_pattern_negative', TSKindId.SimplePatternNegative],
 	['_except_clause_list', TSKindId.ExceptClauseList],
-	['_comparison_operator_comparator', TSKindId.ComparisonOperatorComparator]
+	['_comparison_operator_comparator', TSKindId.ComparisonOperatorComparator],
+	['_yield_from_clause', TSKindId.YieldFromClause]
 ]);
 
 export const is = {
@@ -751,6 +755,7 @@ export const is = {
 	SuiteBlockWithIndent: _g(TSKindId.SuiteBlockWithIndent),
 	SimplePatternNegative: _g(TSKindId.SimplePatternNegative),
 	ExceptClauseList: _g(TSKindId.ExceptClauseList),
+	YieldFromClause: _g(TSKindId.YieldFromClause),
 	kind: (v: { readonly $type: number }, k: string): boolean => {
 		const id = _kindIdByKind.get(k);
 		return id !== undefined && v.$type === id;
@@ -922,6 +927,7 @@ export const assert = {
 	SuiteBlockWithIndent: _makeAssert('SuiteBlockWithIndent', is.SuiteBlockWithIndent as _AnyGuard),
 	SimplePatternNegative: _makeAssert('SimplePatternNegative', is.SimplePatternNegative as _AnyGuard),
 	ExceptClauseList: _makeAssert('ExceptClauseList', is.ExceptClauseList as _AnyGuard),
+	YieldFromClause: _makeAssert('YieldFromClause', is.YieldFromClause as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	statement: _makeAssert('statement', is.statement as _AnyGuard),
 	simpleStatement: _makeAssert('simpleStatement', is.simpleStatement as _AnyGuard),

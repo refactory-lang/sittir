@@ -695,6 +695,7 @@ export function buildTryStatement(config: T.TryStatement.Config) {
 }
 
 export function buildExceptClause(config: T.ExceptClause.Config) {
+	const _star_marker = coerceBooleanKeywordStorage(config.starMarker);
 	const _except_clause_group1 = config.exceptClauseGroup1;
 	const _content = config.content;
 	return withMethods(
@@ -703,9 +704,12 @@ export function buildExceptClause(config: T.ExceptClause.Config) {
 				$type: TSKindId.ExceptClause as const,
 				$source: 2 as const,
 				$named: true as const,
+				_star_marker,
 				_except_clause_group1,
 				_content,
 				$with: {
+					starMarker: (value?: NonNullable<Parameters<typeof buildExceptClause>[0]>['starMarker']) =>
+						buildExceptClause({ ...config, starMarker: value }),
 					exceptClauseGroup1: (value?: T.ExceptClauseGroup1) =>
 						buildExceptClause({ ...config, exceptClauseGroup1: value }),
 					content: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
@@ -713,6 +717,7 @@ export function buildExceptClause(config: T.ExceptClause.Config) {
 				}
 			},
 			{
+				starMarker: () => _star_marker,
 				exceptClauseGroup1: () => _except_clause_group1,
 				content: () => _content
 			}
@@ -1152,7 +1157,7 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config) {
 
 export function buildDecorator(expression: T.Decorator.Config['expression']) {
 	const _expression = expression;
-	const _newline = '\n' as const;
+	const _newline = coerceKindEnumStorage('\n' as const, [['\n', TSKindId.Newline] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -1974,7 +1979,7 @@ export function buildPatternList(config: T.PatternList.Config) {
 	);
 }
 
-export function buildYield(child?: T.Expression | T.Expressions) {
+export function buildYield(child?: T.YieldFromClause | T.Expressions) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -1983,7 +1988,7 @@ export function buildYield(child?: T.Expression | T.Expressions) {
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.Expression | T.Expressions) => buildYield(v) }
+				$with: { $child: (v: T.YieldFromClause | T.Expressions) => buildYield(v) }
 			},
 			{
 				content: () => _content
@@ -2501,7 +2506,7 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config) {
 	);
 }
 
-export function buildParenthesizedExpression(child: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat) {
+export function buildParenthesizedExpression(child: T.Expression | T.Yield | T.ListSplat) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -2510,10 +2515,7 @@ export function buildParenthesizedExpression(child: T.Expression | T.Yield | T.P
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: {
-					$child: (v: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat) =>
-						buildParenthesizedExpression(v)
-				}
+				$with: { $child: (v: T.Expression | T.Yield | T.ListSplat) => buildParenthesizedExpression(v) }
 			},
 			{
 				content: () => _content
@@ -2708,6 +2710,7 @@ export function buildStringContent(
 
 export function buildInterpolation(config: T.Interpolation.Config) {
 	const _expression = config.expression;
+	const _eq_marker = coerceBooleanKeywordStorage(config.eqMarker);
 	const _type_conversion = config.typeConversion;
 	const _format_specifier = config.formatSpecifier;
 	return withMethods(
@@ -2717,16 +2720,20 @@ export function buildInterpolation(config: T.Interpolation.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
+				_eq_marker,
 				_type_conversion,
 				_format_specifier,
 				$with: {
 					expression: (value: T.FExpression) => buildInterpolation({ ...config, expression: value }),
+					eqMarker: (value?: NonNullable<Parameters<typeof buildInterpolation>[0]>['eqMarker']) =>
+						buildInterpolation({ ...config, eqMarker: value }),
 					typeConversion: (value?: T.TypeConversion) => buildInterpolation({ ...config, typeConversion: value }),
 					formatSpecifier: (value?: T.FormatSpecifier) => buildInterpolation({ ...config, formatSpecifier: value })
 				}
 			},
 			{
 				expression: () => _expression,
+				eqMarker: () => _eq_marker,
 				typeConversion: () => _type_conversion,
 				formatSpecifier: () => _format_specifier
 			}
@@ -3540,6 +3547,25 @@ export function buildComparisonOperatorComparator(config: T.ComparisonOperatorCo
 	);
 }
 
+export function buildYieldFromClause(child: T.Expression) {
+	const _expression = child;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.YieldFromClause as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				$with: { $child: (v: T.Expression) => buildYieldFromClause(v) }
+			},
+			{
+				expression: () => _expression
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildIndent(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_indent: text must be non-empty`);
@@ -3832,6 +3858,7 @@ export type FluentKindMap = {
 	_simple_pattern_negative: FluentNode<'_simple_pattern_negative', T.SimplePatternNegative.Config>;
 	_except_clause_list: FluentNode<'_except_clause_list', T.ExceptClauseList.Config>;
 	_comparison_operator_comparator: T.ComparisonOperatorComparator;
+	_yield_from_clause: FluentNode<'_yield_from_clause', T.YieldFromClause.Config>;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
 	string_start: T.StringStart;
@@ -3996,6 +4023,7 @@ export const _factoryMap = {
 	_simple_pattern_negative: buildSimplePatternNegative,
 	_except_clause_list: buildExceptClauseList,
 	_comparison_operator_comparator: buildComparisonOperatorComparator,
+	_yield_from_clause: buildYieldFromClause,
 	_indent: buildIndent,
 	_dedent: buildDedent,
 	string_start: buildStringStart,

@@ -136,7 +136,7 @@ export type PythonGrammar = {
 				{ type: 'expression'; named: true },
 				{ type: 'keyword_argument'; named: true },
 				{ type: 'list_splat'; named: true },
-				{ type: 'parenthesized_expression'; named: true }
+				{ type: 'parenthesized_list_splat'; named: true }
 			];
 		};
 	};
@@ -718,7 +718,7 @@ export type PythonGrammar = {
 	readonly except_clause: {
 		type: 'except_clause';
 		named: true;
-		fields: {};
+		fields: { star_marker: { multiple: false; required: false; types: [{ type: '*'; named: false }] } };
 		children: {
 			multiple: true;
 			required: true;
@@ -837,7 +837,11 @@ export type PythonGrammar = {
 			right: {
 				multiple: true;
 				required: true;
-				types: [{ type: ','; named: false }, { type: 'expression'; named: true }];
+				types: [
+					{ type: ','; named: false },
+					{ type: 'expression'; named: true },
+					{ type: 'lambda_within_for_in_clause'; named: true }
+				];
 			};
 		};
 	};
@@ -846,6 +850,7 @@ export type PythonGrammar = {
 		named: true;
 		fields: {
 			alternative: { multiple: false; required: false; types: [{ type: 'else_clause'; named: true }] };
+			async_marker: { multiple: false; required: false; types: [{ type: 'async'; named: false }] };
 			body: {
 				multiple: false;
 				required: true;
@@ -871,6 +876,7 @@ export type PythonGrammar = {
 		type: 'format_expression';
 		named: true;
 		fields: {
+			eq_marker: { multiple: false; required: false; types: [{ type: '='; named: false }] };
 			expression: {
 				multiple: false;
 				required: true;
@@ -895,6 +901,7 @@ export type PythonGrammar = {
 		type: 'function_definition';
 		named: true;
 		fields: {
+			async_marker: { multiple: false; required: false; types: [{ type: 'async'; named: false }] };
 			body: {
 				multiple: false;
 				required: true;
@@ -1013,6 +1020,7 @@ export type PythonGrammar = {
 		type: 'interpolation';
 		named: true;
 		fields: {
+			eq_marker: { multiple: false; required: false; types: [{ type: '='; named: false }] };
 			expression: {
 				multiple: false;
 				required: true;
@@ -1078,6 +1086,18 @@ export type PythonGrammar = {
 		named: true;
 		fields: {};
 		children: { multiple: false; required: true; types: [{ type: 'parameter_list'; named: true }] };
+	};
+	readonly lambda_within_for_in_clause: {
+		type: 'lambda_within_for_in_clause';
+		named: true;
+		fields: {
+			body: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'expression'; named: true }, { type: 'lambda_within_for_in_clause'; named: true }];
+			};
+			parameters: { multiple: false; required: false; types: [{ type: 'lambda_parameters'; named: true }] };
+		};
 	};
 	readonly list: {
 		type: 'list';
@@ -1601,6 +1621,7 @@ export type PythonGrammar = {
 		type: 'with_statement';
 		named: true;
 		fields: {
+			async_marker: { multiple: false; required: false; types: [{ type: 'async'; named: false }] };
 			body: {
 				multiple: false;
 				required: true;
@@ -1620,8 +1641,18 @@ export type PythonGrammar = {
 		children: {
 			multiple: false;
 			required: false;
-			types: [{ type: 'expression'; named: true }, { type: 'expression_list'; named: true }];
+			types: [
+				{ type: 'expression'; named: true },
+				{ type: 'expression_list'; named: true },
+				{ type: 'yield_from_clause'; named: true }
+			];
 		};
+	};
+	readonly yield_from_clause: {
+		type: 'yield_from_clause';
+		named: true;
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
 	};
 	readonly '_anonymous_!=': { type: '!='; named: false };
 	readonly '_anonymous_%': { type: '%'; named: false };

@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 257,
+  "nodeCount": 258,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -79,6 +79,12 @@
       "definedBy": "override",
       "childKind": {
         "pattern_list_group1": "group1"
+      }
+    },
+    "yield": {
+      "definedBy": "override",
+      "childKind": {
+        "yield_from_clause": "from_clause"
       }
     },
     "string_content": {
@@ -224,6 +230,9 @@
     "pattern_list.tail": {
       "pattern_list_group1": "_pattern_list_group1"
     },
+    "yield.content": {
+      "yield_from_clause": "_yield_from_clause"
+    },
     "slice.step": {
       "slice_group1": "_slice_group1"
     },
@@ -239,9 +248,6 @@
     "dictionary.entries": {
       "dictionary_group1": "_dictionary_group1"
     },
-    "parenthesized_expression.content": {
-      "parenthesized_expression": "parenthesized_list_splat"
-    },
     "string_content.content": {
       "string_content_group1": "_not_escape_sequence"
     },
@@ -251,9 +257,6 @@
     "_except_clause_group1.content": {
       "except_clause_as": "_except_clause_as",
       "except_clause_list": "_except_clause_list"
-    },
-    "_argument_list_group1.content": {
-      "parenthesized_expression": "parenthesized_list_splat"
     },
     "_dict_pattern_group2.dict_pattern_kv": {
       "dict_pattern_kv": "_dict_pattern_kv"
@@ -657,6 +660,13 @@
       }
     },
     "except_clause": {
+      "star_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "except_clause_group1": {
         "unnamed": false,
         "slotCount": 1,
@@ -1818,6 +1828,13 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "eq_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "type_conversion": {
         "unnamed": false,
         "slotCount": 1,
@@ -2117,6 +2134,15 @@
         "multiple": false,
         "nonEmpty": false
       }
+    },
+    "_yield_from_clause": {
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
     }
   },
   "nodes": [
@@ -2216,7 +2242,7 @@
         "expression",
         "list_splat",
         "dictionary_splat",
-        "parenthesized_expression",
+        "parenthesized_list_splat",
         "keyword_argument"
       ],
       "factoryShape": "elements",
@@ -3736,6 +3762,44 @@
       "factoryShape": "spread",
       "factoryFields": [
         "with_item"
+      ]
+    },
+    {
+      "kind": "_yield_from_clause",
+      "modelType": "branch",
+      "typeName": "YieldFromClause",
+      "factoryName": "yieldFromClause",
+      "irKey": "yieldFromClause",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "expression"
       ]
     },
     {
@@ -6505,6 +6569,26 @@
       "hidden": false,
       "fields": [
         {
+          "name": "star_marker",
+          "propertyName": "starMarker",
+          "paramName": "starMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "*",
+              "parseKind": "star"
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
           "name": "except_clause_group1",
           "propertyName": "exceptClauseGroup1",
           "paramName": "exceptClauseGroup1",
@@ -8033,6 +8117,26 @@
           }
         },
         {
+          "name": "eq_marker",
+          "propertyName": "eqMarker",
+          "paramName": "eqMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "=",
+              "parseKind": "eq"
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
           "name": "type_conversion",
           "propertyName": "typeConversion",
           "paramName": "typeConversion",
@@ -9195,13 +9299,6 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "parenthesized_list_splat",
-              "parseKind": "parenthesized_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
               "name": "list_splat",
               "parseKind": "list_splat",
               "unresolved": true
@@ -9212,7 +9309,6 @@
             "kinds": [
               "expression",
               "yield",
-              "parenthesized_list_splat",
               "list_splat"
             ]
           }
@@ -11511,8 +11607,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "expression",
-              "parseKind": "expression",
+              "name": "_yield_from_clause",
+              "parseKind": "yield_from_clause",
               "unresolved": true
             },
             {
@@ -11526,7 +11622,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "expression",
+              "_yield_from_clause",
               "_expressions"
             ]
           }

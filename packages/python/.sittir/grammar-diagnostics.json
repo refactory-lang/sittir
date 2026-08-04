@@ -53,15 +53,6 @@
   },
   {
     "scope": "grammar",
-    "code": "union-slot-nondegenerate-arm",
-    "severity": "warning",
-    "grammar": "python",
-    "ownerKind": "yield",
-    "message": "[collect-slots] kind 'yield': choice rule:yield:root has unnamed-nonterminal arm(s) [_expressions] but cannot union-route — offending arm(s): structured seq[2](\"from\" expression). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
-    "canProceed": true
-  },
-  {
-    "scope": "grammar",
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "grammar": "python",
@@ -199,7 +190,7 @@
         "_exec_statement_optional1",
         "_expressions",
         "_function_definition_optional1",
-        "_kw_async_marker",
+        "_kw_eq_marker",
         "_kw_real",
         "_kw_type",
         "_left_hand_side",
@@ -253,7 +244,7 @@
         "_exec_statement_optional1",
         "_expressions",
         "_function_definition_optional1",
-        "_kw_async_marker",
+        "_kw_eq_marker",
         "_kw_real",
         "_kw_type",
         "_left_hand_side",
@@ -334,6 +325,42 @@
         "_simple_statements",
         "block",
         "_newline"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "_expression_within_for_in_clause",
+    "slotName": "lambda",
+    "message": "Slot 'lambda' of kind '_expression_within_for_in_clause' collapses [lambda, lambda_within_for_in_clause] onto parse kind 'lambda'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
+    "proposal": "Already resolved by enrich() — no action needed.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "lambda",
+      "storageKinds": [
+        "lambda",
+        "lambda_within_for_in_clause"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "_argument_list_group1",
+    "slotName": "parenthesized_expression",
+    "message": "Slot 'parenthesized_expression' of kind '_argument_list_group1' collapses [parenthesized_expression, parenthesized_list_splat] onto parse kind 'parenthesized_expression'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
+    "proposal": "Already resolved by enrich() — no action needed.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "parenthesized_expression",
+      "storageKinds": [
+        "parenthesized_expression",
+        "parenthesized_list_splat"
       ]
     }
   }

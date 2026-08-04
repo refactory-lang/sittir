@@ -275,7 +275,7 @@ export interface AugmentedAssignmentExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _left: Box<AugmentedAssignmentExpressionLeftTransportSlot>
+  _left: Box<AugmentedAssignmentLhsTransport>
   _operator: AugmentedAssignmentExpressionOperatorEnum
   _right: Box<ExpressionTransport>
 }
@@ -1692,17 +1692,6 @@ export interface LexicalDeclarationTransport {
   _semicolon: SemicolonEnum
 }
 
-export interface LhsExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _content: Box<LhsExpressionContentTransportSlot>
-}
-
 export interface LiteralTypeTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2241,17 +2230,11 @@ export interface PublicFieldDefinitionTransport {
   '$triviaData'?: TransportTrivia
   _decorator?: Array<DecoratorTransport>
   _visibility_prefix?: PublicFieldDefinitionVisibilityPrefixTransportSlot
-  _accessor_marker?: boolean
   _name: PropertyNameTransport
   _optionality_marker?: Box<AnyTransport>
   _type?: TypeAnnotationTransport
   _value?: ExpressionTransport
-  _public_field_definition_static_mods?: PublicFieldDefinitionStaticModsTransport
-  _public_field_definition_abstract_first?: PublicFieldDefinitionAbstractFirstTransport
-  _public_field_definition_readonly_first?: PublicFieldDefinitionReadonlyFirstTransport
-  _static_marker?: KwStaticMarkerTransport
-  _readonly_marker?: KwReadonlyMarkerTransport
-  _abstract_marker?: KwAbstractMarkerTransport
+  _content?: PublicFieldDefinitionContentTransportSlot
 }
 
 export interface ReadonlyTypeTransport {

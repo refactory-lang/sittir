@@ -1722,7 +1722,10 @@ export function buildAwaitExpression(expression: T.AwaitExpression.Config['expre
 
 export function buildMemberExpression(config: T.MemberExpression.Config) {
 	const _object = config.object;
-	const _separator = coerceKindEnumStorage(config.separator, [['.', TSKindId.Dot] as const]);
+	const _separator = coerceKindEnumStorage(config.separator, [
+		['.', TSKindId.Dot] as const,
+		['?.', TSKindId.OptionalChain] as const
+	]);
 	const _property = config.property;
 	return withMethods(
 		withAccessors(
@@ -1776,43 +1779,6 @@ export function buildSubscriptExpression(config: T.SubscriptExpression.Config) {
 				object: () => _object,
 				optionalChain: () => _optional_chain,
 				index: () => _index
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildLhsExpression(
-	child:
-		| T.MemberExpression
-		| T.SubscriptExpression
-		| T._Identifier
-		| T.ReservedIdentifier
-		| T.DestructuringPattern
-		| T.NonNullExpression
-) {
-	const _content = child;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.LhsExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					$child: (
-						v:
-							| T.MemberExpression
-							| T.SubscriptExpression
-							| T._Identifier
-							| T.ReservedIdentifier
-							| T.DestructuringPattern
-							| T.NonNullExpression
-					) => buildLhsExpression(v)
-				}
-			},
-			{
-				content: () => _content
 			}
 		),
 		methodsEngine
@@ -1880,15 +1846,7 @@ export function buildAugmentedAssignmentExpression(config: T.AugmentedAssignment
 				_operator,
 				_right,
 				$with: {
-					left: (
-						value:
-							| T.MemberExpression
-							| T.SubscriptExpression
-							| T.ReservedIdentifier
-							| T.Identifier
-							| T.ParenthesizedExpression
-							| T.NonNullExpression
-					) => buildAugmentedAssignmentExpression({ ...config, left: value }),
+					left: (value: T.AugmentedAssignmentLhs) => buildAugmentedAssignmentExpression({ ...config, left: value }),
 					operator: (value: NonNullable<Parameters<typeof buildAugmentedAssignmentExpression>[0]>['operator']) =>
 						buildAugmentedAssignmentExpression({ ...config, operator: value }),
 					right: (value: T.Expression) => buildAugmentedAssignmentExpression({ ...config, right: value })
@@ -2811,10 +2769,7 @@ export function buildReservedIdentifier(
 export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Config) {
 	const _decorator = config.decorator ?? [];
 	const _visibility_prefix = config.visibilityPrefix;
-	const _accessor_marker = coerceBooleanKeywordStorage(config.accessorMarker);
-	const _public_field_definition_static_mods = config.publicFieldDefinitionStaticMods;
-	const _public_field_definition_abstract_first = config.publicFieldDefinitionAbstractFirst;
-	const _public_field_definition_readonly_first = config.publicFieldDefinitionReadonlyFirst;
+	const _content = config.content;
 	const _name = config.name;
 	const _optionality_marker = coerceKindEnumStorage(config.optionalityMarker, [
 		['?', TSKindId.Qmark] as const,
@@ -2830,10 +2785,7 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 				$named: true as const,
 				_decorator,
 				_visibility_prefix,
-				_accessor_marker,
-				_public_field_definition_static_mods,
-				_public_field_definition_abstract_first,
-				_public_field_definition_readonly_first,
+				_content,
 				_name,
 				_optionality_marker,
 				_type,
@@ -2842,14 +2794,13 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 					decorators: (...values: T.Decorator[]) => buildPublicFieldDefinition({ ...config, decorator: values }),
 					visibilityPrefix: (value?: T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst) =>
 						buildPublicFieldDefinition({ ...config, visibilityPrefix: value }),
-					accessorMarker: (value?: NonNullable<Parameters<typeof buildPublicFieldDefinition>[0]>['accessorMarker']) =>
-						buildPublicFieldDefinition({ ...config, accessorMarker: value }),
-					publicFieldDefinitionStaticMods: (value?: T.PublicFieldDefinitionStaticMods) =>
-						buildPublicFieldDefinition({ ...config, publicFieldDefinitionStaticMods: value }),
-					publicFieldDefinitionAbstractFirst: (value?: T.PublicFieldDefinitionAbstractFirst) =>
-						buildPublicFieldDefinition({ ...config, publicFieldDefinitionAbstractFirst: value }),
-					publicFieldDefinitionReadonlyFirst: (value?: T.PublicFieldDefinitionReadonlyFirst) =>
-						buildPublicFieldDefinition({ ...config, publicFieldDefinitionReadonlyFirst: value }),
+					content: (
+						value?:
+							| T.PublicFieldDefinitionStaticMods
+							| T.PublicFieldDefinitionAbstractFirst
+							| T.PublicFieldDefinitionReadonlyFirst
+							| 'accessor'
+					) => buildPublicFieldDefinition({ ...config, content: value }),
 					name: (value: T.PropertyName) => buildPublicFieldDefinition({ ...config, name: value }),
 					optionalityMarker: (
 						value?: NonNullable<Parameters<typeof buildPublicFieldDefinition>[0]>['optionalityMarker']
@@ -2861,10 +2812,7 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 			{
 				decorators: () => _decorator,
 				visibilityPrefix: () => _visibility_prefix,
-				accessorMarker: () => _accessor_marker,
-				publicFieldDefinitionStaticMods: () => _public_field_definition_static_mods,
-				publicFieldDefinitionAbstractFirst: () => _public_field_definition_abstract_first,
-				publicFieldDefinitionReadonlyFirst: () => _public_field_definition_readonly_first,
+				content: () => _content,
 				name: () => _name,
 				optionalityMarker: () => _optionality_marker,
 				type: () => _type,
@@ -3045,7 +2993,11 @@ export function buildFunctionSignature(config: T.FunctionSignature.Config) {
 	const _type_parameters = config.typeParameters;
 	const _parameters = config.parameters;
 	const _return_type = config.returnType;
-	const _semicolon = config.semicolon;
+	const _semicolon = coerceKindEnumStorage(config.semicolon, [
+		['\n', TSKindId.AutomaticSemicolon] as const,
+		[';', TSKindId.Semi] as const,
+		['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -3066,7 +3018,8 @@ export function buildFunctionSignature(config: T.FunctionSignature.Config) {
 					parameters: (value: T.FormalParameters) => buildFunctionSignature({ ...config, parameters: value }),
 					returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
 						buildFunctionSignature({ ...config, returnType: value }),
-					semicolon: (value: T.Semicolon | '\n') => buildFunctionSignature({ ...config, semicolon: value })
+					semicolon: (value: NonNullable<Parameters<typeof buildFunctionSignature>[0]>['semicolon']) =>
+						buildFunctionSignature({ ...config, semicolon: value })
 				}
 			},
 			{
@@ -6037,7 +5990,10 @@ export function buildClassBodyMethod(config: T.ClassBodyMethod.Config) {
 
 export function buildClassBodyMethodSig(config: T.ClassBodyMethodSig.Config) {
 	const _method_signature = config.methodSignature;
-	const _terminator = config.terminator;
+	const _terminator = coerceKindEnumStorage(config.terminator, [
+		['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const,
+		[',', TSKindId.Comma] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -6048,7 +6004,8 @@ export function buildClassBodyMethodSig(config: T.ClassBodyMethodSig.Config) {
 				_terminator,
 				$with: {
 					methodSignature: (value: T.MethodSignature) => buildClassBodyMethodSig({ ...config, methodSignature: value }),
-					terminator: (value: '\n' | ',') => buildClassBodyMethodSig({ ...config, terminator: value })
+					terminator: (value: NonNullable<Parameters<typeof buildClassBodyMethodSig>[0]>['terminator']) =>
+						buildClassBodyMethodSig({ ...config, terminator: value })
 				}
 			},
 			{
@@ -6230,7 +6187,7 @@ export function buildPublicFieldDefinitionAccessFirst(config: T.PublicFieldDefin
 }
 
 export function buildPublicFieldDefinitionStaticMods(config: Partial<T.PublicFieldDefinitionStaticMods.Config> = {}) {
-	const _static_marker = coerceKindEnumStorage('static' as const, []);
+	const _static_marker = coerceKindEnumStorage('static' as const, [['static', TSKindId.KwStaticMarker] as const]);
 	const _override_modifier = coerceBooleanKeywordStorage(config.overrideModifier);
 	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
 	return withMethods(
@@ -6264,7 +6221,9 @@ export function buildPublicFieldDefinitionStaticMods(config: Partial<T.PublicFie
 export function buildPublicFieldDefinitionAbstractFirst(
 	config: Partial<T.PublicFieldDefinitionAbstractFirst.Config> = {}
 ) {
-	const _abstract_marker = coerceKindEnumStorage('abstract' as const, []);
+	const _abstract_marker = coerceKindEnumStorage('abstract' as const, [
+		['abstract', TSKindId.KwAbstractMarker] as const
+	]);
 	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
 	return withMethods(
 		withAccessors(
@@ -6292,7 +6251,9 @@ export function buildPublicFieldDefinitionAbstractFirst(
 export function buildPublicFieldDefinitionReadonlyFirst(
 	config: Partial<T.PublicFieldDefinitionReadonlyFirst.Config> = {}
 ) {
-	const _readonly_marker = coerceKindEnumStorage('readonly' as const, []);
+	const _readonly_marker = coerceKindEnumStorage('readonly' as const, [
+		['readonly', TSKindId.KwReadonlyMarker] as const
+	]);
 	const _abstract_marker = coerceBooleanKeywordStorage(config.abstractMarker);
 	return withMethods(
 		withAccessors(
@@ -6765,7 +6726,6 @@ export type FluentKindMap = {
 	await_expression: FluentNode<'await_expression', T.AwaitExpression.Config>;
 	member_expression: FluentNode<'member_expression', T.MemberExpression.Config>;
 	subscript_expression: FluentNode<'subscript_expression', T.SubscriptExpression.Config>;
-	_lhs_expression: FluentNode<'_lhs_expression', T.LhsExpression.Config>;
 	assignment_expression: FluentNode<'assignment_expression', T.AssignmentExpression.Config>;
 	augmented_assignment_expression: FluentNode<
 		'augmented_assignment_expression',
@@ -7037,7 +6997,6 @@ export const _factoryMap = {
 	await_expression: buildAwaitExpression,
 	member_expression: buildMemberExpression,
 	subscript_expression: buildSubscriptExpression,
-	_lhs_expression: buildLhsExpression,
 	assignment_expression: buildAssignmentExpression,
 	augmented_assignment_expression: buildAugmentedAssignmentExpression,
 	_initializer: buildInitializer,

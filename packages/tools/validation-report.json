@@ -57,13 +57,12 @@
     "grammar": "typescript",
     "backend": "native",
     "scope": "grammar",
-    "code": "union-slot-unaddressable",
+    "code": "union-slot-routed",
     "severity": "warning",
     "ownerKind": "public_field_definition",
-    "message": "[collect-slots] kind 'public_field_definition': fieldless structural choice qualifies for union routing but carries no rule id (rebuilt without id preservation) — union slot would be unaddressable at emit; keeping distribution. Fix the rebuild site to preserve ids.",
+    "message": "[collect-slots] kind 'public_field_definition': choice rule:public_field_definition:root routes 3 unnamed-nonterminal arm(s) [public_field_definition_static_mods, public_field_definition_abstract_first, public_field_definition_readonly_first] into one union slot alongside 1 label-routed arm(s) [field(accessor_marker):\"accessor\"] (PR 1.5)",
     "canProceed": true,
-    "location": "public_field_definition",
-    "sClass": "S4"
+    "location": "public_field_definition"
   },
   {
     "source": "grammar",
@@ -317,7 +316,7 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "50 referenced kind(s) resolved no parser kindId",
+    "message": "41 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -341,18 +340,9 @@
         "_jsx_start_opening_element",
         "_jsx_start_opening_element_group1",
         "_jsx_string",
-        "_kw_abstract_marker",
-        "_kw_accessor_marker",
         "_kw_asserts",
-        "_kw_async_marker",
-        "_kw_await_marker",
-        "_kw_const_marker",
-        "_kw_declare_marker",
         "_kw_optional_marker",
-        "_kw_readonly_marker",
-        "_kw_static_marker",
         "_kw_type_predicate",
-        "_kw_using_marker",
         "_mapped_type_clause_optional1",
         "_operator",
         "_semicolon",
@@ -413,7 +403,7 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-inline-excluded-symbols",
-    "message": "24 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "18 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -433,13 +423,7 @@
         "_jsx_element_name",
         "_jsx_identifier",
         "_jsx_start_opening_element",
-        "_kw_abstract_marker",
-        "_kw_async_marker",
-        "_kw_const_marker",
         "_kw_optional_marker",
-        "_kw_readonly_marker",
-        "_kw_static_marker",
-        "_kw_using_marker",
         "_mapped_type_clause_optional1",
         "_semicolon"
       ]
@@ -514,23 +498,42 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-unclassified-symbols",
-    "message": "9 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "message": "6 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
       "kinds": [
         "__number_operator",
         "_augmented_assignment_expression_operator",
-        "_kw_accessor_marker",
         "_kw_asserts",
-        "_kw_await_marker",
-        "_kw_declare_marker",
         "_kw_type_predicate",
         "_operator",
         "_unary_expression_operator"
       ]
     },
     "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "ownerKind": "primary_expression",
+    "slotName": "identifier",
+    "message": "Slot 'identifier' of kind 'primary_expression' collapses [identifier, _reserved_identifier] onto parse kind 'identifier'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
+    "proposal": "Already resolved by enrich() — no action needed.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "identifier",
+      "storageKinds": [
+        "identifier",
+        "_reserved_identifier"
+      ]
+    },
+    "location": "primary_expression.identifier",
+    "sClass": "S1"
   },
   {
     "source": "grammar",
@@ -596,6 +599,28 @@
       ]
     },
     "location": "arrow_function.parameter",
+    "sClass": "S1"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "ownerKind": "_lhs_expression",
+    "slotName": "identifier",
+    "message": "Slot 'identifier' of kind '_lhs_expression' collapses [identifier, _reserved_identifier] onto parse kind 'identifier'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
+    "proposal": "Already resolved by enrich() — no action needed.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "identifier",
+      "storageKinds": [
+        "identifier",
+        "_reserved_identifier"
+      ]
+    },
+    "location": "_lhs_expression.identifier",
     "sClass": "S1"
   },
   {
@@ -771,18 +796,6 @@
     "grammar": "python",
     "backend": "native",
     "scope": "grammar",
-    "code": "union-slot-nondegenerate-arm",
-    "severity": "warning",
-    "ownerKind": "yield",
-    "message": "[collect-slots] kind 'yield': choice rule:yield:root has unnamed-nonterminal arm(s) [_expressions] but cannot union-route — offending arm(s): structured seq[2](\"from\" expression). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
-    "canProceed": true,
-    "location": "yield"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "ownerKind": "...",
@@ -947,7 +960,7 @@
         "_exec_statement_optional1",
         "_expressions",
         "_function_definition_optional1",
-        "_kw_async_marker",
+        "_kw_eq_marker",
         "_kw_real",
         "_kw_type",
         "_left_hand_side",
@@ -1005,7 +1018,7 @@
         "_exec_statement_optional1",
         "_expressions",
         "_function_definition_optional1",
-        "_kw_async_marker",
+        "_kw_eq_marker",
         "_kw_real",
         "_kw_type",
         "_left_hand_side",
@@ -1096,6 +1109,50 @@
       ]
     },
     "location": "_suite.block",
+    "sClass": "S1"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "ownerKind": "_expression_within_for_in_clause",
+    "slotName": "lambda",
+    "message": "Slot 'lambda' of kind '_expression_within_for_in_clause' collapses [lambda, lambda_within_for_in_clause] onto parse kind 'lambda'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
+    "proposal": "Already resolved by enrich() — no action needed.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "lambda",
+      "storageKinds": [
+        "lambda",
+        "lambda_within_for_in_clause"
+      ]
+    },
+    "location": "_expression_within_for_in_clause.lambda",
+    "sClass": "S1"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "ownerKind": "_argument_list_group1",
+    "slotName": "parenthesized_expression",
+    "message": "Slot 'parenthesized_expression' of kind '_argument_list_group1' collapses [parenthesized_expression, parenthesized_list_splat] onto parse kind 'parenthesized_expression'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
+    "proposal": "Already resolved by enrich() — no action needed.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "parenthesized_expression",
+      "storageKinds": [
+        "parenthesized_expression",
+        "parenthesized_list_splat"
+      ]
+    },
+    "location": "_argument_list_group1.parenthesized_expression",
     "sClass": "S1"
   },
   {
@@ -1247,7 +1304,7 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "34 referenced kind(s) resolved no parser kindId",
+    "message": "27 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -1261,17 +1318,11 @@
         "_expression_ending_with_block",
         "_extern_crate_declaration_optional1",
         "_function_item_optional1",
-        "_in_path",
-        "_kw_async_marker",
         "_kw_comma",
-        "_kw_move_marker",
         "_kw_operator",
         "_kw_pub",
-        "_kw_ref_marker",
         "_kw_reference",
-        "_kw_static_marker",
         "_kw_turbofish",
-        "_kw_unsafe_marker",
         "_let_declaration_optional1",
         "_let_declaration_optional2",
         "_match_block_optional1",
@@ -1283,8 +1334,7 @@
         "_type_parameter_optional1",
         "_variadic_parameter_optional1",
         "_visibility_modifier_pub_parens",
-        "_while_expression_optional1",
-        "in_path"
+        "_while_expression_optional1"
       ]
     },
     "severity": "warning",
@@ -1314,7 +1364,7 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-inline-excluded-symbols",
-    "message": "28 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "24 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -1328,15 +1378,11 @@
         "_expression_ending_with_block",
         "_extern_crate_declaration_optional1",
         "_function_item_optional1",
-        "_kw_async_marker",
         "_kw_comma",
-        "_kw_move_marker",
         "_kw_operator",
         "_kw_pub",
         "_kw_reference",
-        "_kw_static_marker",
         "_kw_turbofish",
-        "_kw_unsafe_marker",
         "_let_declaration_optional1",
         "_let_declaration_optional2",
         "_match_block_optional1",
@@ -1347,21 +1393,6 @@
         "_type_parameter_optional1",
         "_variadic_parameter_optional1",
         "_while_expression_optional1"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "code": "kindid-vaporized-symbols",
-    "message": "1 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "in_path"
       ]
     },
     "scope": "grammar"
@@ -1390,14 +1421,12 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-unclassified-symbols",
-    "message": "5 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "message": "3 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
       "kinds": [
         "_compound_assignment_expr_operator",
-        "_in_path",
-        "_kw_ref_marker",
         "_primitive_type",
         "_visibility_modifier_pub_parens"
       ]

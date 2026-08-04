@@ -1060,7 +1060,14 @@ function enrich(baseInput) {
   for (const groupName of Object.keys(clauseGroupRules)) {
     const groupBody = clauseGroupRules[groupName];
     if (!groupBody) continue;
-    const groupUnaliasResult = applyUnaliasDistinct(groupName, groupBody, rulesBag, kwRules, clauseGroupRules);
+    const groupUnaliasResult = applyUnaliasDistinct(
+      groupName,
+      groupBody,
+      rulesBag,
+      kwRules,
+      clauseGroupRules,
+      supertypeNames
+    );
     clauseGroupRules[groupName] = groupUnaliasResult.rule;
     for (const diagnostic of groupUnaliasResult.diagnostics) {
       recordUnaliasDiagnostic(unaliasSink, diagnostic);
@@ -1161,7 +1168,7 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     visibleGroupHiddenNames,
     clauseGroupOwners
   );
-  const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules);
+  const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules, supertypeNames);
   r = unaliasResult.rule;
   for (const diagnostic of unaliasResult.diagnostics) {
     recordUnaliasDiagnostic(unaliasSink, diagnostic);
@@ -1682,6 +1689,25 @@ function peelPrec(rule) {
   }
   return cursor;
 }
+function tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher) {
+  const peeled = peelOptional(rule);
+  if (!peeled.isOptional) return { matched: false, result: null };
+  const replacement = tryPromoteInnerKeyword(
+    ruleName,
+    rule,
+    peeled.inner,
+    claimedAtSeqLevel,
+    kwRules,
+    rulesBag,
+    wordMatcher
+  );
+  if (replacement !== null) return { matched: true, result: replacement };
+  const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+  if (innerRewritten !== null) {
+    return { matched: true, result: rebuildOptional(rule, innerRewritten) };
+  }
+  return { matched: true, result: null };
+}
 function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher) {
   if (isSeqType(rule.type)) {
     const members = rule.members;
@@ -1695,6 +1721,8 @@ function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBa
     return changed ? { ...rule, members: newMembers } : null;
   }
   if (isChoiceType(rule.type)) {
+    const promoted2 = tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+    if (promoted2.matched) return promoted2.result;
     const members = rule.members;
     let changed = false;
     const newMembers = members.map((m) => {
@@ -1705,24 +1733,8 @@ function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBa
     });
     return changed ? { ...rule, members: newMembers } : null;
   }
-  const peeled = peelOptional(rule);
-  if (peeled.isOptional) {
-    const replacement = tryPromoteInnerKeyword(
-      ruleName,
-      rule,
-      peeled.inner,
-      claimedAtSeqLevel,
-      kwRules,
-      rulesBag,
-      wordMatcher
-    );
-    if (replacement !== null) return replacement;
-    const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
-    if (innerRewritten !== null) {
-      return rebuildOptional(rule, innerRewritten);
-    }
-    return null;
-  }
+  const promoted = tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+  if (promoted.matched) return promoted.result;
   if (isRepeatType(rule.type) || isFieldType(rule.type)) {
     const content = rule.content;
     const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
@@ -2107,7 +2119,7 @@ function recordUnaliasDiagnostic(sink, diagnostic) {
   sink.seen.add(key);
   sink.diagnostics.push(diagnostic);
 }
-function collectUnaliasCandidates(node, path, slotKey, rulesBag, out, walker) {
+function collectUnaliasCandidates(node, path, slotKey, rulesBag, out, walker, visited = /* @__PURE__ */ new Set(), supertypeNames = /* @__PURE__ */ new Set(), rewritable = true) {
   const t = node.type;
   if (!t) return;
   if (t === "ALIAS") {
@@ -2121,21 +2133,38 @@ function collectUnaliasCandidates(node, path, slotKey, rulesBag, out, walker) {
       slotKey,
       storageKind,
       resolvedBody,
-      aliasSite: { path, content: aliasRule.content, named: aliasRule.named }
+      aliasSite: rewritable ? { path, content: aliasRule.content, named: aliasRule.named } : void 0
     });
     return;
   }
   if (isSymbolType(t)) {
     const name = node.name;
     if (typeof name === "string") {
-      const resolvedBody = normalizeMember(rulesBag[name] ?? node);
+      const target = rulesBag[name];
+      const resolvedBody = normalizeMember(target ?? node);
+      const erasesToArms = name.startsWith("_") || supertypeNames.has(name);
+      if (target !== void 0 && erasesToArms && isChoiceType(resolvedBody.type) && !visited.has(name)) {
+        visited.add(name);
+        collectUnaliasCandidates(target, path, slotKey, rulesBag, out, walker, visited, supertypeNames, false);
+        return;
+      }
       out.push({ targetName: name, slotKey, storageKind: name, resolvedBody });
     }
     return;
   }
   const nextSlotKey = isFieldType(t) ? node.name ?? slotKey : slotKey;
   for (const { segment, child } of walker.childEdgesOf(node)) {
-    collectUnaliasCandidates(child, [...path, ...segment], nextSlotKey, rulesBag, out, walker);
+    collectUnaliasCandidates(
+      child,
+      [...path, ...segment],
+      nextSlotKey,
+      rulesBag,
+      out,
+      walker,
+      visited,
+      supertypeNames,
+      rewritable
+    );
   }
 }
 function rewriteUnaliasAt(node, path, replacement) {
@@ -2151,9 +2180,9 @@ function rewriteUnaliasAt(node, path, replacement) {
   const child = node[k];
   return { ...node, [k]: rest.length > 0 ? rewriteUnaliasAt(child, rest, replacement) : replacement };
 }
-function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRules) {
+function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRules, supertypeNames) {
   const candidates = [];
-  collectUnaliasCandidates(rule, [], void 0, rulesBag, candidates, new RuleWalker());
+  collectUnaliasCandidates(rule, [], void 0, rulesBag, candidates, new RuleWalker(), /* @__PURE__ */ new Set(), supertypeNames);
   if (candidates.length === 0) return { rule, diagnostics: [] };
   const byBucket = /* @__PURE__ */ new Map();
   for (const candidate of candidates) {
@@ -3791,6 +3820,7 @@ var grammar_sittir_default = grammar(
         [$.generic_type_with_turbofish, $._path],
         [$.visibility_modifier, $._path],
         [$._expression_except_range, $._closure_expression_group1],
+        [$.async_block, $._kw_async_marker],
         [$.scoped_identifier, $.scoped_type_identifier, $._visibility_modifier_crate],
         [$._visibility_modifier_pub],
         [$._attributed_type_parameter, $._type],
@@ -3826,7 +3856,7 @@ var grammar_sittir_default = grammar(
         _visibility_modifier_pub: {
           "1": "parens"
         },
-        in_path: ($) => seq("in", $._path),
+        visibility_modifier_in_path: ($) => seq("in", $._path),
         attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
         attributed_enum_variant: ($) => seq(repeat($.attribute_item), $.enum_variant),
         attributed_parameter: ($) => seq(optional($.attribute_item), choice($.parameter, $.self_parameter, $.variadic_parameter, "_", $._type)),
@@ -3976,9 +4006,6 @@ var grammar_sittir_default = grammar(
         },
         source_file: {
           1: field2("statements")
-        },
-        static_item: {
-          2: field2("mutable_specifier")
         },
         trait_item: {
           "1/0": field2("unsafe_marker")

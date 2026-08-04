@@ -315,7 +315,8 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_with_clause_bare: TSKindId.WithClauseBare,
 	_with_clause_paren: TSKindId.WithClauseParen,
 	_suite_block_with_indent: TSKindId.SuiteBlockWithIndent,
-	_simple_pattern_negative: TSKindId.SimplePatternNegative
+	_simple_pattern_negative: TSKindId.SimplePatternNegative,
+	_yield_from_clause: TSKindId.YieldFromClause
 };
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
@@ -422,6 +423,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildSuiteBlockWithIndent(children[0] as Parameters<typeof F.buildSuiteBlockWithIndent>[0]);
 		case '_simple_pattern_negative':
 			return F.buildSimplePatternNegative(children[0] as Parameters<typeof F.buildSimplePatternNegative>[0]);
+		case '_yield_from_clause':
+			return F.buildYieldFromClause(children[0] as Parameters<typeof F.buildYieldFromClause>[0]);
 		default:
 			return undefined;
 	}
@@ -1040,6 +1043,7 @@ export function coerceToTryStatement(input: T.TryStatement.Loose): ReturnType<ty
 export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<typeof F.buildExceptClause> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExceptClause>;
 	return F.buildExceptClause({
+		starMarker: _resolveBooleanKeyword(input.starMarker),
 		exceptClauseGroup1: _resolveOneBranch<T.ExceptClauseGroup1>(input.exceptClauseGroup1, '_except_clause_group1'),
 		content: _requireField(
 			'except_clause',
@@ -1701,7 +1705,7 @@ export function coerceToPatternList(input: T.PatternList.Loose): ReturnType<type
 	});
 }
 
-export function coerceToYield(input?: (T.Expression | T.Expressions) | T.Yield): ReturnType<typeof F.buildYield> {
+export function coerceToYield(input?: (T.YieldFromClause | T.Expressions) | T.Yield): ReturnType<typeof F.buildYield> {
 	if (isNodeData(input) && input.$type === TSKindId.Yield) {
 		const data = input;
 		const child = (data as unknown as { _content?: unknown })._content;
@@ -1938,7 +1942,7 @@ export function coerceToGeneratorExpression(
 }
 
 export function coerceToParenthesizedExpression(
-	input?: (T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat) | T.ParenthesizedExpression
+	input?: (T.Expression | T.Yield | T.ListSplat) | T.ParenthesizedExpression
 ): ReturnType<typeof F.buildParenthesizedExpression> {
 	if (isNodeData(input) && input.$type === TSKindId.ParenthesizedExpression) {
 		const data = input;
@@ -2041,6 +2045,7 @@ export function coerceToInterpolation(input: T.Interpolation.Loose): ReturnType<
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildInterpolation>;
 	return F.buildInterpolation({
 		expression: _requireField('interpolation', 'expression', _resolveOne<T.FExpression>(input.expression, _K3, _K24)),
+		eqMarker: _resolveBooleanKeyword(input.eqMarker),
 		typeConversion: _resolveOneLeaf<T.TypeConversion>(input.typeConversion, 'type_conversion'),
 		formatSpecifier: _resolveOneBranch<T.FormatSpecifier>(input.formatSpecifier, 'format_specifier')
 	});

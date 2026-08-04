@@ -1182,17 +1182,6 @@ export interface InnerAttributeItemTransport {
   _attribute: AttributeTransport
 }
 
-export interface InPathTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _path: PathTransport
-}
-
 export interface LabelTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1226,8 +1215,8 @@ export interface LetChainTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _left: Box<LetChainLeftTransportSlot>
-  _right: Box<LetChainRightTransportSlot>
+  _left?: Box<LetChainLeftTransportSlot>
+  _right?: Array<LetChainRightTransportSlot>
 }
 
 export interface LetConditionTransport {
@@ -1960,7 +1949,8 @@ export interface StaticItemTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _visibility_modifier?: VisibilityModifierTransport
-  _mutable_specifier?: StaticItemMutableSpecifierTransportSlot
+  _ref_marker?: KwRefMarkerTransport
+  _mutable_specifier?: MutableSpecifierTransport
   _name: IdentifierTransport
   _type: _TypeTransport
   _value?: ExpressionTransport
@@ -2546,6 +2536,17 @@ export interface VisibilityModifierGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content: VisibilityModifierGroup1ContentTransportSlot
+}
+
+export interface VisibilityModifierInPathTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _path: PathTransport
 }
 
 export interface VisibilityModifierPubParensTransport {

@@ -6,16 +6,19 @@ import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from '@sittir/types';
 import { TSKindId } from './types.js';
 import type {
 	NamespaceMap,
+	AugmentedAssignmentLhs,
 	Declaration,
 	DestructuringPattern,
 	Expression,
 	Expressions,
+	ForHeaderGroup1,
 	FormalParameter,
 	ImportIdentifier,
 	JsxAttributeName,
 	JsxAttributeValue,
 	JsxChild,
 	JsxElementName,
+	LhsExpression,
 	ModuleExportName,
 	Pattern,
 	PrimaryExpression,
@@ -122,7 +125,6 @@ export interface IsGuards {
 	subscriptExpression<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.SubscriptExpression };
-	LhsExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LhsExpression };
 	assignmentExpression<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.AssignmentExpression };
@@ -345,6 +347,8 @@ export interface IsGuards {
 	jsxAttributeName(v: { readonly $type: string | number }): v is JsxAttributeName;
 	jsxAttributeValue(v: { readonly $type: string | number }): v is JsxAttributeValue;
 	formalParameter(v: { readonly $type: string | number }): v is FormalParameter;
+	lhsExpression(v: { readonly $type: string | number }): v is LhsExpression;
+	augmentedAssignmentLhs(v: { readonly $type: string | number }): v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number }): v is DestructuringPattern;
 	identifier(v: { readonly $type: string | number }): v is _Identifier;
 	pattern(v: { readonly $type: string | number }): v is Pattern;
@@ -357,6 +361,7 @@ export interface IsGuards {
 	type(v: { readonly $type: string | number }): v is Type;
 	tupleTypeMember(v: { readonly $type: string | number }): v is TupleTypeMember;
 	primaryType(v: { readonly $type: string | number }): v is PrimaryType;
+	forHeaderGroup1(v: { readonly $type: string | number }): v is ForHeaderGroup1;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -425,7 +430,6 @@ export interface AssertGuards {
 	awaitExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AwaitExpression };
 	memberExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MemberExpression };
 	subscriptExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SubscriptExpression };
-	LhsExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LhsExpression };
 	assignmentExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AssignmentExpression };
 	augmentedAssignmentExpression(v: {
 		readonly $type: number;
@@ -590,6 +594,8 @@ export interface AssertGuards {
 	jsxAttributeName(v: { readonly $type: string | number }): asserts v is JsxAttributeName;
 	jsxAttributeValue(v: { readonly $type: string | number }): asserts v is JsxAttributeValue;
 	formalParameter(v: { readonly $type: string | number }): asserts v is FormalParameter;
+	lhsExpression(v: { readonly $type: string | number }): asserts v is LhsExpression;
+	augmentedAssignmentLhs(v: { readonly $type: string | number }): asserts v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number }): asserts v is DestructuringPattern;
 	identifier(v: { readonly $type: string | number }): asserts v is _Identifier;
 	pattern(v: { readonly $type: string | number }): asserts v is Pattern;
@@ -604,6 +610,7 @@ export interface AssertGuards {
 	type(v: { readonly $type: string | number }): asserts v is Type;
 	tupleTypeMember(v: { readonly $type: string | number }): asserts v is TupleTypeMember;
 	primaryType(v: { readonly $type: string | number }): asserts v is PrimaryType;
+	forHeaderGroup1(v: { readonly $type: string | number }): asserts v is ForHeaderGroup1;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -626,27 +633,30 @@ const _supertype_expression_ids = new Set<number>([
 	275, 276, 277, 285, 274, 237, 239, 233, 245, 244, 243, 246, 232, 212
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	235, 234, 209, 106, 1, 435, 101, 102, 99, 248, 249, 251, 103, 104, 105, 213, 217, 223, 227, 225, 220, 252, 231, 269
+	235, 234, 209, 105, 1, 443, 100, 101, 98, 248, 249, 251, 102, 103, 104, 213, 217, 223, 227, 225, 220, 252, 231, 269
 ]);
 const _supertype_jsxChild_ids = new Set<number>([163]);
 const _supertype_jsxIdentifier_ids = new Set<number>([1]);
 const _supertype_jsxElementName_ids = new Set<number>([1, 219]);
 const _supertype_jsxAttributeName_ids = new Set<number>([1]);
 const _supertype_formalParameter_ids = new Set<number>([297, 298]);
+const _supertype_lhsExpression_ids = new Set<number>([234, 235, 105, 1, 443, 214, 218, 269]);
+const _supertype_augmentedAssignmentLhs_ids = new Set<number>([234, 235, 443, 1, 209, 269]);
 const _supertype_destructuringPattern_ids = new Set<number>([214, 218]);
-const _supertype_identifier_ids = new Set<number>([106, 1]);
-const _supertype_pattern_ids = new Set<number>([236, 261]);
-const _supertype_propertyName_ids = new Set<number>([1, 435, 100, 248, 99, 266]);
-const _supertype_statementIdentifier_ids = new Set<number>([1, 435]);
-const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 435]);
-const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 435]);
-const _supertype_propertyIdentifier_ids = new Set<number>([1, 435]);
+const _supertype_identifier_ids = new Set<number>([105, 1]);
+const _supertype_pattern_ids = new Set<number>([234, 235, 105, 1, 443, 214, 218, 269, 261]);
+const _supertype_propertyName_ids = new Set<number>([1, 443, 99, 248, 98, 266]);
+const _supertype_statementIdentifier_ids = new Set<number>([1, 443]);
+const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 443]);
+const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 443]);
+const _supertype_propertyIdentifier_ids = new Set<number>([1, 443]);
 const _supertype_importIdentifier_ids = new Set<number>([1]);
 const _supertype_type_ids = new Set<number>([352, 349, 314, 318, 304, 305]);
 const _supertype_tupleTypeMember_ids = new Set<number>([309, 310, 311, 312]);
 const _supertype_primaryType_ids = new Set<number>([
-	335, 336, 440, 288, 320, 338, 347, 348, 334, 327, 328, 101, 331, 329, 319, 317, 351, 350
+	335, 336, 448, 288, 320, 338, 347, 348, 334, 327, 328, 100, 331, 329, 319, 317, 351, 350
 ]);
+const _supertype_forHeaderGroup1_ids = new Set<number>([234, 235, 105, 1, 443, 214, 218, 269]);
 
 const _kindIdByKind = new Map<string, number>([
 	['identifier', TSKindId.Identifier],
@@ -662,7 +672,6 @@ const _kindIdByKind = new Map<string, number>([
 	['if', TSKindId.If],
 	['switch', TSKindId.Switch],
 	['for', TSKindId.For],
-	['await', TSKindId.Await],
 	['while', TSKindId.While],
 	['do', TSKindId.Do],
 	['try', TSKindId.Try],
@@ -678,8 +687,8 @@ const _kindIdByKind = new Map<string, number>([
 	['yield', TSKindId.Yield],
 	['anon_class', TSKindId.AnonClass],
 	['function', TSKindId.Function],
-	['async', TSKindId.Async],
 	['new', TSKindId.New],
+	['await', TSKindId.Await],
 	['instanceof', TSKindId.Instanceof],
 	['unescaped_double_string_fragment', TSKindId.UnescapedDoubleStringFragment],
 	['unescaped_single_string_fragment', TSKindId.UnescapedSingleStringFragment],
@@ -702,6 +711,7 @@ const _kindIdByKind = new Map<string, number>([
 	['readonly', TSKindId.Readonly],
 	['anon_module', TSKindId.AnonModule],
 	['export', TSKindId.Export],
+	['async', TSKindId.Async],
 	['abstract', TSKindId.Abstract],
 	['const', TSKindId.Const],
 	['satisfies', TSKindId.Satisfies],
@@ -715,9 +725,9 @@ const _kindIdByKind = new Map<string, number>([
 	['is', TSKindId.Is],
 	['keyof', TSKindId.Keyof],
 	['in', TSKindId.In],
-	['global', TSKindId.Global],
-	['accessor', TSKindId.Accessor],
 	['using', TSKindId.Using],
+	['accessor', TSKindId.Accessor],
+	['global', TSKindId.Global],
 	['_template_chars', TSKindId.TemplateChars],
 	['_ternary_qmark', TSKindId.TernaryQmark],
 	['html_comment', TSKindId.HtmlComment],
@@ -785,7 +795,6 @@ const _kindIdByKind = new Map<string, number>([
 	['await_expression', TSKindId.AwaitExpression],
 	['member_expression', TSKindId.MemberExpression],
 	['subscript_expression', TSKindId.SubscriptExpression],
-	['_lhs_expression', TSKindId.LhsExpression],
 	['assignment_expression', TSKindId.AssignmentExpression],
 	['augmented_assignment_expression', TSKindId.AugmentedAssignmentExpression],
 	['_initializer', TSKindId.Initializer],
@@ -893,6 +902,11 @@ const _kindIdByKind = new Map<string, number>([
 	['union_type', TSKindId.UnionType],
 	['intersection_type', TSKindId.IntersectionType],
 	['function_type', TSKindId.FunctionType],
+	['_kw_async_marker', TSKindId.KwAsyncMarker],
+	['_kw_static_marker', TSKindId.KwStaticMarker],
+	['_kw_readonly_marker', TSKindId.KwReadonlyMarker],
+	['_kw_abstract_marker', TSKindId.KwAbstractMarker],
+	['_kw_const_marker', TSKindId.KwConstMarker],
 	['_export_clause_group1', TSKindId.ExportClauseGroup1],
 	['_import_statement_group1', TSKindId.ImportStatementGroup1],
 	['_import_clause_group1', TSKindId.ImportClauseGroup1],
@@ -931,6 +945,11 @@ const _kindIdByKind = new Map<string, number>([
 	['_for_header_lhs', TSKindId.ForHeaderLhs],
 	['_for_header_var_kind', TSKindId.ForHeaderVarKind],
 	['_for_header_let_const_kind', TSKindId.ForHeaderLetConstKind],
+	['_public_field_definition_declare_first', TSKindId.PublicFieldDefinitionDeclareFirst],
+	['_public_field_definition_access_first', TSKindId.PublicFieldDefinitionAccessFirst],
+	['_public_field_definition_static_mods', TSKindId.PublicFieldDefinitionStaticMods],
+	['_public_field_definition_abstract_first', TSKindId.PublicFieldDefinitionAbstractFirst],
+	['_public_field_definition_readonly_first', TSKindId.PublicFieldDefinitionReadonlyFirst],
 	['_parenthesized_expression_typed', TSKindId.ParenthesizedExpressionTyped],
 	['_export_statement_type_export', TSKindId.ExportStatementTypeExport],
 	['_export_statement_equals_export', TSKindId.ExportStatementEqualsExport],
@@ -942,11 +961,6 @@ const _kindIdByKind = new Map<string, number>([
 	['_string_single', TSKindId.StringSingle],
 	['_update_expression_postfix', TSKindId.UpdateExpressionPostfix],
 	['_update_expression_prefix', TSKindId.UpdateExpressionPrefix],
-	['_public_field_definition_abstract_first', TSKindId.PublicFieldDefinitionAbstractFirst],
-	['_public_field_definition_access_first', TSKindId.PublicFieldDefinitionAccessFirst],
-	['_public_field_definition_declare_first', TSKindId.PublicFieldDefinitionDeclareFirst],
-	['_public_field_definition_readonly_first', TSKindId.PublicFieldDefinitionReadonlyFirst],
-	['_public_field_definition_static_mods', TSKindId.PublicFieldDefinitionStaticMods],
 	['_reserved_identifier', TSKindId.ReservedIdentifier],
 	['_type_identifier', TSKindId.TypeIdentifier]
 ]);
@@ -1010,7 +1024,6 @@ export const is = {
 	awaitExpression: _g(TSKindId.AwaitExpression),
 	memberExpression: _g(TSKindId.MemberExpression),
 	subscriptExpression: _g(TSKindId.SubscriptExpression),
-	LhsExpression: _g(TSKindId.LhsExpression),
 	assignmentExpression: _g(TSKindId.AssignmentExpression),
 	augmentedAssignmentExpression: _g(TSKindId.AugmentedAssignmentExpression),
 	spreadElement: _g(TSKindId.SpreadElement),
@@ -1140,6 +1153,8 @@ export const is = {
 	jsxAttributeName: _sg(_supertype_jsxAttributeName_ids),
 	jsxAttributeValue: _sg(new Set<number>()),
 	formalParameter: _sg(_supertype_formalParameter_ids),
+	lhsExpression: _sg(_supertype_lhsExpression_ids),
+	augmentedAssignmentLhs: _sg(_supertype_augmentedAssignmentLhs_ids),
 	destructuringPattern: _sg(_supertype_destructuringPattern_ids),
 	identifier: _sg(_supertype_identifier_ids),
 	pattern: _sg(_supertype_pattern_ids),
@@ -1151,7 +1166,8 @@ export const is = {
 	importIdentifier: _sg(_supertype_importIdentifier_ids),
 	type: _sg(_supertype_type_ids),
 	tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
-	primaryType: _sg(_supertype_primaryType_ids)
+	primaryType: _sg(_supertype_primaryType_ids),
+	forHeaderGroup1: _sg(_supertype_forHeaderGroup1_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -1238,7 +1254,6 @@ export const assert = {
 	awaitExpression: _makeAssert('awaitExpression', is.awaitExpression as _AnyGuard),
 	memberExpression: _makeAssert('memberExpression', is.memberExpression as _AnyGuard),
 	subscriptExpression: _makeAssert('subscriptExpression', is.subscriptExpression as _AnyGuard),
-	LhsExpression: _makeAssert('LhsExpression', is.LhsExpression as _AnyGuard),
 	assignmentExpression: _makeAssert('assignmentExpression', is.assignmentExpression as _AnyGuard),
 	augmentedAssignmentExpression: _makeAssert(
 		'augmentedAssignmentExpression',
@@ -1386,6 +1401,8 @@ export const assert = {
 	jsxAttributeName: _makeAssert('jsxAttributeName', is.jsxAttributeName as _AnyGuard),
 	jsxAttributeValue: _makeAssert('jsxAttributeValue', is.jsxAttributeValue as _AnyGuard),
 	formalParameter: _makeAssert('formalParameter', is.formalParameter as _AnyGuard),
+	lhsExpression: _makeAssert('lhsExpression', is.lhsExpression as _AnyGuard),
+	augmentedAssignmentLhs: _makeAssert('augmentedAssignmentLhs', is.augmentedAssignmentLhs as _AnyGuard),
 	destructuringPattern: _makeAssert('destructuringPattern', is.destructuringPattern as _AnyGuard),
 	identifier: _makeAssert('identifier', is.identifier as _AnyGuard),
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
@@ -1400,7 +1417,8 @@ export const assert = {
 	importIdentifier: _makeAssert('importIdentifier', is.importIdentifier as _AnyGuard),
 	type: _makeAssert('type', is.type as _AnyGuard),
 	tupleTypeMember: _makeAssert('tupleTypeMember', is.tupleTypeMember as _AnyGuard),
-	primaryType: _makeAssert('primaryType', is.primaryType as _AnyGuard)
+	primaryType: _makeAssert('primaryType', is.primaryType as _AnyGuard),
+	forHeaderGroup1: _makeAssert('forHeaderGroup1', is.forHeaderGroup1 as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

@@ -307,6 +307,8 @@ import type {
 	WithStatement,
 	WithStatementTree,
 	Yield,
+	YieldFromClause,
+	YieldFromClauseTree,
 	YieldTree,
 	_Parameters,
 	_ParametersTree,
@@ -500,6 +502,7 @@ export type _Type_SimplePatternNegative = _TypeAssert<
 	_TypeExtends<SimplePatternNegative['$type'], TSKindId.SimplePatternNegative>
 >;
 export type _Type_ExceptClauseList = _TypeAssert<_TypeExtends<ExceptClauseList['$type'], TSKindId.ExceptClauseList>>;
+export type _Type_YieldFromClause = _TypeAssert<_TypeExtends<YieldFromClause['$type'], TSKindId.YieldFromClause>>;
 export type _Type_ImportPrefix = _TypeAssert<_TypeExtends<ImportPrefix['$type'], TSKindId.ImportPrefix>>;
 export type _Type_PassStatement = _TypeAssert<_TypeExtends<PassStatement['$type'], TSKindId.PassStatement>>;
 export type _Type_BreakStatement = _TypeAssert<_TypeExtends<BreakStatement['$type'], TSKindId.BreakStatement>>;
@@ -726,6 +729,7 @@ export type _Tree_SimplePatternNegative = _TypeAssert<
 	_TypeExtends<SimplePatternNegativeTree['type'], '_simple_pattern_negative'>
 >;
 export type _Tree_ExceptClauseList = _TypeAssert<_TypeExtends<ExceptClauseListTree['type'], '_except_clause_list'>>;
+export type _Tree_YieldFromClause = _TypeAssert<_TypeExtends<YieldFromClauseTree['type'], '_yield_from_clause'>>;
 export type _Tree_ImportPrefix = _TypeAssert<_TypeExtends<ImportPrefixTree['type'], 'import_prefix'>>;
 export type _Tree_PassStatement = _TypeAssert<_TypeExtends<PassStatementTree['type'], 'pass_statement'>>;
 export type _Tree_BreakStatement = _TypeAssert<_TypeExtends<BreakStatementTree['type'], 'break_statement'>>;

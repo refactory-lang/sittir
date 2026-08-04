@@ -707,7 +707,7 @@ export function buildOrderedFieldDeclarationList(attributes?: T.OrderedFieldDecl
 
 export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Config) {
 	const _visibility_modifier = config.visibilityModifier;
-	const _crate = coerceKindEnumStorage('crate' as const, []);
+	const _crate = coerceKindEnumStorage('crate' as const, [['crate', TSKindId.Crate] as const]);
 	const _name = config.name;
 	const _alias = config.alias;
 	return withMethods(
@@ -774,7 +774,8 @@ export function buildConstItem(config: T.ConstItem.Config) {
 
 export function buildStaticItem(config: T.StaticItem.Config) {
 	const _visibility_modifier = config.visibilityModifier;
-	const _mutable_specifier = config.mutableSpecifier;
+	const _ref_marker = coerceBooleanKeywordStorage(config.refMarker);
+	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _name = config.name;
 	const _type = config.type;
 	const _value = config.value;
@@ -785,6 +786,7 @@ export function buildStaticItem(config: T.StaticItem.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_visibility_modifier,
+				_ref_marker,
 				_mutable_specifier,
 				_name,
 				_type,
@@ -792,7 +794,9 @@ export function buildStaticItem(config: T.StaticItem.Config) {
 				$with: {
 					visibilityModifier: (value?: T.VisibilityModifier) =>
 						buildStaticItem({ ...config, visibilityModifier: value }),
-					mutableSpecifier: (value?: 'ref' | T.MutableSpecifier) =>
+					refMarker: (value?: NonNullable<Parameters<typeof buildStaticItem>[0]>['refMarker']) =>
+						buildStaticItem({ ...config, refMarker: value }),
+					mutableSpecifier: (value?: NonNullable<Parameters<typeof buildStaticItem>[0]>['mutableSpecifier']) =>
 						buildStaticItem({ ...config, mutableSpecifier: value }),
 					name: (value: T.Identifier) => buildStaticItem({ ...config, name: value }),
 					type: (value: T._Type) => buildStaticItem({ ...config, type: value }),
@@ -801,6 +805,7 @@ export function buildStaticItem(config: T.StaticItem.Config) {
 			},
 			{
 				visibilityModifier: () => _visibility_modifier,
+				refMarker: () => _ref_marker,
 				mutableSpecifier: () => _mutable_specifier,
 				name: () => _name,
 				type: () => _type,
@@ -1502,7 +1507,7 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 	const _reference = coerceBooleanKeywordStorage(config.reference);
 	const _lifetime = config.lifetime;
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
-	const _self = coerceKindEnumStorage('self' as const, []);
+	const _self = coerceKindEnumStorage('self' as const, [['self', TSKindId.Self] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -2017,7 +2022,10 @@ export function buildReferenceType(config: T.ReferenceType.Config) {
 }
 
 export function buildPointerType(config: T.PointerType.Config) {
-	const _content = config.content;
+	const _content = coerceKindEnumStorage(config.content, [
+		['const', TSKindId.PointerTypeConst] as const,
+		['mut', TSKindId.MutableSpecifier] as const
+	]);
 	const _type = config.type;
 	return withMethods(
 		withAccessors(
@@ -2028,7 +2036,8 @@ export function buildPointerType(config: T.PointerType.Config) {
 				_content,
 				_type,
 				$with: {
-					content: (value: 'const' | T.MutableSpecifier) => buildPointerType({ ...config, content: value }),
+					content: (value: NonNullable<Parameters<typeof buildPointerType>[0]>['content']) =>
+						buildPointerType({ ...config, content: value }),
 					type: (value: T._Type) => buildPointerType({ ...config, type: value })
 				}
 			},
@@ -2817,9 +2826,9 @@ export function buildLetCondition(config: T.LetCondition.Config) {
 	);
 }
 
-export function buildLetChain(config: T.LetChain.Config) {
+export function buildLetChain(config: Partial<T.LetChain.Config> = {}) {
 	const _left = config.left;
-	const _right = config.right;
+	const _right = config.right ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -2829,13 +2838,13 @@ export function buildLetChain(config: T.LetChain.Config) {
 				_left,
 				_right,
 				$with: {
-					left: (value: T.LetChain | T.LetCondition | T.Expression) => buildLetChain({ ...config, left: value }),
-					right: (value: T.LetCondition | T.Expression) => buildLetChain({ ...config, right: value })
+					left: (value?: T.LetChain | T.LetCondition | T.Expression) => buildLetChain({ ...config, left: value }),
+					rights: (...values: (T.LetCondition | T.Expression)[]) => buildLetChain({ ...config, right: values })
 				}
 			},
 			{
 				left: () => _left,
-				right: () => _right
+				rights: () => _right
 			}
 		),
 		methodsEngine
@@ -3565,7 +3574,7 @@ export function buildFieldPattern(child?: 'ref' | T.MutableSpecifier | T.Identif
 }
 
 export function buildMutPattern(pattern: T.MutPattern.Config['pattern']) {
-	const _mutable_specifier = 'mut' as const;
+	const _mutable_specifier = coerceKindEnumStorage('mut' as const, [['mut', TSKindId.MutableSpecifier] as const]);
 	const _pattern = pattern;
 	return withMethods(
 		withAccessors(
@@ -4161,7 +4170,7 @@ export function buildParametersGroup1(
 	);
 }
 
-export function buildVisibilityModifierGroup1(child: T.Self | T.Super | T.Crate | T.InPath) {
+export function buildVisibilityModifierGroup1(child: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -4170,7 +4179,9 @@ export function buildVisibilityModifierGroup1(child: T.Self | T.Super | T.Crate 
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.Self | T.Super | T.Crate | T.InPath) => buildVisibilityModifierGroup1(v) }
+				$with: {
+					$child: (v: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath) => buildVisibilityModifierGroup1(v)
+				}
 			},
 			{
 				content: () => _content
@@ -4566,7 +4577,7 @@ export function buildReferenceExpressionRawConst(text: string) {
 }
 
 export function buildReferenceExpressionRawMut(_config?: T.ReferenceExpressionRawMut.Config) {
-	const _mutable_specifier = 'mut' as const;
+	const _mutable_specifier = coerceKindEnumStorage('mut' as const, [['mut', TSKindId.MutableSpecifier] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -4950,7 +4961,7 @@ export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Confi
 
 export function buildRangeExpressionPostfix(config: T.RangeExpressionPostfix.Config) {
 	const _start = config.start;
-	const _operator = coerceKindEnumStorage('..' as const, []);
+	const _operator = coerceKindEnumStorage('..' as const, [['..', TSKindId.DotDot] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -4973,7 +4984,7 @@ export function buildRangeExpressionPostfix(config: T.RangeExpressionPostfix.Con
 }
 
 export function buildRangeExpressionPrefix(config: T.RangeExpressionPrefix.Config) {
-	const _operator = coerceKindEnumStorage('..' as const, []);
+	const _operator = coerceKindEnumStorage('..' as const, [['..', TSKindId.DotDot] as const]);
 	const _end = config.end;
 	return withMethods(
 		withAccessors(
@@ -5124,6 +5135,25 @@ export function buildVisibilityModifierPub(config: Partial<T.VisibilityModifierP
 			{
 				pub: () => _pub,
 				visibilityModifierGroup1: () => _visibility_modifier_group1
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildVisibilityModifierInPath(child: T.Path) {
+	const _path = child;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.VisibilityModifierInPath as const,
+				$source: 2 as const,
+				$named: true as const,
+				_path,
+				$with: { $child: (v: T.Path) => buildVisibilityModifierInPath(v) }
+			},
+			{
+				path: () => _path
 			}
 		),
 		methodsEngine
@@ -5896,6 +5926,7 @@ export type FluentKindMap = {
 	_struct_item_brace: T.StructItemBrace;
 	_struct_item_tuple: T.StructItemTuple;
 	_visibility_modifier_pub: T.VisibilityModifierPub;
+	_visibility_modifier_in_path: FluentNode<'_visibility_modifier_in_path', T.VisibilityModifierInPath.Config>;
 	_expression_statement_with_semi: T.ExpressionStatementWithSemi;
 	_match_arm_with_comma: T.MatchArmWithComma;
 	_line_comment_regular_dslash: T.LineCommentRegularDslash;
@@ -6127,6 +6158,7 @@ export const _factoryMap = {
 	_struct_item_brace: buildStructItemBrace,
 	_struct_item_tuple: buildStructItemTuple,
 	_visibility_modifier_pub: buildVisibilityModifierPub,
+	_visibility_modifier_in_path: buildVisibilityModifierInPath,
 	_expression_statement_with_semi: buildExpressionStatementWithSemi,
 	_match_arm_with_comma: buildMatchArmWithComma,
 	_line_comment_regular_dslash: buildLineCommentRegularDslash,

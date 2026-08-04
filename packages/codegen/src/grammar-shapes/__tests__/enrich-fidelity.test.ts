@@ -15,7 +15,7 @@
  *   - reference_type   : Shape 2 optional(non-`_` symbol) -> field inserted INSIDE the CHOICE (path gains a level)
  *   - for_expression   : Shape 3 optional(seq(symbol,anon)) -> field inside the inner seq
  *   - break_expression : Shape 2 of supertype `_expression` LEFT UNWRAPPED (the `_`-prefix gate)
- *   - closure_expression: optional('static'/'async'/'move') NOT wrapped (no `_marker` from enrich)
+ *   - closure_expression: optional('static'/'async'/'move') wrapped as '<kw>_marker' (pass 3, CHOICE-shaped optional)
  */
 import { describe, it, expect, expectTypeOf, afterAll } from 'vitest';
 import { createRequire } from 'node:module';
@@ -200,14 +200,21 @@ describe('EnrichRule<> structural fidelity vs runtime enrich()', () => {
 		expectTypeOf<M1Inner0['type']>().toEqualTypeOf<'FIELD'>();
 	});
 
-	it('closure_expression: optional(keyword literal) NOT wrapped (no enrich _marker)', () => {
+	it("closure_expression: optional(keyword literal) WRAPPED as '<kw>_marker' (enrich pass 3)", () => {
 		const sk = skel(enriched.closure_expression) as { c: { m: unknown[] } };
-		// members 0/1/2 are CHOICE(STRING 'static'|'async'|'move', BLANK) — unchanged.
-		expect(sk.c.m[0]).toEqual({ t: 'CHOICE', m: [{ t: 'STRING', v: 'static' }, { t: 'BLANK' }] });
+		// members 0/1/2 are CHOICE(STRING 'static'|'async'|'move', BLANK) —
+		// the non-BLANK member is promoted to FIELD('static_marker', SYMBOL(_kw_static_marker)),
+		// matching pass 3's optional-keyword-prefix promotion (the CHOICE
+		// wrapper itself stays, same as reference_type's Shape 2 above).
+		expect(sk.c.m[0]).toEqual({
+			t: 'CHOICE',
+			m: [{ t: 'FIELD', name: 'static_marker', c: { t: 'SYMBOL', name: '_kw_static_marker' } }, { t: 'BLANK' }]
+		});
 		type E = EnrichRule<Rules['closure_expression']>;
 		type M0 = (E & { content: { members: readonly GrammarRule[] } })['content']['members'][0];
 		type M0Inner0 = (M0 & { members: readonly GrammarRule[] })['members'][0];
-		expectTypeOf<M0Inner0['type']>().toEqualTypeOf<'STRING'>();
+		expectTypeOf<M0Inner0['type']>().toEqualTypeOf<'FIELD'>();
+		expectTypeOf<(M0Inner0 & { name: string })['name']>().toEqualTypeOf<'static_marker'>();
 	});
 
 	it('whole-grammar structural parity: EnrichRule has the same FIELD insertion sites as enrich (runtime check)', () => {

@@ -267,6 +267,10 @@ function projectKindEnumStorage<T>(value: T, textIds?: Readonly<Record<string, n
 	if (!value) return value;
 	if (Array.isArray(value)) return value.map((entry) => projectKindEnumStorage(entry, textIds)) as unknown as T;
 	const entry = value as unknown as _NodeData;
+	if (typeof value === 'string') {
+		const mappedId = textIds?.[value];
+		return typeof mappedId === 'number' ? (mappedId as unknown as T) : value;
+	}
 	if (typeof entry.$text === 'string') {
 		const mappedId = textIds?.[entry.$text];
 		if (typeof mappedId === 'number') return mappedId as unknown as T;
@@ -946,18 +950,22 @@ export function wrapSimpleStatements(
 				'simple_statement',
 				{ tree, nodeType: data.$type, slotName: 'simple_statement', span: (data as _NodeData).$span }
 			),
-			_newline: normalizeSingularWrapSlot(data._newline, 'newline', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'newline',
-				span: (data as _NodeData).$span
-			}),
+			_newline: projectKindEnumStorage(
+				normalizeSingularWrapSlot(
+					data._newline ?? readTerminalFromOther(data, [TSKindId.Newline]),
+					'newline',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'newline', span: (data as _NodeData).$span }
+				),
+				{ '\n': 101 }
+			),
 
 			simpleStatements() {
 				return drillInAll<T.SimpleStatement>(this._simple_statement as readonly T.SimpleStatement[] | undefined, tree);
 			},
 			newline() {
-				return drillAs<'\n'>(this._newline, tree, [{ from: 'newline', to: '_newline' }]);
+				return this._newline;
 			},
 			$with: {
 				simpleStatements: (...v: NonEmptyArray<NonNullable<T.SimpleStatements['_simple_statement']>[number]>) =>
@@ -2579,6 +2587,14 @@ export function wrapExceptClause(
 		{
 			..._omitWrapKeys(data, ['_newline', '_simple_statements', '_suite_block_with_indent']),
 			$type: TSKindId.ExceptClause as const,
+			_star_marker: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._star_marker, 'star_marker', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'star_marker',
+					span: (data as _NodeData).$span
+				})
+			),
 			_except_clause_group1: normalizeSingularWrapSlot(
 				data._except_clause_group1,
 				'except_clause_group1',
@@ -2594,6 +2610,9 @@ export function wrapExceptClause(
 				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
 
+			starMarker() {
+				return this._star_marker;
+			},
 			exceptClauseGroup1() {
 				return drillAs<T.ExceptClauseGroup1 | undefined>(this._except_clause_group1, tree, [
 					{ from: 'except_clause_group1', to: '_except_clause_group1' }
@@ -2607,6 +2626,8 @@ export function wrapExceptClause(
 				]);
 			},
 			$with: {
+				starMarker: (v: NonNullable<T.ExceptClause['_star_marker']>) =>
+					wrapExceptClause({ ...data, _star_marker: v }, tree),
 				exceptClauseGroup1: (v: NonNullable<T.ExceptClause['_except_clause_group1']>) =>
 					wrapExceptClause({ ...data, _except_clause_group1: v }, tree),
 				content: (v: NonNullable<T.ExceptClause['_content']>) => wrapExceptClause({ ...data, _content: v }, tree)
@@ -3077,7 +3098,7 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'type', span: (data as _NodeData).$span }
 				),
-				{ type: 66 }
+				{ type: 65 }
 			),
 			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
 				tree,
@@ -3304,18 +3325,22 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
 				slotName: 'expression',
 				span: (data as _NodeData).$span
 			}),
-			_newline: normalizeSingularWrapSlot(data._newline, 'newline', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'newline',
-				span: (data as _NodeData).$span
-			}),
+			_newline: projectKindEnumStorage(
+				normalizeSingularWrapSlot(
+					data._newline ?? readTerminalFromOther(data, [TSKindId.Newline]),
+					'newline',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'newline', span: (data as _NodeData).$span }
+				),
+				{ '\n': 101 }
+			),
 
 			expression() {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			newline() {
-				return drillAs<'\n'>(this._newline, tree, [{ from: 'newline', to: '_newline' }]);
+				return this._newline;
 			},
 			$with: {
 				expression: (v: NonNullable<T.Decorator['_expression']>) => wrapDecorator({ ...data, _expression: v }, tree),
@@ -3916,7 +3941,7 @@ export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '*': 11, '**': 37 }
+				{ '*': 11, '**': 36 }
 			),
 			_identifier: normalizeSingularWrapSlot(data._identifier, 'identifier', true, data.$type, {
 				tree,
@@ -4009,7 +4034,7 @@ export function wrapComplexPattern(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '+': 50, '-': 51 }
+				{ '+': 49, '-': 50 }
 			),
 			_content: normalizeSingularWrapSlot(data._content ?? data._integer ?? data._float, 'content', true, data.$type, {
 				tree,
@@ -4648,7 +4673,7 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ and: 53, or: 54 }
+				{ and: 52, or: 53 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -4713,18 +4738,18 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
 				{
-					'+': 50,
-					'-': 51,
+					'+': 49,
+					'-': 50,
 					'*': 11,
-					'@': 45,
-					'/': 55,
-					'%': 56,
-					'//': 57,
-					'**': 37,
-					'|': 46,
-					'&': 58,
-					'^': 59,
-					'<<': 60,
+					'@': 44,
+					'/': 54,
+					'%': 55,
+					'//': 56,
+					'**': 36,
+					'|': 45,
+					'&': 57,
+					'^': 58,
+					'<<': 59,
 					'>>': 12
 				}
 			),
@@ -4769,7 +4794,7 @@ export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '+': 50, '-': 51, '~': 61 }
+				{ '+': 49, '-': 50, '~': 60 }
 			),
 			_argument: normalizeSingularWrapSlot(data._argument, 'argument', true, data.$type, {
 				tree,
@@ -4887,9 +4912,7 @@ export function wrapLambdaWithinForInClause(data: T.LambdaWithinForInClause, tre
 				return drillIn<T.LambdaParameters | undefined>(this._parameters, tree);
 			},
 			body() {
-				return drillAs<T.ExpressionWithinForInClause>(this._body, tree, [
-					{ from: 'lambda', to: 'lambda_within_for_in_clause' }
-				]);
+				return drillIn<T.ExpressionWithinForInClause>(this._body, tree);
 			},
 			$with: {
 				parameters: (v: NonNullable<T.LambdaWithinForInClause['_parameters']>) =>
@@ -5126,39 +5149,40 @@ export function wrapRightHandSide(
 
 export function wrapYield(
 	data: T.Yield & {
-		readonly _comparison_operator?: T.Expression | T.Expressions;
-		readonly _not_operator?: T.Expression | T.Expressions;
-		readonly _boolean_operator?: T.Expression | T.Expressions;
-		readonly _lambda?: T.Expression | T.Expressions;
-		readonly _await?: T.Expression | T.Expressions;
-		readonly _binary_operator?: T.Expression | T.Expressions;
-		readonly _identifier?: T.Expression | T.Expressions;
-		readonly _string?: T.Expression | T.Expressions;
-		readonly _concatenated_string?: T.Expression | T.Expressions;
-		readonly _integer?: T.Expression | T.Expressions;
-		readonly _float?: T.Expression | T.Expressions;
-		readonly _true?: T.Expression | T.Expressions;
-		readonly _false?: T.Expression | T.Expressions;
-		readonly _none?: T.Expression | T.Expressions;
-		readonly _unary_operator?: T.Expression | T.Expressions;
-		readonly _attribute?: T.Expression | T.Expressions;
-		readonly _subscript?: T.Expression | T.Expressions;
-		readonly _call?: T.Expression | T.Expressions;
-		readonly _list?: T.Expression | T.Expressions;
-		readonly _list_comprehension?: T.Expression | T.Expressions;
-		readonly _dictionary?: T.Expression | T.Expressions;
-		readonly _dictionary_comprehension?: T.Expression | T.Expressions;
-		readonly _set?: T.Expression | T.Expressions;
-		readonly _set_comprehension?: T.Expression | T.Expressions;
-		readonly _tuple?: T.Expression | T.Expressions;
-		readonly _parenthesized_expression?: T.Expression | T.Expressions;
-		readonly _generator_expression?: T.Expression | T.Expressions;
-		readonly _ellipsis?: T.Expression | T.Expressions;
-		readonly _list_splat_pattern?: T.Expression | T.Expressions;
-		readonly _conditional_expression?: T.Expression | T.Expressions;
-		readonly _named_expression?: T.Expression | T.Expressions;
-		readonly _as_pattern?: T.Expression | T.Expressions;
-		readonly _expression_list?: T.Expression | T.Expressions;
+		readonly _yield_from_clause?: T.YieldFromClause | T.Expressions;
+		readonly _comparison_operator?: T.YieldFromClause | T.Expressions;
+		readonly _not_operator?: T.YieldFromClause | T.Expressions;
+		readonly _boolean_operator?: T.YieldFromClause | T.Expressions;
+		readonly _lambda?: T.YieldFromClause | T.Expressions;
+		readonly _await?: T.YieldFromClause | T.Expressions;
+		readonly _binary_operator?: T.YieldFromClause | T.Expressions;
+		readonly _identifier?: T.YieldFromClause | T.Expressions;
+		readonly _string?: T.YieldFromClause | T.Expressions;
+		readonly _concatenated_string?: T.YieldFromClause | T.Expressions;
+		readonly _integer?: T.YieldFromClause | T.Expressions;
+		readonly _float?: T.YieldFromClause | T.Expressions;
+		readonly _true?: T.YieldFromClause | T.Expressions;
+		readonly _false?: T.YieldFromClause | T.Expressions;
+		readonly _none?: T.YieldFromClause | T.Expressions;
+		readonly _unary_operator?: T.YieldFromClause | T.Expressions;
+		readonly _attribute?: T.YieldFromClause | T.Expressions;
+		readonly _subscript?: T.YieldFromClause | T.Expressions;
+		readonly _call?: T.YieldFromClause | T.Expressions;
+		readonly _list?: T.YieldFromClause | T.Expressions;
+		readonly _list_comprehension?: T.YieldFromClause | T.Expressions;
+		readonly _dictionary?: T.YieldFromClause | T.Expressions;
+		readonly _dictionary_comprehension?: T.YieldFromClause | T.Expressions;
+		readonly _set?: T.YieldFromClause | T.Expressions;
+		readonly _set_comprehension?: T.YieldFromClause | T.Expressions;
+		readonly _tuple?: T.YieldFromClause | T.Expressions;
+		readonly _parenthesized_expression?: T.YieldFromClause | T.Expressions;
+		readonly _generator_expression?: T.YieldFromClause | T.Expressions;
+		readonly _ellipsis?: T.YieldFromClause | T.Expressions;
+		readonly _list_splat_pattern?: T.YieldFromClause | T.Expressions;
+		readonly _conditional_expression?: T.YieldFromClause | T.Expressions;
+		readonly _named_expression?: T.YieldFromClause | T.Expressions;
+		readonly _as_pattern?: T.YieldFromClause | T.Expressions;
+		readonly _expression_list?: T.YieldFromClause | T.Expressions;
 	},
 	tree: TreeHandle
 ) {
@@ -5197,11 +5221,13 @@ export function wrapYield(
 				'_subscript',
 				'_true',
 				'_tuple',
-				'_unary_operator'
+				'_unary_operator',
+				'_yield_from_clause'
 			]),
 			$type: TSKindId.Yield as const,
 			_content: normalizeSingularWrapSlot(
 				data._content ??
+					data._yield_from_clause ??
 					data._comparison_operator ??
 					data._not_operator ??
 					data._boolean_operator ??
@@ -5242,7 +5268,9 @@ export function wrapYield(
 			),
 
 			content() {
-				return drillIn<T.Expression | T.Expressions | undefined>(this._content, tree);
+				return drillAs<T.YieldFromClause | T.Expressions | undefined>(this._content, tree, [
+					{ from: 'yield_from_clause', to: '_yield_from_clause' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.Yield['_content']>) => wrapYield({ ...data, _content: v }, tree)
@@ -6211,40 +6239,40 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
 
 export function wrapParenthesizedExpression(
 	data: T.ParenthesizedExpression & {
-		readonly _comparison_operator?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _not_operator?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _boolean_operator?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _lambda?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _await?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _binary_operator?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _identifier?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _string?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _concatenated_string?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _integer?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _float?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _true?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _false?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _none?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _unary_operator?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _attribute?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _subscript?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _call?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _list?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _list_comprehension?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _dictionary?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _dictionary_comprehension?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _set?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _set_comprehension?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _tuple?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _parenthesized_expression?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _generator_expression?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _ellipsis?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _list_splat_pattern?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _conditional_expression?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _named_expression?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _as_pattern?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _yield?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly _list_splat?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
+		readonly _comparison_operator?: T.Expression | T.Yield | T.ListSplat;
+		readonly _not_operator?: T.Expression | T.Yield | T.ListSplat;
+		readonly _boolean_operator?: T.Expression | T.Yield | T.ListSplat;
+		readonly _lambda?: T.Expression | T.Yield | T.ListSplat;
+		readonly _await?: T.Expression | T.Yield | T.ListSplat;
+		readonly _binary_operator?: T.Expression | T.Yield | T.ListSplat;
+		readonly _identifier?: T.Expression | T.Yield | T.ListSplat;
+		readonly _string?: T.Expression | T.Yield | T.ListSplat;
+		readonly _concatenated_string?: T.Expression | T.Yield | T.ListSplat;
+		readonly _integer?: T.Expression | T.Yield | T.ListSplat;
+		readonly _float?: T.Expression | T.Yield | T.ListSplat;
+		readonly _true?: T.Expression | T.Yield | T.ListSplat;
+		readonly _false?: T.Expression | T.Yield | T.ListSplat;
+		readonly _none?: T.Expression | T.Yield | T.ListSplat;
+		readonly _unary_operator?: T.Expression | T.Yield | T.ListSplat;
+		readonly _attribute?: T.Expression | T.Yield | T.ListSplat;
+		readonly _subscript?: T.Expression | T.Yield | T.ListSplat;
+		readonly _call?: T.Expression | T.Yield | T.ListSplat;
+		readonly _list?: T.Expression | T.Yield | T.ListSplat;
+		readonly _list_comprehension?: T.Expression | T.Yield | T.ListSplat;
+		readonly _dictionary?: T.Expression | T.Yield | T.ListSplat;
+		readonly _dictionary_comprehension?: T.Expression | T.Yield | T.ListSplat;
+		readonly _set?: T.Expression | T.Yield | T.ListSplat;
+		readonly _set_comprehension?: T.Expression | T.Yield | T.ListSplat;
+		readonly _tuple?: T.Expression | T.Yield | T.ListSplat;
+		readonly _parenthesized_expression?: T.Expression | T.Yield | T.ListSplat;
+		readonly _generator_expression?: T.Expression | T.Yield | T.ListSplat;
+		readonly _ellipsis?: T.Expression | T.Yield | T.ListSplat;
+		readonly _list_splat_pattern?: T.Expression | T.Yield | T.ListSplat;
+		readonly _conditional_expression?: T.Expression | T.Yield | T.ListSplat;
+		readonly _named_expression?: T.Expression | T.Yield | T.ListSplat;
+		readonly _as_pattern?: T.Expression | T.Yield | T.ListSplat;
+		readonly _yield?: T.Expression | T.Yield | T.ListSplat;
+		readonly _list_splat?: T.Expression | T.Yield | T.ListSplat;
 	},
 	tree: TreeHandle
 ) {
@@ -6330,9 +6358,7 @@ export function wrapParenthesizedExpression(
 			),
 
 			content() {
-				return drillAs<T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat>(this._content, tree, [
-					{ from: 'parenthesized_expression', to: 'parenthesized_list_splat' }
-				]);
+				return drillIn<T.Expression | T.Yield | T.ListSplat>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.ParenthesizedExpression['_content']>) =>
@@ -6556,9 +6582,10 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle) {
 				return drillIn<T.LeftHandSide>(this._left, tree);
 			},
 			rights() {
-				return drillAsAll<T.ExpressionWithinForInClause>(this._right, tree, [
-					{ from: 'lambda', to: 'lambda_within_for_in_clause' }
-				]);
+				return drillInAll<T.ExpressionWithinForInClause>(
+					this._right as readonly T.ExpressionWithinForInClause[] | undefined,
+					tree
+				);
 			},
 			$with: {
 				asyncMarker: (v: NonNullable<T.ForInClause['_async_marker']>) =>
@@ -6794,6 +6821,14 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle) {
 				slotName: 'expression',
 				span: (data as _NodeData).$span
 			}),
+			_eq_marker: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._eq_marker, 'eq_marker', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'eq_marker',
+					span: (data as _NodeData).$span
+				})
+			),
 			_type_conversion: normalizeSingularWrapSlot(data._type_conversion, 'type_conversion', false, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -6810,6 +6845,9 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle) {
 			expression() {
 				return drillIn<T.FExpression>(this._expression, tree);
 			},
+			eqMarker() {
+				return this._eq_marker;
+			},
 			typeConversion() {
 				return drillIn<T.TypeConversion | undefined>(this._type_conversion, tree);
 			},
@@ -6819,6 +6857,8 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle) {
 			$with: {
 				expression: (v: NonNullable<T.Interpolation['_expression']>) =>
 					wrapInterpolation({ ...data, _expression: v }, tree),
+				eqMarker: (v: NonNullable<T.Interpolation['_eq_marker']>) =>
+					wrapInterpolation({ ...data, _eq_marker: v }, tree),
 				typeConversion: (v: NonNullable<T.Interpolation['_type_conversion']>) =>
 					wrapInterpolation({ ...data, _type_conversion: v }, tree),
 				formatSpecifier: (v: NonNullable<T.Interpolation['_format_specifier']>) =>
@@ -7077,6 +7117,12 @@ export function wrapArgumentListGroup1(
 			| T.DictionarySplat
 			| T.ParenthesizedListSplat
 			| T.KeywordArgument;
+		readonly _parenthesized_list_splat?:
+			| T.Expression
+			| T.ListSplat
+			| T.DictionarySplat
+			| T.ParenthesizedListSplat
+			| T.KeywordArgument;
 		readonly _keyword_argument?:
 			| T.Expression
 			| T.ListSplat
@@ -7126,6 +7172,7 @@ export function wrapArgumentListGroup1(
 					data._as_pattern,
 					data._list_splat,
 					data._dictionary_splat,
+					data._parenthesized_list_splat,
 					data._keyword_argument
 				]),
 		true,
@@ -7163,6 +7210,7 @@ export function wrapArgumentListGroup1(
 				'_none',
 				'_not_operator',
 				'_parenthesized_expression',
+				'_parenthesized_list_splat',
 				'_set',
 				'_set_comprehension',
 				'_string',
@@ -7176,9 +7224,14 @@ export function wrapArgumentListGroup1(
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			contents() {
-				return drillAsAll<
+				return drillInAll<
 					T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
-				>(this._content, tree, [{ from: 'parenthesized_expression', to: 'parenthesized_list_splat' }]);
+				>(
+					this._content as
+						| readonly (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)[]
+						| undefined,
+					tree
+				);
 			},
 			$with: {}
 		},
@@ -8412,9 +8465,9 @@ export function wrapComparisonOperatorComparator(
 					'>=': 98,
 					'>': 99,
 					'<>': 100,
-					in: 29,
+					in: 28,
 					'not in': 190,
-					is: 62,
+					is: 61,
 					'is not': 191
 				}
 			),
@@ -8462,6 +8515,133 @@ export function wrapComparisonOperatorComparator(
 					wrapComparisonOperatorComparator({ ...data, _operators: v }, tree),
 				primaryExpression: (v: NonNullable<T.ComparisonOperatorComparator['_primary_expression']>) =>
 					wrapComparisonOperatorComparator({ ...data, _primary_expression: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
+export function wrapYieldFromClause(
+	data: T.YieldFromClause & {
+		readonly _comparison_operator?: T.Expression;
+		readonly _not_operator?: T.Expression;
+		readonly _boolean_operator?: T.Expression;
+		readonly _lambda?: T.Expression;
+		readonly _await?: T.Expression;
+		readonly _binary_operator?: T.Expression;
+		readonly _identifier?: T.Expression;
+		readonly _string?: T.Expression;
+		readonly _concatenated_string?: T.Expression;
+		readonly _integer?: T.Expression;
+		readonly _float?: T.Expression;
+		readonly _true?: T.Expression;
+		readonly _false?: T.Expression;
+		readonly _none?: T.Expression;
+		readonly _unary_operator?: T.Expression;
+		readonly _attribute?: T.Expression;
+		readonly _subscript?: T.Expression;
+		readonly _call?: T.Expression;
+		readonly _list?: T.Expression;
+		readonly _list_comprehension?: T.Expression;
+		readonly _dictionary?: T.Expression;
+		readonly _dictionary_comprehension?: T.Expression;
+		readonly _set?: T.Expression;
+		readonly _set_comprehension?: T.Expression;
+		readonly _tuple?: T.Expression;
+		readonly _parenthesized_expression?: T.Expression;
+		readonly _generator_expression?: T.Expression;
+		readonly _ellipsis?: T.Expression;
+		readonly _list_splat_pattern?: T.Expression;
+		readonly _conditional_expression?: T.Expression;
+		readonly _named_expression?: T.Expression;
+		readonly _as_pattern?: T.Expression;
+	},
+	tree: TreeHandle
+) {
+	const _node = withMethods(
+		{
+			..._omitWrapKeys(data, [
+				'_as_pattern',
+				'_attribute',
+				'_await',
+				'_binary_operator',
+				'_boolean_operator',
+				'_call',
+				'_comparison_operator',
+				'_concatenated_string',
+				'_conditional_expression',
+				'_dictionary',
+				'_dictionary_comprehension',
+				'_ellipsis',
+				'_false',
+				'_float',
+				'_generator_expression',
+				'_identifier',
+				'_integer',
+				'_lambda',
+				'_list',
+				'_list_comprehension',
+				'_list_splat_pattern',
+				'_named_expression',
+				'_none',
+				'_not_operator',
+				'_parenthesized_expression',
+				'_set',
+				'_set_comprehension',
+				'_string',
+				'_subscript',
+				'_true',
+				'_tuple',
+				'_unary_operator'
+			]),
+			$type: TSKindId.YieldFromClause as const,
+			_expression: normalizeSingularWrapSlot(
+				data._expression ??
+					data._comparison_operator ??
+					data._not_operator ??
+					data._boolean_operator ??
+					data._lambda ??
+					data._await ??
+					data._binary_operator ??
+					data._identifier ??
+					data._string ??
+					data._concatenated_string ??
+					data._integer ??
+					data._float ??
+					data._true ??
+					data._false ??
+					data._none ??
+					data._unary_operator ??
+					data._attribute ??
+					data._subscript ??
+					data._call ??
+					data._list ??
+					data._list_comprehension ??
+					data._dictionary ??
+					data._dictionary_comprehension ??
+					data._set ??
+					data._set_comprehension ??
+					data._tuple ??
+					data._parenthesized_expression ??
+					data._generator_expression ??
+					data._ellipsis ??
+					data._list_splat_pattern ??
+					data._conditional_expression ??
+					data._named_expression ??
+					data._as_pattern,
+				'expression',
+				true,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
+			),
+
+			expression() {
+				return drillIn<T.Expression>(this._expression, tree);
+			},
+			$with: {
+				expression: (v: NonNullable<T.YieldFromClause['_expression']>) =>
+					wrapYieldFromClause({ ...data, _expression: v }, tree)
 			}
 		},
 		methodsEngine
@@ -8605,6 +8785,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	await: (d, t) => wrapAwait(d as unknown as T.Await, t),
 	comment: (d) => ({ ...d, $type: TSKindId.Comment as const }),
 	line_continuation: (d) => ({ ...d, $type: TSKindId.LineContinuation as const }),
+	_kw_async_marker: (d) => ({ ...d, $type: TSKindId.KwAsyncMarker as const }),
 	_except_clause_group1: (d, t) => wrapExceptClauseGroup1(d as unknown as T.ExceptClauseGroup1, t),
 	_argument_list_group1: (d, t) => wrapArgumentListGroup1(d as unknown as T.ArgumentListGroup1, t),
 	_expression_list_group1: (d, t) => wrapExpressionListGroup1(d as unknown as T.ExpressionListGroup1, t),
@@ -8635,6 +8816,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_except_clause_list: (d, t) => wrapExceptClauseList(d as unknown as T.ExceptClauseList, t),
 	_comparison_operator_comparator: (d, t) =>
 		wrapComparisonOperatorComparator(d as unknown as T.ComparisonOperatorComparator, t),
+	_yield_from_clause: (d, t) => wrapYieldFromClause(d as unknown as T.YieldFromClause, t),
 	_indent: (d) => ({ ...d, $type: TSKindId.Indent as const }),
 	_dedent: (d) => ({ ...d, $type: TSKindId.Dedent as const }),
 	string_start: (d) => ({ ...d, $type: TSKindId.StringStart as const }),
@@ -8649,7 +8831,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 
 const _aliasTargetToSource: Record<string, string> = {
 	_dict_pattern_group1: '_key_value_pattern',
-	_lambda: 'lambda_within_for_in_clause',
 	_statement_group1: '_simple_statements',
 	argument_list_group1: '_argument_list_group1',
 	assignment_eq: '_assignment_eq',
@@ -8692,7 +8873,8 @@ const _aliasTargetToSource: Record<string, string> = {
 	unary_operator_operator: '_unary_operator_operator',
 	wildcard_pattern: '_wildcard_pattern',
 	with_clause_bare: '_with_clause_bare',
-	with_clause_paren: '_with_clause_paren'
+	with_clause_paren: '_with_clause_paren',
+	yield_from_clause: '_yield_from_clause'
 };
 
 function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {

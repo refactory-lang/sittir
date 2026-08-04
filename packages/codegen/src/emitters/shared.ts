@@ -36,6 +36,40 @@ export function isSlotBearingCompound(
 	return node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList';
 }
 
+// Walks assemble-time-RESOLVED subtypes, not raw `rule.subtypes` — see glossary.
+export function computeSupertypeTransitiveParseKinds(nodeMap: NodeMap): void {
+	for (const [, root] of nodeMap.nodes) {
+		if (root.modelType !== 'supertype') continue;
+		const seenLeaves = new Set<string>();
+		const visitingSupertypes = new Set<string>();
+		const out: NodeOrTerminal[] = [];
+		const add = (parseKind: string, storageKind: string): void => {
+			if (seenLeaves.has(parseKind)) return;
+			seenLeaves.add(parseKind);
+			out.push({
+				node: { kind: 'unresolved-ref', name: storageKind },
+				parseKind: { kind: 'unresolved-ref', name: parseKind },
+				multiplicity: 'single'
+			});
+		};
+		const visit = (name: string): void => {
+			const normalized = name.startsWith('_') ? name.slice(1) : name;
+			if (seenLeaves.has(normalized) || visitingSupertypes.has(normalized)) return;
+			const node = nodeMap.nodes.get(name) ?? nodeMap.nodes.get(normalized);
+			if (node?.modelType !== 'supertype') {
+				add(normalized, normalized);
+				return;
+			}
+			visitingSupertypes.add(normalized);
+			for (const [storageKind, parseKind] of Object.entries(node.subtypeParseNames ?? {})) add(parseKind, storageKind);
+			for (const subtype of node.subtypeNames) visit(subtype);
+			visitingSupertypes.delete(normalized);
+		};
+		visit(root.kind);
+		root.transitiveParseKinds = out;
+	}
+}
+
 export function canonicalSeparatedListField(node: AssembledSeparatedList): AssembledNonterminal {
 	return node.fields.find((f) => f.arity === 'many') ?? node.fields[0]!;
 }
@@ -484,11 +518,21 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 			}
 			if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
 				const text = node.text;
-				if (node.resolvedKind === undefined || text === undefined) return verbatim();
-				if (!seenKinds.has(node.resolvedKind)) {
-					seenKinds.add(node.resolvedKind);
-					enumKinds.push(node.resolvedKind);
-					if (node.resolvedKindId !== undefined) enumKindsById.set(node.resolvedKind, node.resolvedKindId);
+				// Prefer this reference SITE's own stamped id/name over the
+				// shared node's `resolvedKind`/`resolvedKindId` — the latter is
+				// derived once from the rule's own catalog-text/name lookup and
+				// has no way to know this occurrence is an alias (e.g. rust's
+				// `_pointer_type_const`, aliased to visible `pointer_type_const`
+				// at link time — its correct wire id lives on `value.parseKind`/
+				// `value.parseKindId`, stamped per-occurrence, not on the
+				// canonical AssembledKeyword instance shared across all sites).
+				const kindName = value.parseKind?.name ?? node.resolvedKind;
+				const kindId = value.parseKindId ?? value.storageKindId ?? node.resolvedKindId;
+				if (kindName === undefined || text === undefined) return verbatim();
+				if (!seenKinds.has(kindName)) {
+					seenKinds.add(kindName);
+					enumKinds.push(kindName);
+					if (kindId !== undefined) enumKindsById.set(kindName, kindId);
 				}
 				if (!seenTexts.has(text)) {
 					seenTexts.add(text);
@@ -547,8 +591,14 @@ export function kindEnumTextIdPairs(
 				continue;
 			}
 			if ((node instanceof AssembledKeyword || node instanceof AssembledToken) && node.text !== undefined) {
-				const entry = kindEntries?.find((e) => e.kind === node.resolvedKind);
-				push(node.text, entry?.id);
+				// Same per-occurrence-stamp preference as classifyFieldStorageInfo
+				// — value.parseKind/parseKindId know about this specific
+				// reference site's alias target; the shared node's own
+				// resolvedKind/resolvedKindId don't.
+				const kindName = value.parseKind?.name ?? node.resolvedKind;
+				const stampedId = value.parseKindId ?? value.storageKindId;
+				const entry = kindEntries?.find((e) => e.kind === kindName);
+				push(node.text, stampedId ?? entry?.id);
 			}
 			continue;
 		}

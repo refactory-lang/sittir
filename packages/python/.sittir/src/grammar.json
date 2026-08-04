@@ -1007,8 +1007,15 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "async"
+              "type": "FIELD",
+              "name": "async_marker",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_async_marker"
+              },
+              "metadata": {
+                "fieldSource": "enriched"
+              }
             },
             {
               "type": "BLANK"
@@ -1198,14 +1205,21 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "TOKEN",
+              "type": "FIELD",
+              "name": "star_marker",
               "content": {
-                "type": "PREC",
-                "value": 1,
+                "type": "TOKEN",
                 "content": {
-                  "type": "STRING",
-                  "value": "*"
+                  "type": "PREC",
+                  "value": 1,
+                  "content": {
+                    "type": "STRING",
+                    "value": "*"
+                  }
                 }
+              },
+              "metadata": {
+                "fieldSource": "override"
               }
             },
             {
@@ -1278,8 +1292,15 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "async"
+              "type": "FIELD",
+              "name": "async_marker",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_async_marker"
+              },
+              "metadata": {
+                "fieldSource": "enriched"
+              }
             },
             {
               "type": "BLANK"
@@ -1376,8 +1397,15 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "async"
+              "type": "FIELD",
+              "name": "async_marker",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_async_marker"
+              },
+              "metadata": {
+                "fieldSource": "enriched"
+              }
             },
             {
               "type": "BLANK"
@@ -2968,13 +2996,8 @@
           "name": "expression"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "lambda_within_for_in_clause"
-          },
-          "named": true,
-          "value": "lambda"
+          "type": "SYMBOL",
+          "name": "lambda_within_for_in_clause"
         }
       ]
     },
@@ -4009,17 +4032,13 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": "from"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "expression"
-                  }
-                ]
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_yield_from_clause"
+                },
+                "named": true,
+                "value": "yield_from_clause"
               },
               {
                 "type": "CHOICE",
@@ -5232,8 +5251,15 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "="
+              "type": "FIELD",
+              "name": "eq_marker",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_eq_marker"
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "BLANK"
@@ -5878,6 +5904,10 @@
       "type": "STRING",
       "value": "*"
     },
+    "_kw_async_marker": {
+      "type": "STRING",
+      "value": "async"
+    },
     "_print_statement_group1": {
       "type": "SEQ",
       "members": [
@@ -6190,13 +6220,8 @@
               "name": "dictionary_splat"
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "parenthesized_list_splat"
-              },
-              "named": true,
-              "value": "parenthesized_expression"
+              "type": "SYMBOL",
+              "name": "parenthesized_list_splat"
             },
             {
               "type": "SYMBOL",
@@ -6229,13 +6254,8 @@
                     "name": "dictionary_splat"
                   },
                   {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "parenthesized_list_splat"
-                    },
-                    "named": true,
-                    "value": "parenthesized_expression"
+                    "type": "SYMBOL",
+                    "name": "parenthesized_list_splat"
                   },
                   {
                     "type": "SYMBOL",
@@ -7308,16 +7328,11 @@
     "_kw_entries": {
       "type": "BLANK"
     },
-    "_kw_in_clause": {
+    "_kw_star_marker": {
       "type": "BLANK"
     },
-    "_kw_async_marker": {
-      "type": "PREC_LEFT",
-      "value": 0,
-      "content": {
-        "type": "STRING",
-        "value": "async"
-      }
+    "_kw_in_clause": {
+      "type": "BLANK"
     },
     "_kw_block": {
       "type": "BLANK"
@@ -7327,6 +7342,10 @@
     },
     "_kw_wildcard_import": {
       "type": "BLANK"
+    },
+    "_kw_eq_marker": {
+      "type": "STRING",
+      "value": "="
     },
     "_kw_simple_pattern": {
       "type": "BLANK"
@@ -7425,6 +7444,19 @@
         {
           "type": "SYMBOL",
           "name": "primary_expression"
+        }
+      ]
+    },
+    "_yield_from_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "from"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expression"
         }
       ]
     }
@@ -7715,7 +7747,7 @@
     "_function_definition_optional1",
     "_exec_statement_optional1",
     "_kw_real",
-    "_kw_async_marker",
+    "_kw_eq_marker",
     "_kw_type"
   ],
   "supertypes": [

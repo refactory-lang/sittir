@@ -268,16 +268,10 @@ pub struct ImplItemPositiveClauseTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_in_path.jinja", escape = "none")]
-pub struct InPathTemplate<'a> {
-    pub path: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_let_chain.jinja", escape = "none")]
 pub struct LetChainTemplate<'a> {
-    pub left: SingleNonterminalView<'a>,
-    pub right: SingleNonterminalView<'a>,
+    pub left: OptionalNonterminalView<'a>,
+    pub right: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -484,6 +478,12 @@ pub struct UseListGroup1Template<'a> {
 #[template(path = "_visibility_modifier_group1.jinja", escape = "none")]
 pub struct VisibilityModifierGroup1Template<'a> {
     pub content: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_visibility_modifier_in_path.jinja", escape = "none")]
+pub struct VisibilityModifierInPathTemplate<'a> {
+    pub path: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1234,6 +1234,7 @@ pub struct SourceFileTemplate<'a> {
 pub struct StaticItemTemplate<'a> {
     pub mutable_specifier: OptionalNonterminalView<'a>,
     pub name: SingleNonterminalView<'a>,
+    pub ref_marker: OptionalNonterminalView<'a>,
     pub type_: SingleNonterminalView<'a>,
     pub value: OptionalNonterminalView<'a>,
     pub visibility_modifier: OptionalNonterminalView<'a>,

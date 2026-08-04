@@ -1056,7 +1056,14 @@ function enrich(baseInput) {
   for (const groupName of Object.keys(clauseGroupRules)) {
     const groupBody = clauseGroupRules[groupName];
     if (!groupBody) continue;
-    const groupUnaliasResult = applyUnaliasDistinct(groupName, groupBody, rulesBag, kwRules, clauseGroupRules);
+    const groupUnaliasResult = applyUnaliasDistinct(
+      groupName,
+      groupBody,
+      rulesBag,
+      kwRules,
+      clauseGroupRules,
+      supertypeNames
+    );
     clauseGroupRules[groupName] = groupUnaliasResult.rule;
     for (const diagnostic of groupUnaliasResult.diagnostics) {
       recordUnaliasDiagnostic(unaliasSink, diagnostic);
@@ -1157,7 +1164,7 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     visibleGroupHiddenNames,
     clauseGroupOwners
   );
-  const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules);
+  const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules, supertypeNames);
   r = unaliasResult.rule;
   for (const diagnostic of unaliasResult.diagnostics) {
     recordUnaliasDiagnostic(unaliasSink, diagnostic);
@@ -1678,6 +1685,25 @@ function peelPrec(rule) {
   }
   return cursor;
 }
+function tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher) {
+  const peeled = peelOptional(rule);
+  if (!peeled.isOptional) return { matched: false, result: null };
+  const replacement = tryPromoteInnerKeyword(
+    ruleName,
+    rule,
+    peeled.inner,
+    claimedAtSeqLevel,
+    kwRules,
+    rulesBag,
+    wordMatcher
+  );
+  if (replacement !== null) return { matched: true, result: replacement };
+  const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+  if (innerRewritten !== null) {
+    return { matched: true, result: rebuildOptional(rule, innerRewritten) };
+  }
+  return { matched: true, result: null };
+}
 function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher) {
   if (isSeqType(rule.type)) {
     const members = rule.members;
@@ -1691,6 +1717,8 @@ function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBa
     return changed ? { ...rule, members: newMembers } : null;
   }
   if (isChoiceType(rule.type)) {
+    const promoted2 = tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+    if (promoted2.matched) return promoted2.result;
     const members = rule.members;
     let changed = false;
     const newMembers = members.map((m) => {
@@ -1701,24 +1729,8 @@ function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBa
     });
     return changed ? { ...rule, members: newMembers } : null;
   }
-  const peeled = peelOptional(rule);
-  if (peeled.isOptional) {
-    const replacement = tryPromoteInnerKeyword(
-      ruleName,
-      rule,
-      peeled.inner,
-      claimedAtSeqLevel,
-      kwRules,
-      rulesBag,
-      wordMatcher
-    );
-    if (replacement !== null) return replacement;
-    const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
-    if (innerRewritten !== null) {
-      return rebuildOptional(rule, innerRewritten);
-    }
-    return null;
-  }
+  const promoted = tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+  if (promoted.matched) return promoted.result;
   if (isRepeatType(rule.type) || isFieldType(rule.type)) {
     const content = rule.content;
     const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
@@ -2103,7 +2115,7 @@ function recordUnaliasDiagnostic(sink, diagnostic) {
   sink.seen.add(key);
   sink.diagnostics.push(diagnostic);
 }
-function collectUnaliasCandidates(node, path, slotKey, rulesBag, out, walker) {
+function collectUnaliasCandidates(node, path, slotKey, rulesBag, out, walker, visited = /* @__PURE__ */ new Set(), supertypeNames = /* @__PURE__ */ new Set(), rewritable = true) {
   const t = node.type;
   if (!t) return;
   if (t === "ALIAS") {
@@ -2117,21 +2129,38 @@ function collectUnaliasCandidates(node, path, slotKey, rulesBag, out, walker) {
       slotKey,
       storageKind,
       resolvedBody,
-      aliasSite: { path, content: aliasRule.content, named: aliasRule.named }
+      aliasSite: rewritable ? { path, content: aliasRule.content, named: aliasRule.named } : void 0
     });
     return;
   }
   if (isSymbolType(t)) {
     const name = node.name;
     if (typeof name === "string") {
-      const resolvedBody = normalizeMember(rulesBag[name] ?? node);
+      const target = rulesBag[name];
+      const resolvedBody = normalizeMember(target ?? node);
+      const erasesToArms = name.startsWith("_") || supertypeNames.has(name);
+      if (target !== void 0 && erasesToArms && isChoiceType(resolvedBody.type) && !visited.has(name)) {
+        visited.add(name);
+        collectUnaliasCandidates(target, path, slotKey, rulesBag, out, walker, visited, supertypeNames, false);
+        return;
+      }
       out.push({ targetName: name, slotKey, storageKind: name, resolvedBody });
     }
     return;
   }
   const nextSlotKey = isFieldType(t) ? node.name ?? slotKey : slotKey;
   for (const { segment, child } of walker.childEdgesOf(node)) {
-    collectUnaliasCandidates(child, [...path, ...segment], nextSlotKey, rulesBag, out, walker);
+    collectUnaliasCandidates(
+      child,
+      [...path, ...segment],
+      nextSlotKey,
+      rulesBag,
+      out,
+      walker,
+      visited,
+      supertypeNames,
+      rewritable
+    );
   }
 }
 function rewriteUnaliasAt(node, path, replacement) {
@@ -2147,9 +2176,9 @@ function rewriteUnaliasAt(node, path, replacement) {
   const child = node[k];
   return { ...node, [k]: rest.length > 0 ? rewriteUnaliasAt(child, rest, replacement) : replacement };
 }
-function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRules) {
+function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRules, supertypeNames) {
   const candidates = [];
-  collectUnaliasCandidates(rule, [], void 0, rulesBag, candidates, new RuleWalker());
+  collectUnaliasCandidates(rule, [], void 0, rulesBag, candidates, new RuleWalker(), /* @__PURE__ */ new Set(), supertypeNames);
   if (candidates.length === 0) return { rule, diagnostics: [] };
   const byBucket = /* @__PURE__ */ new Map();
   for (const candidate of candidates) {
@@ -3801,6 +3830,16 @@ var grammar_sittir_default = grammar(
         [$.sequence_expression, $._parenthesized_expression_typed],
         [$.sequence_expression, $._parenthesized_expression_group1],
         [$.primary_expression, $.arrow_function],
+        [$.readonly_type, $._kw_readonly_marker],
+        [$.abstract_method_signature, $._kw_abstract_marker],
+        [$.index_signature, $._kw_readonly_marker],
+        [$.primary_expression, $._kw_async_marker],
+        [$.primary_expression, $._property_name, $._kw_async_marker],
+        [$.primary_expression, $._kw_static_marker],
+        [$.primary_expression, $._kw_readonly_marker],
+        [$.primary_expression, $._kw_abstract_marker],
+        [$.primary_expression, $._kw_const_marker],
+        [$.primary_expression, $._kw_using_marker],
         [$.primary_expression, $._property_name],
         [$.labeled_statement, $._property_name],
         [$.object, $.object_pattern],
@@ -3920,6 +3959,16 @@ var grammar_sittir_default = grammar(
         [$.primary_expression, $._parameter_name, $.readonly_type],
         [$._class_body_method],
         [$._class_body_method_sig, $._class_body_member],
+        [$._public_field_definition_declare_first],
+        [$.method_definition, $._public_field_definition_readonly_first],
+        [$.method_definition, $._public_field_definition_static_mods],
+        [$.method_definition, $._public_field_definition_access_first],
+        [$._public_field_definition_static_mods],
+        [$._public_field_definition_abstract_first],
+        [$.method_definition, $.method_signature, $._public_field_definition_readonly_first],
+        [$.method_definition, $.method_signature, $._public_field_definition_static_mods],
+        [$.abstract_method_signature, $._public_field_definition_access_first],
+        [$.method_definition, $.method_signature, $._public_field_definition_access_first],
         [$.primary_expression, $._for_header_lhs],
         [$.primary_expression, $._for_header_var_kind],
         [$.primary_expression, $._for_header_let_const_kind],
@@ -3947,11 +3996,6 @@ var grammar_sittir_default = grammar(
         $._export_statement_group6,
         $._export_statement_group7,
         $._export_statement_group8,
-        $._public_field_definition_declare_first,
-        $._public_field_definition_access_first,
-        $._public_field_definition_static_mods,
-        $._public_field_definition_abstract_first,
-        $._public_field_definition_readonly_first,
         $._public_field_definition_accessor_opt
       ],
       polymorphs: {

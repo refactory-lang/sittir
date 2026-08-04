@@ -285,12 +285,12 @@ describe('elif_clause', () => {
 
 describe('else_clause', () => {
 	it('factory produces correct type', () => {
-		const node = ir.elseClause({ $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any);
+		const node = ir.elseClause({ body: { $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any });
 		expect(node.$type).toBe(TSKindId.ElseClause);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.elseClause({ $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any);
+		const node = ir.elseClause({ body: { $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any });
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -427,12 +427,12 @@ describe('except_clause', () => {
 
 describe('finally_clause', () => {
 	it('factory produces correct type', () => {
-		const node = ir.finallyClause({ $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any);
+		const node = ir.finallyClause({ block: { $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any });
 		expect(node.$type).toBe(TSKindId.FinallyClause);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.finallyClause({ $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any);
+		const node = ir.finallyClause({ block: { $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any });
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

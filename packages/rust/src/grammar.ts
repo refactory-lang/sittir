@@ -840,6 +840,7 @@ export type RustGrammar = {
 		named: true;
 		fields: {
 			mutable_specifier: { multiple: false; required: false; types: [{ type: 'mutable_specifier'; named: true }] };
+			ref_marker: { multiple: false; required: false; types: [{ type: 'ref'; named: false }] };
 		};
 		children: {
 			multiple: false;
@@ -1771,12 +1772,9 @@ export type RustGrammar = {
 		type: 'static_item';
 		named: true;
 		fields: {
-			mutable_specifier: {
-				multiple: true;
-				required: false;
-				types: [{ type: 'mutable_specifier'; named: true }, { type: 'ref'; named: false }];
-			};
+			mutable_specifier: { multiple: false; required: false; types: [{ type: 'mutable_specifier'; named: true }] };
 			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
+			ref_marker: { multiple: false; required: false; types: [{ type: 'ref'; named: false }] };
 			type: { multiple: false; required: true; types: [{ type: '_type'; named: true }] };
 			value: { multiple: false; required: false; types: [{ type: '_expression'; named: true }] };
 			visibility_modifier: { multiple: false; required: false; types: [{ type: 'visibility_modifier'; named: true }] };
@@ -2376,7 +2374,7 @@ export type RustGrammar = {
 	readonly visibility_modifier_in_path: {
 		type: 'visibility_modifier_in_path';
 		named: true;
-		fields: { in: { multiple: false; required: true; types: [{ type: 'in'; named: false }] } };
+		fields: {};
 		children: {
 			multiple: false;
 			required: true;

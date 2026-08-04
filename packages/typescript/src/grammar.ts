@@ -68,6 +68,7 @@ export type TypescriptGrammar = {
 			{ type: 'object'; named: true },
 			{ type: 'parenthesized_expression'; named: true },
 			{ type: 'regex'; named: true },
+			{ type: 'reserved_identifier'; named: true },
 			{ type: 'string'; named: true },
 			{ type: 'subscript_expression'; named: true },
 			{ type: 'super'; named: true },
@@ -285,6 +286,7 @@ export type TypescriptGrammar = {
 		type: 'arrow_function';
 		named: true;
 		fields: {
+			async_marker: { multiple: false; required: false; types: [{ type: 'async'; named: false }] };
 			body: {
 				multiple: false;
 				required: true;
@@ -722,6 +724,7 @@ export type TypescriptGrammar = {
 		type: 'construct_signature';
 		named: true;
 		fields: {
+			abstract_marker: { multiple: false; required: false; types: [{ type: 'abstract'; named: false }] };
 			parameters: { multiple: false; required: true; types: [{ type: 'formal_parameters'; named: true }] };
 			type: { multiple: false; required: false; types: [{ type: 'type_annotation'; named: true }] };
 			type_parameters: { multiple: false; required: false; types: [{ type: 'type_parameters'; named: true }] };
@@ -1069,6 +1072,7 @@ export type TypescriptGrammar = {
 				{ type: 'member_expression'; named: true },
 				{ type: 'non_null_expression'; named: true },
 				{ type: 'object_pattern'; named: true },
+				{ type: 'reserved_identifier'; named: true },
 				{ type: 'subscript_expression'; named: true },
 				{ type: 'undefined'; named: true }
 			];
@@ -1127,6 +1131,7 @@ export type TypescriptGrammar = {
 		type: 'for_in_statement';
 		named: true;
 		fields: {
+			await_marker: { multiple: false; required: false; types: [{ type: 'await'; named: false }] };
 			body: { multiple: false; required: true; types: [{ type: 'statement'; named: true }] };
 			operator: {
 				multiple: false;
@@ -1243,6 +1248,7 @@ export type TypescriptGrammar = {
 		type: 'function_signature';
 		named: true;
 		fields: {
+			async_marker: { multiple: false; required: false; types: [{ type: 'async'; named: false }] };
 			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
 			parameters: { multiple: false; required: true; types: [{ type: 'formal_parameters'; named: true }] };
 			return_type: {
@@ -1747,6 +1753,7 @@ export type TypescriptGrammar = {
 				required: false;
 				types: [{ type: '*'; named: false }, { type: 'get'; named: false }, { type: 'set'; named: false }];
 			};
+			async_marker: { multiple: false; required: false; types: [{ type: 'async'; named: false }] };
 			name: {
 				multiple: false;
 				required: true;
@@ -1761,6 +1768,7 @@ export type TypescriptGrammar = {
 			optional_marker: { multiple: false; required: false; types: [{ type: '?'; named: false }] };
 			override_modifier: { multiple: false; required: false; types: [{ type: 'override_modifier'; named: true }] };
 			parameters: { multiple: false; required: true; types: [{ type: 'formal_parameters'; named: true }] };
+			readonly_marker: { multiple: false; required: false; types: [{ type: 'readonly'; named: false }] };
 			return_type: {
 				multiple: false;
 				required: false;
@@ -1953,6 +1961,7 @@ export type TypescriptGrammar = {
 				required: false;
 				types: [{ type: 'pattern'; named: true }, { type: 'this'; named: true }];
 			};
+			readonly_marker: { multiple: false; required: false; types: [{ type: 'readonly'; named: false }] };
 			type: { multiple: false; required: false; types: [{ type: 'type_annotation'; named: true }] };
 			value: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
 		};
@@ -2067,6 +2076,7 @@ export type TypescriptGrammar = {
 			};
 			optional_marker: { multiple: false; required: false; types: [{ type: '?'; named: false }] };
 			override_modifier: { multiple: false; required: false; types: [{ type: 'override_modifier'; named: true }] };
+			readonly_marker: { multiple: false; required: false; types: [{ type: 'readonly'; named: false }] };
 			static_marker: { multiple: false; required: false; types: [{ type: 'static'; named: false }] };
 			type: { multiple: false; required: false; types: [{ type: 'type_annotation'; named: true }] };
 		};
@@ -2075,6 +2085,7 @@ export type TypescriptGrammar = {
 		type: 'public_field_definition';
 		named: true;
 		fields: {
+			accessor_marker: { multiple: false; required: false; types: [{ type: 'accessor'; named: false }] };
 			decorator: { multiple: true; required: false; types: [{ type: 'decorator'; named: true }] };
 			name: {
 				multiple: false;
@@ -2108,11 +2119,47 @@ export type TypescriptGrammar = {
 			required: false;
 			types: [
 				{ type: 'public_field_definition_abstract_first'; named: true },
-				{ type: 'public_field_definition_accessor_opt'; named: true },
 				{ type: 'public_field_definition_readonly_first'; named: true },
 				{ type: 'public_field_definition_static_mods'; named: true }
 			];
 		};
+	};
+	readonly public_field_definition_abstract_first: {
+		type: 'public_field_definition_abstract_first';
+		named: true;
+		fields: {
+			abstract_marker: { multiple: false; required: true; types: [{ type: 'abstract'; named: false }] };
+			readonly_marker: { multiple: false; required: false; types: [{ type: 'readonly'; named: false }] };
+		};
+	};
+	readonly public_field_definition_access_first: {
+		type: 'public_field_definition_access_first';
+		named: true;
+		fields: { declare_marker: { multiple: false; required: false; types: [{ type: 'declare'; named: false }] } };
+		children: { multiple: false; required: true; types: [{ type: 'accessibility_modifier'; named: true }] };
+	};
+	readonly public_field_definition_declare_first: {
+		type: 'public_field_definition_declare_first';
+		named: true;
+		fields: {};
+		children: { multiple: false; required: false; types: [{ type: 'accessibility_modifier'; named: true }] };
+	};
+	readonly public_field_definition_readonly_first: {
+		type: 'public_field_definition_readonly_first';
+		named: true;
+		fields: {
+			abstract_marker: { multiple: false; required: false; types: [{ type: 'abstract'; named: false }] };
+			readonly_marker: { multiple: false; required: true; types: [{ type: 'readonly'; named: false }] };
+		};
+	};
+	readonly public_field_definition_static_mods: {
+		type: 'public_field_definition_static_mods';
+		named: true;
+		fields: {
+			readonly_marker: { multiple: false; required: false; types: [{ type: 'readonly'; named: false }] };
+			static_marker: { multiple: false; required: true; types: [{ type: 'static'; named: false }] };
+		};
+		children: { multiple: false; required: false; types: [{ type: 'override_modifier'; named: true }] };
 	};
 	readonly readonly_type: {
 		type: 'readonly_type';
@@ -2142,6 +2189,7 @@ export type TypescriptGrammar = {
 				required: false;
 				types: [{ type: 'pattern'; named: true }, { type: 'this'; named: true }];
 			};
+			readonly_marker: { multiple: false; required: false; types: [{ type: 'readonly'; named: false }] };
 			type: { multiple: false; required: false; types: [{ type: 'type_annotation'; named: true }] };
 			value: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
 		};
@@ -2164,6 +2212,7 @@ export type TypescriptGrammar = {
 				{ type: 'member_expression'; named: true },
 				{ type: 'non_null_expression'; named: true },
 				{ type: 'object_pattern'; named: true },
+				{ type: 'reserved_identifier'; named: true },
 				{ type: 'subscript_expression'; named: true },
 				{ type: 'undefined'; named: true }
 			];
@@ -2439,6 +2488,7 @@ export type TypescriptGrammar = {
 		type: 'type_parameter';
 		named: true;
 		fields: {
+			const_marker: { multiple: false; required: false; types: [{ type: 'const'; named: false }] };
 			constraint: { multiple: false; required: false; types: [{ type: 'constraint'; named: true }] };
 			name: { multiple: false; required: true; types: [{ type: 'type_identifier'; named: true }] };
 			value: { multiple: false; required: false; types: [{ type: 'default_type'; named: true }] };

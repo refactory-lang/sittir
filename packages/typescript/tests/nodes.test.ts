@@ -433,13 +433,7 @@ describe('for_in_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_left: {
-					$type: TSKindId.LhsExpression,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_content: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any
-				} as any
+				_left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 			} as any,
 			operator: 'in',
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
@@ -455,13 +449,7 @@ describe('for_in_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_left: {
-					$type: TSKindId.LhsExpression,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_content: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any
-				} as any
+				_left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 			} as any,
 			operator: 'in',
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
@@ -777,13 +765,7 @@ describe('object_pattern', () => {
 describe('assignment_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.assignmentPattern({
-			left: {
-				$type: TSKindId.LhsExpression,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any
-			} as any,
+			left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.AssignmentPattern);
@@ -791,13 +773,7 @@ describe('assignment_pattern', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.assignmentPattern({
-			left: {
-				$type: TSKindId.LhsExpression,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any
-			} as any,
+			left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -1085,13 +1061,7 @@ describe('subscript_expression', () => {
 describe('assignment_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.assignmentExpression({
-			left: {
-				$type: TSKindId.ParenthesizedExpression,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any,
+			left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.AssignmentExpression);
@@ -1099,13 +1069,7 @@ describe('assignment_expression', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.assignmentExpression({
-			left: {
-				$type: TSKindId.ParenthesizedExpression,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any,
+			left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -1538,20 +1502,7 @@ describe('pair_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.pairPattern({
 			key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: {
-				$type: TSKindId.AssignmentPattern,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_left: {
-					$type: TSKindId.LhsExpression,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_content: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any
-				} as any,
-				_right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
-			} as any
+			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.PairPattern);
 		expect(node.$source).toBe(2);
@@ -1559,20 +1510,7 @@ describe('pair_pattern', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.pairPattern({
 			key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: {
-				$type: TSKindId.AssignmentPattern,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_left: {
-					$type: TSKindId.LhsExpression,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_content: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any
-				} as any,
-				_right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
-			} as any
+			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -1679,7 +1617,7 @@ describe('function_signature', () => {
 		const node = ir.functionSignature({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			semicolon: { $type: TSKindId.FunctionSignatureAutomaticSemicolon, $text: '\n', $source: 2, $named: true } as any
+			semicolon: '\n'
 		});
 		expect(node.$type).toBe(TSKindId.FunctionSignature);
 		expect(node.$source).toBe(2);
@@ -1688,7 +1626,7 @@ describe('function_signature', () => {
 		const node = ir.functionSignature({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			semicolon: { $type: TSKindId.FunctionSignatureAutomaticSemicolon, $text: '\n', $source: 2, $named: true } as any
+			semicolon: '\n'
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});

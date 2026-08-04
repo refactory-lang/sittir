@@ -18,6 +18,7 @@ Apply it concretely:
 - Do not add ad hoc tree walkers that duplicate an existing derivation.
 - Prefer object references over string re-resolution.
 - End discriminated-union switches with `assertNever(...)`; no silent `default:` fallbacks.
+- A `NodeRef`'s own per-reference-site stamps (`parseKind`, `parseKindId`, `storageKindId`) are the authoritative alias-aware facts for a field value's kind identity — they know whether THIS occurrence is an alias target. The shared `AssembledKeyword`/`AssembledToken`/etc. model instance's own `resolvedKind`/`resolvedKindId` reflect only that rule's isolated definition and have no per-occurrence alias awareness (the alias fact is stamped onto the SYMBOL REFERENCE by `link.ts`, never onto the referenced rule's own body). Any site consuming a keyword/token/enum field's kind identity should prefer `value.parseKind?.name ?? node.resolvedKind` / `value.parseKindId ?? value.storageKindId ?? node.resolvedKindId`, not the shared instance's fields alone — see `acceptedIdPairsByKindOf` for the established, already-correct pattern.
 
 ## Fix the generator, not the generated output
 

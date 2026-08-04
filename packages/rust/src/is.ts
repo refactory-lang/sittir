@@ -280,6 +280,9 @@ export interface IsGuards {
 	MacroDefinitionBrace<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.MacroDefinitionBrace };
+	VisibilityModifierInPath<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.VisibilityModifierInPath };
 	TokenTreePatternParen<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.TokenTreePatternParen };
@@ -532,6 +535,9 @@ export interface AssertGuards {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.MacroDefinitionBracket };
 	MacroDefinitionBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinitionBrace };
+	VisibilityModifierInPath(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.VisibilityModifierInPath };
 	TokenTreePatternParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePatternParen };
 	TokenTreePatternBracket(v: {
 		readonly $type: number;
@@ -589,15 +595,15 @@ const _supertype_declarationStatement_ids = new Set<number>([
 	186, 240, 161, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
 ]);
 const _supertype_tokenPattern_ids = new Set<number>([
-	164, 166, 165, 137, 312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 338, 339
+	164, 166, 165, 137, 312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 343, 344
 ]);
 const _supertype_tokens_ids = new Set<number>([
-	168, 169, 137, 312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 338, 339
+	168, 169, 137, 312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 343, 344
 ]);
-const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 338, 339]);
+const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 343, 344]);
 const _supertype_useClause_ids = new Set<number>([134, 1, 137, 135, 136, 244, 209, 208, 207, 210]);
 const _supertype_type_ids = new Set<number>([
-	236, 233, 137, 234, 227, 246, 224, 225, 221, 223, 430, 240, 237, 229, 199
+	236, 233, 137, 234, 227, 246, 224, 225, 221, 223, 435, 240, 237, 229, 199
 ]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
 	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 124, 314, 121, 151, 1, 134, 244, 226, 288, 289, 259, 261,
@@ -611,19 +617,19 @@ const _supertype_expressionEndingWithBlock_ids = new Set<number>([
 	290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
 ]);
 const _supertype_delimTokens_ids = new Set<number>([241]);
-const _supertype_nonDelimToken_ids = new Set<number>([312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 338, 339]);
+const _supertype_nonDelimToken_ids = new Set<number>([312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 343, 344]);
 const _supertype_condition_ids = new Set<number>([
 	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 124, 314, 121, 151, 1, 134, 244, 226, 288, 289, 259, 261,
 	240, 262, 285, 286, 287, 137, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247, 269, 270
 ]);
 const _supertype_pattern_ids = new Set<number>([
-	312, 313, 124, 314, 121, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 303, 304, 308, 281, 240, 341
+	312, 313, 124, 314, 121, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 303, 304, 308, 281, 240, 346
 ]);
 const _supertype_literal_ids = new Set<number>([312, 313, 124, 314, 121, 151]);
 const _supertype_literalPattern_ids = new Set<number>([312, 313, 124, 314, 121, 151, 311]);
 const _supertype_path_ids = new Set<number>([134, 1, 137, 135, 136, 244]);
 const _supertype_tokenPatternGroup1_ids = new Set<number>([
-	312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 338, 339
+	312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 343, 344
 ]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -670,10 +676,10 @@ const _kindIdByKind = new Map<string, number>([
 	['super', TSKindId.Super],
 	['crate', TSKindId.Crate],
 	['metavariable', TSKindId.Metavariable],
+	['move', TSKindId.Move],
 	['_', TSKindId.Anonymous],
 	['pub', TSKindId.Pub],
 	['raw', TSKindId.Raw],
-	['move', TSKindId.Move],
 	['_line_comment_content', TSKindId.LineCommentContent],
 	['string_content', TSKindId.StringContent],
 	['raw_string_literal_content', TSKindId.RawStringLiteralContent],
@@ -824,6 +830,8 @@ const _kindIdByKind = new Map<string, number>([
 	['boolean_literal', TSKindId.BooleanLiteral],
 	['line_comment', TSKindId.LineComment],
 	['block_comment', TSKindId.BlockComment],
+	['_kw_ref_marker', TSKindId.KwRefMarker],
+	['_kw_move_marker', TSKindId.KwMoveMarker],
 	['_attribute_group1', TSKindId.AttributeGroup1],
 	['_enum_variant_list_group1', TSKindId.EnumVariantListGroup1],
 	['_field_declaration_list_group1', TSKindId.FieldDeclarationListGroup1],
@@ -870,6 +878,7 @@ const _kindIdByKind = new Map<string, number>([
 	['_struct_item_brace', TSKindId.StructItemBrace],
 	['_struct_item_tuple', TSKindId.StructItemTuple],
 	['_visibility_modifier_pub', TSKindId.VisibilityModifierPub],
+	['_visibility_modifier_in_path', TSKindId.VisibilityModifierInPath],
 	['_pointer_type_const', TSKindId.PointerTypeConst],
 	['_expression_statement_with_semi', TSKindId.ExpressionStatementWithSemi],
 	['_match_arm_with_comma', TSKindId.MatchArmWithComma],
@@ -1059,6 +1068,7 @@ export const is = {
 	MacroDefinitionParen: _g(TSKindId.MacroDefinitionParen),
 	MacroDefinitionBracket: _g(TSKindId.MacroDefinitionBracket),
 	MacroDefinitionBrace: _g(TSKindId.MacroDefinitionBrace),
+	VisibilityModifierInPath: _g(TSKindId.VisibilityModifierInPath),
 	TokenTreePatternParen: _g(TSKindId.TokenTreePatternParen),
 	TokenTreePatternBracket: _g(TSKindId.TokenTreePatternBracket),
 	TokenTreePatternBrace: _g(TSKindId.TokenTreePatternBrace),
@@ -1289,6 +1299,7 @@ export const assert = {
 	MacroDefinitionParen: _makeAssert('MacroDefinitionParen', is.MacroDefinitionParen as _AnyGuard),
 	MacroDefinitionBracket: _makeAssert('MacroDefinitionBracket', is.MacroDefinitionBracket as _AnyGuard),
 	MacroDefinitionBrace: _makeAssert('MacroDefinitionBrace', is.MacroDefinitionBrace as _AnyGuard),
+	VisibilityModifierInPath: _makeAssert('VisibilityModifierInPath', is.VisibilityModifierInPath as _AnyGuard),
 	TokenTreePatternParen: _makeAssert('TokenTreePatternParen', is.TokenTreePatternParen as _AnyGuard),
 	TokenTreePatternBracket: _makeAssert('TokenTreePatternBracket', is.TokenTreePatternBracket as _AnyGuard),
 	TokenTreePatternBrace: _makeAssert('TokenTreePatternBrace', is.TokenTreePatternBrace as _AnyGuard),
