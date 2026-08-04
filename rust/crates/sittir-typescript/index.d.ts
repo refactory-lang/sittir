@@ -740,6 +740,7 @@ export interface EnumBodyGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<EnumBodyGroup1ContentTransportSlot>
+  _content_trailing_sep?: boolean
 }
 
 export interface EnumBodyTransport {
@@ -775,6 +776,7 @@ export interface ExportClauseGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _export_specifier: Array<ExportSpecifierTransport>
+  _export_specifier_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -1111,6 +1113,7 @@ export interface FormalParametersGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _formal_parameter: Array<FormalParameterTransport>
+  _formal_parameter_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -1839,6 +1842,7 @@ export interface NamedImportsGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _import_specifier: Array<ImportSpecifierTransport>
+  _import_specifier_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -1978,6 +1982,8 @@ export interface ObjectTypeContentTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<ObjectTypeContentContentTransportSlot>
+  _content_trailing_sep?: boolean
+  _content_leading_sep?: boolean
   _leading_sep?: boolean
   _trailing_sep?: boolean
   _separator_kind?: number
@@ -2552,6 +2558,7 @@ export interface TupleTypeGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _tuple_type_member: Array<TupleTypeMemberTransport>
+  _tuple_type_member_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -2600,6 +2607,7 @@ export interface TypeArgumentsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: Array<TypeTransport>
+  _type_trailing_sep?: boolean
 }
 
 export interface TypeAssertionTransport {
@@ -2623,6 +2631,7 @@ export interface TypeParametersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type_parameter: Array<TypeParameterTransport>
+  _type_parameter_trailing_sep?: boolean
 }
 
 export interface TypeParameterTransport {

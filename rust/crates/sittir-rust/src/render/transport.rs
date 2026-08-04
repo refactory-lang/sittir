@@ -29600,6 +29600,8 @@ pub struct TypeParametersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_type_parameter"))]
     pub attributed_type_parameter: Vec<AttributedTypeParameterTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_type_parameter_trailing_sep"))]
+    pub attributed_type_parameter_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for TypeParametersTransport {
@@ -30640,6 +30642,8 @@ pub struct ForLifetimesTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime"))]
     pub lifetime: Vec<LifetimeTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime_trailing_sep"))]
+    pub lifetime_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for ForLifetimesTransport {
@@ -30750,6 +30754,8 @@ pub struct TupleTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Vec<_TypeTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_trailing_sep"))]
+    pub type__trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for TupleTypeTransport {
@@ -31163,6 +31169,8 @@ pub struct TypeArgumentsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_argument"))]
     pub type_argument: Vec<TypeArgumentTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_argument_trailing_sep"))]
+    pub type_argument_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for TypeArgumentsTransport {
@@ -32694,6 +32702,8 @@ pub struct TupleExpressionTransport {
     pub attributes: Option<Vec<AttributeItemTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Vec<ExpressionTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_trailing_sep"))]
+    pub elements_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for TupleExpressionTransport {
@@ -37592,6 +37602,8 @@ pub struct EnumVariantListGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_enum_variant"))]
     pub attributed_enum_variant: Vec<AttributedEnumVariantTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_enum_variant_trailing_sep"))]
+    pub attributed_enum_variant_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -37694,6 +37706,8 @@ pub struct FieldDeclarationListGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_field_declaration"))]
     pub attributed_field_declaration: Vec<AttributedFieldDeclarationTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_field_declaration_trailing_sep"))]
+    pub attributed_field_declaration_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -37746,6 +37760,8 @@ pub struct OrderedFieldDeclarationListGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_ordered_field"))]
     pub attributed_ordered_field: Vec<AttributedOrderedFieldTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_ordered_field_trailing_sep"))]
+    pub attributed_ordered_field_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<_TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
@@ -37900,6 +37916,8 @@ pub struct WhereClauseGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate"))]
     pub where_predicate: Vec<WherePredicateTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate_trailing_sep"))]
+    pub where_predicate_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38152,6 +38170,8 @@ pub struct UseListGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause"))]
     pub use_clause: Vec<UseClauseTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause_trailing_sep"))]
+    pub use_clause_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38204,6 +38224,8 @@ pub struct ParametersGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_parameter"))]
     pub attributed_parameter: Vec<AttributedParameterTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_parameter_trailing_sep"))]
+    pub attributed_parameter_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38406,6 +38428,8 @@ pub struct UseBoundsGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<UseBoundsGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_trailing_sep"))]
+    pub content_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38508,6 +38532,8 @@ pub struct ArgumentsGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_argument"))]
     pub attributed_argument: Vec<AttributedArgumentTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_argument_trailing_sep"))]
+    pub attributed_argument_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38612,6 +38638,8 @@ pub struct FieldInitializerListGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<FieldInitializerListGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_trailing_sep"))]
+    pub content_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38764,6 +38792,8 @@ pub struct TuplePatternGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<TuplePatternGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_trailing_sep"))]
+    pub content_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38816,6 +38846,8 @@ pub struct SlicePatternGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: Vec<PatternTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_trailing_sep"))]
+    pub pattern_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -38868,6 +38900,8 @@ pub struct StructPatternGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<StructPatternGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_trailing_sep"))]
+    pub content_trailing_sep: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -40919,6 +40953,8 @@ pub struct MacroDefinitionParenTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule"))]
     pub macro_rule: Option<Vec<MacroRuleTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule_trailing_sep"))]
+    pub macro_rule_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for MacroDefinitionParenTransport {
@@ -40969,6 +41005,8 @@ pub struct MacroDefinitionBracketTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule"))]
     pub macro_rule: Option<Vec<MacroRuleTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule_trailing_sep"))]
+    pub macro_rule_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for MacroDefinitionBracketTransport {
@@ -41019,6 +41057,8 @@ pub struct MacroDefinitionBraceTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule"))]
     pub macro_rule: Option<Vec<MacroRuleTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule_trailing_sep"))]
+    pub macro_rule_trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for MacroDefinitionBraceTransport {
@@ -53493,7 +53533,7 @@ fn render_tuple_type(node: &TupleTypeTransport, dest: &mut dyn ::std::fmt::Write
             items: type__buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: false,
+            trailing: node.type__trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -53838,7 +53878,7 @@ fn render_tuple_expression(node: &TupleExpressionTransport, dest: &mut dyn ::std
             items: elements_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: false,
+            trailing: node.elements_trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)

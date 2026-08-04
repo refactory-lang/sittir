@@ -421,6 +421,8 @@ interface EmittedField {
 	isUnnamed: boolean;
 	hasLeading: boolean;
 	hasTrailing: boolean;
+	trailingMode: 'mandatory' | 'optional' | 'none';
+	leadingMode: 'mandatory' | 'optional' | 'none';
 	separator?: string;
 	backingTransportField?: string;
 	backingInnerRequired?: boolean;
@@ -672,7 +674,9 @@ function mergeTemplateSurfaceFromBody(body: string, surface: RenderTemplateSurfa
 			view,
 			required: !guarded.has(name),
 			hasLeading: false,
-			hasTrailing: false
+			hasTrailing: false,
+			trailingMode: 'none',
+			leadingMode: 'none'
 		} as const;
 		const prev = byName.get(name);
 		if (!prev) {
@@ -716,7 +720,9 @@ function buildSlotModelSurface(node: AssembledNode | undefined): RenderTemplateS
 		view: (isMultiple(slot) ? 'field' : 'scalar') as 'scalar' | 'list' | 'field',
 		required: isRequired(slot),
 		hasLeading: slot.hasLeading,
-		hasTrailing: slot.hasTrailing
+		hasTrailing: slot.hasTrailing,
+		trailingMode: slot.trailingMode,
+		leadingMode: slot.leadingMode
 	}));
 	return {
 		slots,
@@ -1407,18 +1413,35 @@ function buildTypedTemplateBody(
 			// (hardcoded `true`, no per-instance capture exists — see
 			// AssembledSeparatedList's `leadingMode`/`trailingMode` doc comment,
 			// node-map.ts); `'none'`/`undefined` is always absent (`false`).
+			// Non-separatedList list-shaped slots (a 'branch'/'group' kind's own
+			// array field, e.g. a paren-wrapped tuple's inner repeat) carry the
+			// SAME tri-state mode on `f` itself (render-module.ts's EmittedField,
+			// threaded from AssembledNonterminal — see wrap.ts's
+			// emitFieldFlankCaptureLines doc comment for the per-field wire-key
+			// counterpart this reads). Only the 'optional' case is wired here.
+			// `f.trailingMode === 'mandatory'` on an inner slot is deliberately
+			// left at the 'false' default rather than flipped to an
+			// unconditional 'true': unlike the kind-level AssembledSeparatedList
+			// case (a proven-safe, already-shipped fact), no inner-slot kind
+			// with that combination has been verified against real render
+			// output — flipping it speculatively risks an unreviewed behavior
+			// change on a kind whose output is otherwise byte-identical today.
 			const leadingExpr =
 				separatedList?.leadingMode === 'optional'
 					? 'node.leading_sep.unwrap_or(false)'
 					: separatedList?.leadingMode === 'mandatory'
 						? 'true'
-						: 'false';
+						: f.leadingMode === 'optional'
+							? `node.${rIdent}_leading_sep.unwrap_or(false)`
+							: 'false';
 			const trailingExpr =
 				separatedList?.trailingMode === 'optional'
 					? 'node.trailing_sep.unwrap_or(false)'
 					: separatedList?.trailingMode === 'mandatory'
 						? 'true'
-						: 'false';
+						: f.trailingMode === 'optional'
+							? `node.${rIdent}_trailing_sep.unwrap_or(false)`
+							: 'false';
 			const separatorMatchLines =
 				separatedList?.separatorRule !== undefined
 					? buildSeparatorKindMatchLines(separatedList.separatorRule, fieldSepLiteral, kindIdByKind)
@@ -3262,6 +3285,24 @@ function renderTransportDataStruct(
 			// per slot with the matching `js_name` to deserialize.
 			for (const field of [...slotModel.named, ...slotModel.unnamed]) {
 				lines.push(...renderTransportField(field, node.kind, node.typeName, nodeMap));
+				// Per-field optional-flank capture (see wrap.ts's
+				// emitFieldFlankCaptureLines doc comment) — the per-slot
+				// counterpart to AssembledSeparatedList's kind-level
+				// leading_sep/trailing_sep fields below. Gated on the SAME
+				// 'optional' mode wrap.ts gates its wire-key emission on, so a
+				// struct field only exists when the wire can actually populate it.
+				if (field.trailingMode === 'optional') {
+					lines.push(
+						`    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_${field.storageName}_trailing_sep"))]`,
+						`    pub ${rustFieldIdent(field.storageName)}_trailing_sep: Option<bool>,`
+					);
+				}
+				if (field.leadingMode === 'optional') {
+					lines.push(
+						`    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_${field.storageName}_leading_sep"))]`,
+						`    pub ${rustFieldIdent(field.storageName)}_leading_sep: Option<bool>,`
+					);
+				}
 			}
 			// Group-lift inner field hoisting: for each unnamed slot that is a
 			// group-lift helper (points to `_<slotName>`), also emit the helper's

@@ -1236,6 +1236,7 @@ export function buildTypeParameters(...children: T.AttributedTypeParameter[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_attributed_type_parameter,
+				_attributed_type_parameter_trailing_sep: false,
 				$with: { $children: (...vs: T.AttributedTypeParameter[]) => buildTypeParameters(...vs) }
 			},
 			{
@@ -1733,6 +1734,7 @@ export function buildForLifetimes(...children: T.Lifetime[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_lifetime,
+				_lifetime_trailing_sep: false,
 				$with: { $children: (...vs: T.Lifetime[]) => buildForLifetimes(...vs) }
 			},
 			{
@@ -1782,7 +1784,7 @@ export function buildFunctionType(config: T.FunctionType.Config) {
 	);
 }
 
-export function buildTupleType(config: T.TupleType.Config) {
+export function buildTupleType(config: T.TupleType.Config, options: { trailing?: boolean } = {}) {
 	const _type = config.type ?? [];
 	return withMethods(
 		withAccessors(
@@ -1791,8 +1793,10 @@ export function buildTupleType(config: T.TupleType.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_type,
+				_type_trailing_sep: options.trailing ?? false,
 				$with: {
-					types: (...values: NonEmptyArray<T._Type>) => buildTupleType({ ...config, type: values })
+					types: (...values: NonEmptyArray<T._Type>) => buildTupleType({ ...config, type: values }, options),
+					trailing: (v: boolean) => buildTupleType(config, { ...options, trailing: v })
 				}
 			},
 			{
@@ -1952,6 +1956,7 @@ export function buildTypeArguments(...children: T.TypeArgument[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_type_argument,
+				_type_argument_trailing_sep: false,
 				$with: { $children: (...vs: T.TypeArgument[]) => buildTypeArguments(...vs) }
 			},
 			{
@@ -2610,7 +2615,7 @@ export function buildParenthesizedExpression(expression: T.ParenthesizedExpressi
 	);
 }
 
-export function buildTupleExpression(config: T.TupleExpression.Config) {
+export function buildTupleExpression(config: T.TupleExpression.Config, options: { trailing?: boolean } = {}) {
 	const _attributes = config.attributes ?? [];
 	const _elements = config.elements ?? [];
 	return withMethods(
@@ -2621,9 +2626,13 @@ export function buildTupleExpression(config: T.TupleExpression.Config) {
 				$named: true as const,
 				_attributes,
 				_elements,
+				_elements_trailing_sep: options.trailing ?? false,
 				$with: {
-					attributes: (...values: T.AttributeItem[]) => buildTupleExpression({ ...config, attributes: values }),
-					elements: (...values: NonEmptyArray<T.Expression>) => buildTupleExpression({ ...config, elements: values })
+					attributes: (...values: T.AttributeItem[]) =>
+						buildTupleExpression({ ...config, attributes: values }, options),
+					elements: (...values: NonEmptyArray<T.Expression>) =>
+						buildTupleExpression({ ...config, elements: values }, options),
+					trailing: (v: boolean) => buildTupleExpression(config, { ...options, trailing: v })
 				}
 			},
 			{
@@ -4831,6 +4840,7 @@ export function buildMacroDefinitionParen(...children: T.MacroRule[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_macro_rule,
+				_macro_rule_trailing_sep: false,
 				$with: { $children: (...vs: T.MacroRule[]) => buildMacroDefinitionParen(...vs) }
 			},
 			{
@@ -4850,6 +4860,7 @@ export function buildMacroDefinitionBracket(...children: T.MacroRule[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_macro_rule,
+				_macro_rule_trailing_sep: false,
 				$with: { $children: (...vs: T.MacroRule[]) => buildMacroDefinitionBracket(...vs) }
 			},
 			{
@@ -4869,6 +4880,7 @@ export function buildMacroDefinitionBrace(...children: T.MacroRule[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_macro_rule,
+				_macro_rule_trailing_sep: false,
 				$with: { $children: (...vs: T.MacroRule[]) => buildMacroDefinitionBrace(...vs) }
 			},
 			{

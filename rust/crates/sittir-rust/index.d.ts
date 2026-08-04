@@ -80,6 +80,7 @@ export interface ArgumentsGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributed_argument: Array<AttributedArgumentTransport>
+  _attributed_argument_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -685,6 +686,7 @@ export interface EnumVariantListGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributed_enum_variant: Array<AttributedEnumVariantTransport>
+  _attributed_enum_variant_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -791,6 +793,7 @@ export interface FieldDeclarationListGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributed_field_declaration: Array<AttributedFieldDeclarationTransport>
+  _attributed_field_declaration_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -839,6 +842,7 @@ export interface FieldInitializerListGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<FieldInitializerListGroup1ContentTransportSlot>
+  _content_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -927,6 +931,7 @@ export interface ForLifetimesTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _lifetime: Array<LifetimeTransport>
+  _lifetime_trailing_sep?: boolean
 }
 
 export interface FunctionItemOptional1Transport {
@@ -1336,6 +1341,7 @@ export interface MacroDefinitionBraceTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _macro_rule?: Array<MacroRuleTransport>
+  _macro_rule_trailing_sep?: boolean
 }
 
 export interface MacroDefinitionBracketTransport {
@@ -1347,6 +1353,7 @@ export interface MacroDefinitionBracketTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _macro_rule?: Array<MacroRuleTransport>
+  _macro_rule_trailing_sep?: boolean
 }
 
 export interface MacroDefinitionParenTransport {
@@ -1358,6 +1365,7 @@ export interface MacroDefinitionParenTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _macro_rule?: Array<MacroRuleTransport>
+  _macro_rule_trailing_sep?: boolean
 }
 
 export interface MacroDefinitionTransport {
@@ -1524,6 +1532,7 @@ export interface OrderedFieldDeclarationListGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributed_ordered_field: Array<AttributedOrderedFieldTransport>
+  _attributed_ordered_field_trailing_sep?: boolean
   _type?: _TypeTransport
   _trailing_sep?: boolean
 }
@@ -1582,6 +1591,7 @@ export interface ParametersGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributed_parameter: Array<AttributedParameterTransport>
+  _attributed_parameter_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -1914,6 +1924,7 @@ export interface SlicePatternGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _pattern: Array<PatternTransport>
+  _pattern_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -2026,6 +2037,7 @@ export interface StructPatternGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<StructPatternGroup1ContentTransportSlot>
+  _content_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -2227,6 +2239,7 @@ export interface TupleExpressionTransport {
   '$triviaData'?: TransportTrivia
   _attributes?: Array<AttributeItemTransport>
   _elements: Array<ExpressionTransport>
+  _elements_trailing_sep?: boolean
 }
 
 export interface TuplePatternGroup1Transport {
@@ -2238,6 +2251,7 @@ export interface TuplePatternGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<TuplePatternGroup1ContentTransportSlot>
+  _content_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -2273,6 +2287,7 @@ export interface TupleTypeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: Array<_TypeTransport>
+  _type_trailing_sep?: boolean
 }
 
 export interface TypeArgumentsTransport {
@@ -2284,6 +2299,7 @@ export interface TypeArgumentsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type_argument: Array<TypeArgumentTransport>
+  _type_argument_trailing_sep?: boolean
 }
 
 export interface TypeArgumentTransport {
@@ -2359,6 +2375,7 @@ export interface TypeParametersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributed_type_parameter: Array<AttributedTypeParameterTransport>
+  _attributed_type_parameter_trailing_sep?: boolean
 }
 
 export interface TypeParameterTransport {
@@ -2433,6 +2450,7 @@ export interface UseBoundsGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<UseBoundsGroup1ContentTransportSlot>
+  _content_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -2468,6 +2486,7 @@ export interface UseListGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _use_clause: Array<UseClauseTransport>
+  _use_clause_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -2592,6 +2611,7 @@ export interface WhereClauseGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _where_predicate: Array<WherePredicateTransport>
+  _where_predicate_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 

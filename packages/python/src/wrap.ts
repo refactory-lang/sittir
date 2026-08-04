@@ -960,6 +960,16 @@ export function wrapSimpleStatements(
 				),
 				{ '\n': 101 }
 			),
+			_simple_statement_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._simple_statement) ? data._simple_statement : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Semi
+				),
+				'trailing',
+				false,
+				0
+			),
 
 			simpleStatements() {
 				return drillInAll<T.SimpleStatement>(this._simple_statement as readonly T.SimpleStatement[] | undefined, tree);
@@ -989,6 +999,16 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
 				true,
 				'name',
 				{ tree, nodeType: data.$type, slotName: 'name', span: (data as _NodeData).$span }
+			),
+			_name_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._name) ? data._name : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
 			),
 
 			names() {
@@ -1064,6 +1084,16 @@ export function wrapFutureImportStatement(
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'import_list', span: (data as _NodeData).$span }
 			),
+			_name_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._name) ? data._name : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
 
 			names() {
 				return drillInAll<T.DottedName | T.AliasedImport>(
@@ -1123,6 +1153,16 @@ export function wrapImportFromStatement(
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'import_list', span: (data as _NodeData).$span }
 			),
+			_name_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._name) ? data._name : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
 
 			moduleName() {
 				return drillIn<T.RelativeImport | T.DottedName>(this._module_name, tree);
@@ -1167,6 +1207,16 @@ export function wrapImportList(data: T.ImportList, tree: TreeHandle) {
 				true,
 				'name',
 				{ tree, nodeType: data.$type, slotName: 'name', span: (data as _NodeData).$span }
+			),
+			_name_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._name) ? data._name : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
 			),
 
 			names() {
@@ -2290,6 +2340,16 @@ export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle) {
 				slotName: 'body',
 				span: (data as _NodeData).$span
 			}),
+			_subject_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._subject) ? data._subject : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
 
 			subjects() {
 				return drillInAll<T.Expression>(this._subject as readonly T.Expression[] | undefined, tree);
@@ -2365,6 +2425,16 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {
 				slotName: 'consequence',
 				span: (data as _NodeData).$span
 			}),
+			_case_pattern_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._case_pattern) ? data._case_pattern : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
 
 			casePatterns() {
 				return drillInAll<T.CasePattern>(this._case_pattern as readonly T.CasePattern[] | undefined, tree);
@@ -3204,6 +3274,16 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
 				slotName: 'type',
 				span: (data as _NodeData).$span
 			}),
+			_type_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._type) ? data._type : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
 
 			types() {
 				return drillInAll<T.Type>(this._type as readonly T.Type[] | undefined, tree);
@@ -5368,6 +5448,16 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle) {
 				true,
 				'subscript',
 				{ tree, nodeType: data.$type, slotName: 'subscript', span: (data as _NodeData).$span }
+			),
+			_subscript_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._subscript) ? data._subscript : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
 			),
 
 			value() {
@@ -7707,6 +7797,16 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 				'case_pattern',
 				{ tree, nodeType: data.$type, slotName: 'case_pattern', span: (data as _NodeData).$span }
 			),
+			_case_pattern_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._case_pattern) ? data._case_pattern : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
 
 			casePatterns() {
 				return drillInAll<T.CasePattern>(this._case_pattern as readonly T.CasePattern[] | undefined, tree);
@@ -7731,6 +7831,16 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle) {
 				false,
 				'case_pattern',
 				{ tree, nodeType: data.$type, slotName: 'case_pattern', span: (data as _NodeData).$span }
+			),
+			_case_pattern_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._case_pattern) ? data._case_pattern : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
 			),
 
 			casePatterns() {
@@ -7871,6 +7981,16 @@ export function wrapPrintStatementGroup1(data: T.PrintStatementGroup1, tree: Tre
 				'argument',
 				{ tree, nodeType: data.$type, slotName: 'argument', span: (data as _NodeData).$span }
 			),
+			_argument_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._argument) ? data._argument : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
 
 			chevron() {
 				return drillIn<T.Chevron>(this._chevron, tree);
@@ -7936,6 +8056,16 @@ export function wrapPrintStatementGroup2(data: T.PrintStatementGroup2, tree: Tre
 				false,
 				'argument',
 				{ tree, nodeType: data.$type, slotName: 'argument', span: (data as _NodeData).$span }
+			),
+			_argument_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._argument) ? data._argument : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
 			),
 
 			arguments() {
@@ -8198,6 +8328,16 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle) {
 				true,
 				'with_item',
 				{ tree, nodeType: data.$type, slotName: 'with_item', span: (data as _NodeData).$span }
+			),
+			_with_item_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._with_item) ? data._with_item : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
 			),
 
 			withItems() {

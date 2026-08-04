@@ -9973,6 +9973,16 @@ export function wrapTypeArguments(
 				'type',
 				{ tree, nodeType: data.$type, slotName: 'type', span: (data as _NodeData).$span }
 			),
+			_type_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._type) ? data._type : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
 
 			types() {
 				return drillAsAll<T.Type>(this._type, tree, [
@@ -10204,6 +10214,16 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
 				true,
 				'type_parameter',
 				{ tree, nodeType: data.$type, slotName: 'type_parameter', span: (data as _NodeData).$span }
+			),
+			_type_parameter_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._type_parameter) ? data._type_parameter : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
 			),
 
 			typeParameters() {
@@ -11071,6 +11091,16 @@ export function wrapEnumBodyGroup1(
 				false,
 				'content',
 				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			),
+			_content_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._content) ? data._content : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
 			),
 
 			contents() {

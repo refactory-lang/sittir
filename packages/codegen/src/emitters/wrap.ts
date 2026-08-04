@@ -912,6 +912,69 @@ function emitFieldStorageLines(
 	}
 }
 
+/**
+ * Emit `_<field>_leading_sep`/`_<field>_trailing_sep` sibling wire keys for
+ * array fields whose OWN separator flank is genuinely `'optional'` — the
+ * per-*field* counterpart to `emitSeparatedListWrap`'s per-*kind* capture
+ * (which only fires when the array IS the kind's whole top-level structure,
+ * `isSeparatedListShape`, assemble.ts). Reuses the SAME `_hasSeparatorFlank`
+ * runtime helper, but can't reuse its span-comparison primary path: that
+ * path compares the CONTAINER's own `$span` against the first/last content
+ * element's span, which is only a valid "does a flank occurrence exist"
+ * signal when the container's span IS the list's own span (the whole-kind
+ * case). For a field nested inside a larger branch (e.g. a paren-wrapped
+ * list), the owning node's span always extends past the field's own
+ * occurrence (there's a closing delimiter after it), so that comparison
+ * would spuriously always read "trailing present". Passing `{}` (no
+ * `$span`) as the container forces `_hasSeparatorFlank` straight to its
+ * count-based fallback instead.
+ *
+ * That fallback counts `$other` (the kind's full unfielded/anonymous
+ * children bucket) — which, unlike the whole-kind case, may ALSO contain
+ * anonymous tokens belonging to OTHER structure on this same kind (e.g.
+ * `tuple_expression`'s wrapping `(`/`)`), not just this field's own
+ * separator. Filter `$other` down to entries matching the separator's own
+ * literal kind before counting, or the paren tokens would inflate the count
+ * and produce false positives.
+ *
+ * Scope: only a literal separator with a catalog-resolvable kind, and only
+ * when the OTHER flank on this same field isn't ALSO `'optional'` — mirrors
+ * `_hasSeparatorFlank`'s own explicit unsupported case (it throws for
+ * text-collapsed content when both flanks are optional, since a lone extra
+ * anon can't be disambiguated by count alone). A field outside this scope
+ * keeps today's behavior (no capture; render falls back to compile-time
+ * `false`) rather than emitting a wire key that could be silently wrong.
+ */
+function emitFieldFlankCaptureLines(
+	fields: readonly AssembledNonterminal[],
+	dataExpr: string,
+	lines: string[],
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): void {
+	for (const f of fields) {
+		if (f.trailingMode !== 'optional' && f.leadingMode !== 'optional') continue;
+		if (f.trailingMode === 'optional' && f.leadingMode === 'optional') continue;
+		const sepText = f.values.map((v) => v.separator).find((s): s is string => s !== undefined);
+		if (sepText === undefined || !hasCatalogEntry(kindEntries, sepText)) continue;
+		const kindExpr = kindDiscriminantExpr(sepText, nodeMap, kindEntries);
+		const contentExpr = `${dataExpr}.${f.storageKey}`;
+		const otherExpr =
+			`(Array.isArray(${dataExpr}.$other) ? ${dataExpr}.$other : ${dataExpr}.$other !== undefined ? [${dataExpr}.$other] : [])` +
+			`.filter((e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === ${kindExpr})`;
+		if (f.trailingMode === 'optional') {
+			lines.push(
+				`    ${f.storageKey}_trailing_sep: _hasSeparatorFlank({}, Array.isArray(${contentExpr}) ? ${contentExpr} : [], ${otherExpr}, "trailing", false, 0),`
+			);
+		}
+		if (f.leadingMode === 'optional') {
+			lines.push(
+				`    ${f.storageKey}_leading_sep: _hasSeparatorFlank({}, Array.isArray(${contentExpr}) ? ${contentExpr} : [], ${otherExpr}, "leading", false, 0),`
+			);
+		}
+	}
+}
+
 function emitFieldAccessorLines(
 	fields: readonly AssembledNonterminal[],
 	dataExpr: string,
@@ -995,6 +1058,9 @@ function emitFieldCarryingWrap(
 	}
 	// Named fields -> `_<name>` storage (enumerable).
 	emitFieldStorageLines(fields, node.kind, 'data', lines, kindEntries, nodeMap);
+	// Per-field optional-flank capture (see doc comment) — sibling wire keys
+	// consumed by render-module.ts's per-field leading/trailing expression.
+	emitFieldFlankCaptureLines(fields, 'data', lines, kindEntries, nodeMap);
 	// Unnamed children slot -- pass through from data (stubs; drilled lazily by consumer).
 	// $other is a $-prefixed metadata key, not a _<name> storage key, so
 	// $other doesn't have the `_` prefix convention — access via data.$other

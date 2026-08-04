@@ -3978,6 +3978,16 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
 				'attributed_type_parameter',
 				{ tree, nodeType: data.$type, slotName: 'attributed_type_parameter', span: (data as _NodeData).$span }
 			),
+			_attributed_type_parameter_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._attributed_type_parameter) ? data._attributed_type_parameter : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
 
 			attributedTypeParameters() {
 				return drillAsAll<T.AttributedTypeParameter>(this._attributed_type_parameter, tree, [
@@ -4882,6 +4892,16 @@ export function wrapForLifetimes(data: T.ForLifetimes, tree: TreeHandle) {
 				slotName: 'lifetime',
 				span: (data as _NodeData).$span
 			}),
+			_lifetime_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._lifetime) ? data._lifetime : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
 
 			lifetimes() {
 				return drillInAll<T.Lifetime>(this._lifetime as readonly T.Lifetime[] | undefined, tree);
@@ -5002,6 +5022,16 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle) {
 				true,
 				'type',
 				{ tree, nodeType: data.$type, slotName: 'type', span: (data as _NodeData).$span }
+			),
+			_type_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._type) ? data._type : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
 			),
 
 			types() {
@@ -5217,6 +5247,16 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle) {
 				true,
 				'type_argument',
 				{ tree, nodeType: data.$type, slotName: 'type_argument', span: (data as _NodeData).$span }
+			),
+			_type_argument_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._type_argument) ? data._type_argument : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
 			),
 
 			typeArguments() {
@@ -6641,6 +6681,16 @@ export function wrapTupleExpression(data: T.TupleExpression, tree: TreeHandle) {
 				true,
 				'elements',
 				{ tree, nodeType: data.$type, slotName: 'elements', span: (data as _NodeData).$span }
+			),
+			_elements_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._elements) ? data._elements : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
 			),
 
 			attributes() {
@@ -10327,6 +10377,16 @@ export function wrapMacroDefinitionParen(data: T.MacroDefinitionParen, tree: Tre
 				'macro_rule',
 				{ tree, nodeType: data.$type, slotName: 'macro_rule', span: (data as _NodeData).$span }
 			),
+			_macro_rule_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._macro_rule) ? data._macro_rule : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Semi
+				),
+				'trailing',
+				false,
+				0
+			),
 
 			macroRules() {
 				return drillInAll<T.MacroRule>(this._macro_rule as readonly T.MacroRule[] | undefined, tree);
@@ -10352,6 +10412,16 @@ export function wrapMacroDefinitionBracket(data: T.MacroDefinitionBracket, tree:
 				'macro_rule',
 				{ tree, nodeType: data.$type, slotName: 'macro_rule', span: (data as _NodeData).$span }
 			),
+			_macro_rule_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._macro_rule) ? data._macro_rule : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Semi
+				),
+				'trailing',
+				false,
+				0
+			),
 
 			macroRules() {
 				return drillInAll<T.MacroRule>(this._macro_rule as readonly T.MacroRule[] | undefined, tree);
@@ -10376,6 +10446,16 @@ export function wrapMacroDefinitionBrace(data: T.MacroDefinitionBrace, tree: Tre
 				false,
 				'macro_rule',
 				{ tree, nodeType: data.$type, slotName: 'macro_rule', span: (data as _NodeData).$span }
+			),
+			_macro_rule_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._macro_rule) ? data._macro_rule : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Semi
+				),
+				'trailing',
+				false,
+				0
 			),
 
 			macroRules() {

@@ -4623,6 +4623,7 @@ export function buildTypeArguments(...children: T.Type[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_type,
+				_type_trailing_sep: false,
 				$with: { $children: (...vs: T.Type[]) => buildTypeArguments(...vs) }
 			},
 			{
@@ -4831,6 +4832,7 @@ export function buildTypeParameters(...children: T.TypeParameter[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_type_parameter,
+				_type_parameter_trailing_sep: false,
 				$with: { $children: (...vs: T.TypeParameter[]) => buildTypeParameters(...vs) }
 			},
 			{
@@ -5413,7 +5415,10 @@ export function buildFormalParametersGroup1(
 	);
 }
 
-export function buildEnumBodyGroup1(config: Partial<T.EnumBodyGroup1.Config> = {}) {
+export function buildEnumBodyGroup1(
+	config: Partial<T.EnumBodyGroup1.Config> = {},
+	options: { trailing?: boolean } = {}
+) {
 	const _content = config.content ?? [];
 	return withMethods(
 		withAccessors(
@@ -5422,9 +5427,11 @@ export function buildEnumBodyGroup1(config: Partial<T.EnumBodyGroup1.Config> = {
 				$source: 2 as const,
 				$named: true as const,
 				_content,
+				_content_trailing_sep: options.trailing ?? false,
 				$with: {
 					contents: (...values: (T.EnumAssignment | T.PropertyName)[]) =>
-						buildEnumBodyGroup1({ ...config, content: values })
+						buildEnumBodyGroup1({ ...config, content: values }, options),
+					trailing: (v: boolean) => buildEnumBodyGroup1(config, { ...options, trailing: v })
 				}
 			},
 			{
