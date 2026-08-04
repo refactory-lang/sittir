@@ -24,6 +24,7 @@
 
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, RuleBase, RenderRule } from '../types/rule.ts';
+import { isSpliceableBareSeq } from '../types/rule.ts';
 import { fuseHeadRepeatLists, combineMultiplicity } from '../dsl/rule-transforms.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
 
@@ -175,6 +176,15 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs, ownName?: st
 		}
 
 		case SEQ: {
+			// Splice a nested seq carrying none of its OWN fieldName/separator/
+			// multiplicity — it's not a cardinality-carrying unit, just redundant
+			// nesting around siblings of whatever else is in this seq. Matches
+			// simplify.ts::simplifySeqRule's identical splice exactly (shared
+			// predicate — see isSpliceableBareSeq's doc comment for why the two
+			// derivations must agree).
+			const flatMembers = rule.members.flatMap((m) =>
+				isSpliceableBareSeq(m) ? (m as Rule<'link'> & { members: Rule<'link'>[] }).members : [m]
+			);
 			// Push the wrapper's multiplicity intrinsically onto each SLOT-BEARING
 			// member so collect-slots can read it directly (no seq-level inheritance
 			// needed). optional(seq(field('x',…), field('y',…))): each field gets
@@ -192,7 +202,7 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs, ownName?: st
 			// individual member.
 			const rawMult = attrs.multiplicity;
 			const multToPush = rawMult === 'nonEmptyArray' ? 'array' : rawMult;
-			const members = rule.members.map((m) => {
+			const members = flatMembers.map((m) => {
 				// Only push multiplicity to potential slot-bearing members (wrappers or
 				// nonterminal rule types). String/pattern literals carry no slot; pushing
 				// would cause the template emitter to drop co-optional keywords.
@@ -220,7 +230,7 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs, ownName?: st
 			// SEQ NODE too, so the template emitter's co-optional-unit guard gates the
 			// whole sequence on its internal slot. (Enrich's seq-stamp masked this
 			// until it was removed — see project_nonterminal_authoritative_slot_signal.)
-			const hasBareLiteral = rule.members.some((m) => m.type === 'STRING' || m.type === 'PATTERN');
+			const hasBareLiteral = flatMembers.some((m) => m.type === 'STRING' || m.type === 'PATTERN');
 			const seqAttrs: WrapperAttrs = {
 				fieldName: attrs.fieldName,
 				separator: attrs.separator,

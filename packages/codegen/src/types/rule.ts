@@ -336,6 +336,30 @@ export function transitiveParseKinds<T extends PhaseName>(
 	return kinds;
 }
 
+/**
+ * A nested `seq` member carrying none of its own `fieldName`/`separator`/
+ * `multiplicity` is structurally redundant — its members are siblings of
+ * whatever else shares the parent seq, not a cardinality-carrying unit — and
+ * should splice (flatten) into the parent rather than surviving as its own
+ * nesting level. `simplify.ts::simplifySeqRule` already applies exactly this
+ * predicate; `wrapper-deletion.ts`'s SEQ case shares it so the two
+ * derivations of "does this nested seq need to stay nested" agree — before
+ * this was extracted, they disagreed (simplify spliced, wrapper-deletion
+ * didn't), which is what `seq-with-nested-seq` (`classifyTopLevelShape`,
+ * compiler/model/node-map.ts) flags: assemble's slot-derivation runs on
+ * `Rule<'link'>` directly, never through simplify's splice.
+ */
+export function isSpliceableBareSeq(rule: {
+	readonly type: string;
+	readonly fieldName?: unknown;
+	readonly separator?: unknown;
+	readonly multiplicity?: unknown;
+}): boolean {
+	return (
+		rule.type === SEQ && rule.fieldName === undefined && rule.separator === undefined && rule.multiplicity === undefined
+	);
+}
+
 export type GroupRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof GROUP;
 	readonly name: string;
