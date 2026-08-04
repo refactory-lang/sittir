@@ -855,6 +855,24 @@ function _deriveSlotsInternal(rule: Rule<'link'>, ctx?: DeriveCtx): AssembledNon
 	}
 }
 
+/**
+ * Merge a same-named slot's flank mode across two occurrences of the same
+ * field within one rule (e.g. python `if_statement`'s `alternative` in both
+ * a repeat and an optional). Widen to `'optional'` on any disagreement: the
+ * merged field's actual flank presence then genuinely varies depending on
+ * which occurrence a real parse reached, which is exactly what `'optional'`
+ * mode triggers real per-instance wire capture for (see
+ * `emitFieldFlankCaptureLines`, wrap.ts) — picking either single
+ * occurrence's fixed mode would be wrong for a parse that reached the
+ * other. Defined here (not `collect-slots.ts`, its other call site) since
+ * `collect-slots.ts` already imports `AssembledNonterminal` from this file
+ * — the reverse import would cycle.
+ */
+export function mergeFlankMode(modes: readonly ['mandatory' | 'optional' | 'none', 'mandatory' | 'optional' | 'none']): 'mandatory' | 'optional' | 'none' {
+	const [a, b] = modes;
+	return a === b ? a : 'optional';
+}
+
 function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[] {
 	if (fields.length <= 1) return fields;
 	const out: AssembledNonterminal[] = [];
@@ -881,6 +899,8 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 			values: dedupeValues([...existing.values, ...f.values]),
 			hasTrailing: existing.hasTrailing || f.hasTrailing,
 			hasLeading: existing.hasLeading || f.hasLeading,
+			trailingMode: mergeFlankMode([existing.trailingMode, f.trailingMode]),
+			leadingMode: mergeFlankMode([existing.leadingMode, f.leadingMode]),
 			sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, f.sourceRuleIds)
 		});
 	}

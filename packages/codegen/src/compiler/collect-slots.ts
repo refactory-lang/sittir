@@ -55,6 +55,7 @@ import {
 	deriveValuesForRule,
 	dedupeValues,
 	extractSeparatorString,
+	mergeFlankMode,
 	mergeSourceRuleIds,
 	recordAssembleWarning,
 	stampSeparatorOnValues
@@ -261,6 +262,8 @@ function mergeByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
 			values: dedupeValues([...prev.values, ...s.values]),
 			hasTrailing: prev.hasTrailing || s.hasTrailing,
 			hasLeading: prev.hasLeading || s.hasLeading,
+			trailingMode: mergeFlankMode([prev.trailingMode, s.trailingMode]),
+			leadingMode: mergeFlankMode([prev.leadingMode, s.leadingMode]),
 			sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, s.sourceRuleIds)
 		});
 	}
@@ -305,6 +308,8 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 					values: dedupeValues([...prev.values, ...slot.values]),
 					hasTrailing: prev.hasTrailing || slot.hasTrailing,
 					hasLeading: prev.hasLeading || slot.hasLeading,
+					trailingMode: mergeFlankMode([prev.trailingMode, slot.trailingMode]),
+					leadingMode: mergeFlankMode([prev.leadingMode, slot.leadingMode]),
 					sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, slot.sourceRuleIds)
 				})
 			);
