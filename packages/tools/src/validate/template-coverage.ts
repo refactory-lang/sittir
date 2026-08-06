@@ -259,7 +259,7 @@ function checkVariantsForLiteralLeaks(entry: RawNodeEntry, variants: NamedTempla
 	return issues;
 }
 
-function checkRule(
+export function checkRule(
 	entry: RawNodeEntry,
 	rule: TemplateRule,
 	hoistedOuterFields: Set<string>,
