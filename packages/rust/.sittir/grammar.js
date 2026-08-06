@@ -3896,14 +3896,6 @@ var grammar_sittir_default = grammar(
         use_bounds: {
           2: field2("bounds")
         },
-        // last_match_arm: seq(repeat(attrs)[0], field('pattern')[1], '=>'[2],
-        //   field('value')[3], optional(',')[4]).
-        // Pos 4's optional trailing comma is an unnamed anonymous token — never
-        // captured, so a source last-arm's trailing ',' was silently dropped on
-        // render (3 corpus AST mismatches: [pattern,"=>",value,","] vs
-        // [pattern,"=>",value]). Field it ('4/0' = the optional's content) so
-        // read captures and render preserves it; same marker-promotion pattern
-        // as async_block's move_marker.
         last_match_arm: {
           "0": field2("attributes"),
           "4/0": field2("comma")
@@ -4212,6 +4204,7 @@ var grammar_sittir_default = grammar(
           )
         )
       },
+      //TODO: remove
       expectTestFailures: {
         async_block: "#130 \u2014 factory returns block $type / no $render accessor",
         block_comment: "#130 \u2014 factory output has no $render accessor",

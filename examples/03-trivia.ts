@@ -15,7 +15,7 @@ export function attachDocComment() {
 
 export function attachLeadingTrivia() {
 	return ir.functionItem.from({
-		visibilityModifier: 'pub',
+		visibilityModifier: 'crate',
 		name: 'main',
 		parameters: ir.parameters.strict(),
 		body: ir.block.strict(),
