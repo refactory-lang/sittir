@@ -102,6 +102,10 @@ export default grammar(
 				match_block_arms: ($) => seq(repeat($.match_arm), field('last_arm', $.last_match_arm))
 			},
 			transforms: {
+				parameter: {
+					'1': field('name')
+				},
+
 				token_repetition: {
 					4: field('separator'),
 					5: field('operator')
@@ -507,10 +511,9 @@ export default grammar(
 				variadic_parameter: '#130 — factory output has no $render accessor'
 			},
 			renderAs: (_$) => ({
-				_outer_line_doc_comment_marker: string('/'), // /// outer line doc
-				_inner_line_doc_comment_marker: string('!'), // //! inner line doc
-				_outer_block_doc_comment_marker: string('*'), // /** outer block doc */
-				_inner_block_doc_comment_marker: string('!'), // /*! inner block doc */
+				_inner_line_doc_comment_marker: string('!'),
+				_outer_block_doc_comment_marker: string('*'),
+				_inner_block_doc_comment_marker: string('!'),
 				_raw_string_literal_start: string('r#"'),
 				_raw_string_literal_end: string('"#')
 			})

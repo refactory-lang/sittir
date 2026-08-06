@@ -3345,7 +3345,7 @@
         },
         {
           "type": "FIELD",
-          "name": "pattern",
+          "name": "name",
           "content": {
             "type": "CHOICE",
             "members": [
@@ -3358,6 +3358,9 @@
                 "name": "self"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -11436,6 +11439,9 @@
           "name": "_path"
         }
       ]
+    },
+    "_kw_name": {
+      "type": "BLANK"
     },
     "_kw_separator": {
       "type": "BLANK"

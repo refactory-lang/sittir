@@ -4549,10 +4549,10 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle) {
 					span: (data as _NodeData).$span
 				})
 			),
-			_pattern: normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
+			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'pattern',
+				slotName: 'name',
 				span: (data as _NodeData).$span
 			}),
 			_type: normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
@@ -4565,10 +4565,8 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle) {
 			mutableSpecifier() {
 				return this._mutable_specifier;
 			},
-			pattern() {
-				return drillAs<T.Pattern | T.Self>(this._pattern, tree, [
-					{ from: 'wildcard_pattern', to: '_wildcard_pattern' }
-				]);
+			name() {
+				return drillAs<T.Pattern | T.Self>(this._name, tree, [{ from: 'wildcard_pattern', to: '_wildcard_pattern' }]);
 			},
 			type() {
 				return drillAs<T._Type>(this._type, tree, [{ from: 'primitive_type', to: '_primitive_type' }]);
@@ -4576,7 +4574,7 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle) {
 			$with: {
 				mutableSpecifier: (v: NonNullable<T.Parameter['_mutable_specifier']>) =>
 					wrapParameter({ ...data, _mutable_specifier: v }, tree),
-				pattern: (v: NonNullable<T.Parameter['_pattern']>) => wrapParameter({ ...data, _pattern: v }, tree),
+				name: (v: NonNullable<T.Parameter['_name']>) => wrapParameter({ ...data, _name: v }, tree),
 				type: (v: NonNullable<T.Parameter['_type']>) => wrapParameter({ ...data, _type: v }, tree)
 			}
 		},

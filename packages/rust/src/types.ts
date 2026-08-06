@@ -3956,13 +3956,13 @@ export interface VariadicParameter {
 export interface Parameter {
 	readonly $type: TSKindId.Parameter;
 	readonly _mutable_specifier?: boolean;
-	readonly _pattern: Pattern | Self;
+	readonly _name: Pattern | Self;
 	readonly _type: _Type;
 	readonly __inputHints__?: {
 		readonly mutable_specifier?: BooleanKeyword<'mut'>;
 	};
 	mutableSpecifier(): boolean | undefined;
-	pattern(): Pattern | Self;
+	name(): Pattern | Self;
 	type(): _Type;
 }
 

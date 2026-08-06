@@ -1615,7 +1615,7 @@ export interface ParameterTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _mutable_specifier?: MutableSpecifierTransport
-  _pattern: Box<ParameterPatternTransportSlot>
+  _name: Box<ParameterNameTransportSlot>
   _type: Box<_TypeTransport>
 }
 

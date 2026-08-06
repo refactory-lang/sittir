@@ -3096,13 +3096,16 @@ function unifyChoiceArmFieldNames(content, unifiedName) {
 }
 function resolveFieldPlaceholder(patch, originalMember, precStack) {
   let content = originalMember;
-  if (isEnrichShapedFieldWrapper(content)) {
+  if (isFieldLike(content)) {
     const overrideName = patch.name;
-    const enrichName = content.name ?? "(unknown)";
-    if (overrideName === enrichName && !process.env.SITTIR_QUIET) {
+    const existingName = content.name ?? "(unknown)";
+    const isEnrichShaped = isEnrichShapedFieldWrapper(content);
+    if (overrideName === existingName && !process.env.SITTIR_QUIET) {
       const parentKind = wireGetCurrentRuleKind() ?? "(unknown)";
+      const label = isEnrichShaped ? "an enrich-labeled FIELD" : "an existing FIELD";
+      const advice = isEnrichShaped ? "enrich will cover it automatically." : "it already has this name.";
       process.stderr.write(
-        `transform: override field('${overrideName}') on '${parentKind}' wraps an enrich-labeled FIELD \u2014 duplicate name ('${overrideName}'). Drop the override entry; enrich will cover it automatically.
+        `transform: override field('${overrideName}') on '${parentKind}' wraps ${label} \u2014 duplicate name ('${overrideName}'). Drop the override entry; ${advice}
 `
       );
     }
@@ -3870,6 +3873,9 @@ var grammar_sittir_default = grammar(
         match_block_arms: ($) => seq(repeat($.match_arm), field2("last_arm", $.last_match_arm))
       },
       transforms: {
+        parameter: {
+          "1": field2("name")
+        },
         token_repetition: {
           4: field2("separator"),
           5: field2("operator")
@@ -4214,14 +4220,9 @@ var grammar_sittir_default = grammar(
         variadic_parameter: "#130 \u2014 factory output has no $render accessor"
       },
       renderAs: (_$) => ({
-        _outer_line_doc_comment_marker: string("/"),
-        // /// outer line doc
         _inner_line_doc_comment_marker: string("!"),
-        // //! inner line doc
         _outer_block_doc_comment_marker: string("*"),
-        // /** outer block doc */
         _inner_block_doc_comment_marker: string("!"),
-        // /*! inner block doc */
         _raw_string_literal_start: string('r#"'),
         _raw_string_literal_end: string('"#')
       })

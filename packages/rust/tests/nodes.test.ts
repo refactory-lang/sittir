@@ -872,7 +872,7 @@ describe.skip('variadic_parameter', () => {
 describe('parameter', () => {
 	it('factory produces correct type', () => {
 		const node = ir.parameter({
-			pattern: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any,
 			type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.Parameter);
@@ -880,7 +880,7 @@ describe('parameter', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.parameter({
-			pattern: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any,
 			type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
