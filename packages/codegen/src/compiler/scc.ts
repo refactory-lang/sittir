@@ -54,6 +54,7 @@
 import type { NodeMap } from './types.ts';
 import {
 	kindsOf,
+	isMultiple,
 	type AssembledNode,
 	type AssembledNonterminal,
 	type AssembledSupertype
@@ -159,19 +160,14 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 	return adjacency;
 }
 
-// Despite the name, this no longer filters out `multiple` (Vec-typed) slots —
-// a Vec field doesn't itself need `Box<T>` (Vec is heap-indirect regardless
-// of T's size), but excluding it from the graph meant a kind reachable ONLY
-// through a Vec edge never joined its ancestors' SCC, even when that kind's
-// OWN singular fields close a real cycle back through them (e.g. a list
-// element whose own field references the same supertype its container's
-// ancestor chain passes through). SCC membership needs the full reachability
-// graph; `rustTransportSlotType`'s separate `!multiple` check is what
-// actually decides whether to box a given field, so Vec fields still never
-// get boxed themselves.
+// `Vec<T>` is heap-indirect regardless of T's size, so a Vec-typed slot
+// never contributes to a real struct-size cycle. Including it in the graph
+// would falsely merge kinds into the same SCC whenever the only path
+// between them ran through a Vec — this filter keeps the graph aligned with
+// `rustTransportSlotType`'s own box-decision model.
 function structuralSingularSlots(node: AssembledNode): readonly AssembledNonterminal[] {
 	if (node.modelType === 'branch' || node.modelType === 'group') {
-		return Object.values(node.slots);
+		return Object.values(node.slots).filter((slot) => !isMultiple(slot));
 	}
 	return [];
 }

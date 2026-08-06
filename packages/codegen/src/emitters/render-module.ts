@@ -3304,10 +3304,11 @@ function renderTransportDataStruct(
 					);
 				}
 			}
-			// Group-lift inner field hoisting: for each unnamed slot that is a
-			// group-lift helper (points to `_<slotName>`), also emit the helper's
-			// inner NAMED fields as direct transport fields on the parent struct
-			// (e.g. `_value: Option<ExpressionTransport>` on ConstItemTransport).
+			// Group-lift inner field hoisting: for each unnamed SINGULAR slot that
+			// is a group-lift helper (points to `_<slotName>`), also emit the
+			// helper's inner NAMED fields as direct transport fields on the parent
+			// struct (e.g. `_value: Option<ExpressionTransport>` on
+			// ConstItemTransport).
 			//
 			// The CST native reader exposes inner grammar fields at the parent
 			// level (tree-sitter places `value` directly on `const_item`, not
@@ -3315,6 +3316,15 @@ function renderTransportDataStruct(
 			// lets napi deserialization read the CST path without a nested
 			// helper object. The render fn then tries the direct field first,
 			// falling back to the helper for factory-built transports.
+			//
+			// MULTIPLE unnamed slots are excluded (`isMultiple` guard below): this
+			// hoist only makes sense for a single collapsed occurrence — a
+			// Vec-typed slot can hold 0, 1, or many nodes, so "hoisting" one into
+			// a scalar `Option<T>` field would silently drop every occurrence past
+			// the first. Vec-typed helpers also don't need this hoist for the
+			// stated CST-reader reason: the parser DOES emit the helper's inner
+			// fields as their own addressable per-element struct (the Vec element
+			// type), so the direct-field bypass this hoist exists for doesn't apply.
 			{
 				// Track ALL already-emitted storage names to prevent duplicate fields.
 				// Includes: named slots, unnamed slots (helpers themselves), and any
@@ -3324,6 +3334,7 @@ function renderTransportDataStruct(
 					...slotModel.unnamed.map((f) => f.storageName)
 				]);
 				for (const unnamedSlot of slotModel.unnamed) {
+					if (isMultiple(unnamedSlot)) continue;
 					const helperNodeName = `_${unnamedSlot.name}`;
 					const helperNode = nodeMap.nodes.get(helperNodeName);
 					if (helperNode === undefined) continue;
