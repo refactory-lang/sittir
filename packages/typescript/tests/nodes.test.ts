@@ -2356,9 +2356,13 @@ describe('template_type', () => {
 
 describe('template_literal_type', () => {
 	it('factory produces correct type', () => {
-		const node = ir.templateLiteralType();
+		const node = ir.templateLiteralType({});
 		expect(node.$type).toBe(TSKindId.TemplateLiteralType);
 		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.templateLiteralType({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 

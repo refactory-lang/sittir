@@ -9018,25 +9018,17 @@ export function wrapTemplateType(
 	return _node;
 }
 
-export function wrapTemplateLiteralType(
-	data: T.TemplateLiteralType & {
-		readonly _string_fragment?: T.TemplateChars | T.TemplateType | readonly (T.TemplateChars | T.TemplateType)[];
-		readonly _template_type?: T.TemplateChars | T.TemplateType | readonly (T.TemplateChars | T.TemplateType)[];
-	},
-	tree: TreeHandle
-) {
+export function wrapTemplateLiteralType(data: T.TemplateLiteralType, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_string_fragment', '_template_type']),
+			...data,
 			$type: TSKindId.TemplateLiteralType as const,
-			_content: normalizeRepeatedWrapSlot(
-				data._content !== undefined
-					? _toArr(data._content)
-					: _concatInSourceOrder([data._string_fragment, data._template_type]),
-				false,
-				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeRepeatedWrapSlot(data._content, false, 'content', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			contents() {
 				return drillAsAll<T.TemplateChars | T.TemplateType>(this._content, tree, [

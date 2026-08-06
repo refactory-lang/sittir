@@ -4122,8 +4122,8 @@ export function buildTemplateType(child: T.PrimaryType | T.InferType) {
 	);
 }
 
-export function buildTemplateLiteralType(...children: (T.TemplateChars | T.TemplateType)[]) {
-	const _content = children;
+export function buildTemplateLiteralType(config: Partial<T.TemplateLiteralType.Config> = {}) {
+	const _content = config.content ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -4131,7 +4131,10 @@ export function buildTemplateLiteralType(...children: (T.TemplateChars | T.Templ
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $children: (...vs: (T.TemplateChars | T.TemplateType)[]) => buildTemplateLiteralType(...vs) }
+				$with: {
+					contents: (...values: (T.TemplateChars | T.TemplateType)[]) =>
+						buildTemplateLiteralType({ ...config, content: values })
+				}
 			},
 			{
 				contents: () => _content

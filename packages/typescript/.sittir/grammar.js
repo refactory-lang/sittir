@@ -4351,6 +4351,22 @@ var grammar_sittir_default = grammar(
             $.method_signature
           );
           return seq(optional(SEP()), seq(member, repeat(seq(SEP(), member))), optional(SEP()));
+        },
+        // Both repeated arms are unfielded, so the native reader routes
+        // them into two separate per-kind buckets (`_string_fragment`,
+        // `_template_type`) that only carry a recoverable source
+        // position for the node-shaped arm — the text-collapsed
+        // `string_fragment` arm loses it on the wire, so recombining
+        // the buckets can't restore document order. Fielding the
+        // choice keeps every repetition in one bucket, in read order,
+        // regardless of arm kind.
+        template_literal_type: ($, original) => {
+          const members = original.members;
+          const repeated = members[1];
+          return {
+            ...original,
+            members: [members[0], { ...repeated, content: field("content", repeated.content) }, members[2]]
+          };
         }
       }
     },

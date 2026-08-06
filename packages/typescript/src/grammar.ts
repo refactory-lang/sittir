@@ -2359,11 +2359,12 @@ export type TypescriptGrammar = {
 	readonly template_literal_type: {
 		type: 'template_literal_type';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [{ type: 'string_fragment'; named: true }, { type: 'template_type'; named: true }];
+		fields: {
+			content: {
+				multiple: true;
+				required: false;
+				types: [{ type: 'string_fragment'; named: true }, { type: 'template_type'; named: true }];
+			};
 		};
 	};
 	readonly template_string: {

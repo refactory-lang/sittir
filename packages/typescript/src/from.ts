@@ -338,7 +338,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	enum_body: TSKindId.EnumBody,
 	asserts: TSKindId.Asserts,
 	template_type: TSKindId.TemplateType,
-	template_literal_type: TSKindId.TemplateLiteralType,
 	type_query: TSKindId.TypeQuery,
 	literal_type: TSKindId.LiteralType,
 	type_arguments: TSKindId.TypeArguments,
@@ -412,8 +411,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildAsserts(children[0] as Parameters<typeof F.buildAsserts>[0]);
 		case 'template_type':
 			return F.buildTemplateType(children[0] as Parameters<typeof F.buildTemplateType>[0]);
-		case 'template_literal_type':
-			return F.buildTemplateLiteralType(...(children as Parameters<typeof F.buildTemplateLiteralType>));
 		case 'type_query':
 			return F.buildTypeQuery(children[0] as Parameters<typeof F.buildTypeQuery>[0]);
 		case 'literal_type':
@@ -858,9 +855,11 @@ const _K33: readonly string[] = ['string', 'nested_identifier'];
 const _K34: readonly string[] = ['nested_type_identifier', 'generic_type'];
 const _K35: readonly string[] = ['undefined', 'identifier', '_reserved_identifier', 'this'];
 const _K36: readonly string[] = ['rest_pattern'];
-const _K37: readonly string[] = ['nested_type_identifier'];
-const _K38: readonly string[] = ['identifier', 'this', 'predefined_type'];
-const _K39: readonly string[] = [
+const _K37: readonly string[] = ['_template_chars'];
+const _K38: readonly string[] = ['template_type'];
+const _K39: readonly string[] = ['nested_type_identifier'];
+const _K40: readonly string[] = ['identifier', 'this', 'predefined_type'];
+const _K41: readonly string[] = [
 	'parenthesized_type',
 	'nested_type_identifier',
 	'generic_type',
@@ -877,14 +876,14 @@ const _K39: readonly string[] = [
 	'intersection_type',
 	'union_type'
 ];
-const _K40: readonly string[] = ['_index_signature_colon', 'mapped_type_clause'];
-const _K41: readonly string[] = [
+const _K42: readonly string[] = ['_index_signature_colon', 'mapped_type_clause'];
+const _K43: readonly string[] = [
 	'type_annotation',
 	'omitting_type_annotation',
 	'adding_type_annotation',
 	'opting_type_annotation'
 ];
-const _K42: readonly string[] = [
+const _K44: readonly string[] = [
 	'parenthesized_type',
 	'nested_type_identifier',
 	'generic_type',
@@ -2898,15 +2897,13 @@ export function coerceToTemplateType(
 }
 
 export function coerceToTemplateLiteralType(
-	...input: readonly ((T.TemplateChars | T.TemplateType) | T.TemplateLiteralType)[]
+	input?: T.TemplateLiteralType.Loose
 ): ReturnType<typeof F.buildTemplateLiteralType> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TemplateLiteralType) {
-		const data = input[0];
-		const stored = (data as unknown as { _content?: unknown })._content;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTemplateLiteralType(...(children as unknown as Parameters<typeof F.buildTemplateLiteralType>));
-	}
-	return F.buildTemplateLiteralType(...(input as unknown as Parameters<typeof F.buildTemplateLiteralType>));
+	if (input !== undefined && isNodeData(input))
+		return input as unknown as ReturnType<typeof F.buildTemplateLiteralType>;
+	return F.buildTemplateLiteralType({
+		content: _resolveMany<T.TemplateChars | T.TemplateType>(input?.content, _K37, _K38)
+	});
 }
 
 export function coerceToInferType(input: T.InferType.Loose): ReturnType<typeof F.buildInferType> {
@@ -2937,7 +2934,7 @@ export function coerceToGenericType(input: T.GenericType.Loose): ReturnType<type
 		name: _requireField(
 			'generic_type',
 			'name',
-			_resolveOne<T.Identifier | T.NestedTypeIdentifier>(input.name, _super_import_identifier, _K37)
+			_resolveOne<T.Identifier | T.NestedTypeIdentifier>(input.name, _super_import_identifier, _K39)
 		),
 		typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments') ?? F.buildTypeArguments()
 	});
@@ -2949,7 +2946,7 @@ export function coerceToTypePredicate(input: T.TypePredicate.Loose): ReturnType<
 		name: _requireField(
 			'type_predicate',
 			'name',
-			_resolveOne<T.Identifier | T.This | T.PredefinedType>(input.name, _K38, _K0)
+			_resolveOne<T.Identifier | T.This | T.PredefinedType>(input.name, _K40, _K0)
 		),
 		type: _requireField('type_predicate', 'type', _resolveOne<T.Type>(input.type, _K31, _K32))
 	});
@@ -3006,7 +3003,7 @@ export function coerceToIndexTypeQuery(input: T.IndexTypeQuery.Loose): ReturnTyp
 					? input.primaryType
 					: input,
 				_K31,
-				_K39
+				_K41
 			)
 		)
 	);
@@ -3015,7 +3012,7 @@ export function coerceToIndexTypeQuery(input: T.IndexTypeQuery.Loose): ReturnTyp
 export function coerceToLookupType(input: T.LookupType.Loose): ReturnType<typeof F.buildLookupType> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildLookupType>;
 	return F.buildLookupType({
-		primaryType: _requireField('lookup_type', 'primaryType', _resolveOne<T.PrimaryType>(input.primaryType, _K31, _K39)),
+		primaryType: _requireField('lookup_type', 'primaryType', _resolveOne<T.PrimaryType>(input.primaryType, _K31, _K41)),
 		indexType: _requireField('lookup_type', 'indexType', _resolveOne<T.Type>(input.indexType, _K31, _K32))
 	});
 }
@@ -3052,7 +3049,7 @@ export function coerceToFlowMaybeType(input: T.FlowMaybeType.Loose): ReturnType<
 					? input.primaryType
 					: input,
 				_K31,
-				_K39
+				_K41
 			)
 		)
 	);
@@ -3228,7 +3225,7 @@ export function coerceToIndexSignature(input: T.IndexSignature.Loose): ReturnTyp
 		content: _requireField(
 			'index_signature',
 			'content',
-			_resolveOne<T.IndexSignatureColon | T.MappedTypeClause>(input.content, _K0, _K40)
+			_resolveOne<T.IndexSignatureColon | T.MappedTypeClause>(input.content, _K0, _K42)
 		),
 		type: _requireField(
 			'index_signature',
@@ -3236,7 +3233,7 @@ export function coerceToIndexSignature(input: T.IndexSignature.Loose): ReturnTyp
 			_resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(
 				input.type,
 				_K0,
-				_K41
+				_K43
 			)
 		)
 	});
@@ -3254,7 +3251,7 @@ export function coerceToArrayType(input: T.ArrayType.Loose): ReturnType<typeof F
 					? input.primaryType
 					: input,
 				_K31,
-				_K39
+				_K41
 			)
 		)
 	);
@@ -3310,7 +3307,7 @@ export function coerceToFunctionType(input: T.FunctionType.Loose): ReturnType<ty
 		returnType: _requireField(
 			'function_type',
 			'returnType',
-			_resolveOne<T.Type | T.Asserts | T.TypePredicate>(input.returnType, _K31, _K42)
+			_resolveOne<T.Type | T.Asserts | T.TypePredicate>(input.returnType, _K31, _K44)
 		)
 	});
 }

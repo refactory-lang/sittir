@@ -9276,22 +9276,29 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_template_chars"
+            "type": "FIELD",
+            "name": "content",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_template_chars"
+                  },
+                  "named": true,
+                  "value": "string_fragment"
                 },
-                "named": true,
-                "value": "string_fragment"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "template_type"
-              }
-            ]
+                {
+                  "type": "SYMBOL",
+                  "name": "template_type"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         },
         {
