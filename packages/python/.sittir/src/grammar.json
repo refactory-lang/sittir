@@ -7285,92 +7285,17 @@
         }
       ]
     },
-    "_kw_arguments": {
-      "type": "BLANK"
-    },
-    "_kw_tail": {
-      "type": "BLANK"
-    },
-    "_kw_left": {
-      "type": "BLANK"
-    },
-    "_kw_comparators": {
-      "type": "BLANK"
-    },
     "_kw_real": {
       "type": "STRING",
       "value": "-"
-    },
-    "_kw_imaginary": {
-      "type": "BLANK"
-    },
-    "_kw_operator": {
-      "type": "BLANK"
-    },
-    "_kw_body": {
-      "type": "BLANK"
-    },
-    "_kw_condition": {
-      "type": "BLANK"
-    },
-    "_kw_alternative": {
-      "type": "BLANK"
-    },
-    "_kw_base_type": {
-      "type": "BLANK"
-    },
-    "_kw_constraint": {
-      "type": "BLANK"
-    },
-    "_kw_newline": {
-      "type": "BLANK"
-    },
-    "_kw_entries": {
-      "type": "BLANK"
-    },
-    "_kw_star_marker": {
-      "type": "BLANK"
-    },
-    "_kw_in_clause": {
-      "type": "BLANK"
-    },
-    "_kw_block": {
-      "type": "BLANK"
-    },
-    "_kw_identifier": {
-      "type": "BLANK"
-    },
-    "_kw_wildcard_import": {
-      "type": "BLANK"
     },
     "_kw_eq_marker": {
       "type": "STRING",
       "value": "="
     },
-    "_kw_simple_pattern": {
-      "type": "BLANK"
-    },
-    "_kw_start": {
-      "type": "BLANK"
-    },
-    "_kw_stop": {
-      "type": "BLANK"
-    },
-    "_kw_step": {
-      "type": "BLANK"
-    },
-    "_kw_content": {
-      "type": "BLANK"
-    },
     "_kw_type": {
       "type": "STRING",
       "value": "type"
-    },
-    "_kw_except_clauses": {
-      "type": "BLANK"
-    },
-    "_kw_right": {
-      "type": "BLANK"
     },
     "_comparison_operator_comparator": {
       "type": "SEQ",

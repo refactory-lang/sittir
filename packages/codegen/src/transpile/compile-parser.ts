@@ -1,6 +1,7 @@
 import { existsSync, statSync, mkdirSync, copyFileSync, readFileSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { pruneOrphanedPlaceholderRules } from './prune-grammar-json.ts';
 
 export interface CompileOptions {
 	force?: boolean;
@@ -30,6 +31,7 @@ export async function compileParser(grammarDir: string, options?: CompileOptions
 		cwd: sittirDir,
 		stdio: 'pipe'
 	});
+	pruneOrphanedPlaceholderRules(sittirDir);
 
 	syncExternalScanner(grammarDir, sittirDir);
 
