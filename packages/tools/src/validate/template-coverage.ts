@@ -178,7 +178,7 @@ export function validateTemplateCoverage(grammar: string, templatesPath: string)
 		const rule = rules[resolvedKind];
 		if (rule === undefined) continue; // validate-renderable catches this.
 		const rawTemplate = rawByKind[resolvedKind];
-		const templatePath = `packages/${grammar}/templates/${resolvedKind}.jinja`;
+		const templatePath = join(templatesPath, `${resolvedKind}.jinja`);
 
 		total++;
 		const kindIssues = checkRule(
