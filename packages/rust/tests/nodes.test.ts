@@ -2375,9 +2375,13 @@ describe('integer_literal', () => {
 
 describe('string_literal', () => {
 	it('factory produces correct type', () => {
-		const node = ir.stringLiteral();
+		const node = ir.stringLiteral({});
 		expect(node.$type).toBe(TSKindId.StringLiteral);
 		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.stringLiteral({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 

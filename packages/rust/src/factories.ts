@@ -3751,19 +3751,22 @@ export function buildIntegerLiteral(text: string) {
 	);
 }
 
-export function buildStringLiteral(...children: (T.EscapeSequence | T.StringContent)[]) {
-	const _content = children;
+export function buildStringLiteral(config: Partial<T.StringLiteral.Config> = {}) {
+	const _elements = config.elements ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.StringLiteral as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
-				$with: { $children: (...vs: (T.EscapeSequence | T.StringContent)[]) => buildStringLiteral(...vs) }
+				_elements,
+				$with: {
+					elements: (...values: (T.EscapeSequence | T.StringContent)[]) =>
+						buildStringLiteral({ ...config, elements: values })
+				}
 			},
 			{
-				contents: () => _content
+				elements: () => _elements
 			}
 		),
 		methodsEngine

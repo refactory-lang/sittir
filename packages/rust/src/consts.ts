@@ -2830,7 +2830,7 @@ export const FIELD_MAP: Record<
 		{ name: 'type', required: true, multiple: false },
 		{ name: 'value', required: false, multiple: false }
 	],
-	string_literal: [{ name: 'contents', required: false, multiple: true }],
+	string_literal: [{ name: 'elements', required: false, multiple: true }],
 	struct_expression: [
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'body', required: true, multiple: false }

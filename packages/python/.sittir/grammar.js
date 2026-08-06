@@ -1023,8 +1023,9 @@ function escapeRegexLiteral(s) {
 }
 
 // packages/codegen/src/dsl/enrich.ts
-function enrich(baseInput) {
+function enrich(baseInput, config) {
   const base2 = baseInput;
+  const enrichSkip = new Set(config?.skip ?? []);
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
   }
@@ -1044,7 +1045,7 @@ function enrich(baseInput) {
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
-    enrichedRules[name] = rule ? applyEnrichPasses(
+    enrichedRules[name] = rule && !enrichSkip.has(name) ? applyEnrichPasses(
       name,
       rule,
       kwRules,
@@ -1076,6 +1077,11 @@ function enrich(baseInput) {
     }
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+  for (const name of Object.keys(mergedRules)) {
+    if (enrichSkip.has(name)) continue;
+    const rule = mergedRules[name];
+    if (rule) mergedRules[name] = applyRepeatedChoiceBlockWrap(name, rule);
+  }
   synthesizeFieldEnumRules(mergedRules);
   setGroupLiftRuleMap({
     get: (n) => mergedRules[n],
@@ -1274,6 +1280,88 @@ function applyChoiceArmFieldWrap(ruleName, rule, supertypeNames, rulesBag) {
     result = { ...precStack[i], content: result };
   }
   return result;
+}
+function collectAllFieldNamesDeep(rule, into) {
+  if (isFieldType(rule.type) && typeof rule.name === "string") {
+    into.add(rule.name);
+  }
+  const bag = rule;
+  if (Array.isArray(bag.members)) {
+    for (const m of bag.members) collectAllFieldNamesDeep(m, into);
+  } else if (bag.content && typeof bag.content === "object") {
+    collectAllFieldNamesDeep(bag.content, into);
+  }
+}
+function isAllArmsNodeShaped(choiceRule) {
+  const members = choiceRule.members;
+  return members.every((arm) => {
+    let cursor = arm;
+    while (isPrecWrapper(cursor)) {
+      cursor = cursor.content;
+    }
+    const t = cursor.type;
+    return t === "SYMBOL" || t === "ALIAS";
+  });
+}
+function applyRepeatedChoiceBlockWrap(ruleName, rule) {
+  const usedNames = /* @__PURE__ */ new Set();
+  collectAllFieldNamesDeep(rule, usedNames);
+  let changed = false;
+  const reserve = (base2) => {
+    if (!usedNames.has(base2)) {
+      usedNames.add(base2);
+      return base2;
+    }
+    let n = 2;
+    while (usedNames.has(`${base2}_${n}`)) n++;
+    const name = `${base2}_${n}`;
+    usedNames.add(name);
+    return name;
+  };
+  const visit = (r) => {
+    if (isRepeatType(r.type)) {
+      const content = r.content;
+      const precStack = [];
+      let inner = content;
+      while (isPrecWrapper(inner)) {
+        precStack.push(inner);
+        inner = inner.content;
+      }
+      const visitedInner = visit(inner);
+      if (isChoiceType(visitedInner.type) && isAllArmsNodeShaped(visitedInner)) {
+        changed = true;
+        let rebuiltInner = visitedInner;
+        for (let i = precStack.length - 1; i >= 0; i--) {
+          rebuiltInner = { ...precStack[i], content: rebuiltInner };
+        }
+        const rebuiltRepeat = { ...r, content: rebuiltInner };
+        return makeField(reserve("elements"), rebuiltRepeat);
+      }
+      if (visitedInner === inner) return r;
+      let newContent = visitedInner;
+      for (let i = precStack.length - 1; i >= 0; i--) {
+        newContent = { ...precStack[i], content: newContent };
+      }
+      return { ...r, content: newContent };
+    }
+    const bag = r;
+    if (Array.isArray(bag.members)) {
+      let memberChanged = false;
+      const newMembers = bag.members.map((m) => {
+        const nm = visit(m);
+        if (nm !== m) memberChanged = true;
+        return nm;
+      });
+      return memberChanged ? { ...r, members: newMembers } : r;
+    }
+    if (bag.content && typeof bag.content === "object") {
+      const nc = visit(bag.content);
+      return nc !== bag.content ? { ...r, content: nc } : r;
+    }
+    return r;
+  };
+  const result = visit(rule);
+  return changed ? result : rule;
 }
 function extractWordName(word) {
   if (typeof word === "string") return word;
@@ -3824,7 +3912,17 @@ function role(symbol, roleName) {
 }
 
 // packages/python/grammar.sittir.ts
-var enrichedBase = enrich(import_grammar.default);
+var enrichedBase = enrich(import_grammar.default, {
+  // `string_content`'s plain-text runs between escapes aren't CST children
+  // at all (an implicit gap), so it renders via a verbatim $TEXT fallback
+  // today. Fielding its choice (which applyRepeatedChoiceBlockWrap would
+  // otherwise do — all four arms are node-shaped) flips the walker off
+  // that fallback onto join-the-field-elements rendering, silently
+  // dropping every gap. None of enrich's other passes touch this rule's
+  // shape anyway, so exempting it from all of them is a no-op beyond the
+  // one pass that matters here.
+  skip: ["string_content"]
+});
 var grammar_sittir_default = grammar(
   enrichedBase,
   wire(

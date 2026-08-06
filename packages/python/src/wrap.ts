@@ -6847,7 +6847,7 @@ export function wrapStringContent(
 			| '\\'
 			| T._StringContent
 			| readonly (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)[];
-		readonly _string_content_group1?:
+		readonly _not_escape_sequence?:
 			| T.EscapeInterpolation
 			| T.EscapeSequence
 			| '\\'
@@ -6864,12 +6864,7 @@ export function wrapStringContent(
 ) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_escape_interpolation',
-				'_escape_sequence',
-				'_string_content',
-				'_string_content_group1'
-			]),
+			..._omitWrapKeys(data, ['_escape_interpolation', '_escape_sequence', '_not_escape_sequence', '_string_content']),
 			$type: TSKindId.StringContent as const,
 			_content: normalizeRepeatedWrapSlot(
 				data._content !== undefined
@@ -6877,7 +6872,7 @@ export function wrapStringContent(
 					: _concatInSourceOrder([
 							data._escape_interpolation,
 							data._escape_sequence,
-							data._string_content_group1,
+							data._not_escape_sequence,
 							data._string_content
 						]),
 				false,
@@ -6886,9 +6881,10 @@ export function wrapStringContent(
 			),
 
 			contents() {
-				return drillAsAll<T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent>(this._content, tree, [
-					{ from: 'string_content_group1', to: '_not_escape_sequence' }
-				]);
+				return drillInAll<T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent>(
+					this._content as readonly (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)[] | undefined,
+					tree
+				);
 			},
 			$with: {
 				contents: (...v: NonNullable<T.StringContent['_content']>[number][]) =>

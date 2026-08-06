@@ -2927,19 +2927,26 @@
               "value": "\""
             },
             {
-              "type": "REPEAT",
+              "type": "FIELD",
+              "name": "elements",
               "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "unescaped_double_jsx_string_fragment"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "html_character_reference"
-                  }
-                ]
+                "type": "REPEAT",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "unescaped_double_jsx_string_fragment"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "html_character_reference"
+                    }
+                  ]
+                }
+              },
+              "metadata": {
+                "fieldSource": "enriched"
               }
             },
             {
@@ -2956,19 +2963,26 @@
               "value": "'"
             },
             {
-              "type": "REPEAT",
+              "type": "FIELD",
+              "name": "elements_2",
               "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "unescaped_single_jsx_string_fragment"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "html_character_reference"
-                  }
-                ]
+                "type": "REPEAT",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "unescaped_single_jsx_string_fragment"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "html_character_reference"
+                    }
+                  ]
+                }
+              },
+              "metadata": {
+                "fieldSource": "enriched"
               }
             },
             {
@@ -5330,28 +5344,35 @@
           "value": "`"
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "elements",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_template_chars"
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_template_chars"
+                  },
+                  "named": true,
+                  "value": "string_fragment"
                 },
-                "named": true,
-                "value": "string_fragment"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "escape_sequence"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "template_substitution"
-              }
-            ]
+                {
+                  "type": "SYMBOL",
+                  "name": "escape_sequence"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "template_substitution"
+                }
+              ]
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         },
         {
@@ -9274,10 +9295,10 @@
           "value": "`"
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "elements",
           "content": {
-            "type": "FIELD",
-            "name": "content",
+            "type": "REPEAT",
             "content": {
               "type": "CHOICE",
               "members": [
@@ -9295,10 +9316,10 @@
                   "name": "template_type"
                 }
               ]
-            },
-            "metadata": {
-              "fieldSource": "override"
             }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         },
         {
@@ -13962,19 +13983,26 @@
           "value": "\""
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "elements",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "unescaped_double_string_fragment"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "escape_sequence"
-              }
-            ]
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "unescaped_double_string_fragment"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "escape_sequence"
+                }
+              ]
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         },
         {
@@ -13991,19 +14019,26 @@
           "value": "'"
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "elements_2",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "unescaped_single_string_fragment"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "escape_sequence"
-              }
-            ]
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "unescaped_single_string_fragment"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "escape_sequence"
+                }
+              ]
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         },
         {

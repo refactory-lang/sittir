@@ -5327,47 +5327,26 @@ export function wrapString(
 	return _node;
 }
 
-export function wrapTemplateString(
-	data: T.TemplateString & {
-		readonly _string_fragment?:
-			| T.TemplateChars
-			| T.EscapeSequence
-			| T.TemplateSubstitution
-			| readonly (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[];
-		readonly _escape_sequence?:
-			| T.TemplateChars
-			| T.EscapeSequence
-			| T.TemplateSubstitution
-			| readonly (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[];
-		readonly _template_substitution?:
-			| T.TemplateChars
-			| T.EscapeSequence
-			| T.TemplateSubstitution
-			| readonly (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[];
-	},
-	tree: TreeHandle
-) {
+export function wrapTemplateString(data: T.TemplateString, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_escape_sequence', '_string_fragment', '_template_substitution']),
+			...data,
 			$type: TSKindId.TemplateString as const,
-			_content: normalizeRepeatedWrapSlot(
-				data._content !== undefined
-					? _toArr(data._content)
-					: _concatInSourceOrder([data._string_fragment, data._escape_sequence, data._template_substitution]),
-				false,
-				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_elements: normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _NodeData).$span
+			}),
 
-			contents() {
-				return drillAsAll<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>(this._content, tree, [
+			elements() {
+				return drillAsAll<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>(this._elements, tree, [
 					{ from: 'string_fragment', to: '_template_chars' }
 				]);
 			},
 			$with: {
-				contents: (...v: NonNullable<T.TemplateString['_content']>[number][]) =>
-					wrapTemplateString({ ...data, _content: v }, tree)
+				elements: (...v: NonNullable<T.TemplateString['_elements']>[number][]) =>
+					wrapTemplateString({ ...data, _elements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -9023,21 +9002,21 @@ export function wrapTemplateLiteralType(data: T.TemplateLiteralType, tree: TreeH
 		{
 			...data,
 			$type: TSKindId.TemplateLiteralType as const,
-			_content: normalizeRepeatedWrapSlot(data._content, false, 'content', {
+			_elements: normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
 				tree,
 				nodeType: data.$type,
-				slotName: 'content',
+				slotName: 'elements',
 				span: (data as _NodeData).$span
 			}),
 
-			contents() {
-				return drillAsAll<T.TemplateChars | T.TemplateType>(this._content, tree, [
+			elements() {
+				return drillAsAll<T.TemplateChars | T.TemplateType>(this._elements, tree, [
 					{ from: 'string_fragment', to: '_template_chars' }
 				]);
 			},
 			$with: {
-				contents: (...v: NonNullable<T.TemplateLiteralType['_content']>[number][]) =>
-					wrapTemplateLiteralType({ ...data, _content: v }, tree)
+				elements: (...v: NonNullable<T.TemplateLiteralType['_elements']>[number][]) =>
+					wrapTemplateLiteralType({ ...data, _elements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -12891,41 +12870,27 @@ export function wrapCallExpressionMember(data: T.CallExpressionMember, tree: Tre
 	return _node;
 }
 
-export function wrapStringDouble(
-	data: T.StringDouble & {
-		readonly _unescaped_double_string_fragment?:
-			| T.UnescapedDoubleStringFragment
-			| T.EscapeSequence
-			| readonly (T.UnescapedDoubleStringFragment | T.EscapeSequence)[];
-		readonly _escape_sequence?:
-			| T.UnescapedDoubleStringFragment
-			| T.EscapeSequence
-			| readonly (T.UnescapedDoubleStringFragment | T.EscapeSequence)[];
-	},
-	tree: TreeHandle
-) {
+export function wrapStringDouble(data: T.StringDouble, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_escape_sequence', '_unescaped_double_string_fragment']),
+			...data,
 			$type: TSKindId.StringDouble as const,
-			_content: normalizeRepeatedWrapSlot(
-				data._content !== undefined
-					? _toArr(data._content)
-					: _concatInSourceOrder([data._unescaped_double_string_fragment, data._escape_sequence]),
-				false,
-				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_elements: normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _NodeData).$span
+			}),
 
-			contents() {
+			elements() {
 				return drillInAll<T.UnescapedDoubleStringFragment | T.EscapeSequence>(
-					this._content as readonly (T.UnescapedDoubleStringFragment | T.EscapeSequence)[] | undefined,
+					this._elements as readonly (T.UnescapedDoubleStringFragment | T.EscapeSequence)[] | undefined,
 					tree
 				);
 			},
 			$with: {
-				contents: (...v: NonNullable<T.StringDouble['_content']>[number][]) =>
-					wrapStringDouble({ ...data, _content: v }, tree)
+				elements: (...v: NonNullable<T.StringDouble['_elements']>[number][]) =>
+					wrapStringDouble({ ...data, _elements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -12933,41 +12898,27 @@ export function wrapStringDouble(
 	return _node;
 }
 
-export function wrapStringSingle(
-	data: T.StringSingle & {
-		readonly _unescaped_single_string_fragment?:
-			| T.UnescapedSingleStringFragment
-			| T.EscapeSequence
-			| readonly (T.UnescapedSingleStringFragment | T.EscapeSequence)[];
-		readonly _escape_sequence?:
-			| T.UnescapedSingleStringFragment
-			| T.EscapeSequence
-			| readonly (T.UnescapedSingleStringFragment | T.EscapeSequence)[];
-	},
-	tree: TreeHandle
-) {
+export function wrapStringSingle(data: T.StringSingle, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_escape_sequence', '_unescaped_single_string_fragment']),
+			...data,
 			$type: TSKindId.StringSingle as const,
-			_content: normalizeRepeatedWrapSlot(
-				data._content !== undefined
-					? _toArr(data._content)
-					: _concatInSourceOrder([data._unescaped_single_string_fragment, data._escape_sequence]),
-				false,
-				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_elements_2: normalizeRepeatedWrapSlot(data._elements_2, false, 'elements_2', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements_2',
+				span: (data as _NodeData).$span
+			}),
 
-			contents() {
+			elements_2s() {
 				return drillInAll<T.UnescapedSingleStringFragment | T.EscapeSequence>(
-					this._content as readonly (T.UnescapedSingleStringFragment | T.EscapeSequence)[] | undefined,
+					this._elements_2 as readonly (T.UnescapedSingleStringFragment | T.EscapeSequence)[] | undefined,
 					tree
 				);
 			},
 			$with: {
-				contents: (...v: NonNullable<T.StringSingle['_content']>[number][]) =>
-					wrapStringSingle({ ...data, _content: v }, tree)
+				elements_2s: (...v: NonNullable<T.StringSingle['_elements_2']>[number][]) =>
+					wrapStringSingle({ ...data, _elements_2: v }, tree)
 			}
 		},
 		methodsEngine

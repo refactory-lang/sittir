@@ -4852,19 +4852,26 @@
           "name": "for_in_clause"
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "elements",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "for_in_clause"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "if_clause"
-              }
-            ]
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "for_in_clause"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "if_clause"
+                }
+              ]
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         }
       ]
@@ -5213,16 +5220,8 @@
               "name": "escape_sequence"
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_not_escape_sequence"
-              },
-              "named": true,
-              "value": "string_content_group1",
-              "metadata": {
-                "author": "enrich"
-              }
+              "type": "SYMBOL",
+              "name": "_not_escape_sequence"
             },
             {
               "type": "SYMBOL",
@@ -7599,13 +7598,6 @@
     ],
     [
       "_dictionary_group1"
-    ],
-    [
-      "string_content",
-      "_not_escape_sequence"
-    ],
-    [
-      "_not_escape_sequence"
     ]
   ],
   "precedences": [],

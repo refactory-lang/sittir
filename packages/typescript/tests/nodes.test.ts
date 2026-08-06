@@ -1290,9 +1290,13 @@ describe('comment', () => {
 
 describe('template_string', () => {
 	it('factory produces correct type', () => {
-		const node = ir.templateString();
+		const node = ir.templateString({});
 		expect(node.$type).toBe(TSKindId.TemplateString);
 		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.templateString({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 

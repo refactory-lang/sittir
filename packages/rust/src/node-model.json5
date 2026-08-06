@@ -2858,7 +2858,7 @@
       }
     },
     "string_literal": {
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -16651,9 +16651,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -16683,9 +16683,9 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
-        "content"
+        "elements"
       ]
     },
     {

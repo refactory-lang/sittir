@@ -412,13 +412,13 @@ pub struct PublicFieldDefinitionStaticModsTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_string_double.jinja", escape = "none")]
 pub struct StringDoubleTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
+    pub elements: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_string_single.jinja", escape = "none")]
 pub struct StringSingleTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
+    pub elements_2: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1501,13 +1501,13 @@ pub struct SwitchStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "template_literal_type.jinja", escape = "none")]
 pub struct TemplateLiteralTypeTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
+    pub elements: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "template_string.jinja", escape = "none")]
 pub struct TemplateStringTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
+    pub elements: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

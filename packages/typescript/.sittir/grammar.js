@@ -1017,8 +1017,9 @@ function escapeRegexLiteral(s) {
 }
 
 // packages/codegen/src/dsl/enrich.ts
-function enrich(baseInput) {
+function enrich(baseInput, config) {
   const base2 = baseInput;
+  const enrichSkip = new Set(config?.skip ?? []);
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
   }
@@ -1038,7 +1039,7 @@ function enrich(baseInput) {
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
-    enrichedRules[name] = rule ? applyEnrichPasses(
+    enrichedRules[name] = rule && !enrichSkip.has(name) ? applyEnrichPasses(
       name,
       rule,
       kwRules,
@@ -1070,6 +1071,11 @@ function enrich(baseInput) {
     }
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+  for (const name of Object.keys(mergedRules)) {
+    if (enrichSkip.has(name)) continue;
+    const rule = mergedRules[name];
+    if (rule) mergedRules[name] = applyRepeatedChoiceBlockWrap(name, rule);
+  }
   synthesizeFieldEnumRules(mergedRules);
   setGroupLiftRuleMap({
     get: (n) => mergedRules[n],
@@ -1268,6 +1274,88 @@ function applyChoiceArmFieldWrap(ruleName, rule, supertypeNames, rulesBag) {
     result = { ...precStack[i], content: result };
   }
   return result;
+}
+function collectAllFieldNamesDeep(rule, into) {
+  if (isFieldType(rule.type) && typeof rule.name === "string") {
+    into.add(rule.name);
+  }
+  const bag = rule;
+  if (Array.isArray(bag.members)) {
+    for (const m of bag.members) collectAllFieldNamesDeep(m, into);
+  } else if (bag.content && typeof bag.content === "object") {
+    collectAllFieldNamesDeep(bag.content, into);
+  }
+}
+function isAllArmsNodeShaped(choiceRule) {
+  const members = choiceRule.members;
+  return members.every((arm) => {
+    let cursor = arm;
+    while (isPrecWrapper(cursor)) {
+      cursor = cursor.content;
+    }
+    const t = cursor.type;
+    return t === "SYMBOL" || t === "ALIAS";
+  });
+}
+function applyRepeatedChoiceBlockWrap(ruleName, rule) {
+  const usedNames = /* @__PURE__ */ new Set();
+  collectAllFieldNamesDeep(rule, usedNames);
+  let changed = false;
+  const reserve = (base2) => {
+    if (!usedNames.has(base2)) {
+      usedNames.add(base2);
+      return base2;
+    }
+    let n = 2;
+    while (usedNames.has(`${base2}_${n}`)) n++;
+    const name = `${base2}_${n}`;
+    usedNames.add(name);
+    return name;
+  };
+  const visit = (r) => {
+    if (isRepeatType(r.type)) {
+      const content = r.content;
+      const precStack = [];
+      let inner = content;
+      while (isPrecWrapper(inner)) {
+        precStack.push(inner);
+        inner = inner.content;
+      }
+      const visitedInner = visit(inner);
+      if (isChoiceType(visitedInner.type) && isAllArmsNodeShaped(visitedInner)) {
+        changed = true;
+        let rebuiltInner = visitedInner;
+        for (let i = precStack.length - 1; i >= 0; i--) {
+          rebuiltInner = { ...precStack[i], content: rebuiltInner };
+        }
+        const rebuiltRepeat = { ...r, content: rebuiltInner };
+        return makeField(reserve("elements"), rebuiltRepeat);
+      }
+      if (visitedInner === inner) return r;
+      let newContent = visitedInner;
+      for (let i = precStack.length - 1; i >= 0; i--) {
+        newContent = { ...precStack[i], content: newContent };
+      }
+      return { ...r, content: newContent };
+    }
+    const bag = r;
+    if (Array.isArray(bag.members)) {
+      let memberChanged = false;
+      const newMembers = bag.members.map((m) => {
+        const nm = visit(m);
+        if (nm !== m) memberChanged = true;
+        return nm;
+      });
+      return memberChanged ? { ...r, members: newMembers } : r;
+    }
+    if (bag.content && typeof bag.content === "object") {
+      const nc = visit(bag.content);
+      return nc !== bag.content ? { ...r, content: nc } : r;
+    }
+    return r;
+  };
+  const result = visit(rule);
+  return changed ? result : rule;
 }
 function extractWordName(word) {
   if (typeof word === "string") return word;
@@ -4351,22 +4439,6 @@ var grammar_sittir_default = grammar(
             $.method_signature
           );
           return seq(optional(SEP()), seq(member, repeat(seq(SEP(), member))), optional(SEP()));
-        },
-        // Both repeated arms are unfielded, so the native reader routes
-        // them into two separate per-kind buckets (`_string_fragment`,
-        // `_template_type`) that only carry a recoverable source
-        // position for the node-shaped arm — the text-collapsed
-        // `string_fragment` arm loses it on the wire, so recombining
-        // the buckets can't restore document order. Fielding the
-        // choice keeps every repetition in one bucket, in read order,
-        // regardless of arm kind.
-        template_literal_type: ($, original) => {
-          const members = original.members;
-          const repeated = members[1];
-          return {
-            ...original,
-            members: [members[0], { ...repeated, content: field("content", repeated.content) }, members[2]]
-          };
         }
       }
     },

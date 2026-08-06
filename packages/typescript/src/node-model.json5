@@ -302,7 +302,7 @@
       "string_double": "_string_double",
       "string_single": "_string_single"
     },
-    "template_string.content": {
+    "template_string.elements": {
       "string_fragment": "_template_chars"
     },
     "meta_property.content": {
@@ -391,7 +391,7 @@
     "_type_query_call_expression_in_type_annotation.function": {
       "member_expression": "_type_query_member_expression_in_type_annotation"
     },
-    "template_literal_type.content": {
+    "template_literal_type.elements": {
       "string_fragment": "_template_chars"
     },
     "infer_type.type_identifier": {
@@ -1797,7 +1797,7 @@
       }
     },
     "template_string": {
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2972,7 +2972,7 @@
       }
     },
     "template_literal_type": {
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4275,7 +4275,7 @@
       }
     },
     "_string_double": {
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4284,7 +4284,7 @@
       }
     },
     "_string_single": {
-      "content": {
+      "elements_2": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -7568,9 +7568,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -7588,21 +7588,44 @@
               "name": "html_character_reference",
               "parseKind": "html_character_reference",
               "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "unescaped_single_jsx_string_fragment",
-              "parseKind": "unescaped_single_jsx_string_fragment",
-              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
               "unescaped_double_jsx_string_fragment",
-              "html_character_reference",
-              "unescaped_single_jsx_string_fragment"
+              "html_character_reference"
+            ]
+          }
+        },
+        {
+          "name": "elements_2",
+          "propertyName": "elements_2s",
+          "paramName": "elements_2s",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "unescaped_single_jsx_string_fragment",
+              "parseKind": "unescaped_single_jsx_string_fragment",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "html_character_reference",
+              "parseKind": "html_character_reference",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "unescaped_single_jsx_string_fragment",
+              "html_character_reference"
             ]
           }
         }
@@ -8555,16 +8578,17 @@
     },
     {
       "kind": "_string_double",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "StringDouble",
-      "factoryName": "stringDouble",
+      "factoryName": "_stringDouble",
       "irKey": "stringDouble",
       "hidden": false,
+      "name": "_string_double",
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -8594,23 +8618,24 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
-        "content"
+        "elements"
       ]
     },
     {
       "kind": "_string_single",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "StringSingle",
-      "factoryName": "stringSingle",
+      "factoryName": "_stringSingle",
       "irKey": "stringSingle",
       "hidden": false,
+      "name": "_string_single",
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements_2",
+          "propertyName": "elements_2s",
+          "paramName": "elements_2s",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -8640,9 +8665,9 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
-        "content"
+        "elements_2"
       ]
     },
     {
@@ -21713,9 +21738,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -21747,7 +21772,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "content"
+        "elements"
       ]
     },
     {
@@ -21759,9 +21784,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -21799,9 +21824,9 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
-        "content"
+        "elements"
       ]
     },
     {

@@ -1243,7 +1243,7 @@ pub struct StaticItemTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "string_literal.jinja", escape = "none")]
 pub struct StringLiteralTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
+    pub elements: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

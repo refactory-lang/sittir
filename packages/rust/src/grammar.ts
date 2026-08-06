@@ -1783,11 +1783,12 @@ export type RustGrammar = {
 	readonly string_literal: {
 		type: 'string_literal';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [{ type: 'escape_sequence'; named: true }, { type: 'string_content'; named: true }];
+		fields: {
+			elements: {
+				multiple: true;
+				required: false;
+				types: [{ type: 'escape_sequence'; named: true }, { type: 'string_content'; named: true }];
+			};
 		};
 	};
 	readonly struct_expression: {

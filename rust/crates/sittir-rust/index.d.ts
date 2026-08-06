@@ -1974,7 +1974,7 @@ export interface StringLiteralTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<StringLiteralContentTransportSlot>
+  _elements?: Array<StringLiteralElementsTransportSlot>
 }
 
 export interface StructExpressionTransport {

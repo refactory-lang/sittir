@@ -544,7 +544,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         228 => "string_content", // "string_content"
         229 => "interpolation", // "interpolation"
         230 => "_f_expression", // "_f_expression"
-        231 => "string_content_group1", // "_not_escape_sequence"
+        231 => "_not_escape_sequence", // "_not_escape_sequence"
         232 => "format_specifier", // "format_specifier"
         233 => "await", // "await"
         234 => "positional_separator", // "positional_separator"

@@ -1143,7 +1143,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[228, 'string_content'],
 	[229, 'interpolation'],
 	[230, '_f_expression'],
-	[231, 'string_content_group1'],
+	[231, '_not_escape_sequence'],
 	[232, 'format_specifier'],
 	[233, 'await'],
 	[234, 'positional_separator'],
@@ -1935,8 +1935,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.IsNot;
 		case 'element_list':
 			return TSKindId.CollectionElements;
-		case 'string_content_group1':
-			return TSKindId.NotEscapeSequence;
 		case 'except_clause_group1':
 			return TSKindId.ExceptClauseGroup1;
 		case 'argument_list_group1':

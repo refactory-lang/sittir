@@ -1667,7 +1667,8 @@ export interface JsxStringTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<JsxStringContentTransportSlot>
+  _elements?: Array<JsxStringElementsTransportSlot>
+  _elements_2?: Array<JsxStringElements2TransportSlot>
 }
 
 export interface LabeledStatementTransport {
@@ -2371,7 +2372,7 @@ export interface StringDoubleTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<StringDoubleContentTransportSlot>
+  _elements?: Array<StringDoubleElementsTransportSlot>
 }
 
 export interface StringSingleTransport {
@@ -2382,7 +2383,7 @@ export interface StringSingleTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<StringSingleContentTransportSlot>
+  _elements_2?: Array<StringSingleElements2TransportSlot>
 }
 
 export interface StringTransport {
@@ -2463,7 +2464,7 @@ export interface TemplateLiteralTypeTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<TemplateLiteralTypeContentTransportSlot>
+  _elements?: Array<TemplateLiteralTypeElementsTransportSlot>
 }
 
 export interface TemplateStringTransport {
@@ -2474,7 +2475,7 @@ export interface TemplateStringTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<TemplateStringContentTransportSlot>
+  _elements?: Array<TemplateStringElementsTransportSlot>
 }
 
 export interface TemplateSubstitutionTransport {

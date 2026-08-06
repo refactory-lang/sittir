@@ -8182,19 +8182,26 @@
           "value": "\""
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "elements",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "escape_sequence"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "string_content"
-              }
-            ]
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "escape_sequence"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "string_content"
+                }
+              ]
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         },
         {

@@ -2161,22 +2161,22 @@ export function buildComment(text: string) {
 	);
 }
 
-export function buildTemplateString(...children: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) {
-	const _content = children;
+export function buildTemplateString(config: Partial<T.TemplateString.Config> = {}) {
+	const _elements = config.elements ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.TemplateString as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_elements,
 				$with: {
-					$children: (...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) =>
-						buildTemplateString(...vs)
+					elements: (...values: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) =>
+						buildTemplateString({ ...config, elements: values })
 				}
 			},
 			{
-				contents: () => _content
+				elements: () => _elements
 			}
 		),
 		methodsEngine
@@ -4123,21 +4123,21 @@ export function buildTemplateType(child: T.PrimaryType | T.InferType) {
 }
 
 export function buildTemplateLiteralType(config: Partial<T.TemplateLiteralType.Config> = {}) {
-	const _content = config.content ?? [];
+	const _elements = config.elements ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.TemplateLiteralType as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_elements,
 				$with: {
-					contents: (...values: (T.TemplateChars | T.TemplateType)[]) =>
-						buildTemplateLiteralType({ ...config, content: values })
+					elements: (...values: (T.TemplateChars | T.TemplateType)[]) =>
+						buildTemplateLiteralType({ ...config, elements: values })
 				}
 			},
 			{
-				contents: () => _content
+				elements: () => _elements
 			}
 		),
 		methodsEngine
@@ -6491,42 +6491,44 @@ export function buildCallExpressionMember(config: T.CallExpressionMember.Config)
 	);
 }
 
-export function buildStringDouble(...children: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) {
-	const _content = children;
+export function buildStringDouble(config: Partial<T.StringDouble.Config> = {}) {
+	const _elements = config.elements ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.StringDouble as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_elements,
 				$with: {
-					$children: (...vs: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) => buildStringDouble(...vs)
+					elements: (...values: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) =>
+						buildStringDouble({ ...config, elements: values })
 				}
 			},
 			{
-				contents: () => _content
+				elements: () => _elements
 			}
 		),
 		methodsEngine
 	);
 }
 
-export function buildStringSingle(...children: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) {
-	const _content = children;
+export function buildStringSingle(config: Partial<T.StringSingle.Config> = {}) {
+	const _elements_2 = config.elements_2 ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.StringSingle as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_elements_2,
 				$with: {
-					$children: (...vs: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) => buildStringSingle(...vs)
+					elements_2s: (...values: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) =>
+						buildStringSingle({ ...config, elements_2: values })
 				}
 			},
 			{
-				contents: () => _content
+				elements_2s: () => _elements_2
 			}
 		),
 		methodsEngine
@@ -6934,8 +6936,8 @@ export type FluentKindMap = {
 	_call_expression_call: T.CallExpressionCall;
 	_call_expression_template_call: T.CallExpressionTemplateCall;
 	_call_expression_member: T.CallExpressionMember;
-	_string_double: FluentNode<'_string_double', T.StringDouble.Config>;
-	_string_single: FluentNode<'_string_single', T.StringSingle.Config>;
+	_string_double: T.StringDouble;
+	_string_single: T.StringSingle;
 	_update_expression_postfix: T.UpdateExpressionPostfix;
 	_update_expression_prefix: T.UpdateExpressionPrefix;
 	_template_chars: T.TemplateChars;

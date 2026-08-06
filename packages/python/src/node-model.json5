@@ -86,12 +86,6 @@
       "childKind": {
         "yield_from_clause": "from_clause"
       }
-    },
-    "string_content": {
-      "definedBy": "override",
-      "childKind": {
-        "string_content_group1": "group1"
-      }
     }
   },
   "fieldAliasMap": {
@@ -247,9 +241,6 @@
     },
     "dictionary.entries": {
       "dictionary_group1": "_dictionary_group1"
-    },
-    "string_content.content": {
-      "string_content_group1": "_not_escape_sequence"
     },
     "format_specifier.content": {
       "format_expression": "interpolation"
@@ -10394,7 +10385,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_not_escape_sequence",
-              "parseKind": "string_content_group1",
+              "parseKind": "_not_escape_sequence",
               "unresolved": true
             },
             {

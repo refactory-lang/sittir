@@ -8951,35 +8951,27 @@ export function wrapNegativeLiteral(data: T.NegativeLiteral, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapStringLiteral(
-	data: T.StringLiteral & {
-		readonly _escape_sequence?: T.EscapeSequence | T.StringContent | readonly (T.EscapeSequence | T.StringContent)[];
-		readonly _string_content?: T.EscapeSequence | T.StringContent | readonly (T.EscapeSequence | T.StringContent)[];
-	},
-	tree: TreeHandle
-) {
+export function wrapStringLiteral(data: T.StringLiteral, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_escape_sequence', '_string_content']),
+			...data,
 			$type: TSKindId.StringLiteral as const,
-			_content: normalizeRepeatedWrapSlot(
-				data._content !== undefined
-					? _toArr(data._content)
-					: _concatInSourceOrder([data._escape_sequence, data._string_content]),
-				false,
-				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_elements: normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _NodeData).$span
+			}),
 
-			contents() {
+			elements() {
 				return drillInAll<T.EscapeSequence | T.StringContent>(
-					this._content as readonly (T.EscapeSequence | T.StringContent)[] | undefined,
+					this._elements as readonly (T.EscapeSequence | T.StringContent)[] | undefined,
 					tree
 				);
 			},
 			$with: {
-				contents: (...v: NonNullable<T.StringLiteral['_content']>[number][]) =>
-					wrapStringLiteral({ ...data, _content: v }, tree)
+				elements: (...v: NonNullable<T.StringLiteral['_elements']>[number][]) =>
+					wrapStringLiteral({ ...data, _elements: v }, tree)
 			}
 		},
 		methodsEngine

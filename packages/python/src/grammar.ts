@@ -1414,14 +1414,9 @@ export type PythonGrammar = {
 		children: {
 			multiple: true;
 			required: false;
-			types: [
-				{ type: 'escape_interpolation'; named: true },
-				{ type: 'escape_sequence'; named: true },
-				{ type: 'string_content_group1'; named: true }
-			];
+			types: [{ type: 'escape_interpolation'; named: true }, { type: 'escape_sequence'; named: true }];
 		};
 	};
-	readonly string_content_group1: { type: 'string_content_group1'; named: true; fields: {} };
 	readonly subscript: {
 		type: 'subscript';
 		named: true;

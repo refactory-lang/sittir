@@ -64,6 +64,18 @@
  *      single-occurrence positions in practice; per-arm collisions still
  *      skip via `reportSkip`.
  *
+ *   6. Repeated-choice-block field wrapping — a bare `repeat(choice(...))`
+ *      wraps the whole choice as `field('elements', choice(...))` instead
+ *      of leaving each arm to route into a separate per-kind read bucket
+ *      (see `applyRepeatedChoiceBlockWrap`'s doc comment). Runs once, LAST,
+ *      over the fully-merged rule map — not part of the fixed-point loop
+ *      above. Numbered on collision (`elements_2`, ...) rather than
+ *      skipped, and reaches hidden rules too — unlike passes 1-5. Callers
+ *      exempt individual rule names via `enrich()`'s `config` parameter
+ *      when the wrap would be structurally correct but empirically wrong
+ *      (a choice arm that's an implicit, unmodeled text gap rather than a
+ *      real CST child).
+ *
  * All passes collision-aware: skip (stderr notification) when the
  * promotion would shadow an existing field name. Strictly local — no
  * cross-rule analysis, no thresholds. All enrich-added FIELDs carry
@@ -131,8 +143,22 @@ export type EnrichedGrammar<B> = B extends GrammarJson
 		}
 	: B;
 
-export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
+export interface EnrichConfig {
+	/**
+	 * Rule names exempt from EVERY mechanical enrich pass — the fixed-point
+	 * loop (symbol-to-field, choice-arm-field-wrap, optional-keyword),
+	 * clause-hoist, un-aliasing, and `applyRepeatedChoiceBlockWrap`. Escape
+	 * hatch for a rule where the grammar shape looks like a pass's target
+	 * but empirically isn't — e.g. python's `string_content` (see
+	 * `applyRepeatedChoiceBlockWrap`'s doc comment) — rather than a
+	 * per-pass knob that every future pass would need its own copy of.
+	 */
+	readonly skip?: readonly string[];
+}
+
+export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): EnrichedGrammar<B> {
 	const base = baseInput as unknown as GrammarResult;
+	const enrichSkip = new Set(config?.skip ?? []);
 	if (!base || typeof base !== 'object') {
 		throw new Error('enrich(): expected a grammar object, got ' + typeof base);
 	}
@@ -205,22 +231,23 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	const enrichedRules: Record<string, Rule> = {};
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
-		enrichedRules[name] = rule
-			? applyEnrichPasses(
-					name,
-					rule,
-					kwRules,
-					supertypeNames,
-					rulesBag,
-					clauseGroupRules,
-					clauseDedupeMap,
-					groupDedupeMap,
-					visibleGroupHiddenNames,
-					clauseGroupOwners,
-					wordMatcher,
-					unaliasSink
-				)
-			: rule!;
+		enrichedRules[name] =
+			rule && !enrichSkip.has(name)
+				? applyEnrichPasses(
+						name,
+						rule,
+						kwRules,
+						supertypeNames,
+						rulesBag,
+						clauseGroupRules,
+						clauseDedupeMap,
+						groupDedupeMap,
+						visibleGroupHiddenNames,
+						clauseGroupOwners,
+						wordMatcher,
+						unaliasSink
+					)
+				: rule!;
 	}
 	// Base-grammar un-aliasing also needs to reach clause-hoist-minted group
 	// rules, not just the original rulesBag entries above. `applyEnrichPasses`
@@ -253,6 +280,15 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	// Inject clause-group rules — user rules NEVER shadow them either
 	// (they start with `_<parentKind>_optional`, a synthesized prefix).
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+	// Repeated-choice-block field wrapping (pass 6) — runs once, last, over
+	// every rule this enrich() call produced (original + kw + clause-hoist
+	// mints), never inside the fixed-point loop above. See
+	// `applyRepeatedChoiceBlockWrap`'s doc comment for why.
+	for (const name of Object.keys(mergedRules)) {
+		if (enrichSkip.has(name)) continue;
+		const rule = mergedRules[name];
+		if (rule) mergedRules[name] = applyRepeatedChoiceBlockWrap(name, rule);
+	}
 	// Mint inline field-enum choices (`field('operator', choice('+', '-', …))`)
 	// as named hidden rules directly into `mergedRules`, pre-generate — see
 	// `synthesizeFieldEnumRules`'s doc comment. Runs last so it also sees
@@ -625,6 +661,162 @@ function applyChoiceArmFieldWrap(
 		result = { ...precStack[i]!, content: result } as Rule;
 	}
 	return result;
+}
+
+function collectAllFieldNamesDeep(rule: Rule, into: Set<string>): void {
+	if (isFieldType((rule as { type: string }).type) && typeof (rule as { name?: unknown }).name === 'string') {
+		into.add((rule as { name: string }).name);
+	}
+	const bag = rule as unknown as { members?: readonly Rule[]; content?: Rule };
+	if (Array.isArray(bag.members)) {
+		for (const m of bag.members) collectAllFieldNamesDeep(m, into);
+	} else if (bag.content && typeof bag.content === 'object') {
+		collectAllFieldNamesDeep(bag.content, into);
+	}
+}
+
+/**
+ * A choice whose arms are all node-shaped (SYMBOL/ALIAS references, no bare
+ * literal arm) is the merge-order-bug shape this pass targets. A literal
+ * arm (e.g. `class_body`'s `;` terminator alongside method/member arms)
+ * signals the OTHER established shape for a heterogeneous repeated choice —
+ * per-arm `polymorphs:`/positional-path classification — which this pass
+ * must leave untouched: wrapping the whole choice would shift every
+ * existing positional path into and past it.
+ */
+function isAllArmsNodeShaped(choiceRule: Rule): boolean {
+	const members = (choiceRule as unknown as { members: readonly Rule[] }).members;
+	return members.every((arm) => {
+		let cursor = arm;
+		while (isPrecWrapper(cursor as { type: string })) {
+			cursor = (cursor as unknown as { content: Rule }).content;
+		}
+		const t = (cursor as { type: string }).type;
+		return t === 'SYMBOL' || t === 'ALIAS';
+	});
+}
+
+/**
+ * Repeated-choice-block field wrapping — `repeat(choice(...))` with no
+ * field wrapper routes each repetition into a separate per-arm-kind read
+ * bucket (tree-sitter has no field to key on), and any arm whose text
+ * collapses to a scalar leaf on the wire loses the position data needed to
+ * recombine those buckets in document order (`typescript`'s
+ * `template_literal_type` — string_fragment/template_type arms — is the
+ * motivating case). Rewriting `repeat(choice(...))` to
+ * `field('elements', repeat(choice(...)))` — the field wraps the WHOLE
+ * repeat, matching the codebase's existing `field(name, repeat(...))`
+ * convention (e.g. `array: {1: field('elements')}`) rather than living
+ * inside it — keeps every repetition in a single read bucket, in source
+ * order, regardless of arm kind, with no cross-bucket reassembly needed.
+ * The outer placement also keeps a pre-existing hand-authored
+ * `field(newName)` override at this same position working unmodified: it
+ * finds a plain top-level FIELD and renames it via
+ * `resolveFieldPlaceholder`'s ordinary unwrap-and-rewrap path (see
+ * `transform.ts`) instead of finding a bare REPEAT underneath and nesting
+ * a second field around it. Scoped to all-node-shaped choices only
+ * (`isAllArmsNodeShaped`) — a choice with a literal arm is the other,
+ * already-handled heterogeneous-repeat shape (e.g. `class_body`'s
+ * method/member arms plus a `;` terminator).
+ *
+ * Deliberately NOT run from `enrich()`'s fixed-point loop, and deliberately
+ * NOT skipping hidden (`_`-prefixed) rule names — both differ from every
+ * other pass in this file. Run mid-loop, it would fire before the loop's
+ * other passes (and clause-hoist, which runs once after the loop settles)
+ * have finished reshaping the rule, risking a wrap that clause-hoist no
+ * longer recognizes as hoistable. Run instead as the LAST step of
+ * `enrich()`, over the fully-merged `mergedRules` bag (every rule's fixed
+ * point already reached, every clause-hoist mint already folded in) — see
+ * the call site near `synthesizeFieldEnumRules`. Hidden rules are eligible
+ * because by this point they're the final atomic units; nothing later in
+ * `enrich()` restructures them further.
+ *
+ * Some `repeat(choice(...))` shapes still can't be judged safe from grammar
+ * structure alone even at this late point — e.g. python's `string_content`,
+ * whose plain-text arm is an implicit gap (no real CST child), correctly
+ * rendered today via a verbatim `$TEXT` fallback that fielding would
+ * displace. That's a corpus fact, not a structural one, so callers pass an
+ * explicit `EnrichConfig.skip` list for cases like it — see `enrich()`'s
+ * `config` parameter (skips ALL enrich passes for the named rule, not just
+ * this one).
+ *
+ * Note this still runs BEFORE `wire()`, so a rule split apart later by
+ * `variant()` (e.g. `typescript`'s `string` choice, whose two arms
+ * `variant('double')`/`variant('single')` later mint into their own
+ * `_string_double` / `_string_single` rules) is wrapped as ONE rule here —
+ * both of its repeat-choice sites get `elements` in the same call, so the
+ * second is numbered `elements_2` to avoid colliding with the first.
+ */
+function applyRepeatedChoiceBlockWrap(ruleName: string, rule: Rule): Rule {
+	const usedNames = new Set<string>();
+	collectAllFieldNamesDeep(rule, usedNames);
+	let changed = false;
+
+	const reserve = (base: string): string => {
+		if (!usedNames.has(base)) {
+			usedNames.add(base);
+			return base;
+		}
+		let n = 2;
+		while (usedNames.has(`${base}_${n}`)) n++;
+		const name = `${base}_${n}`;
+		usedNames.add(name);
+		return name;
+	};
+
+	const visit = (r: Rule): Rule => {
+		if (isRepeatType((r as { type: string }).type)) {
+			const content = (r as unknown as { content: Rule }).content;
+			const precStack: Rule[] = [];
+			let inner = content;
+			while (isPrecWrapper(inner as { type: string })) {
+				precStack.push(inner);
+				inner = (inner as unknown as { content: Rule }).content;
+			}
+			const visitedInner = visit(inner);
+			if (isChoiceType((visitedInner as { type: string }).type) && isAllArmsNodeShaped(visitedInner)) {
+				changed = true;
+				// Field wraps the WHOLE repeat (matching the codebase's existing
+				// `field(name, repeat(...))` convention — e.g. `array: {1:
+				// field('elements')}` — rather than living inside it) so an
+				// existing hand-authored `field(newName)` override targeting this
+				// same position sees a plain top-level FIELD and renames it via
+				// `resolveFieldPlaceholder`'s ordinary unwrap-and-rewrap path,
+				// instead of finding a bare REPEAT and nesting a second field
+				// around it.
+				let rebuiltInner: Rule = visitedInner;
+				for (let i = precStack.length - 1; i >= 0; i--) {
+					rebuiltInner = { ...(precStack[i] as object), content: rebuiltInner } as Rule;
+				}
+				const rebuiltRepeat = { ...(r as object), content: rebuiltInner } as Rule;
+				return makeField(reserve('elements'), rebuiltRepeat);
+			}
+			if (visitedInner === inner) return r;
+			let newContent: Rule = visitedInner;
+			for (let i = precStack.length - 1; i >= 0; i--) {
+				newContent = { ...(precStack[i] as object), content: newContent } as Rule;
+			}
+			return { ...(r as object), content: newContent } as Rule;
+		}
+		const bag = r as unknown as { members?: readonly Rule[]; content?: Rule };
+		if (Array.isArray(bag.members)) {
+			let memberChanged = false;
+			const newMembers = bag.members.map((m) => {
+				const nm = visit(m);
+				if (nm !== m) memberChanged = true;
+				return nm;
+			});
+			return memberChanged ? ({ ...(r as object), members: newMembers } as Rule) : r;
+		}
+		if (bag.content && typeof bag.content === 'object') {
+			const nc = visit(bag.content);
+			return nc !== bag.content ? ({ ...(r as object), content: nc } as Rule) : r;
+		}
+		return r;
+	};
+
+	const result = visit(rule);
+	return changed ? result : rule;
 }
 
 /**

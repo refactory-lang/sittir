@@ -2284,21 +2284,23 @@ export type TypescriptGrammar = {
 	readonly string_double: {
 		type: 'string_double';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [{ type: 'escape_sequence'; named: true }, { type: 'unescaped_double_string_fragment'; named: true }];
+		fields: {
+			elements: {
+				multiple: true;
+				required: false;
+				types: [{ type: 'escape_sequence'; named: true }, { type: 'unescaped_double_string_fragment'; named: true }];
+			};
 		};
 	};
 	readonly string_single: {
 		type: 'string_single';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [{ type: 'escape_sequence'; named: true }, { type: 'unescaped_single_string_fragment'; named: true }];
+		fields: {
+			elements_2: {
+				multiple: true;
+				required: false;
+				types: [{ type: 'escape_sequence'; named: true }, { type: 'unescaped_single_string_fragment'; named: true }];
+			};
 		};
 	};
 	readonly subscript_expression: {
@@ -2360,7 +2362,7 @@ export type TypescriptGrammar = {
 		type: 'template_literal_type';
 		named: true;
 		fields: {
-			content: {
+			elements: {
 				multiple: true;
 				required: false;
 				types: [{ type: 'string_fragment'; named: true }, { type: 'template_type'; named: true }];
@@ -2370,15 +2372,16 @@ export type TypescriptGrammar = {
 	readonly template_string: {
 		type: 'template_string';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [
-				{ type: 'escape_sequence'; named: true },
-				{ type: 'string_fragment'; named: true },
-				{ type: 'template_substitution'; named: true }
-			];
+		fields: {
+			elements: {
+				multiple: true;
+				required: false;
+				types: [
+					{ type: 'escape_sequence'; named: true },
+					{ type: 'string_fragment'; named: true },
+					{ type: 'template_substitution'; named: true }
+				];
+			};
 		};
 	};
 	readonly template_substitution: {

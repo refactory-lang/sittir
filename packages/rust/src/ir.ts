@@ -542,9 +542,6 @@ export const from = {
 			}
 		}
 	),
-	string(value: string): ReturnType<typeof F.buildStringLiteral> {
-		return F.buildStringLiteral(F.buildStringContent(value));
-	},
 	type(name: string): ReturnType<typeof F.buildTypeIdentifier> {
 		return F.buildTypeIdentifier(name);
 	},

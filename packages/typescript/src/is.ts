@@ -330,8 +330,6 @@ export interface IsGuards {
 	PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
-	StringDouble<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StringDouble };
-	StringSingle<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StringSingle };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	moduleExportName(v: { readonly $type: string | number }): v is ModuleExportName;
 	declaration(v: { readonly $type: string | number }): v is Declaration;
@@ -577,8 +575,6 @@ export interface AssertGuards {
 	PublicFieldDefinitionDeclareFirst(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
-	StringDouble(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StringDouble };
-	StringSingle(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StringSingle };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	moduleExportName(v: { readonly $type: string | number }): asserts v is ModuleExportName;
 	declaration(v: { readonly $type: string | number }): asserts v is Declaration;
@@ -1133,8 +1129,6 @@ export const is = {
 	ExportStatementDefaultClauseFrom: _g(TSKindId.ExportStatementDefaultClauseFrom),
 	ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
 	PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
-	StringDouble: _g(TSKindId.StringDouble),
-	StringSingle: _g(TSKindId.StringSingle),
 	kind: (v: { readonly $type: number }, k: string): boolean => {
 		const id = _kindIdByKind.get(k);
 		return id !== undefined && v.$type === id;
@@ -1384,8 +1378,6 @@ export const assert = {
 		'PublicFieldDefinitionDeclareFirst',
 		is.PublicFieldDefinitionDeclareFirst as _AnyGuard
 	),
-	StringDouble: _makeAssert('StringDouble', is.StringDouble as _AnyGuard),
-	StringSingle: _makeAssert('StringSingle', is.StringSingle as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	moduleExportName: _makeAssert('moduleExportName', is.moduleExportName as _AnyGuard),
 	declaration: _makeAssert('declaration', is.declaration as _AnyGuard),

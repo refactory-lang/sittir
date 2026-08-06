@@ -339,7 +339,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	field_pattern: TSKindId.FieldPattern,
 	range_pattern: TSKindId.RangePattern,
 	or_pattern: TSKindId.OrPattern,
-	string_literal: TSKindId.StringLiteral,
 	line_comment: TSKindId.LineComment,
 	block_comment: TSKindId.BlockComment,
 	_enum_variant_list_group1: TSKindId.EnumVariantListGroup1,
@@ -422,8 +421,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildRangePattern(children[0] as Parameters<typeof F.buildRangePattern>[0]);
 		case 'or_pattern':
 			return F.buildOrPattern(children[0] as Parameters<typeof F.buildOrPattern>[0]);
-		case 'string_literal':
-			return F.buildStringLiteral(...(children as Parameters<typeof F.buildStringLiteral>));
 		case 'line_comment':
 			return F.buildLineComment(children[0] as Parameters<typeof F.buildLineComment>[0]);
 		case 'block_comment':
@@ -925,6 +922,7 @@ const _K45: readonly string[] = [
 	'parameter'
 ];
 const _K46: readonly string[] = ['integer_literal', 'float_literal'];
+const _K47: readonly string[] = ['escape_sequence', 'string_content'];
 
 export function coerceToSourceFile(input?: T.SourceFile.Loose): ReturnType<typeof F.buildSourceFile> {
 	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSourceFile>;
@@ -2695,16 +2693,11 @@ export function coerceToIntegerLiteral(input: string | T.IntegerLiteral): Return
 	return F.buildIntegerLiteral(input as Parameters<typeof F.buildIntegerLiteral>[0]);
 }
 
-export function coerceToStringLiteral(
-	...input: readonly ((T.EscapeSequence | T.StringContent) | T.StringLiteral)[]
-): ReturnType<typeof F.buildStringLiteral> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.StringLiteral) {
-		const data = input[0];
-		const stored = (data as unknown as { _content?: unknown })._content;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildStringLiteral(...(children as unknown as Parameters<typeof F.buildStringLiteral>));
-	}
-	return F.buildStringLiteral(...(input as unknown as Parameters<typeof F.buildStringLiteral>));
+export function coerceToStringLiteral(input?: T.StringLiteral.Loose): ReturnType<typeof F.buildStringLiteral> {
+	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildStringLiteral>;
+	return F.buildStringLiteral({
+		elements: _resolveMany<T.EscapeSequence | T.StringContent>(input?.elements, _K47, _K0)
+	});
 }
 
 export function coerceToRawStringLiteral(input: T.RawStringLiteral.Loose): ReturnType<typeof F.buildRawStringLiteral> {

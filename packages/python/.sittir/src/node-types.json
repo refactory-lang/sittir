@@ -3732,18 +3732,9 @@
         {
           "type": "escape_sequence",
           "named": true
-        },
-        {
-          "type": "string_content_group1",
-          "named": true
         }
       ]
     }
-  },
-  {
-    "type": "string_content_group1",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "subscript",

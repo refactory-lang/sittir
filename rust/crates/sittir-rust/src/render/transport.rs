@@ -22505,14 +22505,14 @@ impl RenderableTransport for NegativeLiteralValueTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum StringLiteralContentTransportSlot {
+pub enum StringLiteralElementsTransportSlot {
     EscapeSequence(EscapeSequenceTransport),
     StringContent(StringContentTransport),
     Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for StringLiteralContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for StringLiteralElementsTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -22527,7 +22527,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringLiteralContentTransportSlo
                         StringContentTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StringLiteralContentTransportSlot",
+                        "unknown kind id {other} in StringLiteralElementsTransportSlot",
                     ))),
                 }
             }
@@ -22538,7 +22538,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringLiteralContentTransportSlo
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in StringLiteralContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in StringLiteralElementsTransportSlot")
                 )?;
                 match kind_id {
                     125 => Ok(Self::EscapeSequence(
@@ -22548,62 +22548,62 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringLiteralContentTransportSlo
                         StringContentTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StringLiteralContentTransportSlot",
+                        "unknown kind id {other} in StringLiteralElementsTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("StringLiteralContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("StringLiteralElementsTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StringLiteralContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for StringLiteralElementsTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("StringLiteralContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("StringLiteralElementsTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StringLiteralContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StringLiteralElementsTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        StringLiteralContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        StringLiteralElementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StringLiteralContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StringLiteralElementsTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        StringLiteralContentTransportSlot::to_napi_value(env, *val)
+        StringLiteralElementsTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn string_literal_content_transport_slot_to_any(t: StringLiteralContentTransportSlot) -> AnyTransport {
+fn string_literal_elements_transport_slot_to_any(t: StringLiteralElementsTransportSlot) -> AnyTransport {
     match t {
-        StringLiteralContentTransportSlot::EscapeSequence(inner) => AnyTransport::EscapeSequence(inner),
-        StringLiteralContentTransportSlot::StringContent(inner) => AnyTransport::StringContent(inner),
-        StringLiteralContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        StringLiteralElementsTransportSlot::EscapeSequence(inner) => AnyTransport::EscapeSequence(inner),
+        StringLiteralElementsTransportSlot::StringContent(inner) => AnyTransport::StringContent(inner),
+        StringLiteralElementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for StringLiteralContentTransportSlot {
+impl RenderableTransport for StringLiteralElementsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            StringLiteralContentTransportSlot::EscapeSequence(inner) => render_escape_sequence(inner, dest),
-            StringLiteralContentTransportSlot::StringContent(inner) => render_string_content(inner, dest),
-            StringLiteralContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            StringLiteralElementsTransportSlot::EscapeSequence(inner) => render_escape_sequence(inner, dest),
+            StringLiteralElementsTransportSlot::StringContent(inner) => render_string_content(inner, dest),
+            StringLiteralElementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -35341,8 +35341,8 @@ pub struct StringLiteralTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<Vec<StringLiteralContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Option<Vec<StringLiteralElementsTransportSlot>>,
 }
 
 impl RenderableTransport for StringLiteralTransport {
@@ -54432,18 +54432,18 @@ fn render_integer_literal(t: &IntegerLiteralTransport, dest: &mut dyn ::std::fmt
 }
 
 fn render_string_literal(node: &StringLiteralTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.content.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.elements.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let content_owned = node.content.as_deref().unwrap_or(&[]);
-    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
+    let elements_owned = node.elements.as_deref().unwrap_or(&[]);
+    let elements_buf: Vec<::sittir_core::filters::Renderable<'_>> = elements_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = StringLiteralTemplate {
-        content: ListNonterminalView {
-            items: content_buf.as_slice(),
+        elements: ListNonterminalView {
+            items: elements_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,

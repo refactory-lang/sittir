@@ -4695,8 +4695,8 @@ export interface NegativeLiteral {
 
 export interface StringLiteral {
 	readonly $type: TSKindId.StringLiteral;
-	readonly _content?: readonly (EscapeSequence | StringContent)[];
-	contents(): readonly (EscapeSequence | StringContent)[];
+	readonly _elements?: readonly (EscapeSequence | StringContent)[];
+	elements(): readonly (EscapeSequence | StringContent)[];
 }
 
 export interface RawStringLiteral {
