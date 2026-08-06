@@ -13,3 +13,4 @@
 13. NEW: Make examples realizable Refer to TODOs in example code
 14. NEW: collapse logic for "unnamed" children vs. "named" children (from factory surface PoV), broadly simplify emitter logic. 
 15. Refactor generated manifest logic to distinguish between native impacting codegen changes, and js impacting changes. js-only changes should not require trigger native rebuild. (Base on changes to generated output and/or core source, not changes to codegen source)
+16. Consider using polymorph shape (perhaps resurrecting AssembledPolymorph as a subclass of AssembledBranch) to distinguish between top-level sequences and top-level choices (non-supertype), which permit distinct emissions for each choice arm. Consider collapsing AssembledGroup into branch.  Finally, consider using node.hidden as ssot for whether a factory emitted and SlotClass as ssot for emitting branch factories (getting rid of multiple varying interpretations of the same branch)
