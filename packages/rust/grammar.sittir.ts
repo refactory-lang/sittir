@@ -102,6 +102,10 @@ export default grammar(
 				match_block_arms: ($) => seq(repeat($.match_arm), field('last_arm', $.last_match_arm))
 			},
 			transforms: {
+				parameter: {
+					'1': field('name')
+				},
+
 				token_repetition: {
 					4: field('separator'),
 					5: field('operator')
@@ -132,14 +136,6 @@ export default grammar(
 				use_bounds: {
 					2: field('bounds')
 				},
-				// last_match_arm: seq(repeat(attrs)[0], field('pattern')[1], '=>'[2],
-				//   field('value')[3], optional(',')[4]).
-				// Pos 4's optional trailing comma is an unnamed anonymous token — never
-				// captured, so a source last-arm's trailing ',' was silently dropped on
-				// render (3 corpus AST mismatches: [pattern,"=>",value,","] vs
-				// [pattern,"=>",value]). Field it ('4/0' = the optional's content) so
-				// read captures and render preserves it; same marker-promotion pattern
-				// as async_block's move_marker.
 				last_match_arm: {
 					'0': field('attributes'),
 					'4/0': field('comma')
@@ -173,8 +169,6 @@ export default grammar(
 					'1/0': field('async_marker'),
 					'2/0': field('move_marker')
 				},
-
-				extern_modifier: {},
 
 				function_modifiers: {
 					_: field('modifier')
@@ -258,8 +252,6 @@ export default grammar(
 					2: field('pattern')
 				},
 
-				reference_type: {},
-
 				self_parameter: {
 					0: field('reference')
 				},
@@ -298,8 +290,6 @@ export default grammar(
 					0: field('operator'),
 					1: field('operand')
 				},
-
-				variadic_parameter: {},
 
 				expression_statement: {
 					0: variant('with_semi'),
@@ -511,7 +501,7 @@ export default grammar(
 						)
 					)
 			},
-
+			//TODO: remove
 			expectTestFailures: {
 				async_block: '#130 — factory returns block $type / no $render accessor',
 				block_comment: '#130 — factory output has no $render accessor',
@@ -521,10 +511,9 @@ export default grammar(
 				variadic_parameter: '#130 — factory output has no $render accessor'
 			},
 			renderAs: (_$) => ({
-				_outer_line_doc_comment_marker: string('/'), // /// outer line doc
-				_inner_line_doc_comment_marker: string('!'), // //! inner line doc
-				_outer_block_doc_comment_marker: string('*'), // /** outer block doc */
-				_inner_block_doc_comment_marker: string('!'), // /*! inner block doc */
+				_inner_line_doc_comment_marker: string('!'),
+				_outer_block_doc_comment_marker: string('*'),
+				_inner_block_doc_comment_marker: string('!'),
 				_raw_string_literal_start: string('r#"'),
 				_raw_string_literal_end: string('"#')
 			})

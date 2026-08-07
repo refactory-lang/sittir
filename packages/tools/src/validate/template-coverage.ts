@@ -97,8 +97,13 @@ function jinjaInterpolationsToLegacy(body: string): string {
 	);
 }
 
-function loadRulesFromPath(templatesPath: string): Record<string, TemplateRule> {
-	return loadRulesFromTemplatesPath(templatesPath, (_kind, body) => jinjaBodyToLegacyRule(body));
+function loadRulesFromPath(templatesPath: string): { rules: Record<string, TemplateRule>; rawByKind: Record<string, string> } {
+	const rawByKind: Record<string, string> = {};
+	const rules = loadRulesFromTemplatesPath(templatesPath, (kind, body) => {
+		rawByKind[kind] = body;
+		return jinjaBodyToLegacyRule(body);
+	});
+	return { rules, rawByKind };
 }
 import type { TemplateRule, TemplateRuleObject } from '@sittir/types';
 
@@ -130,7 +135,7 @@ export interface CoverageIssue {
 
 export function validateTemplateCoverage(grammar: string, templatesPath: string): TemplateCoverageResult {
 	const entries = loadRawEntries(grammar);
-	const rules = loadRulesFromPath(templatesPath);
+	const { rules, rawByKind } = loadRulesFromPath(templatesPath);
 	// Tree-sitter's `node-types.json` flattens nested-field-paths to the
 	// top level: `field('outer', wrapper(seq(literals?, field('inner',
 	// X))))` declares BOTH `outer` (whose runtime value is the
@@ -148,6 +153,7 @@ export function validateTemplateCoverage(grammar: string, templatesPath: string)
 	// before.
 	const grammarJson = loadGrammarJson(grammar);
 	const hoistedOuterByKind = grammarJson ? computeHoistedOuterFields(grammarJson) : new Map<string, Set<string>>();
+	const unionSlotRoutedByKind = loadUnionSlotRoutedFields(grammar);
 
 	const issues: CoverageIssue[] = [];
 	let total = 0;
@@ -168,11 +174,21 @@ export function validateTemplateCoverage(grammar: string, templatesPath: string)
 		// hidden alias-source kinds. Fall back to the underscore form
 		// when the visible name has no direct rule — `wrapNode` and
 		// `render.ts` perform the same remap on the runtime side.
-		const rule = rules[entry.type] ?? rules[`_${entry.type}`];
+		const resolvedKind = entry.type in rules ? entry.type : `_${entry.type}`;
+		const rule = rules[resolvedKind];
 		if (rule === undefined) continue; // validate-renderable catches this.
+		const rawTemplate = rawByKind[resolvedKind];
+		const templatePath = join(templatesPath, `${resolvedKind}.jinja`);
 
 		total++;
-		const kindIssues = checkRule(entry, rule, hoistedOuterByKind.get(entry.type) ?? new Set());
+		const kindIssues = checkRule(
+			entry,
+			rule,
+			hoistedOuterByKind.get(entry.type) ?? new Set(),
+			unionSlotRoutedByKind.get(entry.type),
+			rawTemplate,
+			templatePath
+		);
 		if (kindIssues.length === 0) {
 			pass++;
 		} else {
@@ -243,7 +259,14 @@ function checkVariantsForLiteralLeaks(entry: RawNodeEntry, variants: NamedTempla
 	return issues;
 }
 
-function checkRule(entry: RawNodeEntry, rule: TemplateRule, hoistedOuterFields: Set<string>): CoverageIssue[] {
+export function checkRule(
+	entry: RawNodeEntry,
+	rule: TemplateRule,
+	hoistedOuterFields: Set<string>,
+	unionSlotRouted: { unionSlot: string; fields: Set<string> } | undefined,
+	rawTemplate: string | undefined,
+	templatePath: string
+): CoverageIssue[] {
 	const fields = entry.fields ?? {};
 	const fieldNames = Object.keys(fields);
 	const issues: CoverageIssue[] = [];
@@ -279,15 +302,32 @@ function checkRule(entry: RawNodeEntry, rule: TemplateRule, hoistedOuterFields: 
 		// surrounding template text. See `hoistInnerFieldsForTemplate`
 		// in `compiler/simplify.ts`.
 		if (hoistedOuterFields.has(fname)) continue;
-		// Show all variant bodies so the caller can see which one(s) to patch.
+		// Union-slot routing (collect-slots.ts): `fname`'s arm was folded
+		// into a shared union slot alongside unnamed-nonterminal arms —
+		// its data flows through that slot at render/read time even
+		// though the template only names the slot, not `fname` itself.
+		// Exempt ONLY when the stamped fact says THIS field's arm is
+		// actually a member of the union slot AND the template references
+		// that slot (a template that dropped the slot placeholder while
+		// still routing a field into it is a real bug, not exempt).
+		if (unionSlotRouted?.fields.has(fname) && unionPlaceholders.has(unionSlotRouted.unionSlot)) continue;
+		// Quote the real jinja source so the message points at what's
+		// actually on disk — `variants[].template` is this checker's own
+		// `$NAME`/`$$$NAME` placeholder DSL (see `jinjaBodyToLegacyRule`),
+		// not jinja syntax, and showing it verbatim reads as a broken
+		// template reference. Fall back to the legacy DSL only when no
+		// raw source was captured for this kind (rule came from a
+		// non-jinja-file source).
 		const bodies =
-			variants.length === 1
-				? JSON.stringify(variants[0]!.template)
-				: variants.map((v) => `${v.label}=${JSON.stringify(v.template)}`).join(' | ');
+			rawTemplate !== undefined
+				? JSON.stringify(rawTemplate.trim())
+				: variants.length === 1
+					? JSON.stringify(variants[0]!.template)
+					: variants.map((v) => `${v.label}=${JSON.stringify(v.template)}`).join(' | ');
 		issues.push({
 			kind: entry.type,
 			type: 'missing-field',
-			message: `field '${fname}' declared but not referenced in any template: ${bodies}`
+			message: `${templatePath}: field '${fname}' declared but not referenced: ${bodies}`
 		});
 	}
 
@@ -675,4 +715,43 @@ function loadGrammarJson(grammar: string): GrammarJson | null {
 	const path = join(packagesDir, grammar, '.sittir', 'src', 'grammar.json');
 	if (!existsSync(path)) return null;
 	return JSON.parse(readFileSync(path, 'utf8')) as GrammarJson;
+}
+
+interface UnionSlotRoutedDiagnostic {
+	code: string;
+	ownerKind?: string;
+	details?: { unionSlot?: string; degenerateFields?: string[] };
+}
+
+/**
+ * Load `union-slot-routed` diagnostics from `packages/<grammar>/.sittir/grammar-diagnostics.json`
+ * and index them by (visible) kind name → the union slot name + the set of
+ * field-labeled arm names collect-slots folded into it.
+ *
+ * @remarks
+ * This is the stamped fact `collect-slots.ts` computes when a field-labeled
+ * CHOICE arm merges into a shared union slot (rendered as `{{ content }}`)
+ * alongside unnamed-nonterminal arms — the field's data is not lost, just
+ * routed through the union slot instead of its own named placeholder. Only a
+ * field name present in THIS map for THIS kind is exempt from the
+ * missing-field check; a field absent from the map (e.g. `call_expression`'s
+ * fields, which have no slot anywhere, union or otherwise) gets no exemption.
+ * `ownerKind` in the diagnostic carries the internal (possibly `_`-prefixed
+ * hidden) rule name; strip the leading underscore to match node-types.json's
+ * visible kind names.
+ */
+function loadUnionSlotRoutedFields(grammar: string): Map<string, { unionSlot: string; fields: Set<string> }> {
+	const out = new Map<string, { unionSlot: string; fields: Set<string> }>();
+	const path = join(packagesDir, grammar, '.sittir', 'grammar-diagnostics.json');
+	if (!existsSync(path)) return out;
+	const diagnostics = JSON.parse(readFileSync(path, 'utf8')) as UnionSlotRoutedDiagnostic[];
+	for (const d of diagnostics) {
+		if (d.code !== 'union-slot-routed') continue;
+		const unionSlot = d.details?.unionSlot;
+		const fields = d.details?.degenerateFields;
+		if (d.ownerKind === undefined || unionSlot === undefined || fields === undefined || fields.length === 0) continue;
+		const kind = d.ownerKind.replace(/^_+/, '');
+		out.set(kind, { unionSlot, fields: new Set(fields) });
+	}
+	return out;
 }

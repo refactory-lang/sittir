@@ -1590,7 +1590,7 @@ export function coerceToParameter(input: T.Parameter.Loose): ReturnType<typeof F
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildParameter>;
 	return F.buildParameter({
 		mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
-		pattern: _requireField('parameter', 'pattern', _resolveOne<T.Pattern | T.Self>(input.pattern, _K24, _K22)),
+		name: _requireField('parameter', 'name', _resolveOne<T.Pattern | T.Self>(input.name, _K24, _K22)),
 		type: _requireField('parameter', 'type', _resolveOne<T._Type>(input.type, _K12, _K13))
 	});
 }

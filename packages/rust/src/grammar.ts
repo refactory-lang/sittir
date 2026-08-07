@@ -1438,7 +1438,7 @@ export type RustGrammar = {
 		named: true;
 		fields: {
 			mutable_specifier: { multiple: false; required: false; types: [{ type: 'mutable_specifier'; named: true }] };
-			pattern: {
+			name: {
 				multiple: false;
 				required: true;
 				types: [{ type: '_pattern'; named: true }, { type: 'self'; named: true }];

@@ -2759,7 +2759,7 @@ export const FIELD_MAP: Record<
 	ordered_field_declaration_list: [{ name: 'attributes', required: false, multiple: false }],
 	parameter: [
 		{ name: 'mutableSpecifier', required: false, multiple: false },
-		{ name: 'pattern', required: true, multiple: false },
+		{ name: 'name', required: true, multiple: false },
 		{ name: 'type', required: true, multiple: false }
 	],
 	parameters: [{ name: 'parametersGroup1', required: false, multiple: false }],

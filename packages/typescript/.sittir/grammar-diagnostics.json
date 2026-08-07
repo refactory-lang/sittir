@@ -15,7 +15,13 @@
     "grammar": "typescript",
     "ownerKind": "public_field_definition",
     "message": "[collect-slots] kind 'public_field_definition': choice rule:public_field_definition:root routes 3 unnamed-nonterminal arm(s) [public_field_definition_static_mods, public_field_definition_abstract_first, public_field_definition_readonly_first] into one union slot alongside 1 label-routed arm(s) [field(accessor_marker):\"accessor\"] (PR 1.5)",
-    "canProceed": true
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "accessor_marker"
+      ]
+    }
   },
   {
     "scope": "grammar",
@@ -24,7 +30,13 @@
     "grammar": "typescript",
     "ownerKind": "_enum_body_group1",
     "message": "[collect-slots] kind '_enum_body_group1': choice rule:_enum_body_group1:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
-    "canProceed": true
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "name"
+      ]
+    }
   },
   {
     "scope": "grammar",
@@ -33,7 +45,13 @@
     "grammar": "typescript",
     "ownerKind": "_export_statement_default_decl_arm",
     "message": "[collect-slots] kind '_export_statement_default_decl_arm': choice rule:_export_statement_default_decl_arm:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
-    "canProceed": true
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "declaration"
+      ]
+    }
   },
   {
     "scope": "grammar",
@@ -42,7 +60,13 @@
     "grammar": "typescript",
     "ownerKind": "_export_statement_default_default_kw",
     "message": "[collect-slots] kind '_export_statement_default_default_kw': choice rule:_export_statement_default_default_kw:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
-    "canProceed": true
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "declaration"
+      ]
+    }
   },
   {
     "scope": "grammar",
@@ -220,7 +244,7 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "41 referenced kind(s) resolved no parser kindId",
+    "message": "39 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -244,9 +268,7 @@
         "_jsx_start_opening_element",
         "_jsx_start_opening_element_group1",
         "_jsx_string",
-        "_kw_asserts",
         "_kw_optional_marker",
-        "_kw_type_predicate",
         "_mapped_type_clause_optional1",
         "_operator",
         "_semicolon",
@@ -392,15 +414,13 @@
   },
   {
     "code": "kindid-unclassified-symbols",
-    "message": "6 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "message": "4 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
       "kinds": [
         "__number_operator",
         "_augmented_assignment_expression_operator",
-        "_kw_asserts",
-        "_kw_type_predicate",
         "_operator",
         "_unary_expression_operator"
       ]

@@ -3345,7 +3345,7 @@
         },
         {
           "type": "FIELD",
-          "name": "pattern",
+          "name": "name",
           "content": {
             "type": "CHOICE",
             "members": [
@@ -3358,6 +3358,9 @@
                 "name": "self"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -10842,9 +10845,6 @@
         }
       }
     },
-    "_field_pattern_shorthand": {
-      "type": "BLANK"
-    },
     "_field_pattern_named": {
       "type": "SEQ",
       "members": [
@@ -11065,9 +11065,6 @@
     "_mod_item_external": {
       "type": "STRING",
       "value": ";"
-    },
-    "_mod_item_inline": {
-      "type": "BLANK"
     },
     "_or_pattern_binary": {
       "type": "PREC_LEFT",
@@ -11437,9 +11434,6 @@
         }
       ]
     },
-    "_kw_separator": {
-      "type": "BLANK"
-    },
     "_kw_operator": {
       "type": "PREC_LEFT",
       "value": 1,
@@ -11448,45 +11442,9 @@
         "value": ".."
       }
     },
-    "_kw_initializers": {
-      "type": "BLANK"
-    },
-    "_kw_elements": {
-      "type": "BLANK"
-    },
-    "_kw_parameters": {
-      "type": "BLANK"
-    },
-    "_kw_fields": {
-      "type": "BLANK"
-    },
-    "_kw_bounds": {
-      "type": "BLANK"
-    },
-    "_kw_attributes": {
-      "type": "BLANK"
-    },
     "_kw_comma": {
       "type": "STRING",
       "value": ","
-    },
-    "_kw_last_arm": {
-      "type": "BLANK"
-    },
-    "_kw_path": {
-      "type": "BLANK"
-    },
-    "_kw_trailing_expression": {
-      "type": "BLANK"
-    },
-    "_kw_left": {
-      "type": "BLANK"
-    },
-    "_kw_right": {
-      "type": "BLANK"
-    },
-    "_kw_modifier": {
-      "type": "BLANK"
     },
     "_kw_pub": {
       "type": "STRING",
@@ -11500,61 +11458,13 @@
       "type": "STRING",
       "value": "::"
     },
-    "_kw_object": {
-      "type": "BLANK"
-    },
-    "_kw_index": {
-      "type": "BLANK"
-    },
-    "_kw_token_tree": {
-      "type": "BLANK"
-    },
-    "_kw_value": {
-      "type": "BLANK"
-    },
     "_pointer_type_const": {
       "type": "STRING",
       "value": "const"
     },
-    "_pointer_type_mut": {
-      "type": "BLANK"
-    },
-    "_kw_raw_string_literal_start": {
-      "type": "BLANK"
-    },
-    "_kw_string_content": {
-      "type": "BLANK"
-    },
-    "_kw_raw_string_literal_end": {
-      "type": "BLANK"
-    },
-    "_kw_start": {
-      "type": "BLANK"
-    },
-    "_kw_end": {
-      "type": "BLANK"
-    },
-    "_kw_pattern": {
-      "type": "BLANK"
-    },
     "_kw_reference": {
       "type": "STRING",
       "value": "&"
-    },
-    "_kw_statements": {
-      "type": "BLANK"
-    },
-    "_kw_type": {
-      "type": "BLANK"
-    },
-    "_kw_where_clause": {
-      "type": "BLANK"
-    },
-    "_kw_trailing_where_clause": {
-      "type": "BLANK"
-    },
-    "_kw_operand": {
-      "type": "BLANK"
     },
     "_expression_statement_with_semi": {
       "type": "SEQ",
@@ -11576,15 +11486,9 @@
         }
       ]
     },
-    "_expression_statement_block_ending": {
-      "type": "BLANK"
-    },
     "_foreign_mod_item_semi": {
       "type": "STRING",
       "value": ";"
-    },
-    "_foreign_mod_item_body": {
-      "type": "BLANK"
     },
     "_match_arm_with_comma": {
       "type": "PREC_RIGHT",

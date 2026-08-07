@@ -1566,7 +1566,7 @@ export function buildVariadicParameter(config: Partial<T.VariadicParameter.Confi
 
 export function buildParameter(config: T.Parameter.Config) {
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
-	const _pattern = config.pattern;
+	const _name = config.name;
 	const _type = config.type;
 	return withMethods(
 		withAccessors(
@@ -1575,18 +1575,18 @@ export function buildParameter(config: T.Parameter.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_mutable_specifier,
-				_pattern,
+				_name,
 				_type,
 				$with: {
 					mutableSpecifier: (value?: NonNullable<Parameters<typeof buildParameter>[0]>['mutableSpecifier']) =>
 						buildParameter({ ...config, mutableSpecifier: value }),
-					pattern: (value: T.Pattern | T.Self) => buildParameter({ ...config, pattern: value }),
+					name: (value: T.Pattern | T.Self) => buildParameter({ ...config, name: value }),
 					type: (value: T._Type) => buildParameter({ ...config, type: value })
 				}
 			},
 			{
 				mutableSpecifier: () => _mutable_specifier,
-				pattern: () => _pattern,
+				name: () => _name,
 				type: () => _type
 			}
 		),

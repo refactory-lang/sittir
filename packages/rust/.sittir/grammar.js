@@ -3085,7 +3085,7 @@ function unifyChoiceArmFieldNames(content, unifiedName) {
   if (!Array.isArray(members)) return content;
   let anyChanged = false;
   const newMembers = members.map((m) => {
-    if (isEnrichShapedFieldWrapper(m) && m.name !== unifiedName) {
+    if (isFieldLike(m) && m.name !== unifiedName) {
       anyChanged = true;
       return { ...m, name: unifiedName, metadata: makeRuleMetadata({ fieldSource: "override" }) };
     }
@@ -3096,13 +3096,16 @@ function unifyChoiceArmFieldNames(content, unifiedName) {
 }
 function resolveFieldPlaceholder(patch, originalMember, precStack) {
   let content = originalMember;
-  if (isEnrichShapedFieldWrapper(content)) {
+  if (isFieldLike(content)) {
     const overrideName = patch.name;
-    const enrichName = content.name ?? "(unknown)";
-    if (overrideName === enrichName && !process.env.SITTIR_QUIET) {
+    const existingName = content.name ?? "(unknown)";
+    const isEnrichShaped = isEnrichShapedFieldWrapper(content);
+    if (overrideName === existingName && !process.env.SITTIR_QUIET) {
       const parentKind = wireGetCurrentRuleKind() ?? "(unknown)";
+      const label = isEnrichShaped ? "an enrich-labeled FIELD" : "an existing FIELD";
+      const advice = isEnrichShaped ? "enrich will cover it automatically." : "it already has this name.";
       process.stderr.write(
-        `transform: override field('${overrideName}') on '${parentKind}' wraps an enrich-labeled FIELD \u2014 duplicate name ('${overrideName}'). Drop the override entry; enrich will cover it automatically.
+        `transform: override field('${overrideName}') on '${parentKind}' wraps ${label} \u2014 duplicate name ('${overrideName}'). Drop the override entry; ${advice}
 `
       );
     }
@@ -3870,6 +3873,9 @@ var grammar_sittir_default = grammar(
         match_block_arms: ($) => seq(repeat($.match_arm), field2("last_arm", $.last_match_arm))
       },
       transforms: {
+        parameter: {
+          "1": field2("name")
+        },
         token_repetition: {
           4: field2("separator"),
           5: field2("operator")
@@ -3896,14 +3902,6 @@ var grammar_sittir_default = grammar(
         use_bounds: {
           2: field2("bounds")
         },
-        // last_match_arm: seq(repeat(attrs)[0], field('pattern')[1], '=>'[2],
-        //   field('value')[3], optional(',')[4]).
-        // Pos 4's optional trailing comma is an unnamed anonymous token — never
-        // captured, so a source last-arm's trailing ',' was silently dropped on
-        // render (3 corpus AST mismatches: [pattern,"=>",value,","] vs
-        // [pattern,"=>",value]). Field it ('4/0' = the optional's content) so
-        // read captures and render preserves it; same marker-promotion pattern
-        // as async_block's move_marker.
         last_match_arm: {
           "0": field2("attributes"),
           "4/0": field2("comma")
@@ -3930,7 +3928,6 @@ var grammar_sittir_default = grammar(
           "1/0": field2("async_marker"),
           "2/0": field2("move_marker")
         },
-        extern_modifier: {},
         function_modifiers: {
           _: field2("modifier")
         },
@@ -3997,7 +3994,6 @@ var grammar_sittir_default = grammar(
         reference_pattern: {
           2: field2("pattern")
         },
-        reference_type: {},
         self_parameter: {
           0: field2("reference")
         },
@@ -4028,7 +4024,6 @@ var grammar_sittir_default = grammar(
           0: field2("operator"),
           1: field2("operand")
         },
-        variadic_parameter: {},
         expression_statement: {
           0: variant("with_semi"),
           1: variant("block_ending")
@@ -4215,6 +4210,7 @@ var grammar_sittir_default = grammar(
           )
         )
       },
+      //TODO: remove
       expectTestFailures: {
         async_block: "#130 \u2014 factory returns block $type / no $render accessor",
         block_comment: "#130 \u2014 factory output has no $render accessor",
@@ -4224,14 +4220,9 @@ var grammar_sittir_default = grammar(
         variadic_parameter: "#130 \u2014 factory output has no $render accessor"
       },
       renderAs: (_$) => ({
-        _outer_line_doc_comment_marker: string("/"),
-        // /// outer line doc
         _inner_line_doc_comment_marker: string("!"),
-        // //! inner line doc
         _outer_block_doc_comment_marker: string("*"),
-        // /** outer block doc */
         _inner_block_doc_comment_marker: string("!"),
-        // /*! inner block doc */
         _raw_string_literal_start: string('r#"'),
         _raw_string_literal_end: string('"#')
       })

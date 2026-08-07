@@ -332,6 +332,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	formal_parameters: TSKindId.FormalParameters,
 	rest_pattern: TSKindId.RestPattern,
 	decorator_parenthesized_expression: TSKindId.DecoratorParenthesizedExpression,
+	extends_clause: TSKindId.ExtendsClause,
 	implements_clause: TSKindId.ImplementsClause,
 	ambient_declaration: TSKindId.AmbientDeclaration,
 	enum_body: TSKindId.EnumBody,
@@ -399,6 +400,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildDecoratorParenthesizedExpression(
 				children[0] as Parameters<typeof F.buildDecoratorParenthesizedExpression>[0]
 			);
+		case 'extends_clause':
+			return F.buildExtendsClause(...(children as Parameters<typeof F.buildExtendsClause>));
 		case 'implements_clause':
 			return F.buildImplementsClause(...(children as Parameters<typeof F.buildImplementsClause>));
 		case 'ambient_declaration':
@@ -1060,18 +1063,18 @@ export function coerceToImportSpecifier(input: T.ImportSpecifier.Loose): ReturnT
 }
 
 export function coerceToImportAttribute(input: T.ImportAttribute.Loose): ReturnType<typeof F.buildImportAttribute> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ImportAttribute)
-		return input as unknown as ReturnType<typeof F.buildImportAttribute>;
-	return F.buildImportAttribute(
-		_requireField(
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildImportAttribute>;
+	return F.buildImportAttribute({
+		attributeKind: _requireField(
 			'import_attribute',
-			'object',
-			_resolveOneBranch<'with' | 'assert' | T.Object>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'object' in input ? input.object : input,
-				'object'
-			)
-		)
-	);
+			'attributeKind',
+			coerceKindEnumStorage(_resolveOne<'with' | 'assert'>(input.attributeKind, _K0, _K0), [
+				['with', TSKindId.With] as const,
+				['assert', TSKindId.Assert] as const
+			])
+		),
+		object: _resolveOneBranch<T.Object>(input.object, 'object') ?? F.buildObject()
+	});
 }
 
 export function coerceToExpressionStatement(
@@ -2482,14 +2485,16 @@ export function coerceToImportRequireClause(
 	});
 }
 
-export function coerceToExtendsClause(input: T.ExtendsClause.Loose): ReturnType<typeof F.buildExtendsClause> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExtendsClause>;
-	const _ne_values = _resolveMany<T.Expression>(input.value, _K5, _K10);
-	_assertNonEmpty(_ne_values, 'extends_clause.values');
-	return F.buildExtendsClause({
-		value: _ne_values,
-		typeArguments: _resolveManyBranch<T.TypeArguments>(input.typeArguments, 'type_arguments')
-	});
+export function coerceToExtendsClause(
+	...input: readonly (T.ExtendsClauseSingle | T.ExtendsClause)[]
+): ReturnType<typeof F.buildExtendsClause> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExtendsClause) {
+		const data = input[0];
+		const stored = (data as unknown as { _extends_clause_single?: unknown })._extends_clause_single;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildExtendsClause(...(children as unknown as Parameters<typeof F.buildExtendsClause>));
+	}
+	return F.buildExtendsClause(...(input as unknown as Parameters<typeof F.buildExtendsClause>));
 }
 
 export function coerceToImplementsClause(
@@ -2804,7 +2809,7 @@ export function coerceToAssertsAnnotation(
 		_requireField(
 			'asserts_annotation',
 			'asserts',
-			_resolveOneBranch<':' | T.Asserts>(
+			_resolveOneBranch<T.Asserts>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'asserts' in input ? input.asserts : input,
 				'asserts'
 			)
@@ -2959,7 +2964,7 @@ export function coerceToTypePredicateAnnotation(
 		_requireField(
 			'type_predicate_annotation',
 			'typePredicate',
-			_resolveOneBranch<':' | T.TypePredicate>(
+			_resolveOneBranch<T.TypePredicate>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'typePredicate' in input
 					? input.typePredicate
 					: input,

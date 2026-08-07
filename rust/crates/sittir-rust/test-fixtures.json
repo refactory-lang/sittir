@@ -4455,7 +4455,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "x",
+                    "_name": "x",
                     "_type": "i32",
                     "$other": [
                       5
@@ -4480,7 +4480,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "y",
+                    "_name": "y",
                     "_type": "i32",
                     "$other": [
                       5
@@ -4616,7 +4616,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "slice",
+                    "_name": "slice",
                     "_type": {
                       "$type": 233,
                       "$source": 0,
@@ -5133,7 +5133,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "x",
+                    "_name": "x",
                     "_type": {
                       "$type": 236,
                       "$source": 0,
@@ -5348,7 +5348,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "x",
+                    "_name": "x",
                     "_type": "i32",
                     "$other": [
                       5
@@ -5399,7 +5399,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "x",
+                    "_name": "x",
                     "_type": "i64",
                     "$other": [
                       5
@@ -5621,7 +5621,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "bar",
+                    "_name": "bar",
                     "_type": {
                       "$type": 236,
                       "$source": 0,
@@ -5842,7 +5842,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn main(){  }fn add(x:i32,y:i32)->i32{ return x+y; }fn takes_slice(slice:&str){ println!(\"Got: {}\",slice); }fn foo()->[u32;2]{ return[1,2]; }fn foo()->(u32,u16){ return(1,2); }fn foo(){ return }fn foo(x:impl FnOnce()->result::Result<T,E>){  }fn foo(#[attr]x:i32,#[attr]x:i64){  }fn accumulate(self)->Machine<{ State::Accumulate }>{  }fn foo(bar:impl for<'a>Baz<Quux<'a>>){  }",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))))) return_type: (primitive_type) body: (block (expression_statement (expression_statement_with_semi expression: (return_expression expression: (binary_expression left: (identifier) right: (identifier))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (primitive_type)))))) body: (block (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal (string_content))) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier))))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (array_type element: (primitive_type) length: (integer_literal)) body: (block (expression_statement (expression_statement_with_semi expression: (return_expression expression: (array_expression (array_expression_list (arguments_group1 (attributed_argument (integer_literal)) (attributed_argument (integer_literal)))))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (tuple_type type: (primitive_type) type: (primitive_type)) body: (block (expression_statement (expression_statement_with_semi expression: (return_expression expression: (tuple_expression elements: (integer_literal) elements: (integer_literal))))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block trailing_expression: (return_expression))) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_argument (type_identifier)) (type_argument (type_identifier)))))))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter pattern: (identifier) type: (primitive_type))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))))) return_type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier)))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (abstract_type type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))))))))))))) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))) (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) return_type: (primitive_type) body: (block (expression_statement (expression_statement_with_semi expression: (return_expression expression: (binary_expression left: (identifier) right: (identifier))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (reference_type type: (primitive_type)))))) body: (block (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal (string_content))) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier))))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (array_type element: (primitive_type) length: (integer_literal)) body: (block (expression_statement (expression_statement_with_semi expression: (return_expression expression: (array_expression (array_expression_list (arguments_group1 (attributed_argument (integer_literal)) (attributed_argument (integer_literal)))))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (tuple_type type: (primitive_type) type: (primitive_type)) body: (block (expression_statement (expression_statement_with_semi expression: (return_expression expression: (tuple_expression elements: (integer_literal) elements: (integer_literal))))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block trailing_expression: (return_expression))) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_argument (type_identifier)) (type_argument (type_identifier)))))))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type))) (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))))) return_type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier)))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (abstract_type type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))))))))))))) body: (block)))",
     "wrappedText": "fn main(){  }fn add(x:i32,y:i32)->i32{ return x+y; }fn takes_slice(slice:&str){ println!(\"Got: {}\",slice); }fn foo()->[u32;2]{ return[1,2]; }fn foo()->(u32,u16){ return(1,2); }fn foo(){ return }fn foo(x:impl FnOnce()->result::Result<T,E>){  }fn foo(#[attr]x:i32,#[attr]x:i64){  }fn accumulate(self)->Machine<{ State::Accumulate }>{  }fn foo(bar:impl for<'a>Baz<Quux<'a>>){  }",
     "wrappedOffset": 0
   },
@@ -5928,7 +5928,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "x",
+                "_name": "x",
                 "_type": "i32",
                 "$other": [
                   5
@@ -5953,7 +5953,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "y",
+                "_name": "y",
                 "_type": "i32",
                 "$other": [
                   5
@@ -6071,7 +6071,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn add(x:i32,y:i32)->i32{ return x+y; }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))))) return_type: (primitive_type) body: (block (expression_statement (expression_statement_with_semi expression: (return_expression expression: (binary_expression left: (identifier) right: (identifier)))))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))) (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) return_type: (primitive_type) body: (block (expression_statement (expression_statement_with_semi expression: (return_expression expression: (binary_expression left: (identifier) right: (identifier)))))))",
     "wrappedText": "fn add(x:i32,y:i32)->i32{ return x+y; }",
     "wrappedOffset": 0
   },
@@ -6105,7 +6105,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "slice",
+                "_name": "slice",
                 "_type": {
                   "$type": 233,
                   "$source": 0,
@@ -6274,7 +6274,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn takes_slice(slice:&str){ println!(\"Got: {}\",slice); }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (primitive_type)))))) body: (block (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal (string_content))) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)))))))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (reference_type type: (primitive_type)))))) body: (block (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal (string_content))) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)))))))))",
     "wrappedText": "fn takes_slice(slice:&str){ println!(\"Got: {}\",slice); }",
     "wrappedOffset": 0
   },
@@ -6686,7 +6686,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "x",
+                "_name": "x",
                 "_type": {
                   "$type": 236,
                   "$source": 0,
@@ -6857,7 +6857,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo(x:impl FnOnce()->result::Result<T,E>){  }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_argument (type_identifier)) (type_argument (type_identifier)))))))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_argument (type_identifier)) (type_argument (type_identifier)))))))))) body: (block))",
     "wrappedText": "fn foo(x:impl FnOnce()->result::Result<T,E>){  }",
     "wrappedOffset": 0
   },
@@ -6917,7 +6917,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "x",
+                "_name": "x",
                 "_type": "i32",
                 "$other": [
                   5
@@ -6968,7 +6968,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "x",
+                "_name": "x",
                 "_type": "i64",
                 "$other": [
                   5
@@ -7030,7 +7030,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo(#[attr]x:i32,#[attr]x:i64){  }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter pattern: (identifier) type: (primitive_type))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type))) (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type))))) body: (block))",
     "wrappedText": "fn foo(#[attr]x:i32,#[attr]x:i64){  }",
     "wrappedOffset": 0
   },
@@ -7222,7 +7222,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "bar",
+                "_name": "bar",
                 "_type": {
                   "$type": 236,
                   "$source": 0,
@@ -7436,7 +7436,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo(bar:impl for<'a>Baz<Quux<'a>>){  }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (abstract_type type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))))))))))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (abstract_type type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))))))))))))) body: (block))",
     "wrappedText": "fn foo(bar:impl for<'a>Baz<Quux<'a>>){  }",
     "wrappedOffset": 0
   },
@@ -7492,7 +7492,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "x",
+              "_name": "x",
               "_type": "i32",
               "$other": [
                 5
@@ -7517,7 +7517,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "y",
+              "_name": "y",
               "_type": "i32",
               "$other": [
                 5
@@ -7559,7 +7559,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(x:i32,y:i32)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (primitive_type)))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))) (attributed_parameter (parameter name: (identifier) type: (primitive_type)))))",
     "wrappedText": "fn _f(x:i32,y:i32) {}",
     "wrappedOffset": 5
   },
@@ -7588,7 +7588,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "slice",
+              "_name": "slice",
               "_type": {
                 "$type": 233,
                 "$source": 0,
@@ -7640,7 +7640,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(slice:&str)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (primitive_type))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (reference_type type: (primitive_type))))))",
     "wrappedText": "fn _f(slice:&str) {}",
     "wrappedOffset": 5
   },
@@ -7750,7 +7750,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "x",
+              "_name": "x",
               "_type": {
                 "$type": 236,
                 "$source": 0,
@@ -7901,7 +7901,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(x:impl FnOnce()->result::Result<T,E>)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_argument (type_identifier)) (type_argument (type_identifier))))))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_argument (type_identifier)) (type_argument (type_identifier))))))))))",
     "wrappedText": "fn _f(x:impl FnOnce()->result::Result<T,E>) {}",
     "wrappedOffset": 5
   },
@@ -7983,7 +7983,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "x",
+              "_name": "x",
               "_type": "i32",
               "$other": [
                 5
@@ -8034,7 +8034,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "x",
+              "_name": "x",
               "_type": "i64",
               "$other": [
                 5
@@ -8076,7 +8076,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(#[attr]x:i32,#[attr]x:i64)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter pattern: (identifier) type: (primitive_type)))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type))) (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type)))))",
     "wrappedText": "fn _f(#[attr]x:i32,#[attr]x:i64) {}",
     "wrappedOffset": 5
   },
@@ -8169,7 +8169,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "bar",
+              "_name": "bar",
               "_type": {
                 "$type": 236,
                 "$source": 0,
@@ -8363,7 +8363,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(bar:impl for<'a>Baz<Quux<'a>>)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (abstract_type type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier)))))))))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (abstract_type type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier)))))))))))))",
     "wrappedText": "fn _f(bar:impl for<'a>Baz<Quux<'a>>) {}",
     "wrappedOffset": 5
   },
@@ -9024,7 +9024,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "x",
+      "_name": "x",
       "_type": "i32",
       "$other": [
         5
@@ -9044,7 +9044,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "x:i32",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (primitive_type))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (primitive_type))",
     "wrappedText": "fn _f(x:i32) {}",
     "wrappedOffset": 6
   },
@@ -9055,7 +9055,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "y",
+      "_name": "y",
       "_type": "i32",
       "$other": [
         5
@@ -9075,7 +9075,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "y:i32",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (primitive_type))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (primitive_type))",
     "wrappedText": "fn _f(y:i32) {}",
     "wrappedOffset": 6
   },
@@ -9086,7 +9086,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "slice",
+      "_name": "slice",
       "_type": {
         "$type": 233,
         "$source": 0,
@@ -9119,7 +9119,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "slice:&str",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (reference_type type: (primitive_type)))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (reference_type type: (primitive_type)))",
     "wrappedText": "fn _f(slice:&str) {}",
     "wrappedOffset": 6
   },
@@ -9130,7 +9130,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "x",
+      "_name": "x",
       "_type": {
         "$type": 236,
         "$source": 0,
@@ -9262,7 +9262,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "x:impl FnOnce()->result::Result<T,E>",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_argument (type_identifier)) (type_argument (type_identifier)))))))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_argument (type_identifier)) (type_argument (type_identifier)))))))",
     "wrappedText": "fn _f(x:impl FnOnce()->result::Result<T,E>) {}",
     "wrappedOffset": 6
   },
@@ -9273,7 +9273,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "x",
+      "_name": "x",
       "_type": "i32",
       "$other": [
         5
@@ -9293,7 +9293,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "x:i32",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (primitive_type))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (primitive_type))",
     "wrappedText": "fn _f(x:i32) {}",
     "wrappedOffset": 6
   },
@@ -9304,7 +9304,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "x",
+      "_name": "x",
       "_type": "i64",
       "$other": [
         5
@@ -9324,7 +9324,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "x:i64",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (primitive_type))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (primitive_type))",
     "wrappedText": "fn _f(x:i64) {}",
     "wrappedOffset": 6
   },
@@ -9335,7 +9335,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "bar",
+      "_name": "bar",
       "_type": {
         "$type": 236,
         "$source": 0,
@@ -9510,7 +9510,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "bar:impl for<'a>Baz<Quux<'a>>",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (abstract_type type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))))))))))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (abstract_type type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))))))))))",
     "wrappedText": "fn _f(bar:impl for<'a>Baz<Quux<'a>>) {}",
     "wrappedOffset": 6
   },
@@ -11363,7 +11363,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "a",
+                    "_name": "a",
                     "_type": {
                       "$type": 236,
                       "$source": 0,
@@ -11526,7 +11526,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn triples(a:impl B)->impl Iterator<Item=(usize)>{  }",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (abstract_type trait: (type_identifier)))))) return_type: (abstract_type trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_binding name: (type_identifier) type: (tuple_type type: (primitive_type))))))) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (type_identifier)))))) return_type: (abstract_type trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_binding name: (type_identifier) type: (tuple_type type: (primitive_type))))))) body: (block)))",
     "wrappedText": "fn triples(a:impl B)->impl Iterator<Item=(usize)>{  }",
     "wrappedOffset": 0
   },
@@ -11560,7 +11560,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "a",
+                "_name": "a",
                 "_type": {
                   "$type": 236,
                   "$source": 0,
@@ -11716,7 +11716,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn triples(a:impl B)->impl Iterator<Item=(usize)>{  }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (abstract_type trait: (type_identifier)))))) return_type: (abstract_type trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_binding name: (type_identifier) type: (tuple_type type: (primitive_type))))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (type_identifier)))))) return_type: (abstract_type trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_binding name: (type_identifier) type: (tuple_type type: (primitive_type))))))) body: (block))",
     "wrappedText": "fn triples(a:impl B)->impl Iterator<Item=(usize)>{  }",
     "wrappedOffset": 0
   },
@@ -11745,7 +11745,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "a",
+              "_name": "a",
               "_type": {
                 "$type": 236,
                 "$source": 0,
@@ -11797,7 +11797,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(a:impl B)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (abstract_type trait: (type_identifier))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (type_identifier))))))",
     "wrappedText": "fn _f(a:impl B) {}",
     "wrappedOffset": 5
   },
@@ -11808,7 +11808,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "a",
+      "_name": "a",
       "_type": {
         "$type": 236,
         "$source": 0,
@@ -11841,7 +11841,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "a:impl B",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (abstract_type trait: (type_identifier)))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (abstract_type trait: (type_identifier)))",
     "wrappedText": "fn _f(a:impl B) {}",
     "wrappedOffset": 6
   },
@@ -12208,7 +12208,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "x",
+                    "_name": "x",
                     "_type": {
                       "$type": 236,
                       "$source": 0,
@@ -12314,7 +12314,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn foo<'a>(x:impl'a+Clone){  }",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (abstract_type trait: (bounded_type left: (lifetime identifier: (identifier)) right: (type_identifier))))))) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (bounded_type left: (lifetime identifier: (identifier)) right: (type_identifier))))))) body: (block)))",
     "wrappedText": "fn foo<'a>(x:impl'a+Clone){  }",
     "wrappedOffset": 0
   },
@@ -12400,7 +12400,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "x",
+                "_name": "x",
                 "_type": {
                   "$type": 236,
                   "$source": 0,
@@ -12499,7 +12499,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo<'a>(x:impl'a+Clone){  }",
-    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (abstract_type trait: (bounded_type left: (lifetime identifier: (identifier)) right: (type_identifier))))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (bounded_type left: (lifetime identifier: (identifier)) right: (type_identifier))))))) body: (block))",
     "wrappedText": "fn foo<'a>(x:impl'a+Clone){  }",
     "wrappedOffset": 0
   },
@@ -12596,7 +12596,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "x",
+              "_name": "x",
               "_type": {
                 "$type": 236,
                 "$source": 0,
@@ -12675,7 +12675,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(x:impl'a+Clone)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (abstract_type trait: (bounded_type left: (lifetime identifier: (identifier)) right: (type_identifier)))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (bounded_type left: (lifetime identifier: (identifier)) right: (type_identifier)))))))",
     "wrappedText": "fn _f(x:impl'a+Clone) {}",
     "wrappedOffset": 5
   },
@@ -12686,7 +12686,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "x",
+      "_name": "x",
       "_type": {
         "$type": 236,
         "$source": 0,
@@ -12746,7 +12746,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "x:impl'a+Clone",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (abstract_type trait: (bounded_type left: (lifetime identifier: (identifier)) right: (type_identifier))))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (abstract_type trait: (bounded_type left: (lifetime identifier: (identifier)) right: (type_identifier))))",
     "wrappedText": "fn _f(x:impl'a+Clone) {}",
     "wrappedOffset": 6
   },
@@ -15113,7 +15113,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "fmt",
+                    "_name": "fmt",
                     "_type": {
                       "$type": 234,
                       "$source": 0,
@@ -15354,7 +15354,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "extern\"C\"fn foo(){  }extern\"C\"fn printf(*const c_char,...,){  }pub unsafe extern\"C\"fn c_variadic_no_use(fmt:*const i8,mut ap:...)->i32{ vprintf(fmt,ap.as_va_list()) }",
-    "expectedReparseTree": "(source_file statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal (string_content)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal (string_content)))) name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (pointer_type (pointer_type_const) type: (type_identifier))) (attributed_parameter (variadic_parameter)))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal (string_content)))) name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (pointer_type (pointer_type_const) type: (primitive_type)))) (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)) (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))))))",
+    "expectedReparseTree": "(source_file statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal (string_content)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal (string_content)))) name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (pointer_type (pointer_type_const) type: (type_identifier))) (attributed_parameter (variadic_parameter)))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal (string_content)))) name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (pointer_type (pointer_type_const) type: (primitive_type)))) (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)) (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))))))",
     "wrappedText": "extern\"C\"fn foo(){  }extern\"C\"fn printf(*const c_char,...,){  }pub unsafe extern\"C\"fn c_variadic_no_use(fmt:*const i8,mut ap:...)->i32{ vprintf(fmt,ap.as_va_list()) }",
     "wrappedOffset": 0
   },
@@ -15715,7 +15715,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "fmt",
+                "_name": "fmt",
                 "_type": {
                   "$type": 234,
                   "$source": 0,
@@ -15949,7 +15949,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "pub unsafe extern\"C\"fn c_variadic_no_use(fmt:*const i8,mut ap:...)->i32{ vprintf(fmt,ap.as_va_list()) }",
-    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal (string_content)))) name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (pointer_type (pointer_type_const) type: (primitive_type)))) (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)) (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))))",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal (string_content)))) name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (pointer_type (pointer_type_const) type: (primitive_type)))) (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)) (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))))",
     "wrappedText": "pub unsafe extern\"C\"fn c_variadic_no_use(fmt:*const i8,mut ap:...)->i32{ vprintf(fmt,ap.as_va_list()) }",
     "wrappedOffset": 0
   },
@@ -16197,7 +16197,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "fmt",
+              "_name": "fmt",
               "_type": {
                 "$type": 234,
                 "$source": 0,
@@ -16279,7 +16279,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(fmt:*const i8,mut ap:...)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (pointer_type (pointer_type_const) type: (primitive_type)))) (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier)))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (pointer_type (pointer_type_const) type: (primitive_type)))) (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier)))))",
     "wrappedText": "fn _f(fmt:*const i8,mut ap:...) {}",
     "wrappedOffset": 5
   },
@@ -16600,7 +16600,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "fmt",
+      "_name": "fmt",
       "_type": {
         "$type": 234,
         "$source": 0,
@@ -16634,7 +16634,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "fmt:*const i8",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (pointer_type (pointer_type_const) type: (primitive_type)))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (pointer_type (pointer_type_const) type: (primitive_type)))",
     "wrappedText": "fn _f(fmt:*const i8) {}",
     "wrappedOffset": 6
   },
@@ -25605,7 +25605,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "old_range",
+                    "_name": "old_range",
                     "_type": {
                       "$type": 227,
                       "$source": 0,
@@ -25668,7 +25668,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "new_text",
+                    "_name": "new_text",
                     "_type": "T",
                     "$other": [
                       5
@@ -25857,7 +25857,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "pub fn splice<T:Into<Text>>(&mut self,old_range:Range<usize>,new_text:T){  }pub fn uninit_array<const LEN:usize>()->[Self;LEN]{  }",
-    "expectedReparseTree": "(source_file statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))) (attributed_parameter (parameter pattern: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type)))))) (attributed_parameter (parameter pattern: (identifier) type: (type_identifier))))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (const_parameter name: (identifier) type: (primitive_type)))) parameters: (parameters) return_type: (array_type element: (type_identifier) length: (identifier)) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))) (attributed_parameter (parameter name: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type)))))) (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (const_parameter name: (identifier) type: (primitive_type)))) parameters: (parameters) return_type: (array_type element: (type_identifier) length: (identifier)) body: (block)))",
     "wrappedText": "pub fn splice<T:Into<Text>>(&mut self,old_range:Range<usize>,new_text:T){  }pub fn uninit_array<const LEN:usize>()->[Self;LEN]{  }",
     "wrappedOffset": 0
   },
@@ -26028,7 +26028,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "old_range",
+                "_name": "old_range",
                 "_type": {
                   "$type": 227,
                   "$source": 0,
@@ -26091,7 +26091,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "new_text",
+                "_name": "new_text",
                 "_type": "T",
                 "$other": [
                   5
@@ -26154,7 +26154,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "pub fn splice<T:Into<Text>>(&mut self,old_range:Range<usize>,new_text:T){  }",
-    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))) (attributed_parameter (parameter pattern: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type)))))) (attributed_parameter (parameter pattern: (identifier) type: (type_identifier))))) body: (block))",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))) (attributed_parameter (parameter name: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type)))))) (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) body: (block))",
     "wrappedText": "pub fn splice<T:Into<Text>>(&mut self,old_range:Range<usize>,new_text:T){  }",
     "wrappedOffset": 0
   },
@@ -26775,7 +26775,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "old_range",
+              "_name": "old_range",
               "_type": {
                 "$type": 227,
                 "$source": 0,
@@ -26838,7 +26838,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "new_text",
+              "_name": "new_text",
               "_type": "T",
               "$other": [
                 5
@@ -26881,7 +26881,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(&mut self,old_range:Range<usize>,new_text:T)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))) (attributed_parameter (parameter pattern: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type)))))) (attributed_parameter (parameter pattern: (identifier) type: (type_identifier)))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))) (attributed_parameter (parameter name: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type)))))) (attributed_parameter (parameter name: (identifier) type: (type_identifier)))))",
     "wrappedText": "fn _f(&mut self,old_range:Range<usize>,new_text:T) {}",
     "wrappedOffset": 5
   },
@@ -26919,7 +26919,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "old_range",
+      "_name": "old_range",
       "_type": {
         "$type": 227,
         "$source": 0,
@@ -26977,7 +26977,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "old_range:Range<usize>",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type)))))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type)))))",
     "wrappedText": "fn _f(old_range:Range<usize>) {}",
     "wrappedOffset": 6
   },
@@ -26988,7 +26988,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "new_text",
+      "_name": "new_text",
       "_type": "T",
       "$other": [
         5
@@ -27008,7 +27008,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "new_text:T",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (type_identifier))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (type_identifier))",
     "wrappedText": "fn _f(new_text:T) {}",
     "wrappedOffset": 6
   },
@@ -27135,7 +27135,7 @@
                     "$source": 0,
                     "$named": true,
                     "_mutable_specifier": true,
-                    "_pattern": "x",
+                    "_name": "x",
                     "_type": "u32",
                     "$other": [
                       5
@@ -27201,7 +27201,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn foo(mut x:u32){  }",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter mutable_specifier: (mutable_specifier) pattern: (identifier) type: (primitive_type))))) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter mutable_specifier: (mutable_specifier) name: (identifier) type: (primitive_type))))) body: (block)))",
     "wrappedText": "fn foo(mut x:u32){  }",
     "wrappedOffset": 0
   },
@@ -27236,7 +27236,7 @@
                 "$source": 0,
                 "$named": true,
                 "_mutable_specifier": true,
-                "_pattern": "x",
+                "_name": "x",
                 "_type": "u32",
                 "$other": [
                   5
@@ -27295,7 +27295,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo(mut x:u32){  }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter mutable_specifier: (mutable_specifier) pattern: (identifier) type: (primitive_type))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter mutable_specifier: (mutable_specifier) name: (identifier) type: (primitive_type))))) body: (block))",
     "wrappedText": "fn foo(mut x:u32){  }",
     "wrappedOffset": 0
   },
@@ -27325,7 +27325,7 @@
               "$source": 0,
               "$named": true,
               "_mutable_specifier": true,
-              "_pattern": "x",
+              "_name": "x",
               "_type": "u32",
               "$other": [
                 5
@@ -27364,7 +27364,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(mut x:u32)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter mutable_specifier: (mutable_specifier) pattern: (identifier) type: (primitive_type)))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter mutable_specifier: (mutable_specifier) name: (identifier) type: (primitive_type)))))",
     "wrappedText": "fn _f(mut x:u32) {}",
     "wrappedOffset": 5
   },
@@ -27376,7 +27376,7 @@
       "$source": 0,
       "$named": true,
       "_mutable_specifier": true,
-      "_pattern": "x",
+      "_name": "x",
       "_type": "u32",
       "$other": [
         5
@@ -27396,7 +27396,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "mut x:u32",
-    "expectedReparseTree": "(parameter mutable_specifier: (mutable_specifier) pattern: (identifier) type: (primitive_type))",
+    "expectedReparseTree": "(parameter mutable_specifier: (mutable_specifier) name: (identifier) type: (primitive_type))",
     "wrappedText": "fn _f(mut x:u32) {}",
     "wrappedOffset": 6
   },
@@ -27462,7 +27462,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": {
+                    "_name": {
                       "$type": 298,
                       "$source": 0,
                       "$named": true,
@@ -27586,7 +27586,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": {
+                    "_name": {
                       "$type": 307,
                       "$source": 0,
                       "$named": true,
@@ -27689,7 +27689,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": {
+                    "_name": {
                       "$type": 297,
                       "$source": 0,
                       "$named": true,
@@ -27805,7 +27805,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn f1([x,y]:[u32;2]){  }fn f2(&x:&Y){  }fn f3((x,y):(T,U)){  }",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (slice_pattern (slice_pattern_group1 (identifier) (identifier))) type: (array_type element: (primitive_type) length: (integer_literal)))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (reference_pattern pattern: (identifier)) type: (reference_type type: (type_identifier)))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (tuple_pattern elements: (tuple_pattern_group1 (identifier) (identifier))) type: (tuple_type type: (type_identifier) type: (type_identifier)))))) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (slice_pattern (slice_pattern_group1 (identifier) (identifier))) type: (array_type element: (primitive_type) length: (integer_literal)))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (reference_pattern pattern: (identifier)) type: (reference_type type: (type_identifier)))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (tuple_pattern elements: (tuple_pattern_group1 (identifier) (identifier))) type: (tuple_type type: (type_identifier) type: (type_identifier)))))) body: (block)))",
     "wrappedText": "fn f1([x,y]:[u32;2]){  }fn f2(&x:&Y){  }fn f3((x,y):(T,U)){  }",
     "wrappedOffset": 0
   },
@@ -27839,7 +27839,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": {
+                "_name": {
                   "$type": 298,
                   "$source": 0,
                   "$named": true,
@@ -27945,7 +27945,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn f1([x,y]:[u32;2]){  }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (slice_pattern (slice_pattern_group1 (identifier) (identifier))) type: (array_type element: (primitive_type) length: (integer_literal)))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (slice_pattern (slice_pattern_group1 (identifier) (identifier))) type: (array_type element: (primitive_type) length: (integer_literal)))))) body: (block))",
     "wrappedText": "fn f1([x,y]:[u32;2]){  }",
     "wrappedOffset": 0
   },
@@ -27979,7 +27979,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": {
+                "_name": {
                   "$type": 307,
                   "$source": 0,
                   "$named": true,
@@ -28064,7 +28064,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn f2(&x:&Y){  }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (reference_pattern pattern: (identifier)) type: (reference_type type: (type_identifier)))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (reference_pattern pattern: (identifier)) type: (reference_type type: (type_identifier)))))) body: (block))",
     "wrappedText": "fn f2(&x:&Y){  }",
     "wrappedOffset": 0
   },
@@ -28098,7 +28098,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": {
+                "_name": {
                   "$type": 297,
                   "$source": 0,
                   "$named": true,
@@ -28207,7 +28207,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn f3((x,y):(T,U)){  }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (tuple_pattern elements: (tuple_pattern_group1 (identifier) (identifier))) type: (tuple_type type: (type_identifier) type: (type_identifier)))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (tuple_pattern elements: (tuple_pattern_group1 (identifier) (identifier))) type: (tuple_type type: (type_identifier) type: (type_identifier)))))) body: (block))",
     "wrappedText": "fn f3((x,y):(T,U)){  }",
     "wrappedOffset": 0
   },
@@ -28236,7 +28236,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": {
+              "_name": {
                 "$type": 298,
                 "$source": 0,
                 "$named": true,
@@ -28322,7 +28322,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "([x,y]:[u32;2])",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (slice_pattern (slice_pattern_group1 (identifier) (identifier))) type: (array_type element: (primitive_type) length: (integer_literal))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (slice_pattern (slice_pattern_group1 (identifier) (identifier))) type: (array_type element: (primitive_type) length: (integer_literal))))))",
     "wrappedText": "fn _f([x,y]:[u32;2]) {}",
     "wrappedOffset": 5
   },
@@ -28351,7 +28351,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": {
+              "_name": {
                 "$type": 307,
                 "$source": 0,
                 "$named": true,
@@ -28416,7 +28416,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(&x:&Y)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (reference_pattern pattern: (identifier)) type: (reference_type type: (type_identifier))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (reference_pattern pattern: (identifier)) type: (reference_type type: (type_identifier))))))",
     "wrappedText": "fn _f(&x:&Y) {}",
     "wrappedOffset": 5
   },
@@ -28445,7 +28445,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": {
+              "_name": {
                 "$type": 297,
                 "$source": 0,
                 "$named": true,
@@ -28534,7 +28534,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "((x,y):(T,U))",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (tuple_pattern elements: (tuple_pattern_group1 (identifier) (identifier))) type: (tuple_type type: (type_identifier) type: (type_identifier))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (tuple_pattern elements: (tuple_pattern_group1 (identifier) (identifier))) type: (tuple_type type: (type_identifier) type: (type_identifier))))))",
     "wrappedText": "fn _f((x,y):(T,U)) {}",
     "wrappedOffset": 5
   },
@@ -28545,7 +28545,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": {
+      "_name": {
         "$type": 298,
         "$source": 0,
         "$named": true,
@@ -28612,7 +28612,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "[x,y]:[u32;2]",
-    "expectedReparseTree": "(parameter pattern: (slice_pattern (slice_pattern_group1 (identifier) (identifier))) type: (array_type element: (primitive_type) length: (integer_literal)))",
+    "expectedReparseTree": "(parameter name: (slice_pattern (slice_pattern_group1 (identifier) (identifier))) type: (array_type element: (primitive_type) length: (integer_literal)))",
     "wrappedText": "fn _f([x,y]:[u32;2]) {}",
     "wrappedOffset": 6
   },
@@ -28623,7 +28623,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": {
+      "_name": {
         "$type": 307,
         "$source": 0,
         "$named": true,
@@ -28669,7 +28669,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "&x:&Y",
-    "expectedReparseTree": "(parameter pattern: (reference_pattern pattern: (identifier)) type: (reference_type type: (type_identifier)))",
+    "expectedReparseTree": "(parameter name: (reference_pattern pattern: (identifier)) type: (reference_type type: (type_identifier)))",
     "wrappedText": "fn _f(&x:&Y) {}",
     "wrappedOffset": 6
   },
@@ -28680,7 +28680,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": {
+      "_name": {
         "$type": 297,
         "$source": 0,
         "$named": true,
@@ -28750,7 +28750,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "(x,y):(T,U)",
-    "expectedReparseTree": "(parameter pattern: (tuple_pattern elements: (tuple_pattern_group1 (identifier) (identifier))) type: (tuple_type type: (type_identifier) type: (type_identifier)))",
+    "expectedReparseTree": "(parameter name: (tuple_pattern elements: (tuple_pattern_group1 (identifier) (identifier))) type: (tuple_type type: (type_identifier) type: (type_identifier)))",
     "wrappedText": "fn _f((x,y):(T,U)) {}",
     "wrappedOffset": 6
   },
@@ -29114,7 +29114,7 @@
                           "$type": 214,
                           "$source": 0,
                           "$named": true,
-                          "_pattern": "self",
+                          "_name": "self",
                           "_type": {
                             "$type": 227,
                             "$source": 0,
@@ -29219,7 +29219,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "trait Callback{ fn call(self:Box<Self>); }",
-    "expectedReparseTree": "(source_file statements: (trait_item name: (type_identifier) body: (declaration_list (function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (self) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier))))))))))))",
+    "expectedReparseTree": "(source_file statements: (trait_item name: (type_identifier) body: (declaration_list (function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (self) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier))))))))))))",
     "wrappedText": "trait Callback{ fn call(self:Box<Self>); }",
     "wrappedOffset": 0
   },
@@ -29272,7 +29272,7 @@
                       "$type": 214,
                       "$source": 0,
                       "$named": true,
-                      "_pattern": "self",
+                      "_name": "self",
                       "_type": {
                         "$type": 227,
                         "$source": 0,
@@ -29370,7 +29370,7 @@
     "pattern": "trait_item",
     "edits": [],
     "expectedSourceOut": "trait Callback{ fn call(self:Box<Self>); }",
-    "expectedReparseTree": "(trait_item name: (type_identifier) body: (declaration_list (function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (self) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))))))",
+    "expectedReparseTree": "(trait_item name: (type_identifier) body: (declaration_list (function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (self) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))))))",
     "wrappedText": "trait Callback{ fn call(self:Box<Self>); }",
     "wrappedOffset": 0
   },
@@ -29404,7 +29404,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "self",
+                "_name": "self",
                 "_type": {
                   "$type": 227,
                   "$source": 0,
@@ -29491,7 +29491,7 @@
     "pattern": "function_signature_item",
     "edits": [],
     "expectedSourceOut": "fn call(self:Box<Self>);",
-    "expectedReparseTree": "(function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (self) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))))",
+    "expectedReparseTree": "(function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (self) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))))",
     "wrappedText": "fn call(self:Box<Self>);",
     "wrappedOffset": 0
   },
@@ -29520,7 +29520,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "self",
+              "_name": "self",
               "_type": {
                 "$type": 227,
                 "$source": 0,
@@ -29597,7 +29597,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(self:Box<Self>)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (self) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier))))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (self) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier))))))))",
     "wrappedText": "fn _f(self:Box<Self>) {}",
     "wrappedOffset": 5
   },
@@ -29608,7 +29608,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "self",
+      "_name": "self",
       "_type": {
         "$type": 227,
         "$source": 0,
@@ -29666,7 +29666,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "self:Box<Self>",
-    "expectedReparseTree": "(parameter pattern: (self) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))",
+    "expectedReparseTree": "(parameter name: (self) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))",
     "wrappedText": "fn _f(self:Box<Self>) {}",
     "wrappedOffset": 6
   },
@@ -47331,7 +47331,7 @@
                           "$type": 214,
                           "$source": 0,
                           "$named": true,
-                          "_pattern": "rhs",
+                          "_name": "rhs",
                           "_type": "RHS",
                           "$other": [
                             5
@@ -47417,7 +47417,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "trait Add<RHS=Self>{ type Output;fn add(self,rhs:RHS)->Self::Output; }",
-    "expectedReparseTree": "(source_file statements: (trait_item name: (type_identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier) default_type: (type_identifier)))) body: (declaration_list (associated_type name: (type_identifier)) (function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))) (attributed_parameter (parameter pattern: (identifier) type: (type_identifier))))) return_type: (scoped_type_identifier path: (identifier) name: (type_identifier))))))",
+    "expectedReparseTree": "(source_file statements: (trait_item name: (type_identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier) default_type: (type_identifier)))) body: (declaration_list (associated_type name: (type_identifier)) (function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))) (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) return_type: (scoped_type_identifier path: (identifier) name: (type_identifier))))))",
     "wrappedText": "trait Add<RHS=Self>{ type Output;fn add(self,rhs:RHS)->Self::Output; }",
     "wrappedOffset": 0
   },
@@ -47549,7 +47549,7 @@
                       "$type": 214,
                       "$source": 0,
                       "$named": true,
-                      "_pattern": "rhs",
+                      "_name": "rhs",
                       "_type": "RHS",
                       "$other": [
                         5
@@ -47628,7 +47628,7 @@
     "pattern": "trait_item",
     "edits": [],
     "expectedSourceOut": "trait Add<RHS=Self>{ type Output;fn add(self,rhs:RHS)->Self::Output; }",
-    "expectedReparseTree": "(trait_item name: (type_identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier) default_type: (type_identifier)))) body: (declaration_list (associated_type name: (type_identifier)) (function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))) (attributed_parameter (parameter pattern: (identifier) type: (type_identifier))))) return_type: (scoped_type_identifier path: (identifier) name: (type_identifier)))))",
+    "expectedReparseTree": "(trait_item name: (type_identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier) default_type: (type_identifier)))) body: (declaration_list (associated_type name: (type_identifier)) (function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))) (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) return_type: (scoped_type_identifier path: (identifier) name: (type_identifier)))))",
     "wrappedText": "trait Add<RHS=Self>{ type Output;fn add(self,rhs:RHS)->Self::Output; }",
     "wrappedOffset": 0
   },
@@ -47804,7 +47804,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "rhs",
+                "_name": "rhs",
                 "_type": "RHS",
                 "$other": [
                   5
@@ -47872,7 +47872,7 @@
     "pattern": "function_signature_item",
     "edits": [],
     "expectedSourceOut": "fn add(self,rhs:RHS)->Self::Output;",
-    "expectedReparseTree": "(function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))) (attributed_parameter (parameter pattern: (identifier) type: (type_identifier))))) return_type: (scoped_type_identifier path: (identifier) name: (type_identifier)))",
+    "expectedReparseTree": "(function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))) (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) return_type: (scoped_type_identifier path: (identifier) name: (type_identifier)))",
     "wrappedText": "fn add(self,rhs:RHS)->Self::Output;",
     "wrappedOffset": 0
   },
@@ -47922,7 +47922,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "rhs",
+              "_name": "rhs",
               "_type": "RHS",
               "$other": [
                 5
@@ -47964,7 +47964,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(self,rhs:RHS)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))) (attributed_parameter (parameter pattern: (identifier) type: (type_identifier)))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))) (attributed_parameter (parameter name: (identifier) type: (type_identifier)))))",
     "wrappedText": "fn _f(self,rhs:RHS) {}",
     "wrappedOffset": 5
   },
@@ -47975,7 +47975,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "rhs",
+      "_name": "rhs",
       "_type": "RHS",
       "$other": [
         5
@@ -47995,7 +47995,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "rhs:RHS",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (type_identifier))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (type_identifier))",
     "wrappedText": "fn _f(rhs:RHS) {}",
     "wrappedOffset": 6
   },
@@ -48158,7 +48158,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "this",
+                    "_name": "this",
                     "_type": {
                       "$type": 233,
                       "$source": 0,
@@ -48222,7 +48222,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "that",
+                    "_name": "that",
                     "_type": {
                       "$type": 233,
                       "$source": 0,
@@ -48361,7 +48361,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "trait Foo<T:?Sized>{  }fn univariant(this:&impl?Sized,that:&(impl LayoutCalculator+?Sized)){  }",
-    "expectedReparseTree": "(source_file statements: (trait_item name: (type_identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (removed_trait_bound type: (type_identifier)))))) body: (declaration_list)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (abstract_type trait: (removed_trait_bound type: (type_identifier)))))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (tuple_type type: (bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound type: (type_identifier))))))))) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (trait_item name: (type_identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (removed_trait_bound type: (type_identifier)))))) body: (declaration_list)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (reference_type type: (abstract_type trait: (removed_trait_bound type: (type_identifier)))))) (attributed_parameter (parameter name: (identifier) type: (reference_type type: (tuple_type type: (bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound type: (type_identifier))))))))) body: (block)))",
     "wrappedText": "trait Foo<T:?Sized>{  }fn univariant(this:&impl?Sized,that:&(impl LayoutCalculator+?Sized)){  }",
     "wrappedOffset": 0
   },
@@ -48734,7 +48734,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "this",
+                "_name": "this",
                 "_type": {
                   "$type": 233,
                   "$source": 0,
@@ -48798,7 +48798,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "that",
+                "_name": "that",
                 "_type": {
                   "$type": 233,
                   "$source": 0,
@@ -48930,7 +48930,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn univariant(this:&impl?Sized,that:&(impl LayoutCalculator+?Sized)){  }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (abstract_type trait: (removed_trait_bound type: (type_identifier)))))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (tuple_type type: (bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound type: (type_identifier))))))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (reference_type type: (abstract_type trait: (removed_trait_bound type: (type_identifier)))))) (attributed_parameter (parameter name: (identifier) type: (reference_type type: (tuple_type type: (bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound type: (type_identifier))))))))) body: (block))",
     "wrappedText": "fn univariant(this:&impl?Sized,that:&(impl LayoutCalculator+?Sized)){  }",
     "wrappedOffset": 0
   },
@@ -48959,7 +48959,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "this",
+              "_name": "this",
               "_type": {
                 "$type": 233,
                 "$source": 0,
@@ -49023,7 +49023,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "that",
+              "_name": "that",
               "_type": {
                 "$type": 233,
                 "$source": 0,
@@ -49135,7 +49135,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(this:&impl?Sized,that:&(impl LayoutCalculator+?Sized))",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (abstract_type trait: (removed_trait_bound type: (type_identifier)))))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (tuple_type type: (bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound type: (type_identifier)))))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (reference_type type: (abstract_type trait: (removed_trait_bound type: (type_identifier)))))) (attributed_parameter (parameter name: (identifier) type: (reference_type type: (tuple_type type: (bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound type: (type_identifier)))))))))",
     "wrappedText": "fn _f(this:&impl?Sized,that:&(impl LayoutCalculator+?Sized)) {}",
     "wrappedOffset": 5
   },
@@ -49146,7 +49146,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "this",
+      "_name": "this",
       "_type": {
         "$type": 233,
         "$source": 0,
@@ -49205,7 +49205,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "this:&impl?Sized",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (reference_type type: (abstract_type trait: (removed_trait_bound type: (type_identifier)))))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (reference_type type: (abstract_type trait: (removed_trait_bound type: (type_identifier)))))",
     "wrappedText": "fn _f(this:&impl?Sized) {}",
     "wrappedOffset": 6
   },
@@ -49216,7 +49216,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "that",
+      "_name": "that",
       "_type": {
         "$type": 233,
         "$source": 0,
@@ -49306,7 +49306,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "that:&(impl LayoutCalculator+?Sized)",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (reference_type type: (tuple_type type: (bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound type: (type_identifier))))))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (reference_type type: (tuple_type type: (bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound type: (type_identifier))))))",
     "wrappedText": "fn _f(that:&(impl LayoutCalculator+?Sized)) {}",
     "wrappedOffset": 6
   },
@@ -58610,7 +58610,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "str",
+                    "_name": "str",
                     "_type": {
                       "$type": 234,
                       "$source": 0,
@@ -58701,7 +58701,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "bool",
+                    "_name": "bool",
                     "_type": "bool",
                     "$other": [
                       5
@@ -58767,7 +58767,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn foo(str:*const c_char){  }fn bar(bool:bool){  }",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (pointer_type (pointer_type_const) type: (type_identifier)))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))))) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (pointer_type (pointer_type_const) type: (type_identifier)))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block)))",
     "wrappedText": "fn foo(str:*const c_char){  }fn bar(bool:bool){  }",
     "wrappedOffset": 0
   },
@@ -58801,7 +58801,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "str",
+                "_name": "str",
                 "_type": {
                   "$type": 234,
                   "$source": 0,
@@ -58874,7 +58874,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo(str:*const c_char){  }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (pointer_type (pointer_type_const) type: (type_identifier)))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (pointer_type (pointer_type_const) type: (type_identifier)))))) body: (block))",
     "wrappedText": "fn foo(str:*const c_char){  }",
     "wrappedOffset": 0
   },
@@ -58908,7 +58908,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "bool",
+                "_name": "bool",
                 "_type": "bool",
                 "$other": [
                   5
@@ -58967,7 +58967,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn bar(bool:bool){  }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block))",
     "wrappedText": "fn bar(bool:bool){  }",
     "wrappedOffset": 0
   },
@@ -58996,7 +58996,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "str",
+              "_name": "str",
               "_type": {
                 "$type": 234,
                 "$source": 0,
@@ -59049,7 +59049,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(str:*const c_char)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (pointer_type (pointer_type_const) type: (type_identifier))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (pointer_type (pointer_type_const) type: (type_identifier))))))",
     "wrappedText": "fn _f(str:*const c_char) {}",
     "wrappedOffset": 5
   },
@@ -59078,7 +59078,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "bool",
+              "_name": "bool",
               "_type": "bool",
               "$other": [
                 5
@@ -59117,7 +59117,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(bool:bool)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type)))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type)))))",
     "wrappedText": "fn _f(bool:bool) {}",
     "wrappedOffset": 5
   },
@@ -59128,7 +59128,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "str",
+      "_name": "str",
       "_type": {
         "$type": 234,
         "$source": 0,
@@ -59162,7 +59162,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "str:*const c_char",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (pointer_type (pointer_type_const) type: (type_identifier)))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (pointer_type (pointer_type_const) type: (type_identifier)))",
     "wrappedText": "fn _f(str:*const c_char) {}",
     "wrappedOffset": 6
   },
@@ -59173,7 +59173,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "bool",
+      "_name": "bool",
       "_type": "bool",
       "$other": [
         5
@@ -59193,7 +59193,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "bool:bool",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (primitive_type))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (primitive_type))",
     "wrappedText": "fn _f(bool:bool) {}",
     "wrappedOffset": 6
   },
@@ -59378,7 +59378,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "it",
+                    "_name": "it",
                     "_type": {
                       "$type": 233,
                       "$source": 0,
@@ -61537,7 +61537,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn walk<F>(&self,it:&mut F)->bool where F:FnMut(&Pat)->bool{ return false }impl<'a,T:'a+Item>Iterator for Iter<'a,T>where Self:'a{  }impl<T>A for B<T>where C<T>:D,T:'c,'c:'b,{  }impl<'a,E>Read where&'a E:Read,{  }impl<T>A for B<T>where(T,T,T):C,{  }impl<T>A for B<T>where for<'a>D<T>:E<'a>,{  }pub trait A<B>where B:C,{  }fn foo<A>()where A:B+As<f64>,f64:As<A>{  }impl<A>Default for B<A>where*mut A:C+D{  }",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier)))))) return_type: (primitive_type) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (reference_type type: (type_identifier))))) return_type: (primitive_type)))))) body: (block trailing_expression: (return_expression expression: (boolean_literal)))) statements: (impl_item type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)) bounds: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))) bounds: (trait_bounds bounds: (type_identifier))) (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))) (where_predicate left: (lifetime identifier: (identifier)) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) (attributed_type_parameter (type_parameter name: (type_identifier)))) type: (type_identifier) where_clause: (where_clause (where_clause_group1 (where_predicate left: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (tuple_type type: (type_identifier) type: (type_identifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (higher_ranked_trait_bound type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier))))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))))))))) (impl_item_body (declaration_list))) statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier))))) body: (declaration_list)) statements: (function_item name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type)))))) (where_predicate left: (primitive_type) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))) body: (block)) statements: (impl_item type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (pointer_type (mutable_specifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier))))) (impl_item_body (declaration_list))))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))) (attributed_parameter (parameter name: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier)))))) return_type: (primitive_type) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (reference_type type: (type_identifier))))) return_type: (primitive_type)))))) body: (block trailing_expression: (return_expression expression: (boolean_literal)))) statements: (impl_item type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)) bounds: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))) bounds: (trait_bounds bounds: (type_identifier))) (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))) (where_predicate left: (lifetime identifier: (identifier)) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) (attributed_type_parameter (type_parameter name: (type_identifier)))) type: (type_identifier) where_clause: (where_clause (where_clause_group1 (where_predicate left: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (tuple_type type: (type_identifier) type: (type_identifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (higher_ranked_trait_bound type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier))))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))))))))) (impl_item_body (declaration_list))) statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier))))) body: (declaration_list)) statements: (function_item name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type)))))) (where_predicate left: (primitive_type) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))) body: (block)) statements: (impl_item type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (pointer_type (mutable_specifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier))))) (impl_item_body (declaration_list))))",
     "wrappedText": "fn walk<F>(&self,it:&mut F)->bool where F:FnMut(&Pat)->bool{ return false }impl<'a,T:'a+Item>Iterator for Iter<'a,T>where Self:'a{  }impl<T>A for B<T>where C<T>:D,T:'c,'c:'b,{  }impl<'a,E>Read where&'a E:Read,{  }impl<T>A for B<T>where(T,T,T):C,{  }impl<T>A for B<T>where for<'a>D<T>:E<'a>,{  }pub trait A<B>where B:C,{  }fn foo<A>()where A:B+As<f64>,f64:As<A>{  }impl<A>Default for B<A>where*mut A:C+D{  }",
     "wrappedOffset": 0
   },
@@ -61632,7 +61632,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "it",
+                "_name": "it",
                 "_type": {
                   "$type": 233,
                   "$source": 0,
@@ -61866,7 +61866,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn walk<F>(&self,it:&mut F)->bool where F:FnMut(&Pat)->bool{ return false }",
-    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier)))))) return_type: (primitive_type) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (reference_type type: (type_identifier))))) return_type: (primitive_type)))))) body: (block trailing_expression: (return_expression expression: (boolean_literal))))",
+    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))) (attributed_parameter (parameter name: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier)))))) return_type: (primitive_type) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (reference_type type: (type_identifier))))) return_type: (primitive_type)))))) body: (block trailing_expression: (return_expression expression: (boolean_literal))))",
     "wrappedText": "fn walk<F>(&self,it:&mut F)->bool where F:FnMut(&Pat)->bool{ return false }",
     "wrappedOffset": 0
   },
@@ -63133,7 +63133,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "it",
+              "_name": "it",
               "_type": {
                 "$type": 233,
                 "$source": 0,
@@ -63189,7 +63189,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(&self,it:&mut F)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))) (attributed_parameter (parameter name: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier))))))",
     "wrappedText": "fn _f(&self,it:&mut F) {}",
     "wrappedOffset": 5
   },
@@ -63294,7 +63294,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "it",
+      "_name": "it",
       "_type": {
         "$type": 233,
         "$source": 0,
@@ -63328,7 +63328,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "it:&mut F",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier)))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier)))",
     "wrappedText": "fn _f(it:&mut F) {}",
     "wrappedOffset": 6
   },
@@ -67323,7 +67323,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "val",
+                    "_name": "val",
                     "_type": "D",
                     "$other": [
                       5
@@ -67499,7 +67499,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn foo<D>(val:D)where[u8;32]:From<D>,{  }",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (type_identifier))))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (array_type element: (primitive_type) length: (integer_literal)) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (array_type element: (primitive_type) length: (integer_literal)) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))) body: (block)))",
     "wrappedText": "fn foo<D>(val:D)where[u8;32]:From<D>,{  }",
     "wrappedOffset": 0
   },
@@ -67572,7 +67572,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "val",
+                "_name": "val",
                 "_type": "D",
                 "$other": [
                   5
@@ -67741,7 +67741,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo<D>(val:D)where[u8;32]:From<D>,{  }",
-    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (type_identifier))))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (array_type element: (primitive_type) length: (integer_literal)) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (array_type element: (primitive_type) length: (integer_literal)) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))) body: (block))",
     "wrappedText": "fn foo<D>(val:D)where[u8;32]:From<D>,{  }",
     "wrappedOffset": 0
   },
@@ -67852,7 +67852,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "val",
+              "_name": "val",
               "_type": "D",
               "$other": [
                 5
@@ -67891,7 +67891,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(val:D)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (type_identifier)))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (type_identifier)))))",
     "wrappedText": "fn _f(val:D) {}",
     "wrappedOffset": 5
   },
@@ -67902,7 +67902,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "val",
+      "_name": "val",
       "_type": "D",
       "$other": [
         5
@@ -67922,7 +67922,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "val:D",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (type_identifier))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (type_identifier))",
     "wrappedText": "fn _f(val:D) {}",
     "wrappedOffset": 6
   },
@@ -98638,7 +98638,7 @@
                               "$type": 214,
                               "$source": 0,
                               "$named": true,
-                              "_pattern": "b",
+                              "_name": "b",
                               "_type": "usize",
                               "$other": [
                                 5
@@ -98791,7 +98791,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "a.map(|b:usize|b.push(c));",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (closure_expression parameters: (closure_parameters parameters: (parameter pattern: (identifier) type: (primitive_type))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (identifier))))))))))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (closure_expression parameters: (closure_parameters parameters: (parameter name: (identifier) type: (primitive_type))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (identifier))))))))))))))",
     "wrappedText": "a.map(|b:usize|b.push(c));",
     "wrappedOffset": 0
   },
@@ -98849,7 +98849,7 @@
                       "$type": 214,
                       "$source": 0,
                       "$named": true,
-                      "_pattern": "b",
+                      "_name": "b",
                       "_type": "usize",
                       "$other": [
                         5
@@ -98985,7 +98985,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "a.map(|b:usize|b.push(c))",
-    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (closure_expression parameters: (closure_parameters parameters: (parameter pattern: (identifier) type: (primitive_type))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))))))))",
+    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (closure_expression parameters: (closure_parameters parameters: (parameter name: (identifier) type: (primitive_type))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))))))))",
     "wrappedText": "fn _f() { let _ = a.map(|b:usize|b.push(c)); }",
     "wrappedOffset": 18
   },
@@ -99166,7 +99166,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "b",
+                    "_name": "b",
                     "_type": "usize",
                     "$other": [
                       5
@@ -99296,7 +99296,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(|b:usize|b.push(c))",
-    "expectedReparseTree": "(arguments (arguments_group1 (attributed_argument (closure_expression parameters: (closure_parameters parameters: (parameter pattern: (identifier) type: (primitive_type))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (identifier))))))))))",
+    "expectedReparseTree": "(arguments (arguments_group1 (attributed_argument (closure_expression parameters: (closure_parameters parameters: (parameter name: (identifier) type: (primitive_type))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (identifier))))))))))",
     "wrappedText": "f(|b:usize|b.push(c));",
     "wrappedOffset": 1
   },
@@ -99371,7 +99371,7 @@
             "$type": 214,
             "$source": 0,
             "$named": true,
-            "_pattern": "b",
+            "_name": "b",
             "_type": "usize",
             "$other": [
               5
@@ -99482,7 +99482,7 @@
     "pattern": "closure_expression",
     "edits": [],
     "expectedSourceOut": "|b:usize|b.push(c)",
-    "expectedReparseTree": "(closure_expression parameters: (closure_parameters parameters: (parameter pattern: (identifier) type: (primitive_type))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))))",
+    "expectedReparseTree": "(closure_expression parameters: (closure_parameters parameters: (parameter name: (identifier) type: (primitive_type))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))))",
     "wrappedText": "fn _f() { let _ = |b:usize|b.push(c); }",
     "wrappedOffset": 18
   },
@@ -99493,7 +99493,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "b",
+      "_name": "b",
       "_type": "usize",
       "$other": [
         5
@@ -99513,7 +99513,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "b:usize",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (primitive_type))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (primitive_type))",
     "wrappedText": "fn _f(b:usize) {}",
     "wrappedOffset": 6
   },
@@ -112441,7 +112441,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": {
+                    "_name": {
                       "$type": 297,
                       "$source": 0,
                       "$named": true,
@@ -112734,7 +112734,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "if let A(x)|B(x)=expr{ do_stuff_with(x); }while let A(x)|B(x)=expr{ do_stuff_with(x); }let Ok(index)|Err(index)=slice.binary_search(&x);for ref a|b in c{  }let Ok(x)|Err(x)=binary_search(x);for A|B|C in c{  }|(Ok(x)|Err(x))|expr();let ref mut x@(A|B|C);fn foo((1|2|3):u8){  }if let x!()|y!()=(){  }",
-    "expectedReparseTree": "(source_file statements: (expression_statement (if_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))) right: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))))) value: (identifier)) consequence: (block (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))))))) statements: (expression_statement (while_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))) right: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))))) value: (identifier)) body: (block (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))))))) statements: (let_declaration pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))) right: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))))) value: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (reference_expression value: (identifier))))))) statements: (expression_statement (for_expression pattern: (or_pattern (or_pattern_binary left: (ref_pattern pattern: (identifier)) right: (identifier))) value: (identifier) body: (block))) statements: (let_declaration pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))) right: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))))) value: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))) statements: (expression_statement (for_expression pattern: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier))) value: (identifier) body: (block))) statements: (expression_statement (expression_statement_with_semi expression: (closure_expression parameters: (closure_parameters parameters: (tuple_pattern elements: (tuple_pattern_group1 (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))) right: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier)))))))) (closure_expression_expr body: (call_expression function: (identifier) arguments: (arguments)))))) statements: (let_declaration pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (captured_pattern identifier: (identifier) pattern: (tuple_pattern elements: (tuple_pattern_group1 (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier))))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (tuple_pattern elements: (tuple_pattern_group1 (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal))))) type: (primitive_type))))) body: (block)) statements: (expression_statement (if_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren))) right: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren))))) value: (unit_expression)) consequence: (block))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (if_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))) right: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))))) value: (identifier)) consequence: (block (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))))))) statements: (expression_statement (while_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))) right: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))))) value: (identifier)) body: (block (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))))))) statements: (let_declaration pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))) right: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))))) value: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (reference_expression value: (identifier))))))) statements: (expression_statement (for_expression pattern: (or_pattern (or_pattern_binary left: (ref_pattern pattern: (identifier)) right: (identifier))) value: (identifier) body: (block))) statements: (let_declaration pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))) right: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))))) value: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))) statements: (expression_statement (for_expression pattern: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier))) value: (identifier) body: (block))) statements: (expression_statement (expression_statement_with_semi expression: (closure_expression parameters: (closure_parameters parameters: (tuple_pattern elements: (tuple_pattern_group1 (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier))) right: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier)))))))) (closure_expression_expr body: (call_expression function: (identifier) arguments: (arguments)))))) statements: (let_declaration pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (captured_pattern identifier: (identifier) pattern: (tuple_pattern elements: (tuple_pattern_group1 (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier))))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (tuple_pattern elements: (tuple_pattern_group1 (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal))))) type: (primitive_type))))) body: (block)) statements: (expression_statement (if_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren))) right: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren))))) value: (unit_expression)) consequence: (block))))",
     "wrappedText": "if let A(x)|B(x)=expr{ do_stuff_with(x); }while let A(x)|B(x)=expr{ do_stuff_with(x); }let Ok(index)|Err(index)=slice.binary_search(&x);for ref a|b in c{  }let Ok(x)|Err(x)=binary_search(x);for A|B|C in c{  }|(Ok(x)|Err(x))|expr();let ref mut x@(A|B|C);fn foo((1|2|3):u8){  }if let x!()|y!()=(){  }",
     "wrappedOffset": 0
   },
@@ -117277,7 +117277,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": {
+                "_name": {
                   "$type": 297,
                   "$source": 0,
                   "$named": true,
@@ -117411,7 +117411,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo((1|2|3):u8){  }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (tuple_pattern elements: (tuple_pattern_group1 (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal))))) type: (primitive_type))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (tuple_pattern elements: (tuple_pattern_group1 (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal))))) type: (primitive_type))))) body: (block))",
     "wrappedText": "fn foo((1|2|3):u8){  }",
     "wrappedOffset": 0
   },
@@ -117440,7 +117440,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": {
+              "_name": {
                 "$type": 297,
                 "$source": 0,
                 "$named": true,
@@ -117554,7 +117554,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "((1|2|3):u8)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (tuple_pattern elements: (tuple_pattern_group1 (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal))))) type: (primitive_type)))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (tuple_pattern elements: (tuple_pattern_group1 (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal))))) type: (primitive_type)))))",
     "wrappedText": "fn _f((1|2|3):u8) {}",
     "wrappedOffset": 5
   },
@@ -117565,7 +117565,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": {
+      "_name": {
         "$type": 297,
         "$source": 0,
         "$named": true,
@@ -117660,7 +117660,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "(1|2|3):u8",
-    "expectedReparseTree": "(parameter pattern: (tuple_pattern elements: (tuple_pattern_group1 (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal))))) type: (primitive_type))",
+    "expectedReparseTree": "(parameter name: (tuple_pattern elements: (tuple_pattern_group1 (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal))))) type: (primitive_type))",
     "wrappedText": "fn _f((1|2|3):u8) {}",
     "wrappedOffset": 6
   },
@@ -117875,7 +117875,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "x",
+                    "_name": "x",
                     "_type": "i32",
                     "$other": [
                       5
@@ -118230,7 +118230,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "x",
+                    "_name": "x",
                     "_type": "i32",
                     "$other": [
                       5
@@ -118583,7 +118583,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn foo(x:i32){ const CUBE:i32=3.pow(3);match x{ CUBE=>println!(\"three cubed\"),_=>{  } } }fn foo(x:i32){ match x{ const{ 3.pow(3) }=>println!(\"three cubed\"),_=>{  } } }",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))))) body: (block (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (integer_literal)))))) (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))))) body: (block (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (integer_literal)))))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (integer_literal)))))) (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (integer_literal)))))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))))",
     "wrappedText": "fn foo(x:i32){ const CUBE:i32=3.pow(3);match x{ CUBE=>println!(\"three cubed\"),_=>{  } } }fn foo(x:i32){ match x{ const{ 3.pow(3) }=>println!(\"three cubed\"),_=>{  } } }",
     "wrappedOffset": 0
   },
@@ -118617,7 +118617,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "x",
+                "_name": "x",
                 "_type": "i32",
                 "$other": [
                   5
@@ -118954,7 +118954,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo(x:i32){ const CUBE:i32=3.pow(3);match x{ CUBE=>println!(\"three cubed\"),_=>{  } } }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))))) body: (block (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (integer_literal)))))) (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (integer_literal)))))) (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))))",
     "wrappedText": "fn foo(x:i32){ const CUBE:i32=3.pow(3);match x{ CUBE=>println!(\"three cubed\"),_=>{  } } }",
     "wrappedOffset": 0
   },
@@ -118988,7 +118988,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "x",
+                "_name": "x",
                 "_type": "i32",
                 "$other": [
                   5
@@ -119334,7 +119334,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo(x:i32){ match x{ const{ 3.pow(3) }=>println!(\"three cubed\"),_=>{  } } }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))))) body: (block (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (integer_literal)))))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_group1 (attributed_argument (integer_literal)))))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))))",
     "wrappedText": "fn foo(x:i32){ match x{ const{ 3.pow(3) }=>println!(\"three cubed\"),_=>{  } } }",
     "wrappedOffset": 0
   },
@@ -119363,7 +119363,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "x",
+              "_name": "x",
               "_type": "i32",
               "$other": [
                 5
@@ -119402,7 +119402,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(x:i32)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type)))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type)))))",
     "wrappedText": "fn _f(x:i32) {}",
     "wrappedOffset": 5
   },
@@ -119431,7 +119431,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "x",
+              "_name": "x",
               "_type": "i32",
               "$other": [
                 5
@@ -119470,7 +119470,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(x:i32)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type)))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type)))))",
     "wrappedText": "fn _f(x:i32) {}",
     "wrappedOffset": 5
   },
@@ -119481,7 +119481,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "x",
+      "_name": "x",
       "_type": "i32",
       "$other": [
         5
@@ -119501,7 +119501,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "x:i32",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (primitive_type))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (primitive_type))",
     "wrappedText": "fn _f(x:i32) {}",
     "wrappedOffset": 6
   },
@@ -119512,7 +119512,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "x",
+      "_name": "x",
       "_type": "i32",
       "$other": [
         5
@@ -119532,7 +119532,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "x:i32",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (primitive_type))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (primitive_type))",
     "wrappedText": "fn _f(x:i32) {}",
     "wrappedOffset": 6
   },
@@ -125125,7 +125125,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "value",
+                    "_name": "value",
                     "_type": "i32",
                     "$other": [
                       5
@@ -125150,7 +125150,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "f",
+                    "_name": "f",
                     "_type": {
                       "$type": 223,
                       "$source": 0,
@@ -125290,7 +125290,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "value",
+                    "_name": "value",
                     "_type": "i32",
                     "$other": [
                       5
@@ -125315,7 +125315,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "f",
+                    "_name": "f",
                     "_type": {
                       "$type": 223,
                       "$source": 0,
@@ -125513,7 +125513,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "value",
+                    "_name": "value",
                     "_type": "i32",
                     "$other": [
                       5
@@ -125538,7 +125538,7 @@
                     "$type": 214,
                     "$source": 0,
                     "$named": true,
-                    "_pattern": "f",
+                    "_name": "f",
                     "_type": {
                       "$type": 233,
                       "$source": 0,
@@ -125811,7 +125811,7 @@
                       "$type": 214,
                       "$source": 0,
                       "$named": true,
-                      "_pattern": "x",
+                      "_name": "x",
                       "_type": {
                         "$type": 233,
                         "$source": 0,
@@ -125863,7 +125863,7 @@
                       "$type": 214,
                       "$source": 0,
                       "$named": true,
-                      "_pattern": "y",
+                      "_name": "y",
                       "_type": {
                         "$type": 233,
                         "$source": 0,
@@ -126038,7 +126038,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn high_order1(value:i32,f:fn(i32))->i32{  }fn high_order2(value:i32,f:fn(i32)->i32)->i32{ f(value) }fn high_order3(value:i32,f:&FnOnce(i32)->i32)->i32{ f(value) }type F=for<'a,'b>fn(x:&'a A,y:&'a mut B<'i,'t>,)->C;",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type))))))))) return_type: (primitive_type) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type)))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type))))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier))))))) statements: (type_item name: (type_identifier) type: (function_type for_lifetimes: (for_lifetimes (lifetime identifier: (identifier)) (lifetime identifier: (identifier))) (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier)))))))))) return_type: (type_identifier))))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))) (attributed_parameter (parameter name: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type))))))))) return_type: (primitive_type) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))) (attributed_parameter (parameter name: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type)))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))) (attributed_parameter (parameter name: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type))))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier))))))) statements: (type_item name: (type_identifier) type: (function_type for_lifetimes: (for_lifetimes (lifetime identifier: (identifier)) (lifetime identifier: (identifier))) (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)))) (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier)))))))))) return_type: (type_identifier))))",
     "wrappedText": "fn high_order1(value:i32,f:fn(i32))->i32{  }fn high_order2(value:i32,f:fn(i32)->i32)->i32{ f(value) }fn high_order3(value:i32,f:&FnOnce(i32)->i32)->i32{ f(value) }type F=for<'a,'b>fn(x:&'a A,y:&'a mut B<'i,'t>,)->C;",
     "wrappedOffset": 0
   },
@@ -126072,7 +126072,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "value",
+                "_name": "value",
                 "_type": "i32",
                 "$other": [
                   5
@@ -126097,7 +126097,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "f",
+                "_name": "f",
                 "_type": {
                   "$type": 223,
                   "$source": 0,
@@ -126219,7 +126219,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn high_order1(value:i32,f:fn(i32))->i32{  }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type))))))))) return_type: (primitive_type) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))) (attributed_parameter (parameter name: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type))))))))) return_type: (primitive_type) body: (block))",
     "wrappedText": "fn high_order1(value:i32,f:fn(i32))->i32{  }",
     "wrappedOffset": 0
   },
@@ -126253,7 +126253,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "value",
+                "_name": "value",
                 "_type": "i32",
                 "$other": [
                   5
@@ -126278,7 +126278,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "f",
+                "_name": "f",
                 "_type": {
                   "$type": 223,
                   "$source": 0,
@@ -126458,7 +126458,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn high_order2(value:i32,f:fn(i32)->i32)->i32{ f(value) }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type)))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))) (attributed_parameter (parameter name: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type)))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))))",
     "wrappedText": "fn high_order2(value:i32,f:fn(i32)->i32)->i32{ f(value) }",
     "wrappedOffset": 0
   },
@@ -126492,7 +126492,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "value",
+                "_name": "value",
                 "_type": "i32",
                 "$other": [
                   5
@@ -126517,7 +126517,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "f",
+                "_name": "f",
                 "_type": {
                   "$type": 233,
                   "$source": 0,
@@ -126710,7 +126710,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn high_order3(value:i32,f:&FnOnce(i32)->i32)->i32{ f(value) }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type))))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))) (attributed_parameter (parameter name: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type))))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))))",
     "wrappedText": "fn high_order3(value:i32,f:&FnOnce(i32)->i32)->i32{ f(value) }",
     "wrappedOffset": 0
   },
@@ -126739,7 +126739,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "value",
+              "_name": "value",
               "_type": "i32",
               "$other": [
                 5
@@ -126764,7 +126764,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "f",
+              "_name": "f",
               "_type": {
                 "$type": 223,
                 "$source": 0,
@@ -126864,7 +126864,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(value:i32,f:fn(i32))",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))) (attributed_parameter (parameter name: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))))))))",
     "wrappedText": "fn _f(value:i32,f:fn(i32)) {}",
     "wrappedOffset": 5
   },
@@ -126947,7 +126947,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "value",
+              "_name": "value",
               "_type": "i32",
               "$other": [
                 5
@@ -126972,7 +126972,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "f",
+              "_name": "f",
               "_type": {
                 "$type": 223,
                 "$source": 0,
@@ -127076,7 +127076,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(value:i32,f:fn(i32)->i32)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))) (attributed_parameter (parameter name: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type))))))",
     "wrappedText": "fn _f(value:i32,f:fn(i32)->i32) {}",
     "wrappedOffset": 5
   },
@@ -127159,7 +127159,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "value",
+              "_name": "value",
               "_type": "i32",
               "$other": [
                 5
@@ -127184,7 +127184,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "f",
+              "_name": "f",
               "_type": {
                 "$type": 233,
                 "$source": 0,
@@ -127301,7 +127301,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(value:i32,f:&FnOnce(i32)->i32)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type)))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (primitive_type))) (attributed_parameter (parameter name: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type)))))))",
     "wrappedText": "fn _f(value:i32,f:&FnOnce(i32)->i32) {}",
     "wrappedOffset": 5
   },
@@ -127384,7 +127384,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "x",
+              "_name": "x",
               "_type": {
                 "$type": 233,
                 "$source": 0,
@@ -127436,7 +127436,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_pattern": "y",
+              "_name": "y",
               "_type": {
                 "$type": 233,
                 "$source": 0,
@@ -127583,7 +127583,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(x:&'a A,y:&'a mut B<'i,'t>,)",
-    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier))))))))))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)))) (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier))))))))))",
     "wrappedText": "fn _f(x:&'a A,y:&'a mut B<'i,'t>,) {}",
     "wrappedOffset": 5
   },
@@ -127594,7 +127594,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "value",
+      "_name": "value",
       "_type": "i32",
       "$other": [
         5
@@ -127614,7 +127614,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "value:i32",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (primitive_type))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (primitive_type))",
     "wrappedText": "fn _f(value:i32) {}",
     "wrappedOffset": 6
   },
@@ -127625,7 +127625,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "f",
+      "_name": "f",
       "_type": {
         "$type": 223,
         "$source": 0,
@@ -127703,7 +127703,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "f:fn(i32)",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type))))))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type))))))",
     "wrappedText": "fn _f(f:fn(i32)) {}",
     "wrappedOffset": 6
   },
@@ -127714,7 +127714,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "value",
+      "_name": "value",
       "_type": "i32",
       "$other": [
         5
@@ -127734,7 +127734,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "value:i32",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (primitive_type))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (primitive_type))",
     "wrappedText": "fn _f(value:i32) {}",
     "wrappedOffset": 6
   },
@@ -127745,7 +127745,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "f",
+      "_name": "f",
       "_type": {
         "$type": 223,
         "$source": 0,
@@ -127827,7 +127827,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "f:fn(i32)->i32",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type)))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type)))",
     "wrappedText": "fn _f(f:fn(i32)->i32) {}",
     "wrappedOffset": 6
   },
@@ -127838,7 +127838,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "value",
+      "_name": "value",
       "_type": "i32",
       "$other": [
         5
@@ -127858,7 +127858,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "value:i32",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (primitive_type))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (primitive_type))",
     "wrappedText": "fn _f(value:i32) {}",
     "wrappedOffset": 6
   },
@@ -127869,7 +127869,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "f",
+      "_name": "f",
       "_type": {
         "$type": 233,
         "$source": 0,
@@ -127964,7 +127964,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "f:&FnOnce(i32)->i32",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type))))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type))))",
     "wrappedText": "fn _f(f:&FnOnce(i32)->i32) {}",
     "wrappedOffset": 6
   },
@@ -127975,7 +127975,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "x",
+      "_name": "x",
       "_type": {
         "$type": 233,
         "$source": 0,
@@ -128022,7 +128022,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "x:&'a A",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)))",
     "wrappedText": "fn _f(x:&'a A) {}",
     "wrappedOffset": 6
   },
@@ -128033,7 +128033,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_pattern": "y",
+      "_name": "y",
       "_type": {
         "$type": 233,
         "$source": 0,
@@ -128157,7 +128157,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "y:&'a mut B<'i,'t>",
-    "expectedReparseTree": "(parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier)))))))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier)))))))",
     "wrappedText": "fn _f(y:&'a mut B<'i,'t>) {}",
     "wrappedOffset": 6
   },
@@ -128481,7 +128481,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "x",
+                "_name": "x",
                 "_type": {
                   "$type": 233,
                   "$source": 0,
@@ -128533,7 +128533,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_pattern": "y",
+                "_name": "y",
                 "_type": {
                   "$type": 233,
                   "$source": 0,
@@ -128690,7 +128690,7 @@
     "pattern": "function_type",
     "edits": [],
     "expectedSourceOut": "for<'a,'b>fn(x:&'a A,y:&'a mut B<'i,'t>,)->C",
-    "expectedReparseTree": "(function_type for_lifetimes: (for_lifetimes (lifetime identifier: (identifier)) (lifetime identifier: (identifier))) (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier)))))))))) return_type: (type_identifier))",
+    "expectedReparseTree": "(function_type for_lifetimes: (for_lifetimes (lifetime identifier: (identifier)) (lifetime identifier: (identifier))) (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)))) (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier)))))))))) return_type: (type_identifier))",
     "wrappedText": "type _X = for<'a,'b>fn(x:&'a A,y:&'a mut B<'i,'t>,)->C;",
     "wrappedOffset": 10
   },
@@ -129474,7 +129474,7 @@
                   "$type": 214,
                   "$source": 0,
                   "$named": true,
-                  "_pattern": "x",
+                  "_name": "x",
                   "_type": {
                     "$type": 233,
                     "$source": 0,
@@ -129526,7 +129526,7 @@
                   "$type": 214,
                   "$source": 0,
                   "$named": true,
-                  "_pattern": "y",
+                  "_name": "y",
                   "_type": {
                     "$type": 233,
                     "$source": 0,
@@ -129694,7 +129694,7 @@
     "pattern": "type_item",
     "edits": [],
     "expectedSourceOut": "type F=for<'a,'b>fn(x:&'a A,y:&'a mut B<'i,'t>,)->C;",
-    "expectedReparseTree": "(type_item name: (type_identifier) type: (function_type for_lifetimes: (for_lifetimes (lifetime identifier: (identifier)) (lifetime identifier: (identifier))) (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier)))))))))) return_type: (type_identifier)))",
+    "expectedReparseTree": "(type_item name: (type_identifier) type: (function_type for_lifetimes: (for_lifetimes (lifetime identifier: (identifier)) (lifetime identifier: (identifier))) (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)))) (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier)))))))))) return_type: (type_identifier)))",
     "wrappedText": "type F=for<'a,'b>fn(x:&'a A,y:&'a mut B<'i,'t>,)->C;",
     "wrappedOffset": 0
   },

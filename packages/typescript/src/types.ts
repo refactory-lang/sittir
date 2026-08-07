@@ -1665,7 +1665,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[277, 'instantiation_expression'],
 	[278, 'import_require_clause'],
 	[279, 'extends_clause'],
-	[280, '_extends_clause_single'],
+	[280, 'extends_clause_single'],
 	[281, 'implements_clause'],
 	[282, 'ambient_declaration'],
 	[283, 'abstract_class_declaration'],
@@ -2882,6 +2882,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TemplateChars;
 		case 'function_signature_automatic_semicolon':
 			return TSKindId.FunctionSignatureAutomaticSemicolon;
+		case 'extends_clause_single':
+			return TSKindId.ExtendsClauseSingle;
 		case 'export_clause_group1':
 			return TSKindId.ExportClauseGroup1;
 		case 'import_statement_group1':
@@ -3396,8 +3398,13 @@ export interface ImportSpecifier {
 
 export interface ImportAttribute {
 	readonly $type: TSKindId.ImportAttribute;
-	readonly _object: 'with' | 'assert' | Object;
-	object(): 'with' | 'assert' | Object;
+	readonly _attribute_kind: number;
+	readonly _object: Object;
+	readonly __inputHints__?: {
+		readonly attribute_kind: KindEnum<'with' | 'assert', TSKindId.With | TSKindId.Assert>;
+	};
+	attributeKind(): number;
+	object(): Object;
 }
 
 export interface ExpressionStatement {
@@ -4488,10 +4495,8 @@ export interface ImportRequireClause {
 
 export interface ExtendsClause {
 	readonly $type: TSKindId.ExtendsClause;
-	readonly _value: NonEmptyArray<Expression>;
-	readonly _type_arguments?: readonly TypeArguments[];
-	values(): NonEmptyArray<Expression>;
-	typeArguments(): readonly TypeArguments[];
+	readonly _extends_clause_single: NonEmptyArray<ExtendsClauseSingle>;
+	extendsClauseSingles(): NonEmptyArray<ExtendsClauseSingle>;
 }
 
 export interface ExtendsClauseSingle {
@@ -4755,8 +4760,8 @@ export interface Asserts {
 
 export interface AssertsAnnotation {
 	readonly $type: TSKindId.AssertsAnnotation;
-	readonly _asserts: ':' | Asserts;
-	asserts(): ':' | Asserts;
+	readonly _asserts: Asserts;
+	asserts(): Asserts;
 }
 
 export interface TupleParameter {
@@ -4852,8 +4857,8 @@ export interface TypePredicate {
 
 export interface TypePredicateAnnotation {
 	readonly $type: TSKindId.TypePredicateAnnotation;
-	readonly _type_predicate: ':' | TypePredicate;
-	typePredicate(): ':' | TypePredicate;
+	readonly _type_predicate: TypePredicate;
+	typePredicate(): TypePredicate;
 }
 
 export interface TypeQueryMemberExpression {

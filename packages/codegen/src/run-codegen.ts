@@ -36,6 +36,7 @@ import {
 import { getEnrichUnaliasDiagnostics } from './dsl/enrich.ts';
 import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
+import { pruneOrphanedPlaceholderRules } from './transpile/prune-grammar-json.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { writeManifestForGrammar, type Grammar } from './scripts/generated-manifest.ts';
@@ -93,6 +94,7 @@ export function runTreeSitterGenerate(grammar: string): void {
 		cwd: sittirDir,
 		stdio: 'inherit'
 	});
+	pruneOrphanedPlaceholderRules(sittirDir);
 }
 
 export async function runStandaloneSteps(opts: CodegenOptions): Promise<void> {

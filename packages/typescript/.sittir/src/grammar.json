@@ -384,10 +384,13 @@
               },
               {
                 "type": "FIELD",
-                "name": "source",
+                "name": "from_clause",
                 "content": {
                   "type": "SYMBOL",
                   "name": "string"
+                },
+                "metadata": {
+                  "fieldSource": "override"
                 }
               }
             ]
@@ -607,7 +610,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "object",
+          "name": "attribute_kind",
           "content": {
             "type": "CHOICE",
             "members": [
@@ -7825,8 +7828,13 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_extends_clause_single"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_extends_clause_single"
+              },
+              "named": true,
+              "value": "extends_clause_single"
             },
             {
               "type": "REPEAT",
@@ -7838,8 +7846,13 @@
                     "value": ","
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "_extends_clause_single"
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_extends_clause_single"
+                    },
+                    "named": true,
+                    "value": "extends_clause_single"
                   }
                 ]
               }
@@ -8874,24 +8887,17 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "FIELD",
-          "name": "asserts",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "STRING",
-                "value": ":"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "asserts"
-              }
-            ]
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ":"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "asserts"
+            }
+          ]
         }
       ]
     },
@@ -9470,24 +9476,17 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "FIELD",
-          "name": "type_predicate",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "STRING",
-                "value": ":"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "type_predicate"
-              }
-            ]
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ":"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "type_predicate"
+            }
+          ]
         }
       ]
     },
@@ -12976,15 +12975,6 @@
         }
       ]
     },
-    "_class_heritage_implements_clause": {
-      "type": "BLANK"
-    },
-    "_import_clause_namespace_import": {
-      "type": "BLANK"
-    },
-    "_import_clause_named_imports": {
-      "type": "BLANK"
-    },
     "_import_clause_default_import": {
       "type": "SEQ",
       "members": [
@@ -13017,9 +13007,6 @@
           ]
         }
       ]
-    },
-    "_import_specifier_name": {
-      "type": "BLANK"
     },
     "_import_specifier_as": {
       "type": "SEQ",
@@ -13098,12 +13085,6 @@
           }
         }
       ]
-    },
-    "_index_signature_mapped_type_clause": {
-      "type": "BLANK"
-    },
-    "_ambient_declaration_declaration": {
-      "type": "BLANK"
     },
     "_export_statement_default_from_arm": {
       "type": "SEQ",
@@ -13699,99 +13680,9 @@
     "_public_field_definition_accessor_opt": {
       "type": "BLANK"
     },
-    "_kw_arguments": {
-      "type": "BLANK"
-    },
-    "_kw_elements": {
-      "type": "BLANK"
-    },
-    "_kw_properties": {
-      "type": "BLANK"
-    },
-    "_kw_cases": {
-      "type": "BLANK"
-    },
-    "_kw_expression": {
-      "type": "BLANK"
-    },
-    "_kw_terminator": {
-      "type": "BLANK"
-    },
-    "_kw_accessor_kind": {
-      "type": "BLANK"
-    },
     "_kw_optional_marker": {
       "type": "STRING",
       "value": "?"
-    },
-    "_kw_type_annotation": {
-      "type": "BLANK"
-    },
-    "_kw_asserts": {
-      "type": "BLANK"
-    },
-    "_kw_automatic_semicolon": {
-      "type": "BLANK"
-    },
-    "_kw_name": {
-      "type": "BLANK"
-    },
-    "_kw_value": {
-      "type": "BLANK"
-    },
-    "_kw_semicolon": {
-      "type": "BLANK"
-    },
-    "_kw_object": {
-      "type": "BLANK"
-    },
-    "_kw_import_clause": {
-      "type": "BLANK"
-    },
-    "_kw_from_clause": {
-      "type": "BLANK"
-    },
-    "_kw_type_identifier": {
-      "type": "BLANK"
-    },
-    "_kw_constraint": {
-      "type": "BLANK"
-    },
-    "_kw_left": {
-      "type": "BLANK"
-    },
-    "_kw_right": {
-      "type": "BLANK"
-    },
-    "_kw_declarators": {
-      "type": "BLANK"
-    },
-    "_kw_index_type": {
-      "type": "BLANK"
-    },
-    "_kw_separator": {
-      "type": "BLANK"
-    },
-    "_kw_hash_bang_line": {
-      "type": "BLANK"
-    },
-    "_kw_statements": {
-      "type": "BLANK"
-    },
-    "_kw_type_predicate": {
-      "type": "BLANK"
-    },
-    "_kw_export_kind": {
-      "type": "BLANK"
-    },
-    "_kw_import_kind": {
-      "type": "BLANK"
-    },
-    "_kw_visibility_prefix": {
-      "type": "BLANK"
-    },
-    "_kw_optionality_marker": {
-      "type": "BLANK"
     },
     "_parenthesized_expression_typed": {
       "type": "SEQ",
@@ -13817,9 +13708,6 @@
           }
         }
       ]
-    },
-    "_parenthesized_expression_sequence": {
-      "type": "BLANK"
     },
     "_export_statement_type_export": {
       "type": "SEQ",

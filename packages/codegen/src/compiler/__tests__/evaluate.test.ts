@@ -13,7 +13,7 @@ import {
 	field,
 	token,
 	prec,
-	normalize,
+	coerceToRule,
 	createProxy,
 	evaluate
 } from '../evaluate.ts';
@@ -50,22 +50,22 @@ const fixture = (name: string) => resolve(__dirname, '../../__tests__/fixtures',
 describe('Evaluate — DSL functions', () => {
 	describe('normalize', () => {
 		it('converts a string to a StringRule', () => {
-			const rule = normalize('hello');
+			const rule = coerceToRule('hello');
 			expect(rule).toEqual({ type: 'STRING', value: 'hello' });
 		});
 
 		it('converts a RegExp to a PatternRule', () => {
-			const rule = normalize(/[a-z]+/);
+			const rule = coerceToRule(/[a-z]+/);
 			expect(rule).toEqual({ type: 'PATTERN', value: '[a-z]+' });
 		});
 
 		it('passes through an existing Rule object', () => {
 			const existing = { type: 'STRING' as const, value: 'x' };
-			expect(normalize(existing)).toBe(existing);
+			expect(coerceToRule(existing)).toBe(existing);
 		});
 
 		it('throws on undefined', () => {
-			expect(() => normalize(undefined as any)).toThrow();
+			expect(() => coerceToRule(undefined as any)).toThrow();
 		});
 	});
 

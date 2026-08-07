@@ -53,8 +53,8 @@
 
 import type { NodeMap } from './types.ts';
 import {
-	isMultiple,
 	kindsOf,
+	isMultiple,
 	type AssembledNode,
 	type AssembledNonterminal,
 	type AssembledSupertype
@@ -160,14 +160,16 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 	return adjacency;
 }
 
+// `Vec<T>` is heap-indirect regardless of T's size, so a Vec-typed slot
+// never contributes to a real struct-size cycle. Including it in the graph
+// would falsely merge kinds into the same SCC whenever the only path
+// between them ran through a Vec — this filter keeps the graph aligned with
+// `rustTransportSlotType`'s own box-decision model.
 function structuralSingularSlots(node: AssembledNode): readonly AssembledNonterminal[] {
-	let slots: readonly AssembledNonterminal[];
 	if (node.modelType === 'branch' || node.modelType === 'group') {
-		slots = Object.values(node.slots);
-	} else {
-		return [];
+		return Object.values(node.slots).filter((slot) => !isMultiple(slot));
 	}
-	return slots.filter((slot) => !isMultiple(slot));
+	return [];
 }
 
 function tarjanSCC(adjacency: ReadonlyMap<string, ReadonlySet<string>>): {
