@@ -362,10 +362,17 @@
           "value": "("
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "token_patterns",
           "content": {
-            "type": "SYMBOL",
-            "name": "_token_pattern"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_token_pattern"
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         },
         {
@@ -555,10 +562,17 @@
           "value": "("
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "tokens",
           "content": {
-            "type": "SYMBOL",
-            "name": "_tokens"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_tokens"
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         },
         {
@@ -955,10 +969,17 @@
           "value": "{"
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "declaration_statements",
           "content": {
-            "type": "SYMBOL",
-            "name": "_declaration_statement"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_declaration_statement"
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         },
         {
@@ -7278,10 +7299,17 @@
           "value": "{"
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "statements",
           "content": {
-            "type": "SYMBOL",
-            "name": "_statement"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_statement"
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         },
         {

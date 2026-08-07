@@ -3449,7 +3449,7 @@ export interface TokenBindingPattern {
 
 export interface TokenRepetitionPattern {
 	readonly $type: TSKindId.TokenRepetitionPattern;
-	readonly _token_pattern?: readonly TokenPattern[];
+	readonly _token_patterns?: readonly TokenPattern[];
 	readonly _separator?: boolean;
 	readonly _operator: number;
 	readonly __inputHints__?: {
@@ -3535,7 +3535,7 @@ export interface ForeignModItem {
 
 export interface DeclarationList {
 	readonly $type: TSKindId.DeclarationList;
-	readonly _declaration_statement?: readonly DeclarationStatement[];
+	readonly _declaration_statements?: readonly DeclarationStatement[];
 	declarationStatements(): readonly DeclarationStatement[];
 }
 
@@ -4582,7 +4582,7 @@ export interface TryBlock {
 export interface Block {
 	readonly $type: TSKindId.Block;
 	readonly _label?: Label;
-	readonly _statement?: readonly Statement[];
+	readonly _statements?: readonly Statement[];
 	readonly _trailing_expression?: Expression;
 	label(): Label | undefined;
 	statements(): readonly Statement[];

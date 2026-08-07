@@ -385,8 +385,8 @@ export interface BlockTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _label?: LabelTransport
+  _statements?: Array<StatementTransport>
   _trailing_expression?: Box<ExpressionTransport>
-  _statement?: Array<StatementTransport>
 }
 
 export interface BoundedTypeTransport {
@@ -589,7 +589,7 @@ export interface DeclarationListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _declaration_statement?: Array<DeclarationStatementTransport>
+  _declaration_statements?: Array<DeclarationStatementTransport>
 }
 
 export interface DelimTokenTreeBraceTransport {
@@ -2072,9 +2072,9 @@ export interface TokenRepetitionPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _token_patterns?: Array<TokenPatternTransport>
   _separator?: boolean
   _operator: Box<AnyTransport>
-  _token_pattern?: Array<TokenPatternTransport>
 }
 
 export interface TokenRepetitionTransport {
@@ -2085,9 +2085,9 @@ export interface TokenRepetitionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _tokens?: Array<TokensTransport>
   _separator?: boolean
   _operator: Box<AnyTransport>
-  _tokens?: Array<TokensTransport>
 }
 
 export interface TokenTreeBraceTransport {

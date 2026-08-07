@@ -3731,10 +3731,10 @@ export interface ArrayPattern {
 export interface JsxElement {
 	readonly $type: 'jsx_element';
 	readonly _open_tag: JsxOpeningElement;
-	readonly _jsx_child?: readonly JsxChild[];
+	readonly _jsx_childs?: readonly JsxChild[];
 	readonly _close_tag: JsxClosingElement;
 	openTag(): JsxOpeningElement;
-	jsxChildren(): readonly JsxChild[];
+	jsxChilds(): readonly JsxChild[];
 	closeTag(): JsxClosingElement;
 }
 

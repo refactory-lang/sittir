@@ -27665,12 +27665,12 @@ pub struct TokenRepetitionPatternTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns"))]
+    pub token_patterns: Option<Vec<TokenPatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator"))]
     pub separator: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: Box<AnyTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_pattern"))]
-    pub token_pattern: Option<Vec<TokenPatternTransport>>,
 }
 
 impl RenderableTransport for TokenRepetitionPatternTransport {
@@ -27958,12 +27958,12 @@ pub struct TokenRepetitionTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens"))]
+    pub tokens: Option<Vec<TokensTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator"))]
     pub separator: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: Box<AnyTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens"))]
-    pub tokens: Option<Vec<TokensTransport>>,
 }
 
 impl RenderableTransport for TokenRepetitionTransport {
@@ -28276,8 +28276,8 @@ pub struct DeclarationListTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declaration_statement"))]
-    pub declaration_statement: Option<Vec<DeclarationStatementTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declaration_statements"))]
+    pub declaration_statements: Option<Vec<DeclarationStatementTransport>>,
 }
 
 impl RenderableTransport for DeclarationListTransport {
@@ -34419,10 +34419,10 @@ pub struct BlockTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
     pub label: Option<LabelTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
+    pub statements: Option<Vec<StatementTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_expression"))]
     pub trailing_expression: Option<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statement"))]
-    pub statement: Option<Vec<StatementTransport>>,
 }
 
 impl RenderableTransport for BlockTransport {
@@ -52668,8 +52668,8 @@ fn render_token_binding_pattern(node: &TokenBindingPatternTransport, dest: &mut 
 }
 
 fn render_token_repetition_pattern(node: &TokenRepetitionPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let token_pattern_owned = node.token_pattern.as_deref().unwrap_or(&[]);
-    let token_pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = token_pattern_owned.iter()
+    let token_patterns_owned = node.token_patterns.as_deref().unwrap_or(&[]);
+    let token_patterns_buf: Vec<::sittir_core::filters::Renderable<'_>> = token_patterns_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TokenRepetitionPatternTemplate {
@@ -52679,8 +52679,8 @@ fn render_token_repetition_pattern(node: &TokenRepetitionPatternTransport, dest:
         } else {
             OptionalNonterminalView::Missing
         },
-        token_pattern: ListNonterminalView {
-            items: token_pattern_buf.as_slice(),
+        token_patterns: ListNonterminalView {
+            items: token_patterns_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
@@ -52772,18 +52772,18 @@ fn render_foreign_mod_item(node: &ForeignModItemTransport, dest: &mut dyn ::std:
 }
 
 fn render_declaration_list(node: &DeclarationListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.declaration_statement.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.declaration_statements.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let declaration_statement_owned = node.declaration_statement.as_deref().unwrap_or(&[]);
-    let declaration_statement_buf: Vec<::sittir_core::filters::Renderable<'_>> = declaration_statement_owned.iter()
+    let declaration_statements_owned = node.declaration_statements.as_deref().unwrap_or(&[]);
+    let declaration_statements_buf: Vec<::sittir_core::filters::Renderable<'_>> = declaration_statements_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = DeclarationListTemplate {
-        declaration_statement: ListNonterminalView {
-            items: declaration_statement_buf.as_slice(),
+        declaration_statements: ListNonterminalView {
+            items: declaration_statements_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
@@ -54265,13 +54265,13 @@ fn render_try_block(node: &TryBlockTransport, dest: &mut dyn ::std::fmt::Write) 
 }
 
 fn render_block(node: &BlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.label.is_none() && node.trailing_expression.is_none() && node.statement.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.label.is_none() && node.statements.as_deref().is_none_or(<[_]>::is_empty) && node.trailing_expression.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let statement_owned = node.statement.as_deref().unwrap_or(&[]);
-    let statement_buf: Vec<::sittir_core::filters::Renderable<'_>> = statement_owned.iter()
+    let statements_owned = node.statements.as_deref().unwrap_or(&[]);
+    let statements_buf: Vec<::sittir_core::filters::Renderable<'_>> = statements_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = BlockTemplate {
@@ -54279,8 +54279,8 @@ fn render_block(node: &BlockTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        statement: ListNonterminalView {
-            items: statement_buf.as_slice(),
+        statements: ListNonterminalView {
+            items: statements_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,

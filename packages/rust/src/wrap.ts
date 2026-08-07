@@ -1955,82 +1955,17 @@ export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeH
 	return _node;
 }
 
-export function wrapTokenRepetitionPattern(
-	data: T.TokenRepetitionPattern & {
-		readonly _token_pattern_group1?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_tree_pattern?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_repetition_pattern?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_binding_pattern?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _metavariable?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _primitive_type?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_tree_punctuation?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _string_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _raw_string_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _char_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _boolean_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _integer_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _float_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _identifier?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _mutable_specifier?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _self?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _super?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _crate?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_keywords?: T.TokenPattern | readonly T.TokenPattern[];
-	},
-	tree: TreeHandle
-) {
+export function wrapTokenRepetitionPattern(data: T.TokenRepetitionPattern, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_boolean_literal',
-				'_char_literal',
-				'_crate',
-				'_float_literal',
-				'_identifier',
-				'_integer_literal',
-				'_metavariable',
-				'_mutable_specifier',
-				'_primitive_type',
-				'_raw_string_literal',
-				'_self',
-				'_string_literal',
-				'_super',
-				'_token_binding_pattern',
-				'_token_keywords',
-				'_token_pattern_group1',
-				'_token_repetition_pattern',
-				'_token_tree_pattern',
-				'_token_tree_punctuation'
-			]),
+			...data,
 			$type: TSKindId.TokenRepetitionPattern as const,
-			_token_pattern: normalizeRepeatedWrapSlot(
-				data._token_pattern !== undefined
-					? _toArr(data._token_pattern)
-					: _concatInSourceOrder([
-							data._token_pattern_group1,
-							data._token_tree_pattern,
-							data._token_repetition_pattern,
-							data._token_binding_pattern,
-							data._metavariable,
-							data._primitive_type,
-							data._token_tree_punctuation,
-							data._string_literal,
-							data._raw_string_literal,
-							data._char_literal,
-							data._boolean_literal,
-							data._integer_literal,
-							data._float_literal,
-							data._identifier,
-							data._mutable_specifier,
-							data._self,
-							data._super,
-							data._crate,
-							data._token_keywords
-						]),
-				false,
-				'token_pattern',
-				{ tree, nodeType: data.$type, slotName: 'token_pattern', span: (data as _NodeData).$span }
-			),
+			_token_patterns: normalizeRepeatedWrapSlot(data._token_patterns, false, 'token_patterns', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'token_patterns',
+				span: (data as _NodeData).$span
+			}),
 			_separator: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._separator, 'separator', false, data.$type, {
 					tree,
@@ -2051,7 +1986,7 @@ export function wrapTokenRepetitionPattern(
 			),
 
 			tokenPatterns() {
-				return drillAsAll<T.TokenPattern>(this._token_pattern, tree, [
+				return drillAsAll<T.TokenPattern>(this._token_patterns, tree, [
 					{ from: 'token_pattern_group1', to: '_non_special_token' }
 				]);
 			},
@@ -2062,8 +1997,8 @@ export function wrapTokenRepetitionPattern(
 				return this._operator;
 			},
 			$with: {
-				tokenPatterns: (...v: NonNullable<T.TokenRepetitionPattern['_token_pattern']>[number][]) =>
-					wrapTokenRepetitionPattern({ ...data, _token_pattern: v }, tree),
+				tokenPatterns: (...v: NonNullable<T.TokenRepetitionPattern['_token_patterns']>[number][]) =>
+					wrapTokenRepetitionPattern({ ...data, _token_patterns: v }, tree),
 				separator: (v: NonNullable<T.TokenRepetitionPattern['_separator']>) =>
 					wrapTokenRepetitionPattern({ ...data, _separator: v }, tree),
 				operator: (v: NonNullable<T.TokenRepetitionPattern['_operator']>) =>
@@ -2173,79 +2108,17 @@ export function wrapTokenTree(
 	return _node;
 }
 
-export function wrapTokenRepetition(
-	data: T.TokenRepetition & {
-		readonly _token_pattern_group1?: T.Tokens | readonly T.Tokens[];
-		readonly _token_tree?: T.Tokens | readonly T.Tokens[];
-		readonly _token_repetition?: T.Tokens | readonly T.Tokens[];
-		readonly _metavariable?: T.Tokens | readonly T.Tokens[];
-		readonly _primitive_type?: T.Tokens | readonly T.Tokens[];
-		readonly _token_tree_punctuation?: T.Tokens | readonly T.Tokens[];
-		readonly _string_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _raw_string_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _char_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _boolean_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _integer_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _float_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _identifier?: T.Tokens | readonly T.Tokens[];
-		readonly _mutable_specifier?: T.Tokens | readonly T.Tokens[];
-		readonly _self?: T.Tokens | readonly T.Tokens[];
-		readonly _super?: T.Tokens | readonly T.Tokens[];
-		readonly _crate?: T.Tokens | readonly T.Tokens[];
-		readonly _token_keywords?: T.Tokens | readonly T.Tokens[];
-	},
-	tree: TreeHandle
-) {
+export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_boolean_literal',
-				'_char_literal',
-				'_crate',
-				'_float_literal',
-				'_identifier',
-				'_integer_literal',
-				'_metavariable',
-				'_mutable_specifier',
-				'_primitive_type',
-				'_raw_string_literal',
-				'_self',
-				'_string_literal',
-				'_super',
-				'_token_keywords',
-				'_token_pattern_group1',
-				'_token_repetition',
-				'_token_tree',
-				'_token_tree_punctuation'
-			]),
+			...data,
 			$type: TSKindId.TokenRepetition as const,
-			_tokens: normalizeRepeatedWrapSlot(
-				data._tokens !== undefined
-					? _toArr(data._tokens)
-					: _concatInSourceOrder([
-							data._token_pattern_group1,
-							data._token_tree,
-							data._token_repetition,
-							data._metavariable,
-							data._primitive_type,
-							data._token_tree_punctuation,
-							data._string_literal,
-							data._raw_string_literal,
-							data._char_literal,
-							data._boolean_literal,
-							data._integer_literal,
-							data._float_literal,
-							data._identifier,
-							data._mutable_specifier,
-							data._self,
-							data._super,
-							data._crate,
-							data._token_keywords
-						]),
-				false,
-				'tokens',
-				{ tree, nodeType: data.$type, slotName: 'tokens', span: (data as _NodeData).$span }
-			),
+			_tokens: normalizeRepeatedWrapSlot(data._tokens, false, 'tokens', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'tokens',
+				span: (data as _NodeData).$span
+			}),
 			_separator: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._separator, 'separator', false, data.$type, {
 					tree,
@@ -2548,98 +2421,27 @@ export function wrapForeignModItem(
 	return _node;
 }
 
-export function wrapDeclarationList(
-	data: T.DeclarationList & {
-		readonly _const_item?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _macro_invocation?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _macro_definition?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _empty_statement?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _attribute_item?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _inner_attribute_item?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _mod_item?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _foreign_mod_item?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _struct_item?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _union_item?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _enum_item?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _type_item?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _function_item?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _function_signature_item?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _impl_item?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _trait_item?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _associated_type?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _let_declaration?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _use_declaration?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _extern_crate_declaration?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-		readonly _static_item?: T.DeclarationStatement | readonly T.DeclarationStatement[];
-	},
-	tree: TreeHandle
-) {
+export function wrapDeclarationList(data: T.DeclarationList, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_associated_type',
-				'_attribute_item',
-				'_const_item',
-				'_empty_statement',
-				'_enum_item',
-				'_extern_crate_declaration',
-				'_foreign_mod_item',
-				'_function_item',
-				'_function_signature_item',
-				'_impl_item',
-				'_inner_attribute_item',
-				'_let_declaration',
-				'_macro_definition',
-				'_macro_invocation',
-				'_mod_item',
-				'_static_item',
-				'_struct_item',
-				'_trait_item',
-				'_type_item',
-				'_union_item',
-				'_use_declaration'
-			]),
+			...data,
 			$type: TSKindId.DeclarationList as const,
-			_declaration_statement: normalizeRepeatedWrapSlot(
-				data._declaration_statement !== undefined
-					? _toArr(data._declaration_statement)
-					: _concatInSourceOrder([
-							data._const_item,
-							data._macro_invocation,
-							data._macro_definition,
-							data._empty_statement,
-							data._attribute_item,
-							data._inner_attribute_item,
-							data._mod_item,
-							data._foreign_mod_item,
-							data._struct_item,
-							data._union_item,
-							data._enum_item,
-							data._type_item,
-							data._function_item,
-							data._function_signature_item,
-							data._impl_item,
-							data._trait_item,
-							data._associated_type,
-							data._let_declaration,
-							data._use_declaration,
-							data._extern_crate_declaration,
-							data._static_item
-						]),
+			_declaration_statements: normalizeRepeatedWrapSlot(
+				data._declaration_statements,
 				false,
-				'declaration_statement',
-				{ tree, nodeType: data.$type, slotName: 'declaration_statement', span: (data as _NodeData).$span }
+				'declaration_statements',
+				{ tree, nodeType: data.$type, slotName: 'declaration_statements', span: (data as _NodeData).$span }
 			),
 
 			declarationStatements() {
 				return drillInAll<T.DeclarationStatement>(
-					this._declaration_statement as readonly T.DeclarationStatement[] | undefined,
+					this._declaration_statements as readonly T.DeclarationStatement[] | undefined,
 					tree
 				);
 			},
 			$with: {
-				declarationStatements: (...v: NonNullable<T.DeclarationList['_declaration_statement']>[number][]) =>
-					wrapDeclarationList({ ...data, _declaration_statement: v }, tree)
+				declarationStatements: (...v: NonNullable<T.DeclarationList['_declaration_statements']>[number][]) =>
+					wrapDeclarationList({ ...data, _declaration_statements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -8213,59 +8015,10 @@ export function wrapTryBlock(data: T.TryBlock, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapBlock(
-	data: T.Block & {
-		readonly _expression_statement?: T.Statement | readonly T.Statement[];
-		readonly _const_item?: T.Statement | readonly T.Statement[];
-		readonly _macro_invocation?: T.Statement | readonly T.Statement[];
-		readonly _macro_definition?: T.Statement | readonly T.Statement[];
-		readonly _empty_statement?: T.Statement | readonly T.Statement[];
-		readonly _attribute_item?: T.Statement | readonly T.Statement[];
-		readonly _inner_attribute_item?: T.Statement | readonly T.Statement[];
-		readonly _mod_item?: T.Statement | readonly T.Statement[];
-		readonly _foreign_mod_item?: T.Statement | readonly T.Statement[];
-		readonly _struct_item?: T.Statement | readonly T.Statement[];
-		readonly _union_item?: T.Statement | readonly T.Statement[];
-		readonly _enum_item?: T.Statement | readonly T.Statement[];
-		readonly _type_item?: T.Statement | readonly T.Statement[];
-		readonly _function_item?: T.Statement | readonly T.Statement[];
-		readonly _function_signature_item?: T.Statement | readonly T.Statement[];
-		readonly _impl_item?: T.Statement | readonly T.Statement[];
-		readonly _trait_item?: T.Statement | readonly T.Statement[];
-		readonly _associated_type?: T.Statement | readonly T.Statement[];
-		readonly _let_declaration?: T.Statement | readonly T.Statement[];
-		readonly _use_declaration?: T.Statement | readonly T.Statement[];
-		readonly _extern_crate_declaration?: T.Statement | readonly T.Statement[];
-		readonly _static_item?: T.Statement | readonly T.Statement[];
-	},
-	tree: TreeHandle
-) {
+export function wrapBlock(data: T.Block, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_associated_type',
-				'_attribute_item',
-				'_const_item',
-				'_empty_statement',
-				'_enum_item',
-				'_expression_statement',
-				'_extern_crate_declaration',
-				'_foreign_mod_item',
-				'_function_item',
-				'_function_signature_item',
-				'_impl_item',
-				'_inner_attribute_item',
-				'_let_declaration',
-				'_macro_definition',
-				'_macro_invocation',
-				'_mod_item',
-				'_static_item',
-				'_struct_item',
-				'_trait_item',
-				'_type_item',
-				'_union_item',
-				'_use_declaration'
-			]),
+			...data,
 			$type: TSKindId.Block as const,
 			_label: normalizeSingularWrapSlot(data._label, 'label', false, data.$type, {
 				tree,
@@ -8273,37 +8026,12 @@ export function wrapBlock(
 				slotName: 'label',
 				span: (data as _NodeData).$span
 			}),
-			_statement: normalizeRepeatedWrapSlot(
-				data._statement !== undefined
-					? _toArr(data._statement)
-					: _concatInSourceOrder([
-							data._expression_statement,
-							data._const_item,
-							data._macro_invocation,
-							data._macro_definition,
-							data._empty_statement,
-							data._attribute_item,
-							data._inner_attribute_item,
-							data._mod_item,
-							data._foreign_mod_item,
-							data._struct_item,
-							data._union_item,
-							data._enum_item,
-							data._type_item,
-							data._function_item,
-							data._function_signature_item,
-							data._impl_item,
-							data._trait_item,
-							data._associated_type,
-							data._let_declaration,
-							data._use_declaration,
-							data._extern_crate_declaration,
-							data._static_item
-						]),
-				false,
-				'statement',
-				{ tree, nodeType: data.$type, slotName: 'statement', span: (data as _NodeData).$span }
-			),
+			_statements: normalizeRepeatedWrapSlot(data._statements, false, 'statements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'statements',
+				span: (data as _NodeData).$span
+			}),
 			_trailing_expression: normalizeSingularWrapSlot(
 				data._trailing_expression,
 				'trailing_expression',
@@ -8316,14 +8044,15 @@ export function wrapBlock(
 				return drillIn<T.Label | undefined>(this._label, tree);
 			},
 			statements() {
-				return drillInAll<T.Statement>(this._statement as readonly T.Statement[] | undefined, tree);
+				return drillInAll<T.Statement>(this._statements as readonly T.Statement[] | undefined, tree);
 			},
 			trailingExpression() {
 				return drillIn<T.Expression | undefined>(this._trailing_expression, tree);
 			},
 			$with: {
 				label: (v: NonNullable<T.Block['_label']>) => wrapBlock({ ...data, _label: v }, tree),
-				statements: (...v: NonNullable<T.Block['_statement']>[number][]) => wrapBlock({ ...data, _statement: v }, tree),
+				statements: (...v: NonNullable<T.Block['_statements']>[number][]) =>
+					wrapBlock({ ...data, _statements: v }, tree),
 				trailingExpression: (v: NonNullable<T.Block['_trailing_expression']>) =>
 					wrapBlock({ ...data, _trailing_expression: v }, tree)
 			}

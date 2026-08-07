@@ -189,7 +189,7 @@ export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config) {
 }
 
 export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Config) {
-	const _token_pattern = config.tokenPattern ?? [];
+	const _token_patterns = config.tokenPatterns ?? [];
 	const _separator = coerceBooleanKeywordStorage(config.separator);
 	const _operator = coerceKindEnumStorage(config.operator, [
 		['+', TSKindId.Plus] as const,
@@ -202,12 +202,12 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 				$type: TSKindId.TokenRepetitionPattern as const,
 				$source: 2 as const,
 				$named: true as const,
-				_token_pattern,
+				_token_patterns,
 				_separator,
 				_operator,
 				$with: {
 					tokenPatterns: (...values: T.TokenPattern[]) =>
-						buildTokenRepetitionPattern({ ...config, tokenPattern: values }),
+						buildTokenRepetitionPattern({ ...config, tokenPatterns: values }),
 					separator: (value?: NonNullable<Parameters<typeof buildTokenRepetitionPattern>[0]>['separator']) =>
 						buildTokenRepetitionPattern({ ...config, separator: value }),
 					operator: (value: NonNullable<Parameters<typeof buildTokenRepetitionPattern>[0]>['operator']) =>
@@ -215,7 +215,7 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 				}
 			},
 			{
-				tokenPatterns: () => _token_pattern,
+				tokenPatterns: () => _token_patterns,
 				separator: () => _separator,
 				operator: () => _operator
 			}
@@ -451,19 +451,22 @@ export function buildForeignModItem(config: T.ForeignModItem.Config) {
 	);
 }
 
-export function buildDeclarationList(...children: T.DeclarationStatement[]) {
-	const _declaration_statement = children;
+export function buildDeclarationList(config: Partial<T.DeclarationList.Config> = {}) {
+	const _declaration_statements = config.declarationStatements ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.DeclarationList as const,
 				$source: 2 as const,
 				$named: true as const,
-				_declaration_statement,
-				$with: { $children: (...vs: T.DeclarationStatement[]) => buildDeclarationList(...vs) }
+				_declaration_statements,
+				$with: {
+					declarationStatements: (...values: T.DeclarationStatement[]) =>
+						buildDeclarationList({ ...config, declarationStatements: values })
+				}
 			},
 			{
-				declarationStatements: () => _declaration_statement
+				declarationStatements: () => _declaration_statements
 			}
 		),
 		methodsEngine
@@ -3419,7 +3422,7 @@ export function buildTryBlock(block: T.TryBlock.Config['block']) {
 
 export function buildBlock(config: Partial<T.Block.Config> = {}) {
 	const _label = config.label;
-	const _statement = config.statement ?? [];
+	const _statements = config.statements ?? [];
 	const _trailing_expression = config.trailingExpression;
 	return withMethods(
 		withAccessors(
@@ -3428,17 +3431,17 @@ export function buildBlock(config: Partial<T.Block.Config> = {}) {
 				$source: 2 as const,
 				$named: true as const,
 				_label,
-				_statement,
+				_statements,
 				_trailing_expression,
 				$with: {
 					label: (value?: T.Label) => buildBlock({ ...config, label: value }),
-					statements: (...values: T.Statement[]) => buildBlock({ ...config, statement: values }),
+					statements: (...values: T.Statement[]) => buildBlock({ ...config, statements: values }),
 					trailingExpression: (value?: T.Expression) => buildBlock({ ...config, trailingExpression: value })
 				}
 			},
 			{
 				label: () => _label,
-				statements: () => _statement,
+				statements: () => _statements,
 				trailingExpression: () => _trailing_expression
 			}
 		),

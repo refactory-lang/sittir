@@ -575,7 +575,7 @@
       }
     },
     "token_repetition_pattern": {
-      "token_pattern": {
+      "token_patterns": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -710,7 +710,7 @@
       }
     },
     "declaration_list": {
-      "declaration_statement": {
+      "declaration_statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2669,7 +2669,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "statement": {
+      "statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -9226,7 +9226,7 @@
           }
         },
         {
-          "name": "statement",
+          "name": "statements",
           "propertyName": "statements",
           "paramName": "statements",
           "required": false,
@@ -9276,7 +9276,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "label",
-        "statement",
+        "statements",
         "trailing_expression"
       ]
     },
@@ -10387,7 +10387,7 @@
       "hidden": false,
       "fields": [
         {
-          "name": "declaration_statement",
+          "name": "declaration_statements",
           "propertyName": "declarationStatements",
           "paramName": "declarationStatements",
           "required": false,
@@ -10411,9 +10411,9 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
-        "declaration_statement"
+        "declaration_statements"
       ]
     },
     {
@@ -17170,7 +17170,7 @@
       "hidden": false,
       "fields": [
         {
-          "name": "token_pattern",
+          "name": "token_patterns",
           "propertyName": "tokenPatterns",
           "paramName": "tokenPatterns",
           "required": false,
@@ -17247,7 +17247,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "token_pattern",
+        "token_patterns",
         "operator"
       ]
     },

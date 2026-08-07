@@ -14165,8 +14165,8 @@ pub struct ModuleTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statement"))]
-    pub statement: Option<Vec<StatementTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
+    pub statements: Option<Vec<StatementTransport>>,
 }
 
 impl RenderableTransport for ModuleTransport {
@@ -17111,8 +17111,8 @@ pub struct BlockTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statement"))]
-    pub statement: Option<Vec<StatementTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
+    pub statements: Option<Vec<StatementTransport>>,
 }
 
 impl RenderableTransport for BlockTransport {
@@ -32091,18 +32091,18 @@ impl ::askama::FastWritable for Renderable<'_> {
 }
 
 fn render_module(node: &ModuleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.statement.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.statements.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let statement_owned = node.statement.as_deref().unwrap_or(&[]);
-    let statement_buf: Vec<::sittir_core::filters::Renderable<'_>> = statement_owned.iter()
+    let statements_owned = node.statements.as_deref().unwrap_or(&[]);
+    let statements_buf: Vec<::sittir_core::filters::Renderable<'_>> = statements_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ModuleTemplate {
-        statement: ListNonterminalView {
-            items: statement_buf.as_slice(),
+        statements: ListNonterminalView {
+            items: statements_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
@@ -32736,18 +32736,18 @@ fn render_suite(node: &SuiteTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
 }
 
 fn render_block(node: &BlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.statement.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.statements.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let statement_owned = node.statement.as_deref().unwrap_or(&[]);
-    let statement_buf: Vec<::sittir_core::filters::Renderable<'_>> = statement_owned.iter()
+    let statements_owned = node.statements.as_deref().unwrap_or(&[]);
+    let statements_buf: Vec<::sittir_core::filters::Renderable<'_>> = statements_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = BlockTemplate {
-        statement: ListNonterminalView {
-            items: statement_buf.as_slice(),
+        statements: ListNonterminalView {
+            items: statements_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,

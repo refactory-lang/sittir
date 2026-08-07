@@ -210,7 +210,7 @@ export interface BlockTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _statement?: Array<StatementTransport>
+  _statements?: Array<StatementTransport>
 }
 
 export interface BooleanOperatorTransport {
@@ -1116,7 +1116,7 @@ export interface ModuleTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _statement?: Array<StatementTransport>
+  _statements?: Array<StatementTransport>
 }
 
 export interface NamedExpressionTransport {

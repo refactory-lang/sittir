@@ -1096,7 +1096,7 @@ pub struct JsxClosingElementTemplate<'a> {
 #[template(path = "jsx_element.jinja", escape = "none")]
 pub struct JsxElementTemplate<'a> {
     pub close_tag: SingleNonterminalView<'a>,
-    pub jsx_child: ListNonterminalView<'a>,
+    pub jsx_childs: ListNonterminalView<'a>,
     pub open_tag: SingleNonterminalView<'a>,
 }
 

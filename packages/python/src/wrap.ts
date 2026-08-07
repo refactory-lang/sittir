@@ -746,65 +746,26 @@ function _filterWrapChildrenByKind<T>(
 	});
 }
 
-export function wrapModule(
-	data: T.Module & {
-		readonly _statement_group1?: T.Statement | readonly T.Statement[];
-		readonly _simple_statements?: T.Statement | readonly T.Statement[];
-		readonly _if_statement?: T.Statement | readonly T.Statement[];
-		readonly _for_statement?: T.Statement | readonly T.Statement[];
-		readonly _while_statement?: T.Statement | readonly T.Statement[];
-		readonly _try_statement?: T.Statement | readonly T.Statement[];
-		readonly _with_statement?: T.Statement | readonly T.Statement[];
-		readonly _function_definition?: T.Statement | readonly T.Statement[];
-		readonly _class_definition?: T.Statement | readonly T.Statement[];
-		readonly _decorated_definition?: T.Statement | readonly T.Statement[];
-		readonly _match_statement?: T.Statement | readonly T.Statement[];
-	},
-	tree: TreeHandle
-) {
+export function wrapModule(data: T.Module, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_class_definition',
-				'_decorated_definition',
-				'_for_statement',
-				'_function_definition',
-				'_if_statement',
-				'_match_statement',
-				'_simple_statements',
-				'_statement_group1',
-				'_try_statement',
-				'_while_statement',
-				'_with_statement'
-			]),
+			...data,
 			$type: TSKindId.Module as const,
-			_statement: normalizeRepeatedWrapSlot(
-				data._statement !== undefined
-					? _toArr(data._statement)
-					: _concatInSourceOrder([
-							data._statement_group1,
-							data._simple_statements,
-							data._if_statement,
-							data._for_statement,
-							data._while_statement,
-							data._try_statement,
-							data._with_statement,
-							data._function_definition,
-							data._class_definition,
-							data._decorated_definition,
-							data._match_statement
-						]),
-				false,
-				'statement',
-				{ tree, nodeType: data.$type, slotName: 'statement', span: (data as _NodeData).$span }
-			),
+			_statements: normalizeRepeatedWrapSlot(data._statements, false, 'statements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'statements',
+				span: (data as _NodeData).$span
+			}),
 
 			statements() {
-				return drillAsAll<T.Statement>(this._statement, tree, [{ from: 'statement_group1', to: '_simple_statements' }]);
+				return drillAsAll<T.Statement>(this._statements, tree, [
+					{ from: 'statement_group1', to: '_simple_statements' }
+				]);
 			},
 			$with: {
-				statements: (...v: NonNullable<T.Module['_statement']>[number][]) =>
-					wrapModule({ ...data, _statement: v }, tree)
+				statements: (...v: NonNullable<T.Module['_statements']>[number][]) =>
+					wrapModule({ ...data, _statements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -3432,64 +3393,26 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapBlock(
-	data: T.Block & {
-		readonly _statement_group1?: T.Statement | readonly T.Statement[];
-		readonly _simple_statements?: T.Statement | readonly T.Statement[];
-		readonly _if_statement?: T.Statement | readonly T.Statement[];
-		readonly _for_statement?: T.Statement | readonly T.Statement[];
-		readonly _while_statement?: T.Statement | readonly T.Statement[];
-		readonly _try_statement?: T.Statement | readonly T.Statement[];
-		readonly _with_statement?: T.Statement | readonly T.Statement[];
-		readonly _function_definition?: T.Statement | readonly T.Statement[];
-		readonly _class_definition?: T.Statement | readonly T.Statement[];
-		readonly _decorated_definition?: T.Statement | readonly T.Statement[];
-		readonly _match_statement?: T.Statement | readonly T.Statement[];
-	},
-	tree: TreeHandle
-) {
+export function wrapBlock(data: T.Block, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_class_definition',
-				'_decorated_definition',
-				'_for_statement',
-				'_function_definition',
-				'_if_statement',
-				'_match_statement',
-				'_simple_statements',
-				'_statement_group1',
-				'_try_statement',
-				'_while_statement',
-				'_with_statement'
-			]),
+			...data,
 			$type: TSKindId.Block as const,
-			_statement: normalizeRepeatedWrapSlot(
-				data._statement !== undefined
-					? _toArr(data._statement)
-					: _concatInSourceOrder([
-							data._statement_group1,
-							data._simple_statements,
-							data._if_statement,
-							data._for_statement,
-							data._while_statement,
-							data._try_statement,
-							data._with_statement,
-							data._function_definition,
-							data._class_definition,
-							data._decorated_definition,
-							data._match_statement
-						]),
-				false,
-				'statement',
-				{ tree, nodeType: data.$type, slotName: 'statement', span: (data as _NodeData).$span }
-			),
+			_statements: normalizeRepeatedWrapSlot(data._statements, false, 'statements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'statements',
+				span: (data as _NodeData).$span
+			}),
 
 			statements() {
-				return drillAsAll<T.Statement>(this._statement, tree, [{ from: 'statement_group1', to: '_simple_statements' }]);
+				return drillAsAll<T.Statement>(this._statements, tree, [
+					{ from: 'statement_group1', to: '_simple_statements' }
+				]);
 			},
 			$with: {
-				statements: (...v: NonNullable<T.Block['_statement']>[number][]) => wrapBlock({ ...data, _statement: v }, tree)
+				statements: (...v: NonNullable<T.Block['_statements']>[number][]) =>
+					wrapBlock({ ...data, _statements: v }, tree)
 			}
 		},
 		methodsEngine

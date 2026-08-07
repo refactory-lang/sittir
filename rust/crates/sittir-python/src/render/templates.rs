@@ -329,7 +329,7 @@ pub struct BinaryOperatorTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "block.jinja", escape = "none")]
 pub struct BlockTemplate<'a> {
-    pub statement: ListNonterminalView<'a>,
+    pub statements: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -738,7 +738,7 @@ pub struct MemberTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "module.jinja", escape = "none")]
 pub struct ModuleTemplate<'a> {
-    pub statement: ListNonterminalView<'a>,
+    pub statements: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

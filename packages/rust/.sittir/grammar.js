@@ -1078,7 +1078,7 @@ function enrich(baseInput, config) {
   for (const name of Object.keys(mergedRules)) {
     if (enrichSkip.has(name)) continue;
     const rule = mergedRules[name];
-    if (rule) mergedRules[name] = applyRepeatedChoiceBlockWrap(name, rule);
+    if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
   }
   synthesizeFieldEnumRules(mergedRules);
   setGroupLiftRuleMap({
@@ -1301,7 +1301,25 @@ function isAllArmsNodeShaped(choiceRule) {
     return t === "SYMBOL" || t === "ALIAS";
   });
 }
-function applyRepeatedChoiceBlockWrap(ruleName, rule) {
+function pluralizeFieldName(name) {
+  if (name.endsWith("s")) return name;
+  if (name.endsWith("y") && !/[aeiou]y$/.test(name)) return name.slice(0, -1) + "ies";
+  return name + "s";
+}
+function isHiddenPureUnionRule(name, mergedRules) {
+  if (!name.startsWith("_")) return false;
+  const target = mergedRules[name];
+  if (!target) return false;
+  let core = target;
+  while (isPrecWrapper(core)) {
+    core = core.content;
+  }
+  return isChoiceType(core.type) && isAllArmsNodeShaped(core);
+}
+function isEligibleFieldReferent(name, mergedRules, supertypeNames) {
+  return supertypeNames.has(name) || isHiddenPureUnionRule(name, mergedRules);
+}
+function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
   const usedNames = /* @__PURE__ */ new Set();
   collectAllFieldNamesDeep(rule, usedNames);
   let changed = false;
@@ -1316,8 +1334,27 @@ function applyRepeatedChoiceBlockWrap(ruleName, rule) {
     usedNames.add(name);
     return name;
   };
-  const visit = (r) => {
-    if (isRepeatType(r.type)) {
+  const refCounts = /* @__PURE__ */ new Map();
+  const countEligibleRefs = (r) => {
+    if (isFieldType(r.type)) return;
+    if (isSymbolType(r.type)) {
+      const name = r.name;
+      if (isEligibleFieldReferent(name, mergedRules, supertypeNames)) {
+        refCounts.set(name, (refCounts.get(name) ?? 0) + 1);
+      }
+      return;
+    }
+    const bag = r;
+    if (Array.isArray(bag.members)) {
+      for (const m of bag.members) countEligibleRefs(m);
+    } else if (bag.content && typeof bag.content === "object") {
+      countEligibleRefs(bag.content);
+    }
+  };
+  countEligibleRefs(rule);
+  const visit = (r, suppressed = false) => {
+    if (isFieldType(r.type)) return r;
+    if (!suppressed && isRepeatType(r.type)) {
       const content = r.content;
       const precStack = [];
       let inner = content;
@@ -1325,35 +1362,42 @@ function applyRepeatedChoiceBlockWrap(ruleName, rule) {
         precStack.push(inner);
         inner = inner.content;
       }
-      const visitedInner = visit(inner);
-      if (isChoiceType(visitedInner.type) && isAllArmsNodeShaped(visitedInner)) {
-        changed = true;
-        let rebuiltInner = visitedInner;
+      const rebuildRepeat = (newInner) => {
+        let rebuiltInner = newInner;
         for (let i = precStack.length - 1; i >= 0; i--) {
           rebuiltInner = { ...precStack[i], content: rebuiltInner };
         }
-        const rebuiltRepeat = { ...r, content: rebuiltInner };
-        return makeField(reserve("elements"), rebuiltRepeat);
+        return { ...r, content: rebuiltInner };
+      };
+      if (isSymbolType(inner.type)) {
+        const refName = inner.name;
+        if (isEligibleFieldReferent(refName, mergedRules, supertypeNames) && refCounts.get(refName) === 1) {
+          changed = true;
+          const fieldName = pluralizeFieldName(refName.replace(/^_/, ""));
+          return makeField(reserve(fieldName), rebuildRepeat(inner));
+        }
+      }
+      const visitedInner = visit(inner, true);
+      if (isChoiceType(visitedInner.type) && isAllArmsNodeShaped(visitedInner)) {
+        changed = true;
+        return makeField(reserve("elements"), rebuildRepeat(visitedInner));
       }
       if (visitedInner === inner) return r;
-      let newContent = visitedInner;
-      for (let i = precStack.length - 1; i >= 0; i--) {
-        newContent = { ...precStack[i], content: newContent };
-      }
-      return { ...r, content: newContent };
+      return rebuildRepeat(visitedInner);
     }
     const bag = r;
     if (Array.isArray(bag.members)) {
+      const memberSuppressed = isChoiceType(r.type);
       let memberChanged = false;
       const newMembers = bag.members.map((m) => {
-        const nm = visit(m);
+        const nm = visit(m, memberSuppressed);
         if (nm !== m) memberChanged = true;
         return nm;
       });
       return memberChanged ? { ...r, members: newMembers } : r;
     }
     if (bag.content && typeof bag.content === "object") {
-      const nc = visit(bag.content);
+      const nc = visit(bag.content, suppressed);
       return nc !== bag.content ? { ...r, content: nc } : r;
     }
     return r;

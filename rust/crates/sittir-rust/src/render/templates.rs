@@ -591,7 +591,7 @@ pub struct BlockCommentTemplate<'a> {
 #[template(path = "block.jinja", escape = "none")]
 pub struct BlockTemplate<'a> {
     pub label: OptionalNonterminalView<'a>,
-    pub statement: ListNonterminalView<'a>,
+    pub statements: ListNonterminalView<'a>,
     pub trailing_expression: OptionalNonterminalView<'a>,
 }
 
@@ -691,7 +691,7 @@ pub struct ContinueExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "declaration_list.jinja", escape = "none")]
 pub struct DeclarationListTemplate<'a> {
-    pub declaration_statement: ListNonterminalView<'a>,
+    pub declaration_statements: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1281,7 +1281,7 @@ pub struct TokenBindingPatternTemplate<'a> {
 pub struct TokenRepetitionPatternTemplate<'a> {
     pub operator: SingleNonterminalView<'a>,
     pub separator: OptionalNonterminalView<'a>,
-    pub token_pattern: ListNonterminalView<'a>,
+    pub token_patterns: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

@@ -1567,8 +1567,8 @@ export interface JsxElementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _open_tag: JsxOpeningElementTransport
+  _jsx_childs?: Array<JsxChildTransport>
   _close_tag: JsxClosingElementTransport
-  _jsx_child?: Array<JsxChildTransport>
 }
 
 export interface JsxExpressionTransport {

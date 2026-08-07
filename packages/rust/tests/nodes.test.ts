@@ -258,9 +258,13 @@ describe('foreign_mod_item', () => {
 
 describe('declaration_list', () => {
 	it('factory produces correct type', () => {
-		const node = ir.declarationList();
+		const node = ir.declarationList({});
 		expect(node.$type).toBe(TSKindId.DeclarationList);
 		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.declarationList({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 

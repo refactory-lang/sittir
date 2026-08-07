@@ -1159,6 +1159,20 @@
           }
         ]
       },
+      "statements": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "_declaration_statement",
+            "named": true
+          },
+          {
+            "type": "expression_statement",
+            "named": true
+          }
+        ]
+      },
       "trailing_expression": {
         "multiple": false,
         "required": false,
@@ -1169,20 +1183,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_declaration_statement",
-          "named": true
-        },
-        {
-          "type": "expression_statement",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -1864,16 +1864,17 @@
   {
     "type": "declaration_list",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_declaration_statement",
-          "named": true
-        }
-      ]
+    "fields": {
+      "declaration_statements": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "_declaration_statement",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -5473,29 +5474,29 @@
             "named": false
           }
         ]
+      },
+      "tokens": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "metavariable",
+            "named": true
+          },
+          {
+            "type": "token_pattern_group1",
+            "named": true
+          },
+          {
+            "type": "token_repetition",
+            "named": true
+          },
+          {
+            "type": "token_tree",
+            "named": true
+          }
+        ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "metavariable",
-          "named": true
-        },
-        {
-          "type": "token_pattern_group1",
-          "named": true
-        },
-        {
-          "type": "token_repetition",
-          "named": true
-        },
-        {
-          "type": "token_tree",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -5519,33 +5520,33 @@
             "named": false
           }
         ]
+      },
+      "token_patterns": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "metavariable",
+            "named": true
+          },
+          {
+            "type": "token_binding_pattern",
+            "named": true
+          },
+          {
+            "type": "token_pattern_group1",
+            "named": true
+          },
+          {
+            "type": "token_repetition_pattern",
+            "named": true
+          },
+          {
+            "type": "token_tree_pattern",
+            "named": true
+          }
+        ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "metavariable",
-          "named": true
-        },
-        {
-          "type": "token_binding_pattern",
-          "named": true
-        },
-        {
-          "type": "token_pattern_group1",
-          "named": true
-        },
-        {
-          "type": "token_repetition_pattern",
-          "named": true
-        },
-        {
-          "type": "token_tree_pattern",
-          "named": true
-        }
-      ]
     }
   },
   {

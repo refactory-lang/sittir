@@ -303,16 +303,17 @@ export type PythonGrammar = {
 	readonly block: {
 		type: 'block';
 		named: true;
-		fields: {};
+		fields: {
+			statements: {
+				multiple: true;
+				required: false;
+				types: [{ type: '_compound_statement'; named: true }, { type: 'statement_group1'; named: true }];
+			};
+		};
 		children: {
-			multiple: true;
+			multiple: false;
 			required: false;
-			types: [
-				{ type: '_compound_statement'; named: true },
-				{ type: 'match_block_block'; named: true },
-				{ type: 'newline'; named: true },
-				{ type: 'statement_group1'; named: true }
-			];
+			types: [{ type: 'match_block_block'; named: true }, { type: 'newline'; named: true }];
 		};
 	};
 	readonly boolean_operator: {
@@ -1167,11 +1168,12 @@ export type PythonGrammar = {
 		type: 'module';
 		named: true;
 		root: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [{ type: '_compound_statement'; named: true }, { type: 'statement_group1'; named: true }];
+		fields: {
+			statements: {
+				multiple: true;
+				required: false;
+				types: [{ type: '_compound_statement'; named: true }, { type: 'statement_group1'; named: true }];
+			};
 		};
 	};
 	readonly named_expression: {

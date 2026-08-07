@@ -2593,10 +2593,17 @@
           }
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "jsx_childs",
           "content": {
-            "type": "SYMBOL",
-            "name": "_jsx_child"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_jsx_child"
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         },
         {

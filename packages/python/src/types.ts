@@ -2166,7 +2166,7 @@ export const enum DictPatternKvKind {
 // Node types — concrete interfaces
 export interface Module {
 	readonly $type: TSKindId.Module;
-	readonly _statement?: readonly Statement[];
+	readonly _statements?: readonly Statement[];
 	statements(): readonly Statement[];
 }
 
@@ -2548,7 +2548,7 @@ export interface Suite {
 
 export interface Block {
 	readonly $type: TSKindId.Block;
-	readonly _statement?: readonly Statement[];
+	readonly _statements?: readonly Statement[];
 	statements(): readonly Statement[];
 }
 

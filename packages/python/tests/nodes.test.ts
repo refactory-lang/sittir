@@ -5,9 +5,13 @@ import { TSKindId } from '../src/types.js';
 
 describe('module', () => {
 	it('factory produces correct type', () => {
-		const node = ir.module();
+		const node = ir.module({});
 		expect(node.$type).toBe(TSKindId.Module);
 		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.module({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -800,9 +804,13 @@ describe('decorator', () => {
 
 describe('block', () => {
 	it('factory produces correct type', () => {
-		const node = ir.block();
+		const node = ir.block({});
 		expect(node.$type).toBe(TSKindId.Block);
 		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.block({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 

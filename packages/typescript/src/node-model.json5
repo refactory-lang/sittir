@@ -1156,7 +1156,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "jsx_child": {
+      "jsx_childs": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -16936,9 +16936,9 @@
           }
         },
         {
-          "name": "jsx_child",
-          "propertyName": "jsxChildren",
-          "paramName": "jsxChildren",
+          "name": "jsx_childs",
+          "propertyName": "jsxChilds",
+          "paramName": "jsxChilds",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -16986,7 +16986,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "open_tag",
-        "jsx_child",
+        "jsx_childs",
         "close_tag"
       ]
     },

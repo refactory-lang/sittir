@@ -36621,10 +36621,10 @@ pub struct JsxElementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_open_tag"))]
     pub open_tag: JsxOpeningElementTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_childs"))]
+    pub jsx_childs: Option<Vec<JsxChildTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_close_tag"))]
     pub close_tag: JsxClosingElementTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_child"))]
-    pub jsx_child: Option<Vec<JsxChildTransport>>,
 }
 
 impl RenderableTransport for JsxElementTransport {
@@ -63015,14 +63015,14 @@ fn render_array_pattern(node: &ArrayPatternTransport, dest: &mut dyn ::std::fmt:
 }
 
 fn render_jsx_element(node: &JsxElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let jsx_child_owned = node.jsx_child.as_deref().unwrap_or(&[]);
-    let jsx_child_buf: Vec<::sittir_core::filters::Renderable<'_>> = jsx_child_owned.iter()
+    let jsx_childs_owned = node.jsx_childs.as_deref().unwrap_or(&[]);
+    let jsx_childs_buf: Vec<::sittir_core::filters::Renderable<'_>> = jsx_childs_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = JsxElementTemplate {
         close_tag: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.close_tag)),
-        jsx_child: ListNonterminalView {
-            items: jsx_child_buf.as_slice(),
+        jsx_childs: ListNonterminalView {
+            items: jsx_childs_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,

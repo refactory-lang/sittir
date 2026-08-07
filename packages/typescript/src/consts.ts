@@ -2863,7 +2863,7 @@ export const FIELD_MAP: Record<
 	jsx_closing_element: [{ name: 'name', required: false, multiple: false }],
 	jsx_element: [
 		{ name: 'openTag', required: true, multiple: false },
-		{ name: 'jsxChildren', required: false, multiple: true },
+		{ name: 'jsxChilds', required: false, multiple: true },
 		{ name: 'closeTag', required: true, multiple: false }
 	],
 	jsx_expression: [{ name: 'expression', required: false, multiple: false }],

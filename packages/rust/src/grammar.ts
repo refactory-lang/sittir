@@ -392,12 +392,12 @@ export type RustGrammar = {
 		named: true;
 		fields: {
 			label: { multiple: false; required: false; types: [{ type: 'label'; named: true }] };
+			statements: {
+				multiple: true;
+				required: false;
+				types: [{ type: '_declaration_statement'; named: true }, { type: 'expression_statement'; named: true }];
+			};
 			trailing_expression: { multiple: false; required: false; types: [{ type: '_expression'; named: true }] };
-		};
-		children: {
-			multiple: true;
-			required: false;
-			types: [{ type: '_declaration_statement'; named: true }, { type: 'expression_statement'; named: true }];
 		};
 	};
 	readonly block_comment: {
@@ -619,8 +619,13 @@ export type RustGrammar = {
 	readonly declaration_list: {
 		type: 'declaration_list';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: false; types: [{ type: '_declaration_statement'; named: true }] };
+		fields: {
+			declaration_statements: {
+				multiple: true;
+				required: false;
+				types: [{ type: '_declaration_statement'; named: true }];
+			};
+		};
 	};
 	readonly delim_token_tree_brace: {
 		type: 'delim_token_tree_brace';
@@ -1898,16 +1903,16 @@ export type RustGrammar = {
 				required: true;
 				types: [{ type: '*'; named: false }, { type: '+'; named: false }, { type: '?'; named: false }];
 			};
-		};
-		children: {
-			multiple: true;
-			required: false;
-			types: [
-				{ type: 'metavariable'; named: true },
-				{ type: 'token_pattern_group1'; named: true },
-				{ type: 'token_repetition'; named: true },
-				{ type: 'token_tree'; named: true }
-			];
+			tokens: {
+				multiple: true;
+				required: false;
+				types: [
+					{ type: 'metavariable'; named: true },
+					{ type: 'token_pattern_group1'; named: true },
+					{ type: 'token_repetition'; named: true },
+					{ type: 'token_tree'; named: true }
+				];
+			};
 		};
 	};
 	readonly token_repetition_pattern: {
@@ -1919,17 +1924,17 @@ export type RustGrammar = {
 				required: true;
 				types: [{ type: '*'; named: false }, { type: '+'; named: false }, { type: '?'; named: false }];
 			};
-		};
-		children: {
-			multiple: true;
-			required: false;
-			types: [
-				{ type: 'metavariable'; named: true },
-				{ type: 'token_binding_pattern'; named: true },
-				{ type: 'token_pattern_group1'; named: true },
-				{ type: 'token_repetition_pattern'; named: true },
-				{ type: 'token_tree_pattern'; named: true }
-			];
+			token_patterns: {
+				multiple: true;
+				required: false;
+				types: [
+					{ type: 'metavariable'; named: true },
+					{ type: 'token_binding_pattern'; named: true },
+					{ type: 'token_pattern_group1'; named: true },
+					{ type: 'token_repetition_pattern'; named: true },
+					{ type: 'token_tree_pattern'; named: true }
+				];
+			};
 		};
 	};
 	readonly token_tree: {

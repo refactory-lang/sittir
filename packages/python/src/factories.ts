@@ -21,19 +21,21 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 const _leafRe_buildTypeConversion = /^(?:![a-z])/u;
 const _leafRe_buildIdentifier = /^(?:[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 
-export function buildModule(...children: T.Statement[]) {
-	const _statement = children;
+export function buildModule(config: Partial<T.Module.Config> = {}) {
+	const _statements = config.statements ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.Module as const,
 				$source: 2 as const,
 				$named: true as const,
-				_statement,
-				$with: { $children: (...vs: T.Statement[]) => buildModule(...vs) }
+				_statements,
+				$with: {
+					statements: (...values: T.Statement[]) => buildModule({ ...config, statements: values })
+				}
 			},
 			{
-				statements: () => _statement
+				statements: () => _statements
 			}
 		),
 		methodsEngine
@@ -1197,19 +1199,21 @@ export function buildDecorator(expression: T.Decorator.Config['expression']) {
 	);
 }
 
-export function buildBlock(...children: T.Statement[]) {
-	const _statement = children;
+export function buildBlock(config: Partial<T.Block.Config> = {}) {
+	const _statements = config.statements ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.Block as const,
 				$source: 2 as const,
 				$named: true as const,
-				_statement,
-				$with: { $children: (...vs: T.Statement[]) => buildBlock(...vs) }
+				_statements,
+				$with: {
+					statements: (...values: T.Statement[]) => buildBlock({ ...config, statements: values })
+				}
 			},
 			{
-				statements: () => _statement
+				statements: () => _statements
 			}
 		),
 		methodsEngine

@@ -258,7 +258,7 @@
   },
   "factorySlots": {
     "module": {
-      "statement": {
+      "statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -950,7 +950,7 @@
       }
     },
     "block": {
-      "statement": {
+      "statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4529,7 +4529,7 @@
       "hidden": false,
       "fields": [
         {
-          "name": "statement",
+          "name": "statements",
           "propertyName": "statements",
           "paramName": "statements",
           "required": false,
@@ -4553,9 +4553,9 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
-        "statement"
+        "statements"
       ]
     },
     {
@@ -8927,7 +8927,7 @@
       "hidden": false,
       "fields": [
         {
-          "name": "statement",
+          "name": "statements",
           "propertyName": "statements",
           "paramName": "statements",
           "required": false,
@@ -8951,9 +8951,9 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
-        "statement"
+        "statements"
       ]
     },
     {

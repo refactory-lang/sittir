@@ -5,10 +5,17 @@
   "word": "identifier",
   "rules": {
     "module": {
-      "type": "REPEAT",
+      "type": "FIELD",
+      "name": "statements",
       "content": {
-        "type": "SYMBOL",
-        "name": "_statement"
+        "type": "REPEAT",
+        "content": {
+          "type": "SYMBOL",
+          "name": "_statement"
+        }
+      },
+      "metadata": {
+        "fieldSource": "enriched"
       }
     },
     "_statement": {
@@ -2010,10 +2017,17 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "statements",
           "content": {
-            "type": "SYMBOL",
-            "name": "_statement"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_statement"
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         },
         {
