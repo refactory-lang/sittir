@@ -11,7 +11,40 @@
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
 import { transform, enrich, field, alias, wire, refine, variant } from '../codegen/src/dsl/index.ts';
 
-const enrichedBase = enrich(base);
+const enrichedBase = enrich(base, {
+	// `lexical_declaration` and `variable_declaration` already field their
+	// separated declarator list's WHOLE span at positional index 1 as
+	// 'declarators' below. applyNodeChoiceFieldWrap's separated-list target
+	// fielding the leading/repeated element positions too nests a second,
+	// inner field under that outer one — tree-sitter keeps only the
+	// innermost field name, so 'declarators' ends up matching nothing
+	// (`accessor-throw: repeated slot "declarators" requires at least one
+	// value`).
+	// `_enum_body_group1`'s element is a multi-field separated list (each
+	// occurrence is either a bare `name` or an `enum_assignment` pattern —
+	// see the '#170' comment on `enum_body_group1` further down in this
+	// file) — a single uniform 'element' field loses that distinction the
+	// same way `emitSeparatedListFactory`'s existing single-field-storage
+	// path already does (a documented, pre-existing gap, not something
+	// this pass should paper over with its own conflicting 'element'
+	// field: `accessor-throw: repeated slot "element" requires at least
+	// one value`).
+	// `object`, `object_pattern`, `array`, `array_pattern`, and `arguments`
+	// already field their separated list's WHOLE span at a positional
+	// index below ('properties', 'elements', 'arguments' respectively) —
+	// same outer/inner nested-field collision as
+	// `lexical_declaration`/`variable_declaration`.
+	skip: [
+		'lexical_declaration',
+		'variable_declaration',
+		'_enum_body_group1',
+		'object',
+		'object_pattern',
+		'array',
+		'array_pattern',
+		'arguments'
+	]
+});
 export default grammar(
 	enrichedBase,
 	wire(

@@ -3731,10 +3731,10 @@ export interface ArrayPattern {
 export interface JsxElement {
 	readonly $type: 'jsx_element';
 	readonly _open_tag: JsxOpeningElement;
-	readonly _jsx_child?: readonly JsxChild[];
+	readonly _jsx_childs?: readonly JsxChild[];
 	readonly _close_tag: JsxClosingElement;
 	openTag(): JsxOpeningElement;
-	jsxChildren(): readonly JsxChild[];
+	jsxChilds(): readonly JsxChild[];
 	closeTag(): JsxClosingElement;
 }
 
@@ -3788,12 +3788,10 @@ export interface JsxAttribute {
 
 export interface JsxString {
 	readonly $type: '_jsx_string';
-	readonly _content?: readonly (
-		| UnescapedDoubleJsxStringFragment
-		| HtmlCharacterReference
-		| UnescapedSingleJsxStringFragment
-	)[];
-	contents(): readonly (UnescapedDoubleJsxStringFragment | HtmlCharacterReference | UnescapedSingleJsxStringFragment)[];
+	readonly _elements?: readonly (UnescapedDoubleJsxStringFragment | HtmlCharacterReference)[];
+	readonly _elements_2?: readonly (UnescapedSingleJsxStringFragment | HtmlCharacterReference)[];
+	elements(): readonly (UnescapedDoubleJsxStringFragment | HtmlCharacterReference)[];
+	elements_2s(): readonly (UnescapedSingleJsxStringFragment | HtmlCharacterReference)[];
 }
 
 export interface Class {
@@ -4151,8 +4149,8 @@ export interface String {
 
 export interface TemplateString {
 	readonly $type: TSKindId.TemplateString;
-	readonly _content?: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
-	contents(): readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
+	readonly _elements?: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
+	elements(): readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
 }
 
 export interface TemplateSubstitution {
@@ -4815,8 +4813,8 @@ export interface TemplateType {
 
 export interface TemplateLiteralType {
 	readonly $type: TSKindId.TemplateLiteralType;
-	readonly _content?: readonly (TemplateChars | TemplateType)[];
-	contents(): readonly (TemplateChars | TemplateType)[];
+	readonly _elements?: readonly (TemplateChars | TemplateType)[];
+	elements(): readonly (TemplateChars | TemplateType)[];
 }
 
 export interface InferType {
@@ -5631,14 +5629,14 @@ export interface CallExpressionMember {
 
 export interface StringDouble {
 	readonly $type: TSKindId.StringDouble;
-	readonly _content?: readonly (UnescapedDoubleStringFragment | EscapeSequence)[];
-	contents(): readonly (UnescapedDoubleStringFragment | EscapeSequence)[];
+	readonly _elements?: readonly (UnescapedDoubleStringFragment | EscapeSequence)[];
+	elements(): readonly (UnescapedDoubleStringFragment | EscapeSequence)[];
 }
 
 export interface StringSingle {
 	readonly $type: TSKindId.StringSingle;
-	readonly _content?: readonly (UnescapedSingleStringFragment | EscapeSequence)[];
-	contents(): readonly (UnescapedSingleStringFragment | EscapeSequence)[];
+	readonly _elements_2?: readonly (UnescapedSingleStringFragment | EscapeSequence)[];
+	elements_2s(): readonly (UnescapedSingleStringFragment | EscapeSequence)[];
 }
 
 export interface UpdateExpressionPostfix {

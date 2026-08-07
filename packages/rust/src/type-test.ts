@@ -305,6 +305,8 @@ import type {
 	StringContent,
 	StringContentTree,
 	StringLiteral,
+	StringLiteralOpen,
+	StringLiteralOpenTree,
 	StringLiteralTree,
 	StructExpression,
 	StructExpressionTree,
@@ -862,6 +864,7 @@ export type _Type_TokenKeywords = _TypeAssert<
 		| TSKindId.While
 	>
 >;
+export type _Type_StringLiteralOpen = _TypeAssert<_TypeExtends<StringLiteralOpen['$type'], TSKindId.StringLiteralOpen>>;
 export type _Type_ReferenceExpressionRawConst = _TypeAssert<
 	_TypeExtends<ReferenceExpressionRawConst['$type'], TSKindId.ReferenceExpressionRawConst>
 >;
@@ -1182,6 +1185,7 @@ export type _Tree_TokenTreePunctuation = _TypeAssert<
 	_TypeExtends<TokenTreePunctuationTree['type'], '_token_tree_punctuation'>
 >;
 export type _Tree_TokenKeywords = _TypeAssert<_TypeExtends<TokenKeywordsTree['type'], '_token_keywords'>>;
+export type _Tree_StringLiteralOpen = _TypeAssert<_TypeExtends<StringLiteralOpenTree['type'], '_string_literal_open'>>;
 export type _Tree_ReferenceExpressionRawConst = _TypeAssert<
 	_TypeExtends<ReferenceExpressionRawConstTree['type'], '_reference_expression_raw_const'>
 >;

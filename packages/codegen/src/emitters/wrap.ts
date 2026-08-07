@@ -641,10 +641,30 @@ export function buildSeparatedListContentSlot(node: AssembledSeparatedList): Ass
 	});
 }
 
+// A separatedList's content position is genuinely field-backed when
+// wrapper-deletion stamped a `fieldName` directly onto its simplified rule
+// (carried down from the REPEAT wrapper it deleted — see
+// `compiler/model/node-map.ts`'s `AssembledSeparatedList` doc comment).
+// That's a real tree-sitter `field()` the native reader always populates —
+// confirmed empirically (a fielded separatedList's canonical storage key is
+// present on every genuine parse) — as opposed to a `separatedList`
+// classified purely by structural shape (`isSeparatedListShape`,
+// compiler/assemble.ts) with no grammar-level field backing it, where the
+// canonical key is a compiler-only abstraction and the candidate-kind-bucket
+// keys below are the ONLY thing a fresh read ever populates. Conflating the
+// two (dropping candidates whenever there's a "single" canonical slot,
+// regardless of whether it's a real field) breaks the many separatedList
+// kinds that fall in the second bucket — verified the hard way.
+function isFieldBackedSeparatedList(node: AssembledSeparatedList): boolean {
+	return (node.simplifiedRule as { fieldName?: string }).fieldName !== undefined;
+}
+
 function collectSeparatedListContentStorageKeys(
 	contentSlot: AssembledNonterminal,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	fieldBacked: boolean
 ): readonly string[] {
+	if (fieldBacked) return [];
 	const parseKinds = valueParseKindsOf(contentSlot);
 	if (parseKinds.length === 0) return [];
 	const concrete = expandToConcreteParseKinds(parseKinds, nodeMap);
@@ -656,9 +676,10 @@ function collectSeparatedListWireKeyTypes(
 	canonicalField: AssembledNonterminal,
 	canonicalKeys: ReadonlySet<string>,
 	fallbackStorageKey: string,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	fieldBacked: boolean
 ): ReadonlyMap<string, string> {
-	const candidates = collectSeparatedListContentStorageKeys(contentSlot, nodeMap);
+	const candidates = collectSeparatedListContentStorageKeys(contentSlot, nodeMap, fieldBacked);
 	const elemType = fieldElementType(canonicalField, nodeMap);
 	const keyTypes = new Map<string, string>();
 	for (const k of candidates) {
@@ -727,18 +748,20 @@ function emitSeparatedListWrap(
 	// exactly, or a still-declared key gets redundantly (and incoherently)
 	// re-widened.
 	const canonicalKeys = new Set(node.fields.map((f) => f.storageKey));
+	const fieldBacked = isFieldBackedSeparatedList(node);
 	const wireKeyTypes = collectSeparatedListWireKeyTypes(
 		contentSlot,
 		canonical,
 		canonicalKeys,
 		canonical.storageKey,
-		nodeMap
+		nodeMap,
+		fieldBacked
 	);
 	const paramType = buildSeparatedListWrapParamType(node.typeName, wireKeyTypes);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
 
 	const storageInfo = resolveFieldStorageInfo(contentSlot, nodeMap, kindEntries);
-	const candidateStorageKeys = collectSeparatedListContentStorageKeys(contentSlot, nodeMap);
+	const candidateStorageKeys = collectSeparatedListContentStorageKeys(contentSlot, nodeMap, fieldBacked);
 	const contentModel: SlotModel = { name: canonical.name, storageKey: canonical.storageKey, arity: 'many' };
 	const { storeExpr, accessorBody } = resolveSlotDrillExprs(contentModel, {
 		dataExpr: 'data',

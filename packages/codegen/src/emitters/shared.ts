@@ -919,6 +919,38 @@ export function wordCharAsciiTable(wordMatcher: RegExp): boolean[] {
 }
 
 /**
+ * Per-grammar symbol-character class: every ASCII PUNCTUATION character
+ * that participates in some multi-character anonymous literal token (e.g.
+ * rust's `.` and `=` from `..`/`..=`/`=>`). Two such characters adjacent at
+ * a SpacingWriter write seam risk the same maximal-munch collision the
+ * word-class table guards against — a longer real token could start
+ * exactly where two independently-rendered writes meet (e.g. a bare
+ * range-pattern `..` immediately followed by a match arm's `=>` re-lexes
+ * as `..=` plus a dangling `>`). Derived from the grammar's own
+ * anonymous-literal inventory — never hand-picked.
+ *
+ * Word-class and whitespace characters are excluded even when they occur
+ * inside a multi-character literal (e.g. python's `alias($._not_in, 'not
+ * in')` — a compound-keyword token whose spelling embeds a literal space
+ * and letters): those characters are either already covered by the
+ * word-class table or, for whitespace, never risk a token-fusion seam —
+ * including them corrupted indentation-sensitive rendering by flagging
+ * plain spaces as merge-hazardous.
+ */
+export function symbolCharAsciiTable(literals: readonly { readonly text: string }[]): boolean[] {
+	const table: boolean[] = Array.from({ length: 128 }, () => false);
+	for (const literal of literals) {
+		if (literal.text.length < 2) continue;
+		for (const ch of literal.text) {
+			const code = ch.charCodeAt(0);
+			if (code >= 128 || /[A-Za-z0-9_\s]/.test(ch)) continue;
+			table[code] = true;
+		}
+	}
+	return table;
+}
+
+/**
  * Escapes a string for embedding inside a single-quoted JS/TS string literal
  * in emitted source. Grammar values can contain literal control characters
  * (e.g. the newline that stands for TypeScript's automatic-semicolon token) —
