@@ -154,6 +154,7 @@ export function validateTemplateCoverage(grammar: string, templatesPath: string)
 	const grammarJson = loadGrammarJson(grammar);
 	const hoistedOuterByKind = grammarJson ? computeHoistedOuterFields(grammarJson) : new Map<string, Set<string>>();
 	const unionSlotRoutedByKind = loadUnionSlotRoutedFields(grammar);
+	const childDelegatedByKind = computeChildDelegatedFields(entries);
 
 	const issues: CoverageIssue[] = [];
 	let total = 0;
@@ -186,6 +187,7 @@ export function validateTemplateCoverage(grammar: string, templatesPath: string)
 			rule,
 			hoistedOuterByKind.get(entry.type) ?? new Set(),
 			unionSlotRoutedByKind.get(entry.type),
+			childDelegatedByKind.get(entry.type),
 			rawTemplate,
 			templatePath
 		);
@@ -264,6 +266,7 @@ export function checkRule(
 	rule: TemplateRule,
 	hoistedOuterFields: Set<string>,
 	unionSlotRouted: { unionSlot: string; fields: Set<string> } | undefined,
+	childDelegated: { contentSlot: string; fields: Set<string> } | undefined,
 	rawTemplate: string | undefined,
 	templatePath: string
 ): CoverageIssue[] {
@@ -311,6 +314,15 @@ export function checkRule(
 		// that slot (a template that dropped the slot placeholder while
 		// still routing a field into it is a real bug, not exempt).
 		if (unionSlotRouted?.fields.has(fname) && unionPlaceholders.has(unionSlotRouted.unionSlot)) continue;
+		// Polymorph child delegation (computeChildDelegatedFields): `fname`
+		// is one of tree-sitter's own node-types.json flattening artifacts —
+		// unioned onto this kind's field list from its `children.types`
+		// variant kinds, not actually declared by this kind's own grammar
+		// position. Its real storage identity on this kind IS the single
+		// dispatched child, addressed by the walker's `content` fallback
+		// name. Exempt ONLY when that slot is itself referenced — a
+		// template that dropped `content` too renders nothing, a real bug.
+		if (childDelegated?.fields.has(fname) && unionPlaceholders.has(childDelegated.contentSlot)) continue;
 		// Quote the real jinja source so the message points at what's
 		// actually on disk — `variants[].template` is this checker's own
 		// `$NAME`/`$$$NAME` placeholder DSL (see `jinjaBodyToLegacyRule`),
@@ -507,6 +519,46 @@ function computeHoistedOuterFields(grammar: GrammarJson): Map<string, Set<string
 		const fields = new Set<string>();
 		collectHoistedOuterFields(rules[kind], rules, fields, new Set());
 		out.set(kind, fields);
+	}
+	return out;
+}
+
+/**
+ * Compute, for each rule with a `node-types.json` `children.types` list
+ * (a polymorph parent whose body is a bare CHOICE of separately-aliased
+ * variant kinds — e.g. `call_expression` dispatching to
+ * `call_expression_call`/`_member`/`_template_call` via `polymorphs:`
+ * `variant()` labels in grammar.sittir.ts), the set of field names
+ * declared on ANY of those children. Tree-sitter's own node-types.json
+ * generator unions each child's fields onto the PARENT's field list too
+ * (this is why `call_expression` reports `function`/`arguments`/
+ * `type_arguments` as its own fields even though only its children
+ * actually declare them) — the field's real storage identity on the
+ * parent IS the single dispatched child, addressed by the walker's fixed
+ * unnamed-PATTERN fallback name `content` (`emitScalarSlot('content')` in
+ * `emitters/templates.ts`, e.g. `call_expression.jinja`: `{{ content }}`).
+ *
+ * Mirrors `unionSlotRouted`'s AND condition, not an unconditional exempt:
+ * a field only counts as covered by delegation when the template also
+ * references `content` itself — a template that dropped even that would
+ * render nothing for this kind, a real bug, not exempt.
+ */
+function computeChildDelegatedFields(
+	entries: readonly RawNodeEntry[]
+): Map<string, { contentSlot: string; fields: Set<string> }> {
+	const CONTENT_SLOT = 'content';
+	const byType = new Map(entries.map((e) => [e.type, e]));
+	const out = new Map<string, { contentSlot: string; fields: Set<string> }>();
+	for (const entry of entries) {
+		const childTypes = entry.children?.types;
+		if (!childTypes || childTypes.length === 0) continue;
+		const fields = new Set<string>();
+		for (const child of childTypes) {
+			const childFields = byType.get(child.type)?.fields;
+			if (!childFields) continue;
+			for (const fname of Object.keys(childFields)) fields.add(fname);
+		}
+		if (fields.size > 0) out.set(entry.type, { contentSlot: CONTENT_SLOT, fields });
 	}
 	return out;
 }
