@@ -265,9 +265,7 @@ function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {
 }
 
 const _wrapKindIds: { readonly [kind: string]: number } = {
-	_simple_statements: TSKindId.SimpleStatements,
 	print_statement: TSKindId.PrintStatement,
-	assert_statement: TSKindId.AssertStatement,
 	expression_statement: TSKindId.ExpressionStatement,
 	return_statement: TSKindId.ReturnStatement,
 	delete_statement: TSKindId.DeleteStatement,
@@ -275,16 +273,9 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	with_clause: TSKindId.WithClause,
 	parameters: TSKindId.Parameters,
 	lambda_parameters: TSKindId.LambdaParameters,
-	global_statement: TSKindId.GlobalStatement,
-	nonlocal_statement: TSKindId.NonlocalStatement,
-	type_parameter: TSKindId.TypeParameter,
 	parenthesized_list_splat: TSKindId.ParenthesizedListSplat,
-	dotted_name: TSKindId.DottedName,
 	case_pattern: TSKindId.CasePattern,
-	union_pattern: TSKindId.UnionPattern,
 	dict_pattern: TSKindId.DictPattern,
-	_parameters: TSKindId._Parameters,
-	_patterns: TSKindId.Patterns,
 	tuple_pattern: TSKindId.TuplePattern,
 	list_pattern: TSKindId.ListPattern,
 	list_splat_pattern: TSKindId.ListSplatPattern,
@@ -295,23 +286,18 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	set: TSKindId.Set,
 	tuple: TSKindId.Tuple,
 	parenthesized_expression: TSKindId.ParenthesizedExpression,
-	_collection_elements: TSKindId.CollectionElements,
 	concatenated_string: TSKindId.ConcatenatedString,
 	string_content: TSKindId.StringContent,
 	format_specifier: TSKindId.FormatSpecifier,
 	_except_clause_group1: TSKindId.ExceptClauseGroup1,
 	_argument_list_group1: TSKindId.ArgumentListGroup1,
 	_expression_list_group1: TSKindId.ExpressionListGroup1,
-	_list_pattern_group1: TSKindId.ListPatternGroup1,
 	_pattern_list_group1: TSKindId.PatternListGroup1,
 	_slice_group1: TSKindId.SliceGroup1,
 	_dictionary_group1: TSKindId.DictionaryGroup1,
 	case_tuple_pattern: TSKindId.CaseTuplePattern,
 	case_list_pattern: TSKindId.CaseListPattern,
 	comprehension_clauses: TSKindId.ComprehensionClauses,
-	_expression_statement_tuple: TSKindId.ExpressionStatementTuple,
-	_with_clause_bare: TSKindId.WithClauseBare,
-	_with_clause_paren: TSKindId.WithClauseParen,
 	_suite_block_with_indent: TSKindId.SuiteBlockWithIndent,
 	_simple_pattern_negative: TSKindId.SimplePatternNegative,
 	_yield_from_clause: TSKindId.YieldFromClause
@@ -319,12 +305,8 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
 	switch (kind) {
-		case '_simple_statements':
-			return F.buildSimpleStatements(...(children as Parameters<typeof F.buildSimpleStatements>));
 		case 'print_statement':
 			return F.buildPrintStatement(children[0] as Parameters<typeof F.buildPrintStatement>[0]);
-		case 'assert_statement':
-			return F.buildAssertStatement(...(children as Parameters<typeof F.buildAssertStatement>));
 		case 'expression_statement':
 			return F.buildExpressionStatement(children[0] as Parameters<typeof F.buildExpressionStatement>[0]);
 		case 'return_statement':
@@ -339,26 +321,12 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildParameters(children[0] as Parameters<typeof F.buildParameters>[0]);
 		case 'lambda_parameters':
 			return F.buildLambdaParameters(children[0] as Parameters<typeof F.buildLambdaParameters>[0]);
-		case 'global_statement':
-			return F.buildGlobalStatement(...(children as Parameters<typeof F.buildGlobalStatement>));
-		case 'nonlocal_statement':
-			return F.buildNonlocalStatement(...(children as Parameters<typeof F.buildNonlocalStatement>));
-		case 'type_parameter':
-			return F.buildTypeParameter(...(children as Parameters<typeof F.buildTypeParameter>));
 		case 'parenthesized_list_splat':
 			return F.buildParenthesizedListSplat(children[0] as Parameters<typeof F.buildParenthesizedListSplat>[0]);
-		case 'dotted_name':
-			return F.buildDottedName(...(children as Parameters<typeof F.buildDottedName>));
 		case 'case_pattern':
 			return F.buildCasePattern(children[0] as Parameters<typeof F.buildCasePattern>[0]);
-		case 'union_pattern':
-			return F.buildUnionPattern(...(children as Parameters<typeof F.buildUnionPattern>));
 		case 'dict_pattern':
 			return F.buildDictPattern(children[0] as Parameters<typeof F.buildDictPattern>[0]);
-		case '_parameters':
-			return F.build_Parameters(children as Parameters<typeof F.build_Parameters>[0]);
-		case '_patterns':
-			return F.buildPatterns(children as Parameters<typeof F.buildPatterns>[0]);
 		case 'tuple_pattern':
 			return F.buildTuplePattern(children[0] as Parameters<typeof F.buildTuplePattern>[0]);
 		case 'list_pattern':
@@ -379,8 +347,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildTuple(children[0] as Parameters<typeof F.buildTuple>[0]);
 		case 'parenthesized_expression':
 			return F.buildParenthesizedExpression(children[0] as Parameters<typeof F.buildParenthesizedExpression>[0]);
-		case '_collection_elements':
-			return F.buildCollectionElements(children as Parameters<typeof F.buildCollectionElements>[0]);
 		case 'concatenated_string':
 			return F.buildConcatenatedString(...(children as Parameters<typeof F.buildConcatenatedString>));
 		case 'string_content':
@@ -393,8 +359,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildArgumentListGroup1(children as Parameters<typeof F.buildArgumentListGroup1>[0]);
 		case '_expression_list_group1':
 			return F.buildExpressionListGroup1(children as Parameters<typeof F.buildExpressionListGroup1>[0]);
-		case '_list_pattern_group1':
-			return F.buildListPatternGroup1(children as Parameters<typeof F.buildListPatternGroup1>[0]);
 		case '_pattern_list_group1':
 			return F.buildPatternListGroup1(children as Parameters<typeof F.buildPatternListGroup1>[0]);
 		case '_slice_group1':
@@ -407,12 +371,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildCaseListPattern(...(children as Parameters<typeof F.buildCaseListPattern>));
 		case 'comprehension_clauses':
 			return F.buildComprehensionClauses(...(children as Parameters<typeof F.buildComprehensionClauses>));
-		case '_expression_statement_tuple':
-			return F.buildExpressionStatementTuple(children as Parameters<typeof F.buildExpressionStatementTuple>[0]);
-		case '_with_clause_bare':
-			return F.buildWithClauseBare(children as Parameters<typeof F.buildWithClauseBare>[0]);
-		case '_with_clause_paren':
-			return F.buildWithClauseParen(...(children as Parameters<typeof F.buildWithClauseParen>));
 		case '_suite_block_with_indent':
 			return F.buildSuiteBlockWithIndent(children[0] as Parameters<typeof F.buildSuiteBlockWithIndent>[0]);
 		case '_simple_pattern_negative':
@@ -819,7 +777,7 @@ export function coerceToImportFromStatement(
 export function coerceToAliasedImport(input: T.AliasedImport.Loose): ReturnType<typeof F.buildAliasedImport> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildAliasedImport>;
 	return F.buildAliasedImport({
-		name: _resolveOneBranch<T.DottedName>(input.name, 'dotted_name') ?? F.buildDottedName(),
+		name: _requireField('aliased_import', 'name', _resolveOneBranch<T.DottedName>(input.name, 'dotted_name')),
 		alias: _requireField('aliased_import', 'alias', _resolveOneLeaf<T.Identifier>(input.alias, 'identifier'))
 	});
 }
@@ -853,16 +811,13 @@ export function coerceToChevron(input: T.Chevron.Loose): ReturnType<typeof F.bui
 	);
 }
 
-export function coerceToAssertStatement(
-	...input: readonly (T.Expression | T.AssertStatement)[]
-): ReturnType<typeof F.buildAssertStatement> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.AssertStatement) {
-		const data = input[0];
-		const stored = (data as unknown as { _expression?: unknown })._expression;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildAssertStatement(...(children as unknown as Parameters<typeof F.buildAssertStatement>));
-	}
-	return F.buildAssertStatement(...(input as unknown as Parameters<typeof F.buildAssertStatement>));
+export function coerceToAssertStatement(input: T.AssertStatement.Loose): ReturnType<typeof F.buildAssertStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildAssertStatement>;
+	const _ne_expressions = _resolveMany<T.Expression>(input.expression, _K4, _K5);
+	_assertNonEmpty(_ne_expressions, 'assert_statement.expressions');
+	return F.buildAssertStatement({
+		expression: _ne_expressions
+	});
 }
 
 export function coerceToExpressionStatement(
@@ -1190,28 +1145,24 @@ export function coerceToDictionarySplat(input: T.DictionarySplat.Loose): ReturnT
 	);
 }
 
-export function coerceToGlobalStatement(
-	...input: readonly (T.Identifier | T.GlobalStatement)[]
-): ReturnType<typeof F.buildGlobalStatement> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.GlobalStatement) {
-		const data = input[0];
-		const stored = (data as unknown as { _identifier?: unknown })._identifier;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildGlobalStatement(...(children as unknown as Parameters<typeof F.buildGlobalStatement>));
-	}
-	return F.buildGlobalStatement(...(input as unknown as Parameters<typeof F.buildGlobalStatement>));
+export function coerceToGlobalStatement(input: T.GlobalStatement.Loose): ReturnType<typeof F.buildGlobalStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildGlobalStatement>;
+	const _ne_identifiers = _resolveManyLeaf<T.Identifier>(input.identifier, 'identifier');
+	_assertNonEmpty(_ne_identifiers, 'global_statement.identifiers');
+	return F.buildGlobalStatement({
+		identifier: _ne_identifiers
+	});
 }
 
 export function coerceToNonlocalStatement(
-	...input: readonly (T.Identifier | T.NonlocalStatement)[]
+	input: T.NonlocalStatement.Loose
 ): ReturnType<typeof F.buildNonlocalStatement> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.NonlocalStatement) {
-		const data = input[0];
-		const stored = (data as unknown as { _identifier?: unknown })._identifier;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildNonlocalStatement(...(children as unknown as Parameters<typeof F.buildNonlocalStatement>));
-	}
-	return F.buildNonlocalStatement(...(input as unknown as Parameters<typeof F.buildNonlocalStatement>));
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildNonlocalStatement>;
+	const _ne_identifiers = _resolveManyLeaf<T.Identifier>(input.identifier, 'identifier');
+	_assertNonEmpty(_ne_identifiers, 'nonlocal_statement.identifiers');
+	return F.buildNonlocalStatement({
+		identifier: _ne_identifiers
+	});
 }
 
 export function coerceToExecStatement(input: T.ExecStatement.Loose): ReturnType<typeof F.buildExecStatement> {
@@ -1222,7 +1173,7 @@ export function coerceToExecStatement(input: T.ExecStatement.Loose): ReturnType<
 			'code',
 			_resolveOne<T.String | T.Identifier>(input.code, _super_keyword_identifier, _K10)
 		),
-		inClause: _resolveMany<T.Expression>(input.inClause, _K4, _K5)
+		expression: _resolveMany<T.Expression>(input.expression, _K4, _K5)
 	});
 }
 
@@ -1250,16 +1201,13 @@ export function coerceToClassDefinition(input: T.ClassDefinition.Loose): ReturnT
 	});
 }
 
-export function coerceToTypeParameter(
-	...input: readonly (T.Type | T.TypeParameter)[]
-): ReturnType<typeof F.buildTypeParameter> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TypeParameter) {
-		const data = input[0];
-		const stored = (data as unknown as { _type?: unknown })._type;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypeParameter(...(children as unknown as Parameters<typeof F.buildTypeParameter>));
-	}
-	return F.buildTypeParameter(...(input as unknown as Parameters<typeof F.buildTypeParameter>));
+export function coerceToTypeParameter(input: T.TypeParameter.Loose): ReturnType<typeof F.buildTypeParameter> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeParameter>;
+	const _ne_types = _resolveManyBranch<T.Type>(input.type, 'type');
+	_assertNonEmpty(_ne_types, 'type_parameter.types');
+	return F.buildTypeParameter({
+		type: _ne_types
+	});
 }
 
 export function coerceToParenthesizedListSplat(
@@ -1339,16 +1287,13 @@ export function coerceToExpressionList(input: T.ExpressionList.Loose): ReturnTyp
 	});
 }
 
-export function coerceToDottedName(
-	...input: readonly (T.Identifier | T.DottedName)[]
-): ReturnType<typeof F.buildDottedName> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DottedName) {
-		const data = input[0];
-		const stored = (data as unknown as { _identifier?: unknown })._identifier;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildDottedName(...(children as unknown as Parameters<typeof F.buildDottedName>));
-	}
-	return F.buildDottedName(...(input as unknown as Parameters<typeof F.buildDottedName>));
+export function coerceToDottedName(input: T.DottedName.Loose): ReturnType<typeof F.buildDottedName> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildDottedName>;
+	const _ne_identifiers = _resolveManyLeaf<T.Identifier>(input.identifier, 'identifier');
+	_assertNonEmpty(_ne_identifiers, 'dotted_name.identifiers');
+	return F.buildDottedName({
+		identifier: _ne_identifiers
+	});
 }
 
 export function coerceToCasePattern(
@@ -1362,16 +1307,13 @@ export function coerceToCasePattern(
 	return F.buildCasePattern(input as Parameters<typeof F.buildCasePattern>[0]);
 }
 
-export function coerceToUnionPattern(
-	...input: readonly (T.SimplePattern | T.UnionPattern)[]
-): ReturnType<typeof F.buildUnionPattern> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.UnionPattern) {
-		const data = input[0];
-		const stored = (data as unknown as { _simple_pattern?: unknown })._simple_pattern;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildUnionPattern(...(children as unknown as Parameters<typeof F.buildUnionPattern>));
-	}
-	return F.buildUnionPattern(...(input as unknown as Parameters<typeof F.buildUnionPattern>));
+export function coerceToUnionPattern(input: T.UnionPattern.Loose): ReturnType<typeof F.buildUnionPattern> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildUnionPattern>;
+	const _ne_simplePatterns = _resolveMany<T.SimplePattern>(input.simplePattern, _K12, _K13);
+	_assertNonEmpty(_ne_simplePatterns, 'union_pattern.simplePatterns');
+	return F.buildUnionPattern({
+		simplePattern: _ne_simplePatterns
+	});
 }
 
 export function coerceToDictPattern(
@@ -1423,7 +1365,11 @@ export function coerceToSplatPattern(input: T.SplatPattern.Loose): ReturnType<ty
 export function coerceToClassPattern(input: T.ClassPattern.Loose): ReturnType<typeof F.buildClassPattern> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildClassPattern>;
 	return F.buildClassPattern({
-		dottedName: _resolveOneBranch<T.DottedName>(input.dottedName, 'dotted_name') ?? F.buildDottedName(),
+		dottedName: _requireField(
+			'class_pattern',
+			'dottedName',
+			_resolveOneBranch<T.DottedName>(input.dottedName, 'dotted_name')
+		),
 		arguments: _resolveOneBranch<T.ListPatternGroup1>(input.arguments, '_list_pattern_group1')
 	});
 }
@@ -1805,7 +1751,11 @@ export function coerceToGenericType(input: T.GenericType.Loose): ReturnType<type
 			'identifier',
 			_resolveOneLeaf<T.Identifier>(input.identifier, 'identifier')
 		),
-		typeParameter: _resolveOneBranch<T.TypeParameter>(input.typeParameter, 'type_parameter') ?? F.buildTypeParameter()
+		typeParameter: _requireField(
+			'generic_type',
+			'typeParameter',
+			_resolveOneBranch<T.TypeParameter>(input.typeParameter, 'type_parameter')
+		)
 	});
 }
 

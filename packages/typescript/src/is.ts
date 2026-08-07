@@ -298,9 +298,6 @@ export interface IsGuards {
 	NamedImportsGroup1<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.NamedImportsGroup1 };
-	FormalParametersGroup1<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.FormalParametersGroup1 };
 	TupleTypeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleTypeGroup1 };
 	objectTypeContent<T extends { readonly $type: number }>(
 		v: T
@@ -545,9 +542,6 @@ export interface AssertGuards {
 	ImportStatementGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportStatementGroup1 };
 	ImportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseGroup1 };
 	NamedImportsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NamedImportsGroup1 };
-	FormalParametersGroup1(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.FormalParametersGroup1 };
 	TupleTypeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleTypeGroup1 };
 	objectTypeContent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectTypeContent };
 	ExportStatementDefault(v: {
@@ -1117,7 +1111,6 @@ export const is = {
 	ImportStatementGroup1: _g(TSKindId.ImportStatementGroup1),
 	ImportClauseGroup1: _g(TSKindId.ImportClauseGroup1),
 	NamedImportsGroup1: _g(TSKindId.NamedImportsGroup1),
-	FormalParametersGroup1: _g(TSKindId.FormalParametersGroup1),
 	TupleTypeGroup1: _g(TSKindId.TupleTypeGroup1),
 	objectTypeContent: _g(TSKindId.ObjectTypeContent),
 	ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
@@ -1351,7 +1344,6 @@ export const assert = {
 	ImportStatementGroup1: _makeAssert('ImportStatementGroup1', is.ImportStatementGroup1 as _AnyGuard),
 	ImportClauseGroup1: _makeAssert('ImportClauseGroup1', is.ImportClauseGroup1 as _AnyGuard),
 	NamedImportsGroup1: _makeAssert('NamedImportsGroup1', is.NamedImportsGroup1 as _AnyGuard),
-	FormalParametersGroup1: _makeAssert('FormalParametersGroup1', is.FormalParametersGroup1 as _AnyGuard),
 	TupleTypeGroup1: _makeAssert('TupleTypeGroup1', is.TupleTypeGroup1 as _AnyGuard),
 	objectTypeContent: _makeAssert('objectTypeContent', is.objectTypeContent as _AnyGuard),
 	ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),

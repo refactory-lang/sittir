@@ -322,7 +322,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	class_heritage: TSKindId.ClassHeritage,
 	call_expression: TSKindId.CallExpression,
 	update_expression: TSKindId.UpdateExpression,
-	sequence_expression: TSKindId.SequenceExpression,
 	string: TSKindId.String,
 	template_substitution: TSKindId.TemplateSubstitution,
 	meta_property: TSKindId.MetaProperty,
@@ -332,20 +331,16 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	rest_pattern: TSKindId.RestPattern,
 	decorator_parenthesized_expression: TSKindId.DecoratorParenthesizedExpression,
 	extends_clause: TSKindId.ExtendsClause,
-	implements_clause: TSKindId.ImplementsClause,
 	ambient_declaration: TSKindId.AmbientDeclaration,
 	enum_body: TSKindId.EnumBody,
 	asserts: TSKindId.Asserts,
 	template_type: TSKindId.TemplateType,
 	type_query: TSKindId.TypeQuery,
 	literal_type: TSKindId.LiteralType,
-	type_arguments: TSKindId.TypeArguments,
-	type_parameters: TSKindId.TypeParameters,
 	tuple_type: TSKindId.TupleType,
 	_export_clause_group1: TSKindId.ExportClauseGroup1,
 	_import_clause_group1: TSKindId.ImportClauseGroup1,
 	_named_imports_group1: TSKindId.NamedImportsGroup1,
-	_formal_parameters_group1: TSKindId.FormalParametersGroup1,
 	_tuple_type_group1: TSKindId.TupleTypeGroup1,
 	object_type_content: TSKindId.ObjectTypeContent,
 	_export_statement_default: TSKindId.ExportStatementDefault,
@@ -374,8 +369,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildCallExpression(children[0] as Parameters<typeof F.buildCallExpression>[0]);
 		case 'update_expression':
 			return F.buildUpdateExpression(children[0] as Parameters<typeof F.buildUpdateExpression>[0]);
-		case 'sequence_expression':
-			return F.buildSequenceExpression(...(children as Parameters<typeof F.buildSequenceExpression>));
 		case 'string':
 			return F.buildString(children[0] as Parameters<typeof F.buildString>[0]);
 		case 'template_substitution':
@@ -396,8 +389,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			);
 		case 'extends_clause':
 			return F.buildExtendsClause(...(children as Parameters<typeof F.buildExtendsClause>));
-		case 'implements_clause':
-			return F.buildImplementsClause(...(children as Parameters<typeof F.buildImplementsClause>));
 		case 'ambient_declaration':
 			return F.buildAmbientDeclaration(children[0] as Parameters<typeof F.buildAmbientDeclaration>[0]);
 		case 'enum_body':
@@ -410,10 +401,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildTypeQuery(children[0] as Parameters<typeof F.buildTypeQuery>[0]);
 		case 'literal_type':
 			return F.buildLiteralType(children[0] as Parameters<typeof F.buildLiteralType>[0]);
-		case 'type_arguments':
-			return F.buildTypeArguments(...(children as Parameters<typeof F.buildTypeArguments>));
-		case 'type_parameters':
-			return F.buildTypeParameters(...(children as Parameters<typeof F.buildTypeParameters>));
 		case 'tuple_type':
 			return F.buildTupleType(children[0] as Parameters<typeof F.buildTupleType>[0]);
 		case '_export_clause_group1':
@@ -422,8 +409,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildImportClauseGroup1(children[0] as Parameters<typeof F.buildImportClauseGroup1>[0]);
 		case '_named_imports_group1':
 			return F.buildNamedImportsGroup1(children as Parameters<typeof F.buildNamedImportsGroup1>[0]);
-		case '_formal_parameters_group1':
-			return F.buildFormalParametersGroup1(children as Parameters<typeof F.buildFormalParametersGroup1>[0]);
 		case '_tuple_type_group1':
 			return F.buildTupleTypeGroup1(children as Parameters<typeof F.buildTupleTypeGroup1>[0]);
 		case 'object_type_content':
@@ -1948,15 +1933,14 @@ export function coerceToUpdateExpression(
 }
 
 export function coerceToSequenceExpression(
-	...input: readonly (T.Expression | T.SequenceExpression)[]
+	input: T.SequenceExpression.Loose
 ): ReturnType<typeof F.buildSequenceExpression> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.SequenceExpression) {
-		const data = input[0];
-		const stored = (data as unknown as { _expression?: unknown })._expression;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildSequenceExpression(...(children as unknown as Parameters<typeof F.buildSequenceExpression>));
-	}
-	return F.buildSequenceExpression(...(input as unknown as Parameters<typeof F.buildSequenceExpression>));
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSequenceExpression>;
+	const _ne_expressions = _resolveMany<T.Expression>(input.expression, _K5, _K10);
+	_assertNonEmpty(_ne_expressions, 'sequence_expression.expressions');
+	return F.buildSequenceExpression({
+		expression: _ne_expressions
+	});
 }
 
 export function coerceToString(input?: (T.StringDouble | T.StringSingle) | T.String): ReturnType<typeof F.buildString> {
@@ -2409,7 +2393,11 @@ export function coerceToDecoratorParenthesizedExpression(
 export function coerceToTypeAssertion(input: T.TypeAssertion.Loose): ReturnType<typeof F.buildTypeAssertion> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeAssertion>;
 	return F.buildTypeAssertion({
-		typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments') ?? F.buildTypeArguments(),
+		typeArguments: _requireField(
+			'type_assertion',
+			'typeArguments',
+			_resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments')
+		),
 		expression: _requireField('type_assertion', 'expression', _resolveOne<T.Expression>(input.expression, _K5, _K10))
 	});
 }
@@ -2454,7 +2442,11 @@ export function coerceToInstantiationExpression(
 			'expression',
 			_resolveOne<T.Expression>(input.expression, _K5, _K10)
 		),
-		typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments') ?? F.buildTypeArguments()
+		typeArguments: _requireField(
+			'instantiation_expression',
+			'typeArguments',
+			_resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments')
+		)
 	});
 }
 
@@ -2484,16 +2476,13 @@ export function coerceToExtendsClause(
 	return F.buildExtendsClause(...(input as unknown as Parameters<typeof F.buildExtendsClause>));
 }
 
-export function coerceToImplementsClause(
-	...input: readonly (T.Type | T.ImplementsClause)[]
-): ReturnType<typeof F.buildImplementsClause> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ImplementsClause) {
-		const data = input[0];
-		const stored = (data as unknown as { _type?: unknown })._type;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildImplementsClause(...(children as unknown as Parameters<typeof F.buildImplementsClause>));
-	}
-	return F.buildImplementsClause(...(input as unknown as Parameters<typeof F.buildImplementsClause>));
+export function coerceToImplementsClause(input: T.ImplementsClause.Loose): ReturnType<typeof F.buildImplementsClause> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildImplementsClause>;
+	const _ne_types = _resolveMany<T.Type>(input.type, _K33, _K34);
+	_assertNonEmpty(_ne_types, 'implements_clause.types');
+	return F.buildImplementsClause({
+		type: _ne_types
+	});
 }
 
 export function coerceToAmbientDeclaration(
@@ -2924,7 +2913,11 @@ export function coerceToGenericType(input: T.GenericType.Loose): ReturnType<type
 			'name',
 			_resolveOne<T.Identifier | T.NestedTypeIdentifier>(input.name, _super_import_identifier, _K41)
 		),
-		typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments') ?? F.buildTypeArguments()
+		typeArguments: _requireField(
+			'generic_type',
+			'typeArguments',
+			_resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments')
+		)
 	});
 }
 
@@ -3066,16 +3059,13 @@ export function coerceToPredefinedType(input: string | T.PredefinedType): Return
 	return F.buildPredefinedType(input as Parameters<typeof F.buildPredefinedType>[0]);
 }
 
-export function coerceToTypeArguments(
-	...input: readonly (T.Type | T.TypeArguments)[]
-): ReturnType<typeof F.buildTypeArguments> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TypeArguments) {
-		const data = input[0];
-		const stored = (data as unknown as { _type?: unknown })._type;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypeArguments(...(children as unknown as Parameters<typeof F.buildTypeArguments>));
-	}
-	return F.buildTypeArguments(...(input as unknown as Parameters<typeof F.buildTypeArguments>));
+export function coerceToTypeArguments(input: T.TypeArguments.Loose): ReturnType<typeof F.buildTypeArguments> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeArguments>;
+	const _ne_types = _resolveMany<T.Type>(input.type, _K33, _K34);
+	_assertNonEmpty(_ne_types, 'type_arguments.types');
+	return F.buildTypeArguments({
+		type: _ne_types
+	});
 }
 
 export function coerceToObjectType(input: T.ObjectType.Loose): ReturnType<typeof F.buildObjectType> {
@@ -3137,16 +3127,13 @@ export function coerceToPropertySignature(
 	});
 }
 
-export function coerceToTypeParameters(
-	...input: readonly (T.TypeParameter | T.TypeParameters)[]
-): ReturnType<typeof F.buildTypeParameters> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TypeParameters) {
-		const data = input[0];
-		const stored = (data as unknown as { _type_parameter?: unknown })._type_parameter;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypeParameters(...(children as unknown as Parameters<typeof F.buildTypeParameters>));
-	}
-	return F.buildTypeParameters(...(input as unknown as Parameters<typeof F.buildTypeParameters>));
+export function coerceToTypeParameters(input: T.TypeParameters.Loose): ReturnType<typeof F.buildTypeParameters> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeParameters>;
+	const _ne_typeParameters = _resolveManyBranch<T.TypeParameter>(input.typeParameter, 'type_parameter');
+	_assertNonEmpty(_ne_typeParameters, 'type_parameters.typeParameters');
+	return F.buildTypeParameters({
+		typeParameter: _ne_typeParameters
+	});
 }
 
 export function coerceToTypeParameter(input: T.TypeParameter.Loose): ReturnType<typeof F.buildTypeParameter> {

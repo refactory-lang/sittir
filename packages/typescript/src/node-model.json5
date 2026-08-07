@@ -6767,19 +6767,39 @@
     },
     {
       "kind": "_formal_parameters_group1",
-      "modelType": "separatedList",
+      "modelType": "group",
       "typeName": "FormalParametersGroup1",
-      "factoryName": "formalParametersGroup1",
+      "factoryName": "_formalParametersGroup1",
       "irKey": "formalParametersGroup1",
       "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
-      "elementKinds": [
-        "_formal_parameter"
+      "name": "_formal_parameters_group1",
+      "fields": [
+        {
+          "name": "formal_parameter",
+          "propertyName": "formalParameters",
+          "paramName": "formalParameters",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "_formal_parameter",
+              "parseKind": "_formal_parameter",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_formal_parameter"
+            ]
+          }
+        }
       ],
-      "factoryShape": "elements",
+      "children": [],
+      "factoryShape": "config",
       "factoryFields": [
         "formal_parameter"
       ]
@@ -15722,7 +15742,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "type"
       ]
@@ -21175,7 +21195,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "expression"
       ]
@@ -22498,7 +22518,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "type"
       ]
@@ -22707,7 +22727,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "type_parameter"
       ]

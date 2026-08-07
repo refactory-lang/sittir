@@ -25,7 +25,33 @@ import type { EnrichedGrammar } from '../codegen/src/dsl/enrich.ts';
 
 declare const string: (value: string) => unknown;
 
-const enrichedBase = enrich(base);
+const enrichedBase = enrich(base, {
+	// `tuple_type` and `trait_bounds` already field their separated list's
+	// element position via their own override below (`tuple_type: {
+	// '(_type)': field('type') }`, `trait_bounds`'s `bounds` field) —
+	// applyNodeChoiceFieldWrap's separated-list target fielding the same
+	// position first left those overrides with nothing to find: a hard
+	// `tree-sitter generate` failure for `tuple_type` (kind-match search
+	// came up empty) and an accessor-throw for `trait_bounds` (merged slot
+	// ended up empty).
+	// `function_modifiers` already fields EVERY position with a wildcard
+	// override (`_: field('modifier')` below) — same nested-field collision
+	// as `tuple_type`/`trait_bounds`, this time surfacing as a render-time
+	// unknown-kind-id error rather than a hard generate failure or an
+	// accessor-throw. `_where_clause_group1` regressed factory-render-parse
+	// (-2) and `_closure_parameters_optional1`/`_use_list_group1` each
+	// regressed coverage (-1) when enabled — found via bisection against
+	// `validate:native`, root cause not further isolated (each is a small,
+	// contained loss, not a hard failure); left skipped until diagnosed.
+	skip: [
+		'tuple_type',
+		'trait_bounds',
+		'function_modifiers',
+		'_where_clause_group1',
+		'_closure_parameters_optional1',
+		'_use_list_group1'
+	]
+});
 
 export default grammar(
 	enrichedBase,

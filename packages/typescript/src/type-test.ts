@@ -141,8 +141,6 @@ import type {
 	ForStatement,
 	ForStatementTree,
 	FormalParameters,
-	FormalParametersGroup1,
-	FormalParametersGroup1Tree,
 	FormalParametersTree,
 	FunctionDeclaration,
 	FunctionDeclarationTree,
@@ -692,9 +690,6 @@ export type _Type_ImportClauseGroup1 = _TypeAssert<
 export type _Type_NamedImportsGroup1 = _TypeAssert<
 	_TypeExtends<NamedImportsGroup1['$type'], TSKindId.NamedImportsGroup1>
 >;
-export type _Type_FormalParametersGroup1 = _TypeAssert<
-	_TypeExtends<FormalParametersGroup1['$type'], TSKindId.FormalParametersGroup1>
->;
 export type _Type_TupleTypeGroup1 = _TypeAssert<_TypeExtends<TupleTypeGroup1['$type'], TSKindId.TupleTypeGroup1>>;
 export type _Type_ObjectTypeContent = _TypeAssert<_TypeExtends<ObjectTypeContent['$type'], TSKindId.ObjectTypeContent>>;
 export type _Type_ExportStatementDefault = _TypeAssert<
@@ -1083,9 +1078,6 @@ export type _Tree_ImportClauseGroup1 = _TypeAssert<
 >;
 export type _Tree_NamedImportsGroup1 = _TypeAssert<
 	_TypeExtends<NamedImportsGroup1Tree['type'], '_named_imports_group1'>
->;
-export type _Tree_FormalParametersGroup1 = _TypeAssert<
-	_TypeExtends<FormalParametersGroup1Tree['type'], '_formal_parameters_group1'>
 >;
 export type _Tree_TupleTypeGroup1 = _TypeAssert<_TypeExtends<TupleTypeGroup1Tree['type'], '_tuple_type_group1'>>;
 export type _Tree_ObjectTypeContent = _TypeAssert<_TypeExtends<ObjectTypeContentTree['type'], 'object_type_content'>>;

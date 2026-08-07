@@ -384,7 +384,7 @@ describe('ordered_field_declaration_list', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_attributed_ordered_field: [
+			_element: [
 				{
 					$type: TSKindId.AttributedOrderedField,
 					$text: 'test',
@@ -638,7 +638,7 @@ describe('higher_ranked_trait_bound', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_attributed_type_parameter: [
+				_element: [
 					{
 						$type: TSKindId.AttributedTypeParameter,
 						$text: 'test',
@@ -660,7 +660,7 @@ describe('higher_ranked_trait_bound', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_attributed_type_parameter: [
+				_element: [
 					{
 						$type: TSKindId.AttributedTypeParameter,
 						$text: 'test',
@@ -691,14 +691,32 @@ describe('removed_trait_bound', () => {
 describe('type_parameters', () => {
 	it('factory produces correct type', () => {
 		const node = ir.typeParameters({
-			$type: TSKindId.AttributedTypeParameter,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_content: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-		} as any);
+			element: [
+				{
+					$type: TSKindId.AttributedTypeParameter,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		});
 		expect(node.$type).toBe(TSKindId.TypeParameters);
 		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.typeParameters({
+			element: [
+				{
+					$type: TSKindId.AttributedTypeParameter,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -985,14 +1003,32 @@ describe('array_type', () => {
 describe('for_lifetimes', () => {
 	it('factory produces correct type', () => {
 		const node = ir.forLifetimes({
-			$type: TSKindId.Lifetime,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		} as any);
+			lifetime: [
+				{
+					$type: TSKindId.Lifetime,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		});
 		expect(node.$type).toBe(TSKindId.ForLifetimes);
 		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.forLifetimes({
+			lifetime: [
+				{
+					$type: TSKindId.Lifetime,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -1046,7 +1082,7 @@ describe('generic_function', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_argument: [
+				_element: [
 					{
 						$type: TSKindId.TypeArgument,
 						$text: 'test',
@@ -1068,7 +1104,7 @@ describe('generic_function', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_argument: [
+				_element: [
 					{
 						$type: TSKindId.TypeArgument,
 						$text: 'test',
@@ -1092,7 +1128,7 @@ describe('generic_type', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_argument: [
+				_element: [
 					{
 						$type: TSKindId.TypeArgument,
 						$text: 'test',
@@ -1114,7 +1150,7 @@ describe('generic_type', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_argument: [
+				_element: [
 					{
 						$type: TSKindId.TypeArgument,
 						$text: 'test',
@@ -1138,7 +1174,7 @@ describe('generic_type_with_turbofish', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_argument: [
+				_element: [
 					{
 						$type: TSKindId.TypeArgument,
 						$text: 'test',
@@ -1160,7 +1196,7 @@ describe('generic_type_with_turbofish', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_argument: [
+				_element: [
 					{
 						$type: TSKindId.TypeArgument,
 						$text: 'test',
@@ -1200,7 +1236,13 @@ describe('use_bounds', () => {
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.useBounds({ $type: TSKindId.UseBoundsGroup1, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.useBounds({
+			$type: TSKindId.UseBoundsGroup1,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_element: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+		} as any);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -1208,14 +1250,32 @@ describe('use_bounds', () => {
 describe('type_arguments', () => {
 	it('factory produces correct type', () => {
 		const node = ir.typeArguments({
-			$type: TSKindId.TypeArgument,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_content: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-		} as any);
+			element: [
+				{
+					$type: TSKindId.TypeArgument,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		});
 		expect(node.$type).toBe(TSKindId.TypeArguments);
 		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.typeArguments({
+			element: [
+				{
+					$type: TSKindId.TypeArgument,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -1684,7 +1744,16 @@ describe('field_initializer_list', () => {
 			$type: TSKindId.FieldInitializerListGroup1,
 			$text: 'test',
 			$source: 2,
-			$named: true
+			$named: true,
+			_element: [
+				{
+					$type: TSKindId.ShorthandFieldInitializer,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
 		} as any);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -2169,7 +2238,7 @@ describe('generic_pattern', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_argument: [
+				_element: [
 					{
 						$type: TSKindId.TypeArgument,
 						$text: 'test',
@@ -2191,7 +2260,7 @@ describe('generic_pattern', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_argument: [
+				_element: [
 					{
 						$type: TSKindId.TypeArgument,
 						$text: 'test',
@@ -2217,7 +2286,8 @@ describe('tuple_pattern', () => {
 			$type: TSKindId.TuplePatternGroup1,
 			$text: 'test',
 			$source: 2,
-			$named: true
+			$named: true,
+			_element: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
 		} as any);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});

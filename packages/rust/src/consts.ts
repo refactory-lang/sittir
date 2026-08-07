@@ -2430,7 +2430,7 @@ export const FIELD_MAP: Record<
 		multiple: boolean;
 	}>
 > = {
-	_arguments_group1: [{ name: 'attributedArguments', required: true, multiple: true }],
+	_arguments_group1: [{ name: 'elements', required: true, multiple: true }],
 	_attribute_group1: [
 		{ name: 'value', required: false, multiple: false },
 		{ name: 'arguments', required: false, multiple: false }
@@ -2459,9 +2459,9 @@ export const FIELD_MAP: Record<
 	_delim_token_tree_brace: [{ name: 'delimTokens', required: false, multiple: true }],
 	_delim_token_tree_bracket: [{ name: 'delimTokens', required: false, multiple: true }],
 	_delim_token_tree_paren: [{ name: 'delimTokens', required: false, multiple: true }],
-	_enum_variant_list_group1: [{ name: 'attributedEnumVariants', required: true, multiple: true }],
-	_field_declaration_list_group1: [{ name: 'attributedFieldDeclarations', required: true, multiple: true }],
-	_field_initializer_list_group1: [{ name: 'contents', required: false, multiple: true }],
+	_enum_variant_list_group1: [{ name: 'elements', required: true, multiple: true }],
+	_field_declaration_list_group1: [{ name: 'elements', required: true, multiple: true }],
+	_field_initializer_list_group1: [{ name: 'elements', required: true, multiple: true }],
 	_function_type_fn_form: [{ name: 'functionModifiers', required: false, multiple: false }],
 	_function_type_trait_form: [{ name: 'trait', required: true, multiple: false }],
 	_impl_item_body: [{ name: 'declarationList', required: true, multiple: false }],
@@ -2472,23 +2472,23 @@ export const FIELD_MAP: Record<
 	_macro_definition_brace: [{ name: 'macroRules', required: false, multiple: true }],
 	_macro_definition_bracket: [{ name: 'macroRules', required: false, multiple: true }],
 	_macro_definition_paren: [{ name: 'macroRules', required: false, multiple: true }],
-	_ordered_field_declaration_list_group1: [{ name: 'attributedOrderedFields', required: true, multiple: true }],
-	_parameters_group1: [{ name: 'attributedParameters', required: true, multiple: true }],
+	_ordered_field_declaration_list_group1: [{ name: 'elements', required: true, multiple: true }],
+	_parameters_group1: [{ name: 'elements', required: true, multiple: true }],
 	_reference_expression_raw_mut: [{ name: 'mutableSpecifier', required: true, multiple: false }],
 	_slice_pattern_group1: [{ name: 'patterns', required: true, multiple: true }],
-	_struct_pattern_group1: [{ name: 'contents', required: false, multiple: true }],
+	_struct_pattern_group1: [{ name: 'elements', required: true, multiple: true }],
 	_token_tree_brace: [{ name: 'tokens', required: false, multiple: true }],
 	_token_tree_bracket: [{ name: 'tokens', required: false, multiple: true }],
 	_token_tree_paren: [{ name: 'tokens', required: false, multiple: true }],
 	_token_tree_pattern_brace: [{ name: 'tokenPatterns', required: false, multiple: true }],
 	_token_tree_pattern_bracket: [{ name: 'tokenPatterns', required: false, multiple: true }],
 	_token_tree_pattern_paren: [{ name: 'tokenPatterns', required: false, multiple: true }],
-	_tuple_pattern_group1: [{ name: 'contents', required: false, multiple: true }],
+	_tuple_pattern_group1: [{ name: 'elements', required: true, multiple: true }],
 	_type_argument: [
 		{ name: 'content', required: true, multiple: false },
 		{ name: 'traitBounds', required: false, multiple: false }
 	],
-	_use_bounds_group1: [{ name: 'contents', required: false, multiple: true }],
+	_use_bounds_group1: [{ name: 'elements', required: true, multiple: true }],
 	_use_list_group1: [{ name: 'useClauses', required: true, multiple: true }],
 	_visibility_modifier_group1: [{ name: 'content', required: true, multiple: false }],
 	_visibility_modifier_in_path: [{ name: 'path', required: true, multiple: false }],
@@ -2900,7 +2900,7 @@ export const FIELD_MAP: Record<
 		{ name: 'slicePatternGroup1', required: false, multiple: false }
 	],
 	tuple_type: [{ name: 'types', required: true, multiple: true }],
-	type_arguments: [{ name: 'typeArguments', required: true, multiple: true }],
+	type_arguments: [{ name: 'elements', required: true, multiple: true }],
 	type_binding: [
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'typeArguments', required: false, multiple: false },
@@ -2923,7 +2923,7 @@ export const FIELD_MAP: Record<
 		{ name: 'bounds', required: false, multiple: false },
 		{ name: 'defaultType', required: false, multiple: false }
 	],
-	type_parameters: [{ name: 'attributedTypeParameters', required: true, multiple: true }],
+	type_parameters: [{ name: 'elements', required: true, multiple: true }],
 	unary_expression: [
 		{ name: 'operator', required: true, multiple: false },
 		{ name: 'operand', required: true, multiple: false }

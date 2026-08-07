@@ -321,13 +321,10 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	enum_variant_list: TSKindId.EnumVariantList,
 	field_declaration_list: TSKindId.FieldDeclarationList,
 	where_clause: TSKindId.WhereClause,
-	type_parameters: TSKindId.TypeParameters,
 	use_list: TSKindId.UseList,
 	parameters: TSKindId.Parameters,
 	visibility_modifier: TSKindId.VisibilityModifier,
 	bracketed_type: TSKindId.BracketedType,
-	for_lifetimes: TSKindId.ForLifetimes,
-	type_arguments: TSKindId.TypeArguments,
 	delim_token_tree: TSKindId.DelimTokenTree,
 	range_expression: TSKindId.RangeExpression,
 	arguments: TSKindId.Arguments,
@@ -384,8 +381,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildFieldDeclarationList(children[0] as Parameters<typeof F.buildFieldDeclarationList>[0]);
 		case 'where_clause':
 			return F.buildWhereClause(children[0] as Parameters<typeof F.buildWhereClause>[0]);
-		case 'type_parameters':
-			return F.buildTypeParameters(...(children as Parameters<typeof F.buildTypeParameters>));
 		case 'use_list':
 			return F.buildUseList(children[0] as Parameters<typeof F.buildUseList>[0]);
 		case 'parameters':
@@ -394,10 +389,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildVisibilityModifier(children[0] as Parameters<typeof F.buildVisibilityModifier>[0]);
 		case 'bracketed_type':
 			return F.buildBracketedType(children[0] as Parameters<typeof F.buildBracketedType>[0]);
-		case 'for_lifetimes':
-			return F.buildForLifetimes(...(children as Parameters<typeof F.buildForLifetimes>));
-		case 'type_arguments':
-			return F.buildTypeArguments(...(children as Parameters<typeof F.buildTypeArguments>));
 		case 'delim_token_tree':
 			return F.buildDelimTokenTree(children[0] as Parameters<typeof F.buildDelimTokenTree>[0]);
 		case 'range_expression':
@@ -1445,8 +1436,11 @@ export function coerceToHigherRankedTraitBound(
 ): ReturnType<typeof F.buildHigherRankedTraitBound> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildHigherRankedTraitBound>;
 	return F.buildHigherRankedTraitBound({
-		typeParameters:
-			_resolveOneBranch<T.TypeParameters>(input.typeParameters, 'type_parameters') ?? F.buildTypeParameters(),
+		typeParameters: _requireField(
+			'higher_ranked_trait_bound',
+			'typeParameters',
+			_resolveOneBranch<T.TypeParameters>(input.typeParameters, 'type_parameters')
+		),
 		type: _requireField('higher_ranked_trait_bound', 'type', _resolveOne<T._Type>(input.type, _K13, _K14))
 	});
 }
@@ -1469,16 +1463,13 @@ export function coerceToRemovedTraitBound(
 	);
 }
 
-export function coerceToTypeParameters(
-	...input: readonly (T.AttributedTypeParameter | T.TypeParameters)[]
-): ReturnType<typeof F.buildTypeParameters> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TypeParameters) {
-		const data = input[0];
-		const stored = (data as unknown as { _attributed_type_parameter?: unknown })._attributed_type_parameter;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypeParameters(...(children as unknown as Parameters<typeof F.buildTypeParameters>));
-	}
-	return F.buildTypeParameters(...(input as unknown as Parameters<typeof F.buildTypeParameters>));
+export function coerceToTypeParameters(input: T.TypeParameters.Loose): ReturnType<typeof F.buildTypeParameters> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeParameters>;
+	const _ne_elements = _resolveManyBranch<T.AttributedTypeParameter>(input.element, '_attributed_type_parameter');
+	_assertNonEmpty(_ne_elements, 'type_parameters.elements');
+	return F.buildTypeParameters({
+		element: _ne_elements
+	});
 }
 
 export function coerceToConstParameter(input: T.ConstParameter.Loose): ReturnType<typeof F.buildConstParameter> {
@@ -1675,16 +1666,13 @@ export function coerceToArrayType(input: T.ArrayType.Loose): ReturnType<typeof F
 	});
 }
 
-export function coerceToForLifetimes(
-	...input: readonly (T.Lifetime | T.ForLifetimes)[]
-): ReturnType<typeof F.buildForLifetimes> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ForLifetimes) {
-		const data = input[0];
-		const stored = (data as unknown as { _lifetime?: unknown })._lifetime;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildForLifetimes(...(children as unknown as Parameters<typeof F.buildForLifetimes>));
-	}
-	return F.buildForLifetimes(...(input as unknown as Parameters<typeof F.buildForLifetimes>));
+export function coerceToForLifetimes(input: T.ForLifetimes.Loose): ReturnType<typeof F.buildForLifetimes> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildForLifetimes>;
+	const _ne_lifetimes = _resolveManyBranch<T.Lifetime>(input.lifetime, 'lifetime');
+	_assertNonEmpty(_ne_lifetimes, 'for_lifetimes.lifetimes');
+	return F.buildForLifetimes({
+		lifetime: _ne_lifetimes
+	});
 }
 
 export function coerceToFunctionType(input: T.FunctionType.Loose): ReturnType<typeof F.buildFunctionType> {
@@ -1723,7 +1711,11 @@ export function coerceToGenericFunction(input: T.GenericFunction.Loose): ReturnT
 			'function',
 			_resolveOne<T.Identifier | T.ScopedIdentifier | T.FieldExpression>(input.function, _K26, _K27)
 		),
-		typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments') ?? F.buildTypeArguments()
+		typeArguments: _requireField(
+			'generic_function',
+			'typeArguments',
+			_resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments')
+		)
 	});
 }
 
@@ -1735,7 +1727,11 @@ export function coerceToGenericType(input: T.GenericType.Loose): ReturnType<type
 			'type',
 			_resolveOne<T.Identifier | T.ScopedTypeIdentifier>(input.type, _K26, _K28)
 		),
-		typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments') ?? F.buildTypeArguments()
+		typeArguments: _requireField(
+			'generic_type',
+			'typeArguments',
+			_resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments')
+		)
 	});
 }
 
@@ -1749,7 +1745,11 @@ export function coerceToGenericTypeWithTurbofish(
 			'type',
 			_resolveOne<T.Identifier | T.ScopedIdentifier>(input.type, _K26, _K7)
 		),
-		typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments') ?? F.buildTypeArguments()
+		typeArguments: _requireField(
+			'generic_type_with_turbofish',
+			'typeArguments',
+			_resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments')
+		)
 	});
 }
 
@@ -1780,16 +1780,13 @@ export function coerceToUseBounds(input?: T.UseBounds.Loose): ReturnType<typeof 
 	);
 }
 
-export function coerceToTypeArguments(
-	...input: readonly (T.TypeArgument | T.TypeArguments)[]
-): ReturnType<typeof F.buildTypeArguments> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TypeArguments) {
-		const data = input[0];
-		const stored = (data as unknown as { _type_argument?: unknown })._type_argument;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypeArguments(...(children as unknown as Parameters<typeof F.buildTypeArguments>));
-	}
-	return F.buildTypeArguments(...(input as unknown as Parameters<typeof F.buildTypeArguments>));
+export function coerceToTypeArguments(input: T.TypeArguments.Loose): ReturnType<typeof F.buildTypeArguments> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeArguments>;
+	const _ne_elements = _resolveManyBranch<T.TypeArgument>(input.element, '_type_argument');
+	_assertNonEmpty(_ne_elements, 'type_arguments.elements');
+	return F.buildTypeArguments({
+		element: _ne_elements
+	});
 }
 
 export function coerceToTypeBinding(input: T.TypeBinding.Loose): ReturnType<typeof F.buildTypeBinding> {
@@ -2549,7 +2546,11 @@ export function coerceToGenericPattern(input: T.GenericPattern.Loose): ReturnTyp
 			'content',
 			_resolveOne<T.Identifier | T.ScopedIdentifier>(input.content, _K26, _K7)
 		),
-		typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments') ?? F.buildTypeArguments()
+		typeArguments: _requireField(
+			'generic_pattern',
+			'typeArguments',
+			_resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments')
+		)
 	});
 }
 

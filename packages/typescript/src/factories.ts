@@ -2054,9 +2054,8 @@ export function buildUpdateExpression(child: T.UpdateExpressionPostfix | T.Updat
 	);
 }
 
-export function buildSequenceExpression(...children: T.Expression[]) {
-	_assertNonEmpty(children, 'sequence_expression.children');
-	const _expression = children;
+export function buildSequenceExpression(config: T.SequenceExpression.Config) {
+	const _expression = config.expression ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -2064,7 +2063,10 @@ export function buildSequenceExpression(...children: T.Expression[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				$with: { $children: (...vs: T.Expression[]) => buildSequenceExpression(...vs) }
+				$with: {
+					expressions: (...values: NonEmptyArray<T.Expression>) =>
+						buildSequenceExpression({ ...config, expression: values })
+				}
 			},
 			{
 				expressions: () => _expression
@@ -3237,9 +3239,8 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config) {
 	);
 }
 
-export function buildImplementsClause(...children: T.Type[]) {
-	_assertNonEmpty(children, 'implements_clause.children');
-	const _type = children;
+export function buildImplementsClause(config: T.ImplementsClause.Config) {
+	const _type = config.type ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -3247,7 +3248,9 @@ export function buildImplementsClause(...children: T.Type[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_type,
-				$with: { $children: (...vs: T.Type[]) => buildImplementsClause(...vs) }
+				$with: {
+					types: (...values: NonEmptyArray<T.Type>) => buildImplementsClause({ ...config, type: values })
+				}
 			},
 			{
 				types: () => _type
@@ -4619,9 +4622,8 @@ export function buildPredefinedType(
 	);
 }
 
-export function buildTypeArguments(...children: T.Type[]) {
-	_assertNonEmpty(children, 'type_arguments.children');
-	const _type = children;
+export function buildTypeArguments(config: T.TypeArguments.Config, options: { trailing?: boolean } = {}) {
+	const _type = config.type ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -4629,8 +4631,11 @@ export function buildTypeArguments(...children: T.Type[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_type,
-				_type_trailing_sep: false,
-				$with: { $children: (...vs: T.Type[]) => buildTypeArguments(...vs) }
+				_type_trailing_sep: options.trailing ?? false,
+				$with: {
+					types: (...values: NonEmptyArray<T.Type>) => buildTypeArguments({ ...config, type: values }, options),
+					trailing: (v: boolean) => buildTypeArguments(config, { ...options, trailing: v })
+				}
 			},
 			{
 				types: () => _type
@@ -4828,9 +4833,8 @@ export function buildPropertySignature(config: T.PropertySignature.Config) {
 	);
 }
 
-export function buildTypeParameters(...children: T.TypeParameter[]) {
-	_assertNonEmpty(children, 'type_parameters.children');
-	const _type_parameter = children;
+export function buildTypeParameters(config: T.TypeParameters.Config, options: { trailing?: boolean } = {}) {
+	const _type_parameter = config.typeParameter ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -4838,8 +4842,12 @@ export function buildTypeParameters(...children: T.TypeParameter[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_type_parameter,
-				_type_parameter_trailing_sep: false,
-				$with: { $children: (...vs: T.TypeParameter[]) => buildTypeParameters(...vs) }
+				_type_parameter_trailing_sep: options.trailing ?? false,
+				$with: {
+					typeParameters: (...values: NonEmptyArray<T.TypeParameter>) =>
+						buildTypeParameters({ ...config, typeParameter: values }, options),
+					trailing: (v: boolean) => buildTypeParameters(config, { ...options, trailing: v })
+				}
 			},
 			{
 				typeParameters: () => _type_parameter
@@ -5394,12 +5402,10 @@ export function buildMetaPropertyGroup2(text: string) {
 }
 
 export function buildFormalParametersGroup1(
-	elements: NonEmptyArray<T.FormalParameter>,
+	config: T.FormalParametersGroup1.Config,
 	options: { trailing?: boolean } = {}
 ) {
-	_assertNonEmpty(elements, '_formal_parameters_group1.elements');
-	const _formal_parameter = elements;
-	const _trailing_sep = options.trailing ?? false;
+	const _formal_parameter = config.formalParameter ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -5407,10 +5413,11 @@ export function buildFormalParametersGroup1(
 				$source: 2 as const,
 				$named: true as const,
 				_formal_parameter,
-				_trailing_sep,
+				_formal_parameter_trailing_sep: options.trailing ?? false,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.FormalParameter>) => buildFormalParametersGroup1(vs, options),
-					trailing: (v: boolean) => buildFormalParametersGroup1(elements, { ...options, trailing: v })
+					formalParameters: (...values: NonEmptyArray<T.FormalParameter>) =>
+						buildFormalParametersGroup1({ ...config, formalParameter: values }, options),
+					trailing: (v: boolean) => buildFormalParametersGroup1(config, { ...options, trailing: v })
 				}
 			},
 			{
@@ -6881,7 +6888,7 @@ export type FluentKindMap = {
 	_binary_expression_group1: T.BinaryExpressionGroup1;
 	_meta_property_group1: T.MetaPropertyGroup1;
 	_meta_property_group2: T.MetaPropertyGroup2;
-	_formal_parameters_group1: FluentNode<'_formal_parameters_group1', T.FormalParametersGroup1.Config>;
+	_formal_parameters_group1: T.FormalParametersGroup1;
 	_enum_body_group1: T.EnumBodyGroup1;
 	_tuple_type_group1: FluentNode<'_tuple_type_group1', T.TupleTypeGroup1.Config>;
 	_kind: T.Kind;

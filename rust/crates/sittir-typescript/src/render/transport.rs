@@ -34183,6 +34183,8 @@ pub struct ExportClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause_group1"))]
     pub export_clause_group1: Option<ExportClauseGroup1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier"))]
+    pub export_specifier: Option<Vec<ExportSpecifierTransport>>,
 }
 
 impl RenderableTransport for ExportClauseTransport {
@@ -34596,6 +34598,8 @@ pub struct NamedImportsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_imports_group1"))]
     pub named_imports_group1: Option<NamedImportsGroup1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier"))]
+    pub import_specifier: Option<Vec<ImportSpecifierTransport>>,
 }
 
 impl RenderableTransport for NamedImportsTransport {
@@ -40976,6 +40980,8 @@ pub struct FormalParametersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameters_group1"))]
     pub formal_parameters_group1: Option<FormalParametersGroup1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter"))]
+    pub formal_parameter: Option<Vec<FormalParameterTransport>>,
 }
 
 impl RenderableTransport for FormalParametersTransport {
@@ -46095,6 +46101,8 @@ pub struct TupleTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_group1"))]
     pub tuple_type_group1: Option<TupleTypeGroup1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member"))]
+    pub tuple_type_member: Option<Vec<TupleTypeMemberTransport>>,
 }
 
 impl RenderableTransport for TupleTypeTransport {
@@ -47824,8 +47832,6 @@ pub struct FormalParametersGroup1Transport {
     pub formal_parameter: Vec<FormalParameterTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_trailing_sep"))]
     pub formal_parameter_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for FormalParametersGroup1Transport {
@@ -64617,7 +64623,7 @@ fn render_type_arguments(node: &TypeArgumentsTransport, dest: &mut dyn ::std::fm
             items: type__buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: false,
+            trailing: node.type__trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -64695,7 +64701,7 @@ fn render_type_parameters(node: &TypeParametersTransport, dest: &mut dyn ::std::
             items: type_parameter_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: false,
+            trailing: node.type_parameter_trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -64978,7 +64984,7 @@ fn render_formal_parameters_group1(node: &FormalParametersGroup1Transport, dest:
             items: formal_parameter_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.formal_parameter_trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)

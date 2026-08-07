@@ -79,8 +79,8 @@ export interface ArgumentsGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attributed_argument: Array<AttributedArgumentTransport>
-  _attributed_argument_trailing_sep?: boolean
+  _element: Array<AttributedArgumentTransport>
+  _element_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -93,6 +93,7 @@ export interface ArgumentsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _arguments_group1?: ArgumentsGroup1Transport
+  _element?: Array<AttributedArgumentTransport>
 }
 
 export interface ArrayExpressionGroup1Transport {
@@ -117,6 +118,7 @@ export interface ArrayExpressionListTransport {
   '$triviaData'?: TransportTrivia
   _attributes?: Array<AttributeItemTransport>
   _arguments_group1?: ArgumentsGroup1Transport
+  _element?: Array<AttributedArgumentTransport>
 }
 
 export interface ArrayExpressionSemiTransport {
@@ -685,8 +687,8 @@ export interface EnumVariantListGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attributed_enum_variant: Array<AttributedEnumVariantTransport>
-  _attributed_enum_variant_trailing_sep?: boolean
+  _element: Array<AttributedEnumVariantTransport>
+  _element_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -699,6 +701,7 @@ export interface EnumVariantListTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _enum_variant_list_group1?: EnumVariantListGroup1Transport
+  _element?: Array<AttributedEnumVariantTransport>
 }
 
 export interface EnumVariantOptional1Transport {
@@ -792,8 +795,8 @@ export interface FieldDeclarationListGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attributed_field_declaration: Array<AttributedFieldDeclarationTransport>
-  _attributed_field_declaration_trailing_sep?: boolean
+  _element: Array<AttributedFieldDeclarationTransport>
+  _element_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -806,6 +809,7 @@ export interface FieldDeclarationListTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _field_declaration_list_group1?: FieldDeclarationListGroup1Transport
+  _element?: Array<AttributedFieldDeclarationTransport>
 }
 
 export interface FieldDeclarationTransport {
@@ -841,8 +845,8 @@ export interface FieldInitializerListGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<FieldInitializerListGroup1ContentTransportSlot>
-  _content_trailing_sep?: boolean
+  _element: Array<FieldInitializerListGroup1ElementTransportSlot>
+  _element_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -1531,8 +1535,8 @@ export interface OrderedFieldDeclarationListGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attributed_ordered_field: Array<AttributedOrderedFieldTransport>
-  _attributed_ordered_field_trailing_sep?: boolean
+  _element: Array<AttributedOrderedFieldTransport>
+  _element_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -1589,8 +1593,8 @@ export interface ParametersGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attributed_parameter: Array<AttributedParameterTransport>
-  _attributed_parameter_trailing_sep?: boolean
+  _element: Array<AttributedParameterTransport>
+  _element_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -1603,6 +1607,7 @@ export interface ParametersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _parameters_group1?: ParametersGroup1Transport
+  _element?: Array<AttributedParameterTransport>
 }
 
 export interface ParameterTransport {
@@ -1936,6 +1941,7 @@ export interface SlicePatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _slice_pattern_group1?: SlicePatternGroup1Transport
+  _pattern?: Array<PatternTransport>
 }
 
 export interface SourceFileTransport {
@@ -2035,8 +2041,8 @@ export interface StructPatternGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<StructPatternGroup1ContentTransportSlot>
-  _content_trailing_sep?: boolean
+  _element: Array<StructPatternGroup1ElementTransportSlot>
+  _element_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -2249,8 +2255,8 @@ export interface TuplePatternGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<TuplePatternGroup1ContentTransportSlot>
-  _content_trailing_sep?: boolean
+  _element: Array<TuplePatternGroup1ElementTransportSlot>
+  _element_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 
@@ -2275,6 +2281,7 @@ export interface TupleStructPatternTransport {
   '$triviaData'?: TransportTrivia
   _type: Box<TupleStructPatternTypeTransportSlot>
   _slice_pattern_group1?: SlicePatternGroup1Transport
+  _pattern?: Array<PatternTransport>
 }
 
 export interface TupleTypeTransport {
@@ -2297,8 +2304,8 @@ export interface TypeArgumentsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type_argument: Array<TypeArgumentTransport>
-  _type_argument_trailing_sep?: boolean
+  _element: Array<TypeArgumentTransport>
+  _element_trailing_sep?: boolean
 }
 
 export interface TypeArgumentTransport {
@@ -2373,8 +2380,8 @@ export interface TypeParametersTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attributed_type_parameter: Array<AttributedTypeParameterTransport>
-  _attributed_type_parameter_trailing_sep?: boolean
+  _element: Array<AttributedTypeParameterTransport>
+  _element_trailing_sep?: boolean
 }
 
 export interface TypeParameterTransport {
@@ -2448,8 +2455,8 @@ export interface UseBoundsGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<UseBoundsGroup1ContentTransportSlot>
-  _content_trailing_sep?: boolean
+  _element: Array<UseBoundsGroup1ElementTransportSlot>
+  _element_trailing_sep?: boolean
   _trailing_sep?: boolean
 }
 

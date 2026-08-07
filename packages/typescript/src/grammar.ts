@@ -858,8 +858,9 @@ export type TypescriptGrammar = {
 	readonly export_clause_group1: {
 		type: 'export_clause_group1';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: 'export_specifier'; named: true }] };
+		fields: {
+			export_specifier: { multiple: true; required: true; types: [{ type: 'export_specifier'; named: true }] };
+		};
 	};
 	readonly export_specifier: {
 		type: 'export_specifier';
@@ -1197,11 +1198,12 @@ export type TypescriptGrammar = {
 	readonly formal_parameters_group1: {
 		type: 'formal_parameters_group1';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'optional_parameter'; named: true }, { type: 'required_parameter'; named: true }];
+		fields: {
+			formal_parameter: {
+				multiple: true;
+				required: true;
+				types: [{ type: 'optional_parameter'; named: true }, { type: 'required_parameter'; named: true }];
+			};
 		};
 	};
 	readonly function_declaration: {
@@ -1355,8 +1357,7 @@ export type TypescriptGrammar = {
 	readonly implements_clause: {
 		type: 'implements_clause';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: 'type'; named: true }] };
+		fields: { type: { multiple: true; required: true; types: [{ type: 'type'; named: true }] } };
 	};
 	readonly import: { type: 'import'; named: true; fields: {} };
 	readonly import_alias: {
@@ -1812,8 +1813,9 @@ export type TypescriptGrammar = {
 	readonly named_imports_group1: {
 		type: 'named_imports_group1';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: 'import_specifier'; named: true }] };
+		fields: {
+			import_specifier: { multiple: true; required: true; types: [{ type: 'import_specifier'; named: true }] };
+		};
 	};
 	readonly namespace_export: {
 		type: 'namespace_export';
@@ -2255,8 +2257,7 @@ export type TypescriptGrammar = {
 	readonly sequence_expression: {
 		type: 'sequence_expression';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: 'expression'; named: true }] };
+		fields: { expression: { multiple: true; required: true; types: [{ type: 'expression'; named: true }] } };
 	};
 	readonly spread_element: {
 		type: 'spread_element';
@@ -2447,17 +2448,18 @@ export type TypescriptGrammar = {
 	readonly tuple_type_group1: {
 		type: 'tuple_type_group1';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [
-				{ type: 'optional_parameter'; named: true },
-				{ type: 'optional_type'; named: true },
-				{ type: 'required_parameter'; named: true },
-				{ type: 'rest_type'; named: true },
-				{ type: 'type'; named: true }
-			];
+		fields: {
+			tuple_type_member: {
+				multiple: true;
+				required: true;
+				types: [
+					{ type: 'optional_parameter'; named: true },
+					{ type: 'optional_type'; named: true },
+					{ type: 'required_parameter'; named: true },
+					{ type: 'rest_type'; named: true },
+					{ type: 'type'; named: true }
+				];
+			};
 		};
 	};
 	readonly type_alias_declaration: {
@@ -2482,8 +2484,7 @@ export type TypescriptGrammar = {
 	readonly type_arguments: {
 		type: 'type_arguments';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: 'type'; named: true }] };
+		fields: { type: { multiple: true; required: true; types: [{ type: 'type'; named: true }] } };
 	};
 	readonly type_assertion: {
 		type: 'type_assertion';
@@ -2506,8 +2507,7 @@ export type TypescriptGrammar = {
 	readonly type_parameters: {
 		type: 'type_parameters';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: 'type_parameter'; named: true }] };
+		fields: { type_parameter: { multiple: true; required: true; types: [{ type: 'type_parameter'; named: true }] } };
 	};
 	readonly type_predicate: {
 		type: 'type_predicate';

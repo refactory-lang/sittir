@@ -2473,16 +2473,17 @@
   {
     "type": "export_clause_group1",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "export_specifier",
-          "named": true
-        }
-      ]
+    "fields": {
+      "export_specifier": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "export_specifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -3320,20 +3321,21 @@
   {
     "type": "formal_parameters_group1",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "optional_parameter",
-          "named": true
-        },
-        {
-          "type": "required_parameter",
-          "named": true
-        }
-      ]
+    "fields": {
+      "formal_parameter": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "optional_parameter",
+            "named": true
+          },
+          {
+            "type": "required_parameter",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -3847,16 +3849,17 @@
   {
     "type": "implements_clause",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "type",
-          "named": true
-        }
-      ]
+    "fields": {
+      "type": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -5127,16 +5130,17 @@
   {
     "type": "named_imports_group1",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "import_specifier",
-          "named": true
-        }
-      ]
+    "fields": {
+      "import_specifier": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "import_specifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -6389,16 +6393,17 @@
   {
     "type": "sequence_expression",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "expression",
-          "named": true
-        }
-      ]
+    "fields": {
+      "expression": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -6852,32 +6857,33 @@
   {
     "type": "tuple_type_group1",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "optional_parameter",
-          "named": true
-        },
-        {
-          "type": "optional_type",
-          "named": true
-        },
-        {
-          "type": "required_parameter",
-          "named": true
-        },
-        {
-          "type": "rest_type",
-          "named": true
-        },
-        {
-          "type": "type",
-          "named": true
-        }
-      ]
+    "fields": {
+      "tuple_type_member": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "optional_parameter",
+            "named": true
+          },
+          {
+            "type": "optional_type",
+            "named": true
+          },
+          {
+            "type": "required_parameter",
+            "named": true
+          },
+          {
+            "type": "rest_type",
+            "named": true
+          },
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -6949,16 +6955,17 @@
   {
     "type": "type_arguments",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "type",
-          "named": true
-        }
-      ]
+    "fields": {
+      "type": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -7036,16 +7043,17 @@
   {
     "type": "type_parameters",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "type_parameter",
-          "named": true
-        }
-      ]
+    "fields": {
+      "type_parameter": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "type_parameter",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

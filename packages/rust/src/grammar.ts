@@ -176,8 +176,7 @@ export type RustGrammar = {
 	readonly arguments_group1: {
 		type: 'arguments_group1';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: 'attributed_argument'; named: true }] };
+		fields: { element: { multiple: true; required: true; types: [{ type: 'attributed_argument'; named: true }] } };
 	};
 	readonly array_expression: {
 		type: 'array_expression';
@@ -723,8 +722,7 @@ export type RustGrammar = {
 	readonly enum_variant_list_group1: {
 		type: 'enum_variant_list_group1';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: 'attributed_enum_variant'; named: true }] };
+		fields: { element: { multiple: true; required: true; types: [{ type: 'attributed_enum_variant'; named: true }] } };
 	};
 	readonly expression_statement: {
 		type: 'expression_statement';
@@ -787,8 +785,9 @@ export type RustGrammar = {
 	readonly field_declaration_list_group1: {
 		type: 'field_declaration_list_group1';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: 'attributed_field_declaration'; named: true }] };
+		fields: {
+			element: { multiple: true; required: true; types: [{ type: 'attributed_field_declaration'; named: true }] };
+		};
 	};
 	readonly field_expression: {
 		type: 'field_expression';
@@ -829,15 +828,16 @@ export type RustGrammar = {
 	readonly field_initializer_list_group1: {
 		type: 'field_initializer_list_group1';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [
-				{ type: 'base_field_initializer'; named: true },
-				{ type: 'field_initializer'; named: true },
-				{ type: 'shorthand_field_initializer'; named: true }
-			];
+		fields: {
+			element: {
+				multiple: true;
+				required: true;
+				types: [
+					{ type: 'base_field_initializer'; named: true },
+					{ type: 'field_initializer'; named: true },
+					{ type: 'shorthand_field_initializer'; named: true }
+				];
+			};
 		};
 	};
 	readonly field_pattern: {
@@ -874,8 +874,7 @@ export type RustGrammar = {
 	readonly for_lifetimes: {
 		type: 'for_lifetimes';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: 'lifetime'; named: true }] };
+		fields: { lifetime: { multiple: true; required: true; types: [{ type: 'lifetime'; named: true }] } };
 	};
 	readonly foreign_mod_item: {
 		type: 'foreign_mod_item';
@@ -1434,8 +1433,7 @@ export type RustGrammar = {
 	readonly ordered_field_declaration_list_group1: {
 		type: 'ordered_field_declaration_list_group1';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: 'attributed_ordered_field'; named: true }] };
+		fields: { element: { multiple: true; required: true; types: [{ type: 'attributed_ordered_field'; named: true }] } };
 	};
 	readonly outer_doc_comment_marker: { type: 'outer_doc_comment_marker'; named: true; fields: {} };
 	readonly parameter: {
@@ -1460,8 +1458,7 @@ export type RustGrammar = {
 	readonly parameters_group1: {
 		type: 'parameters_group1';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: 'attributed_parameter'; named: true }] };
+		fields: { element: { multiple: true; required: true; types: [{ type: 'attributed_parameter'; named: true }] } };
 	};
 	readonly parenthesized_expression: {
 		type: 'parenthesized_expression';
@@ -1757,8 +1754,7 @@ export type RustGrammar = {
 	readonly slice_pattern_group1: {
 		type: 'slice_pattern_group1';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: '_pattern'; named: true }] };
+		fields: { pattern: { multiple: true; required: true; types: [{ type: '_pattern'; named: true }] } };
 	};
 	readonly source_file: {
 		type: 'source_file';
@@ -1860,11 +1856,12 @@ export type RustGrammar = {
 	readonly struct_pattern_group1: {
 		type: 'struct_pattern_group1';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'field_pattern'; named: true }, { type: 'remaining_field_pattern'; named: true }];
+		fields: {
+			element: {
+				multiple: true;
+				required: true;
+				types: [{ type: 'field_pattern'; named: true }, { type: 'remaining_field_pattern'; named: true }];
+			};
 		};
 	};
 	readonly token_binding_pattern: {
@@ -2117,11 +2114,12 @@ export type RustGrammar = {
 	readonly tuple_pattern_group1: {
 		type: 'tuple_pattern_group1';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: '_pattern'; named: true }, { type: 'closure_expression'; named: true }];
+		fields: {
+			element: {
+				multiple: true;
+				required: true;
+				types: [{ type: '_pattern'; named: true }, { type: 'closure_expression'; named: true }];
+			};
 		};
 	};
 	readonly tuple_struct_pattern: {
@@ -2165,8 +2163,7 @@ export type RustGrammar = {
 	readonly type_arguments: {
 		type: 'type_arguments';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: 'type_argument'; named: true }] };
+		fields: { element: { multiple: true; required: true; types: [{ type: 'type_argument'; named: true }] } };
 	};
 	readonly type_binding: {
 		type: 'type_binding';
@@ -2209,8 +2206,9 @@ export type RustGrammar = {
 	readonly type_parameters: {
 		type: 'type_parameters';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: 'attributed_type_parameter'; named: true }] };
+		fields: {
+			element: { multiple: true; required: true; types: [{ type: 'attributed_type_parameter'; named: true }] };
+		};
 	};
 	readonly unary_expression: {
 		type: 'unary_expression';
@@ -2269,11 +2267,12 @@ export type RustGrammar = {
 	readonly use_bounds_group1: {
 		type: 'use_bounds_group1';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'lifetime'; named: true }, { type: 'type_identifier'; named: true }];
+		fields: {
+			element: {
+				multiple: true;
+				required: true;
+				types: [{ type: 'lifetime'; named: true }, { type: 'type_identifier'; named: true }];
+			};
 		};
 	};
 	readonly use_declaration: {

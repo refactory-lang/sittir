@@ -3834,8 +3834,8 @@ export interface RemovedTraitBound {
 
 export interface TypeParameters {
 	readonly $type: TSKindId.TypeParameters;
-	readonly _attributed_type_parameter: NonEmptyArray<AttributedTypeParameter>;
-	attributedTypeParameters(): NonEmptyArray<AttributedTypeParameter>;
+	readonly _element: NonEmptyArray<AttributedTypeParameter>;
+	elements(): NonEmptyArray<AttributedTypeParameter>;
 }
 
 export interface ConstParameter {
@@ -4077,8 +4077,8 @@ export interface UseBounds {
 
 export interface TypeArguments {
 	readonly $type: TSKindId.TypeArguments;
-	readonly _type_argument: NonEmptyArray<TypeArgument>;
-	typeArguments(): NonEmptyArray<TypeArgument>;
+	readonly _element: NonEmptyArray<TypeArgument>;
+	elements(): NonEmptyArray<TypeArgument>;
 }
 
 export interface TypeBinding {
@@ -4733,8 +4733,8 @@ export interface AttributeGroup1 {
 
 export interface EnumVariantListGroup1 {
 	readonly $type: TSKindId.EnumVariantListGroup1;
-	readonly _attributed_enum_variant: NonEmptyArray<AttributedEnumVariant>;
-	attributedEnumVariants(): NonEmptyArray<AttributedEnumVariant>;
+	readonly _element: NonEmptyArray<AttributedEnumVariant>;
+	elements(): NonEmptyArray<AttributedEnumVariant>;
 }
 
 export interface EnumVariantOptional1 {
@@ -4745,14 +4745,14 @@ export interface EnumVariantOptional1 {
 
 export interface FieldDeclarationListGroup1 {
 	readonly $type: TSKindId.FieldDeclarationListGroup1;
-	readonly _attributed_field_declaration: NonEmptyArray<AttributedFieldDeclaration>;
-	attributedFieldDeclarations(): NonEmptyArray<AttributedFieldDeclaration>;
+	readonly _element: NonEmptyArray<AttributedFieldDeclaration>;
+	elements(): NonEmptyArray<AttributedFieldDeclaration>;
 }
 
 export interface OrderedFieldDeclarationListGroup1 {
 	readonly $type: TSKindId.OrderedFieldDeclarationListGroup1;
-	readonly _attributed_ordered_field: NonEmptyArray<AttributedOrderedField>;
-	attributedOrderedFields(): NonEmptyArray<AttributedOrderedField>;
+	readonly _element: NonEmptyArray<AttributedOrderedField>;
+	elements(): NonEmptyArray<AttributedOrderedField>;
 }
 
 export interface ExternCrateDeclarationOptional1 {
@@ -4805,8 +4805,8 @@ export interface UseListGroup1 {
 
 export interface ParametersGroup1 {
 	readonly $type: TSKindId.ParametersGroup1;
-	readonly _attributed_parameter: NonEmptyArray<AttributedParameter>;
-	attributedParameters(): NonEmptyArray<AttributedParameter>;
+	readonly _element: NonEmptyArray<AttributedParameter>;
+	elements(): NonEmptyArray<AttributedParameter>;
 }
 
 export interface VariadicParameterOptional1 {
@@ -4829,8 +4829,8 @@ export interface ArrayTypeOptional1 {
 
 export interface UseBoundsGroup1 {
 	readonly $type: TSKindId.UseBoundsGroup1;
-	readonly _content?: readonly (Lifetime | Identifier)[];
-	contents(): readonly (Lifetime | Identifier)[];
+	readonly _element: NonEmptyArray<Lifetime | Identifier>;
+	elements(): NonEmptyArray<Lifetime | Identifier>;
 }
 
 export interface AbstractTypeOptional1 {
@@ -4841,8 +4841,8 @@ export interface AbstractTypeOptional1 {
 
 export interface ArgumentsGroup1 {
 	readonly $type: TSKindId.ArgumentsGroup1;
-	readonly _attributed_argument: NonEmptyArray<AttributedArgument>;
-	attributedArguments(): NonEmptyArray<AttributedArgument>;
+	readonly _element: NonEmptyArray<AttributedArgument>;
+	elements(): NonEmptyArray<AttributedArgument>;
 }
 
 export interface ArrayExpressionGroup1 {
@@ -4855,8 +4855,8 @@ export interface ArrayExpressionGroup1 {
 
 export interface FieldInitializerListGroup1 {
 	readonly $type: TSKindId.FieldInitializerListGroup1;
-	readonly _content?: readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
-	contents(): readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
+	readonly _element: NonEmptyArray<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer>;
+	elements(): NonEmptyArray<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer>;
 }
 
 export interface MatchPatternOptional1 {
@@ -4873,8 +4873,8 @@ export interface WhileExpressionOptional1 {
 
 export interface TuplePatternGroup1 {
 	readonly $type: TSKindId.TuplePatternGroup1;
-	readonly _content?: readonly (Pattern | ClosureExpression)[];
-	contents(): readonly (Pattern | ClosureExpression)[];
+	readonly _element: NonEmptyArray<Pattern | ClosureExpression>;
+	elements(): NonEmptyArray<Pattern | ClosureExpression>;
 }
 
 export interface SlicePatternGroup1 {
@@ -4885,8 +4885,8 @@ export interface SlicePatternGroup1 {
 
 export interface StructPatternGroup1 {
 	readonly $type: TSKindId.StructPatternGroup1;
-	readonly _content?: readonly (FieldPattern | RemainingFieldPattern)[];
-	contents(): readonly (FieldPattern | RemainingFieldPattern)[];
+	readonly _element: NonEmptyArray<FieldPattern | RemainingFieldPattern>;
+	elements(): NonEmptyArray<FieldPattern | RemainingFieldPattern>;
 }
 
 export interface RangePatternGroup2 {

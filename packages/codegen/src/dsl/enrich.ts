@@ -64,17 +64,21 @@
  *      single-occurrence positions in practice; per-arm collisions still
  *      skip via `reportSkip`.
  *
- *   6. Repeated-choice-block field wrapping — a bare `repeat(choice(...))`
- *      wraps the whole choice as `field('elements', choice(...))` instead
- *      of leaving each arm to route into a separate per-kind read bucket
- *      (see `applyRepeatedChoiceBlockWrap`'s doc comment). Runs once, LAST,
- *      over the fully-merged rule map — not part of the fixed-point loop
- *      above. Numbered on collision (`elements_2`, ...) rather than
+ *   6. Node-choice field wrapping — a bare `repeat(choice(...))` wraps the
+ *      whole choice as `field('elements', choice(...))` instead of leaving
+ *      each arm to route into a separate per-kind read bucket; a bare
+ *      eligible-referent symbol as a repeat's direct content gets the same
+ *      treatment; and a separated list's leading + repeated element
+ *      positions get the SAME field name so they merge into one slot (see
+ *      `applyNodeChoiceFieldWrap`'s doc comment for all three). Runs once,
+ *      LAST, over the fully-merged rule map — not part of the fixed-point
+ *      loop above. Numbered on collision (`elements_2`, ...) rather than
  *      skipped, and reaches hidden rules too — unlike passes 1-5. Callers
  *      exempt individual rule names via `enrich()`'s `config` parameter
  *      when the wrap would be structurally correct but empirically wrong
  *      (a choice arm that's an implicit, unmodeled text gap rather than a
- *      real CST child).
+ *      real CST child; or a rule whose own override already fields this
+ *      exact position).
  *
  * All passes collision-aware: skip (stderr notification) when the
  * promotion would shadow an existing field name. Strictly local — no
@@ -147,10 +151,13 @@ export interface EnrichConfig {
 	/**
 	 * Rule names exempt from EVERY mechanical enrich pass — the fixed-point
 	 * loop (symbol-to-field, choice-arm-field-wrap, optional-keyword),
-	 * clause-hoist, un-aliasing, and `applyRepeatedChoiceBlockWrap`. Escape
+	 * clause-hoist, un-aliasing, and `applyNodeChoiceFieldWrap`. Escape
 	 * hatch for a rule where the grammar shape looks like a pass's target
-	 * but empirically isn't — e.g. python's `string_content` (see
-	 * `applyRepeatedChoiceBlockWrap`'s doc comment) — rather than a
+	 * but empirically isn't — e.g. python's `string_content`, or rust's
+	 * `tuple_type`/`trait_bounds` whose own hand-authored override already
+	 * fields the exact position `applyNodeChoiceFieldWrap`'s separated-list
+	 * target would also try to field (see that function's doc comment) —
+	 * rather than a
 	 * per-pass knob that every future pass would need its own copy of.
 	 */
 	readonly skip?: readonly string[];
@@ -283,7 +290,8 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 	// Node-choice field wrapping (pass 6) — runs once, last, over every rule
 	// this enrich() call produced (original + kw + clause-hoist mints), never
 	// inside the fixed-point loop above. Needs `mergedRules` itself (to
-	// dereference a hidden referent's own body). See
+	// dereference a hidden referent's own body, and to mint literal-arm
+	// promotion rules directly into the final rule bag). See
 	// `applyNodeChoiceFieldWrap`'s doc comment for why.
 	for (const name of Object.keys(mergedRules)) {
 		if (enrichSkip.has(name)) continue;
@@ -678,12 +686,13 @@ function collectAllFieldNamesDeep(rule: Rule, into: Set<string>): void {
 
 /**
  * A choice whose arms are all node-shaped (SYMBOL/ALIAS references, no bare
- * literal arm) is the merge-order-bug shape this pass targets. A literal
- * arm (e.g. `class_body`'s `;` terminator alongside method/member arms)
- * signals the OTHER established shape for a heterogeneous repeated choice —
- * per-arm `polymorphs:`/positional-path classification — which this pass
- * must leave untouched: wrapping the whole choice would shift every
- * existing positional path into and past it.
+ * literal arm) is the merge-order-bug shape this pass targets. Run as-is
+ * against a repeat's raw choice content, a bare literal arm (e.g.
+ * `class_body`'s `;` terminator alongside method/member arms) disqualifies
+ * it here — but `promoteLiteralChoiceArms` (below) runs first and turns a
+ * literal arm into a node-shaped one, so by the time this check matters it
+ * usually no longer applies. See that function's doc comment for why
+ * promoting is safe.
  */
 function isAllArmsNodeShaped(choiceRule: Rule): boolean {
 	const members = (choiceRule as unknown as { members: readonly Rule[] }).members;
@@ -695,6 +704,96 @@ function isAllArmsNodeShaped(choiceRule: Rule): boolean {
 		const t = (cursor as { type: string }).type;
 		return t === 'SYMBOL' || t === 'ALIAS';
 	});
+}
+
+/**
+ * Same as `isAllArmsNodeShaped` but also accepts a bare literal (STRING /
+ * PATTERN) arm — the shape `promoteLiteralChoiceArms` knows how to fix.
+ * Deliberately excludes anything else (nested SEQ/CHOICE arms, etc.): those
+ * are a different shape (e.g. a separated list) that this pass doesn't
+ * touch.
+ */
+function isAllArmsNodeOrLiteralShaped(choiceRule: Rule): boolean {
+	const members = (choiceRule as unknown as { members: readonly Rule[] }).members;
+	return members.every((arm) => {
+		let cursor = arm;
+		while (isPrecWrapper(cursor as { type: string })) {
+			cursor = (cursor as unknown as { content: Rule }).content;
+		}
+		const t = (cursor as { type: string }).type;
+		return t === 'SYMBOL' || t === 'ALIAS' || isStringType(t) || t === 'PATTERN';
+	});
+}
+
+/** Minimal punctuation → readable-name map for `promoteLiteralChoiceArms`.
+ * Not a general token-naming utility (that's `compiler/link.ts`'s
+ * `tokenToName`, a later compiler phase enrich.ts doesn't import from —
+ * same reasoning as `pluralizeFieldName`); the promoted name is a
+ * synthesized hidden-rule identifier immediately folded into the outer
+ * `elements` field, so it only needs to be valid, unique, and readable
+ * enough for debugging, not exhaustive. */
+const LITERAL_ARM_NAMES: Record<string, string> = {
+	';': 'semi'
+};
+
+function literalArmNameHint(text: string): string {
+	return LITERAL_ARM_NAMES[text] ?? text.replace(/[^\w]+/g, '');
+}
+
+/**
+ * Promotes each bare literal (STRING/PATTERN) arm of a choice into a
+ * minted `_kw_<name>` hidden-rule SYMBOL — via `registerKwRule`, the same
+ * mechanism passes 2-4 already use for keyword promotion — so a mixed
+ * node+literal choice becomes all-node-shaped and reaches case 1's
+ * ordinary `field('elements', repeat(choice(...)))` wrap instead of
+ * staying split across per-kind wire buckets joined by
+ * `_concatInSourceOrder`.
+ *
+ * Only called on a REPEAT's direct choice content (never a rule's own
+ * top-level dispatch choice, which classifies what variant a single node
+ * itself is): `isAllArmsNodeShaped`'s doc comment used to warn that a
+ * literal arm here signals per-arm `polymorphs:` classification that
+ * fielding the choice would break. That classification (see
+ * `node-model.json5`'s `childKind` maps) is keyed by each occurrence's own
+ * CST kind name, not by its position among the choice's arms or which wire
+ * bucket it arrived in — promoting the literal doesn't rename or reorder
+ * any node-shaped arm, so the classification survives fielding the whole
+ * repeat the same way case 1 already does for a purely node-shaped choice.
+ *
+ * Returns `null` (no-op) if nothing changed — e.g. every arm was already
+ * node-shaped, or a mint declined due to a genuine name collision
+ * (`registerKwRule`'s own conservative guard); the caller keeps the
+ * original choice in that case rather than risk a partially-promoted one.
+ */
+function promoteLiteralChoiceArms(choiceRule: Rule, mergedRules: Record<string, Rule>): Rule | null {
+	const members = (choiceRule as unknown as { members: readonly Rule[] }).members;
+	let changed = false;
+	let declined = false;
+	const newMembers = members.map((arm) => {
+		let cursor = arm;
+		const precStack: Rule[] = [];
+		while (isPrecWrapper(cursor as { type: string })) {
+			precStack.push(cursor);
+			cursor = (cursor as unknown as { content: Rule }).content;
+		}
+		const t = (cursor as { type: string }).type;
+		if (!isStringType(t) && t !== 'PATTERN') return arm;
+		const text = (cursor as unknown as { value: string }).value;
+		const nameHint = literalArmNameHint(text);
+		const symbol = nameHint ? registerKwRule(cursor, nameHint, mergedRules, mergedRules) : null;
+		if (!symbol) {
+			declined = true;
+			return arm;
+		}
+		changed = true;
+		let rebuilt: Rule = symbol;
+		for (let i = precStack.length - 1; i >= 0; i--) {
+			rebuilt = { ...(precStack[i] as object), content: rebuilt } as Rule;
+		}
+		return rebuilt;
+	});
+	if (!changed || declined) return null;
+	return { ...(choiceRule as object), members: newMembers } as Rule;
 }
 
 /**
@@ -718,9 +817,12 @@ function isAllArmsNodeShaped(choiceRule: Rule): boolean {
  *     `resolveFieldPlaceholder`'s ordinary unwrap-and-rewrap path (see
  *     `transform.ts`) instead of finding a bare REPEAT underneath and
  *     nesting a second field around it. Scoped to all-node-shaped choices
- *     only (`isAllArmsNodeShaped`) — a choice with a literal arm is the
- *     other, already-handled heterogeneous-repeat shape (e.g.
- *     `class_body`'s method/member arms plus a `;` terminator).
+ *     (`isAllArmsNodeShaped`) — a choice with a literal arm alongside node
+ *     arms (e.g. `class_body`'s method/member arms plus a `;` terminator)
+ *     first goes through `promoteLiteralChoiceArms`, which turns the
+ *     literal arm into a node-shaped one so it reaches this same wrap; a
+ *     choice with any OTHER shape (nested SEQ/CHOICE arms — a separated
+ *     list, say) is left alone.
  *
  *  2. `repeat($.statement)` — an eligible field referent
  *     (`isEligibleFieldReferent`: a DECLARED supertype from `supertypeNames`,
@@ -820,6 +922,121 @@ function isEligibleFieldReferent(
 	return supertypeNames.has(name) || isHiddenPureUnionRule(name, mergedRules);
 }
 
+function sameElementShape(a: Rule, b: Rule): boolean {
+	return ruleKey(a as unknown as RuntimeRule) === ruleKey(b as unknown as RuntimeRule);
+}
+
+/** Field name for a separated list's element pair (see
+ * `fieldSeparatedListElements`): named after the element's own referent
+ * when it's a single SYMBOL/ALIAS (matching case 2's
+ * `refName.replace(/^_/, '')` convention — singular, since each field
+ * occurrence covers one element, not the whole list); falls back to the
+ * generic `element` for a choice-shaped element (no single referent to
+ * name it after). */
+function deriveElementFieldName(elementRule: Rule): string {
+	let cursor: Rule = elementRule;
+	while (isPrecWrapper(cursor as { type: string })) {
+		cursor = (cursor as unknown as { content: Rule }).content;
+	}
+	const t = (cursor as { type: string }).type;
+	if (t === 'SYMBOL') {
+		return (cursor as unknown as { name: string }).name.replace(/^_/, '');
+	}
+	if (t === 'ALIAS') {
+		const value = (cursor as unknown as { value?: string }).value;
+		if (typeof value === 'string') return value;
+	}
+	return 'element';
+}
+
+/**
+ * A separated list — `seq(element, repeat(seq(SEP, element)), optional(SEP))`
+ * (tree-sitter's `commaSep1`-style desugaring; `dsl/list-patterns.ts`'s
+ * `detectRepeatSeparator` is the canonical recognizer for the repeat's own
+ * `seq(SEP, element)` content) — routes its LEADING element and every
+ * REPEATED element into separate per-kind wire buckets today (no field
+ * ties them together), needing `_concatInSourceOrder` to reassemble
+ * document order at read time.
+ *
+ * Fields the LEADING element and the repeat's per-iteration element with
+ * the SAME name. Tree-sitter tracks a field by name across every position
+ * it's attached to within a rule, and `compiler/model/node-map.ts`'s
+ * `mergeSlotsByName` already folds same-named fields at different
+ * structural positions into one array-valued slot downstream — so two
+ * SIBLING per-occurrence fields (this position, and the repeat's own) is
+ * enough; no outer field wrapping the whole list is needed. That outer-
+ * field approach was tried earlier and abandoned: it collided with an
+ * ancestor override's own field at the same position ("fields don't
+ * stack" — tree-sitter only keeps the innermost field name). Two sibling
+ * fields at different positions carries no such risk.
+ *
+ * Declines when the leading position is already fielded (nothing to do),
+ * when the repeat is the TRAILING-separator form (`seq(element, SEP)` —
+ * `detected.trailing`, a different, rarer shape not handled here), or
+ * when the leading element and the repeat's element aren't the same shape
+ * (`sameElementShape` — a mismatch means this isn't really one list, e.g.
+ * an unrelated repeat happens to sit right after some other element).
+ *
+ * Runs everywhere the shape matches — same as case 1/case 2 above, no
+ * pass-specific gate of its own. Rules whose own hand-authored override
+ * already fields this exact position exempt themselves the standard way,
+ * via `enrich()`'s `config.skip` (see `EnrichConfig.skip`'s doc comment):
+ * enrich runs before any override, so it has no way to see one exists.
+ * rust's `tuple_type: { '(_type)': field('type') }` was the first found
+ * this way — this pass fielding `_type` first left the override's kind
+ * search with zero occurrences to find, a hard `tree-sitter generate`
+ * failure, not a silent one; `trait_bounds`'s own `'bounds'`-fielding
+ * override showed up the same way, as an `accessor-throw: repeated slot
+ * "bounds" requires at least one value` — both are skip-listed in their
+ * grammar's own `enrich(base, { skip: [...] })` call, same discovery path
+ * as python's `string_content`.
+ */
+function fieldSeparatedListElements(seqRule: Rule, reserve: (base: string) => string): Rule | null {
+	const members = (seqRule as unknown as { members?: Rule[] }).members;
+	if (!Array.isArray(members)) return null;
+	for (let i = 0; i < members.length - 1; i++) {
+		const leading = members[i]!;
+		if (isFieldType((leading as { type: string }).type)) continue;
+		let repeatCursor: Rule = members[i + 1]!;
+		const outerPrecStack: Rule[] = [];
+		while (isPrecWrapper(repeatCursor as { type: string })) {
+			outerPrecStack.push(repeatCursor);
+			repeatCursor = (repeatCursor as unknown as { content: Rule }).content;
+		}
+		if (!isRepeatType((repeatCursor as { type: string }).type)) continue;
+		let inner = (repeatCursor as unknown as { content: RuntimeRule }).content;
+		const innerPrecStack: Rule[] = [];
+		while (isPrecWrapper(inner as unknown as { type: string })) {
+			innerPrecStack.push(inner as unknown as Rule);
+			inner = (inner as unknown as { content: RuntimeRule }).content;
+		}
+		const detected = detectRepeatSeparator(inner);
+		if (!detected || detected.trailing) continue;
+		const innerElement = detected.content as unknown as Rule;
+		if (!sameElementShape(leading, innerElement)) continue;
+		const fieldName = reserve(deriveElementFieldName(leading));
+
+		const innerMembers = (inner as unknown as { members: Rule[] }).members;
+		const newInnerMembers = innerMembers.slice();
+		const elementIdx = innerMembers.indexOf(innerElement as unknown as Rule);
+		newInnerMembers[elementIdx] = makeField(fieldName, innerElement);
+		let rebuiltInner: Rule = { ...(inner as unknown as object), members: newInnerMembers } as Rule;
+		for (let j = innerPrecStack.length - 1; j >= 0; j--) {
+			rebuiltInner = { ...(innerPrecStack[j] as object), content: rebuiltInner } as Rule;
+		}
+		let rebuiltRepeat: Rule = { ...(repeatCursor as object), content: rebuiltInner } as Rule;
+		for (let j = outerPrecStack.length - 1; j >= 0; j--) {
+			rebuiltRepeat = { ...(outerPrecStack[j] as object), content: rebuiltRepeat } as Rule;
+		}
+
+		const newMembers = members.slice();
+		newMembers[i] = makeField(fieldName, leading);
+		newMembers[i + 1] = rebuiltRepeat;
+		return { ...(seqRule as object), members: newMembers } as Rule;
+	}
+	return null;
+}
+
 function applyNodeChoiceFieldWrap(
 	ruleName: string,
 	rule: Rule,
@@ -905,7 +1122,20 @@ function applyNodeChoiceFieldWrap(
 					return makeField(reserve(fieldName), rebuildRepeat(inner));
 				}
 			}
-			const visitedInner = visit(inner, true);
+			let visitedInner = visit(inner, true);
+			if (
+				isChoiceType((visitedInner as { type: string }).type) &&
+				!isAllArmsNodeShaped(visitedInner) &&
+				isAllArmsNodeOrLiteralShaped(visitedInner)
+			) {
+				// A mixed node+literal choice (e.g. class_body's method/member
+				// arms plus its `;` terminator) — promote the literal arm(s) into
+				// node-shaped symbols first, then fall through to the ordinary
+				// all-node-shaped field wrap below. See
+				// `promoteLiteralChoiceArms`'s doc comment for why this is safe.
+				const promoted = promoteLiteralChoiceArms(visitedInner, mergedRules);
+				if (promoted) visitedInner = promoted;
+			}
 			if (isChoiceType((visitedInner as { type: string }).type) && isAllArmsNodeShaped(visitedInner)) {
 				changed = true;
 				// Field wraps the WHOLE repeat (matching the codebase's existing
@@ -920,6 +1150,14 @@ function applyNodeChoiceFieldWrap(
 			}
 			if (visitedInner === inner) return r;
 			return rebuildRepeat(visitedInner);
+		}
+
+		if (isSeqType((r as { type: string }).type)) {
+			const sepListRewrite = fieldSeparatedListElements(r, reserve);
+			if (sepListRewrite) {
+				changed = true;
+				r = sepListRewrite;
+			}
 		}
 
 		const bag = r as unknown as { members?: readonly Rule[]; content?: Rule };

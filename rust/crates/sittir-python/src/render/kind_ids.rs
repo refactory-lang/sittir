@@ -299,16 +299,19 @@ pub const STRING_REPEAT1: KindId = KindId(288);
 pub const STRING_CONTENT_REPEAT1: KindId = KindId(289);
 pub const FORMAT_SPECIFIER_REPEAT1: KindId = KindId(290);
 pub const _ARGUMENT_LIST_GROUP1_REPEAT1: KindId = KindId(291);
-pub const _DICT_PATTERN_GROUP2_REPEAT1: KindId = KindId(292);
-pub const _DICTIONARY_GROUP1_REPEAT1: KindId = KindId(293);
-pub const COMPREHENSION_CLAUSES_REPEAT1: KindId = KindId(294);
-pub const PRINT_STATEMENT_GROUP1_REPEAT1: KindId = KindId(295);
-pub const _WITH_CLAUSE_BARE_REPEAT1: KindId = KindId(296);
-pub const _MATCH_BLOCK_BLOCK_REPEAT1: KindId = KindId(297);
-pub const _EXCEPT_CLAUSE_LIST_REPEAT1: KindId = KindId(298);
-pub const _AS_PATTERN_TARGET: KindId = KindId(299);
-pub const _FORMAT_EXPRESSION: KindId = KindId(300);
-pub const _FUTURE_IMPORT_STATEMENT_GROUP1: KindId = KindId(301);
+pub const _EXPRESSION_LIST_GROUP1_REPEAT1: KindId = KindId(292);
+pub const _DICT_PATTERN_GROUP2_REPEAT1: KindId = KindId(293);
+pub const _PATTERN_LIST_GROUP1_REPEAT1: KindId = KindId(294);
+pub const _DICTIONARY_GROUP1_REPEAT1: KindId = KindId(295);
+pub const CASE_TUPLE_PATTERN_REPEAT1: KindId = KindId(296);
+pub const COMPREHENSION_CLAUSES_REPEAT1: KindId = KindId(297);
+pub const PRINT_STATEMENT_GROUP1_REPEAT1: KindId = KindId(298);
+pub const _WITH_CLAUSE_BARE_REPEAT1: KindId = KindId(299);
+pub const _MATCH_BLOCK_BLOCK_REPEAT1: KindId = KindId(300);
+pub const _EXCEPT_CLAUSE_LIST_REPEAT1: KindId = KindId(301);
+pub const _AS_PATTERN_TARGET: KindId = KindId(302);
+pub const _FORMAT_EXPRESSION: KindId = KindId(303);
+pub const _FUTURE_IMPORT_STATEMENT_GROUP1: KindId = KindId(304);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -605,16 +608,19 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         289 => "string_content_repeat1", // "string_content_repeat1"
         290 => "format_specifier_repeat1", // "format_specifier_repeat1"
         291 => "_argument_list_group1_repeat1", // "_argument_list_group1_repeat1"
-        292 => "_dict_pattern_group2_repeat1", // "_dict_pattern_group2_repeat1"
-        293 => "_dictionary_group1_repeat1", // "_dictionary_group1_repeat1"
-        294 => "comprehension_clauses_repeat1", // "comprehension_clauses_repeat1"
-        295 => "print_statement_group1_repeat1", // "print_statement_group1_repeat1"
-        296 => "_with_clause_bare_repeat1", // "_with_clause_bare_repeat1"
-        297 => "_match_block_block_repeat1", // "_match_block_block_repeat1"
-        298 => "_except_clause_list_repeat1", // "_except_clause_list_repeat1"
-        299 => "as_pattern_target", // "_as_pattern_target"
-        300 => "format_expression", // "_format_expression"
-        301 => "future_import_statement_group1", // "_future_import_statement_group1"
+        292 => "_expression_list_group1_repeat1", // "_expression_list_group1_repeat1"
+        293 => "_dict_pattern_group2_repeat1", // "_dict_pattern_group2_repeat1"
+        294 => "_pattern_list_group1_repeat1", // "_pattern_list_group1_repeat1"
+        295 => "_dictionary_group1_repeat1", // "_dictionary_group1_repeat1"
+        296 => "case_tuple_pattern_repeat1", // "case_tuple_pattern_repeat1"
+        297 => "comprehension_clauses_repeat1", // "comprehension_clauses_repeat1"
+        298 => "print_statement_group1_repeat1", // "print_statement_group1_repeat1"
+        299 => "_with_clause_bare_repeat1", // "_with_clause_bare_repeat1"
+        300 => "_match_block_block_repeat1", // "_match_block_block_repeat1"
+        301 => "_except_clause_list_repeat1", // "_except_clause_list_repeat1"
+        302 => "as_pattern_target", // "_as_pattern_target"
+        303 => "format_expression", // "_format_expression"
+        304 => "future_import_statement_group1", // "_future_import_statement_group1"
         _ => "<unknown>",
     }
 }

@@ -1301,6 +1301,53 @@ function isAllArmsNodeShaped(choiceRule) {
     return t === "SYMBOL" || t === "ALIAS";
   });
 }
+function isAllArmsNodeOrLiteralShaped(choiceRule) {
+  const members = choiceRule.members;
+  return members.every((arm) => {
+    let cursor = arm;
+    while (isPrecWrapper(cursor)) {
+      cursor = cursor.content;
+    }
+    const t = cursor.type;
+    return t === "SYMBOL" || t === "ALIAS" || isStringType(t) || t === "PATTERN";
+  });
+}
+var LITERAL_ARM_NAMES = {
+  ";": "semi"
+};
+function literalArmNameHint(text) {
+  return LITERAL_ARM_NAMES[text] ?? text.replace(/[^\w]+/g, "");
+}
+function promoteLiteralChoiceArms(choiceRule, mergedRules) {
+  const members = choiceRule.members;
+  let changed = false;
+  let declined = false;
+  const newMembers = members.map((arm) => {
+    let cursor = arm;
+    const precStack = [];
+    while (isPrecWrapper(cursor)) {
+      precStack.push(cursor);
+      cursor = cursor.content;
+    }
+    const t = cursor.type;
+    if (!isStringType(t) && t !== "PATTERN") return arm;
+    const text = cursor.value;
+    const nameHint = literalArmNameHint(text);
+    const symbol = nameHint ? registerKwRule(cursor, nameHint, mergedRules, mergedRules) : null;
+    if (!symbol) {
+      declined = true;
+      return arm;
+    }
+    changed = true;
+    let rebuilt = symbol;
+    for (let i = precStack.length - 1; i >= 0; i--) {
+      rebuilt = { ...precStack[i], content: rebuilt };
+    }
+    return rebuilt;
+  });
+  if (!changed || declined) return null;
+  return { ...choiceRule, members: newMembers };
+}
 function pluralizeFieldName(name) {
   if (name.endsWith("s")) return name;
   if (name.endsWith("y") && !/[aeiou]y$/.test(name)) return name.slice(0, -1) + "ies";
@@ -1318,6 +1365,67 @@ function isHiddenPureUnionRule(name, mergedRules) {
 }
 function isEligibleFieldReferent(name, mergedRules, supertypeNames) {
   return supertypeNames.has(name) || isHiddenPureUnionRule(name, mergedRules);
+}
+function sameElementShape(a, b) {
+  return ruleKey(a) === ruleKey(b);
+}
+function deriveElementFieldName(elementRule) {
+  let cursor = elementRule;
+  while (isPrecWrapper(cursor)) {
+    cursor = cursor.content;
+  }
+  const t = cursor.type;
+  if (t === "SYMBOL") {
+    return cursor.name.replace(/^_/, "");
+  }
+  if (t === "ALIAS") {
+    const value = cursor.value;
+    if (typeof value === "string") return value;
+  }
+  return "element";
+}
+function fieldSeparatedListElements(seqRule, reserve) {
+  const members = seqRule.members;
+  if (!Array.isArray(members)) return null;
+  for (let i = 0; i < members.length - 1; i++) {
+    const leading = members[i];
+    if (isFieldType(leading.type)) continue;
+    let repeatCursor = members[i + 1];
+    const outerPrecStack = [];
+    while (isPrecWrapper(repeatCursor)) {
+      outerPrecStack.push(repeatCursor);
+      repeatCursor = repeatCursor.content;
+    }
+    if (!isRepeatType(repeatCursor.type)) continue;
+    let inner = repeatCursor.content;
+    const innerPrecStack = [];
+    while (isPrecWrapper(inner)) {
+      innerPrecStack.push(inner);
+      inner = inner.content;
+    }
+    const detected = detectRepeatSeparator(inner);
+    if (!detected || detected.trailing) continue;
+    const innerElement = detected.content;
+    if (!sameElementShape(leading, innerElement)) continue;
+    const fieldName = reserve(deriveElementFieldName(leading));
+    const innerMembers = inner.members;
+    const newInnerMembers = innerMembers.slice();
+    const elementIdx = innerMembers.indexOf(innerElement);
+    newInnerMembers[elementIdx] = makeField(fieldName, innerElement);
+    let rebuiltInner = { ...inner, members: newInnerMembers };
+    for (let j = innerPrecStack.length - 1; j >= 0; j--) {
+      rebuiltInner = { ...innerPrecStack[j], content: rebuiltInner };
+    }
+    let rebuiltRepeat = { ...repeatCursor, content: rebuiltInner };
+    for (let j = outerPrecStack.length - 1; j >= 0; j--) {
+      rebuiltRepeat = { ...outerPrecStack[j], content: rebuiltRepeat };
+    }
+    const newMembers = members.slice();
+    newMembers[i] = makeField(fieldName, leading);
+    newMembers[i + 1] = rebuiltRepeat;
+    return { ...seqRule, members: newMembers };
+  }
+  return null;
 }
 function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
   const usedNames = /* @__PURE__ */ new Set();
@@ -1377,13 +1485,24 @@ function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
           return makeField(reserve(fieldName), rebuildRepeat(inner));
         }
       }
-      const visitedInner = visit(inner, true);
+      let visitedInner = visit(inner, true);
+      if (isChoiceType(visitedInner.type) && !isAllArmsNodeShaped(visitedInner) && isAllArmsNodeOrLiteralShaped(visitedInner)) {
+        const promoted = promoteLiteralChoiceArms(visitedInner, mergedRules);
+        if (promoted) visitedInner = promoted;
+      }
       if (isChoiceType(visitedInner.type) && isAllArmsNodeShaped(visitedInner)) {
         changed = true;
         return makeField(reserve("elements"), rebuildRepeat(visitedInner));
       }
       if (visitedInner === inner) return r;
       return rebuildRepeat(visitedInner);
+    }
+    if (isSeqType(r.type)) {
+      const sepListRewrite = fieldSeparatedListElements(r, reserve);
+      if (sepListRewrite) {
+        changed = true;
+        r = sepListRewrite;
+      }
     }
     const bag = r;
     if (Array.isArray(bag.members)) {
@@ -3942,7 +4061,33 @@ var token = globalThis.token;
 var grammar = globalThis.grammar;
 
 // packages/rust/grammar.sittir.ts
-var enrichedBase = enrich(base_default);
+var enrichedBase = enrich(base_default, {
+  // `tuple_type` and `trait_bounds` already field their separated list's
+  // element position via their own override below (`tuple_type: {
+  // '(_type)': field('type') }`, `trait_bounds`'s `bounds` field) —
+  // applyNodeChoiceFieldWrap's separated-list target fielding the same
+  // position first left those overrides with nothing to find: a hard
+  // `tree-sitter generate` failure for `tuple_type` (kind-match search
+  // came up empty) and an accessor-throw for `trait_bounds` (merged slot
+  // ended up empty).
+  // `function_modifiers` already fields EVERY position with a wildcard
+  // override (`_: field('modifier')` below) — same nested-field collision
+  // as `tuple_type`/`trait_bounds`, this time surfacing as a render-time
+  // unknown-kind-id error rather than a hard generate failure or an
+  // accessor-throw. `_where_clause_group1` regressed factory-render-parse
+  // (-2) and `_closure_parameters_optional1`/`_use_list_group1` each
+  // regressed coverage (-1) when enabled — found via bisection against
+  // `validate:native`, root cause not further isolated (each is a small,
+  // contained loss, not a hard failure); left skipped until diagnosed.
+  skip: [
+    "tuple_type",
+    "trait_bounds",
+    "function_modifiers",
+    "_where_clause_group1",
+    "_closure_parameters_optional1",
+    "_use_list_group1"
+  ]
+});
 var grammar_sittir_default = grammar(
   enrichedBase,
   wire(

@@ -274,7 +274,7 @@
     "associated_type.name": {
       "type_identifier": "identifier"
     },
-    "type_parameters.attributed_type_parameter": {
+    "type_parameters.element": {
       "attributed_type_parameter": "_attributed_type_parameter"
     },
     "type_parameter.name": {
@@ -304,7 +304,7 @@
     "use_bounds.bounds": {
       "use_bounds_group1": "_use_bounds_group1"
     },
-    "type_arguments.type_argument": {
+    "type_arguments.element": {
       "type_argument": "_type_argument"
     },
     "type_binding.name": {
@@ -423,25 +423,25 @@
     "_attribute_group1.arguments": {
       "token_tree": "delim_token_tree"
     },
-    "_enum_variant_list_group1.attributed_enum_variant": {
+    "_enum_variant_list_group1.element": {
       "attributed_enum_variant": "_attributed_enum_variant"
     },
-    "_field_declaration_list_group1.attributed_field_declaration": {
+    "_field_declaration_list_group1.element": {
       "attributed_field_declaration": "_attributed_field_declaration"
     },
-    "_ordered_field_declaration_list_group1.attributed_ordered_field": {
+    "_ordered_field_declaration_list_group1.element": {
       "attributed_ordered_field": "_attributed_ordered_field"
     },
-    "_parameters_group1.attributed_parameter": {
+    "_parameters_group1.element": {
       "attributed_parameter": "_attributed_parameter"
     },
     "_visibility_modifier_group1.content": {
       "visibility_modifier_in_path": "_visibility_modifier_in_path"
     },
-    "_use_bounds_group1.content": {
+    "_use_bounds_group1.element": {
       "type_identifier": "identifier"
     },
-    "_arguments_group1.attributed_argument": {
+    "_arguments_group1.element": {
       "attributed_argument": "_attributed_argument"
     },
     "_range_pattern_group2.content": {
@@ -1353,7 +1353,7 @@
       }
     },
     "type_parameters": {
-      "attributed_type_parameter": {
+      "element": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1808,7 +1808,7 @@
       }
     },
     "type_arguments": {
-      "type_argument": {
+      "element": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2919,7 +2919,7 @@
       }
     },
     "_enum_variant_list_group1": {
-      "attributed_enum_variant": {
+      "element": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2928,7 +2928,7 @@
       }
     },
     "_field_declaration_list_group1": {
-      "attributed_field_declaration": {
+      "element": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2937,7 +2937,7 @@
       }
     },
     "_ordered_field_declaration_list_group1": {
-      "attributed_ordered_field": {
+      "element": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2964,7 +2964,7 @@
       }
     },
     "_parameters_group1": {
-      "attributed_parameter": {
+      "element": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2982,16 +2982,16 @@
       }
     },
     "_use_bounds_group1": {
-      "content": {
+      "element": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "_arguments_group1": {
-      "attributed_argument": {
+      "element": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3016,21 +3016,21 @@
       }
     },
     "_field_initializer_list_group1": {
-      "content": {
+      "element": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "_tuple_pattern_group1": {
-      "content": {
+      "element": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "_slice_pattern_group1": {
@@ -3043,12 +3043,12 @@
       }
     },
     "_struct_pattern_group1": {
-      "content": {
+      "element": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "_range_pattern_group2": {
@@ -3743,7 +3743,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "attributed_argument"
+        "element"
       ]
     },
     {
@@ -4989,7 +4989,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "attributed_enum_variant"
+        "element"
       ]
     },
     {
@@ -5259,7 +5259,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "attributed_field_declaration"
+        "element"
       ]
     },
     {
@@ -5289,7 +5289,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "content"
+        "element"
       ]
     },
     {
@@ -6425,7 +6425,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "attributed_ordered_field"
+        "element"
       ]
     },
     {
@@ -6464,7 +6464,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "attributed_parameter"
+        "element"
       ]
     },
     {
@@ -7315,7 +7315,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "content"
+        "element"
       ]
     },
     {
@@ -7713,7 +7713,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "content"
+        "element"
       ]
     },
     {
@@ -7897,7 +7897,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "content"
+        "element"
       ]
     },
     {
@@ -11802,7 +11802,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "lifetime"
       ]
@@ -17949,9 +17949,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "type_argument",
-          "propertyName": "typeArguments",
-          "paramName": "typeArguments",
+          "name": "element",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -17973,9 +17973,9 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
-        "type_argument"
+        "element"
       ]
     },
     {
@@ -18379,9 +18379,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attributed_type_parameter",
-          "propertyName": "attributedTypeParameters",
-          "paramName": "attributedTypeParameters",
+          "name": "element",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -18403,9 +18403,9 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
-        "attributed_type_parameter"
+        "element"
       ]
     },
     {

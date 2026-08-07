@@ -1303,6 +1303,53 @@ function isAllArmsNodeShaped(choiceRule) {
     return t === "SYMBOL" || t === "ALIAS";
   });
 }
+function isAllArmsNodeOrLiteralShaped(choiceRule) {
+  const members = choiceRule.members;
+  return members.every((arm) => {
+    let cursor = arm;
+    while (isPrecWrapper(cursor)) {
+      cursor = cursor.content;
+    }
+    const t = cursor.type;
+    return t === "SYMBOL" || t === "ALIAS" || isStringType(t) || t === "PATTERN";
+  });
+}
+var LITERAL_ARM_NAMES = {
+  ";": "semi"
+};
+function literalArmNameHint(text) {
+  return LITERAL_ARM_NAMES[text] ?? text.replace(/[^\w]+/g, "");
+}
+function promoteLiteralChoiceArms(choiceRule, mergedRules) {
+  const members = choiceRule.members;
+  let changed = false;
+  let declined = false;
+  const newMembers = members.map((arm) => {
+    let cursor = arm;
+    const precStack = [];
+    while (isPrecWrapper(cursor)) {
+      precStack.push(cursor);
+      cursor = cursor.content;
+    }
+    const t = cursor.type;
+    if (!isStringType(t) && t !== "PATTERN") return arm;
+    const text = cursor.value;
+    const nameHint = literalArmNameHint(text);
+    const symbol = nameHint ? registerKwRule(cursor, nameHint, mergedRules, mergedRules) : null;
+    if (!symbol) {
+      declined = true;
+      return arm;
+    }
+    changed = true;
+    let rebuilt = symbol;
+    for (let i = precStack.length - 1; i >= 0; i--) {
+      rebuilt = { ...precStack[i], content: rebuilt };
+    }
+    return rebuilt;
+  });
+  if (!changed || declined) return null;
+  return { ...choiceRule, members: newMembers };
+}
 function pluralizeFieldName(name) {
   if (name.endsWith("s")) return name;
   if (name.endsWith("y") && !/[aeiou]y$/.test(name)) return name.slice(0, -1) + "ies";
@@ -1320,6 +1367,67 @@ function isHiddenPureUnionRule(name, mergedRules) {
 }
 function isEligibleFieldReferent(name, mergedRules, supertypeNames) {
   return supertypeNames.has(name) || isHiddenPureUnionRule(name, mergedRules);
+}
+function sameElementShape(a, b) {
+  return ruleKey(a) === ruleKey(b);
+}
+function deriveElementFieldName(elementRule) {
+  let cursor = elementRule;
+  while (isPrecWrapper(cursor)) {
+    cursor = cursor.content;
+  }
+  const t = cursor.type;
+  if (t === "SYMBOL") {
+    return cursor.name.replace(/^_/, "");
+  }
+  if (t === "ALIAS") {
+    const value = cursor.value;
+    if (typeof value === "string") return value;
+  }
+  return "element";
+}
+function fieldSeparatedListElements(seqRule, reserve) {
+  const members = seqRule.members;
+  if (!Array.isArray(members)) return null;
+  for (let i = 0; i < members.length - 1; i++) {
+    const leading = members[i];
+    if (isFieldType(leading.type)) continue;
+    let repeatCursor = members[i + 1];
+    const outerPrecStack = [];
+    while (isPrecWrapper(repeatCursor)) {
+      outerPrecStack.push(repeatCursor);
+      repeatCursor = repeatCursor.content;
+    }
+    if (!isRepeatType(repeatCursor.type)) continue;
+    let inner = repeatCursor.content;
+    const innerPrecStack = [];
+    while (isPrecWrapper(inner)) {
+      innerPrecStack.push(inner);
+      inner = inner.content;
+    }
+    const detected = detectRepeatSeparator(inner);
+    if (!detected || detected.trailing) continue;
+    const innerElement = detected.content;
+    if (!sameElementShape(leading, innerElement)) continue;
+    const fieldName = reserve(deriveElementFieldName(leading));
+    const innerMembers = inner.members;
+    const newInnerMembers = innerMembers.slice();
+    const elementIdx = innerMembers.indexOf(innerElement);
+    newInnerMembers[elementIdx] = makeField(fieldName, innerElement);
+    let rebuiltInner = { ...inner, members: newInnerMembers };
+    for (let j = innerPrecStack.length - 1; j >= 0; j--) {
+      rebuiltInner = { ...innerPrecStack[j], content: rebuiltInner };
+    }
+    let rebuiltRepeat = { ...repeatCursor, content: rebuiltInner };
+    for (let j = outerPrecStack.length - 1; j >= 0; j--) {
+      rebuiltRepeat = { ...outerPrecStack[j], content: rebuiltRepeat };
+    }
+    const newMembers = members.slice();
+    newMembers[i] = makeField(fieldName, leading);
+    newMembers[i + 1] = rebuiltRepeat;
+    return { ...seqRule, members: newMembers };
+  }
+  return null;
 }
 function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
   const usedNames = /* @__PURE__ */ new Set();
@@ -1379,13 +1487,24 @@ function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
           return makeField(reserve(fieldName), rebuildRepeat(inner));
         }
       }
-      const visitedInner = visit(inner, true);
+      let visitedInner = visit(inner, true);
+      if (isChoiceType(visitedInner.type) && !isAllArmsNodeShaped(visitedInner) && isAllArmsNodeOrLiteralShaped(visitedInner)) {
+        const promoted = promoteLiteralChoiceArms(visitedInner, mergedRules);
+        if (promoted) visitedInner = promoted;
+      }
       if (isChoiceType(visitedInner.type) && isAllArmsNodeShaped(visitedInner)) {
         changed = true;
         return makeField(reserve("elements"), rebuildRepeat(visitedInner));
       }
       if (visitedInner === inner) return r;
       return rebuildRepeat(visitedInner);
+    }
+    if (isSeqType(r.type)) {
+      const sepListRewrite = fieldSeparatedListElements(r, reserve);
+      if (sepListRewrite) {
+        changed = true;
+        r = sepListRewrite;
+      }
     }
     const bag = r;
     if (Array.isArray(bag.members)) {
@@ -3965,7 +4084,19 @@ var enrichedBase = enrich(import_grammar.default, {
   // dropping every gap. None of enrich's other passes touch this rule's
   // shape anyway, so exempting it from all of them is a no-op beyond the
   // one pass that matters here.
-  skip: ["string_content"]
+  //
+  // `_dict_pattern_group2`'s leading and repeated occurrences are the
+  // SAME `choice($._key_value_pattern, $.splat_pattern)` body (tree-sitter's
+  // `commaSep1` passes one shared choice object to both positions), so
+  // `fieldSeparatedListElements` fields both as `element` — but `dict_pattern`'s
+  // own override (`'1/0/0/0': 'kv'`) already targets the leading occurrence
+  // to mint the visible `dict_pattern_kv` kind. Auto-fielding it first left
+  // the override's positional path pointing at an already-FIELD-wrapped
+  // node instead of the bare choice it expects — the override silently no
+  // longer applies, and `dict_pattern_kv` stops existing as a distinct
+  // exported kind. Same override-collision class found in rust's
+  // `tuple_type`/`trait_bounds` and typescript's `lexical_declaration`.
+  skip: ["string_content", "_dict_pattern_group2"]
 });
 var grammar_sittir_default = grammar(
   enrichedBase,

@@ -93,7 +93,7 @@ pub mod filters {
 #[derive(::askama::Template)]
 #[template(path = "_argument_list_group1.jinja", escape = "none")]
 pub struct ArgumentListGroup1Template<'a> {
-    pub content: ListNonterminalView<'a>,
+    pub element: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -118,7 +118,7 @@ pub struct AssignmentTypedTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_collection_elements.jinja", escape = "none")]
 pub struct CollectionElementsTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
+    pub element: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -138,7 +138,7 @@ pub struct DictPatternGroup2Template<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_dictionary_group1.jinja", escape = "none")]
 pub struct DictionaryGroup1Template<'a> {
-    pub content: ListNonterminalView<'a>,
+    pub element: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -534,7 +534,8 @@ pub struct ExceptClauseTemplate<'a> {
 #[template(path = "exec_statement.jinja", escape = "none")]
 pub struct ExecStatementTemplate<'a> {
     pub code: SingleNonterminalView<'a>,
-    pub in_clause: ListNonterminalView<'a>,
+    pub expression: ListNonterminalView<'a>,
+    pub in_clause: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
