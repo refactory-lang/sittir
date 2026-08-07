@@ -7414,9 +7414,10 @@
                     "$named": true,
                     "_element": [
                       {
-                        "$type": 180,
+                        "$type": 148,
                         "$source": 0,
                         "$named": true,
+                        "_expression": "b",
                         "$other": [
                           11
                         ],
@@ -7424,8 +7425,7 @@
                           "start": 17,
                           "end": 19
                         },
-                        "$nodeHandle": 48,
-                        "_content": "b"
+                        "$nodeHandle": 48
                       }
                     ],
                     "$span": {
@@ -7572,7 +7572,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "a(*())\na(**{})\na(*b)\nc(d,*e,**g)"
+    "expectedOutput": "a(*())\na(** {})\na(*b)\nc(d,*e,**g)"
   },
   {
     "kind": "roundtrip",
@@ -7580,9 +7580,9 @@
     "sourceIn": "a(*())\na(**{})\na(*b)\nc(d, *e, **g)",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "a(*())\na(**{})\na(*b)\nc(d,*e,**g)",
-    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (list_splat expression: (tuple)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (dictionary_splat expression: (dictionary)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (list_splat_pattern (identifier)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (identifier) element: (list_splat expression: (identifier)) element: (dictionary_splat expression: (identifier)))))) (newline)))",
-    "wrappedText": "a(*())\na(**{})\na(*b)\nc(d,*e,**g)",
+    "expectedSourceOut": "a(*())\na(** {})\na(*b)\nc(d,*e,**g)",
+    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (list_splat expression: (tuple)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (dictionary_splat expression: (dictionary)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (list_splat expression: (identifier)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (identifier) element: (list_splat expression: (identifier)) element: (dictionary_splat expression: (identifier)))))) (newline)))",
+    "wrappedText": "a(*())\na(** {})\na(*b)\nc(d,*e,**g)",
     "wrappedOffset": 0
   },
   {
@@ -7748,7 +7748,7 @@
         "$nodeHandle": 60
       }
     },
-    "expectedOutput": "a(**{})"
+    "expectedOutput": "a(** {})"
   },
   {
     "kind": "roundtrip",
@@ -7756,9 +7756,9 @@
     "sourceIn": "a(**{})",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "a(**{})",
+    "expectedSourceOut": "a(** {})",
     "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (dictionary_splat expression: (dictionary))))))",
-    "wrappedText": "a(**{})",
+    "wrappedText": "a(** {})",
     "wrappedOffset": 0
   },
   {
@@ -7788,9 +7788,10 @@
             "$named": true,
             "_element": [
               {
-                "$type": 180,
+                "$type": 148,
                 "$source": 0,
                 "$named": true,
+                "_expression": "b",
                 "$other": [
                   11
                 ],
@@ -7798,8 +7799,7 @@
                   "start": 17,
                   "end": 19
                 },
-                "$nodeHandle": 68,
-                "_content": "b"
+                "$nodeHandle": 68
               }
             ],
             "$span": {
@@ -7835,7 +7835,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "a(*b)",
-    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (list_splat_pattern (identifier))))))",
+    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (list_splat expression: (identifier))))))",
     "wrappedText": "a(*b)",
     "wrappedOffset": 0
   },
@@ -8088,7 +8088,7 @@
       },
       "$nodeHandle": 12
     },
-    "expectedOutput": "a(**{})"
+    "expectedOutput": "a(** {})"
   },
   {
     "kind": "roundtrip",
@@ -8096,9 +8096,9 @@
     "sourceIn": "a(**{})",
     "pattern": "call",
     "edits": [],
-    "expectedSourceOut": "a(**{})",
+    "expectedSourceOut": "a(** {})",
     "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (dictionary_splat expression: (dictionary)))))",
-    "wrappedText": "_ = a(**{})",
+    "wrappedText": "_ = a(** {})",
     "wrappedOffset": 4
   },
   {
@@ -8119,9 +8119,10 @@
           "$named": true,
           "_element": [
             {
-              "$type": 180,
+              "$type": 148,
               "$source": 0,
               "$named": true,
+              "_expression": "b",
               "$other": [
                 11
               ],
@@ -8129,8 +8130,7 @@
                 "start": 17,
                 "end": 19
               },
-              "$nodeHandle": 84,
-              "_content": "b"
+              "$nodeHandle": 84
             }
           ],
           "$span": {
@@ -8165,7 +8165,7 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "a(*b)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (list_splat_pattern (identifier)))))",
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (list_splat expression: (identifier)))))",
     "wrappedText": "_ = a(*b)",
     "wrappedOffset": 4
   },
@@ -8386,7 +8386,7 @@
       },
       "$nodeHandle": 13
     },
-    "expectedOutput": "(**{})"
+    "expectedOutput": "(** {})"
   },
   {
     "kind": "roundtrip",
@@ -8394,9 +8394,9 @@
     "sourceIn": "(**{})",
     "pattern": "argument_list",
     "edits": [],
-    "expectedSourceOut": "(**{})",
+    "expectedSourceOut": "(** {})",
     "expectedReparseTree": "(argument_list arguments: (argument_list_group1 element: (dictionary_splat expression: (dictionary))))",
-    "wrappedText": "_f(**{})",
+    "wrappedText": "_f(** {})",
     "wrappedOffset": 2
   },
   {
@@ -8412,9 +8412,10 @@
         "$named": true,
         "_element": [
           {
-            "$type": 180,
+            "$type": 148,
             "$source": 0,
             "$named": true,
+            "_expression": "b",
             "$other": [
               11
             ],
@@ -8422,8 +8423,7 @@
               "start": 17,
               "end": 19
             },
-            "$nodeHandle": 96,
-            "_content": "b"
+            "$nodeHandle": 96
           }
         ],
         "$span": {
@@ -8452,7 +8452,7 @@
     "pattern": "argument_list",
     "edits": [],
     "expectedSourceOut": "(*b)",
-    "expectedReparseTree": "(argument_list arguments: (argument_list_group1 element: (list_splat_pattern (identifier))))",
+    "expectedReparseTree": "(argument_list arguments: (argument_list_group1 element: (list_splat expression: (identifier))))",
     "wrappedText": "_f(*b)",
     "wrappedOffset": 2
   },
@@ -8585,6 +8585,66 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 148,
+      "$source": 0,
+      "$named": true,
+      "_expression": "b",
+      "$other": [
+        11
+      ],
+      "$span": {
+        "start": 17,
+        "end": 19
+      },
+      "$nodeHandle": 21
+    },
+    "expectedOutput": "*b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*b",
+    "pattern": "list_splat",
+    "edits": [],
+    "expectedSourceOut": "*b",
+    "expectedReparseTree": "(list_splat expression: (identifier))",
+    "wrappedText": "_f(*b)",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 148,
+      "$source": 0,
+      "$named": true,
+      "_expression": "e",
+      "$other": [
+        11
+      ],
+      "$span": {
+        "start": 26,
+        "end": 28
+      },
+      "$nodeHandle": 26
+    },
+    "expectedOutput": "*e"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*e",
+    "pattern": "list_splat",
+    "edits": [],
+    "expectedSourceOut": "*e",
+    "expectedReparseTree": "(list_splat expression: (identifier))",
+    "wrappedText": "_f(*e)",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 214,
       "$source": 0,
       "$named": true,
@@ -8634,36 +8694,6 @@
     "expectedReparseTree": "(dictionary)",
     "wrappedText": "_ = {}",
     "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$other": [
-        11
-      ],
-      "$span": {
-        "start": 17,
-        "end": 19
-      },
-      "$nodeHandle": 21,
-      "_content": "b"
-    },
-    "expectedOutput": "*b"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "*b",
-    "pattern": "list_splat_pattern",
-    "edits": [],
-    "expectedSourceOut": "*b",
-    "expectedReparseTree": "(list_splat_pattern (identifier))",
-    "wrappedText": "*b = (1,)",
-    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -10659,7 +10689,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "a()+b[c]*c.d.e"
+    "expectedOutput": "a()+b[c] *c.d.e"
   },
   {
     "kind": "roundtrip",
@@ -10667,9 +10697,9 @@
     "sourceIn": "a() + b[c] * c.d.e",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "a()+b[c]*c.d.e",
+    "expectedSourceOut": "a()+b[c] *c.d.e",
     "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (binary_operator left: (call function: (identifier) arguments: (argument_list)) right: (binary_operator left: (subscript value: (identifier) subscript: (identifier)) right: (attribute object: (attribute object: (identifier) attribute: (identifier)) attribute: (identifier))))) (newline)))",
-    "wrappedText": "a()+b[c]*c.d.e",
+    "wrappedText": "a()+b[c] *c.d.e",
     "wrappedOffset": 0
   },
   {
@@ -10777,7 +10807,7 @@
         "$nodeHandle": 19
       }
     },
-    "expectedOutput": "a()+b[c]*c.d.e"
+    "expectedOutput": "a()+b[c] *c.d.e"
   },
   {
     "kind": "roundtrip",
@@ -10785,9 +10815,9 @@
     "sourceIn": "a() + b[c] * c.d.e",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "a()+b[c]*c.d.e",
+    "expectedSourceOut": "a()+b[c] *c.d.e",
     "expectedReparseTree": "(expression_statement (binary_operator left: (call function: (identifier) arguments: (argument_list)) right: (binary_operator left: (subscript value: (identifier) subscript: (identifier)) right: (attribute object: (attribute object: (identifier) attribute: (identifier)) attribute: (identifier)))))",
-    "wrappedText": "a()+b[c]*c.d.e",
+    "wrappedText": "a()+b[c] *c.d.e",
     "wrappedOffset": 0
   },
   {
@@ -10885,7 +10915,7 @@
       },
       "$nodeHandle": 3
     },
-    "expectedOutput": "a()+b[c]*c.d.e"
+    "expectedOutput": "a()+b[c] *c.d.e"
   },
   {
     "kind": "roundtrip",
@@ -10893,9 +10923,9 @@
     "sourceIn": "a() + b[c] * c.d.e",
     "pattern": "binary_operator",
     "edits": [],
-    "expectedSourceOut": "a()+b[c]*c.d.e",
+    "expectedSourceOut": "a()+b[c] *c.d.e",
     "expectedReparseTree": "(binary_operator left: (call function: (identifier) arguments: (argument_list)) right: (binary_operator left: (subscript value: (identifier) subscript: (identifier)) right: (attribute object: (attribute object: (identifier) attribute: (identifier)) attribute: (identifier))))",
-    "wrappedText": "_ = a()+b[c]*c.d.e",
+    "wrappedText": "_ = a()+b[c] *c.d.e",
     "wrappedOffset": 4
   },
   {
@@ -10960,7 +10990,7 @@
       },
       "$nodeHandle": 6
     },
-    "expectedOutput": "b[c]*c.d.e"
+    "expectedOutput": "b[c] *c.d.e"
   },
   {
     "kind": "roundtrip",
@@ -10968,9 +10998,9 @@
     "sourceIn": "b[c] * c.d.e",
     "pattern": "binary_operator",
     "edits": [],
-    "expectedSourceOut": "b[c]*c.d.e",
+    "expectedSourceOut": "b[c] *c.d.e",
     "expectedReparseTree": "(binary_operator left: (subscript value: (identifier) subscript: (identifier)) right: (attribute object: (attribute object: (identifier) attribute: (identifier)) attribute: (identifier)))",
-    "wrappedText": "_ = b[c]*c.d.e",
+    "wrappedText": "_ = b[c] *c.d.e",
     "wrappedOffset": 4
   },
   {
@@ -14433,7 +14463,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "a=1\na,b=1,2\na,*c=1,2,3\na,=1,2\na[b]=c=d\na,*b.c=d"
+    "expectedOutput": "a=1\na,b=1,2\na,*c=1,2,3\na,=1,2\na[b] =c=d\na,*b.c=d"
   },
   {
     "kind": "roundtrip",
@@ -14441,9 +14471,9 @@
     "sourceIn": "a = 1\na, b = 1, 2\na, *c = 1, 2, 3\na, = 1, 2\na[b] = c = d\na, *b.c = d",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "a=1\na,b=1,2\na,*c=1,2,3\na,=1,2\na[b]=c=d\na,*b.c=d",
+    "expectedSourceOut": "a=1\na,b=1,2\na,*c=1,2,3\na,=1,2\na[b] =c=d\na,*b.c=d",
     "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (integer)))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (integer)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (list_splat_pattern (identifier)))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (integer) (integer)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (pattern_list (identifier)) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (integer)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (subscript value: (identifier) subscript: (identifier)) (assignment_eq right: (assignment left: (identifier) (assignment_eq right: (identifier)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (list_splat_pattern (attribute object: (identifier) attribute: (identifier))))) (assignment_eq right: (identifier)))) (newline)))",
-    "wrappedText": "a=1\na,b=1,2\na,*c=1,2,3\na,=1,2\na[b]=c=d\na,*b.c=d",
+    "wrappedText": "a=1\na,b=1,2\na,*c=1,2,3\na,=1,2\na[b] =c=d\na,*b.c=d",
     "wrappedOffset": 0
   },
   {
@@ -14891,7 +14921,7 @@
         }
       }
     },
-    "expectedOutput": "a[b]=c=d"
+    "expectedOutput": "a[b] =c=d"
   },
   {
     "kind": "roundtrip",
@@ -14899,9 +14929,9 @@
     "sourceIn": "a[b] = c = d",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "a[b]=c=d",
+    "expectedSourceOut": "a[b] =c=d",
     "expectedReparseTree": "(expression_statement (assignment left: (subscript value: (identifier) subscript: (identifier)) (assignment_eq right: (assignment left: (identifier) (assignment_eq right: (identifier))))))",
-    "wrappedText": "a[b]=c=d",
+    "wrappedText": "a[b] =c=d",
     "wrappedOffset": 0
   },
   {
@@ -15404,7 +15434,7 @@
         "$nodeHandle": 135
       }
     },
-    "expectedOutput": "a[b]=c=d"
+    "expectedOutput": "a[b] =c=d"
   },
   {
     "kind": "roundtrip",
@@ -15412,9 +15442,9 @@
     "sourceIn": "a[b] = c = d",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "a[b]=c=d",
+    "expectedSourceOut": "a[b] =c=d",
     "expectedReparseTree": "(assignment left: (subscript value: (identifier) subscript: (identifier)) (assignment_eq right: (assignment left: (identifier) (assignment_eq right: (identifier)))))",
-    "wrappedText": "a[b]=c=d",
+    "wrappedText": "a[b] =c=d",
     "wrappedOffset": 0
   },
   {
@@ -15581,6 +15611,50 @@
     "expectedSourceOut": "*c",
     "expectedReparseTree": "(list_splat_pattern (identifier))",
     "wrappedText": "*c = (1,)",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 180,
+      "$source": 0,
+      "$named": true,
+      "$other": [
+        11
+      ],
+      "$span": {
+        "start": 60,
+        "end": 64
+      },
+      "$nodeHandle": 41,
+      "_content": {
+        "$type": 200,
+        "$source": 0,
+        "$named": true,
+        "_object": "b",
+        "_attribute": "c",
+        "$other": [
+          4
+        ],
+        "$span": {
+          "start": 61,
+          "end": 64
+        },
+        "$nodeHandle": 153
+      }
+    },
+    "expectedOutput": "*b.c"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*b.c",
+    "pattern": "list_splat_pattern",
+    "edits": [],
+    "expectedSourceOut": "*b.c",
+    "expectedReparseTree": "(list_splat_pattern (attribute object: (identifier) attribute: (identifier)))",
+    "wrappedText": "*b.c = (1,)",
     "wrappedOffset": 0
   },
   {
@@ -15773,7 +15847,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "tail_leaves:List[Leaf]=[]"
+    "expectedOutput": "tail_leaves:List[Leaf] = []"
   },
   {
     "kind": "roundtrip",
@@ -15781,9 +15855,9 @@
     "sourceIn": "tail_leaves: List[Leaf] = []",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "tail_leaves:List[Leaf]=[]",
+    "expectedSourceOut": "tail_leaves:List[Leaf] = []",
     "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_typed type: (type (generic_type identifier: (identifier) type_parameter: (type_parameter type: (type (identifier))))) right: (list)))) (newline)))",
-    "wrappedText": "tail_leaves:List[Leaf]=[]",
+    "wrappedText": "tail_leaves:List[Leaf] = []",
     "wrappedOffset": 0
   },
   {
@@ -15884,7 +15958,7 @@
         }
       }
     },
-    "expectedOutput": "tail_leaves:List[Leaf]=[]"
+    "expectedOutput": "tail_leaves:List[Leaf] = []"
   },
   {
     "kind": "roundtrip",
@@ -15892,9 +15966,9 @@
     "sourceIn": "tail_leaves: List[Leaf] = []",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "tail_leaves:List[Leaf]=[]",
+    "expectedSourceOut": "tail_leaves:List[Leaf] = []",
     "expectedReparseTree": "(expression_statement (assignment left: (identifier) (assignment_typed type: (type (generic_type identifier: (identifier) type_parameter: (type_parameter type: (type (identifier))))) right: (list))))",
-    "wrappedText": "tail_leaves:List[Leaf]=[]",
+    "wrappedText": "tail_leaves:List[Leaf] = []",
     "wrappedOffset": 0
   },
   {
@@ -15985,7 +16059,7 @@
         "$nodeHandle": 26
       }
     },
-    "expectedOutput": "tail_leaves:List[Leaf]=[]"
+    "expectedOutput": "tail_leaves:List[Leaf] = []"
   },
   {
     "kind": "roundtrip",
@@ -15993,9 +16067,9 @@
     "sourceIn": "tail_leaves: List[Leaf] = []",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "tail_leaves:List[Leaf]=[]",
+    "expectedSourceOut": "tail_leaves:List[Leaf] = []",
     "expectedReparseTree": "(assignment left: (identifier) (assignment_typed type: (type (generic_type identifier: (identifier) type_parameter: (type_parameter type: (type (identifier))))) right: (list)))",
-    "wrappedText": "tail_leaves:List[Leaf]=[]",
+    "wrappedText": "tail_leaves:List[Leaf] = []",
     "wrappedOffset": 0
   },
   {
@@ -24665,6 +24739,66 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 148,
+      "$source": 0,
+      "$named": true,
+      "_expression": "bar",
+      "$other": [
+        11
+      ],
+      "$span": {
+        "start": 6,
+        "end": 10
+      },
+      "$nodeHandle": 5
+    },
+    "expectedOutput": "*bar"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*bar",
+    "pattern": "list_splat",
+    "edits": [],
+    "expectedSourceOut": "*bar",
+    "expectedReparseTree": "(list_splat expression: (identifier))",
+    "wrappedText": "_f(*bar)",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 148,
+      "$source": 0,
+      "$named": true,
+      "_expression": "baz",
+      "$other": [
+        11
+      ],
+      "$span": {
+        "start": 12,
+        "end": 16
+      },
+      "$nodeHandle": 6
+    },
+    "expectedOutput": "*baz"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*baz",
+    "pattern": "list_splat",
+    "edits": [],
+    "expectedSourceOut": "*baz",
+    "expectedReparseTree": "(list_splat expression: (identifier))",
+    "wrappedText": "_f(*baz)",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 108,
       "$source": 0,
       "$named": true,
@@ -27009,7 +27143,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "def a():\n  b(1,2)\n  c=[3]"
+    "expectedOutput": "def a():\n  b(1,2)\n  c= [3]"
   },
   {
     "kind": "roundtrip",
@@ -27017,9 +27151,9 @@
     "sourceIn": "def a():\n    b(\n1,\n2\n    )\n\n    c = [\n3\n    ]",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "def a():\n  b(1,2)\n  c=[3]",
+    "expectedSourceOut": "def a():\n  b(1,2)\n  c= [3]",
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (list (element_list element: (integer)))))) (newline))))))",
-    "wrappedText": "def a():\n  b(1,2)\n  c=[3]",
+    "wrappedText": "def a():\n  b(1,2)\n  c= [3]",
     "wrappedOffset": 0
   },
   {
@@ -27216,7 +27350,7 @@
       },
       "$nodeHandle": 1
     },
-    "expectedOutput": "def a():\n  b(1,2)\n  c=[3]"
+    "expectedOutput": "def a():\n  b(1,2)\n  c= [3]"
   },
   {
     "kind": "roundtrip",
@@ -27224,9 +27358,9 @@
     "sourceIn": "def a():\n    b(\n1,\n2\n    )\n\n    c = [\n3\n    ]",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a():\n  b(1,2)\n  c=[3]",
+    "expectedSourceOut": "def a():\n  b(1,2)\n  c= [3]",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (list (element_list element: (integer)))))) (newline)))))",
-    "wrappedText": "def a():\n  b(1,2)\n  c=[3]",
+    "wrappedText": "def a():\n  b(1,2)\n  c= [3]",
     "wrappedOffset": 0
   },
   {
@@ -27390,7 +27524,7 @@
         }
       }
     },
-    "expectedOutput": "c=[3]"
+    "expectedOutput": "c= [3]"
   },
   {
     "kind": "roundtrip",
@@ -27398,9 +27532,9 @@
     "sourceIn": "c = [\n3\n    ]",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "c=[3]",
+    "expectedSourceOut": "c= [3]",
     "expectedReparseTree": "(expression_statement (assignment left: (identifier) (assignment_eq right: (list (element_list element: (integer))))))",
-    "wrappedText": "c=[3]",
+    "wrappedText": "c= [3]",
     "wrappedOffset": 0
   },
   {
@@ -27565,7 +27699,7 @@
         "$nodeHandle": 66
       }
     },
-    "expectedOutput": "c=[3]"
+    "expectedOutput": "c= [3]"
   },
   {
     "kind": "roundtrip",
@@ -27573,9 +27707,9 @@
     "sourceIn": "c = [\n3\n    ]",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "c=[3]",
+    "expectedSourceOut": "c= [3]",
     "expectedReparseTree": "(assignment left: (identifier) (assignment_eq right: (list (element_list element: (integer)))))",
-    "wrappedText": "c=[3]",
+    "wrappedText": "c= [3]",
     "wrappedOffset": 0
   },
   {
@@ -27893,7 +28027,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "a,c=[1,2],3\nw,x,y,z=0,*a,c"
+    "expectedOutput": "a,c= [1,2],3\nw,x,y,z=0,*a,c"
   },
   {
     "kind": "roundtrip",
@@ -27901,9 +28035,9 @@
     "sourceIn": "a,c = [1,2],3\nw, x, y, z = 0, *a, c",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "a,c=[1,2],3\nw,x,y,z=0,*a,c",
+    "expectedSourceOut": "a,c= [1,2],3\nw,x,y,z=0,*a,c",
     "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (expression_list (list (element_list element: (integer) element: (integer))) tail: (expression_list_group1 (integer)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier) (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (list_splat_pattern (identifier)) (identifier)))))) (newline)))",
-    "wrappedText": "a,c=[1,2],3\nw,x,y,z=0,*a,c",
+    "wrappedText": "a,c= [1,2],3\nw,x,y,z=0,*a,c",
     "wrappedOffset": 0
   },
   {
@@ -28029,7 +28163,7 @@
         }
       }
     },
-    "expectedOutput": "a,c=[1,2],3"
+    "expectedOutput": "a,c= [1,2],3"
   },
   {
     "kind": "roundtrip",
@@ -28037,9 +28171,9 @@
     "sourceIn": "a,c = [1,2],3",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "a,c=[1,2],3",
+    "expectedSourceOut": "a,c= [1,2],3",
     "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (expression_list (list (element_list element: (integer) element: (integer))) tail: (expression_list_group1 (integer))))))",
-    "wrappedText": "a,c=[1,2],3",
+    "wrappedText": "a,c= [1,2],3",
     "wrappedOffset": 0
   },
   {
@@ -28279,7 +28413,7 @@
         "$nodeHandle": 56
       }
     },
-    "expectedOutput": "a,c=[1,2],3"
+    "expectedOutput": "a,c= [1,2],3"
   },
   {
     "kind": "roundtrip",
@@ -28287,9 +28421,9 @@
     "sourceIn": "a,c = [1,2],3",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "a,c=[1,2],3",
+    "expectedSourceOut": "a,c= [1,2],3",
     "expectedReparseTree": "(assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (expression_list (list (element_list element: (integer) element: (integer))) tail: (expression_list_group1 (integer)))))",
-    "wrappedText": "a,c=[1,2],3",
+    "wrappedText": "a,c= [1,2],3",
     "wrappedOffset": 0
   },
   {
@@ -29008,7 +29142,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "a:A[T]|B\ny:type[int]=int"
+    "expectedOutput": "a:A[T]|B\ny:type[int] =int"
   },
   {
     "kind": "roundtrip",
@@ -29016,9 +29150,9 @@
     "sourceIn": "a: A[T] | B\ny: type[int] = int",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "a:A[T]|B\ny:type[int]=int",
+    "expectedSourceOut": "a:A[T]|B\ny:type[int] =int",
     "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_type type: (type (union_type left: (type (generic_type identifier: (identifier) type_parameter: (type_parameter type: (type (identifier))))) right: (type (identifier))))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_typed type: (type (generic_type identifier: (identifier) type_parameter: (type_parameter type: (type (identifier))))) right: (identifier)))) (newline)))",
-    "wrappedText": "a:A[T]|B\ny:type[int]=int",
+    "wrappedText": "a:A[T]|B\ny:type[int] =int",
     "wrappedOffset": 0
   },
   {
@@ -29242,7 +29376,7 @@
         }
       }
     },
-    "expectedOutput": "y:type[int]=int"
+    "expectedOutput": "y:type[int] =int"
   },
   {
     "kind": "roundtrip",
@@ -29250,9 +29384,9 @@
     "sourceIn": "y: type[int] = int",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "y:type[int]=int",
+    "expectedSourceOut": "y:type[int] =int",
     "expectedReparseTree": "(expression_statement (assignment left: (identifier) (assignment_typed type: (type (generic_type identifier: (identifier) type_parameter: (type_parameter type: (type (identifier))))) right: (identifier))))",
-    "wrappedText": "y:type[int]=int",
+    "wrappedText": "y:type[int] =int",
     "wrappedOffset": 0
   },
   {
@@ -29456,7 +29590,7 @@
         "$nodeHandle": 62
       }
     },
-    "expectedOutput": "y:type[int]=int"
+    "expectedOutput": "y:type[int] =int"
   },
   {
     "kind": "roundtrip",
@@ -29464,9 +29598,9 @@
     "sourceIn": "y: type[int] = int",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "y:type[int]=int",
+    "expectedSourceOut": "y:type[int] =int",
     "expectedReparseTree": "(assignment left: (identifier) (assignment_typed type: (type (generic_type identifier: (identifier) type_parameter: (type_parameter type: (type (identifier))))) right: (identifier)))",
-    "wrappedText": "y:type[int]=int",
+    "wrappedText": "y:type[int] =int",
     "wrappedOffset": 0
   },
   {
@@ -34411,7 +34545,7 @@
                     "$source": 0,
                     "$named": true,
                     "_expression": {
-                      "$type": 161,
+                      "$type": 197,
                       "$source": 0,
                       "$named": true,
                       "_tail": 9,
@@ -34420,7 +34554,7 @@
                         "end": 147
                       },
                       "$nodeHandle": 140,
-                      "_expression": {
+                      "_pattern": {
                         "$type": 180,
                         "$source": 0,
                         "$named": true,
@@ -34827,7 +34961,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "f\"a { b(f'c { e } d') } e\"\nf\"\"\"a\"{ b }c\"\"\"\nf\"\"\"a\"\"{ b }c\"\"\"\nf\"{{}}\"\nf\"a { b }}}\"\nf\"{{{ b }\"\nf\"{{}}\"\nf\"{{{ b }}}\"\nf\"{ c, }\"\nf\"{ yield d }\"\nf\"{ *a, }\"\ndef function():\n  return f\"\"\"\n  { \"string1\"if True else\"string2\" }\"\"\"\ndef test(self):\n  self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')"
+    "expectedOutput": "f\"a { b(f'c { e } d') } e\"\nf\"\"\"a\"{ b }c\"\"\"\nf\"\"\"a\"\"{ b }c\"\"\"\nf\"{{ }}\"\nf\"a { b }}}\"\nf\"{{{ b }\"\nf\"{{ }}\"\nf\"{{{ b }}}\"\nf\"{ c, }\"\nf\"{ yield d }\"\nf\"{ *a, }\"\ndef function():\n  return f\"\"\"\n  { \"string1\"if True else\"string2\" }\"\"\"\ndef test(self):\n  self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')"
   },
   {
     "kind": "roundtrip",
@@ -34835,9 +34969,9 @@
     "sourceIn": "# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\n\ndef function():\n    return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"\n\ndef test(self):\n    self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "f\"a { b(f'c { e } d') } e\"\nf\"\"\"a\"{ b }c\"\"\"\nf\"\"\"a\"\"{ b }c\"\"\"\nf\"{{}}\"\nf\"a { b }}}\"\nf\"{{{ b }\"\nf\"{{}}\"\nf\"{{{ b }}}\"\nf\"{ c, }\"\nf\"{ yield d }\"\nf\"{ *a, }\"\ndef function():\n  return f\"\"\"\n  { \"string1\"if True else\"string2\" }\"\"\"\ndef test(self):\n  self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')",
-    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end)))))) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation)) content: (interpolation expression: (identifier)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation)) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (expression_list (identifier))) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (yield (identifier))) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (expression_list (list_splat_pattern (identifier)))) string_end: (string_end))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (return_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (conditional_expression body: (string string_start: (string_start) content: (string_content) string_end: (string_end)) condition: (true) alternative: (string string_start: (string_start) content: (string_content) string_end: (string_end)))) string_end: (string_end))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (identifier))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) content: (interpolation expression: (integer)) string_end: (string_end)) element: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) (newline))))))",
-    "wrappedText": "f\"a { b(f'c { e } d') } e\"\nf\"\"\"a\"{ b }c\"\"\"\nf\"\"\"a\"\"{ b }c\"\"\"\nf\"{{}}\"\nf\"a { b }}}\"\nf\"{{{ b }\"\nf\"{{}}\"\nf\"{{{ b }}}\"\nf\"{ c, }\"\nf\"{ yield d }\"\nf\"{ *a, }\"\ndef function():\n  return f\"\"\"\n  { \"string1\"if True else\"string2\" }\"\"\"\ndef test(self):\n  self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')",
+    "expectedSourceOut": "f\"a { b(f'c { e } d') } e\"\nf\"\"\"a\"{ b }c\"\"\"\nf\"\"\"a\"\"{ b }c\"\"\"\nf\"{{ }}\"\nf\"a { b }}}\"\nf\"{{{ b }\"\nf\"{{ }}\"\nf\"{{{ b }}}\"\nf\"{ c, }\"\nf\"{ yield d }\"\nf\"{ *a, }\"\ndef function():\n  return f\"\"\"\n  { \"string1\"if True else\"string2\" }\"\"\"\ndef test(self):\n  self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')",
+    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end)))))) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation)) content: (interpolation expression: (identifier)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation)) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (expression_list (identifier))) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (yield (identifier))) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (pattern_list (list_splat_pattern (identifier)))) string_end: (string_end))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (return_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (conditional_expression body: (string string_start: (string_start) content: (string_content) string_end: (string_end)) condition: (true) alternative: (string string_start: (string_start) content: (string_content) string_end: (string_end)))) string_end: (string_end))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (identifier))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) content: (interpolation expression: (integer)) string_end: (string_end)) element: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) (newline))))))",
+    "wrappedText": "f\"a { b(f'c { e } d') } e\"\nf\"\"\"a\"{ b }c\"\"\"\nf\"\"\"a\"\"{ b }c\"\"\"\nf\"{{ }}\"\nf\"a { b }}}\"\nf\"{{{ b }\"\nf\"{{ }}\"\nf\"{{{ b }}}\"\nf\"{ c, }\"\nf\"{ yield d }\"\nf\"{ *a, }\"\ndef function():\n  return f\"\"\"\n  { \"string1\"if True else\"string2\" }\"\"\"\ndef test(self):\n  self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')",
     "wrappedOffset": 0
   },
   {
@@ -35192,7 +35326,7 @@
         "$nodeHandle": 176
       }
     },
-    "expectedOutput": "f\"{{}}\""
+    "expectedOutput": "f\"{{ }}\""
   },
   {
     "kind": "roundtrip",
@@ -35200,9 +35334,9 @@
     "sourceIn": "f\"a {{}} e\"",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "f\"{{}}\"",
+    "expectedSourceOut": "f\"{{ }}\"",
     "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end)))",
-    "wrappedText": "f\"{{}}\"",
+    "wrappedText": "f\"{{ }}\"",
     "wrappedOffset": 0
   },
   {
@@ -35392,7 +35526,7 @@
         "$nodeHandle": 184
       }
     },
-    "expectedOutput": "f\"{{}}\""
+    "expectedOutput": "f\"{{ }}\""
   },
   {
     "kind": "roundtrip",
@@ -35400,9 +35534,9 @@
     "sourceIn": "f\"a {{b}}\"",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "f\"{{}}\"",
+    "expectedSourceOut": "f\"{{ }}\"",
     "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end)))",
-    "wrappedText": "f\"{{}}\"",
+    "wrappedText": "f\"{{ }}\"",
     "wrappedOffset": 0
   },
   {
@@ -35643,7 +35777,7 @@
             "$source": 0,
             "$named": true,
             "_expression": {
-              "$type": 161,
+              "$type": 197,
               "$source": 0,
               "$named": true,
               "_tail": 9,
@@ -35652,7 +35786,7 @@
                 "end": 147
               },
               "$nodeHandle": 198,
-              "_expression": {
+              "_pattern": {
                 "$type": 180,
                 "$source": 0,
                 "$named": true,
@@ -35695,7 +35829,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "f\"{ *a, }\"",
-    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (interpolation expression: (expression_list (list_splat_pattern (identifier)))) string_end: (string_end)))",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (interpolation expression: (pattern_list (list_splat_pattern (identifier)))) string_end: (string_end)))",
     "wrappedText": "f\"{ *a, }\"",
     "wrappedOffset": 0
   },
@@ -36212,7 +36346,7 @@
       },
       "$nodeHandle": 29
     },
-    "expectedOutput": "f\"{{}}\""
+    "expectedOutput": "f\"{{ }}\""
   },
   {
     "kind": "roundtrip",
@@ -36220,9 +36354,9 @@
     "sourceIn": "f\"a {{}} e\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "f\"{{}}\"",
+    "expectedSourceOut": "f\"{{ }}\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))",
-    "wrappedText": "_ = f\"{{}}\"",
+    "wrappedText": "_ = f\"{{ }}\"",
     "wrappedOffset": 4
   },
   {
@@ -36382,7 +36516,7 @@
       },
       "$nodeHandle": 40
     },
-    "expectedOutput": "f\"{{}}\""
+    "expectedOutput": "f\"{{ }}\""
   },
   {
     "kind": "roundtrip",
@@ -36390,9 +36524,9 @@
     "sourceIn": "f\"a {{b}}\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "f\"{{}}\"",
+    "expectedSourceOut": "f\"{{ }}\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))",
-    "wrappedText": "_ = f\"{{}}\"",
+    "wrappedText": "_ = f\"{{ }}\"",
     "wrappedOffset": 4
   },
   {
@@ -36594,7 +36728,7 @@
           "$source": 0,
           "$named": true,
           "_expression": {
-            "$type": 161,
+            "$type": 197,
             "$source": 0,
             "$named": true,
             "_tail": 9,
@@ -36603,7 +36737,7 @@
               "end": 147
             },
             "$nodeHandle": 230,
-            "_expression": {
+            "_pattern": {
               "$type": 180,
               "$source": 0,
               "$named": true,
@@ -36645,7 +36779,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "f\"{ *a, }\"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (expression_list (list_splat_pattern (identifier)))) string_end: (string_end))",
+    "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (pattern_list (list_splat_pattern (identifier)))) string_end: (string_end))",
     "wrappedText": "_ = f\"{ *a, }\"",
     "wrappedOffset": 4
   },
@@ -38446,7 +38580,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "f\"a { b: } { c: }\"\nf\"{ b:{ c.d }{ d.e } }\"\nf\"{ a: }\"\nf\"{ a= }\"\nf\"{ a=: }\"\nf\"{ value:{ width+padding!r }{ precision } }\""
+    "expectedOutput": "f\"a { b: } { c: }\"\nf\"{ b:{ c.d } { d.e } }\"\nf\"{ a: }\"\nf\"{ a= }\"\nf\"{ a=: }\"\nf\"{ value:{ width+padding!r } { precision } }\""
   },
   {
     "kind": "roundtrip",
@@ -38454,9 +38588,9 @@
     "sourceIn": "f\"a {b:2} {c:34.5}\"\nf\"{b:{c.d}.{d.e}}\"\nf\"{a:#06x}\"\nf\"{a=}\"\nf\"{a=:.2f}\"\nf\"{value:{width + padding!r}.{precision}}\"",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "f\"a { b: } { c: }\"\nf\"{ b:{ c.d }{ d.e } }\"\nf\"{ a: }\"\nf\"{ a= }\"\nf\"{ a=: }\"\nf\"{ value:{ width+padding!r }{ precision } }\"",
+    "expectedSourceOut": "f\"a { b: } { c: }\"\nf\"{ b:{ c.d } { d.e } }\"\nf\"{ a: }\"\nf\"{ a= }\"\nf\"{ a=: }\"\nf\"{ value:{ width+padding!r } { precision } }\"",
     "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier (format_expression expression: (attribute object: (identifier) attribute: (identifier))) (format_expression expression: (attribute object: (identifier) attribute: (identifier))))) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier (format_expression expression: (binary_operator left: (identifier) right: (identifier)) type_conversion: (type_conversion)) (format_expression expression: (identifier)))) string_end: (string_end))) (newline)))",
-    "wrappedText": "f\"a { b: } { c: }\"\nf\"{ b:{ c.d }{ d.e } }\"\nf\"{ a: }\"\nf\"{ a= }\"\nf\"{ a=: }\"\nf\"{ value:{ width+padding!r }{ precision } }\"",
+    "wrappedText": "f\"a { b: } { c: }\"\nf\"{ b:{ c.d } { d.e } }\"\nf\"{ a: }\"\nf\"{ a= }\"\nf\"{ a=: }\"\nf\"{ value:{ width+padding!r } { precision } }\"",
     "wrappedOffset": 0
   },
   {
@@ -38686,7 +38820,7 @@
         "$nodeHandle": 82
       }
     },
-    "expectedOutput": "f\"{ b:{ c.d }{ d.e } }\""
+    "expectedOutput": "f\"{ b:{ c.d } { d.e } }\""
   },
   {
     "kind": "roundtrip",
@@ -38694,9 +38828,9 @@
     "sourceIn": "f\"{b:{c.d}.{d.e}}\"",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "f\"{ b:{ c.d }{ d.e } }\"",
+    "expectedSourceOut": "f\"{ b:{ c.d } { d.e } }\"",
     "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier (format_expression expression: (attribute object: (identifier) attribute: (identifier))) (format_expression expression: (attribute object: (identifier) attribute: (identifier))))) string_end: (string_end)))",
-    "wrappedText": "f\"{ b:{ c.d }{ d.e } }\"",
+    "wrappedText": "f\"{ b:{ c.d } { d.e } }\"",
     "wrappedOffset": 0
   },
   {
@@ -38988,7 +39122,7 @@
         "$nodeHandle": 97
       }
     },
-    "expectedOutput": "f\"{ value:{ width+padding!r }{ precision } }\""
+    "expectedOutput": "f\"{ value:{ width+padding!r } { precision } }\""
   },
   {
     "kind": "roundtrip",
@@ -38996,9 +39130,9 @@
     "sourceIn": "f\"{value:{width + padding!r}.{precision}}\"",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "f\"{ value:{ width+padding!r }{ precision } }\"",
+    "expectedSourceOut": "f\"{ value:{ width+padding!r } { precision } }\"",
     "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier (format_expression expression: (binary_operator left: (identifier) right: (identifier)) type_conversion: (type_conversion)) (format_expression expression: (identifier)))) string_end: (string_end)))",
-    "wrappedText": "f\"{ value:{ width+padding!r }{ precision } }\"",
+    "wrappedText": "f\"{ value:{ width+padding!r } { precision } }\"",
     "wrappedOffset": 0
   },
   {
@@ -39208,7 +39342,7 @@
       },
       "$nodeHandle": 14
     },
-    "expectedOutput": "f\"{ b:{ c.d }{ d.e } }\""
+    "expectedOutput": "f\"{ b:{ c.d } { d.e } }\""
   },
   {
     "kind": "roundtrip",
@@ -39216,9 +39350,9 @@
     "sourceIn": "f\"{b:{c.d}.{d.e}}\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "f\"{ b:{ c.d }{ d.e } }\"",
+    "expectedSourceOut": "f\"{ b:{ c.d } { d.e } }\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier (format_expression expression: (attribute object: (identifier) attribute: (identifier))) (format_expression expression: (attribute object: (identifier) attribute: (identifier))))) string_end: (string_end))",
-    "wrappedText": "_ = f\"{ b:{ c.d }{ d.e } }\"",
+    "wrappedText": "_ = f\"{ b:{ c.d } { d.e } }\"",
     "wrappedOffset": 4
   },
   {
@@ -39470,7 +39604,7 @@
       },
       "$nodeHandle": 33
     },
-    "expectedOutput": "f\"{ value:{ width+padding!r }{ precision } }\""
+    "expectedOutput": "f\"{ value:{ width+padding!r } { precision } }\""
   },
   {
     "kind": "roundtrip",
@@ -39478,9 +39612,9 @@
     "sourceIn": "f\"{value:{width + padding!r}.{precision}}\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "f\"{ value:{ width+padding!r }{ precision } }\"",
+    "expectedSourceOut": "f\"{ value:{ width+padding!r } { precision } }\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier (format_expression expression: (binary_operator left: (identifier) right: (identifier)) type_conversion: (type_conversion)) (format_expression expression: (identifier)))) string_end: (string_end))",
-    "wrappedText": "_ = f\"{ value:{ width+padding!r }{ precision } }\"",
+    "wrappedText": "_ = f\"{ value:{ width+padding!r } { precision } }\"",
     "wrappedOffset": 4
   },
   {
@@ -40070,7 +40204,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "t\"Hello, { first_name } { last_name }!\"\nt\"a { b: } { c: }\"\ntr\"Path: { path }\\n\"\nt\"\"\"\nMulti-line template\nwith { variable }\n\"\"\"\nt\"{{}}\"\nt\"Result: { a+b }\""
+    "expectedOutput": "t\"Hello, { first_name } { last_name } !\"\nt\"a { b: } { c: }\"\ntr\"Path: { path } \\n\"\nt\"\"\"\nMulti-line template\nwith { variable }\n\"\"\"\nt\"{{ }}\"\nt\"Result: { a+b }\""
   },
   {
     "kind": "roundtrip",
@@ -40078,9 +40212,9 @@
     "sourceIn": "t\"Hello, {first_name} {last_name}!\"\nt\"a {b:2} {c:34.5}\"\ntr\"Path: {path}\\n\"\nt\"\"\"\nMulti-line template\nwith {variable}\n\"\"\"\nt\"Use {{braces}} to escape\"\nt\"Result: {a + b}\"",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "t\"Hello, { first_name } { last_name }!\"\nt\"a { b: } { c: }\"\ntr\"Path: { path }\\n\"\nt\"\"\"\nMulti-line template\nwith { variable }\n\"\"\"\nt\"{{}}\"\nt\"Result: { a+b }\"",
+    "expectedSourceOut": "t\"Hello, { first_name } { last_name } !\"\nt\"a { b: } { c: }\"\ntr\"Path: { path } \\n\"\nt\"\"\"\nMulti-line template\nwith { variable }\n\"\"\"\nt\"{{ }}\"\nt\"Result: { a+b }\"",
     "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (binary_operator left: (identifier) right: (identifier))) string_end: (string_end))) (newline)))",
-    "wrappedText": "t\"Hello, { first_name } { last_name }!\"\nt\"a { b: } { c: }\"\ntr\"Path: { path }\\n\"\nt\"\"\"\nMulti-line template\nwith { variable }\n\"\"\"\nt\"{{}}\"\nt\"Result: { a+b }\"",
+    "wrappedText": "t\"Hello, { first_name } { last_name } !\"\nt\"a { b: } { c: }\"\ntr\"Path: { path } \\n\"\nt\"\"\"\nMulti-line template\nwith { variable }\n\"\"\"\nt\"{{ }}\"\nt\"Result: { a+b }\"",
     "wrappedOffset": 0
   },
   {
@@ -40170,7 +40304,7 @@
         "$nodeHandle": 59
       }
     },
-    "expectedOutput": "t\"Hello, { first_name } { last_name }!\""
+    "expectedOutput": "t\"Hello, { first_name } { last_name } !\""
   },
   {
     "kind": "roundtrip",
@@ -40178,9 +40312,9 @@
     "sourceIn": "t\"Hello, {first_name} {last_name}!\"",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "t\"Hello, { first_name } { last_name }!\"",
+    "expectedSourceOut": "t\"Hello, { first_name } { last_name } !\"",
     "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end)))",
-    "wrappedText": "t\"Hello, { first_name } { last_name }!\"",
+    "wrappedText": "t\"Hello, { first_name } { last_name } !\"",
     "wrappedOffset": 0
   },
   {
@@ -40357,7 +40491,7 @@
         "$nodeHandle": 67
       }
     },
-    "expectedOutput": "tr\"Path: { path }\\n\""
+    "expectedOutput": "tr\"Path: { path } \\n\""
   },
   {
     "kind": "roundtrip",
@@ -40365,9 +40499,9 @@
     "sourceIn": "tr\"Path: {path}\\n\"",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "tr\"Path: { path }\\n\"",
+    "expectedSourceOut": "tr\"Path: { path } \\n\"",
     "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end)))",
-    "wrappedText": "tr\"Path: { path }\\n\"",
+    "wrappedText": "tr\"Path: { path } \\n\"",
     "wrappedOffset": 0
   },
   {
@@ -40486,7 +40620,7 @@
         "$nodeHandle": 71
       }
     },
-    "expectedOutput": "t\"{{}}\""
+    "expectedOutput": "t\"{{ }}\""
   },
   {
     "kind": "roundtrip",
@@ -40494,9 +40628,9 @@
     "sourceIn": "t\"Use {{braces}} to escape\"",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "t\"{{}}\"",
+    "expectedSourceOut": "t\"{{ }}\"",
     "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end)))",
-    "wrappedText": "t\"{{}}\"",
+    "wrappedText": "t\"{{ }}\"",
     "wrappedOffset": 0
   },
   {
@@ -40653,7 +40787,7 @@
       },
       "$nodeHandle": 8
     },
-    "expectedOutput": "t\"Hello, { first_name } { last_name }!\""
+    "expectedOutput": "t\"Hello, { first_name } { last_name } !\""
   },
   {
     "kind": "roundtrip",
@@ -40661,9 +40795,9 @@
     "sourceIn": "t\"Hello, {first_name} {last_name}!\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "t\"Hello, { first_name } { last_name }!\"",
+    "expectedSourceOut": "t\"Hello, { first_name } { last_name } !\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = t\"Hello, { first_name } { last_name }!\"",
+    "wrappedText": "_ = t\"Hello, { first_name } { last_name } !\"",
     "wrappedOffset": 4
   },
   {
@@ -40820,7 +40954,7 @@
       },
       "$nodeHandle": 18
     },
-    "expectedOutput": "tr\"Path: { path }\\n\""
+    "expectedOutput": "tr\"Path: { path } \\n\""
   },
   {
     "kind": "roundtrip",
@@ -40828,9 +40962,9 @@
     "sourceIn": "tr\"Path: {path}\\n\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "tr\"Path: { path }\\n\"",
+    "expectedSourceOut": "tr\"Path: { path } \\n\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = tr\"Path: { path }\\n\"",
+    "wrappedText": "_ = tr\"Path: { path } \\n\"",
     "wrappedOffset": 4
   },
   {
@@ -40929,7 +41063,7 @@
       },
       "$nodeHandle": 24
     },
-    "expectedOutput": "t\"{{}}\""
+    "expectedOutput": "t\"{{ }}\""
   },
   {
     "kind": "roundtrip",
@@ -40937,9 +41071,9 @@
     "sourceIn": "t\"Use {{braces}} to escape\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "t\"{{}}\"",
+    "expectedSourceOut": "t\"{{ }}\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))",
-    "wrappedText": "_ = t\"{{}}\"",
+    "wrappedText": "_ = t\"{{ }}\"",
     "wrappedOffset": 4
   },
   {
@@ -42915,9 +43049,10 @@
                   "$named": true,
                   "_element": [
                     {
-                      "$type": 180,
+                      "$type": 148,
                       "$source": 0,
                       "$named": true,
+                      "_expression": "a",
                       "$other": [
                         11
                       ],
@@ -42925,8 +43060,7 @@
                         "start": 28,
                         "end": 30
                       },
-                      "$nodeHandle": 69,
-                      "_content": "a"
+                      "$nodeHandle": 69
                     }
                   ],
                   "$span": {
@@ -42980,26 +43114,26 @@
                   "$named": true,
                   "_element": [
                     {
-                      "$type": 200,
+                      "$type": 148,
                       "$source": 0,
                       "$named": true,
-                      "_object": {
-                        "$type": 180,
+                      "_expression": {
+                        "$type": 200,
                         "$source": 0,
                         "$named": true,
+                        "_object": "a",
+                        "_attribute": "b",
                         "$other": [
-                          11
+                          4
                         ],
                         "$span": {
-                          "start": 33,
-                          "end": 35
+                          "start": 34,
+                          "end": 37
                         },
-                        "$nodeHandle": 74,
-                        "_content": "a"
+                        "$nodeHandle": 74
                       },
-                      "_attribute": "b",
                       "$other": [
-                        4
+                        11
                       ],
                       "$span": {
                         "start": 33,
@@ -43059,44 +43193,44 @@
                   "$named": true,
                   "_element": [
                     {
-                      "$type": 200,
+                      "$type": 148,
                       "$source": 0,
                       "$named": true,
-                      "_object": {
-                        "$type": 201,
+                      "_expression": {
+                        "$type": 200,
                         "$source": 0,
                         "$named": true,
-                        "_value": {
-                          "$type": 180,
+                        "_object": {
+                          "$type": 201,
                           "$source": 0,
                           "$named": true,
+                          "_value": "a",
+                          "_subscript": [
+                            "b"
+                          ],
                           "$other": [
-                            11
+                            42,
+                            43
                           ],
                           "$span": {
-                            "start": 40,
-                            "end": 42
+                            "start": 41,
+                            "end": 45
                           },
                           "$nodeHandle": 80,
-                          "_content": "a"
+                          "_subscript_trailing_sep": false
                         },
-                        "_subscript": [
-                          "b"
-                        ],
+                        "_attribute": "c",
                         "$other": [
-                          42,
-                          43
+                          4
                         ],
                         "$span": {
-                          "start": 40,
-                          "end": 45
+                          "start": 41,
+                          "end": 47
                         },
-                        "$nodeHandle": 79,
-                        "_subscript_trailing_sep": false
+                        "$nodeHandle": 79
                       },
-                      "_attribute": "c",
                       "$other": [
-                        4
+                        11
                       ],
                       "$span": {
                         "start": 40,
@@ -43156,34 +43290,34 @@
                   "$named": true,
                   "_element": [
                     {
-                      "$type": 203,
+                      "$type": 148,
                       "$source": 0,
                       "$named": true,
-                      "_function": {
-                        "$type": 180,
+                      "_expression": {
+                        "$type": 203,
                         "$source": 0,
                         "$named": true,
-                        "$other": [
-                          11
-                        ],
-                        "$span": {
-                          "start": 50,
-                          "end": 52
+                        "_function": "a",
+                        "_arguments": {
+                          "$type": 157,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "()",
+                          "$span": {
+                            "start": 52,
+                            "end": 54
+                          },
+                          "$nodeHandle": 86
                         },
-                        "$nodeHandle": 85,
-                        "_content": "a"
-                      },
-                      "_arguments": {
-                        "$type": 157,
-                        "$source": 0,
-                        "$named": true,
-                        "$text": "()",
                         "$span": {
-                          "start": 52,
+                          "start": 51,
                           "end": 54
                         },
-                        "$nodeHandle": 86
+                        "$nodeHandle": 85
                       },
+                      "$other": [
+                        11
+                      ],
                       "$span": {
                         "start": 50,
                         "end": 54
@@ -43216,7 +43350,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "[a,b,[c,d]]\n[*()]\n[*[]]\n[*a]\n[*a.b]\n[*a[b].c]\n[*a()]"
+    "expectedOutput": "[a,b,[c,d]]\n[ *()]\n[ * []]\n[ *a]\n[ *a.b]\n[ *a[b].c]\n[ *a()]"
   },
   {
     "kind": "roundtrip",
@@ -43224,9 +43358,9 @@
     "sourceIn": "[a, b, [c, d]]\n[*()]\n[*[]]\n[*a]\n[*a.b]\n[*a[b].c]\n[*a()]",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "[a,b,[c,d]]\n[*()]\n[*[]]\n[*a]\n[*a.b]\n[*a[b].c]\n[*a()]",
-    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (list (element_list element: (identifier) element: (identifier) element: (list (element_list element: (identifier) element: (identifier)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list (element_list element: (list_splat expression: (tuple))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list (element_list element: (list_splat expression: (list))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list (element_list element: (list_splat_pattern (identifier))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list (element_list element: (attribute object: (list_splat_pattern (identifier)) attribute: (identifier))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list (element_list element: (attribute object: (subscript value: (list_splat_pattern (identifier)) subscript: (identifier)) attribute: (identifier))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list (element_list element: (call function: (list_splat_pattern (identifier)) arguments: (argument_list))))) (newline)))",
-    "wrappedText": "[a,b,[c,d]]\n[*()]\n[*[]]\n[*a]\n[*a.b]\n[*a[b].c]\n[*a()]",
+    "expectedSourceOut": "[a,b,[c,d]]\n[ *()]\n[ * []]\n[ *a]\n[ *a.b]\n[ *a[b].c]\n[ *a()]",
+    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (list (element_list element: (identifier) element: (identifier) element: (list (element_list element: (identifier) element: (identifier)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list (element_list element: (list_splat expression: (tuple))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list (element_list element: (list_splat expression: (list))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list (element_list element: (list_splat expression: (identifier))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list (element_list element: (list_splat expression: (attribute object: (identifier) attribute: (identifier)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list (element_list element: (list_splat expression: (attribute object: (subscript value: (identifier) subscript: (identifier)) attribute: (identifier)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list (element_list element: (list_splat expression: (call function: (identifier) arguments: (argument_list)))))) (newline)))",
+    "wrappedText": "[a,b,[c,d]]\n[ *()]\n[ * []]\n[ *a]\n[ *a.b]\n[ *a[b].c]\n[ *a()]",
     "wrappedOffset": 0
   },
   {
@@ -43402,7 +43536,7 @@
         }
       }
     },
-    "expectedOutput": "[*()]"
+    "expectedOutput": "[ *()]"
   },
   {
     "kind": "roundtrip",
@@ -43410,9 +43544,9 @@
     "sourceIn": "[*()]",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "[*()]",
+    "expectedSourceOut": "[ *()]",
     "expectedReparseTree": "(expression_statement (list (element_list element: (list_splat expression: (tuple)))))",
-    "wrappedText": "[*()]",
+    "wrappedText": "[ *()]",
     "wrappedOffset": 0
   },
   {
@@ -43479,7 +43613,7 @@
         }
       }
     },
-    "expectedOutput": "[*[]]"
+    "expectedOutput": "[ * []]"
   },
   {
     "kind": "roundtrip",
@@ -43487,9 +43621,9 @@
     "sourceIn": "[*[]]",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "[*[]]",
+    "expectedSourceOut": "[ * []]",
     "expectedReparseTree": "(expression_statement (list (element_list element: (list_splat expression: (list)))))",
-    "wrappedText": "[*[]]",
+    "wrappedText": "[ * []]",
     "wrappedOffset": 0
   },
   {
@@ -43523,9 +43657,10 @@
           "$named": true,
           "_element": [
             {
-              "$type": 180,
+              "$type": 148,
               "$source": 0,
               "$named": true,
+              "_expression": "a",
               "$other": [
                 11
               ],
@@ -43533,8 +43668,7 @@
                 "start": 28,
                 "end": 30
               },
-              "$nodeHandle": 101,
-              "_content": "a"
+              "$nodeHandle": 101
             }
           ],
           "$span": {
@@ -43546,7 +43680,7 @@
         }
       }
     },
-    "expectedOutput": "[*a]"
+    "expectedOutput": "[ *a]"
   },
   {
     "kind": "roundtrip",
@@ -43554,9 +43688,9 @@
     "sourceIn": "[*a]",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "[*a]",
-    "expectedReparseTree": "(expression_statement (list (element_list element: (list_splat_pattern (identifier)))))",
-    "wrappedText": "[*a]",
+    "expectedSourceOut": "[ *a]",
+    "expectedReparseTree": "(expression_statement (list (element_list element: (list_splat expression: (identifier)))))",
+    "wrappedText": "[ *a]",
     "wrappedOffset": 0
   },
   {
@@ -43590,26 +43724,26 @@
           "$named": true,
           "_element": [
             {
-              "$type": 200,
+              "$type": 148,
               "$source": 0,
               "$named": true,
-              "_object": {
-                "$type": 180,
+              "_expression": {
+                "$type": 200,
                 "$source": 0,
                 "$named": true,
+                "_object": "a",
+                "_attribute": "b",
                 "$other": [
-                  11
+                  4
                 ],
                 "$span": {
-                  "start": 33,
-                  "end": 35
+                  "start": 34,
+                  "end": 37
                 },
-                "$nodeHandle": 105,
-                "_content": "a"
+                "$nodeHandle": 105
               },
-              "_attribute": "b",
               "$other": [
-                4
+                11
               ],
               "$span": {
                 "start": 33,
@@ -43627,7 +43761,7 @@
         }
       }
     },
-    "expectedOutput": "[*a.b]"
+    "expectedOutput": "[ *a.b]"
   },
   {
     "kind": "roundtrip",
@@ -43635,9 +43769,9 @@
     "sourceIn": "[*a.b]",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "[*a.b]",
-    "expectedReparseTree": "(expression_statement (list (element_list element: (attribute object: (list_splat_pattern (identifier)) attribute: (identifier)))))",
-    "wrappedText": "[*a.b]",
+    "expectedSourceOut": "[ *a.b]",
+    "expectedReparseTree": "(expression_statement (list (element_list element: (list_splat expression: (attribute object: (identifier) attribute: (identifier))))))",
+    "wrappedText": "[ *a.b]",
     "wrappedOffset": 0
   },
   {
@@ -43671,44 +43805,44 @@
           "$named": true,
           "_element": [
             {
-              "$type": 200,
+              "$type": 148,
               "$source": 0,
               "$named": true,
-              "_object": {
-                "$type": 201,
+              "_expression": {
+                "$type": 200,
                 "$source": 0,
                 "$named": true,
-                "_value": {
-                  "$type": 180,
+                "_object": {
+                  "$type": 201,
                   "$source": 0,
                   "$named": true,
+                  "_value": "a",
+                  "_subscript": [
+                    "b"
+                  ],
                   "$other": [
-                    11
+                    42,
+                    43
                   ],
                   "$span": {
-                    "start": 40,
-                    "end": 42
+                    "start": 41,
+                    "end": 45
                   },
                   "$nodeHandle": 110,
-                  "_content": "a"
+                  "_subscript_trailing_sep": false
                 },
-                "_subscript": [
-                  "b"
-                ],
+                "_attribute": "c",
                 "$other": [
-                  42,
-                  43
+                  4
                 ],
                 "$span": {
-                  "start": 40,
-                  "end": 45
+                  "start": 41,
+                  "end": 47
                 },
-                "$nodeHandle": 109,
-                "_subscript_trailing_sep": false
+                "$nodeHandle": 109
               },
-              "_attribute": "c",
               "$other": [
-                4
+                11
               ],
               "$span": {
                 "start": 40,
@@ -43726,7 +43860,7 @@
         }
       }
     },
-    "expectedOutput": "[*a[b].c]"
+    "expectedOutput": "[ *a[b].c]"
   },
   {
     "kind": "roundtrip",
@@ -43734,9 +43868,9 @@
     "sourceIn": "[*a[b].c]",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "[*a[b].c]",
-    "expectedReparseTree": "(expression_statement (list (element_list element: (attribute object: (subscript value: (list_splat_pattern (identifier)) subscript: (identifier)) attribute: (identifier)))))",
-    "wrappedText": "[*a[b].c]",
+    "expectedSourceOut": "[ *a[b].c]",
+    "expectedReparseTree": "(expression_statement (list (element_list element: (list_splat expression: (attribute object: (subscript value: (identifier) subscript: (identifier)) attribute: (identifier))))))",
+    "wrappedText": "[ *a[b].c]",
     "wrappedOffset": 0
   },
   {
@@ -43770,34 +43904,34 @@
           "$named": true,
           "_element": [
             {
-              "$type": 203,
+              "$type": 148,
               "$source": 0,
               "$named": true,
-              "_function": {
-                "$type": 180,
+              "_expression": {
+                "$type": 203,
                 "$source": 0,
                 "$named": true,
-                "$other": [
-                  11
-                ],
-                "$span": {
-                  "start": 50,
-                  "end": 52
+                "_function": "a",
+                "_arguments": {
+                  "$type": 157,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "()",
+                  "$span": {
+                    "start": 52,
+                    "end": 54
+                  },
+                  "$nodeHandle": 115
                 },
-                "$nodeHandle": 114,
-                "_content": "a"
-              },
-              "_arguments": {
-                "$type": 157,
-                "$source": 0,
-                "$named": true,
-                "$text": "()",
                 "$span": {
-                  "start": 52,
+                  "start": 51,
                   "end": 54
                 },
-                "$nodeHandle": 115
+                "$nodeHandle": 114
               },
+              "$other": [
+                11
+              ],
               "$span": {
                 "start": 50,
                 "end": 54
@@ -43814,7 +43948,7 @@
         }
       }
     },
-    "expectedOutput": "[*a()]"
+    "expectedOutput": "[ *a()]"
   },
   {
     "kind": "roundtrip",
@@ -43822,9 +43956,9 @@
     "sourceIn": "[*a()]",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "[*a()]",
-    "expectedReparseTree": "(expression_statement (list (element_list element: (call function: (list_splat_pattern (identifier)) arguments: (argument_list)))))",
-    "wrappedText": "[*a()]",
+    "expectedSourceOut": "[ *a()]",
+    "expectedReparseTree": "(expression_statement (list (element_list element: (list_splat expression: (call function: (identifier) arguments: (argument_list))))))",
+    "wrappedText": "[ *a()]",
     "wrappedOffset": 0
   },
   {
@@ -44028,7 +44162,7 @@
         "_element_trailing_sep": false
       }
     },
-    "expectedOutput": "[*()]"
+    "expectedOutput": "[ *()]"
   },
   {
     "kind": "roundtrip",
@@ -44036,9 +44170,9 @@
     "sourceIn": "[*()]",
     "pattern": "list",
     "edits": [],
-    "expectedSourceOut": "[*()]",
+    "expectedSourceOut": "[ *()]",
     "expectedReparseTree": "(list (element_list element: (list_splat expression: (tuple))))",
-    "wrappedText": "_ = [*()]",
+    "wrappedText": "_ = [ *()]",
     "wrappedOffset": 4
   },
   {
@@ -44095,7 +44229,7 @@
         "_element_trailing_sep": false
       }
     },
-    "expectedOutput": "[*[]]"
+    "expectedOutput": "[ * []]"
   },
   {
     "kind": "roundtrip",
@@ -44103,9 +44237,9 @@
     "sourceIn": "[*[]]",
     "pattern": "list",
     "edits": [],
-    "expectedSourceOut": "[*[]]",
+    "expectedSourceOut": "[ * []]",
     "expectedReparseTree": "(list (element_list element: (list_splat expression: (list))))",
-    "wrappedText": "_ = [*[]]",
+    "wrappedText": "_ = [ * []]",
     "wrappedOffset": 4
   },
   {
@@ -44157,9 +44291,10 @@
         "$named": true,
         "_element": [
           {
-            "$type": 180,
+            "$type": 148,
             "$source": 0,
             "$named": true,
+            "_expression": "a",
             "$other": [
               11
             ],
@@ -44167,8 +44302,7 @@
               "start": 28,
               "end": 30
             },
-            "$nodeHandle": 127,
-            "_content": "a"
+            "$nodeHandle": 127
           }
         ],
         "$span": {
@@ -44179,7 +44313,7 @@
         "_element_trailing_sep": false
       }
     },
-    "expectedOutput": "[*a]"
+    "expectedOutput": "[ *a]"
   },
   {
     "kind": "roundtrip",
@@ -44187,9 +44321,9 @@
     "sourceIn": "[*a]",
     "pattern": "list",
     "edits": [],
-    "expectedSourceOut": "[*a]",
-    "expectedReparseTree": "(list (element_list element: (list_splat_pattern (identifier))))",
-    "wrappedText": "_ = [*a]",
+    "expectedSourceOut": "[ *a]",
+    "expectedReparseTree": "(list (element_list element: (list_splat expression: (identifier))))",
+    "wrappedText": "_ = [ *a]",
     "wrappedOffset": 4
   },
   {
@@ -44214,26 +44348,26 @@
         "$named": true,
         "_element": [
           {
-            "$type": 200,
+            "$type": 148,
             "$source": 0,
             "$named": true,
-            "_object": {
-              "$type": 180,
+            "_expression": {
+              "$type": 200,
               "$source": 0,
               "$named": true,
+              "_object": "a",
+              "_attribute": "b",
               "$other": [
-                11
+                4
               ],
               "$span": {
-                "start": 33,
-                "end": 35
+                "start": 34,
+                "end": 37
               },
-              "$nodeHandle": 130,
-              "_content": "a"
+              "$nodeHandle": 130
             },
-            "_attribute": "b",
             "$other": [
-              4
+              11
             ],
             "$span": {
               "start": 33,
@@ -44250,7 +44384,7 @@
         "_element_trailing_sep": false
       }
     },
-    "expectedOutput": "[*a.b]"
+    "expectedOutput": "[ *a.b]"
   },
   {
     "kind": "roundtrip",
@@ -44258,9 +44392,9 @@
     "sourceIn": "[*a.b]",
     "pattern": "list",
     "edits": [],
-    "expectedSourceOut": "[*a.b]",
-    "expectedReparseTree": "(list (element_list element: (attribute object: (list_splat_pattern (identifier)) attribute: (identifier))))",
-    "wrappedText": "_ = [*a.b]",
+    "expectedSourceOut": "[ *a.b]",
+    "expectedReparseTree": "(list (element_list element: (list_splat expression: (attribute object: (identifier) attribute: (identifier)))))",
+    "wrappedText": "_ = [ *a.b]",
     "wrappedOffset": 4
   },
   {
@@ -44285,44 +44419,44 @@
         "$named": true,
         "_element": [
           {
-            "$type": 200,
+            "$type": 148,
             "$source": 0,
             "$named": true,
-            "_object": {
-              "$type": 201,
+            "_expression": {
+              "$type": 200,
               "$source": 0,
               "$named": true,
-              "_value": {
-                "$type": 180,
+              "_object": {
+                "$type": 201,
                 "$source": 0,
                 "$named": true,
+                "_value": "a",
+                "_subscript": [
+                  "b"
+                ],
                 "$other": [
-                  11
+                  42,
+                  43
                 ],
                 "$span": {
-                  "start": 40,
-                  "end": 42
+                  "start": 41,
+                  "end": 45
                 },
                 "$nodeHandle": 134,
-                "_content": "a"
+                "_subscript_trailing_sep": false
               },
-              "_subscript": [
-                "b"
-              ],
+              "_attribute": "c",
               "$other": [
-                42,
-                43
+                4
               ],
               "$span": {
-                "start": 40,
-                "end": 45
+                "start": 41,
+                "end": 47
               },
-              "$nodeHandle": 133,
-              "_subscript_trailing_sep": false
+              "$nodeHandle": 133
             },
-            "_attribute": "c",
             "$other": [
-              4
+              11
             ],
             "$span": {
               "start": 40,
@@ -44339,7 +44473,7 @@
         "_element_trailing_sep": false
       }
     },
-    "expectedOutput": "[*a[b].c]"
+    "expectedOutput": "[ *a[b].c]"
   },
   {
     "kind": "roundtrip",
@@ -44347,9 +44481,9 @@
     "sourceIn": "[*a[b].c]",
     "pattern": "list",
     "edits": [],
-    "expectedSourceOut": "[*a[b].c]",
-    "expectedReparseTree": "(list (element_list element: (attribute object: (subscript value: (list_splat_pattern (identifier)) subscript: (identifier)) attribute: (identifier))))",
-    "wrappedText": "_ = [*a[b].c]",
+    "expectedSourceOut": "[ *a[b].c]",
+    "expectedReparseTree": "(list (element_list element: (list_splat expression: (attribute object: (subscript value: (identifier) subscript: (identifier)) attribute: (identifier)))))",
+    "wrappedText": "_ = [ *a[b].c]",
     "wrappedOffset": 4
   },
   {
@@ -44374,34 +44508,34 @@
         "$named": true,
         "_element": [
           {
-            "$type": 203,
+            "$type": 148,
             "$source": 0,
             "$named": true,
-            "_function": {
-              "$type": 180,
+            "_expression": {
+              "$type": 203,
               "$source": 0,
               "$named": true,
-              "$other": [
-                11
-              ],
-              "$span": {
-                "start": 50,
-                "end": 52
+              "_function": "a",
+              "_arguments": {
+                "$type": 157,
+                "$source": 0,
+                "$named": true,
+                "$text": "()",
+                "$span": {
+                  "start": 52,
+                  "end": 54
+                },
+                "$nodeHandle": 138
               },
-              "$nodeHandle": 137,
-              "_content": "a"
-            },
-            "_arguments": {
-              "$type": 157,
-              "$source": 0,
-              "$named": true,
-              "$text": "()",
               "$span": {
-                "start": 52,
+                "start": 51,
                 "end": 54
               },
-              "$nodeHandle": 138
+              "$nodeHandle": 137
             },
+            "$other": [
+              11
+            ],
             "$span": {
               "start": 50,
               "end": 54
@@ -44417,7 +44551,7 @@
         "_element_trailing_sep": false
       }
     },
-    "expectedOutput": "[*a()]"
+    "expectedOutput": "[ *a()]"
   },
   {
     "kind": "roundtrip",
@@ -44425,9 +44559,9 @@
     "sourceIn": "[*a()]",
     "pattern": "list",
     "edits": [],
-    "expectedSourceOut": "[*a()]",
-    "expectedReparseTree": "(list (element_list element: (call function: (list_splat_pattern (identifier)) arguments: (argument_list))))",
-    "wrappedText": "_ = [*a()]",
+    "expectedSourceOut": "[ *a()]",
+    "expectedReparseTree": "(list (element_list element: (list_splat expression: (call function: (identifier) arguments: (argument_list)))))",
+    "wrappedText": "_ = [ *a()]",
     "wrappedOffset": 4
   },
   {
@@ -44497,7 +44631,7 @@
       },
       "$nodeHandle": 21
     },
-    "expectedOutput": "*[]"
+    "expectedOutput": "* []"
   },
   {
     "kind": "roundtrip",
@@ -44505,9 +44639,196 @@
     "sourceIn": "*[]",
     "pattern": "list_splat",
     "edits": [],
-    "expectedSourceOut": "*[]",
+    "expectedSourceOut": "* []",
     "expectedReparseTree": "(list_splat expression: (list))",
-    "wrappedText": "_f(*[])",
+    "wrappedText": "_f(* [])",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 148,
+      "$source": 0,
+      "$named": true,
+      "_expression": "a",
+      "$other": [
+        11
+      ],
+      "$span": {
+        "start": 28,
+        "end": 30
+      },
+      "$nodeHandle": 26
+    },
+    "expectedOutput": "*a"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*a",
+    "pattern": "list_splat",
+    "edits": [],
+    "expectedSourceOut": "*a",
+    "expectedReparseTree": "(list_splat expression: (identifier))",
+    "wrappedText": "_f(*a)",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 148,
+      "$source": 0,
+      "$named": true,
+      "_expression": {
+        "$type": 200,
+        "$source": 0,
+        "$named": true,
+        "_object": "a",
+        "_attribute": "b",
+        "$other": [
+          4
+        ],
+        "$span": {
+          "start": 34,
+          "end": 37
+        },
+        "$nodeHandle": 141
+      },
+      "$other": [
+        11
+      ],
+      "$span": {
+        "start": 33,
+        "end": 37
+      },
+      "$nodeHandle": 30
+    },
+    "expectedOutput": "*a.b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*a.b",
+    "pattern": "list_splat",
+    "edits": [],
+    "expectedSourceOut": "*a.b",
+    "expectedReparseTree": "(list_splat expression: (attribute object: (identifier) attribute: (identifier)))",
+    "wrappedText": "_f(*a.b)",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 148,
+      "$source": 0,
+      "$named": true,
+      "_expression": {
+        "$type": 200,
+        "$source": 0,
+        "$named": true,
+        "_object": {
+          "$type": 201,
+          "$source": 0,
+          "$named": true,
+          "_value": "a",
+          "_subscript": [
+            "b"
+          ],
+          "$other": [
+            42,
+            43
+          ],
+          "$span": {
+            "start": 41,
+            "end": 45
+          },
+          "$nodeHandle": 143,
+          "_subscript_trailing_sep": false
+        },
+        "_attribute": "c",
+        "$other": [
+          4
+        ],
+        "$span": {
+          "start": 41,
+          "end": 47
+        },
+        "$nodeHandle": 142
+      },
+      "$other": [
+        11
+      ],
+      "$span": {
+        "start": 40,
+        "end": 47
+      },
+      "$nodeHandle": 35
+    },
+    "expectedOutput": "*a[b].c"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*a[b].c",
+    "pattern": "list_splat",
+    "edits": [],
+    "expectedSourceOut": "*a[b].c",
+    "expectedReparseTree": "(list_splat expression: (attribute object: (subscript value: (identifier) subscript: (identifier)) attribute: (identifier)))",
+    "wrappedText": "_f(*a[b].c)",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 148,
+      "$source": 0,
+      "$named": true,
+      "_expression": {
+        "$type": 203,
+        "$source": 0,
+        "$named": true,
+        "_function": "a",
+        "_arguments": {
+          "$type": 157,
+          "$source": 0,
+          "$named": true,
+          "$text": "()",
+          "$span": {
+            "start": 52,
+            "end": 54
+          },
+          "$nodeHandle": 145
+        },
+        "$span": {
+          "start": 51,
+          "end": 54
+        },
+        "$nodeHandle": 144
+      },
+      "$other": [
+        11
+      ],
+      "$span": {
+        "start": 50,
+        "end": 54
+      },
+      "$nodeHandle": 41
+    },
+    "expectedOutput": "*a()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*a()",
+    "pattern": "list_splat",
+    "edits": [],
+    "expectedSourceOut": "*a()",
+    "expectedReparseTree": "(list_splat expression: (call function: (identifier) arguments: (argument_list)))",
+    "wrappedText": "_f(*a())",
     "wrappedOffset": 3
   },
   {
@@ -44541,164 +44862,31 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$other": [
-        11
-      ],
-      "$span": {
-        "start": 28,
-        "end": 30
-      },
-      "$nodeHandle": 26,
-      "_content": "a"
-    },
-    "expectedOutput": "*a"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "*a",
-    "pattern": "list_splat_pattern",
-    "edits": [],
-    "expectedSourceOut": "*a",
-    "expectedReparseTree": "(list_splat_pattern (identifier))",
-    "wrappedText": "*a = (1,)",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$other": [
-        11
-      ],
-      "$span": {
-        "start": 33,
-        "end": 35
-      },
-      "$nodeHandle": 31,
-      "_content": "a"
-    },
-    "expectedOutput": "*a"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "*a",
-    "pattern": "list_splat_pattern",
-    "edits": [],
-    "expectedSourceOut": "*a",
-    "expectedReparseTree": "(list_splat_pattern (identifier))",
-    "wrappedText": "*a = (1,)",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$other": [
-        11
-      ],
-      "$span": {
-        "start": 40,
-        "end": 42
-      },
-      "$nodeHandle": 37,
-      "_content": "a"
-    },
-    "expectedOutput": "*a"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "*a",
-    "pattern": "list_splat_pattern",
-    "edits": [],
-    "expectedSourceOut": "*a",
-    "expectedReparseTree": "(list_splat_pattern (identifier))",
-    "wrappedText": "*a = (1,)",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$other": [
-        11
-      ],
-      "$span": {
-        "start": 50,
-        "end": 52
-      },
-      "$nodeHandle": 42,
-      "_content": "a"
-    },
-    "expectedOutput": "*a"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "*a",
-    "pattern": "list_splat_pattern",
-    "edits": [],
-    "expectedSourceOut": "*a",
-    "expectedReparseTree": "(list_splat_pattern (identifier))",
-    "wrappedText": "*a = (1,)",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
       "$type": 200,
       "$source": 0,
       "$named": true,
-      "_object": {
-        "$type": 180,
-        "$source": 0,
-        "$named": true,
-        "$other": [
-          11
-        ],
-        "$span": {
-          "start": 33,
-          "end": 35
-        },
-        "$nodeHandle": 141,
-        "_content": "a"
-      },
+      "_object": "a",
       "_attribute": "b",
       "$other": [
         4
       ],
       "$span": {
-        "start": 33,
+        "start": 34,
         "end": 37
       },
-      "$nodeHandle": 30
+      "$nodeHandle": 31
     },
-    "expectedOutput": "*a.b"
+    "expectedOutput": "a.b"
   },
   {
     "kind": "roundtrip",
     "grammar": "python",
-    "sourceIn": "*a.b",
+    "sourceIn": "a.b",
     "pattern": "attribute",
     "edits": [],
-    "expectedSourceOut": "*a.b",
-    "expectedReparseTree": "(attribute object: (list_splat_pattern (identifier)) attribute: (identifier))",
-    "wrappedText": "[*a.b]",
+    "expectedSourceOut": "a.b",
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "[a.b]",
     "wrappedOffset": 1
   },
   {
@@ -44712,20 +44900,7 @@
         "$type": 201,
         "$source": 0,
         "$named": true,
-        "_value": {
-          "$type": 180,
-          "$source": 0,
-          "$named": true,
-          "$other": [
-            11
-          ],
-          "$span": {
-            "start": 40,
-            "end": 42
-          },
-          "$nodeHandle": 143,
-          "_content": "a"
-        },
+        "_value": "a",
         "_subscript": [
           "b"
         ],
@@ -44734,10 +44909,10 @@
           43
         ],
         "$span": {
-          "start": 40,
+          "start": 41,
           "end": 45
         },
-        "$nodeHandle": 142,
+        "$nodeHandle": 146,
         "_subscript_trailing_sep": false
       },
       "_attribute": "c",
@@ -44745,22 +44920,22 @@
         4
       ],
       "$span": {
-        "start": 40,
+        "start": 41,
         "end": 47
       },
-      "$nodeHandle": 35
+      "$nodeHandle": 36
     },
-    "expectedOutput": "*a[b].c"
+    "expectedOutput": "a[b].c"
   },
   {
     "kind": "roundtrip",
     "grammar": "python",
-    "sourceIn": "*a[b].c",
+    "sourceIn": "a[b].c",
     "pattern": "attribute",
     "edits": [],
-    "expectedSourceOut": "*a[b].c",
-    "expectedReparseTree": "(attribute object: (subscript value: (list_splat_pattern (identifier)) subscript: (identifier)) attribute: (identifier))",
-    "wrappedText": "[*a[b].c]",
+    "expectedSourceOut": "a[b].c",
+    "expectedReparseTree": "(attribute object: (subscript value: (identifier) subscript: (identifier)) attribute: (identifier))",
+    "wrappedText": "[a[b].c]",
     "wrappedOffset": 1
   },
   {
@@ -44770,20 +44945,7 @@
       "$type": 201,
       "$source": 0,
       "$named": true,
-      "_value": {
-        "$type": 180,
-        "$source": 0,
-        "$named": true,
-        "$other": [
-          11
-        ],
-        "$span": {
-          "start": 40,
-          "end": 42
-        },
-        "$nodeHandle": 144,
-        "_content": "a"
-      },
+      "_value": "a",
       "_subscript": [
         "b"
       ],
@@ -44792,23 +44954,23 @@
         43
       ],
       "$span": {
-        "start": 40,
+        "start": 41,
         "end": 45
       },
-      "$nodeHandle": 36,
+      "$nodeHandle": 37,
       "_subscript_trailing_sep": false
     },
-    "expectedOutput": "*a[b]"
+    "expectedOutput": "a[b]"
   },
   {
     "kind": "roundtrip",
     "grammar": "python",
-    "sourceIn": "*a[b]",
+    "sourceIn": "a[b]",
     "pattern": "subscript",
     "edits": [],
-    "expectedSourceOut": "*a[b]",
-    "expectedReparseTree": "(subscript value: (list_splat_pattern (identifier)) subscript: (identifier))",
-    "wrappedText": "[*a[b]]",
+    "expectedSourceOut": "a[b]",
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (identifier))",
+    "wrappedText": "[a[b]]",
     "wrappedOffset": 1
   },
   {
@@ -44818,20 +44980,7 @@
       "$type": 203,
       "$source": 0,
       "$named": true,
-      "_function": {
-        "$type": 180,
-        "$source": 0,
-        "$named": true,
-        "$other": [
-          11
-        ],
-        "$span": {
-          "start": 50,
-          "end": 52
-        },
-        "$nodeHandle": 145,
-        "_content": "a"
-      },
+      "_function": "a",
       "_arguments": {
         "$type": 157,
         "$source": 0,
@@ -44841,25 +44990,25 @@
           "start": 52,
           "end": 54
         },
-        "$nodeHandle": 146
+        "$nodeHandle": 147
       },
       "$span": {
-        "start": 50,
+        "start": 51,
         "end": 54
       },
-      "$nodeHandle": 41
+      "$nodeHandle": 42
     },
-    "expectedOutput": "*a()"
+    "expectedOutput": "a()"
   },
   {
     "kind": "roundtrip",
     "grammar": "python",
-    "sourceIn": "*a()",
+    "sourceIn": "a()",
     "pattern": "call",
     "edits": [],
-    "expectedSourceOut": "*a()",
-    "expectedReparseTree": "(call function: (list_splat_pattern (identifier)) arguments: (argument_list))",
-    "wrappedText": "_ = *a()",
+    "expectedSourceOut": "a()",
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
+    "wrappedText": "_ = a()",
     "wrappedOffset": 4
   },
   {
@@ -47048,7 +47197,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "{ a:1,b:2 }\n{}\n{ **{} }\n{ **a }\n{ **a.b }\n{ **a[b].c }\n{ **a() }"
+    "expectedOutput": "{ a:1,b:2 }\n{}\n{ ** {} }\n{ **a }\n{ **a.b }\n{ **a[b].c }\n{ **a() }"
   },
   {
     "kind": "roundtrip",
@@ -47056,9 +47205,9 @@
     "sourceIn": "{a: 1, b: 2}\n{}\n{**{}}\n{**a}\n{**a.b}\n{**a[b].c}\n{**a()}",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "{ a:1,b:2 }\n{}\n{ **{} }\n{ **a }\n{ **a.b }\n{ **a[b].c }\n{ **a() }",
+    "expectedSourceOut": "{ a:1,b:2 }\n{}\n{ ** {} }\n{ **a }\n{ **a.b }\n{ **a[b].c }\n{ **a() }",
     "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (dictionary entries: (dictionary_group1 element: (pair key: (identifier) value: (integer)) element: (pair key: (identifier) value: (integer))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (dictionary)) (newline)) statements: (statement_group1 simple_statement: (expression_statement (dictionary entries: (dictionary_group1 element: (dictionary_splat expression: (dictionary))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (dictionary entries: (dictionary_group1 element: (dictionary_splat expression: (identifier))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (dictionary entries: (dictionary_group1 element: (dictionary_splat expression: (attribute object: (identifier) attribute: (identifier)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (dictionary entries: (dictionary_group1 element: (dictionary_splat expression: (attribute object: (subscript value: (identifier) subscript: (identifier)) attribute: (identifier)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (dictionary entries: (dictionary_group1 element: (dictionary_splat expression: (call function: (identifier) arguments: (argument_list)))))) (newline)))",
-    "wrappedText": "{ a:1,b:2 }\n{}\n{ **{} }\n{ **a }\n{ **a.b }\n{ **a[b].c }\n{ **a() }",
+    "wrappedText": "{ a:1,b:2 }\n{}\n{ ** {} }\n{ **a }\n{ **a.b }\n{ **a[b].c }\n{ **a() }",
     "wrappedOffset": 0
   },
   {
@@ -47248,7 +47397,7 @@
         "$nodeHandle": 86
       }
     },
-    "expectedOutput": "{ **{} }"
+    "expectedOutput": "{ ** {} }"
   },
   {
     "kind": "roundtrip",
@@ -47256,9 +47405,9 @@
     "sourceIn": "{**{}}",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "{ **{} }",
+    "expectedSourceOut": "{ ** {} }",
     "expectedReparseTree": "(expression_statement (dictionary entries: (dictionary_group1 element: (dictionary_splat expression: (dictionary)))))",
-    "wrappedText": "{ **{} }",
+    "wrappedText": "{ ** {} }",
     "wrappedOffset": 0
   },
   {
@@ -47753,7 +47902,7 @@
       },
       "$nodeHandle": 16
     },
-    "expectedOutput": "{ **{} }"
+    "expectedOutput": "{ ** {} }"
   },
   {
     "kind": "roundtrip",
@@ -47761,9 +47910,9 @@
     "sourceIn": "{**{}}",
     "pattern": "dictionary",
     "edits": [],
-    "expectedSourceOut": "{ **{} }",
+    "expectedSourceOut": "{ ** {} }",
     "expectedReparseTree": "(dictionary entries: (dictionary_group1 element: (dictionary_splat expression: (dictionary))))",
-    "wrappedText": "_ = { **{} }",
+    "wrappedText": "_ = { ** {} }",
     "wrappedOffset": 4
   },
   {
@@ -49066,7 +49215,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "{ a,b,c, }\n{ *{} }"
+    "expectedOutput": "{ a,b,c, }\n{ * {} }"
   },
   {
     "kind": "roundtrip",
@@ -49074,9 +49223,9 @@
     "sourceIn": "{a, b, c,}\n{*{}}",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "{ a,b,c, }\n{ *{} }",
+    "expectedSourceOut": "{ a,b,c, }\n{ * {} }",
     "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (set (element_list element: (identifier) element: (identifier) element: (identifier)))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (set (element_list element: (list_splat expression: (dictionary))))) (newline)))",
-    "wrappedText": "{ a,b,c, }\n{ *{} }",
+    "wrappedText": "{ a,b,c, }\n{ * {} }",
     "wrappedOffset": 0
   },
   {
@@ -49204,7 +49353,7 @@
         }
       }
     },
-    "expectedOutput": "{ *{} }"
+    "expectedOutput": "{ * {} }"
   },
   {
     "kind": "roundtrip",
@@ -49212,9 +49361,9 @@
     "sourceIn": "{*{}}",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "{ *{} }",
+    "expectedSourceOut": "{ * {} }",
     "expectedReparseTree": "(expression_statement (set (element_list element: (list_splat expression: (dictionary)))))",
-    "wrappedText": "{ *{} }",
+    "wrappedText": "{ * {} }",
     "wrappedOffset": 0
   },
   {
@@ -49322,7 +49471,7 @@
         "_element_trailing_sep": false
       }
     },
-    "expectedOutput": "{ *{} }"
+    "expectedOutput": "{ * {} }"
   },
   {
     "kind": "roundtrip",
@@ -49330,9 +49479,9 @@
     "sourceIn": "{*{}}",
     "pattern": "set",
     "edits": [],
-    "expectedSourceOut": "{ *{} }",
+    "expectedSourceOut": "{ * {} }",
     "expectedReparseTree": "(set (element_list element: (list_splat expression: (dictionary))))",
-    "wrappedText": "_ = { *{} }",
+    "wrappedText": "_ = { * {} }",
     "wrappedOffset": 4
   },
   {
@@ -49362,7 +49511,7 @@
       },
       "$nodeHandle": 9
     },
-    "expectedOutput": "*{}"
+    "expectedOutput": "* {}"
   },
   {
     "kind": "roundtrip",
@@ -49370,9 +49519,9 @@
     "sourceIn": "*{}",
     "pattern": "list_splat",
     "edits": [],
-    "expectedSourceOut": "*{}",
+    "expectedSourceOut": "* {}",
     "expectedReparseTree": "(list_splat expression: (dictionary))",
-    "wrappedText": "_f(*{})",
+    "wrappedText": "_f(* {})",
     "wrappedOffset": 3
   },
   {
@@ -49638,7 +49787,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "{ a[b][c]for a,b,c in items }\n{ r for s in qs for n in ms }"
+    "expectedOutput": "{ a[b] [c]for a,b,c in items }\n{ r for s in qs for n in ms }"
   },
   {
     "kind": "roundtrip",
@@ -49646,9 +49795,9 @@
     "sourceIn": "{a[b][c] for a, b, c in items}\n{r for s in qs for n in ms}",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "{ a[b][c]for a,b,c in items }\n{ r for s in qs for n in ms }",
+    "expectedSourceOut": "{ a[b] [c]for a,b,c in items }\n{ r for s in qs for n in ms }",
     "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier))) right: (identifier))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (set_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (identifier)) (for_in_clause left: (identifier) right: (identifier))))) (newline)))",
-    "wrappedText": "{ a[b][c]for a,b,c in items }\n{ r for s in qs for n in ms }",
+    "wrappedText": "{ a[b] [c]for a,b,c in items }\n{ r for s in qs for n in ms }",
     "wrappedOffset": 0
   },
   {
@@ -49774,7 +49923,7 @@
         "$nodeHandle": 31
       }
     },
-    "expectedOutput": "{ a[b][c]for a,b,c in items }"
+    "expectedOutput": "{ a[b] [c]for a,b,c in items }"
   },
   {
     "kind": "roundtrip",
@@ -49782,9 +49931,9 @@
     "sourceIn": "{a[b][c] for a, b, c in items}",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "{ a[b][c]for a,b,c in items }",
+    "expectedSourceOut": "{ a[b] [c]for a,b,c in items }",
     "expectedReparseTree": "(expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier))) right: (identifier)))))",
-    "wrappedText": "{ a[b][c]for a,b,c in items }",
+    "wrappedText": "{ a[b] [c]for a,b,c in items }",
     "wrappedOffset": 0
   },
   {
@@ -49989,7 +50138,7 @@
       },
       "$nodeHandle": 4
     },
-    "expectedOutput": "{ a[b][c]for a,b,c in items }"
+    "expectedOutput": "{ a[b] [c]for a,b,c in items }"
   },
   {
     "kind": "roundtrip",
@@ -49997,9 +50146,9 @@
     "sourceIn": "{a[b][c] for a, b, c in items}",
     "pattern": "set_comprehension",
     "edits": [],
-    "expectedSourceOut": "{ a[b][c]for a,b,c in items }",
+    "expectedSourceOut": "{ a[b] [c]for a,b,c in items }",
     "expectedReparseTree": "(set_comprehension body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier))) right: (identifier))))",
-    "wrappedText": "_ = { a[b][c]for a,b,c in items }",
+    "wrappedText": "_ = { a[b] [c]for a,b,c in items }",
     "wrappedOffset": 4
   },
   {
@@ -50121,7 +50270,7 @@
       "$nodeHandle": 5,
       "_subscript_trailing_sep": false
     },
-    "expectedOutput": "a[b][c]"
+    "expectedOutput": "a[b] [c]"
   },
   {
     "kind": "roundtrip",
@@ -50129,9 +50278,9 @@
     "sourceIn": "a[b][c]",
     "pattern": "subscript",
     "edits": [],
-    "expectedSourceOut": "a[b][c]",
+    "expectedSourceOut": "a[b] [c]",
     "expectedReparseTree": "(subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier))",
-    "wrappedText": "[a[b][c]]",
+    "wrappedText": "[a[b] [c]]",
     "wrappedOffset": 1
   },
   {
@@ -50914,7 +51063,7 @@
         "$nodeHandle": 67
       }
     },
-    "expectedOutput": "(a[b][c]for a,b,c in items)"
+    "expectedOutput": "(a[b] [c]for a,b,c in items)"
   },
   {
     "kind": "roundtrip",
@@ -50922,9 +51071,9 @@
     "sourceIn": "(a[b][c] for a, b, c in items)",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "(a[b][c]for a,b,c in items)",
+    "expectedSourceOut": "(a[b] [c]for a,b,c in items)",
     "expectedReparseTree": "(expression_statement (generator_expression body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier))) right: (identifier)))))",
-    "wrappedText": "(a[b][c]for a,b,c in items)",
+    "wrappedText": "(a[b] [c]for a,b,c in items)",
     "wrappedOffset": 0
   },
   {
@@ -51293,7 +51442,7 @@
       },
       "$nodeHandle": 6
     },
-    "expectedOutput": "(a[b][c]for a,b,c in items)"
+    "expectedOutput": "(a[b] [c]for a,b,c in items)"
   },
   {
     "kind": "roundtrip",
@@ -51301,9 +51450,9 @@
     "sourceIn": "(a[b][c] for a, b, c in items)",
     "pattern": "generator_expression",
     "edits": [],
-    "expectedSourceOut": "(a[b][c]for a,b,c in items)",
+    "expectedSourceOut": "(a[b] [c]for a,b,c in items)",
     "expectedReparseTree": "(generator_expression body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier))) right: (identifier))))",
-    "wrappedText": "_ = (a[b][c]for a,b,c in items)",
+    "wrappedText": "_ = (a[b] [c]for a,b,c in items)",
     "wrappedOffset": 4
   },
   {
@@ -51568,7 +51717,7 @@
       "$nodeHandle": 7,
       "_subscript_trailing_sep": false
     },
-    "expectedOutput": "a[b][c]"
+    "expectedOutput": "a[b] [c]"
   },
   {
     "kind": "roundtrip",
@@ -51576,9 +51725,9 @@
     "sourceIn": "a[b][c]",
     "pattern": "subscript",
     "edits": [],
-    "expectedSourceOut": "a[b][c]",
+    "expectedSourceOut": "a[b] [c]",
     "expectedReparseTree": "(subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier))",
-    "wrappedText": "[a[b][c]]",
+    "wrappedText": "[a[b] [c]]",
     "wrappedOffset": 1
   },
   {
@@ -58879,7 +59028,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "match=2\nmatch,a=2,3\nmatch:int=secret\nx,match=2,\"hey, what's up?\"\n*match,last=[1,2,3]\ndef foo(**match):pass"
+    "expectedOutput": "match=2\nmatch,a=2,3\nmatch:int=secret\nx,match=2,\"hey, what's up?\"\n*match,last= [1,2,3]\ndef foo(**match):pass"
   },
   {
     "kind": "roundtrip",
@@ -58887,9 +59036,9 @@
     "sourceIn": "match = 2\nmatch, a = 2, 3\nmatch: int = secret\nx, match = 2, \"hey, what's up?\"\n*match, last = [1, 2, 3]\ndef foo(**match): pass",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match=2\nmatch,a=2,3\nmatch:int=secret\nx,match=2,\"hey, what's up?\"\n*match,last=[1,2,3]\ndef foo(**match):pass",
+    "expectedSourceOut": "match=2\nmatch,a=2,3\nmatch:int=secret\nx,match=2,\"hey, what's up?\"\n*match,last= [1,2,3]\ndef foo(**match):pass",
     "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (integer)))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (integer)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_typed type: (type (identifier)) right: (identifier)))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (string string_start: (string_start) content: (string_content) string_end: (string_end))))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (pattern_list (list_splat_pattern (identifier)) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (list (element_list element: (integer) element: (integer) element: (integer)))))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (dictionary_splat_pattern (identifier)))) body: (simple_statements simple_statement: (pass_statement) (newline))))",
-    "wrappedText": "match=2\nmatch,a=2,3\nmatch:int=secret\nx,match=2,\"hey, what's up?\"\n*match,last=[1,2,3]\ndef foo(**match):pass",
+    "wrappedText": "match=2\nmatch,a=2,3\nmatch:int=secret\nx,match=2,\"hey, what's up?\"\n*match,last= [1,2,3]\ndef foo(**match):pass",
     "wrappedOffset": 0
   },
   {
@@ -59341,7 +59490,7 @@
         }
       }
     },
-    "expectedOutput": "*match,last=[1,2,3]"
+    "expectedOutput": "*match,last= [1,2,3]"
   },
   {
     "kind": "roundtrip",
@@ -59349,9 +59498,9 @@
     "sourceIn": "*match, last = [1, 2, 3]",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "*match,last=[1,2,3]",
+    "expectedSourceOut": "*match,last= [1,2,3]",
     "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (list_splat_pattern (identifier)) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (list (element_list element: (integer) element: (integer) element: (integer))))))",
-    "wrappedText": "*match,last=[1,2,3]",
+    "wrappedText": "*match,last= [1,2,3]",
     "wrappedOffset": 0
   },
   {
@@ -59753,7 +59902,7 @@
         "$nodeHandle": 125
       }
     },
-    "expectedOutput": "*match,last=[1,2,3]"
+    "expectedOutput": "*match,last= [1,2,3]"
   },
   {
     "kind": "roundtrip",
@@ -59761,9 +59910,9 @@
     "sourceIn": "*match, last = [1, 2, 3]",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "*match,last=[1,2,3]",
+    "expectedSourceOut": "*match,last= [1,2,3]",
     "expectedReparseTree": "(assignment left: (pattern_list (list_splat_pattern (identifier)) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (list (element_list element: (integer) element: (integer) element: (integer)))))",
-    "wrappedText": "*match,last=[1,2,3]",
+    "wrappedText": "*match,last= [1,2,3]",
     "wrappedOffset": 0
   },
   {
@@ -60225,7 +60374,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "a=[match]\nmatch=[match]"
+    "expectedOutput": "a= [match]\nmatch= [match]"
   },
   {
     "kind": "roundtrip",
@@ -60233,9 +60382,9 @@
     "sourceIn": "a = [match]\nmatch = [match]",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "a=[match]\nmatch=[match]",
+    "expectedSourceOut": "a= [match]\nmatch= [match]",
     "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (list (element_list element: (identifier)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (list (element_list element: (identifier)))))) (newline)))",
-    "wrappedText": "a=[match]\nmatch=[match]",
+    "wrappedText": "a= [match]\nmatch= [match]",
     "wrappedOffset": 0
   },
   {
@@ -60303,7 +60452,7 @@
         }
       }
     },
-    "expectedOutput": "a=[match]"
+    "expectedOutput": "a= [match]"
   },
   {
     "kind": "roundtrip",
@@ -60311,9 +60460,9 @@
     "sourceIn": "a = [match]",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "a=[match]",
+    "expectedSourceOut": "a= [match]",
     "expectedReparseTree": "(expression_statement (assignment left: (identifier) (assignment_eq right: (list (element_list element: (identifier))))))",
-    "wrappedText": "a=[match]",
+    "wrappedText": "a= [match]",
     "wrappedOffset": 0
   },
   {
@@ -60381,7 +60530,7 @@
         }
       }
     },
-    "expectedOutput": "match=[match]"
+    "expectedOutput": "match= [match]"
   },
   {
     "kind": "roundtrip",
@@ -60389,9 +60538,9 @@
     "sourceIn": "match = [match]",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "match=[match]",
+    "expectedSourceOut": "match= [match]",
     "expectedReparseTree": "(expression_statement (assignment left: (identifier) (assignment_eq right: (list (element_list element: (identifier))))))",
-    "wrappedText": "match=[match]",
+    "wrappedText": "match= [match]",
     "wrappedOffset": 0
   },
   {
@@ -60449,7 +60598,7 @@
         "$nodeHandle": 33
       }
     },
-    "expectedOutput": "a=[match]"
+    "expectedOutput": "a= [match]"
   },
   {
     "kind": "roundtrip",
@@ -60457,9 +60606,9 @@
     "sourceIn": "a = [match]",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "a=[match]",
+    "expectedSourceOut": "a= [match]",
     "expectedReparseTree": "(assignment left: (identifier) (assignment_eq right: (list (element_list element: (identifier)))))",
-    "wrappedText": "a=[match]",
+    "wrappedText": "a= [match]",
     "wrappedOffset": 0
   },
   {
@@ -60517,7 +60666,7 @@
         "$nodeHandle": 36
       }
     },
-    "expectedOutput": "match=[match]"
+    "expectedOutput": "match= [match]"
   },
   {
     "kind": "roundtrip",
@@ -60525,9 +60674,9 @@
     "sourceIn": "match = [match]",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "match=[match]",
+    "expectedSourceOut": "match= [match]",
     "expectedReparseTree": "(assignment left: (identifier) (assignment_eq right: (list (element_list element: (identifier)))))",
-    "wrappedText": "match=[match]",
+    "wrappedText": "match= [match]",
     "wrappedOffset": 0
   },
   {
@@ -61956,7 +62105,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "a=[case]\ncase=[case]\njust_in_case=call_me(case=True)"
+    "expectedOutput": "a= [case]\ncase= [case]\njust_in_case=call_me(case=True)"
   },
   {
     "kind": "roundtrip",
@@ -61964,9 +62113,9 @@
     "sourceIn": "a = [case]\ncase = [case]\njust_in_case = call_me(case=True)",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "a=[case]\ncase=[case]\njust_in_case=call_me(case=True)",
+    "expectedSourceOut": "a= [case]\ncase= [case]\njust_in_case=call_me(case=True)",
     "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (list (element_list element: (identifier)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (list (element_list element: (identifier)))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (keyword_argument name: (identifier) value: (true)))))))) (newline)))",
-    "wrappedText": "a=[case]\ncase=[case]\njust_in_case=call_me(case=True)",
+    "wrappedText": "a= [case]\ncase= [case]\njust_in_case=call_me(case=True)",
     "wrappedOffset": 0
   },
   {
@@ -62034,7 +62183,7 @@
         }
       }
     },
-    "expectedOutput": "a=[case]"
+    "expectedOutput": "a= [case]"
   },
   {
     "kind": "roundtrip",
@@ -62042,9 +62191,9 @@
     "sourceIn": "a = [case]",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "a=[case]",
+    "expectedSourceOut": "a= [case]",
     "expectedReparseTree": "(expression_statement (assignment left: (identifier) (assignment_eq right: (list (element_list element: (identifier))))))",
-    "wrappedText": "a=[case]",
+    "wrappedText": "a= [case]",
     "wrappedOffset": 0
   },
   {
@@ -62112,7 +62261,7 @@
         }
       }
     },
-    "expectedOutput": "case=[case]"
+    "expectedOutput": "case= [case]"
   },
   {
     "kind": "roundtrip",
@@ -62120,9 +62269,9 @@
     "sourceIn": "case = [case]",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "case=[case]",
+    "expectedSourceOut": "case= [case]",
     "expectedReparseTree": "(expression_statement (assignment left: (identifier) (assignment_eq right: (list (element_list element: (identifier))))))",
-    "wrappedText": "case=[case]",
+    "wrappedText": "case= [case]",
     "wrappedOffset": 0
   },
   {
@@ -62283,7 +62432,7 @@
         "$nodeHandle": 55
       }
     },
-    "expectedOutput": "a=[case]"
+    "expectedOutput": "a= [case]"
   },
   {
     "kind": "roundtrip",
@@ -62291,9 +62440,9 @@
     "sourceIn": "a = [case]",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "a=[case]",
+    "expectedSourceOut": "a= [case]",
     "expectedReparseTree": "(assignment left: (identifier) (assignment_eq right: (list (element_list element: (identifier)))))",
-    "wrappedText": "a=[case]",
+    "wrappedText": "a= [case]",
     "wrappedOffset": 0
   },
   {
@@ -62351,7 +62500,7 @@
         "$nodeHandle": 58
       }
     },
-    "expectedOutput": "case=[case]"
+    "expectedOutput": "case= [case]"
   },
   {
     "kind": "roundtrip",
@@ -62359,9 +62508,9 @@
     "sourceIn": "case = [case]",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "case=[case]",
+    "expectedSourceOut": "case= [case]",
     "expectedReparseTree": "(assignment left: (identifier) (assignment_eq right: (list (element_list element: (identifier)))))",
-    "wrappedText": "case=[case]",
+    "wrappedText": "case= [case]",
     "wrappedOffset": 0
   },
   {
@@ -85909,7 +86058,7 @@
                             "$named": true,
                             "_element": [
                               {
-                                "$type": 221,
+                                "$type": 156,
                                 "$source": 0,
                                 "$named": true,
                                 "$other": [
@@ -85922,9 +86071,10 @@
                                 },
                                 "$nodeHandle": 141,
                                 "_content": {
-                                  "$type": 180,
+                                  "$type": 148,
                                   "$source": 0,
                                   "$named": true,
+                                  "_expression": "a",
                                   "$other": [
                                     11
                                   ],
@@ -85932,8 +86082,7 @@
                                     "start": 186,
                                     "end": 188
                                   },
-                                  "$nodeHandle": 142,
-                                  "_content": "a"
+                                  "$nodeHandle": 142
                                 }
                               }
                             ],
@@ -85999,7 +86148,7 @@
                             "$named": true,
                             "_element": [
                               {
-                                "$type": 221,
+                                "$type": 156,
                                 "$source": 0,
                                 "$named": true,
                                 "$other": [
@@ -86012,7 +86161,7 @@
                                 },
                                 "$nodeHandle": 147,
                                 "_content": {
-                                  "$type": 221,
+                                  "$type": 156,
                                   "$source": 0,
                                   "$named": true,
                                   "$other": [
@@ -86025,9 +86174,10 @@
                                   },
                                   "$nodeHandle": 148,
                                   "_content": {
-                                    "$type": 180,
+                                    "$type": 148,
                                     "$source": 0,
                                     "$named": true,
+                                    "_expression": "a",
                                     "$other": [
                                       11
                                     ],
@@ -86035,8 +86185,7 @@
                                       "start": 197,
                                       "end": 199
                                     },
-                                    "$nodeHandle": 149,
-                                    "_content": "a"
+                                    "$nodeHandle": 149
                                   }
                                 }
                               }
@@ -86191,7 +86340,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "def e((a,b)):\n  return(a,b)\ndef e(*list:str):\n  pass\ndef e(**list:str):\n  pass\ndef f():\n  nonlocal a\ndef g(h,i,/,j,*,k=100,**kwarg):\n  return h,i,j,k,kwarg\ndef h(*a):\n  i((*a))\n  j(((*a)))\ndef foo():\n  pass",
-    "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (tuple_pattern (pattern_group pattern: (identifier) pattern: (identifier))))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (return_statement (tuple (element_list element: (identifier) element: (identifier)))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (typed_parameter (list_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (typed_parameter (dictionary_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (nonlocal_statement identifier: (identifier)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (identifier) parameter: (identifier) parameter: (positional_separator) parameter: (identifier) parameter: (keyword_separator) parameter: (default_parameter name: (identifier) value: (integer)) parameter: (dictionary_splat_pattern (identifier)))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (return_statement (expression_list (identifier) tail: (expression_list_group1 (identifier) (identifier) (identifier) (identifier)))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (list_splat_pattern (identifier)))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (parenthesized_expression (list_splat_pattern (identifier))))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (parenthesized_expression (parenthesized_expression (list_splat_pattern (identifier)))))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline))))))",
+    "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (tuple_pattern (pattern_group pattern: (identifier) pattern: (identifier))))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (return_statement (tuple (element_list element: (identifier) element: (identifier)))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (typed_parameter (list_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (typed_parameter (dictionary_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (nonlocal_statement identifier: (identifier)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (identifier) parameter: (identifier) parameter: (positional_separator) parameter: (identifier) parameter: (keyword_separator) parameter: (default_parameter name: (identifier) value: (integer)) parameter: (dictionary_splat_pattern (identifier)))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (return_statement (expression_list (identifier) tail: (expression_list_group1 (identifier) (identifier) (identifier) (identifier)))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (list_splat_pattern (identifier)))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (parenthesized_list_splat (list_splat expression: (identifier))))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (parenthesized_list_splat (parenthesized_expression (list_splat expression: (identifier)))))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline))))))",
     "wrappedText": "def e((a,b)):\n  return(a,b)\ndef e(*list:str):\n  pass\ndef e(**list:str):\n  pass\ndef f():\n  nonlocal a\ndef g(h,i,/,j,*,k=100,**kwarg):\n  return h,i,j,k,kwarg\ndef h(*a):\n  i((*a))\n  j(((*a)))\ndef foo():\n  pass",
     "wrappedOffset": 0
   },
@@ -87063,7 +87212,7 @@
                         "$named": true,
                         "_element": [
                           {
-                            "$type": 221,
+                            "$type": 156,
                             "$source": 0,
                             "$named": true,
                             "$other": [
@@ -87076,9 +87225,10 @@
                             },
                             "$nodeHandle": 211,
                             "_content": {
-                              "$type": 180,
+                              "$type": 148,
                               "$source": 0,
                               "$named": true,
+                              "_expression": "a",
                               "$other": [
                                 11
                               ],
@@ -87086,8 +87236,7 @@
                                 "start": 186,
                                 "end": 188
                               },
-                              "$nodeHandle": 212,
-                              "_content": "a"
+                              "$nodeHandle": 212
                             }
                           }
                         ],
@@ -87153,7 +87302,7 @@
                         "$named": true,
                         "_element": [
                           {
-                            "$type": 221,
+                            "$type": 156,
                             "$source": 0,
                             "$named": true,
                             "$other": [
@@ -87166,7 +87315,7 @@
                             },
                             "$nodeHandle": 217,
                             "_content": {
-                              "$type": 221,
+                              "$type": 156,
                               "$source": 0,
                               "$named": true,
                               "$other": [
@@ -87179,9 +87328,10 @@
                               },
                               "$nodeHandle": 218,
                               "_content": {
-                                "$type": 180,
+                                "$type": 148,
                                 "$source": 0,
                                 "$named": true,
+                                "_expression": "a",
                                 "$other": [
                                   11
                                 ],
@@ -87189,8 +87339,7 @@
                                   "start": 197,
                                   "end": 199
                                 },
-                                "$nodeHandle": 219,
-                                "_content": "a"
+                                "$nodeHandle": 219
                               }
                             }
                           }
@@ -87260,7 +87409,7 @@
     "pattern": "function_definition",
     "edits": [],
     "expectedSourceOut": "def h(*a):\n  i((*a))\n  j(((*a)))",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (list_splat_pattern (identifier)))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (parenthesized_expression (list_splat_pattern (identifier))))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (parenthesized_expression (parenthesized_expression (list_splat_pattern (identifier)))))))) (newline)))))",
+    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (list_splat_pattern (identifier)))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (parenthesized_list_splat (list_splat expression: (identifier))))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (parenthesized_list_splat (parenthesized_expression (list_splat expression: (identifier)))))))) (newline)))))",
     "wrappedText": "def h(*a):\n  i((*a))\n  j(((*a)))",
     "wrappedOffset": 0
   },

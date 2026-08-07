@@ -4268,9 +4268,21 @@ var grammar_sittir_default = grammar(
         }
       },
       rules: {
+        // Base grammar aliases this arm (`alias($.list_splat_pattern,
+        // $.list_splat)`), making primary_expression and list_splat_pattern
+        // parse-kind-non-injective; stripping the alias below (needed so
+        // both fork this OR/AND choice arm produce a real, distinct kind)
+        // exposes the declared `[primary_expression, list_splat_pattern]`
+        // GLR conflict as two visibly different kinds instead of one
+        // display name, with the winning fork now decided by structural
+        // tie-break noise instead of upstream's alias. `prec.dynamic(-1)`
+        // restores upstream's outcome deterministically: the expression
+        // fork (list_splat) wins every genuine ambiguity — true pattern
+        // contexts (`a, *rest = xs`) are unaffected since the expression
+        // fork dies at `=` there, leaving no tie to break.
         primary_expression: ($, original) => {
           let base2 = original.members;
-          return choice(...base2.slice(0, -1), $.list_splat_pattern);
+          return choice(...base2.slice(0, -1), prec.dynamic(-1, $.list_splat_pattern));
         },
         _except_clause_as: ($) => seq(field("value", $.expression), optional($._except_clause_as_optional1)),
         _except_clause_as_optional1: ($) => seq("as", field("alias", $.expression)),

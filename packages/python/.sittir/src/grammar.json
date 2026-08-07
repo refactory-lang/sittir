@@ -3296,8 +3296,12 @@
           "name": "ellipsis"
         },
         {
-          "type": "SYMBOL",
-          "name": "list_splat_pattern"
+          "type": "PREC_DYNAMIC",
+          "value": -1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "list_splat_pattern"
+          }
         }
       ]
     },

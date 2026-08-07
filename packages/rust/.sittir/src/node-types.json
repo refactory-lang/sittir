@@ -5195,6 +5195,16 @@
             "named": true
           }
         ]
+      },
+      "string_open": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_open",
+            "named": true
+          }
+        ]
       }
     }
   },
@@ -7356,6 +7366,10 @@
   },
   {
     "type": "string_content",
+    "named": true
+  },
+  {
+    "type": "string_open",
     "named": true
   },
   {

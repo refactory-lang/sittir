@@ -933,7 +933,13 @@ describe('extern_modifier', () => {
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.externModifier({ $type: TSKindId.StringLiteral, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.externModifier({
+			$type: TSKindId.StringLiteral,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_string_open: { $type: TSKindId.StringLiteralOpen, $text: 'test', $source: 2, $named: true } as any
+		} as any);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -2449,13 +2455,17 @@ describe('integer_literal', () => {
 
 describe('string_literal', () => {
 	it('factory produces correct type', () => {
-		const node = ir.stringLiteral({});
+		const node = ir.stringLiteral({
+			stringOpen: { $type: TSKindId.StringLiteralOpen, $text: 'test', $source: 2, $named: true } as any
+		});
 		expect(node.$type).toBe(TSKindId.StringLiteral);
 		expect(node.$source).toBe(2);
 	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.stringLiteral({});
-		expect(() => node.$render!()).not.toThrow();
+	it('render produces non-empty string', () => {
+		const node = ir.stringLiteral({
+			stringOpen: { $type: TSKindId.StringLiteralOpen, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

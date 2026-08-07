@@ -2708,10 +2708,15 @@ export function coerceToIntegerLiteral(input: string | T.IntegerLiteral): Return
 	return F.buildIntegerLiteral(input as Parameters<typeof F.buildIntegerLiteral>[0]);
 }
 
-export function coerceToStringLiteral(input?: T.StringLiteral.Loose): ReturnType<typeof F.buildStringLiteral> {
-	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildStringLiteral>;
+export function coerceToStringLiteral(input: T.StringLiteral.Loose): ReturnType<typeof F.buildStringLiteral> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildStringLiteral>;
 	return F.buildStringLiteral({
-		elements: _resolveMany<T.EscapeSequence | T.StringContent>(input?.elements, _K48, _K0)
+		stringOpen: _requireField(
+			'string_literal',
+			'stringOpen',
+			_resolveOneLeaf<T.StringLiteralOpen>(input.stringOpen, '_string_literal_open')
+		),
+		elements: _resolveMany<T.EscapeSequence | T.StringContent>(input.elements, _K48, _K0)
 	});
 }
 

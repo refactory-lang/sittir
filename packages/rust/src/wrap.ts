@@ -2858,7 +2858,7 @@ export function wrapExternCrateDeclaration(data: T.ExternCrateDeclaration, tree:
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'crate', span: (data as _NodeData).$span }
 				),
-				{ crate: 136 }
+				{ crate: 135 }
 			),
 			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 				tree,
@@ -4265,7 +4265,7 @@ export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'self', span: (data as _NodeData).$span }
 				),
-				{ self: 134 }
+				{ self: 133 }
 			),
 
 			reference() {
@@ -8681,6 +8681,12 @@ export function wrapStringLiteral(data: T.StringLiteral, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.StringLiteral as const,
+			_string_open: normalizeSingularWrapSlot(data._string_open, 'string_open', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'string_open',
+				span: (data as _NodeData).$span
+			}),
 			_elements: normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
 				tree,
 				nodeType: data.$type,
@@ -8688,6 +8694,11 @@ export function wrapStringLiteral(data: T.StringLiteral, tree: TreeHandle) {
 				span: (data as _NodeData).$span
 			}),
 
+			stringOpen() {
+				return drillAs<T.StringLiteralOpen>(this._string_open, tree, [
+					{ from: 'string_open', to: '_string_literal_open' }
+				]);
+			},
 			elements() {
 				return drillInAll<T.EscapeSequence | T.StringContent>(
 					this._elements as readonly (T.EscapeSequence | T.StringContent)[] | undefined,
@@ -8695,6 +8706,8 @@ export function wrapStringLiteral(data: T.StringLiteral, tree: TreeHandle) {
 				);
 			},
 			$with: {
+				stringOpen: (v: NonNullable<T.StringLiteral['_string_open']>) =>
+					wrapStringLiteral({ ...data, _string_open: v }, tree),
 				elements: (...v: NonNullable<T.StringLiteral['_elements']>[number][]) =>
 					wrapStringLiteral({ ...data, _elements: v }, tree)
 			}
@@ -10084,7 +10097,7 @@ export function wrapRangeExpressionBinary(data: T.RangeExpressionBinary, tree: T
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '..': 106, '...': 75, '..=': 141 }
+				{ '..': 106, '...': 75, '..=': 140 }
 			),
 			_end: normalizeSingularWrapSlot(data._end, 'end', true, data.$type, {
 				tree,
@@ -10211,7 +10224,7 @@ export function wrapRangePatternPrefix(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '..=': 141, '..': 106 }
+				{ '..=': 140, '..': 106 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -10261,7 +10274,7 @@ export function wrapRangePatternLeftWithRight(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '...': 75, '..=': 141, '..': 106 }
+				{ '...': 75, '..=': 140, '..': 106 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -10370,7 +10383,7 @@ export function wrapVisibilityModifierPub(data: T.VisibilityModifierPub, tree: T
 					slotName: 'pub',
 					span: (data as _NodeData).$span
 				}),
-				{ pub: 142 }
+				{ pub: 141 }
 			),
 			_visibility_modifier_group1: normalizeSingularWrapSlot(
 				data._visibility_modifier_group1,
@@ -12218,6 +12231,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_token_keywords: (d) => ({ ...d, $type: TSKindId.TokenKeywords as const }),
 	_use_wildcard_clause: (d, t) => wrapUseWildcardClause(d as unknown as T.UseWildcardClause, t),
 	_wildcard_pattern: (d) => ({ ...d, $type: TSKindId.WildcardPattern as const }),
+	_string_literal_open: (d) => ({ ...d, $type: TSKindId.StringLiteralOpen as const }),
 	_reference_expression_raw_const: (d) => ({ ...d, $type: TSKindId.ReferenceExpressionRawConst as const }),
 	_reference_expression_raw_mut: (d, t) =>
 		wrapReferenceExpressionRawMut(d as unknown as T.ReferenceExpressionRawMut, t),
@@ -12349,6 +12363,7 @@ const _aliasTargetToSource: Record<string, string> = {
 	reference_expression_raw_mut: '_reference_expression_raw_mut',
 	slice_pattern_group1: '_slice_pattern_group1',
 	statement: '_statement',
+	string_literal_open: '_string_literal_open',
 	struct_item_brace: '_struct_item_brace',
 	struct_item_tuple: '_struct_item_tuple',
 	struct_pattern_group1: '_struct_pattern_group1',

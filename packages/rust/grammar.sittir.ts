@@ -245,16 +245,14 @@ export default grammar(
 					'1/1': variant('mut')
 				},
 
-				// string_literal deliberately NOT fielded: its opening token is
-				// `alias(/[bc]?"/, '"')` — a PATTERN carrying the b"/c" byte-/C-string
-				// prefixes, aliased to the constant '"'. Field-promoting it was tried
-				// (2026-07-28) and does NOT recover the prefix: slot classification
-				// keys off the ALIAS display string, minting a fixed `dquote`
-				// TERMINAL whose wire encoding is a presence boolean, so the render
-				// still emits the static '"' and c"..." renders as "..." (1 corpus
-				// AST mismatch). Needs a classification fix (alias-of-PATTERN whose
-				// regex isn't the alias string is content-bearing) — see specs/026
-				// progress notes.
+				// string_literal's opening token carries the b"/c" byte-/C-string
+				// prefix (`alias(/[bc]?"/, $.string_open)` in `rules:` below) — a
+				// NAMED alias, so its real per-occurrence text (`c"`/`b"`/`"`)
+				// survives instead of collapsing to the base grammar's anonymous
+				// `alias(/[bc]?"/, '"')` display string.
+				string_literal: {
+					0: field('string_open')
+				},
 
 				// raw_string_literal: 3 field(s)
 				raw_string_literal: {
@@ -470,6 +468,19 @@ export default grammar(
 					}),
 
 				_range_expression_bare: ($) => '..',
+
+				// string_literal's opening token is `alias(/[bc]?"/, '"')` in the
+				// base grammar — an UNNAMED alias, so the b"/c" prefix distinction
+				// collapses to the fixed display string '"' before the compiler
+				// ever sees it. Same fix as `_wildcard_pattern`/`_range_expression_bare`
+				// above: alias the pattern into its own real, named node so its
+				// per-occurrence text survives.
+				string_literal: ($, original) =>
+					transform(original, {
+						'0': alias($._string_literal_open, $.string_open)
+					}),
+
+				_string_literal_open: ($) => /[bc]?"/,
 
 				_reference_expression_raw_const: ($) => seq('raw', 'const'),
 				_reference_expression_raw_mut: ($) => seq('raw', $.mutable_specifier),

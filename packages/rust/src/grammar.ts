@@ -1790,6 +1790,7 @@ export type RustGrammar = {
 				required: false;
 				types: [{ type: 'escape_sequence'; named: true }, { type: 'string_content'; named: true }];
 			};
+			string_open: { multiple: false; required: true; types: [{ type: 'string_open'; named: true }] };
 		};
 	};
 	readonly struct_expression: {
@@ -2565,6 +2566,7 @@ export type RustGrammar = {
 	readonly _anonymous_static: { type: 'static'; named: false };
 	readonly _anonymous_stmt: { type: 'stmt'; named: false };
 	readonly string_content: { type: 'string_content'; named: true };
+	readonly string_open: { type: 'string_open'; named: true };
 	readonly _anonymous_struct: { type: 'struct'; named: false };
 	readonly super: { type: 'super'; named: true };
 	readonly _anonymous_trait: { type: 'trait'; named: false };

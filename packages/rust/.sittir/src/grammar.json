@@ -8243,13 +8243,20 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "ALIAS",
+          "type": "FIELD",
+          "name": "string_open",
           "content": {
-            "type": "PATTERN",
-            "value": "[bc]?\""
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_string_literal_open"
+            },
+            "named": true,
+            "value": "string_open"
           },
-          "named": false,
-          "value": "\""
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "FIELD",
@@ -10800,6 +10807,10 @@
     "_range_expression_bare": {
       "type": "STRING",
       "value": ".."
+    },
+    "_string_literal_open": {
+      "type": "PATTERN",
+      "value": "[bc]?\""
     },
     "_reference_expression_raw_const": {
       "type": "SEQ",

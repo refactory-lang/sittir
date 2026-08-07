@@ -18,6 +18,14 @@
 pub struct WordMatcher {
     ascii: [bool; 128],
     unicode_fallback: fn(char) -> bool,
+    /// Characters that participate in some multi-character anonymous token
+    /// of this grammar (e.g. rust's `.` and `=` from `..`/`..=`/`=>`).
+    /// Two such characters adjacent at a write seam risk the SAME
+    /// maximal-munch collision the word-class check guards against: a
+    /// longer real token could start where the two writes meet. Derived at
+    /// emit time from the grammar's own anonymous-literal inventory — see
+    /// `WordMatcher::new` callers — never hand-picked.
+    symbol_ascii: [bool; 128],
 }
 
 impl WordMatcher {
@@ -25,7 +33,13 @@ impl WordMatcher {
         Self {
             ascii,
             unicode_fallback,
+            symbol_ascii: [false; 128],
         }
+    }
+
+    pub const fn with_symbol_class(mut self, symbol_ascii: [bool; 128]) -> Self {
+        self.symbol_ascii = symbol_ascii;
+        self
     }
 
     /// The default identifier class shared by the rust/typescript/python
@@ -44,6 +58,11 @@ impl WordMatcher {
         } else {
             (self.unicode_fallback)(c)
         }
+    }
+
+    #[inline]
+    pub fn is_symbol_char(&self, c: char) -> bool {
+        (c as u32) < 128 && self.symbol_ascii[c as usize]
     }
 }
 
@@ -82,7 +101,18 @@ impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
             return Ok(()); // empty write: context untouched
         };
         if let Some(last) = self.last {
-            if self.word.is_word(last) && self.word.is_word(first) {
+            let word_seam = self.word.is_word(last) && self.word.is_word(first);
+            // Identical-char seams (e.g. `>` closing nested generics in
+            // `Vec<Vec<T>>`) are excluded: a real doubled-char token like
+            // rust's `>>` shift operator only exists as its own grammar
+            // rule with its own disambiguation context, not as a blind
+            // concatenation hazard — spacing every repeated symbol char
+            // would make already-common, unambiguous constructs noisy for
+            // no correctness gain.
+            let symbol_seam = last != first
+                && self.word.is_symbol_char(last)
+                && self.word.is_symbol_char(first);
+            if word_seam || symbol_seam {
                 self.inner.write_str(" ")?;
             }
         }
@@ -141,5 +171,55 @@ mod tests {
     fn digits_and_underscore_are_word() {
         assert_eq!(spaced(&["x1", "y2"]), "x1 y2");
         assert_eq!(spaced(&["_a", "_b"]), "_a _b");
+    }
+
+    // A small symbol class covering rust's `.`/`=`/`>` — enough to exercise
+    // seam behavior without depending on the real emitted per-grammar table.
+    fn with_dot_eq_gt_symbol_class() -> WordMatcher {
+        let mut ascii = [false; 128];
+        ascii[b'.' as usize] = true;
+        ascii[b'=' as usize] = true;
+        ascii[b'>' as usize] = true;
+        WordMatcher::new(default_ascii_table(), char::is_alphanumeric).with_symbol_class(ascii)
+    }
+
+    fn spaced_with(word: &WordMatcher, parts: &[&str]) -> String {
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, word);
+        for p in parts {
+            w.write_str(p).unwrap();
+        }
+        out
+    }
+
+    #[test]
+    fn symbol_symbol_seam_inserts() {
+        let word = with_dot_eq_gt_symbol_class();
+        // `d..` (bare range-to-end pattern) immediately followed by `=>`
+        // would re-lex as `..=` + a dangling `>` without this insert.
+        assert_eq!(spaced_with(&word, &["..", "=>"]), ".. =>");
+    }
+
+    #[test]
+    fn identical_symbol_seam_does_not_insert() {
+        let word = with_dot_eq_gt_symbol_class();
+        // Closing nested generics (`Vec<Vec<T>>`) must stay tight — a real
+        // doubled-char token like `>>` only exists in its own disambiguated
+        // grammar rule, not as a blind concatenation hazard.
+        assert_eq!(spaced_with(&word, &[">", ">"]), ">>");
+    }
+
+    #[test]
+    fn symbol_word_seam_does_not_insert() {
+        let word = with_dot_eq_gt_symbol_class();
+        assert_eq!(spaced_with(&word, &["=>", "a"]), "=>a");
+        assert_eq!(spaced_with(&word, &["pub", "("]), "pub(");
+    }
+
+    #[test]
+    fn default_matcher_has_no_symbol_class() {
+        // WordMatcher::default_ident() carries an empty symbol class —
+        // grammars opt in via with_symbol_class at emit time.
+        assert_eq!(spaced(&["..", "=>"]), "..=>");
     }
 }

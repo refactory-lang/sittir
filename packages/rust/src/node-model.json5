@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 362,
+  "nodeCount": 363,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -408,6 +408,9 @@
     "or_pattern.content": {
       "or_pattern_binary": "_or_pattern_binary",
       "or_pattern_prefix": "_or_pattern_prefix"
+    },
+    "string_literal.string_open": {
+      "string_open": "_string_literal_open"
     },
     "raw_string_literal.string_content": {
       "string_content": "raw_string_literal_content"
@@ -2858,6 +2861,13 @@
       }
     },
     "string_literal": {
+      "string_open": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "elements": {
         "unnamed": false,
         "slotCount": 1,
@@ -7161,6 +7171,16 @@
         "union_item",
         "use_declaration"
       ]
+    },
+    {
+      "kind": "_string_literal_open",
+      "modelType": "pattern",
+      "typeName": "StringLiteralOpen",
+      "factoryName": "stringLiteralOpen",
+      "irKey": "stringLiteralOpen",
+      "hidden": false,
+      "pattern": "[bc]?\"",
+      "factoryShape": "text"
     },
     {
       "kind": "_struct_item_brace",
@@ -16651,6 +16671,29 @@
       "hidden": false,
       "fields": [
         {
+          "name": "string_open",
+          "propertyName": "stringOpen",
+          "paramName": "stringOpen",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_string_literal_open",
+              "parseKind": "string_open",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_string_literal_open"
+            ]
+          }
+        },
+        {
           "name": "elements",
           "propertyName": "elements",
           "paramName": "elements",
@@ -16685,6 +16728,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
+        "string_open",
         "elements"
       ]
     },

@@ -23,6 +23,7 @@ const _leafRe_buildShebang = /^(?:#![\r\f\t\v ]*([^[\n].*)?\n)/u;
 const _leafRe_buildTypeIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_buildFieldIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_buildMetavariable = /^(?:\$[a-zA-Z_]\w*)/u;
+const _leafRe_buildStringLiteralOpen = /^(?:[bc]?")/u;
 const _leafRe_buildLineCommentContent = /^(?:.*)/u;
 
 export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}) {
@@ -3763,7 +3764,8 @@ export function buildIntegerLiteral(text: string) {
 	);
 }
 
-export function buildStringLiteral(config: Partial<T.StringLiteral.Config> = {}) {
+export function buildStringLiteral(config: T.StringLiteral.Config) {
+	const _string_open = config.stringOpen;
 	const _elements = config.elements ?? [];
 	return withMethods(
 		withAccessors(
@@ -3771,13 +3773,16 @@ export function buildStringLiteral(config: Partial<T.StringLiteral.Config> = {})
 				$type: TSKindId.StringLiteral as const,
 				$source: 2 as const,
 				$named: true as const,
+				_string_open,
 				_elements,
 				$with: {
+					stringOpen: (value: T.StringLiteralOpen) => buildStringLiteral({ ...config, stringOpen: value }),
 					elements: (...values: (T.EscapeSequence | T.StringContent)[]) =>
 						buildStringLiteral({ ...config, elements: values })
 				}
 			},
 			{
+				stringOpen: () => _string_open,
 				elements: () => _elements
 			}
 		),
@@ -4582,6 +4587,22 @@ export function buildUseWildcardClause(config: T.UseWildcardClause.Config) {
 				path: () => _path
 			}
 		),
+		methodsEngine
+	);
+}
+
+export function buildStringLiteralOpen(text: string) {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_string_literal_open: text must be non-empty`);
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildStringLiteralOpen.test(text))
+		throw new Error(`_string_literal_open: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.StringLiteralOpen as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
 		methodsEngine
 	);
 }
@@ -5928,6 +5949,7 @@ export type FluentKindMap = {
 	_token_tree_punctuation: T.TokenTreePunctuation;
 	_token_keywords: T.TokenKeywords;
 	_use_wildcard_clause: T.UseWildcardClause;
+	_string_literal_open: T.StringLiteralOpen;
 	_reference_expression_raw_const: T.ReferenceExpressionRawConst;
 	_reference_expression_raw_mut: FluentNode<'_reference_expression_raw_mut', T.ReferenceExpressionRawMut.Config>;
 	_impl_item_body: FluentNode<'_impl_item_body', T.ImplItemBody.Config>;
@@ -6160,6 +6182,7 @@ export const _factoryMap = {
 	_token_tree_punctuation: buildTokenTreePunctuation,
 	_token_keywords: buildTokenKeywords,
 	_use_wildcard_clause: buildUseWildcardClause,
+	_string_literal_open: buildStringLiteralOpen,
 	_reference_expression_raw_const: buildReferenceExpressionRawConst,
 	_reference_expression_raw_mut: buildReferenceExpressionRawMut,
 	_impl_item_body: buildImplItemBody,

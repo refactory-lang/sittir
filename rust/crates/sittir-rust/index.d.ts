@@ -1980,6 +1980,7 @@ export interface StringLiteralTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _string_open: StringLiteralOpenTransport
   _elements?: Array<StringLiteralElementsTransportSlot>
 }
 
