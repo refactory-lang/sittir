@@ -532,6 +532,18 @@ function buildSlot(
 	}
 	const values: readonly NodeOrTerminal[] = stampSeparatorOnValues([...dedupedValues], separatorStr);
 
+	// A sanctioned union slot's addressable positions are every one of its
+	// arms, not just the CHOICE root — the render-rule's per-arm scan
+	// (`emitChoice`'s union-backed path in templates.ts) resolves EACH arm
+	// symbol independently via `lookupSlot`'s primary `slotByRuleId` path,
+	// so each arm's own id must also back-point to this slot. Scoped to the
+	// union-slot path only (never the general case) — a non-union rule's
+	// members belong to their OWN slots, and merging their ids in here would
+	// misroute `slotByRuleId` for them.
+	const memberIds =
+		sanctionedUnion && rule.type === CHOICE ? rule.members.map((m) => m.id).filter((id): id is string => !!id) : [];
+	const sourceRuleIds = [...(rule.id ? [rule.id] : []), ...memberIds];
+
 	return new AssembledNonterminal({
 		values,
 		fieldName: (rule as { fieldName?: string }).fieldName,
@@ -539,7 +551,7 @@ function buildSlot(
 		hasLeading,
 		trailingMode,
 		leadingMode,
-		sourceRuleIds: rule.id ? [rule.id] : [],
+		sourceRuleIds,
 		// Blind opaque passthrough — never read/branched
 		// on here or by any compiler consumer. Only a dsl-sanctioned reader
 		// (diagnostics / node-model serialization) may open this bag.

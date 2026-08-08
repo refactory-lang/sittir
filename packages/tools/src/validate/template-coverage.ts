@@ -30,7 +30,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { load } from '../codegen-surface.ts';
-import type { RawNodeEntry } from '../codegen-surface.ts';
+import type { RawNodeEntry, PolymorphVariantMap } from '../codegen-surface.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
 import { loadRulesFromPath as loadRulesFromTemplatesPath } from './templates-path.ts';
@@ -154,7 +154,8 @@ export function validateTemplateCoverage(grammar: string, templatesPath: string)
 	const grammarJson = loadGrammarJson(grammar);
 	const hoistedOuterByKind = grammarJson ? computeHoistedOuterFields(grammarJson) : new Map<string, Set<string>>();
 	const unionSlotRoutedByKind = loadUnionSlotRoutedFields(grammar);
-	const childDelegatedByKind = computeChildDelegatedFields(entries);
+	const nodeModelFacts = loadNodeModelFacts(grammar);
+	const childDelegatedByKind = computeChildDelegatedFields(entries, nodeModelFacts.factorySlots, nodeModelFacts.polymorphVariants);
 
 	const issues: CoverageIssue[] = [];
 	let total = 0;
@@ -524,41 +525,51 @@ function computeHoistedOuterFields(grammar: GrammarJson): Map<string, Set<string
 }
 
 /**
- * Compute, for each rule with a `node-types.json` `children.types` list
- * (a polymorph parent whose body is a bare CHOICE of separately-aliased
- * variant kinds — e.g. `call_expression` dispatching to
- * `call_expression_call`/`_member`/`_template_call` via `polymorphs:`
- * `variant()` labels in grammar.sittir.ts), the set of field names
- * declared on ANY of those children. Tree-sitter's own node-types.json
- * generator unions each child's fields onto the PARENT's field list too
- * (this is why `call_expression` reports `function`/`arguments`/
- * `type_arguments` as its own fields even though only its children
- * actually declare them) — the field's real storage identity on the
- * parent IS the single dispatched child, addressed by the walker's fixed
- * unnamed-PATTERN fallback name `content` (`emitScalarSlot('content')` in
- * `emitters/templates.ts`, e.g. `call_expression.jinja`: `{{ content }}`).
+ * Compute, for each kind the compiler stamped as an override-defined
+ * polymorph (`node-model.json5`'s `polymorphVariants[kind].definedBy ===
+ * 'override'` — a parent dispatching to a set of separately-aliased
+ * variant kinds via `polymorphs:` `variant()` labels in grammar.sittir.ts,
+ * e.g. `call_expression` → `call_expression_call`/`_member`/
+ * `_template_call`), the set of field names declared on ANY of those
+ * children. Tree-sitter's own node-types.json generator unions each
+ * child's fields onto the PARENT's field list too (this is why
+ * `call_expression` reports `function`/`arguments`/`type_arguments` as
+ * its own fields even though only its children actually declare them) —
+ * the field's real storage identity on the parent IS the single
+ * dispatched child, addressed by whatever `node-model.json5`'s
+ * `factorySlots[kind]` stamped as the parent's own (sole) slot name —
+ * read here, never hardcoded (that slot's name is `content` today, by
+ * convention of `emitters/templates.ts`'s unnamed-PATTERN fallback, but
+ * this reads the stamped fact rather than assuming it).
  *
  * Mirrors `unionSlotRouted`'s AND condition, not an unconditional exempt:
  * a field only counts as covered by delegation when the template also
- * references `content` itself — a template that dropped even that would
- * render nothing for this kind, a real bug, not exempt.
+ * references the parent's content slot itself — a template that dropped
+ * that too would render nothing for this kind, a real bug, not exempt.
  */
 function computeChildDelegatedFields(
-	entries: readonly RawNodeEntry[]
+	entries: readonly RawNodeEntry[],
+	factorySlots: Record<string, Record<string, unknown>>,
+	polymorphVariants: PolymorphVariantMap
 ): Map<string, { contentSlot: string; fields: Set<string> }> {
-	const CONTENT_SLOT = 'content';
 	const byType = new Map(entries.map((e) => [e.type, e]));
 	const out = new Map<string, { contentSlot: string; fields: Set<string> }>();
-	for (const entry of entries) {
-		const childTypes = entry.children?.types;
-		if (!childTypes || childTypes.length === 0) continue;
+	for (const [kind, descriptor] of Object.entries(polymorphVariants)) {
+		if (descriptor.definedBy !== 'override') continue;
+		const slotNames = Object.keys(factorySlots[kind] ?? {});
+		// The parent's own slot registry (Root 3's fix in templates.ts)
+		// only ever falls back to a single-slot owner — if this kind's
+		// factorySlots entry doesn't have exactly one slot, it isn't the
+		// content-delegation shape this exemption models.
+		if (slotNames.length !== 1) continue;
+		const contentSlot = slotNames[0]!;
 		const fields = new Set<string>();
-		for (const child of childTypes) {
-			const childFields = byType.get(child.type)?.fields;
+		for (const childType of Object.keys(descriptor.childKind)) {
+			const childFields = byType.get(childType)?.fields;
 			if (!childFields) continue;
 			for (const fname of Object.keys(childFields)) fields.add(fname);
 		}
-		if (fields.size > 0) out.set(entry.type, { contentSlot: CONTENT_SLOT, fields });
+		if (fields.size > 0) out.set(kind, { contentSlot, fields });
 	}
 	return out;
 }
@@ -767,6 +778,33 @@ function loadGrammarJson(grammar: string): GrammarJson | null {
 	const path = join(packagesDir, grammar, '.sittir', 'src', 'grammar.json');
 	if (!existsSync(path)) return null;
 	return JSON.parse(readFileSync(path, 'utf8')) as GrammarJson;
+}
+
+interface NodeModelFacts {
+	readonly factorySlots: Record<string, Record<string, unknown>>;
+	readonly polymorphVariants: PolymorphVariantMap;
+}
+
+const EMPTY_NODE_MODEL_FACTS: NodeModelFacts = { factorySlots: {}, polymorphVariants: {} };
+
+/**
+ * Load the `factorySlots` / `polymorphVariants` sections of a grammar's
+ * `node-model.json5` (`packages/<grammar>/src/`) — the same stamped facts
+ * `validate/common.ts`'s `loadNodeModel` reads for the live NodeMap-backed
+ * validators. This validator is a lightweight file reader (no live
+ * `NodeMap`, see the module doc), so it reads the two sections it needs
+ * directly and synchronously rather than pulling in that async loader.
+ * Returns empty maps when the file is unavailable — mirrors
+ * `loadGrammarJson`'s fail-soft behavior for fresh checkouts.
+ */
+function loadNodeModelFacts(grammar: string): NodeModelFacts {
+	const path = join(packagesDir, grammar, 'src', 'node-model.json5');
+	if (!existsSync(path)) return EMPTY_NODE_MODEL_FACTS;
+	const parsed = JSON.parse(readFileSync(path, 'utf8')) as Partial<NodeModelFacts>;
+	return {
+		factorySlots: parsed.factorySlots ?? {},
+		polymorphVariants: parsed.polymorphVariants ?? {}
+	};
 }
 
 interface UnionSlotRoutedDiagnostic {
