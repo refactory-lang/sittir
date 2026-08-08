@@ -302,7 +302,7 @@
       "string_double": "_string_double",
       "string_single": "_string_single"
     },
-    "template_string.content": {
+    "template_string.elements": {
       "string_fragment": "_template_chars"
     },
     "meta_property.content": {
@@ -391,7 +391,7 @@
     "_type_query_call_expression_in_type_annotation.function": {
       "member_expression": "_type_query_member_expression_in_type_annotation"
     },
-    "template_literal_type.content": {
+    "template_literal_type.elements": {
       "string_fragment": "_template_chars"
     },
     "infer_type.type_identifier": {
@@ -1156,7 +1156,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "jsx_child": {
+      "jsx_childs": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1797,7 +1797,7 @@
       }
     },
     "template_string": {
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2972,7 +2972,7 @@
       }
     },
     "template_literal_type": {
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4275,7 +4275,7 @@
       }
     },
     "_string_double": {
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4284,7 +4284,7 @@
       }
     },
     "_string_single": {
-      "content": {
+      "elements_2": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -6767,19 +6767,39 @@
     },
     {
       "kind": "_formal_parameters_group1",
-      "modelType": "separatedList",
+      "modelType": "group",
       "typeName": "FormalParametersGroup1",
-      "factoryName": "formalParametersGroup1",
+      "factoryName": "_formalParametersGroup1",
       "irKey": "formalParametersGroup1",
       "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
-      "elementKinds": [
-        "_formal_parameter"
+      "name": "_formal_parameters_group1",
+      "fields": [
+        {
+          "name": "formal_parameter",
+          "propertyName": "formalParameters",
+          "paramName": "formalParameters",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "_formal_parameter",
+              "parseKind": "_formal_parameter",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_formal_parameter"
+            ]
+          }
+        }
       ],
-      "factoryShape": "elements",
+      "children": [],
+      "factoryShape": "config",
       "factoryFields": [
         "formal_parameter"
       ]
@@ -7568,9 +7588,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -7588,21 +7608,44 @@
               "name": "html_character_reference",
               "parseKind": "html_character_reference",
               "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "unescaped_single_jsx_string_fragment",
-              "parseKind": "unescaped_single_jsx_string_fragment",
-              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
               "unescaped_double_jsx_string_fragment",
-              "html_character_reference",
-              "unescaped_single_jsx_string_fragment"
+              "html_character_reference"
+            ]
+          }
+        },
+        {
+          "name": "elements_2",
+          "propertyName": "elements_2s",
+          "paramName": "elements_2s",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "unescaped_single_jsx_string_fragment",
+              "parseKind": "unescaped_single_jsx_string_fragment",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "html_character_reference",
+              "parseKind": "html_character_reference",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "unescaped_single_jsx_string_fragment",
+              "html_character_reference"
             ]
           }
         }
@@ -8555,16 +8598,17 @@
     },
     {
       "kind": "_string_double",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "StringDouble",
-      "factoryName": "stringDouble",
+      "factoryName": "_stringDouble",
       "irKey": "stringDouble",
       "hidden": false,
+      "name": "_string_double",
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -8594,23 +8638,24 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
-        "content"
+        "elements"
       ]
     },
     {
       "kind": "_string_single",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "StringSingle",
-      "factoryName": "stringSingle",
+      "factoryName": "_stringSingle",
       "irKey": "stringSingle",
       "hidden": false,
+      "name": "_string_single",
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements_2",
+          "propertyName": "elements_2s",
+          "paramName": "elements_2s",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -8640,9 +8685,9 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
-        "content"
+        "elements_2"
       ]
     },
     {
@@ -15697,7 +15742,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "type"
       ]
@@ -16911,9 +16956,9 @@
           }
         },
         {
-          "name": "jsx_child",
-          "propertyName": "jsxChildren",
-          "paramName": "jsxChildren",
+          "name": "jsx_childs",
+          "propertyName": "jsxChilds",
+          "paramName": "jsxChilds",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -16961,7 +17006,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "open_tag",
-        "jsx_child",
+        "jsx_childs",
         "close_tag"
       ]
     },
@@ -21150,7 +21195,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "expression"
       ]
@@ -21713,9 +21758,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -21745,9 +21790,9 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
-        "content"
+        "elements"
       ]
     },
     {
@@ -21759,9 +21804,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -21799,9 +21844,9 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
-        "content"
+        "elements"
       ]
     },
     {
@@ -22473,7 +22518,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "type"
       ]
@@ -22682,7 +22727,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "type_parameter"
       ]

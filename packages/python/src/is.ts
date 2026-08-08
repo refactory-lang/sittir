@@ -27,7 +27,6 @@ import type {
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
 	module<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Module };
-	SimpleStatements<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimpleStatements };
 	importStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportStatement };
 	relativeImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RelativeImport };
 	futureImportStatement<T extends { readonly $type: number }>(
@@ -96,8 +95,6 @@ export interface IsGuards {
 	splatPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SplatPattern };
 	classPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassPattern };
 	complexPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ComplexPattern };
-	Parameters<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._Parameters };
-	Patterns<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Patterns };
 	tuplePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TuplePattern };
 	listPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ListPattern };
 	defaultParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DefaultParameter };
@@ -156,9 +153,6 @@ export interface IsGuards {
 	parenthesizedExpression<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ParenthesizedExpression };
-	CollectionElements<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.CollectionElements };
 	forInClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForInClause };
 	ifClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IfClause };
 	conditionalExpression<T extends { readonly $type: number }>(
@@ -181,9 +175,6 @@ export interface IsGuards {
 	ExpressionListGroup1<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ExpressionListGroup1 };
-	ListPatternGroup1<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ListPatternGroup1 };
 	DictPatternGroup2<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.DictPatternGroup2 };
@@ -204,11 +195,6 @@ export interface IsGuards {
 	printStatementGroup2<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.PrintStatementGroup2 };
-	ExpressionStatementTuple<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ExpressionStatementTuple };
-	WithClauseBare<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WithClauseBare };
-	WithClauseParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WithClauseParen };
 	SuiteBlockWithIndent<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.SuiteBlockWithIndent };
@@ -239,7 +225,6 @@ export interface IsGuards {
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
 	module(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Module };
-	SimpleStatements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SimpleStatements };
 	importStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportStatement };
 	relativeImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RelativeImport };
 	futureImportStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FutureImportStatement };
@@ -294,8 +279,6 @@ export interface AssertGuards {
 	splatPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SplatPattern };
 	classPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassPattern };
 	complexPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ComplexPattern };
-	Parameters(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._Parameters };
-	Patterns(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Patterns };
 	tuplePattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TuplePattern };
 	listPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ListPattern };
 	defaultParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DefaultParameter };
@@ -344,7 +327,6 @@ export interface AssertGuards {
 	parenthesizedExpression(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ParenthesizedExpression };
-	CollectionElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CollectionElements };
 	forInClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForInClause };
 	ifClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IfClause };
 	conditionalExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ConditionalExpression };
@@ -357,7 +339,6 @@ export interface AssertGuards {
 	ExceptClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseGroup1 };
 	ArgumentListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArgumentListGroup1 };
 	ExpressionListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExpressionListGroup1 };
-	ListPatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ListPatternGroup1 };
 	DictPatternGroup2(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DictPatternGroup2 };
 	PatternListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PatternListGroup1 };
 	SliceGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SliceGroup1 };
@@ -368,11 +349,6 @@ export interface AssertGuards {
 	comprehensionClauses(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ComprehensionClauses };
 	printStatementGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PrintStatementGroup1 };
 	printStatementGroup2(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PrintStatementGroup2 };
-	ExpressionStatementTuple(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ExpressionStatementTuple };
-	WithClauseBare(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseBare };
-	WithClauseParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseParen };
 	SuiteBlockWithIndent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SuiteBlockWithIndent };
 	SimplePatternNegative(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SimplePatternNegative };
 	ExceptClauseList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseList };
@@ -630,7 +606,6 @@ const _kindIdByKind = new Map<string, number>([
 
 export const is = {
 	module: _g(TSKindId.Module),
-	SimpleStatements: _g(TSKindId.SimpleStatements),
 	importStatement: _g(TSKindId.ImportStatement),
 	relativeImport: _g(TSKindId.RelativeImport),
 	futureImportStatement: _g(TSKindId.FutureImportStatement),
@@ -683,8 +658,6 @@ export const is = {
 	splatPattern: _g(TSKindId.SplatPattern),
 	classPattern: _g(TSKindId.ClassPattern),
 	complexPattern: _g(TSKindId.ComplexPattern),
-	Parameters: _g(TSKindId._Parameters),
-	Patterns: _g(TSKindId.Patterns),
 	tuplePattern: _g(TSKindId.TuplePattern),
 	listPattern: _g(TSKindId.ListPattern),
 	defaultParameter: _g(TSKindId.DefaultParameter),
@@ -725,7 +698,6 @@ export const is = {
 	setComprehension: _g(TSKindId.SetComprehension),
 	generatorExpression: _g(TSKindId.GeneratorExpression),
 	parenthesizedExpression: _g(TSKindId.ParenthesizedExpression),
-	CollectionElements: _g(TSKindId.CollectionElements),
 	forInClause: _g(TSKindId.ForInClause),
 	ifClause: _g(TSKindId.IfClause),
 	conditionalExpression: _g(TSKindId.ConditionalExpression),
@@ -738,7 +710,6 @@ export const is = {
 	ExceptClauseGroup1: _g(TSKindId.ExceptClauseGroup1),
 	ArgumentListGroup1: _g(TSKindId.ArgumentListGroup1),
 	ExpressionListGroup1: _g(TSKindId.ExpressionListGroup1),
-	ListPatternGroup1: _g(TSKindId.ListPatternGroup1),
 	DictPatternGroup2: _g(TSKindId.DictPatternGroup2),
 	PatternListGroup1: _g(TSKindId.PatternListGroup1),
 	SliceGroup1: _g(TSKindId.SliceGroup1),
@@ -749,9 +720,6 @@ export const is = {
 	comprehensionClauses: _g(TSKindId.ComprehensionClauses),
 	printStatementGroup1: _g(TSKindId.PrintStatementGroup1),
 	printStatementGroup2: _g(TSKindId.PrintStatementGroup2),
-	ExpressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
-	WithClauseBare: _g(TSKindId.WithClauseBare),
-	WithClauseParen: _g(TSKindId.WithClauseParen),
 	SuiteBlockWithIndent: _g(TSKindId.SuiteBlockWithIndent),
 	SimplePatternNegative: _g(TSKindId.SimplePatternNegative),
 	ExceptClauseList: _g(TSKindId.ExceptClauseList),
@@ -802,7 +770,6 @@ function _makeAssertKind(guard: _AnyGuard) {
 
 export const assert = {
 	module: _makeAssert('module', is.module as _AnyGuard),
-	SimpleStatements: _makeAssert('SimpleStatements', is.SimpleStatements as _AnyGuard),
 	importStatement: _makeAssert('importStatement', is.importStatement as _AnyGuard),
 	relativeImport: _makeAssert('relativeImport', is.relativeImport as _AnyGuard),
 	futureImportStatement: _makeAssert('futureImportStatement', is.futureImportStatement as _AnyGuard),
@@ -855,8 +822,6 @@ export const assert = {
 	splatPattern: _makeAssert('splatPattern', is.splatPattern as _AnyGuard),
 	classPattern: _makeAssert('classPattern', is.classPattern as _AnyGuard),
 	complexPattern: _makeAssert('complexPattern', is.complexPattern as _AnyGuard),
-	Parameters: _makeAssert('Parameters', is.Parameters as _AnyGuard),
-	Patterns: _makeAssert('Patterns', is.Patterns as _AnyGuard),
 	tuplePattern: _makeAssert('tuplePattern', is.tuplePattern as _AnyGuard),
 	listPattern: _makeAssert('listPattern', is.listPattern as _AnyGuard),
 	defaultParameter: _makeAssert('defaultParameter', is.defaultParameter as _AnyGuard),
@@ -897,7 +862,6 @@ export const assert = {
 	setComprehension: _makeAssert('setComprehension', is.setComprehension as _AnyGuard),
 	generatorExpression: _makeAssert('generatorExpression', is.generatorExpression as _AnyGuard),
 	parenthesizedExpression: _makeAssert('parenthesizedExpression', is.parenthesizedExpression as _AnyGuard),
-	CollectionElements: _makeAssert('CollectionElements', is.CollectionElements as _AnyGuard),
 	forInClause: _makeAssert('forInClause', is.forInClause as _AnyGuard),
 	ifClause: _makeAssert('ifClause', is.ifClause as _AnyGuard),
 	conditionalExpression: _makeAssert('conditionalExpression', is.conditionalExpression as _AnyGuard),
@@ -910,7 +874,6 @@ export const assert = {
 	ExceptClauseGroup1: _makeAssert('ExceptClauseGroup1', is.ExceptClauseGroup1 as _AnyGuard),
 	ArgumentListGroup1: _makeAssert('ArgumentListGroup1', is.ArgumentListGroup1 as _AnyGuard),
 	ExpressionListGroup1: _makeAssert('ExpressionListGroup1', is.ExpressionListGroup1 as _AnyGuard),
-	ListPatternGroup1: _makeAssert('ListPatternGroup1', is.ListPatternGroup1 as _AnyGuard),
 	DictPatternGroup2: _makeAssert('DictPatternGroup2', is.DictPatternGroup2 as _AnyGuard),
 	PatternListGroup1: _makeAssert('PatternListGroup1', is.PatternListGroup1 as _AnyGuard),
 	SliceGroup1: _makeAssert('SliceGroup1', is.SliceGroup1 as _AnyGuard),
@@ -921,9 +884,6 @@ export const assert = {
 	comprehensionClauses: _makeAssert('comprehensionClauses', is.comprehensionClauses as _AnyGuard),
 	printStatementGroup1: _makeAssert('printStatementGroup1', is.printStatementGroup1 as _AnyGuard),
 	printStatementGroup2: _makeAssert('printStatementGroup2', is.printStatementGroup2 as _AnyGuard),
-	ExpressionStatementTuple: _makeAssert('ExpressionStatementTuple', is.ExpressionStatementTuple as _AnyGuard),
-	WithClauseBare: _makeAssert('WithClauseBare', is.WithClauseBare as _AnyGuard),
-	WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen as _AnyGuard),
 	SuiteBlockWithIndent: _makeAssert('SuiteBlockWithIndent', is.SuiteBlockWithIndent as _AnyGuard),
 	SimplePatternNegative: _makeAssert('SimplePatternNegative', is.SimplePatternNegative as _AnyGuard),
 	ExceptClauseList: _makeAssert('ExceptClauseList', is.ExceptClauseList as _AnyGuard),

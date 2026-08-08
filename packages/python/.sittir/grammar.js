@@ -1023,8 +1023,9 @@ function escapeRegexLiteral(s) {
 }
 
 // packages/codegen/src/dsl/enrich.ts
-function enrich(baseInput) {
+function enrich(baseInput, config) {
   const base2 = baseInput;
+  const enrichSkip = new Set(config?.skip ?? []);
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
   }
@@ -1044,7 +1045,7 @@ function enrich(baseInput) {
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
-    enrichedRules[name] = rule ? applyEnrichPasses(
+    enrichedRules[name] = rule && !enrichSkip.has(name) ? applyEnrichPasses(
       name,
       rule,
       kwRules,
@@ -1076,6 +1077,11 @@ function enrich(baseInput) {
     }
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+  for (const name of Object.keys(mergedRules)) {
+    if (enrichSkip.has(name)) continue;
+    const rule = mergedRules[name];
+    if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
+  }
   synthesizeFieldEnumRules(mergedRules);
   setGroupLiftRuleMap({
     get: (n) => mergedRules[n],
@@ -1274,6 +1280,251 @@ function applyChoiceArmFieldWrap(ruleName, rule, supertypeNames, rulesBag) {
     result = { ...precStack[i], content: result };
   }
   return result;
+}
+function collectAllFieldNamesDeep(rule, into) {
+  if (isFieldType(rule.type) && typeof rule.name === "string") {
+    into.add(rule.name);
+  }
+  const bag = rule;
+  if (Array.isArray(bag.members)) {
+    for (const m of bag.members) collectAllFieldNamesDeep(m, into);
+  } else if (bag.content && typeof bag.content === "object") {
+    collectAllFieldNamesDeep(bag.content, into);
+  }
+}
+function isAllArmsNodeShaped(choiceRule) {
+  const members = choiceRule.members;
+  return members.every((arm) => {
+    let cursor = arm;
+    while (isPrecWrapper(cursor)) {
+      cursor = cursor.content;
+    }
+    const t = cursor.type;
+    return t === "SYMBOL" || t === "ALIAS";
+  });
+}
+function isAllArmsNodeOrLiteralShaped(choiceRule) {
+  const members = choiceRule.members;
+  return members.every((arm) => {
+    let cursor = arm;
+    while (isPrecWrapper(cursor)) {
+      cursor = cursor.content;
+    }
+    const t = cursor.type;
+    return t === "SYMBOL" || t === "ALIAS" || isStringType(t) || t === "PATTERN";
+  });
+}
+var LITERAL_ARM_NAMES = {
+  ";": "semi"
+};
+function literalArmNameHint(text) {
+  return LITERAL_ARM_NAMES[text] ?? text.replace(/[^\w]+/g, "");
+}
+function promoteLiteralChoiceArms(choiceRule, mergedRules) {
+  const members = choiceRule.members;
+  let changed = false;
+  let declined = false;
+  const newMembers = members.map((arm) => {
+    let cursor = arm;
+    const precStack = [];
+    while (isPrecWrapper(cursor)) {
+      precStack.push(cursor);
+      cursor = cursor.content;
+    }
+    const t = cursor.type;
+    if (!isStringType(t) && t !== "PATTERN") return arm;
+    const text = cursor.value;
+    const nameHint = literalArmNameHint(text);
+    const symbol = nameHint ? registerKwRule(cursor, nameHint, mergedRules, mergedRules) : null;
+    if (!symbol) {
+      declined = true;
+      return arm;
+    }
+    changed = true;
+    let rebuilt = symbol;
+    for (let i = precStack.length - 1; i >= 0; i--) {
+      rebuilt = { ...precStack[i], content: rebuilt };
+    }
+    return rebuilt;
+  });
+  if (!changed || declined) return null;
+  return { ...choiceRule, members: newMembers };
+}
+function pluralizeFieldName(name) {
+  if (name.endsWith("s")) return name;
+  if (name.endsWith("y") && !/[aeiou]y$/.test(name)) return name.slice(0, -1) + "ies";
+  return name + "s";
+}
+function isHiddenPureUnionRule(name, mergedRules) {
+  if (!name.startsWith("_")) return false;
+  const target = mergedRules[name];
+  if (!target) return false;
+  let core = target;
+  while (isPrecWrapper(core)) {
+    core = core.content;
+  }
+  return isChoiceType(core.type) && isAllArmsNodeShaped(core);
+}
+function isEligibleFieldReferent(name, mergedRules, supertypeNames) {
+  return supertypeNames.has(name) || isHiddenPureUnionRule(name, mergedRules);
+}
+function sameElementShape(a, b) {
+  return ruleKey(a) === ruleKey(b);
+}
+function deriveElementFieldName(elementRule) {
+  let cursor = elementRule;
+  while (isPrecWrapper(cursor)) {
+    cursor = cursor.content;
+  }
+  const t = cursor.type;
+  if (t === "SYMBOL") {
+    return cursor.name.replace(/^_/, "");
+  }
+  if (t === "ALIAS") {
+    const value = cursor.value;
+    if (typeof value === "string") return value;
+  }
+  return "element";
+}
+function fieldSeparatedListElements(seqRule, reserve) {
+  const members = seqRule.members;
+  if (!Array.isArray(members)) return null;
+  for (let i = 0; i < members.length - 1; i++) {
+    const leading = members[i];
+    if (isFieldType(leading.type)) continue;
+    let repeatCursor = members[i + 1];
+    const outerPrecStack = [];
+    while (isPrecWrapper(repeatCursor)) {
+      outerPrecStack.push(repeatCursor);
+      repeatCursor = repeatCursor.content;
+    }
+    if (!isRepeatType(repeatCursor.type)) continue;
+    let inner = repeatCursor.content;
+    const innerPrecStack = [];
+    while (isPrecWrapper(inner)) {
+      innerPrecStack.push(inner);
+      inner = inner.content;
+    }
+    const detected = detectRepeatSeparator(inner);
+    if (!detected || detected.trailing) continue;
+    const innerElement = detected.content;
+    if (!sameElementShape(leading, innerElement)) continue;
+    const fieldName = reserve(deriveElementFieldName(leading));
+    const innerMembers = inner.members;
+    const newInnerMembers = innerMembers.slice();
+    const elementIdx = innerMembers.indexOf(innerElement);
+    newInnerMembers[elementIdx] = makeField(fieldName, innerElement);
+    let rebuiltInner = { ...inner, members: newInnerMembers };
+    for (let j = innerPrecStack.length - 1; j >= 0; j--) {
+      rebuiltInner = { ...innerPrecStack[j], content: rebuiltInner };
+    }
+    let rebuiltRepeat = { ...repeatCursor, content: rebuiltInner };
+    for (let j = outerPrecStack.length - 1; j >= 0; j--) {
+      rebuiltRepeat = { ...outerPrecStack[j], content: rebuiltRepeat };
+    }
+    const newMembers = members.slice();
+    newMembers[i] = makeField(fieldName, leading);
+    newMembers[i + 1] = rebuiltRepeat;
+    return { ...seqRule, members: newMembers };
+  }
+  return null;
+}
+function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
+  const usedNames = /* @__PURE__ */ new Set();
+  collectAllFieldNamesDeep(rule, usedNames);
+  let changed = false;
+  const reserve = (base2) => {
+    if (!usedNames.has(base2)) {
+      usedNames.add(base2);
+      return base2;
+    }
+    let n = 2;
+    while (usedNames.has(`${base2}_${n}`)) n++;
+    const name = `${base2}_${n}`;
+    usedNames.add(name);
+    return name;
+  };
+  const refCounts = /* @__PURE__ */ new Map();
+  const countEligibleRefs = (r) => {
+    if (isFieldType(r.type)) return;
+    if (isSymbolType(r.type)) {
+      const name = r.name;
+      if (isEligibleFieldReferent(name, mergedRules, supertypeNames)) {
+        refCounts.set(name, (refCounts.get(name) ?? 0) + 1);
+      }
+      return;
+    }
+    const bag = r;
+    if (Array.isArray(bag.members)) {
+      for (const m of bag.members) countEligibleRefs(m);
+    } else if (bag.content && typeof bag.content === "object") {
+      countEligibleRefs(bag.content);
+    }
+  };
+  countEligibleRefs(rule);
+  const visit = (r, suppressed = false) => {
+    if (isFieldType(r.type)) return r;
+    if (!suppressed && isRepeatType(r.type)) {
+      const content = r.content;
+      const precStack = [];
+      let inner = content;
+      while (isPrecWrapper(inner)) {
+        precStack.push(inner);
+        inner = inner.content;
+      }
+      const rebuildRepeat = (newInner) => {
+        let rebuiltInner = newInner;
+        for (let i = precStack.length - 1; i >= 0; i--) {
+          rebuiltInner = { ...precStack[i], content: rebuiltInner };
+        }
+        return { ...r, content: rebuiltInner };
+      };
+      if (isSymbolType(inner.type)) {
+        const refName = inner.name;
+        if (isEligibleFieldReferent(refName, mergedRules, supertypeNames) && refCounts.get(refName) === 1) {
+          changed = true;
+          const fieldName = pluralizeFieldName(refName.replace(/^_/, ""));
+          return makeField(reserve(fieldName), rebuildRepeat(inner));
+        }
+      }
+      let visitedInner = visit(inner, true);
+      if (isChoiceType(visitedInner.type) && !isAllArmsNodeShaped(visitedInner) && isAllArmsNodeOrLiteralShaped(visitedInner)) {
+        const promoted = promoteLiteralChoiceArms(visitedInner, mergedRules);
+        if (promoted) visitedInner = promoted;
+      }
+      if (isChoiceType(visitedInner.type) && isAllArmsNodeShaped(visitedInner)) {
+        changed = true;
+        return makeField(reserve("elements"), rebuildRepeat(visitedInner));
+      }
+      if (visitedInner === inner) return r;
+      return rebuildRepeat(visitedInner);
+    }
+    if (isSeqType(r.type)) {
+      const sepListRewrite = fieldSeparatedListElements(r, reserve);
+      if (sepListRewrite) {
+        changed = true;
+        r = sepListRewrite;
+      }
+    }
+    const bag = r;
+    if (Array.isArray(bag.members)) {
+      const memberSuppressed = isChoiceType(r.type);
+      let memberChanged = false;
+      const newMembers = bag.members.map((m) => {
+        const nm = visit(m, memberSuppressed);
+        if (nm !== m) memberChanged = true;
+        return nm;
+      });
+      return memberChanged ? { ...r, members: newMembers } : r;
+    }
+    if (bag.content && typeof bag.content === "object") {
+      const nc = visit(bag.content, suppressed);
+      return nc !== bag.content ? { ...r, content: nc } : r;
+    }
+    return r;
+  };
+  const result = visit(rule);
+  return changed ? result : rule;
 }
 function extractWordName(word) {
   if (typeof word === "string") return word;
@@ -3824,7 +4075,29 @@ function role(symbol, roleName) {
 }
 
 // packages/python/grammar.sittir.ts
-var enrichedBase = enrich(import_grammar.default);
+var enrichedBase = enrich(import_grammar.default, {
+  // `string_content`'s plain-text runs between escapes aren't CST children
+  // at all (an implicit gap), so it renders via a verbatim $TEXT fallback
+  // today. Fielding its choice (which applyNodeChoiceFieldWrap would
+  // otherwise do — all four arms are node-shaped) flips the walker off
+  // that fallback onto join-the-field-elements rendering, silently
+  // dropping every gap. None of enrich's other passes touch this rule's
+  // shape anyway, so exempting it from all of them is a no-op beyond the
+  // one pass that matters here.
+  //
+  // `_dict_pattern_group2`'s leading and repeated occurrences are the
+  // SAME `choice($._key_value_pattern, $.splat_pattern)` body (tree-sitter's
+  // `commaSep1` passes one shared choice object to both positions), so
+  // `fieldSeparatedListElements` fields both as `element` — but `dict_pattern`'s
+  // own override (`'1/0/0/0': 'kv'`) already targets the leading occurrence
+  // to mint the visible `dict_pattern_kv` kind. Auto-fielding it first left
+  // the override's positional path pointing at an already-FIELD-wrapped
+  // node instead of the bare choice it expects — the override silently no
+  // longer applies, and `dict_pattern_kv` stops existing as a distinct
+  // exported kind. Same override-collision class found in rust's
+  // `tuple_type`/`trait_bounds` and typescript's `lexical_declaration`.
+  skip: ["string_content", "_dict_pattern_group2"]
+});
 var grammar_sittir_default = grammar(
   enrichedBase,
   wire(
@@ -3995,9 +4268,21 @@ var grammar_sittir_default = grammar(
         }
       },
       rules: {
+        // Base grammar aliases this arm (`alias($.list_splat_pattern,
+        // $.list_splat)`), making primary_expression and list_splat_pattern
+        // parse-kind-non-injective; stripping the alias below (needed so
+        // both fork this OR/AND choice arm produce a real, distinct kind)
+        // exposes the declared `[primary_expression, list_splat_pattern]`
+        // GLR conflict as two visibly different kinds instead of one
+        // display name, with the winning fork now decided by structural
+        // tie-break noise instead of upstream's alias. `prec.dynamic(-1)`
+        // restores upstream's outcome deterministically: the expression
+        // fork (list_splat) wins every genuine ambiguity — true pattern
+        // contexts (`a, *rest = xs`) are unaffected since the expression
+        // fork dies at `=` there, leaving no tie to break.
         primary_expression: ($, original) => {
           let base2 = original.members;
-          return choice(...base2.slice(0, -1), $.list_splat_pattern);
+          return choice(...base2.slice(0, -1), prec.dynamic(-1, $.list_splat_pattern));
         },
         _except_clause_as: ($) => seq(field("value", $.expression), optional($._except_clause_as_optional1)),
         _except_clause_as_optional1: ($) => seq("as", field("alias", $.expression)),

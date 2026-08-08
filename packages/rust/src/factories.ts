@@ -23,6 +23,7 @@ const _leafRe_buildShebang = /^(?:#![\r\f\t\v ]*([^[\n].*)?\n)/u;
 const _leafRe_buildTypeIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_buildFieldIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_buildMetavariable = /^(?:\$[a-zA-Z_]\w*)/u;
+const _leafRe_buildStringLiteralOpen = /^(?:[bc]?")/u;
 const _leafRe_buildLineCommentContent = /^(?:.*)/u;
 
 export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}) {
@@ -189,7 +190,7 @@ export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config) {
 }
 
 export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Config) {
-	const _token_pattern = config.tokenPattern ?? [];
+	const _token_patterns = config.tokenPatterns ?? [];
 	const _separator = coerceBooleanKeywordStorage(config.separator);
 	const _operator = coerceKindEnumStorage(config.operator, [
 		['+', TSKindId.Plus] as const,
@@ -202,12 +203,12 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 				$type: TSKindId.TokenRepetitionPattern as const,
 				$source: 2 as const,
 				$named: true as const,
-				_token_pattern,
+				_token_patterns,
 				_separator,
 				_operator,
 				$with: {
 					tokenPatterns: (...values: T.TokenPattern[]) =>
-						buildTokenRepetitionPattern({ ...config, tokenPattern: values }),
+						buildTokenRepetitionPattern({ ...config, tokenPatterns: values }),
 					separator: (value?: NonNullable<Parameters<typeof buildTokenRepetitionPattern>[0]>['separator']) =>
 						buildTokenRepetitionPattern({ ...config, separator: value }),
 					operator: (value: NonNullable<Parameters<typeof buildTokenRepetitionPattern>[0]>['operator']) =>
@@ -215,7 +216,7 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 				}
 			},
 			{
-				tokenPatterns: () => _token_pattern,
+				tokenPatterns: () => _token_patterns,
 				separator: () => _separator,
 				operator: () => _operator
 			}
@@ -451,19 +452,22 @@ export function buildForeignModItem(config: T.ForeignModItem.Config) {
 	);
 }
 
-export function buildDeclarationList(...children: T.DeclarationStatement[]) {
-	const _declaration_statement = children;
+export function buildDeclarationList(config: Partial<T.DeclarationList.Config> = {}) {
+	const _declaration_statements = config.declarationStatements ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.DeclarationList as const,
 				$source: 2 as const,
 				$named: true as const,
-				_declaration_statement,
-				$with: { $children: (...vs: T.DeclarationStatement[]) => buildDeclarationList(...vs) }
+				_declaration_statements,
+				$with: {
+					declarationStatements: (...values: T.DeclarationStatement[]) =>
+						buildDeclarationList({ ...config, declarationStatements: values })
+				}
 			},
 			{
-				declarationStatements: () => _declaration_statement
+				declarationStatements: () => _declaration_statements
 			}
 		),
 		methodsEngine
@@ -1226,21 +1230,24 @@ export function buildRemovedTraitBound(type: T.RemovedTraitBound.Config['type'])
 	);
 }
 
-export function buildTypeParameters(...children: T.AttributedTypeParameter[]) {
-	_assertNonEmpty(children, 'type_parameters.children');
-	const _attributed_type_parameter = children;
+export function buildTypeParameters(config: T.TypeParameters.Config, options: { trailing?: boolean } = {}) {
+	const _element = config.element ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.TypeParameters as const,
 				$source: 2 as const,
 				$named: true as const,
-				_attributed_type_parameter,
-				_attributed_type_parameter_trailing_sep: false,
-				$with: { $children: (...vs: T.AttributedTypeParameter[]) => buildTypeParameters(...vs) }
+				_element,
+				_element_trailing_sep: options.trailing ?? false,
+				$with: {
+					elements: (...values: NonEmptyArray<T.AttributedTypeParameter>) =>
+						buildTypeParameters({ ...config, element: values }, options),
+					trailing: (v: boolean) => buildTypeParameters(config, { ...options, trailing: v })
+				}
 			},
 			{
-				attributedTypeParameters: () => _attributed_type_parameter
+				elements: () => _element
 			}
 		),
 		methodsEngine
@@ -1724,9 +1731,8 @@ export function buildArrayType(config: T.ArrayType.Config) {
 	);
 }
 
-export function buildForLifetimes(...children: T.Lifetime[]) {
-	_assertNonEmpty(children, 'for_lifetimes.children');
-	const _lifetime = children;
+export function buildForLifetimes(config: T.ForLifetimes.Config, options: { trailing?: boolean } = {}) {
+	const _lifetime = config.lifetime ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -1734,8 +1740,12 @@ export function buildForLifetimes(...children: T.Lifetime[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_lifetime,
-				_lifetime_trailing_sep: false,
-				$with: { $children: (...vs: T.Lifetime[]) => buildForLifetimes(...vs) }
+				_lifetime_trailing_sep: options.trailing ?? false,
+				$with: {
+					lifetimes: (...values: NonEmptyArray<T.Lifetime>) =>
+						buildForLifetimes({ ...config, lifetime: values }, options),
+					trailing: (v: boolean) => buildForLifetimes(config, { ...options, trailing: v })
+				}
 			},
 			{
 				lifetimes: () => _lifetime
@@ -1946,21 +1956,24 @@ export function buildUseBounds(bounds?: T.UseBounds.Config['bounds']) {
 	);
 }
 
-export function buildTypeArguments(...children: T.TypeArgument[]) {
-	_assertNonEmpty(children, 'type_arguments.children');
-	const _type_argument = children;
+export function buildTypeArguments(config: T.TypeArguments.Config, options: { trailing?: boolean } = {}) {
+	const _element = config.element ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.TypeArguments as const,
 				$source: 2 as const,
 				$named: true as const,
-				_type_argument,
-				_type_argument_trailing_sep: false,
-				$with: { $children: (...vs: T.TypeArgument[]) => buildTypeArguments(...vs) }
+				_element,
+				_element_trailing_sep: options.trailing ?? false,
+				$with: {
+					elements: (...values: NonEmptyArray<T.TypeArgument>) =>
+						buildTypeArguments({ ...config, element: values }, options),
+					trailing: (v: boolean) => buildTypeArguments(config, { ...options, trailing: v })
+				}
 			},
 			{
-				typeArguments: () => _type_argument
+				elements: () => _element
 			}
 		),
 		methodsEngine
@@ -3419,7 +3432,7 @@ export function buildTryBlock(block: T.TryBlock.Config['block']) {
 
 export function buildBlock(config: Partial<T.Block.Config> = {}) {
 	const _label = config.label;
-	const _statement = config.statement ?? [];
+	const _statements = config.statements ?? [];
 	const _trailing_expression = config.trailingExpression;
 	return withMethods(
 		withAccessors(
@@ -3428,17 +3441,17 @@ export function buildBlock(config: Partial<T.Block.Config> = {}) {
 				$source: 2 as const,
 				$named: true as const,
 				_label,
-				_statement,
+				_statements,
 				_trailing_expression,
 				$with: {
 					label: (value?: T.Label) => buildBlock({ ...config, label: value }),
-					statements: (...values: T.Statement[]) => buildBlock({ ...config, statement: values }),
+					statements: (...values: T.Statement[]) => buildBlock({ ...config, statements: values }),
 					trailingExpression: (value?: T.Expression) => buildBlock({ ...config, trailingExpression: value })
 				}
 			},
 			{
 				label: () => _label,
-				statements: () => _statement,
+				statements: () => _statements,
 				trailingExpression: () => _trailing_expression
 			}
 		),
@@ -3751,19 +3764,26 @@ export function buildIntegerLiteral(text: string) {
 	);
 }
 
-export function buildStringLiteral(...children: (T.EscapeSequence | T.StringContent)[]) {
-	const _content = children;
+export function buildStringLiteral(config: T.StringLiteral.Config) {
+	const _string_open = config.stringOpen;
+	const _elements = config.elements ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.StringLiteral as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
-				$with: { $children: (...vs: (T.EscapeSequence | T.StringContent)[]) => buildStringLiteral(...vs) }
+				_string_open,
+				_elements,
+				$with: {
+					stringOpen: (value: T.StringLiteralOpen) => buildStringLiteral({ ...config, stringOpen: value }),
+					elements: (...values: (T.EscapeSequence | T.StringContent)[]) =>
+						buildStringLiteral({ ...config, elements: values })
+				}
 			},
 			{
-				contents: () => _content
+				stringOpen: () => _string_open,
+				elements: () => _elements
 			}
 		),
 		methodsEngine
@@ -4017,7 +4037,7 @@ export function buildEnumVariantListGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_enum_variant_list_group1.elements');
-	const _attributed_enum_variant = elements;
+	const _element = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -4025,7 +4045,7 @@ export function buildEnumVariantListGroup1(
 				$type: TSKindId.EnumVariantListGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_attributed_enum_variant,
+				_element,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedEnumVariant>) => buildEnumVariantListGroup1(vs, options),
@@ -4033,7 +4053,7 @@ export function buildEnumVariantListGroup1(
 				}
 			},
 			{
-				attributedEnumVariants: () => _attributed_enum_variant
+				elements: () => _element
 			}
 		),
 		methodsEngine
@@ -4045,7 +4065,7 @@ export function buildFieldDeclarationListGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_field_declaration_list_group1.elements');
-	const _attributed_field_declaration = elements;
+	const _element = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -4053,7 +4073,7 @@ export function buildFieldDeclarationListGroup1(
 				$type: TSKindId.FieldDeclarationListGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_attributed_field_declaration,
+				_element,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedFieldDeclaration>) =>
@@ -4062,7 +4082,7 @@ export function buildFieldDeclarationListGroup1(
 				}
 			},
 			{
-				attributedFieldDeclarations: () => _attributed_field_declaration
+				elements: () => _element
 			}
 		),
 		methodsEngine
@@ -4074,7 +4094,7 @@ export function buildOrderedFieldDeclarationListGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_ordered_field_declaration_list_group1.elements');
-	const _attributed_ordered_field = elements;
+	const _element = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -4082,7 +4102,7 @@ export function buildOrderedFieldDeclarationListGroup1(
 				$type: TSKindId.OrderedFieldDeclarationListGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_attributed_ordered_field,
+				_element,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedOrderedField>) =>
@@ -4091,7 +4111,7 @@ export function buildOrderedFieldDeclarationListGroup1(
 				}
 			},
 			{
-				attributedOrderedFields: () => _attributed_ordered_field
+				elements: () => _element
 			}
 		),
 		methodsEngine
@@ -4156,7 +4176,7 @@ export function buildParametersGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_parameters_group1.elements');
-	const _attributed_parameter = elements;
+	const _element = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -4164,7 +4184,7 @@ export function buildParametersGroup1(
 				$type: TSKindId.ParametersGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_attributed_parameter,
+				_element,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedParameter>) => buildParametersGroup1(vs, options),
@@ -4172,7 +4192,7 @@ export function buildParametersGroup1(
 				}
 			},
 			{
-				attributedParameters: () => _attributed_parameter
+				elements: () => _element
 			}
 		),
 		methodsEngine
@@ -4205,7 +4225,7 @@ export function buildUseBoundsGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_use_bounds_group1.elements');
-	const _content = elements;
+	const _element = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -4213,7 +4233,7 @@ export function buildUseBoundsGroup1(
 				$type: TSKindId.UseBoundsGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_element,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Lifetime | T.TypeIdentifier>) => buildUseBoundsGroup1(vs, options),
@@ -4221,7 +4241,7 @@ export function buildUseBoundsGroup1(
 				}
 			},
 			{
-				contents: () => _content
+				elements: () => _element
 			}
 		),
 		methodsEngine
@@ -4233,7 +4253,7 @@ export function buildArgumentsGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_arguments_group1.elements');
-	const _attributed_argument = elements;
+	const _element = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -4241,7 +4261,7 @@ export function buildArgumentsGroup1(
 				$type: TSKindId.ArgumentsGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_attributed_argument,
+				_element,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedArgument>) => buildArgumentsGroup1(vs, options),
@@ -4249,7 +4269,7 @@ export function buildArgumentsGroup1(
 				}
 			},
 			{
-				attributedArguments: () => _attributed_argument
+				elements: () => _element
 			}
 		),
 		methodsEngine
@@ -4286,7 +4306,7 @@ export function buildFieldInitializerListGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_field_initializer_list_group1.elements');
-	const _content = elements;
+	const _element = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -4294,7 +4314,7 @@ export function buildFieldInitializerListGroup1(
 				$type: TSKindId.FieldInitializerListGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_element,
 				_trailing_sep,
 				$with: {
 					$children: (
@@ -4304,7 +4324,7 @@ export function buildFieldInitializerListGroup1(
 				}
 			},
 			{
-				contents: () => _content
+				elements: () => _element
 			}
 		),
 		methodsEngine
@@ -4316,7 +4336,7 @@ export function buildTuplePatternGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_tuple_pattern_group1.elements');
-	const _content = elements;
+	const _element = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -4324,7 +4344,7 @@ export function buildTuplePatternGroup1(
 				$type: TSKindId.TuplePatternGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_element,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Pattern | T.ClosureExpression>) => buildTuplePatternGroup1(vs, options),
@@ -4332,7 +4352,7 @@ export function buildTuplePatternGroup1(
 				}
 			},
 			{
-				contents: () => _content
+				elements: () => _element
 			}
 		),
 		methodsEngine
@@ -4369,7 +4389,7 @@ export function buildStructPatternGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_struct_pattern_group1.elements');
-	const _content = elements;
+	const _element = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -4377,7 +4397,7 @@ export function buildStructPatternGroup1(
 				$type: TSKindId.StructPatternGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_element,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>) =>
@@ -4386,7 +4406,7 @@ export function buildStructPatternGroup1(
 				}
 			},
 			{
-				contents: () => _content
+				elements: () => _element
 			}
 		),
 		methodsEngine
@@ -4567,6 +4587,22 @@ export function buildUseWildcardClause(config: T.UseWildcardClause.Config) {
 				path: () => _path
 			}
 		),
+		methodsEngine
+	);
+}
+
+export function buildStringLiteralOpen(text: string) {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_string_literal_open: text must be non-empty`);
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildStringLiteralOpen.test(text))
+		throw new Error(`_string_literal_open: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.StringLiteralOpen as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
 		methodsEngine
 	);
 }
@@ -5913,6 +5949,7 @@ export type FluentKindMap = {
 	_token_tree_punctuation: T.TokenTreePunctuation;
 	_token_keywords: T.TokenKeywords;
 	_use_wildcard_clause: T.UseWildcardClause;
+	_string_literal_open: T.StringLiteralOpen;
 	_reference_expression_raw_const: T.ReferenceExpressionRawConst;
 	_reference_expression_raw_mut: FluentNode<'_reference_expression_raw_mut', T.ReferenceExpressionRawMut.Config>;
 	_impl_item_body: FluentNode<'_impl_item_body', T.ImplItemBody.Config>;
@@ -6145,6 +6182,7 @@ export const _factoryMap = {
 	_token_tree_punctuation: buildTokenTreePunctuation,
 	_token_keywords: buildTokenKeywords,
 	_use_wildcard_clause: buildUseWildcardClause,
+	_string_literal_open: buildStringLiteralOpen,
 	_reference_expression_raw_const: buildReferenceExpressionRawConst,
 	_reference_expression_raw_mut: buildReferenceExpressionRawMut,
 	_impl_item_body: buildImplItemBody,

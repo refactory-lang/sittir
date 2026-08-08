@@ -13239,15 +13239,14 @@ impl RenderableTransport for NestedIdentifierObjectTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum JsxStringContentTransportSlot {
+pub enum JsxStringElementsTransportSlot {
     UnescapedDoubleJsxStringFragment(UnescapedDoubleJsxStringFragmentTransport),
     HtmlCharacterReference(HtmlCharacterReferenceTransport),
-    UnescapedSingleJsxStringFragment(UnescapedSingleJsxStringFragmentTransport),
     Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for JsxStringContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for JsxStringElementsTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -13256,7 +13255,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxStringContentTransportSlot {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in JsxStringContentTransportSlot",
+                        "unknown kind id {other} in JsxStringElementsTransportSlot",
                     ))),
                 }
             }
@@ -13267,68 +13266,158 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxStringContentTransportSlot {
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in JsxStringContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in JsxStringElementsTransportSlot")
                 )?;
                 match kind_id {
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in JsxStringContentTransportSlot",
+                        "unknown kind id {other} in JsxStringElementsTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("JsxStringContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("JsxStringElementsTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for JsxStringContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for JsxStringElementsTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("JsxStringContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("JsxStringElementsTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxStringContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxStringElementsTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        JsxStringContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        JsxStringElementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxStringContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxStringElementsTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        JsxStringContentTransportSlot::to_napi_value(env, *val)
+        JsxStringElementsTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn jsx_string_content_transport_slot_to_any(t: JsxStringContentTransportSlot) -> AnyTransport {
+fn jsx_string_elements_transport_slot_to_any(t: JsxStringElementsTransportSlot) -> AnyTransport {
     match t {
-        JsxStringContentTransportSlot::UnescapedDoubleJsxStringFragment(inner) => AnyTransport::UnescapedDoubleJsxStringFragment(inner),
-        JsxStringContentTransportSlot::HtmlCharacterReference(inner) => AnyTransport::HtmlCharacterReference(inner),
-        JsxStringContentTransportSlot::UnescapedSingleJsxStringFragment(inner) => AnyTransport::UnescapedSingleJsxStringFragment(inner),
-        JsxStringContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        JsxStringElementsTransportSlot::UnescapedDoubleJsxStringFragment(inner) => AnyTransport::UnescapedDoubleJsxStringFragment(inner),
+        JsxStringElementsTransportSlot::HtmlCharacterReference(inner) => AnyTransport::HtmlCharacterReference(inner),
+        JsxStringElementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for JsxStringContentTransportSlot {
+impl RenderableTransport for JsxStringElementsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            JsxStringContentTransportSlot::UnescapedDoubleJsxStringFragment(inner) => render_unescaped_double_jsx_string_fragment(inner, dest),
-            JsxStringContentTransportSlot::HtmlCharacterReference(inner) => render_html_character_reference(inner, dest),
-            JsxStringContentTransportSlot::UnescapedSingleJsxStringFragment(inner) => render_unescaped_single_jsx_string_fragment(inner, dest),
-            JsxStringContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            JsxStringElementsTransportSlot::UnescapedDoubleJsxStringFragment(inner) => render_unescaped_double_jsx_string_fragment(inner, dest),
+            JsxStringElementsTransportSlot::HtmlCharacterReference(inner) => render_html_character_reference(inner, dest),
+            JsxStringElementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum JsxStringElements2TransportSlot {
+    UnescapedSingleJsxStringFragment(UnescapedSingleJsxStringFragmentTransport),
+    HtmlCharacterReference(HtmlCharacterReferenceTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for JsxStringElements2TransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in JsxStringElements2TransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in JsxStringElements2TransportSlot")
+                )?;
+                match kind_id {
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in JsxStringElements2TransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("JsxStringElements2TransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for JsxStringElements2TransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("JsxStringElements2TransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxStringElements2TransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        JsxStringElements2TransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxStringElements2TransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        JsxStringElements2TransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn jsx_string_elements_2_transport_slot_to_any(t: JsxStringElements2TransportSlot) -> AnyTransport {
+    match t {
+        JsxStringElements2TransportSlot::UnescapedSingleJsxStringFragment(inner) => AnyTransport::UnescapedSingleJsxStringFragment(inner),
+        JsxStringElements2TransportSlot::HtmlCharacterReference(inner) => AnyTransport::HtmlCharacterReference(inner),
+        JsxStringElements2TransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for JsxStringElements2TransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            JsxStringElements2TransportSlot::UnescapedSingleJsxStringFragment(inner) => render_unescaped_single_jsx_string_fragment(inner, dest),
+            JsxStringElements2TransportSlot::HtmlCharacterReference(inner) => render_html_character_reference(inner, dest),
+            JsxStringElements2TransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -17543,7 +17632,7 @@ impl RenderableTransport for StringContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum TemplateStringContentTransportSlot {
+pub enum TemplateStringElementsTransportSlot {
     TemplateChars(TemplateCharsTransport),
     EscapeSequence(EscapeSequenceTransport),
     TemplateSubstitution(TemplateSubstitutionTransport),
@@ -17551,7 +17640,7 @@ pub enum TemplateStringContentTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TemplateStringContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for TemplateStringElementsTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -17569,7 +17658,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateStringContentTransportSl
                         TemplateSubstitutionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TemplateStringContentTransportSlot",
+                        "unknown kind id {other} in TemplateStringElementsTransportSlot",
                     ))),
                 }
             }
@@ -17580,7 +17669,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateStringContentTransportSl
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in TemplateStringContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in TemplateStringElementsTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::TemplateChars(
@@ -17593,64 +17682,64 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateStringContentTransportSl
                         TemplateSubstitutionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TemplateStringContentTransportSlot",
+                        "unknown kind id {other} in TemplateStringElementsTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("TemplateStringContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("TemplateStringElementsTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TemplateStringContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for TemplateStringElementsTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TemplateStringContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("TemplateStringElementsTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TemplateStringContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TemplateStringElementsTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TemplateStringContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        TemplateStringElementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TemplateStringContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TemplateStringElementsTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TemplateStringContentTransportSlot::to_napi_value(env, *val)
+        TemplateStringElementsTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn template_string_content_transport_slot_to_any(t: TemplateStringContentTransportSlot) -> AnyTransport {
+fn template_string_elements_transport_slot_to_any(t: TemplateStringElementsTransportSlot) -> AnyTransport {
     match t {
-        TemplateStringContentTransportSlot::TemplateChars(inner) => AnyTransport::TemplateChars(inner),
-        TemplateStringContentTransportSlot::EscapeSequence(inner) => AnyTransport::EscapeSequence(inner),
-        TemplateStringContentTransportSlot::TemplateSubstitution(inner) => AnyTransport::TemplateSubstitution(inner),
-        TemplateStringContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        TemplateStringElementsTransportSlot::TemplateChars(inner) => AnyTransport::TemplateChars(inner),
+        TemplateStringElementsTransportSlot::EscapeSequence(inner) => AnyTransport::EscapeSequence(inner),
+        TemplateStringElementsTransportSlot::TemplateSubstitution(inner) => AnyTransport::TemplateSubstitution(inner),
+        TemplateStringElementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for TemplateStringContentTransportSlot {
+impl RenderableTransport for TemplateStringElementsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TemplateStringContentTransportSlot::TemplateChars(inner) => render_template_chars(inner, dest),
-            TemplateStringContentTransportSlot::EscapeSequence(inner) => render_escape_sequence(inner, dest),
-            TemplateStringContentTransportSlot::TemplateSubstitution(inner) => render_template_substitution(inner, dest),
-            TemplateStringContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            TemplateStringElementsTransportSlot::TemplateChars(inner) => render_template_chars(inner, dest),
+            TemplateStringElementsTransportSlot::EscapeSequence(inner) => render_escape_sequence(inner, dest),
+            TemplateStringElementsTransportSlot::TemplateSubstitution(inner) => render_template_substitution(inner, dest),
+            TemplateStringElementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -24849,14 +24938,14 @@ impl RenderableTransport for TemplateTypeContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum TemplateLiteralTypeContentTransportSlot {
+pub enum TemplateLiteralTypeElementsTransportSlot {
     TemplateChars(TemplateCharsTransport),
     TemplateType(TemplateTypeTransport),
     Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TemplateLiteralTypeContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for TemplateLiteralTypeElementsTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -24871,7 +24960,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateLiteralTypeContentTransp
                         TemplateTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TemplateLiteralTypeContentTransportSlot",
+                        "unknown kind id {other} in TemplateLiteralTypeElementsTransportSlot",
                     ))),
                 }
             }
@@ -24882,7 +24971,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateLiteralTypeContentTransp
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in TemplateLiteralTypeContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in TemplateLiteralTypeElementsTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::TemplateChars(
@@ -24892,62 +24981,62 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateLiteralTypeContentTransp
                         TemplateTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TemplateLiteralTypeContentTransportSlot",
+                        "unknown kind id {other} in TemplateLiteralTypeElementsTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("TemplateLiteralTypeContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("TemplateLiteralTypeElementsTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TemplateLiteralTypeContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for TemplateLiteralTypeElementsTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TemplateLiteralTypeContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("TemplateLiteralTypeElementsTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TemplateLiteralTypeContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TemplateLiteralTypeElementsTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TemplateLiteralTypeContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        TemplateLiteralTypeElementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TemplateLiteralTypeContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TemplateLiteralTypeElementsTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TemplateLiteralTypeContentTransportSlot::to_napi_value(env, *val)
+        TemplateLiteralTypeElementsTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn template_literal_type_content_transport_slot_to_any(t: TemplateLiteralTypeContentTransportSlot) -> AnyTransport {
+fn template_literal_type_elements_transport_slot_to_any(t: TemplateLiteralTypeElementsTransportSlot) -> AnyTransport {
     match t {
-        TemplateLiteralTypeContentTransportSlot::TemplateChars(inner) => AnyTransport::TemplateChars(inner),
-        TemplateLiteralTypeContentTransportSlot::TemplateType(inner) => AnyTransport::TemplateType(inner),
-        TemplateLiteralTypeContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        TemplateLiteralTypeElementsTransportSlot::TemplateChars(inner) => AnyTransport::TemplateChars(inner),
+        TemplateLiteralTypeElementsTransportSlot::TemplateType(inner) => AnyTransport::TemplateType(inner),
+        TemplateLiteralTypeElementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for TemplateLiteralTypeContentTransportSlot {
+impl RenderableTransport for TemplateLiteralTypeElementsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TemplateLiteralTypeContentTransportSlot::TemplateChars(inner) => render_template_chars(inner, dest),
-            TemplateLiteralTypeContentTransportSlot::TemplateType(inner) => render_template_type(inner, dest),
-            TemplateLiteralTypeContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            TemplateLiteralTypeElementsTransportSlot::TemplateChars(inner) => render_template_chars(inner, dest),
+            TemplateLiteralTypeElementsTransportSlot::TemplateType(inner) => render_template_type(inner, dest),
+            TemplateLiteralTypeElementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -33513,14 +33602,14 @@ impl RenderableTransport for CallExpressionTemplateCallFunctionTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum StringDoubleContentTransportSlot {
+pub enum StringDoubleElementsTransportSlot {
     UnescapedDoubleStringFragment(UnescapedDoubleStringFragmentTransport),
     EscapeSequence(EscapeSequenceTransport),
     Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for StringDoubleContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for StringDoubleElementsTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -33535,7 +33624,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringDoubleContentTransportSlot
                         EscapeSequenceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StringDoubleContentTransportSlot",
+                        "unknown kind id {other} in StringDoubleElementsTransportSlot",
                     ))),
                 }
             }
@@ -33546,7 +33635,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringDoubleContentTransportSlot
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in StringDoubleContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in StringDoubleElementsTransportSlot")
                 )?;
                 match kind_id {
                     89 => Ok(Self::UnescapedDoubleStringFragment(
@@ -33556,75 +33645,75 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringDoubleContentTransportSlot
                         EscapeSequenceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StringDoubleContentTransportSlot",
+                        "unknown kind id {other} in StringDoubleElementsTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("StringDoubleContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("StringDoubleElementsTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StringDoubleContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for StringDoubleElementsTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("StringDoubleContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("StringDoubleElementsTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StringDoubleContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StringDoubleElementsTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        StringDoubleContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        StringDoubleElementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StringDoubleContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StringDoubleElementsTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        StringDoubleContentTransportSlot::to_napi_value(env, *val)
+        StringDoubleElementsTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn string_double_content_transport_slot_to_any(t: StringDoubleContentTransportSlot) -> AnyTransport {
+fn string_double_elements_transport_slot_to_any(t: StringDoubleElementsTransportSlot) -> AnyTransport {
     match t {
-        StringDoubleContentTransportSlot::UnescapedDoubleStringFragment(inner) => AnyTransport::UnescapedDoubleStringFragment(inner),
-        StringDoubleContentTransportSlot::EscapeSequence(inner) => AnyTransport::EscapeSequence(inner),
-        StringDoubleContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        StringDoubleElementsTransportSlot::UnescapedDoubleStringFragment(inner) => AnyTransport::UnescapedDoubleStringFragment(inner),
+        StringDoubleElementsTransportSlot::EscapeSequence(inner) => AnyTransport::EscapeSequence(inner),
+        StringDoubleElementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for StringDoubleContentTransportSlot {
+impl RenderableTransport for StringDoubleElementsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            StringDoubleContentTransportSlot::UnescapedDoubleStringFragment(inner) => render_unescaped_double_string_fragment(inner, dest),
-            StringDoubleContentTransportSlot::EscapeSequence(inner) => render_escape_sequence(inner, dest),
-            StringDoubleContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            StringDoubleElementsTransportSlot::UnescapedDoubleStringFragment(inner) => render_unescaped_double_string_fragment(inner, dest),
+            StringDoubleElementsTransportSlot::EscapeSequence(inner) => render_escape_sequence(inner, dest),
+            StringDoubleElementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum StringSingleContentTransportSlot {
+pub enum StringSingleElements2TransportSlot {
     UnescapedSingleStringFragment(UnescapedSingleStringFragmentTransport),
     EscapeSequence(EscapeSequenceTransport),
     Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for StringSingleContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for StringSingleElements2TransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -33639,7 +33728,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringSingleContentTransportSlot
                         EscapeSequenceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StringSingleContentTransportSlot",
+                        "unknown kind id {other} in StringSingleElements2TransportSlot",
                     ))),
                 }
             }
@@ -33650,7 +33739,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringSingleContentTransportSlot
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in StringSingleContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in StringSingleElements2TransportSlot")
                 )?;
                 match kind_id {
                     90 => Ok(Self::UnescapedSingleStringFragment(
@@ -33660,62 +33749,62 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringSingleContentTransportSlot
                         EscapeSequenceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StringSingleContentTransportSlot",
+                        "unknown kind id {other} in StringSingleElements2TransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("StringSingleContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("StringSingleElements2TransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StringSingleContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for StringSingleElements2TransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("StringSingleContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("StringSingleElements2TransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StringSingleContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StringSingleElements2TransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        StringSingleContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        StringSingleElements2TransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StringSingleContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StringSingleElements2TransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        StringSingleContentTransportSlot::to_napi_value(env, *val)
+        StringSingleElements2TransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn string_single_content_transport_slot_to_any(t: StringSingleContentTransportSlot) -> AnyTransport {
+fn string_single_elements_2_transport_slot_to_any(t: StringSingleElements2TransportSlot) -> AnyTransport {
     match t {
-        StringSingleContentTransportSlot::UnescapedSingleStringFragment(inner) => AnyTransport::UnescapedSingleStringFragment(inner),
-        StringSingleContentTransportSlot::EscapeSequence(inner) => AnyTransport::EscapeSequence(inner),
-        StringSingleContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        StringSingleElements2TransportSlot::UnescapedSingleStringFragment(inner) => AnyTransport::UnescapedSingleStringFragment(inner),
+        StringSingleElements2TransportSlot::EscapeSequence(inner) => AnyTransport::EscapeSequence(inner),
+        StringSingleElements2TransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for StringSingleContentTransportSlot {
+impl RenderableTransport for StringSingleElements2TransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            StringSingleContentTransportSlot::UnescapedSingleStringFragment(inner) => render_unescaped_single_string_fragment(inner, dest),
-            StringSingleContentTransportSlot::EscapeSequence(inner) => render_escape_sequence(inner, dest),
-            StringSingleContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            StringSingleElements2TransportSlot::UnescapedSingleStringFragment(inner) => render_unescaped_single_string_fragment(inner, dest),
+            StringSingleElements2TransportSlot::EscapeSequence(inner) => render_escape_sequence(inner, dest),
+            StringSingleElements2TransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -34094,6 +34183,8 @@ pub struct ExportClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause_group1"))]
     pub export_clause_group1: Option<ExportClauseGroup1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier"))]
+    pub export_specifier: Option<Vec<ExportSpecifierTransport>>,
 }
 
 impl RenderableTransport for ExportClauseTransport {
@@ -34507,6 +34598,8 @@ pub struct NamedImportsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_imports_group1"))]
     pub named_imports_group1: Option<NamedImportsGroup1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier"))]
+    pub import_specifier: Option<Vec<ImportSpecifierTransport>>,
 }
 
 impl RenderableTransport for NamedImportsTransport {
@@ -36532,10 +36625,10 @@ pub struct JsxElementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_open_tag"))]
     pub open_tag: JsxOpeningElementTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_childs"))]
+    pub jsx_childs: Option<Vec<JsxChildTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_close_tag"))]
     pub close_tag: JsxClosingElementTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_child"))]
-    pub jsx_child: Option<Vec<JsxChildTransport>>,
 }
 
 impl RenderableTransport for JsxElementTransport {
@@ -37150,8 +37243,10 @@ pub struct JsxStringTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<Vec<JsxStringContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Option<Vec<JsxStringElementsTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_2"))]
+    pub elements_2: Option<Vec<JsxStringElements2TransportSlot>>,
 }
 
 impl RenderableTransport for JsxStringTransport {
@@ -39246,8 +39341,8 @@ pub struct TemplateStringTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<Vec<TemplateStringContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Option<Vec<TemplateStringElementsTransportSlot>>,
 }
 
 impl RenderableTransport for TemplateStringTransport {
@@ -40885,6 +40980,8 @@ pub struct FormalParametersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameters_group1"))]
     pub formal_parameters_group1: Option<FormalParametersGroup1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter"))]
+    pub formal_parameter: Option<Vec<FormalParameterTransport>>,
 }
 
 impl RenderableTransport for FormalParametersTransport {
@@ -44228,8 +44325,8 @@ pub struct TemplateLiteralTypeTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<Vec<TemplateLiteralTypeContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Option<Vec<TemplateLiteralTypeElementsTransportSlot>>,
 }
 
 impl RenderableTransport for TemplateLiteralTypeTransport {
@@ -46004,6 +46101,8 @@ pub struct TupleTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_group1"))]
     pub tuple_type_group1: Option<TupleTypeGroup1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member"))]
+    pub tuple_type_member: Option<Vec<TupleTypeMemberTransport>>,
 }
 
 impl RenderableTransport for TupleTypeTransport {
@@ -47733,8 +47832,6 @@ pub struct FormalParametersGroup1Transport {
     pub formal_parameter: Vec<FormalParameterTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_trailing_sep"))]
     pub formal_parameter_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for FormalParametersGroup1Transport {
@@ -50715,8 +50812,8 @@ pub struct StringDoubleTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<Vec<StringDoubleContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Option<Vec<StringDoubleElementsTransportSlot>>,
 }
 
 impl RenderableTransport for StringDoubleTransport {
@@ -50765,8 +50862,8 @@ pub struct StringSingleTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<Vec<StringSingleContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_2"))]
+    pub elements_2: Option<Vec<StringSingleElements2TransportSlot>>,
 }
 
 impl RenderableTransport for StringSingleTransport {
@@ -62924,14 +63021,14 @@ fn render_array_pattern(node: &ArrayPatternTransport, dest: &mut dyn ::std::fmt:
 }
 
 fn render_jsx_element(node: &JsxElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let jsx_child_owned = node.jsx_child.as_deref().unwrap_or(&[]);
-    let jsx_child_buf: Vec<::sittir_core::filters::Renderable<'_>> = jsx_child_owned.iter()
+    let jsx_childs_owned = node.jsx_childs.as_deref().unwrap_or(&[]);
+    let jsx_childs_buf: Vec<::sittir_core::filters::Renderable<'_>> = jsx_childs_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = JsxElementTemplate {
         close_tag: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.close_tag)),
-        jsx_child: ListNonterminalView {
-            items: jsx_child_buf.as_slice(),
+        jsx_childs: ListNonterminalView {
+            items: jsx_childs_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
@@ -63037,7 +63134,12 @@ fn render_jsx_attribute(node: &JsxAttributeTransport, dest: &mut dyn ::std::fmt:
 }
 
 fn render_jsx_string(node: &JsxStringTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(items) = &node.content {
+    if let Some(items) = &node.elements {
+        for child in items.iter() {
+        child.render_into(dest)?;
+        }
+    }
+    if let Some(items) = &node.elements_2 {
         for child in items.iter() {
         child.render_into(dest)?;
         }
@@ -63423,18 +63525,18 @@ fn render_comment(t: &CommentTransport, dest: &mut dyn ::std::fmt::Write) -> Res
 }
 
 fn render_template_string(node: &TemplateStringTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.content.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.elements.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let content_owned = node.content.as_deref().unwrap_or(&[]);
-    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
+    let elements_owned = node.elements.as_deref().unwrap_or(&[]);
+    let elements_buf: Vec<::sittir_core::filters::Renderable<'_>> = elements_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TemplateStringTemplate {
-        content: ListNonterminalView {
-            items: content_buf.as_slice(),
+        elements: ListNonterminalView {
+            items: elements_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
@@ -64338,18 +64440,18 @@ fn render_template_type(node: &TemplateTypeTransport, dest: &mut dyn ::std::fmt:
 }
 
 fn render_template_literal_type(node: &TemplateLiteralTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.content.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.elements.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let content_owned = node.content.as_deref().unwrap_or(&[]);
-    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
+    let elements_owned = node.elements.as_deref().unwrap_or(&[]);
+    let elements_buf: Vec<::sittir_core::filters::Renderable<'_>> = elements_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TemplateLiteralTypeTemplate {
-        content: ListNonterminalView {
-            items: content_buf.as_slice(),
+        elements: ListNonterminalView {
+            items: elements_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
@@ -64521,7 +64623,7 @@ fn render_type_arguments(node: &TypeArgumentsTransport, dest: &mut dyn ::std::fm
             items: type__buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: false,
+            trailing: node.type__trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -64599,7 +64701,7 @@ fn render_type_parameters(node: &TypeParametersTransport, dest: &mut dyn ::std::
             items: type_parameter_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: false,
+            trailing: node.type_parameter_trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -64882,7 +64984,7 @@ fn render_formal_parameters_group1(node: &FormalParametersGroup1Transport, dest:
             items: formal_parameter_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.formal_parameter_trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -65358,18 +65460,18 @@ fn render_call_expression_member(node: &CallExpressionMemberTransport, dest: &mu
 }
 
 fn render_string_double(node: &StringDoubleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.content.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.elements.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let content_owned = node.content.as_deref().unwrap_or(&[]);
-    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
+    let elements_owned = node.elements.as_deref().unwrap_or(&[]);
+    let elements_buf: Vec<::sittir_core::filters::Renderable<'_>> = elements_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = StringDoubleTemplate {
-        content: ListNonterminalView {
-            items: content_buf.as_slice(),
+        elements: ListNonterminalView {
+            items: elements_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
@@ -65379,18 +65481,18 @@ fn render_string_double(node: &StringDoubleTransport, dest: &mut dyn ::std::fmt:
 }
 
 fn render_string_single(node: &StringSingleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.content.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.elements_2.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let content_owned = node.content.as_deref().unwrap_or(&[]);
-    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
+    let elements_2_owned = node.elements_2.as_deref().unwrap_or(&[]);
+    let elements_2_buf: Vec<::sittir_core::filters::Renderable<'_>> = elements_2_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = StringSingleTemplate {
-        content: ListNonterminalView {
-            items: content_buf.as_slice(),
+        elements_2: ListNonterminalView {
+            items: elements_2_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
@@ -66218,7 +66320,8 @@ fn render_primary_type(t: &PrimaryTypeTransport, dest: &mut dyn ::std::fmt::Writ
 static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core::spacing::WordMatcher::new(
     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true],
     char::is_alphanumeric,
-);
+)
+.with_symbol_class([false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, false, false]);
 
 pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {
     let mut s = String::new();

@@ -25,7 +25,33 @@ import type { EnrichedGrammar } from '../codegen/src/dsl/enrich.ts';
 
 declare const string: (value: string) => unknown;
 
-const enrichedBase = enrich(base);
+const enrichedBase = enrich(base, {
+	// `tuple_type` and `trait_bounds` already field their separated list's
+	// element position via their own override below (`tuple_type: {
+	// '(_type)': field('type') }`, `trait_bounds`'s `bounds` field) —
+	// applyNodeChoiceFieldWrap's separated-list target fielding the same
+	// position first left those overrides with nothing to find: a hard
+	// `tree-sitter generate` failure for `tuple_type` (kind-match search
+	// came up empty) and an accessor-throw for `trait_bounds` (merged slot
+	// ended up empty).
+	// `function_modifiers` already fields EVERY position with a wildcard
+	// override (`_: field('modifier')` below) — same nested-field collision
+	// as `tuple_type`/`trait_bounds`, this time surfacing as a render-time
+	// unknown-kind-id error rather than a hard generate failure or an
+	// accessor-throw. `_where_clause_group1` regressed factory-render-parse
+	// (-2) and `_closure_parameters_optional1`/`_use_list_group1` each
+	// regressed coverage (-1) when enabled — found via bisection against
+	// `validate:native`, root cause not further isolated (each is a small,
+	// contained loss, not a hard failure); left skipped until diagnosed.
+	skip: [
+		'tuple_type',
+		'trait_bounds',
+		'function_modifiers',
+		'_where_clause_group1',
+		'_closure_parameters_optional1',
+		'_use_list_group1'
+	]
+});
 
 export default grammar(
 	enrichedBase,
@@ -219,16 +245,14 @@ export default grammar(
 					'1/1': variant('mut')
 				},
 
-				// string_literal deliberately NOT fielded: its opening token is
-				// `alias(/[bc]?"/, '"')` — a PATTERN carrying the b"/c" byte-/C-string
-				// prefixes, aliased to the constant '"'. Field-promoting it was tried
-				// (2026-07-28) and does NOT recover the prefix: slot classification
-				// keys off the ALIAS display string, minting a fixed `dquote`
-				// TERMINAL whose wire encoding is a presence boolean, so the render
-				// still emits the static '"' and c"..." renders as "..." (1 corpus
-				// AST mismatch). Needs a classification fix (alias-of-PATTERN whose
-				// regex isn't the alias string is content-bearing) — see specs/026
-				// progress notes.
+				// string_literal's opening token carries the b"/c" byte-/C-string
+				// prefix (`alias(/[bc]?"/, $.string_open)` in `rules:` below) — a
+				// NAMED alias, so its real per-occurrence text (`c"`/`b"`/`"`)
+				// survives instead of collapsing to the base grammar's anonymous
+				// `alias(/[bc]?"/, '"')` display string.
+				string_literal: {
+					0: field('string_open')
+				},
 
 				// raw_string_literal: 3 field(s)
 				raw_string_literal: {
@@ -444,6 +468,19 @@ export default grammar(
 					}),
 
 				_range_expression_bare: ($) => '..',
+
+				// string_literal's opening token is `alias(/[bc]?"/, '"')` in the
+				// base grammar — an UNNAMED alias, so the b"/c" prefix distinction
+				// collapses to the fixed display string '"' before the compiler
+				// ever sees it. Same fix as `_wildcard_pattern`/`_range_expression_bare`
+				// above: alias the pattern into its own real, named node so its
+				// per-occurrence text survives.
+				string_literal: ($, original) =>
+					transform(original, {
+						'0': alias($._string_literal_open, $.string_open)
+					}),
+
+				_string_literal_open: ($) => /[bc]?"/,
 
 				_reference_expression_raw_const: ($) => seq('raw', 'const'),
 				_reference_expression_raw_mut: ($) => seq('raw', $.mutable_specifier),

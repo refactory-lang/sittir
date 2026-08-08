@@ -298,9 +298,6 @@ export interface IsGuards {
 	NamedImportsGroup1<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.NamedImportsGroup1 };
-	FormalParametersGroup1<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.FormalParametersGroup1 };
 	TupleTypeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleTypeGroup1 };
 	objectTypeContent<T extends { readonly $type: number }>(
 		v: T
@@ -330,8 +327,6 @@ export interface IsGuards {
 	PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
-	StringDouble<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StringDouble };
-	StringSingle<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StringSingle };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	moduleExportName(v: { readonly $type: string | number }): v is ModuleExportName;
 	declaration(v: { readonly $type: string | number }): v is Declaration;
@@ -547,9 +542,6 @@ export interface AssertGuards {
 	ImportStatementGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportStatementGroup1 };
 	ImportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseGroup1 };
 	NamedImportsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NamedImportsGroup1 };
-	FormalParametersGroup1(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.FormalParametersGroup1 };
 	TupleTypeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleTypeGroup1 };
 	objectTypeContent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectTypeContent };
 	ExportStatementDefault(v: {
@@ -577,8 +569,6 @@ export interface AssertGuards {
 	PublicFieldDefinitionDeclareFirst(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
-	StringDouble(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StringDouble };
-	StringSingle(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StringSingle };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	moduleExportName(v: { readonly $type: string | number }): asserts v is ModuleExportName;
 	declaration(v: { readonly $type: string | number }): asserts v is Declaration;
@@ -1121,7 +1111,6 @@ export const is = {
 	ImportStatementGroup1: _g(TSKindId.ImportStatementGroup1),
 	ImportClauseGroup1: _g(TSKindId.ImportClauseGroup1),
 	NamedImportsGroup1: _g(TSKindId.NamedImportsGroup1),
-	FormalParametersGroup1: _g(TSKindId.FormalParametersGroup1),
 	TupleTypeGroup1: _g(TSKindId.TupleTypeGroup1),
 	objectTypeContent: _g(TSKindId.ObjectTypeContent),
 	ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
@@ -1133,8 +1122,6 @@ export const is = {
 	ExportStatementDefaultClauseFrom: _g(TSKindId.ExportStatementDefaultClauseFrom),
 	ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
 	PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
-	StringDouble: _g(TSKindId.StringDouble),
-	StringSingle: _g(TSKindId.StringSingle),
 	kind: (v: { readonly $type: number }, k: string): boolean => {
 		const id = _kindIdByKind.get(k);
 		return id !== undefined && v.$type === id;
@@ -1357,7 +1344,6 @@ export const assert = {
 	ImportStatementGroup1: _makeAssert('ImportStatementGroup1', is.ImportStatementGroup1 as _AnyGuard),
 	ImportClauseGroup1: _makeAssert('ImportClauseGroup1', is.ImportClauseGroup1 as _AnyGuard),
 	NamedImportsGroup1: _makeAssert('NamedImportsGroup1', is.NamedImportsGroup1 as _AnyGuard),
-	FormalParametersGroup1: _makeAssert('FormalParametersGroup1', is.FormalParametersGroup1 as _AnyGuard),
 	TupleTypeGroup1: _makeAssert('TupleTypeGroup1', is.TupleTypeGroup1 as _AnyGuard),
 	objectTypeContent: _makeAssert('objectTypeContent', is.objectTypeContent as _AnyGuard),
 	ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),
@@ -1384,8 +1370,6 @@ export const assert = {
 		'PublicFieldDefinitionDeclareFirst',
 		is.PublicFieldDefinitionDeclareFirst as _AnyGuard
 	),
-	StringDouble: _makeAssert('StringDouble', is.StringDouble as _AnyGuard),
-	StringSingle: _makeAssert('StringSingle', is.StringSingle as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	moduleExportName: _makeAssert('moduleExportName', is.moduleExportName as _AnyGuard),
 	declaration: _makeAssert('declaration', is.declaration as _AnyGuard),

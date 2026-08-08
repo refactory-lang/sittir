@@ -789,6 +789,7 @@ export interface ExportClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _export_clause_group1?: ExportClauseGroup1Transport
+  _export_specifier?: Array<ExportSpecifierTransport>
 }
 
 export interface ExportSpecifierOptional1Transport {
@@ -1113,7 +1114,6 @@ export interface FormalParametersGroup1Transport {
   '$triviaData'?: TransportTrivia
   _formal_parameter: Array<FormalParameterTransport>
   _formal_parameter_trailing_sep?: boolean
-  _trailing_sep?: boolean
 }
 
 export interface FormalParametersTransport {
@@ -1125,6 +1125,7 @@ export interface FormalParametersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _formal_parameters_group1?: FormalParametersGroup1Transport
+  _formal_parameter?: Array<FormalParameterTransport>
 }
 
 export interface ForStatementTransport {
@@ -1567,8 +1568,8 @@ export interface JsxElementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _open_tag: JsxOpeningElementTransport
+  _jsx_childs?: Array<JsxChildTransport>
   _close_tag: JsxClosingElementTransport
-  _jsx_child?: Array<JsxChildTransport>
 }
 
 export interface JsxExpressionTransport {
@@ -1667,7 +1668,8 @@ export interface JsxStringTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<JsxStringContentTransportSlot>
+  _elements?: Array<JsxStringElementsTransportSlot>
+  _elements_2?: Array<JsxStringElements2TransportSlot>
 }
 
 export interface LabeledStatementTransport {
@@ -1855,6 +1857,7 @@ export interface NamedImportsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _named_imports_group1?: NamedImportsGroup1Transport
+  _import_specifier?: Array<ImportSpecifierTransport>
 }
 
 export interface NamespaceExportTransport {
@@ -2371,7 +2374,7 @@ export interface StringDoubleTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<StringDoubleContentTransportSlot>
+  _elements?: Array<StringDoubleElementsTransportSlot>
 }
 
 export interface StringSingleTransport {
@@ -2382,7 +2385,7 @@ export interface StringSingleTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<StringSingleContentTransportSlot>
+  _elements_2?: Array<StringSingleElements2TransportSlot>
 }
 
 export interface StringTransport {
@@ -2463,7 +2466,7 @@ export interface TemplateLiteralTypeTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<TemplateLiteralTypeContentTransportSlot>
+  _elements?: Array<TemplateLiteralTypeElementsTransportSlot>
 }
 
 export interface TemplateStringTransport {
@@ -2474,7 +2477,7 @@ export interface TemplateStringTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<TemplateStringContentTransportSlot>
+  _elements?: Array<TemplateStringElementsTransportSlot>
 }
 
 export interface TemplateSubstitutionTransport {
@@ -2571,6 +2574,7 @@ export interface TupleTypeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _tuple_type_group1?: TupleTypeGroup1Transport
+  _tuple_type_member?: Array<TupleTypeMemberTransport>
 }
 
 export interface TypeAliasDeclarationTransport {

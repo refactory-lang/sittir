@@ -426,6 +426,7 @@ export const enum SyntaxKind {
 	TokenTreePunctuation = '_token_tree_punctuation',
 	TokenKeywords = '_token_keywords',
 	WildcardPattern = '_wildcard_pattern',
+	StringLiteralOpen = '_string_literal_open',
 	ReferenceExpressionRawConst = '_reference_expression_raw_const',
 	PointerTypeConst = '_pointer_type_const',
 	LineCommentRegularDslash = '_line_comment_regular_dslash',
@@ -597,27 +598,27 @@ export const enum TSKindId {
 	Ref = 119,
 	At = 120,
 	IntegerLiteral = 121,
-	StringLiteralToken1 = 122,
-	Dquote = 123,
-	CharLiteral = 124,
-	EscapeSequence = 125,
-	True = 126,
-	False = 127,
-	SlashSlash = 128,
-	Bang2 = 129,
-	Slash2 = 130,
-	SlashStar = 131,
-	StarSlash = 132,
-	Shebang = 133,
-	Self = 134,
-	Super = 135,
-	Crate = 136,
-	Metavariable = 137,
-	Move = 138,
-	DashGt = 139,
-	Anonymous = 140,
-	DotDotEq = 141,
-	Pub = 142,
+	Dquote = 122,
+	CharLiteral = 123,
+	EscapeSequence = 124,
+	True = 125,
+	False = 126,
+	SlashSlash = 127,
+	Bang2 = 128,
+	Slash2 = 129,
+	SlashStar = 130,
+	StarSlash = 131,
+	Shebang = 132,
+	Self = 133,
+	Super = 134,
+	Crate = 135,
+	Metavariable = 136,
+	Move = 137,
+	DashGt = 138,
+	Anonymous = 139,
+	DotDotEq = 140,
+	Pub = 141,
+	StringLiteralOpen = 142,
 	Raw = 143,
 	_LineCommentRegularDslashToken1 = 144,
 	_LineCommentRegularDslashToken2 = 145,
@@ -1034,27 +1035,27 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[119, 'ref'],
 	[120, 'at'],
 	[121, 'integer_literal'],
-	[122, 'string_literal_token1'],
-	[123, 'dquote'],
-	[124, 'char_literal'],
-	[125, 'escape_sequence'],
-	[126, 'true'],
-	[127, 'false'],
-	[128, 'slash_slash'],
-	[129, 'bang2'],
-	[130, 'slash2'],
-	[131, 'slash_star'],
-	[132, 'star_slash'],
-	[133, 'shebang'],
-	[134, 'self'],
-	[135, 'super'],
-	[136, 'crate'],
-	[137, 'metavariable'],
-	[138, 'move'],
-	[139, 'dash_gt'],
-	[140, '_'],
-	[141, 'dot_dot_eq'],
-	[142, 'pub'],
+	[122, 'dquote'],
+	[123, 'char_literal'],
+	[124, 'escape_sequence'],
+	[125, 'true'],
+	[126, 'false'],
+	[127, 'slash_slash'],
+	[128, 'bang2'],
+	[129, 'slash2'],
+	[130, 'slash_star'],
+	[131, 'star_slash'],
+	[132, 'shebang'],
+	[133, 'self'],
+	[134, 'super'],
+	[135, 'crate'],
+	[136, 'metavariable'],
+	[137, 'move'],
+	[138, 'dash_gt'],
+	[139, '_'],
+	[140, 'dot_dot_eq'],
+	[141, 'pub'],
+	[142, '_string_literal_open'],
 	[143, 'raw'],
 	[144, '_line_comment_regular_dslash_token1'],
 	[145, '_line_comment_regular_dslash_token2'],
@@ -1473,27 +1474,27 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[119, 'ref'],
 	[120, 'at'],
 	[121, 'integer_literal'],
-	[122, '"'],
-	[123, 'dquote'],
-	[124, 'char_literal'],
-	[125, 'escape_sequence'],
-	[126, 'true'],
-	[127, 'false'],
-	[128, 'slash_slash'],
-	[129, 'bang2'],
-	[130, 'slash2'],
-	[131, 'slash_star'],
-	[132, 'star_slash'],
-	[133, 'shebang'],
-	[134, 'self'],
-	[135, 'super'],
-	[136, 'crate'],
-	[137, 'metavariable'],
-	[138, 'move'],
-	[139, 'dash_gt'],
-	[140, '_'],
-	[141, 'dot_dot_eq'],
-	[142, 'pub'],
+	[122, 'dquote'],
+	[123, 'char_literal'],
+	[124, 'escape_sequence'],
+	[125, 'true'],
+	[126, 'false'],
+	[127, 'slash_slash'],
+	[128, 'bang2'],
+	[129, 'slash2'],
+	[130, 'slash_star'],
+	[131, 'star_slash'],
+	[132, 'shebang'],
+	[133, 'self'],
+	[134, 'super'],
+	[135, 'crate'],
+	[136, 'metavariable'],
+	[137, 'move'],
+	[138, 'dash_gt'],
+	[139, '_'],
+	[140, 'dot_dot_eq'],
+	[141, 'pub'],
+	[142, 'string_open'],
 	[143, 'raw'],
 	[144, '_line_comment_regular_dslash_token1'],
 	[145, '_line_comment_regular_dslash_token2'],
@@ -2036,8 +2037,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.At;
 		case 'integer_literal':
 			return TSKindId.IntegerLiteral;
-		case 'string_literal_token1':
-			return TSKindId.StringLiteralToken1;
 		case 'dquote':
 			return TSKindId.Dquote;
 		case 'char_literal':
@@ -2078,6 +2077,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DotDotEq;
 		case 'pub':
 			return TSKindId.Pub;
+		case '_string_literal_open':
+			return TSKindId.StringLiteralOpen;
 		case 'raw':
 			return TSKindId.Raw;
 		case '_line_comment_regular_dslash_token1':
@@ -2765,7 +2766,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '@':
 			return TSKindId.At;
 		case '"':
-			return TSKindId.StringLiteralToken1;
+			return TSKindId.Dquote;
 		case '//':
 			return TSKindId.SlashSlash;
 		case '/*':
@@ -2776,6 +2777,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DashGt;
 		case '..=':
 			return TSKindId.DotDotEq;
+		case 'string_open':
+			return TSKindId.StringLiteralOpen;
 		case 'line_comment_content':
 			return TSKindId.LineCommentContent;
 		case 'outer_doc_comment_marker':
@@ -3449,7 +3452,7 @@ export interface TokenBindingPattern {
 
 export interface TokenRepetitionPattern {
 	readonly $type: TSKindId.TokenRepetitionPattern;
-	readonly _token_pattern?: readonly TokenPattern[];
+	readonly _token_patterns?: readonly TokenPattern[];
 	readonly _separator?: boolean;
 	readonly _operator: number;
 	readonly __inputHints__?: {
@@ -3535,7 +3538,7 @@ export interface ForeignModItem {
 
 export interface DeclarationList {
 	readonly $type: TSKindId.DeclarationList;
-	readonly _declaration_statement?: readonly DeclarationStatement[];
+	readonly _declaration_statements?: readonly DeclarationStatement[];
 	declarationStatements(): readonly DeclarationStatement[];
 }
 
@@ -3834,8 +3837,8 @@ export interface RemovedTraitBound {
 
 export interface TypeParameters {
 	readonly $type: TSKindId.TypeParameters;
-	readonly _attributed_type_parameter: NonEmptyArray<AttributedTypeParameter>;
-	attributedTypeParameters(): NonEmptyArray<AttributedTypeParameter>;
+	readonly _element: NonEmptyArray<AttributedTypeParameter>;
+	elements(): NonEmptyArray<AttributedTypeParameter>;
 }
 
 export interface ConstParameter {
@@ -4077,8 +4080,8 @@ export interface UseBounds {
 
 export interface TypeArguments {
 	readonly $type: TSKindId.TypeArguments;
-	readonly _type_argument: NonEmptyArray<TypeArgument>;
-	typeArguments(): NonEmptyArray<TypeArgument>;
+	readonly _element: NonEmptyArray<TypeArgument>;
+	elements(): NonEmptyArray<TypeArgument>;
 }
 
 export interface TypeBinding {
@@ -4582,7 +4585,7 @@ export interface TryBlock {
 export interface Block {
 	readonly $type: TSKindId.Block;
 	readonly _label?: Label;
-	readonly _statement?: readonly Statement[];
+	readonly _statements?: readonly Statement[];
 	readonly _trailing_expression?: Expression;
 	label(): Label | undefined;
 	statements(): readonly Statement[];
@@ -4695,8 +4698,10 @@ export interface NegativeLiteral {
 
 export interface StringLiteral {
 	readonly $type: TSKindId.StringLiteral;
-	readonly _content?: readonly (EscapeSequence | StringContent)[];
-	contents(): readonly (EscapeSequence | StringContent)[];
+	readonly _string_open: StringLiteralOpen;
+	readonly _elements?: readonly (EscapeSequence | StringContent)[];
+	stringOpen(): StringLiteralOpen;
+	elements(): readonly (EscapeSequence | StringContent)[];
 }
 
 export interface RawStringLiteral {
@@ -4733,8 +4738,8 @@ export interface AttributeGroup1 {
 
 export interface EnumVariantListGroup1 {
 	readonly $type: TSKindId.EnumVariantListGroup1;
-	readonly _attributed_enum_variant: NonEmptyArray<AttributedEnumVariant>;
-	attributedEnumVariants(): NonEmptyArray<AttributedEnumVariant>;
+	readonly _element: NonEmptyArray<AttributedEnumVariant>;
+	elements(): NonEmptyArray<AttributedEnumVariant>;
 }
 
 export interface EnumVariantOptional1 {
@@ -4745,14 +4750,14 @@ export interface EnumVariantOptional1 {
 
 export interface FieldDeclarationListGroup1 {
 	readonly $type: TSKindId.FieldDeclarationListGroup1;
-	readonly _attributed_field_declaration: NonEmptyArray<AttributedFieldDeclaration>;
-	attributedFieldDeclarations(): NonEmptyArray<AttributedFieldDeclaration>;
+	readonly _element: NonEmptyArray<AttributedFieldDeclaration>;
+	elements(): NonEmptyArray<AttributedFieldDeclaration>;
 }
 
 export interface OrderedFieldDeclarationListGroup1 {
 	readonly $type: TSKindId.OrderedFieldDeclarationListGroup1;
-	readonly _attributed_ordered_field: NonEmptyArray<AttributedOrderedField>;
-	attributedOrderedFields(): NonEmptyArray<AttributedOrderedField>;
+	readonly _element: NonEmptyArray<AttributedOrderedField>;
+	elements(): NonEmptyArray<AttributedOrderedField>;
 }
 
 export interface ExternCrateDeclarationOptional1 {
@@ -4805,8 +4810,8 @@ export interface UseListGroup1 {
 
 export interface ParametersGroup1 {
 	readonly $type: TSKindId.ParametersGroup1;
-	readonly _attributed_parameter: NonEmptyArray<AttributedParameter>;
-	attributedParameters(): NonEmptyArray<AttributedParameter>;
+	readonly _element: NonEmptyArray<AttributedParameter>;
+	elements(): NonEmptyArray<AttributedParameter>;
 }
 
 export interface VariadicParameterOptional1 {
@@ -4829,8 +4834,8 @@ export interface ArrayTypeOptional1 {
 
 export interface UseBoundsGroup1 {
 	readonly $type: TSKindId.UseBoundsGroup1;
-	readonly _content?: readonly (Lifetime | Identifier)[];
-	contents(): readonly (Lifetime | Identifier)[];
+	readonly _element: NonEmptyArray<Lifetime | Identifier>;
+	elements(): NonEmptyArray<Lifetime | Identifier>;
 }
 
 export interface AbstractTypeOptional1 {
@@ -4841,8 +4846,8 @@ export interface AbstractTypeOptional1 {
 
 export interface ArgumentsGroup1 {
 	readonly $type: TSKindId.ArgumentsGroup1;
-	readonly _attributed_argument: NonEmptyArray<AttributedArgument>;
-	attributedArguments(): NonEmptyArray<AttributedArgument>;
+	readonly _element: NonEmptyArray<AttributedArgument>;
+	elements(): NonEmptyArray<AttributedArgument>;
 }
 
 export interface ArrayExpressionGroup1 {
@@ -4855,8 +4860,8 @@ export interface ArrayExpressionGroup1 {
 
 export interface FieldInitializerListGroup1 {
 	readonly $type: TSKindId.FieldInitializerListGroup1;
-	readonly _content?: readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
-	contents(): readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
+	readonly _element: NonEmptyArray<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer>;
+	elements(): NonEmptyArray<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer>;
 }
 
 export interface MatchPatternOptional1 {
@@ -4873,8 +4878,8 @@ export interface WhileExpressionOptional1 {
 
 export interface TuplePatternGroup1 {
 	readonly $type: TSKindId.TuplePatternGroup1;
-	readonly _content?: readonly (Pattern | ClosureExpression)[];
-	contents(): readonly (Pattern | ClosureExpression)[];
+	readonly _element: NonEmptyArray<Pattern | ClosureExpression>;
+	elements(): NonEmptyArray<Pattern | ClosureExpression>;
 }
 
 export interface SlicePatternGroup1 {
@@ -4885,8 +4890,8 @@ export interface SlicePatternGroup1 {
 
 export interface StructPatternGroup1 {
 	readonly $type: TSKindId.StructPatternGroup1;
-	readonly _content?: readonly (FieldPattern | RemainingFieldPattern)[];
-	contents(): readonly (FieldPattern | RemainingFieldPattern)[];
+	readonly _element: NonEmptyArray<FieldPattern | RemainingFieldPattern>;
+	elements(): NonEmptyArray<FieldPattern | RemainingFieldPattern>;
 }
 
 export interface RangePatternGroup2 {
@@ -5519,6 +5524,7 @@ export type TokenKeywords = Terminal<
 	| 'where'
 	| 'while'
 >;
+export type StringLiteralOpen = Terminal<TSKindId.StringLiteralOpen, string>;
 export type ReferenceExpressionRawConst = Terminal<TSKindId.ReferenceExpressionRawConst, string>;
 export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
 export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
@@ -5950,6 +5956,9 @@ export interface TokenTreePunctuationTree extends AnyTreeNode {
 }
 export interface TokenKeywordsTree extends AnyTreeNode {
 	readonly type: '_token_keywords';
+}
+export interface StringLiteralOpenTree extends AnyTreeNode {
+	readonly type: '_string_literal_open';
 }
 export interface ReferenceExpressionRawConstTree extends AnyTreeNode {
 	readonly type: '_reference_expression_raw_const';
@@ -7307,6 +7316,7 @@ export interface KindMap {
 	_compound_assignment_expr_operator: CompoundAssignmentExprOperator;
 	_token_tree_punctuation: TokenTreePunctuation;
 	_token_keywords: TokenKeywords;
+	_string_literal_open: StringLiteralOpen;
 	_reference_expression_raw_const: ReferenceExpressionRawConst;
 	_line_comment_regular_dslash: LineCommentRegularDslash;
 	_line_comment_content: LineCommentContent;

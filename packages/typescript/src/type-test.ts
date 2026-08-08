@@ -141,8 +141,6 @@ import type {
 	ForStatement,
 	ForStatementTree,
 	FormalParameters,
-	FormalParametersGroup1,
-	FormalParametersGroup1Tree,
 	FormalParametersTree,
 	FunctionDeclaration,
 	FunctionDeclarationTree,
@@ -349,10 +347,6 @@ import type {
 	StatementBlock,
 	StatementBlockTree,
 	String,
-	StringDouble,
-	StringDoubleTree,
-	StringSingle,
-	StringSingleTree,
 	StringTree,
 	SubscriptExpression,
 	SubscriptExpressionTree,
@@ -696,9 +690,6 @@ export type _Type_ImportClauseGroup1 = _TypeAssert<
 export type _Type_NamedImportsGroup1 = _TypeAssert<
 	_TypeExtends<NamedImportsGroup1['$type'], TSKindId.NamedImportsGroup1>
 >;
-export type _Type_FormalParametersGroup1 = _TypeAssert<
-	_TypeExtends<FormalParametersGroup1['$type'], TSKindId.FormalParametersGroup1>
->;
 export type _Type_TupleTypeGroup1 = _TypeAssert<_TypeExtends<TupleTypeGroup1['$type'], TSKindId.TupleTypeGroup1>>;
 export type _Type_ObjectTypeContent = _TypeAssert<_TypeExtends<ObjectTypeContent['$type'], TSKindId.ObjectTypeContent>>;
 export type _Type_ExportStatementDefault = _TypeAssert<
@@ -726,8 +717,6 @@ export type _Type_ForHeaderLhs = _TypeAssert<_TypeExtends<ForHeaderLhs['$type'],
 export type _Type_PublicFieldDefinitionDeclareFirst = _TypeAssert<
 	_TypeExtends<PublicFieldDefinitionDeclareFirst['$type'], TSKindId.PublicFieldDefinitionDeclareFirst>
 >;
-export type _Type_StringDouble = _TypeAssert<_TypeExtends<StringDouble['$type'], TSKindId.StringDouble>>;
-export type _Type_StringSingle = _TypeAssert<_TypeExtends<StringSingle['$type'], TSKindId.StringSingle>>;
 export type _Type_HashBangLine = _TypeAssert<_TypeExtends<HashBangLine['$type'], TSKindId.HashBangLine>>;
 export type _Type_Import = _TypeAssert<_TypeExtends<Import['$type'], TSKindId.Import>>;
 export type _Type_HtmlCharacterReference = _TypeAssert<
@@ -1090,9 +1079,6 @@ export type _Tree_ImportClauseGroup1 = _TypeAssert<
 export type _Tree_NamedImportsGroup1 = _TypeAssert<
 	_TypeExtends<NamedImportsGroup1Tree['type'], '_named_imports_group1'>
 >;
-export type _Tree_FormalParametersGroup1 = _TypeAssert<
-	_TypeExtends<FormalParametersGroup1Tree['type'], '_formal_parameters_group1'>
->;
 export type _Tree_TupleTypeGroup1 = _TypeAssert<_TypeExtends<TupleTypeGroup1Tree['type'], '_tuple_type_group1'>>;
 export type _Tree_ObjectTypeContent = _TypeAssert<_TypeExtends<ObjectTypeContentTree['type'], 'object_type_content'>>;
 export type _Tree_ExportStatementDefault = _TypeAssert<
@@ -1120,8 +1106,6 @@ export type _Tree_ForHeaderLhs = _TypeAssert<_TypeExtends<ForHeaderLhsTree['type
 export type _Tree_PublicFieldDefinitionDeclareFirst = _TypeAssert<
 	_TypeExtends<PublicFieldDefinitionDeclareFirstTree['type'], '_public_field_definition_declare_first'>
 >;
-export type _Tree_StringDouble = _TypeAssert<_TypeExtends<StringDoubleTree['type'], '_string_double'>>;
-export type _Tree_StringSingle = _TypeAssert<_TypeExtends<StringSingleTree['type'], '_string_single'>>;
 export type _Tree_HashBangLine = _TypeAssert<_TypeExtends<HashBangLineTree['type'], 'hash_bang_line'>>;
 export type _Tree_Import = _TypeAssert<_TypeExtends<ImportTree['type'], 'import'>>;
 export type _Tree_HtmlCharacterReference = _TypeAssert<

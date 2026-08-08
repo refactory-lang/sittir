@@ -11,7 +11,29 @@
 import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js';
 import { role, enrich, field, alias, wire } from '../codegen/src/dsl/index.ts';
 
-const enrichedBase = enrich(base);
+const enrichedBase = enrich(base, {
+	// `string_content`'s plain-text runs between escapes aren't CST children
+	// at all (an implicit gap), so it renders via a verbatim $TEXT fallback
+	// today. Fielding its choice (which applyNodeChoiceFieldWrap would
+	// otherwise do — all four arms are node-shaped) flips the walker off
+	// that fallback onto join-the-field-elements rendering, silently
+	// dropping every gap. None of enrich's other passes touch this rule's
+	// shape anyway, so exempting it from all of them is a no-op beyond the
+	// one pass that matters here.
+	//
+	// `_dict_pattern_group2`'s leading and repeated occurrences are the
+	// SAME `choice($._key_value_pattern, $.splat_pattern)` body (tree-sitter's
+	// `commaSep1` passes one shared choice object to both positions), so
+	// `fieldSeparatedListElements` fields both as `element` — but `dict_pattern`'s
+	// own override (`'1/0/0/0': 'kv'`) already targets the leading occurrence
+	// to mint the visible `dict_pattern_kv` kind. Auto-fielding it first left
+	// the override's positional path pointing at an already-FIELD-wrapped
+	// node instead of the bare choice it expects — the override silently no
+	// longer applies, and `dict_pattern_kv` stops existing as a distinct
+	// exported kind. Same override-collision class found in rust's
+	// `tuple_type`/`trait_bounds` and typescript's `lexical_declaration`.
+	skip: ['string_content', '_dict_pattern_group2']
+});
 export default grammar(
 	enrichedBase,
 	wire(
@@ -213,10 +235,22 @@ export default grammar(
 				}
 			},
 			rules: {
+				// Base grammar aliases this arm (`alias($.list_splat_pattern,
+				// $.list_splat)`), making primary_expression and list_splat_pattern
+				// parse-kind-non-injective; stripping the alias below (needed so
+				// both fork this OR/AND choice arm produce a real, distinct kind)
+				// exposes the declared `[primary_expression, list_splat_pattern]`
+				// GLR conflict as two visibly different kinds instead of one
+				// display name, with the winning fork now decided by structural
+				// tie-break noise instead of upstream's alias. `prec.dynamic(-1)`
+				// restores upstream's outcome deterministically: the expression
+				// fork (list_splat) wins every genuine ambiguity — true pattern
+				// contexts (`a, *rest = xs`) are unaffected since the expression
+				// fork dies at `=` there, leaving no tie to break.
 				primary_expression: ($: any, original: ChoiceRule) => {
 					let base = original.members;
 
-					return choice(...base.slice(0, -1), $.list_splat_pattern);
+					return choice(...base.slice(0, -1), prec.dynamic(-1, $.list_splat_pattern));
 				},
 				_except_clause_as: ($) => seq(field('value', $.expression), optional($._except_clause_as_optional1)),
 				_except_clause_as_optional1: ($) => seq('as', field('alias', $.expression)),

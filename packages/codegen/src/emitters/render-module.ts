@@ -62,6 +62,7 @@ import {
 	classifyPrimitiveField,
 	type PrimitiveFieldStorage,
 	wordCharAsciiTable,
+	symbolCharAsciiTable,
 	fieldTypeComponents
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
@@ -927,13 +928,18 @@ function renderTypedDispatch(
 	// via the pair test in wordCharAsciiTable; >=0x80 falls back to
 	// Unicode alphanumerics.
 	const wordTable = wordCharAsciiTable(nodeMap.wordMatcher ?? /\w/);
+	// Per-grammar symbol class, derived from this grammar's own anonymous
+	// literal inventory (`literals`, already collected for the unit-variant
+	// arms below) — see symbolCharAsciiTable's doc comment.
+	const symbolTable = symbolCharAsciiTable(literals);
 	lines.push(`/// Word-class table derived from this grammar's Link-pinned word pattern.`);
 	lines.push(
 		`static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core::spacing::WordMatcher::new(`
 	);
 	lines.push(`    [${wordTable.map((b) => (b ? 'true' : 'false')).join(', ')}],`);
 	lines.push(`    char::is_alphanumeric,`);
-	lines.push(`);`);
+	lines.push(`)`);
+	lines.push(`.with_symbol_class([${symbolTable.map((b) => (b ? 'true' : 'false')).join(', ')}]);`);
 	lines.push('');
 	lines.push(`pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {`);
 	lines.push(`    let mut s = String::new();`);

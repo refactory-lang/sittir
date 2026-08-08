@@ -166,17 +166,16 @@ describe('enrich()', () => {
 			expect(readRuleMetadata((rule.members[2] as { metadata?: unknown }).metadata)?.fieldSource).toBe('enriched');
 		});
 
-		it('skips when the same kind also appears inside a REPEAT in the same body', () => {
+		it('fields both the leading and repeated occurrence of a separated-list element with the same name', () => {
 			// python `dotted_name: prec(1, sep1($.identifier, '.'))` =
 			//   `seq($.identifier, repeat(seq('.', $.identifier)))`.
-			// The bare top-level identifier was being auto-promoted to
-			// `field('identifier', $.identifier)` because the symbol-count
-			// scan only looked at top-level seq positions. The repeat-
-			// wrapped identifier surfaces as an unfielded `$children`
-			// entry — promoting the bare one splits the same kind across
-			// `$fields.identifier` and `$children`, which the variadic
-			// factory `dottedName(...children: Identifier[])` can't
-			// reconstruct (no leading-field slot).
+			// `fieldSeparatedListElements` fields BOTH the leading and the
+			// repeat's per-iteration occurrence with the SAME name — tree-sitter
+			// merges same-named fields at different positions into one
+			// array-valued field, so `import a.b.c` reads back as a single
+			// `identifier: [a, b, c]` field rather than splitting across
+			// field/children storage (verified against python's real
+			// `dotted_name` via probe-kind).
 			const input = mkGrammar({
 				dotted_name: {
 					type: SEQ,
@@ -200,10 +199,16 @@ describe('enrich()', () => {
 				type: 'SEQ';
 				members: Rule[];
 			};
-			// Top-level identifier MUST stay bare (no enrich-added field)
 			expect(rule.members[0]).toMatchObject({
-				type: 'SYMBOL',
-				name: 'identifier'
+				type: 'FIELD',
+				name: 'identifier',
+				content: { type: 'SYMBOL', name: 'identifier' }
+			});
+			const repeatContent = (rule.members[1] as unknown as { content: { members: Rule[] } }).content;
+			expect(repeatContent.members[1]).toMatchObject({
+				type: 'FIELD',
+				name: 'identifier',
+				content: { type: 'SYMBOL', name: 'identifier' }
 			});
 		});
 
