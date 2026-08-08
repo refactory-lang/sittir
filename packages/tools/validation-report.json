@@ -4,46 +4,6 @@
     "grammar": "typescript",
     "backend": "native",
     "scope": "grammar",
-    "code": "seq-with-nested-seq",
-    "severity": "error",
-    "ownerKind": "export_specifier",
-    "ruleId": "rule:export_specifier:root",
-    "message": "Kind 'export_specifier' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
-    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
-    "canProceed": true,
-    "details": {
-      "rawShape": "seq-with-nested-seq",
-      "ruleType": "SEQ",
-      "context": "fields"
-    },
-    "location": "export_specifier",
-    "sClass": "S3"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "seq-with-nested-seq",
-    "severity": "error",
-    "ownerKind": "for_in_statement",
-    "ruleId": "rule:for_in_statement:root",
-    "message": "Kind 'for_in_statement' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
-    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
-    "canProceed": true,
-    "details": {
-      "rawShape": "seq-with-nested-seq",
-      "ruleType": "SEQ",
-      "context": "fields"
-    },
-    "location": "for_in_statement",
-    "sClass": "S3"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
     "code": "union-slot-mixed-row",
     "severity": "warning",
     "ownerKind": "binary_expression",
@@ -726,26 +686,6 @@
     "grammar": "python",
     "backend": "native",
     "scope": "grammar",
-    "code": "seq-with-nested-seq",
-    "severity": "error",
-    "ownerKind": "_dict_pattern_group2",
-    "ruleId": "rule:_dict_pattern_group2:root",
-    "message": "Kind '_dict_pattern_group2' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
-    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
-    "canProceed": true,
-    "details": {
-      "rawShape": "seq-with-nested-seq",
-      "ruleType": "SEQ",
-      "context": "fields"
-    },
-    "location": "_dict_pattern_group2",
-    "sClass": "S3"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
     "code": "union-slot-mixed-row",
     "severity": "warning",
     "ownerKind": "future_import_statement",
@@ -1154,86 +1094,6 @@
     },
     "location": "_argument_list_group1.parenthesized_expression",
     "sClass": "S1"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "seq-with-nested-seq",
-    "severity": "error",
-    "ownerKind": "tuple_expression",
-    "ruleId": "rule:tuple_expression:root",
-    "message": "Kind 'tuple_expression' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
-    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
-    "canProceed": true,
-    "details": {
-      "rawShape": "seq-with-nested-seq",
-      "ruleType": "SEQ",
-      "context": "fields"
-    },
-    "location": "tuple_expression",
-    "sClass": "S3"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "seq-with-nested-seq",
-    "severity": "error",
-    "ownerKind": "_macro_definition_paren",
-    "ruleId": "rule:_macro_definition_paren:root",
-    "message": "Kind '_macro_definition_paren' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
-    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
-    "canProceed": true,
-    "details": {
-      "rawShape": "seq-with-nested-seq",
-      "ruleType": "SEQ",
-      "context": "fields"
-    },
-    "location": "_macro_definition_paren",
-    "sClass": "S3"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "seq-with-nested-seq",
-    "severity": "error",
-    "ownerKind": "_macro_definition_bracket",
-    "ruleId": "rule:_macro_definition_bracket:root",
-    "message": "Kind '_macro_definition_bracket' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
-    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
-    "canProceed": true,
-    "details": {
-      "rawShape": "seq-with-nested-seq",
-      "ruleType": "SEQ",
-      "context": "fields"
-    },
-    "location": "_macro_definition_bracket",
-    "sClass": "S3"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "seq-with-nested-seq",
-    "severity": "error",
-    "ownerKind": "_macro_definition_brace",
-    "ruleId": "rule:_macro_definition_brace:root",
-    "message": "Kind '_macro_definition_brace' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
-    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
-    "canProceed": true,
-    "details": {
-      "rawShape": "seq-with-nested-seq",
-      "ruleType": "SEQ",
-      "context": "fields"
-    },
-    "location": "_macro_definition_brace",
-    "sClass": "S3"
   },
   {
     "source": "grammar",

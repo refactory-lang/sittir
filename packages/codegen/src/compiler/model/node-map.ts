@@ -477,6 +477,10 @@ export interface RenderTemplateSlot {
 	readonly required: boolean;
 	readonly hasLeading: boolean;
 	readonly hasTrailing: boolean;
+	/** See `AssembledNonterminalInit.trailingMode`'s doc comment. */
+	readonly trailingMode: 'mandatory' | 'optional' | 'none';
+	/** See `AssembledNonterminalInit.leadingMode`'s doc comment. */
+	readonly leadingMode: 'mandatory' | 'optional' | 'none';
 }
 
 // ---------------------------------------------------------------------------
@@ -851,6 +855,24 @@ function _deriveSlotsInternal(rule: Rule<'link'>, ctx?: DeriveCtx): AssembledNon
 	}
 }
 
+/**
+ * Merge a same-named slot's flank mode across two occurrences of the same
+ * field within one rule (e.g. python `if_statement`'s `alternative` in both
+ * a repeat and an optional). Widen to `'optional'` on any disagreement: the
+ * merged field's actual flank presence then genuinely varies depending on
+ * which occurrence a real parse reached, which is exactly what `'optional'`
+ * mode triggers real per-instance wire capture for (see
+ * `emitFieldFlankCaptureLines`, wrap.ts) — picking either single
+ * occurrence's fixed mode would be wrong for a parse that reached the
+ * other. Defined here (not `collect-slots.ts`, its other call site) since
+ * `collect-slots.ts` already imports `AssembledNonterminal` from this file
+ * — the reverse import would cycle.
+ */
+export function mergeFlankMode(modes: readonly ['mandatory' | 'optional' | 'none', 'mandatory' | 'optional' | 'none']): 'mandatory' | 'optional' | 'none' {
+	const [a, b] = modes;
+	return a === b ? a : 'optional';
+}
+
 function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[] {
 	if (fields.length <= 1) return fields;
 	const out: AssembledNonterminal[] = [];
@@ -877,6 +899,8 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 			values: dedupeValues([...existing.values, ...f.values]),
 			hasTrailing: existing.hasTrailing || f.hasTrailing,
 			hasLeading: existing.hasLeading || f.hasLeading,
+			trailingMode: mergeFlankMode([existing.trailingMode, f.trailingMode]),
+			leadingMode: mergeFlankMode([existing.leadingMode, f.leadingMode]),
 			sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, f.sourceRuleIds)
 		});
 	}
@@ -1590,6 +1614,21 @@ export interface AssembledNonterminalInit {
 	readonly fieldName?: string;
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
+	/**
+	 * Tri-state flank mode backing `hasTrailing`/`hasLeading`'s boolean
+	 * presence check, when the producer has it — `AssembledSeparatedList`'s
+	 * `trailingMode`/`leadingMode` counterpart, for a per-*slot* (not
+	 * per-kind) array field. Optional so every existing constructor caller
+	 * (test fixtures, merge helpers that only ever OR the booleans) keeps
+	 * working unchanged; `collect-slots.ts::buildSlot` — the sole real
+	 * derivation site — stamps it from the same `sep` it already reads to
+	 * compute `hasTrailing`/`hasLeading`, so the two facts can't disagree at
+	 * the point of truth. Defaults to `hasTrailing ? 'mandatory' : 'none'`
+	 * when omitted, matching today's collapsed-boolean behavior exactly.
+	 */
+	readonly trailingMode?: 'mandatory' | 'optional' | 'none';
+	/** See `trailingMode`'s doc comment — same rationale, `leading` side. */
+	readonly leadingMode?: 'mandatory' | 'optional' | 'none';
 	readonly sourceRuleIds: readonly RuleId[];
 	readonly metadata?: OpaqueFacts;
 	readonly ruleMetadata?: RuleMetadata;
@@ -1614,6 +1653,10 @@ export class AssembledNonterminal {
 	readonly fieldName?: string;
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
+	/** See `AssembledNonterminalInit.trailingMode`'s doc comment. */
+	readonly trailingMode: 'mandatory' | 'optional' | 'none';
+	/** See `AssembledNonterminalInit.leadingMode`'s doc comment. */
+	readonly leadingMode: 'mandatory' | 'optional' | 'none';
 	/**
 	 * Rule<'link'>-ids of every simplified/render-rule position that produced this slot.
 	 * Used by `NodeMap.slotByRuleId` to back-pointer from whichever rule-tree
@@ -1663,6 +1706,8 @@ export class AssembledNonterminal {
 		this.fieldName = init.fieldName;
 		this.hasTrailing = init.hasTrailing;
 		this.hasLeading = init.hasLeading;
+		this.trailingMode = init.trailingMode ?? (init.hasTrailing ? 'mandatory' : 'none');
+		this.leadingMode = init.leadingMode ?? (init.hasLeading ? 'mandatory' : 'none');
 		this.sourceRuleIds = init.sourceRuleIds;
 		this.metadata = init.metadata ?? opaqueFacts({});
 		this.ruleMetadata = init.ruleMetadata;
@@ -1675,6 +1720,8 @@ export class AssembledNonterminal {
 			fieldName: this.fieldName,
 			hasTrailing: this.hasTrailing,
 			hasLeading: this.hasLeading,
+			trailingMode: this.trailingMode,
+			leadingMode: this.leadingMode,
 			sourceRuleIds: this.sourceRuleIds,
 			metadata: this.metadata,
 			ruleMetadata: this.ruleMetadata,

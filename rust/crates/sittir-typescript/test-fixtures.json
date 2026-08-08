@@ -12157,7 +12157,8 @@
                       "$nodeHandle": 74,
                       "_type": [
                         "Buffer"
-                      ]
+                      ],
+                      "_type_trailing_sep": false
                     },
                     "$span": {
                       "start": 169,
@@ -12654,7 +12655,8 @@
                   "$nodeHandle": 108,
                   "_type": [
                     "Buffer"
-                  ]
+                  ],
+                  "_type_trailing_sep": false
                 },
                 "$span": {
                   "start": 169,
@@ -13379,7 +13381,8 @@
           "$nodeHandle": 149,
           "_type": [
             "Buffer"
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 169,
@@ -13722,7 +13725,8 @@
             "$nodeHandle": 162,
             "_type": [
               "Buffer"
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "$span": {
             "start": 169,
@@ -13785,7 +13789,8 @@
         "$nodeHandle": 163,
         "_type": [
           "Buffer"
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 169,
@@ -15765,7 +15770,8 @@
                               "$nodeHandle": 32,
                               "_type": [
                                 "User"
-                              ]
+                              ],
+                              "_type_trailing_sep": false
                             },
                             "$span": {
                               "start": 54,
@@ -16052,7 +16058,8 @@
                           "$nodeHandle": 51,
                           "_type": [
                             "User"
-                          ]
+                          ],
+                          "_type_trailing_sep": false
                         },
                         "$span": {
                           "start": 54,
@@ -16317,7 +16324,8 @@
                     "$nodeHandle": 67,
                     "_type": [
                       "User"
-                    ]
+                    ],
+                    "_type_trailing_sep": false
                   },
                   "$span": {
                     "start": 54,
@@ -16422,7 +16430,8 @@
                   "$nodeHandle": 72,
                   "_type": [
                     "User"
-                  ]
+                  ],
+                  "_type_trailing_sep": false
                 },
                 "$span": {
                   "start": 54,
@@ -16503,7 +16512,8 @@
             "$nodeHandle": 79,
             "_type": [
               "User"
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "$span": {
             "start": 54,
@@ -16566,7 +16576,8 @@
           "$nodeHandle": 81,
           "_type": [
             "User"
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 54,
@@ -16619,7 +16630,8 @@
         "$nodeHandle": 82,
         "_type": [
           "User"
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 54,
@@ -17044,7 +17056,8 @@
                       },
                       "$nodeHandle": 23
                     }
-                  ]
+                  ],
+                  "_type_trailing_sep": false
                 },
                 "$span": {
                   "start": 54,
@@ -17234,7 +17247,8 @@
                   },
                   "$nodeHandle": 35
                 }
-              ]
+              ],
+              "_type_trailing_sep": false
             },
             "$span": {
               "start": 54,
@@ -17405,7 +17419,8 @@
                 },
                 "$nodeHandle": 46
               }
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "$span": {
             "start": 54,
@@ -17570,7 +17585,8 @@
               },
               "$nodeHandle": 56
             }
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 54,
@@ -17903,7 +17919,8 @@
             },
             "$nodeHandle": 71
           }
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 54,
@@ -18065,7 +18082,8 @@
                           "start": 59,
                           "end": 62
                         },
-                        "$nodeHandle": 46
+                        "$nodeHandle": 46,
+                        "_type_parameter_trailing_sep": false
                       },
                       "_parameters": {
                         "$type": 258,
@@ -18110,7 +18128,8 @@
                                     "$nodeHandle": 54,
                                     "_type": [
                                       "R"
-                                    ]
+                                    ],
+                                    "_type_trailing_sep": false
                                   },
                                   "$span": {
                                     "start": 71,
@@ -18174,7 +18193,8 @@
                             "$nodeHandle": 57,
                             "_type": [
                               "R"
-                            ]
+                            ],
+                            "_type_trailing_sep": false
                           },
                           "$span": {
                             "start": 85,
@@ -18503,7 +18523,8 @@
                       "start": 59,
                       "end": 62
                     },
-                    "$nodeHandle": 75
+                    "$nodeHandle": 75,
+                    "_type_parameter_trailing_sep": false
                   },
                   "_parameters": {
                     "$type": 258,
@@ -18548,7 +18569,8 @@
                                 "$nodeHandle": 83,
                                 "_type": [
                                   "R"
-                                ]
+                                ],
+                                "_type_trailing_sep": false
                               },
                               "$span": {
                                 "start": 71,
@@ -18612,7 +18634,8 @@
                         "$nodeHandle": 86,
                         "_type": [
                           "R"
-                        ]
+                        ],
+                        "_type_trailing_sep": false
                       },
                       "$span": {
                         "start": 85,
@@ -18935,7 +18958,8 @@
                     "start": 59,
                     "end": 62
                   },
-                  "$nodeHandle": 101
+                  "$nodeHandle": 101,
+                  "_type_parameter_trailing_sep": false
                 },
                 "_parameters": {
                   "$type": 258,
@@ -18980,7 +19004,8 @@
                               "$nodeHandle": 109,
                               "_type": [
                                 "R"
-                              ]
+                              ],
+                              "_type_trailing_sep": false
                             },
                             "$span": {
                               "start": 71,
@@ -19044,7 +19069,8 @@
                       "$nodeHandle": 112,
                       "_type": [
                         "R"
-                      ]
+                      ],
+                      "_type_trailing_sep": false
                     },
                     "$span": {
                       "start": 85,
@@ -19339,7 +19365,8 @@
           "$nodeHandle": 122,
           "_type": [
             "R"
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 71,
@@ -19396,7 +19423,8 @@
           "$nodeHandle": 124,
           "_type": [
             "R"
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 85,
@@ -19518,7 +19546,8 @@
                 "start": 59,
                 "end": 62
               },
-              "$nodeHandle": 128
+              "$nodeHandle": 128,
+              "_type_parameter_trailing_sep": false
             },
             "_parameters": {
               "$type": 258,
@@ -19563,7 +19592,8 @@
                           "$nodeHandle": 136,
                           "_type": [
                             "R"
-                          ]
+                          ],
+                          "_type_trailing_sep": false
                         },
                         "$span": {
                           "start": 71,
@@ -19627,7 +19657,8 @@
                   "$nodeHandle": 139,
                   "_type": [
                     "R"
-                  ]
+                  ],
+                  "_type_trailing_sep": false
                 },
                 "$span": {
                   "start": 85,
@@ -19703,7 +19734,8 @@
           "start": 59,
           "end": 62
         },
-        "$nodeHandle": 140
+        "$nodeHandle": 140,
+        "_type_parameter_trailing_sep": false
       },
       "_parameters": {
         "$type": 258,
@@ -19748,7 +19780,8 @@
                     "$nodeHandle": 148,
                     "_type": [
                       "R"
-                    ]
+                    ],
+                    "_type_trailing_sep": false
                   },
                   "$span": {
                     "start": 71,
@@ -19812,7 +19845,8 @@
             "$nodeHandle": 151,
             "_type": [
               "R"
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "$span": {
             "start": 85,
@@ -19880,7 +19914,8 @@
         "start": 59,
         "end": 62
       },
-      "$nodeHandle": 14
+      "$nodeHandle": 14,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<R>"
   },
@@ -19941,7 +19976,8 @@
                   "$nodeHandle": 158,
                   "_type": [
                     "R"
-                  ]
+                  ],
+                  "_type_trailing_sep": false
                 },
                 "$span": {
                   "start": 71,
@@ -20017,7 +20053,8 @@
         "$nodeHandle": 163,
         "_type": [
           "R"
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 71,
@@ -20061,7 +20098,8 @@
         "$nodeHandle": 164,
         "_type": [
           "R"
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 85,
@@ -20399,7 +20437,8 @@
                     },
                     "$nodeHandle": 24
                   }
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "$span": {
                 "start": 14,
@@ -20611,7 +20650,8 @@
                 },
                 "$nodeHandle": 36
               }
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "$span": {
             "start": 14,
@@ -20838,7 +20878,8 @@
               },
               "$nodeHandle": 47
             }
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 14,
@@ -20999,7 +21040,8 @@
             },
             "$nodeHandle": 52
           }
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 14,
@@ -21291,7 +21333,8 @@
                                   "start": 51,
                                   "end": 57
                                 },
-                                "$nodeHandle": 35
+                                "$nodeHandle": 35,
+                                "_type_parameter_trailing_sep": false
                               },
                               "_parameters": {
                                 "$type": 258,
@@ -21352,7 +21395,8 @@
                                             "_type": [
                                               "K",
                                               "V"
-                                            ]
+                                            ],
+                                            "_type_trailing_sep": true
                                           },
                                           "$span": {
                                             "start": 64,
@@ -21415,7 +21459,8 @@
                                     "_type": [
                                       "K",
                                       "V"
-                                    ]
+                                    ],
+                                    "_type_trailing_sep": true
                                   },
                                   "$span": {
                                     "start": 87,
@@ -21615,7 +21660,8 @@
                               "start": 51,
                               "end": 57
                             },
-                            "$nodeHandle": 58
+                            "$nodeHandle": 58,
+                            "_type_parameter_trailing_sep": false
                           },
                           "_parameters": {
                             "$type": 258,
@@ -21676,7 +21722,8 @@
                                         "_type": [
                                           "K",
                                           "V"
-                                        ]
+                                        ],
+                                        "_type_trailing_sep": true
                                       },
                                       "$span": {
                                         "start": 64,
@@ -21739,7 +21786,8 @@
                                 "_type": [
                                   "K",
                                   "V"
-                                ]
+                                ],
+                                "_type_trailing_sep": true
                               },
                               "$span": {
                                 "start": 87,
@@ -21881,7 +21929,8 @@
                 "start": 51,
                 "end": 57
               },
-              "$nodeHandle": 75
+              "$nodeHandle": 75,
+              "_type_parameter_trailing_sep": false
             },
             "_parameters": {
               "$type": 258,
@@ -21942,7 +21991,8 @@
                           "_type": [
                             "K",
                             "V"
-                          ]
+                          ],
+                          "_type_trailing_sep": true
                         },
                         "$span": {
                           "start": 64,
@@ -22005,7 +22055,8 @@
                   "_type": [
                     "K",
                     "V"
-                  ]
+                  ],
+                  "_type_trailing_sep": true
                 },
                 "$span": {
                   "start": 87,
@@ -22144,7 +22195,8 @@
                         "start": 51,
                         "end": 57
                       },
-                      "$nodeHandle": 95
+                      "$nodeHandle": 95,
+                      "_type_parameter_trailing_sep": false
                     },
                     "_parameters": {
                       "$type": 258,
@@ -22205,7 +22257,8 @@
                                   "_type": [
                                     "K",
                                     "V"
-                                  ]
+                                  ],
+                                  "_type_trailing_sep": true
                                 },
                                 "$span": {
                                   "start": 64,
@@ -22268,7 +22321,8 @@
                           "_type": [
                             "K",
                             "V"
-                          ]
+                          ],
+                          "_type_trailing_sep": true
                         },
                         "$span": {
                           "start": 87,
@@ -22422,7 +22476,8 @@
                       "start": 51,
                       "end": 57
                     },
-                    "$nodeHandle": 114
+                    "$nodeHandle": 114,
+                    "_type_parameter_trailing_sep": false
                   },
                   "_parameters": {
                     "$type": 258,
@@ -22483,7 +22538,8 @@
                                 "_type": [
                                   "K",
                                   "V"
-                                ]
+                                ],
+                                "_type_trailing_sep": true
                               },
                               "$span": {
                                 "start": 64,
@@ -22546,7 +22602,8 @@
                         "_type": [
                           "K",
                           "V"
-                        ]
+                        ],
+                        "_type_trailing_sep": true
                       },
                       "$span": {
                         "start": 87,
@@ -22645,7 +22702,8 @@
           "start": 51,
           "end": 57
         },
-        "$nodeHandle": 146
+        "$nodeHandle": 146,
+        "_type_parameter_trailing_sep": false
       },
       "_parameters": {
         "$type": 258,
@@ -22706,7 +22764,8 @@
                     "_type": [
                       "K",
                       "V"
-                    ]
+                    ],
+                    "_type_trailing_sep": true
                   },
                   "$span": {
                     "start": 64,
@@ -22769,7 +22828,8 @@
             "_type": [
               "K",
               "V"
-            ]
+            ],
+            "_type_trailing_sep": true
           },
           "$span": {
             "start": 87,
@@ -22849,7 +22909,8 @@
         "start": 51,
         "end": 57
       },
-      "$nodeHandle": 11
+      "$nodeHandle": 11,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<K,V>"
   },
@@ -22926,7 +22987,8 @@
                   "_type": [
                     "K",
                     "V"
-                  ]
+                  ],
+                  "_type_trailing_sep": true
                 },
                 "$span": {
                   "start": 64,
@@ -23024,7 +23086,8 @@
             "_type": [
               "K",
               "V"
-            ]
+            ],
+            "_type_trailing_sep": true
           },
           "$span": {
             "start": 64,
@@ -23104,7 +23167,8 @@
           "_type": [
             "K",
             "V"
-          ]
+          ],
+          "_type_trailing_sep": true
         },
         "$span": {
           "start": 64,
@@ -23163,7 +23227,8 @@
           "_type": [
             "K",
             "V"
-          ]
+          ],
+          "_type_trailing_sep": true
         },
         "$span": {
           "start": 87,
@@ -23232,7 +23297,8 @@
         "_type": [
           "K",
           "V"
-        ]
+        ],
+        "_type_trailing_sep": true
       },
       "$span": {
         "start": 64,
@@ -23278,7 +23344,8 @@
         "_type": [
           "K",
           "V"
-        ]
+        ],
+        "_type_trailing_sep": true
       },
       "$span": {
         "start": 87,
@@ -23699,7 +23766,8 @@
                               "Blaz",
                               "Bloz",
                               "Bleez"
-                            ]
+                            ],
+                            "_content_trailing_sep": true
                           },
                           "$other": [
                             5,
@@ -24129,7 +24197,8 @@
                           "Blaz",
                           "Bloz",
                           "Bleez"
-                        ]
+                        ],
+                        "_content_trailing_sep": true
                       },
                       "$other": [
                         5,
@@ -24535,7 +24604,8 @@
                       "Blaz",
                       "Bloz",
                       "Bleez"
-                    ]
+                    ],
+                    "_content_trailing_sep": true
                   },
                   "$other": [
                     5,
@@ -25095,7 +25165,8 @@
                   "Blaz",
                   "Bloz",
                   "Bleez"
-                ]
+                ],
+                "_content_trailing_sep": true
               },
               "$other": [
                 5,
@@ -25496,7 +25567,8 @@
             "Blaz",
             "Bloz",
             "Bleez"
-          ]
+          ],
+          "_content_trailing_sep": true
         },
         "$other": [
           5,
@@ -26749,7 +26821,8 @@
                       "start": 34,
                       "end": 37
                     },
-                    "$nodeHandle": 63
+                    "$nodeHandle": 63,
+                    "_type_parameter_trailing_sep": false
                   },
                   "_parameters": {
                     "$type": 258,
@@ -26843,7 +26916,8 @@
                                         },
                                         "$nodeHandle": 78
                                       }
-                                    ]
+                                    ],
+                                    "_type_trailing_sep": false
                                   },
                                   "$span": {
                                     "start": 54,
@@ -26996,7 +27070,8 @@
                                         },
                                         "$nodeHandle": 92
                                       }
-                                    ]
+                                    ],
+                                    "_type_trailing_sep": false
                                   },
                                   "$span": {
                                     "start": 112,
@@ -27156,7 +27231,8 @@
                         "$nodeHandle": 101,
                         "_type": [
                           "T"
-                        ]
+                        ],
+                        "_type_trailing_sep": false
                       },
                       "$span": {
                         "start": 177,
@@ -27224,7 +27300,8 @@
                       "start": 218,
                       "end": 221
                     },
-                    "$nodeHandle": 103
+                    "$nodeHandle": 103,
+                    "_type_parameter_trailing_sep": false
                   },
                   "_parameters": {
                     "$type": 258,
@@ -27426,7 +27503,8 @@
                   "start": 34,
                   "end": 37
                 },
-                "$nodeHandle": 117
+                "$nodeHandle": 117,
+                "_type_parameter_trailing_sep": false
               },
               "_parameters": {
                 "$type": 258,
@@ -27520,7 +27598,8 @@
                                     },
                                     "$nodeHandle": 132
                                   }
-                                ]
+                                ],
+                                "_type_trailing_sep": false
                               },
                               "$span": {
                                 "start": 54,
@@ -27673,7 +27752,8 @@
                                     },
                                     "$nodeHandle": 146
                                   }
-                                ]
+                                ],
+                                "_type_trailing_sep": false
                               },
                               "$span": {
                                 "start": 112,
@@ -27833,7 +27913,8 @@
                     "$nodeHandle": 155,
                     "_type": [
                       "T"
-                    ]
+                    ],
+                    "_type_trailing_sep": false
                   },
                   "$span": {
                     "start": 177,
@@ -27901,7 +27982,8 @@
                   "start": 218,
                   "end": 221
                 },
-                "$nodeHandle": 157
+                "$nodeHandle": 157,
+                "_type_parameter_trailing_sep": false
               },
               "_parameters": {
                 "$type": 258,
@@ -28091,7 +28173,8 @@
                 "start": 34,
                 "end": 37
               },
-              "$nodeHandle": 170
+              "$nodeHandle": 170,
+              "_type_parameter_trailing_sep": false
             },
             "_parameters": {
               "$type": 258,
@@ -28185,7 +28268,8 @@
                                   },
                                   "$nodeHandle": 185
                                 }
-                              ]
+                              ],
+                              "_type_trailing_sep": false
                             },
                             "$span": {
                               "start": 54,
@@ -28338,7 +28422,8 @@
                                   },
                                   "$nodeHandle": 199
                                 }
-                              ]
+                              ],
+                              "_type_trailing_sep": false
                             },
                             "$span": {
                               "start": 112,
@@ -28498,7 +28583,8 @@
                   "$nodeHandle": 208,
                   "_type": [
                     "T"
-                  ]
+                  ],
+                  "_type_trailing_sep": false
                 },
                 "$span": {
                   "start": 177,
@@ -28566,7 +28652,8 @@
                 "start": 218,
                 "end": 221
               },
-              "$nodeHandle": 210
+              "$nodeHandle": 210,
+              "_type_parameter_trailing_sep": false
             },
             "_parameters": {
               "$type": 258,
@@ -28714,7 +28801,8 @@
         "start": 34,
         "end": 37
       },
-      "$nodeHandle": 8
+      "$nodeHandle": 8,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<T>"
   },
@@ -28757,7 +28845,8 @@
         "start": 218,
         "end": 221
       },
-      "$nodeHandle": 48
+      "$nodeHandle": 48,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<T>"
   },
@@ -28867,7 +28956,8 @@
                           },
                           "$nodeHandle": 277
                         }
-                      ]
+                      ],
+                      "_type_trailing_sep": false
                     },
                     "$span": {
                       "start": 54,
@@ -29020,7 +29110,8 @@
                           },
                           "$nodeHandle": 291
                         }
-                      ]
+                      ],
+                      "_type_trailing_sep": false
                     },
                     "$span": {
                       "start": 112,
@@ -29422,7 +29513,8 @@
                     },
                     "$nodeHandle": 309
                   }
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "$span": {
                 "start": 54,
@@ -29590,7 +29682,8 @@
                   },
                   "$nodeHandle": 318
                 }
-              ]
+              ],
+              "_type_trailing_sep": false
             },
             "$span": {
               "start": 54,
@@ -29747,7 +29840,8 @@
                   },
                   "$nodeHandle": 330
                 }
-              ]
+              ],
+              "_type_trailing_sep": false
             },
             "$span": {
               "start": 112,
@@ -29932,7 +30026,8 @@
           "$nodeHandle": 334,
           "_type": [
             "T"
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 177,
@@ -30059,7 +30154,8 @@
                 },
                 "$nodeHandle": 339
               }
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "$span": {
             "start": 54,
@@ -30203,7 +30299,8 @@
                 },
                 "$nodeHandle": 350
               }
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "$span": {
             "start": 112,
@@ -30294,7 +30391,8 @@
               },
               "$nodeHandle": 353
             }
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 54,
@@ -30413,7 +30511,8 @@
               },
               "$nodeHandle": 359
             }
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 112,
@@ -30490,7 +30589,8 @@
             },
             "$nodeHandle": 361
           }
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 54,
@@ -30544,7 +30644,8 @@
             },
             "$nodeHandle": 364
           }
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 112,
@@ -30588,7 +30689,8 @@
         "$nodeHandle": 365,
         "_type": [
           "T"
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 177,
@@ -32766,7 +32868,8 @@
                         "$nodeHandle": 16,
                         "_type": [
                           "T"
-                        ]
+                        ],
+                        "_type_trailing_sep": false
                       },
                       "_arguments": {
                         "$type": 253,
@@ -32924,7 +33027,8 @@
                     "$nodeHandle": 25,
                     "_type": [
                       "T"
-                    ]
+                    ],
+                    "_type_trailing_sep": false
                   },
                   "_arguments": {
                     "$type": 253,
@@ -33070,7 +33174,8 @@
                   "$nodeHandle": 33,
                   "_type": [
                     "T"
-                  ]
+                  ],
+                  "_type_trailing_sep": false
                 },
                 "_arguments": {
                   "$type": 253,
@@ -35707,7 +35812,8 @@
         "start": 9,
         "end": 14
       },
-      "$nodeHandle": 2
+      "$nodeHandle": 2,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<Bar>"
   },
@@ -42279,7 +42385,8 @@
                     "$nodeHandle": 122,
                     "_type": [
                       "C"
-                    ]
+                    ],
+                    "_type_trailing_sep": false
                   },
                   "_arguments": {
                     "$type": 253,
@@ -42429,7 +42536,8 @@
                     "$nodeHandle": 131,
                     "_type": [
                       "C"
-                    ]
+                    ],
+                    "_type_trailing_sep": false
                   },
                   "_arguments": {
                     "$type": 253,
@@ -42556,7 +42664,8 @@
           "$nodeHandle": 215,
           "_type": [
             "C"
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "_arguments": {
           "$type": 253,
@@ -42627,7 +42736,8 @@
           "$nodeHandle": 218,
           "_type": [
             "C"
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "_arguments": {
           "$type": 253,
@@ -42698,7 +42808,8 @@
           "$nodeHandle": 221,
           "_type": [
             "C"
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "_arguments": {
           "$type": 253,
@@ -42769,7 +42880,8 @@
           "$nodeHandle": 224,
           "_type": [
             "C"
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "_arguments": {
           "$type": 253,
@@ -43161,7 +43273,8 @@
                           "$nodeHandle": 234,
                           "_type": [
                             "C"
-                          ]
+                          ],
+                          "_type_trailing_sep": false
                         },
                         "_arguments": {
                           "$type": 253,
@@ -52440,7 +52553,8 @@
                 "$nodeHandle": 9,
                 "_type": [
                   "T"
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "_arguments": {
                 "$type": 253,
@@ -52529,7 +52643,8 @@
             "$nodeHandle": 13,
             "_type": [
               "T"
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "_arguments": {
             "$type": 253,
@@ -52601,7 +52716,8 @@
           "$nodeHandle": 16,
           "_type": [
             "T"
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "_arguments": {
           "$type": 253,
@@ -52721,7 +52837,8 @@
                     "$nodeHandle": 24,
                     "_type": [
                       "Hammer"
-                    ]
+                    ],
+                    "_type_trailing_sep": false
                   },
                   "$span": {
                     "start": 22,
@@ -52797,7 +52914,8 @@
                         },
                         "$nodeHandle": 29
                       }
-                    ]
+                    ],
+                    "_type_trailing_sep": false
                   },
                   "$span": {
                     "start": 61,
@@ -52875,7 +52993,8 @@
                         "$nodeHandle": 34
                       },
                       "Error"
-                    ]
+                    ],
+                    "_type_trailing_sep": true
                   },
                   "$span": {
                     "start": 95,
@@ -52964,7 +53083,8 @@
                 "$nodeHandle": 38,
                 "_type": [
                   "Hammer"
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "$span": {
                 "start": 22,
@@ -53056,7 +53176,8 @@
                     },
                     "$nodeHandle": 43
                   }
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "$span": {
                 "start": 61,
@@ -53150,7 +53271,8 @@
                     "$nodeHandle": 48
                   },
                   "Error"
-                ]
+                ],
+                "_type_trailing_sep": true
               },
               "$span": {
                 "start": 95,
@@ -53226,7 +53348,8 @@
             "$nodeHandle": 51,
             "_type": [
               "Hammer"
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "$span": {
             "start": 22,
@@ -53304,7 +53427,8 @@
                 },
                 "$nodeHandle": 55
               }
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "$span": {
             "start": 61,
@@ -53384,7 +53508,8 @@
                 "$nodeHandle": 59
               },
               "Error"
-            ]
+            ],
+            "_type_trailing_sep": true
           },
           "$span": {
             "start": 95,
@@ -53438,7 +53563,8 @@
         "$nodeHandle": 60,
         "_type": [
           "Hammer"
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 22,
@@ -53492,7 +53618,8 @@
             },
             "$nodeHandle": 62
           }
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 61,
@@ -53548,7 +53675,8 @@
             "$nodeHandle": 64
           },
           "Error"
-        ]
+        ],
+        "_type_trailing_sep": true
       },
       "$span": {
         "start": 95,
@@ -53606,7 +53734,8 @@
               "$nodeHandle": 13,
               "_type": [
                 "A"
-              ]
+              ],
+              "_type_trailing_sep": false
             },
             "_expression": "b",
             "$span": {
@@ -53664,7 +53793,8 @@
                     "$nodeHandle": 17,
                     "_type": [
                       "D"
-                    ]
+                    ],
+                    "_type_trailing_sep": false
                   },
                   "$span": {
                     "start": 7,
@@ -53672,7 +53802,8 @@
                   },
                   "$nodeHandle": 16
                 }
-              ]
+              ],
+              "_type_trailing_sep": false
             },
             "_expression": {
               "$type": 234,
@@ -53746,7 +53877,8 @@
           "$nodeHandle": 20,
           "_type": [
             "A"
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "_expression": "b",
         "$span": {
@@ -53820,7 +53952,8 @@
                 "$nodeHandle": 24,
                 "_type": [
                   "D"
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "$span": {
                 "start": 7,
@@ -53828,7 +53961,8 @@
               },
               "$nodeHandle": 23
             }
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "_expression": {
           "$type": 234,
@@ -53885,7 +54019,8 @@
         "$nodeHandle": 26,
         "_type": [
           "A"
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "_expression": "b",
       "$span": {
@@ -53948,7 +54083,8 @@
               "$nodeHandle": 29,
               "_type": [
                 "D"
-              ]
+              ],
+              "_type_trailing_sep": false
             },
             "$span": {
               "start": 7,
@@ -53956,7 +54092,8 @@
             },
             "$nodeHandle": 28
           }
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "_expression": {
         "$type": 234,
@@ -54013,7 +54150,8 @@
         "$nodeHandle": 33,
         "_type": [
           "D"
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 7,
@@ -54673,7 +54811,8 @@
               "start": 79,
               "end": 82
             },
-            "$nodeHandle": 90
+            "$nodeHandle": 90,
+            "_type_parameter_trailing_sep": false
           },
           "_parameters": {
             "$type": 258,
@@ -54810,7 +54949,8 @@
               "start": 110,
               "end": 116
             },
-            "$nodeHandle": 99
+            "$nodeHandle": 99,
+            "_type_parameter_trailing_sep": false
           },
           "_parameters": {
             "$type": 258,
@@ -55070,7 +55210,8 @@
               "start": 164,
               "end": 170
             },
-            "$nodeHandle": 120
+            "$nodeHandle": 120,
+            "_type_parameter_trailing_sep": false
           },
           "_parameters": {
             "$type": 258,
@@ -55288,7 +55429,8 @@
               "start": 216,
               "end": 249
             },
-            "$nodeHandle": 133
+            "$nodeHandle": 133,
+            "_type_parameter_trailing_sep": false
           },
           "_parameters": {
             "$type": 258,
@@ -55615,7 +55757,8 @@
           "start": 79,
           "end": 82
         },
-        "$nodeHandle": 158
+        "$nodeHandle": 158,
+        "_type_parameter_trailing_sep": false
       },
       "_parameters": {
         "$type": 258,
@@ -55768,7 +55911,8 @@
           "start": 110,
           "end": 116
         },
-        "$nodeHandle": 167
+        "$nodeHandle": 167,
+        "_type_parameter_trailing_sep": false
       },
       "_parameters": {
         "$type": 258,
@@ -56044,7 +56188,8 @@
           "start": 164,
           "end": 170
         },
-        "$nodeHandle": 188
+        "$nodeHandle": 188,
+        "_type_parameter_trailing_sep": false
       },
       "_parameters": {
         "$type": 258,
@@ -56278,7 +56423,8 @@
           "start": 216,
           "end": 249
         },
-        "$nodeHandle": 201
+        "$nodeHandle": 201,
+        "_type_parameter_trailing_sep": false
       },
       "_parameters": {
         "$type": 258,
@@ -58355,7 +58501,8 @@
         "start": 79,
         "end": 82
       },
-      "$nodeHandle": 17
+      "$nodeHandle": 17,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<T>"
   },
@@ -58410,7 +58557,8 @@
         "start": 110,
         "end": 116
       },
-      "$nodeHandle": 26
+      "$nodeHandle": 26,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<T,U>"
   },
@@ -58465,7 +58613,8 @@
         "start": 164,
         "end": 170
       },
-      "$nodeHandle": 47
+      "$nodeHandle": 47,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<T,U>"
   },
@@ -58547,7 +58696,8 @@
         "start": 216,
         "end": 249
       },
-      "$nodeHandle": 60
+      "$nodeHandle": 60,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<const T,const U extends string>"
   },
@@ -58844,7 +58994,8 @@
                     "$nodeHandle": 11,
                     "_type": [
                       "DiffLine"
-                    ]
+                    ],
+                    "_type_trailing_sep": false
                   },
                   "_arguments": {
                     "$type": 253,
@@ -58947,7 +59098,8 @@
                 "$nodeHandle": 16,
                 "_type": [
                   "DiffLine"
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "_arguments": {
                 "$type": 253,
@@ -59037,7 +59189,8 @@
             "$nodeHandle": 20,
             "_type": [
               "DiffLine"
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "_arguments": {
             "$type": 253,
@@ -59105,7 +59258,8 @@
         "$nodeHandle": 22,
         "_type": [
           "DiffLine"
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "_arguments": {
         "$type": 253,
@@ -59253,7 +59407,8 @@
                     },
                     "$nodeHandle": 22
                   }
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "_arguments": {
                 "$type": 253,
@@ -59341,7 +59496,8 @@
                     },
                     "$nodeHandle": 28
                   }
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "_arguments": {
                 "$type": 253,
@@ -59463,7 +59619,8 @@
                 },
                 "$nodeHandle": 35
               }
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "_arguments": {
             "$type": 253,
@@ -59567,7 +59724,8 @@
                 },
                 "$nodeHandle": 41
               }
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "_arguments": {
             "$type": 253,
@@ -59672,7 +59830,8 @@
               },
               "$nodeHandle": 47
             }
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "_arguments": {
           "$type": 253,
@@ -59765,7 +59924,8 @@
               },
               "$nodeHandle": 52
             }
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "_arguments": {
           "$type": 253,
@@ -60048,7 +60208,8 @@
                 "$nodeHandle": 9,
                 "_type": [
                   "B"
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "_arguments": {
                 "$type": 253,
@@ -60134,7 +60295,8 @@
             "$nodeHandle": 13,
             "_type": [
               "B"
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "_arguments": {
             "$type": 253,
@@ -60203,7 +60365,8 @@
           "$nodeHandle": 16,
           "_type": [
             "B"
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "_arguments": {
           "$type": 253,
@@ -60326,7 +60489,8 @@
                   "start": 0,
                   "end": 3
                 },
-                "$nodeHandle": 51
+                "$nodeHandle": 51,
+                "_type_parameter_trailing_sep": false
               },
               "_parameters": {
                 "$type": 258,
@@ -60457,7 +60621,8 @@
               "start": 63,
               "end": 66
             },
-            "$nodeHandle": 63
+            "$nodeHandle": 63,
+            "_type_parameter_trailing_sep": false
           },
           "_parameters": {
             "$type": 258,
@@ -60834,7 +60999,8 @@
               "start": 0,
               "end": 3
             },
-            "$nodeHandle": 93
+            "$nodeHandle": 93,
+            "_type_parameter_trailing_sep": false
           },
           "_parameters": {
             "$type": 258,
@@ -61208,7 +61374,8 @@
             "start": 0,
             "end": 3
           },
-          "$nodeHandle": 120
+          "$nodeHandle": 120,
+          "_type_parameter_trailing_sep": false
         },
         "_parameters": {
           "$type": 258,
@@ -61476,7 +61643,8 @@
         "start": 0,
         "end": 3
       },
-      "$nodeHandle": 6
+      "$nodeHandle": 6,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<A>"
   },
@@ -61519,7 +61687,8 @@
         "start": 63,
         "end": 66
       },
-      "$nodeHandle": 18
+      "$nodeHandle": 18,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<A>"
   },
@@ -79212,7 +79381,8 @@
                         "start": 11,
                         "end": 21
                       },
-                      "$nodeHandle": 20
+                      "$nodeHandle": 20,
+                      "_type_parameter_trailing_sep": false
                     },
                     "_parameters": {
                       "$type": 258,
@@ -79391,7 +79561,8 @@
                     "start": 11,
                     "end": 21
                   },
-                  "$nodeHandle": 33
+                  "$nodeHandle": 33,
+                  "_type_parameter_trailing_sep": false
                 },
                 "_parameters": {
                   "$type": 258,
@@ -79557,7 +79728,8 @@
                 "start": 11,
                 "end": 21
               },
-              "$nodeHandle": 45
+              "$nodeHandle": 45,
+              "_type_parameter_trailing_sep": false
             },
             "_parameters": {
               "$type": 258,
@@ -79701,7 +79873,8 @@
             "start": 11,
             "end": 21
           },
-          "$nodeHandle": 55
+          "$nodeHandle": 55,
+          "_type_parameter_trailing_sep": false
         },
         "_parameters": {
           "$type": 258,
@@ -79834,7 +80007,8 @@
           "start": 11,
           "end": 21
         },
-        "$nodeHandle": 64
+        "$nodeHandle": 64,
+        "_type_parameter_trailing_sep": false
       },
       "_parameters": {
         "$type": 258,
@@ -79954,7 +80128,8 @@
         "start": 11,
         "end": 21
       },
-      "$nodeHandle": 6
+      "$nodeHandle": 6,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<T1,T2>"
   },
@@ -89430,7 +89605,8 @@
                           },
                           "$nodeHandle": 14
                         }
-                      ]
+                      ],
+                      "_type_trailing_sep": false
                     },
                     "$span": {
                       "start": 7,
@@ -89539,7 +89715,8 @@
                       },
                       "$nodeHandle": 20
                     }
-                  ]
+                  ],
+                  "_type_trailing_sep": false
                 },
                 "$span": {
                   "start": 7,
@@ -89635,7 +89812,8 @@
                   },
                   "$nodeHandle": 25
                 }
-              ]
+              ],
+              "_type_trailing_sep": false
             },
             "$span": {
               "start": 7,
@@ -89709,7 +89887,8 @@
               },
               "$nodeHandle": 28
             }
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 7,
@@ -89772,7 +89951,8 @@
             },
             "$nodeHandle": 30
           }
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 7,
@@ -93566,7 +93746,8 @@
               "start": 20,
               "end": 32
             },
-            "$nodeHandle": 7
+            "$nodeHandle": 7,
+            "_type_parameter_trailing_sep": false
           },
           "_value": {
             "$type": 336,
@@ -93658,7 +93839,8 @@
           "start": 20,
           "end": 32
         },
-        "$nodeHandle": 11
+        "$nodeHandle": 11,
+        "_type_parameter_trailing_sep": false
       },
       "_value": {
         "$type": 336,
@@ -93738,7 +93920,8 @@
         "start": 20,
         "end": 32
       },
-      "$nodeHandle": 2
+      "$nodeHandle": 2,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<T:Element>"
   },
@@ -93838,7 +94021,8 @@
                           "$nodeHandle": 55,
                           "_type": [
                             "Foo"
-                          ]
+                          ],
+                          "_type_trailing_sep": false
                         },
                         "$span": {
                           "start": 29,
@@ -93846,7 +94030,8 @@
                         },
                         "$nodeHandle": 54
                       }
-                    ]
+                    ],
+                    "_type_trailing_sep": false
                   },
                   "$span": {
                     "start": 21,
@@ -93983,7 +94168,8 @@
                         "$nodeHandle": 63,
                         "_type": [
                           "Foo"
-                        ]
+                        ],
+                        "_type_trailing_sep": false
                       },
                       "$span": {
                         "start": 29,
@@ -93991,7 +94177,8 @@
                       },
                       "$nodeHandle": 62
                     }
-                  ]
+                  ],
+                  "_type_trailing_sep": false
                 },
                 "$span": {
                   "start": 21,
@@ -94112,7 +94299,8 @@
                 "$nodeHandle": 80,
                 "_type": [
                   "Foo"
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "$span": {
                 "start": 29,
@@ -94120,7 +94308,8 @@
               },
               "$nodeHandle": 79
             }
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 21,
@@ -94192,7 +94381,8 @@
               "$nodeHandle": 92,
               "_type": [
                 "Foo"
-              ]
+              ],
+              "_type_trailing_sep": false
             },
             "$span": {
               "start": 29,
@@ -94200,7 +94390,8 @@
             },
             "$nodeHandle": 91
           }
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 21,
@@ -94244,7 +94435,8 @@
         "$nodeHandle": 93,
         "_type": [
           "Foo"
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 29,
@@ -94290,7 +94482,8 @@
         "_type": [
           "Foo",
           "Bar"
-        ]
+        ],
+        "_type_trailing_sep": true
       },
       "$span": {
         "start": 82,
@@ -95943,7 +96136,8 @@
                 "$nodeHandle": 55,
                 "_type": [
                   "P"
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "$span": {
                 "start": 63,
@@ -96538,7 +96732,8 @@
             "$nodeHandle": 82,
             "_type": [
               "P"
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "$span": {
             "start": 63,
@@ -97217,7 +97412,8 @@
           "$nodeHandle": 106,
           "_type": [
             "P"
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 63,
@@ -97473,7 +97669,8 @@
         "$nodeHandle": 111,
         "_type": [
           "P"
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 63,
@@ -98902,7 +99099,8 @@
                     "start": 19,
                     "end": 22
                   },
-                  "$nodeHandle": 19
+                  "$nodeHandle": 19,
+                  "_type_parameter_trailing_sep": false
                 },
                 "_value": {
                   "$type": 351,
@@ -99113,7 +99311,8 @@
                 "start": 19,
                 "end": 22
               },
-              "$nodeHandle": 32
+              "$nodeHandle": 32,
+              "_type_parameter_trailing_sep": false
             },
             "_value": {
               "$type": 351,
@@ -99286,7 +99485,8 @@
           "start": 19,
           "end": 22
         },
-        "$nodeHandle": 42
+        "$nodeHandle": 42,
+        "_type_parameter_trailing_sep": false
       },
       "_value": {
         "$type": 351,
@@ -99451,7 +99651,8 @@
         "start": 19,
         "end": 22
       },
-      "$nodeHandle": 5
+      "$nodeHandle": 5,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<T>"
   },
@@ -105579,7 +105780,8 @@
           "start": 66,
           "end": 75
         },
-        "$nodeHandle": 173
+        "$nodeHandle": 173,
+        "_type_parameter_trailing_sep": false
       },
       "_value": {
         "$type": 319,
@@ -105877,7 +106079,8 @@
           "start": 164,
           "end": 173
         },
-        "$nodeHandle": 194
+        "$nodeHandle": 194,
+        "_type_parameter_trailing_sep": false
       },
       "_value": {
         "$type": 352,
@@ -106135,7 +106338,8 @@
           "start": 258,
           "end": 264
         },
-        "$nodeHandle": 213
+        "$nodeHandle": 213,
+        "_type_parameter_trailing_sep": false
       },
       "_value": {
         "$type": 319,
@@ -106175,7 +106379,8 @@
                 },
                 "$nodeHandle": 219
               }
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "$span": {
             "start": 277,
@@ -106253,7 +106458,8 @@
           "start": 302,
           "end": 305
         },
-        "$nodeHandle": 220
+        "$nodeHandle": 220,
+        "_type_parameter_trailing_sep": false
       },
       "_value": {
         "$type": 319,
@@ -106382,7 +106588,8 @@
           "start": 349,
           "end": 352
         },
-        "$nodeHandle": 227
+        "$nodeHandle": 227,
+        "_type_parameter_trailing_sep": false
       },
       "_value": {
         "$type": 319,
@@ -107229,7 +107436,8 @@
               },
               "$nodeHandle": 280
             }
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 277,
@@ -107569,7 +107777,8 @@
         "start": 66,
         "end": 75
       },
-      "$nodeHandle": 13
+      "$nodeHandle": 13,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<T,X,Y>"
   },
@@ -107636,7 +107845,8 @@
         "start": 164,
         "end": 173
       },
-      "$nodeHandle": 34
+      "$nodeHandle": 34,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<T,X,Y>"
   },
@@ -107691,7 +107901,8 @@
         "start": 258,
         "end": 264
       },
-      "$nodeHandle": 53
+      "$nodeHandle": 53,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<X,Y>"
   },
@@ -107734,7 +107945,8 @@
         "start": 302,
         "end": 305
       },
-      "$nodeHandle": 60
+      "$nodeHandle": 60,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<X>"
   },
@@ -107777,7 +107989,8 @@
         "start": 349,
         "end": 352
       },
-      "$nodeHandle": 67
+      "$nodeHandle": 67,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<X>"
   },
@@ -107820,7 +108033,8 @@
         "start": 399,
         "end": 402
       },
-      "$nodeHandle": 76
+      "$nodeHandle": 76,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<X>"
   },
@@ -109258,7 +109472,8 @@
             },
             "$nodeHandle": 382
           }
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 277,
@@ -109606,7 +109821,8 @@
           "start": 6,
           "end": 12
         },
-        "$nodeHandle": 159
+        "$nodeHandle": 159,
+        "_type_parameter_trailing_sep": false
       },
       "_value": {
         "$type": 317,
@@ -109723,7 +109939,8 @@
           "start": 100,
           "end": 106
         },
-        "$nodeHandle": 180
+        "$nodeHandle": 180,
+        "_type_parameter_trailing_sep": false
       },
       "_value": {
         "$type": 319,
@@ -110048,7 +110265,8 @@
           "start": 216,
           "end": 234
         },
-        "$nodeHandle": 202
+        "$nodeHandle": 202,
+        "_type_parameter_trailing_sep": false
       },
       "_value": {
         "$type": 319,
@@ -110119,7 +110337,8 @@
             "$nodeHandle": 211,
             "_type": [
               "R"
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "$span": {
             "start": 262,
@@ -110364,7 +110583,8 @@
         "start": 6,
         "end": 12
       },
-      "$nodeHandle": 8
+      "$nodeHandle": 8,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<B,C>"
   },
@@ -110419,7 +110639,8 @@
         "start": 100,
         "end": 106
       },
-      "$nodeHandle": 29
+      "$nodeHandle": 29,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<B,C>"
   },
@@ -110487,7 +110708,8 @@
         "start": 216,
         "end": 234
       },
-      "$nodeHandle": 51
+      "$nodeHandle": 51,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<S extends string>"
   },
@@ -110555,7 +110777,8 @@
         "start": 333,
         "end": 351
       },
-      "$nodeHandle": 71
+      "$nodeHandle": 71,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<S extends string>"
   },
@@ -111456,7 +111679,8 @@
         "_type": [
           "U",
           "D"
-        ]
+        ],
+        "_type_trailing_sep": true
       },
       "$span": {
         "start": 60,
@@ -111500,7 +111724,8 @@
         "$nodeHandle": 326,
         "_type": [
           "R"
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 262,
@@ -112413,7 +112638,8 @@
           "$nodeHandle": 379,
           "_type": [
             "R"
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 262,
@@ -112792,7 +113018,8 @@
           "start": 84,
           "end": 87
         },
-        "$nodeHandle": 88
+        "$nodeHandle": 88,
+        "_type_parameter_trailing_sep": false
       },
       "_value": {
         "$type": 338,
@@ -113045,7 +113272,8 @@
         "start": 6,
         "end": 9
       },
-      "$nodeHandle": 3
+      "$nodeHandle": 3,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<B>"
   },
@@ -113088,7 +113316,8 @@
         "start": 84,
         "end": 87
       },
-      "$nodeHandle": 20
+      "$nodeHandle": 20,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<B>"
   },
@@ -114055,7 +114284,8 @@
         "$nodeHandle": 213,
         "_type": [
           "P"
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 46,
@@ -114234,7 +114464,8 @@
                         "$nodeHandle": 31,
                         "_content": "bar"
                       }
-                    ]
+                    ],
+                    "_type_trailing_sep": false
                   },
                   "$span": {
                     "start": 13,
@@ -114242,7 +114473,8 @@
                   },
                   "$nodeHandle": 29
                 }
-              ]
+              ],
+              "_type_trailing_sep": false
             },
             "$span": {
               "start": 9,
@@ -114333,7 +114565,8 @@
                           "_content": 39
                         }
                       }
-                    ]
+                    ],
+                    "_type_trailing_sep": false
                   },
                   "$span": {
                     "start": 43,
@@ -114341,7 +114574,8 @@
                   },
                   "$nodeHandle": 34
                 }
-              ]
+              ],
+              "_type_trailing_sep": false
             },
             "$span": {
               "start": 39,
@@ -114468,7 +114702,8 @@
                         },
                         "$nodeHandle": 42
                       }
-                    ]
+                    ],
+                    "_type_trailing_sep": false
                   },
                   "$span": {
                     "start": 77,
@@ -114476,7 +114711,8 @@
                   },
                   "$nodeHandle": 40
                 }
-              ]
+              ],
+              "_type_trailing_sep": false
             },
             "$span": {
               "start": 73,
@@ -114575,7 +114811,8 @@
                     "$nodeHandle": 51,
                     "_content": "bar"
                   }
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "$span": {
                 "start": 13,
@@ -114583,7 +114820,8 @@
               },
               "$nodeHandle": 49
             }
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 9,
@@ -114690,7 +114928,8 @@
                       "_content": 39
                     }
                   }
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "$span": {
                 "start": 43,
@@ -114698,7 +114937,8 @@
               },
               "$nodeHandle": 54
             }
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 39,
@@ -114841,7 +115081,8 @@
                     },
                     "$nodeHandle": 62
                   }
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "$span": {
                 "start": 77,
@@ -114849,7 +115090,8 @@
               },
               "$nodeHandle": 60
             }
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 73,
@@ -114936,7 +115178,8 @@
                   "$nodeHandle": 70,
                   "_content": "bar"
                 }
-              ]
+              ],
+              "_type_trailing_sep": false
             },
             "$span": {
               "start": 13,
@@ -114944,7 +115187,8 @@
             },
             "$nodeHandle": 68
           }
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 9,
@@ -115001,7 +115245,8 @@
             "$nodeHandle": 72,
             "_content": "bar"
           }
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 13,
@@ -115092,7 +115337,8 @@
                     "_content": 39
                   }
                 }
-              ]
+              ],
+              "_type_trailing_sep": false
             },
             "$span": {
               "start": 43,
@@ -115100,7 +115346,8 @@
             },
             "$nodeHandle": 74
           }
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 39,
@@ -115172,7 +115419,8 @@
               "_content": 39
             }
           }
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 43,
@@ -115299,7 +115547,8 @@
                   },
                   "$nodeHandle": 84
                 }
-              ]
+              ],
+              "_type_trailing_sep": false
             },
             "$span": {
               "start": 77,
@@ -115307,7 +115556,8 @@
             },
             "$nodeHandle": 82
           }
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 73,
@@ -115415,7 +115665,8 @@
             },
             "$nodeHandle": 90
           }
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 77,
@@ -115939,7 +116190,8 @@
                     }
                   }
                 }
-              ]
+              ],
+              "_type_trailing_sep": true
             },
             "$span": {
               "start": 9,
@@ -116162,7 +116414,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_type_trailing_sep": true
         },
         "$span": {
           "start": 9,
@@ -116373,7 +116626,8 @@
               }
             }
           }
-        ]
+        ],
+        "_type_trailing_sep": true
       },
       "$span": {
         "start": 9,
@@ -116779,7 +117033,8 @@
               "start": 8,
               "end": 54
             },
-            "$nodeHandle": 27
+            "$nodeHandle": 27,
+            "_type_parameter_trailing_sep": false
           },
           "_value": "T",
           "_semicolon": 20,
@@ -116938,7 +117193,8 @@
               "start": 68,
               "end": 105
             },
-            "$nodeHandle": 38
+            "$nodeHandle": 38,
+            "_type_parameter_trailing_sep": false
           },
           "_value": "T",
           "_semicolon": 20,
@@ -117121,7 +117377,8 @@
           "start": 8,
           "end": 54
         },
-        "$nodeHandle": 49
+        "$nodeHandle": 49,
+        "_type_parameter_trailing_sep": false
       },
       "_value": "T",
       "_semicolon": 20,
@@ -117296,7 +117553,8 @@
           "start": 68,
           "end": 105
         },
-        "$nodeHandle": 60
+        "$nodeHandle": 60,
+        "_type_parameter_trailing_sep": false
       },
       "_value": "T",
       "_semicolon": 20,
@@ -117467,7 +117725,8 @@
         "start": 8,
         "end": 54
       },
-      "$nodeHandle": 3
+      "$nodeHandle": 3,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<T extends abstract new(...args:any)=>any>"
   },
@@ -117625,7 +117884,8 @@
         "start": 68,
         "end": 105
       },
-      "$nodeHandle": 14
+      "$nodeHandle": 14,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<T extends new(...args:any)=>any>"
   },
@@ -118227,7 +118487,8 @@
               "start": 8,
               "end": 11
             },
-            "$nodeHandle": 7
+            "$nodeHandle": 7,
+            "_type_parameter_trailing_sep": false
           },
           "_value": {
             "$type": 314,
@@ -118320,7 +118581,8 @@
           "start": 8,
           "end": 11
         },
-        "$nodeHandle": 11
+        "$nodeHandle": 11,
+        "_type_parameter_trailing_sep": false
       },
       "_value": {
         "$type": 314,
@@ -118401,7 +118663,8 @@
         "start": 8,
         "end": 11
       },
-      "$nodeHandle": 2
+      "$nodeHandle": 2,
+      "_type_parameter_trailing_sep": false
     },
     "expectedOutput": "<T>"
   },
@@ -119314,7 +119577,8 @@
                 "$nodeHandle": 8,
                 "_type": [
                   "T"
-                ]
+                ],
+                "_type_trailing_sep": false
               },
               "$span": {
                 "start": 132,
@@ -119394,7 +119658,8 @@
             "$nodeHandle": 11,
             "_type": [
               "T"
-            ]
+            ],
+            "_type_trailing_sep": false
           },
           "$span": {
             "start": 132,
@@ -119462,7 +119727,8 @@
           "$nodeHandle": 13,
           "_type": [
             "T"
-          ]
+          ],
+          "_type_trailing_sep": false
         },
         "$span": {
           "start": 132,
@@ -119507,7 +119773,8 @@
         "$nodeHandle": 14,
         "_type": [
           "T"
-        ]
+        ],
+        "_type_trailing_sep": false
       },
       "$span": {
         "start": 132,

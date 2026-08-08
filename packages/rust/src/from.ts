@@ -2155,11 +2155,13 @@ export function coerceToParenthesizedExpression(
 	);
 }
 
-export function coerceToTupleExpression(input?: T.TupleExpression.Loose): ReturnType<typeof F.buildTupleExpression> {
-	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTupleExpression>;
+export function coerceToTupleExpression(input: T.TupleExpression.Loose): ReturnType<typeof F.buildTupleExpression> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTupleExpression>;
+	const _ne_elements = _resolveMany<T.Expression>(input.elements, _K10, _K11);
+	_assertNonEmpty(_ne_elements, 'tuple_expression.elements');
 	return F.buildTupleExpression({
-		attributes: _resolveManyBranch<T.AttributeItem>(input?.attributes, 'attribute_item'),
-		elements: _resolveMany<T.Expression>(input?.elements, _K10, _K11)
+		attributes: _resolveManyBranch<T.AttributeItem>(input.attributes, 'attribute_item'),
+		elements: _ne_elements
 	});
 }
 

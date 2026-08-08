@@ -634,6 +634,29 @@ function emitFieldCarryingFactory(
 			? sc.slot
 			: undefined;
 
+	// Fields whose own separator flank is genuinely `'optional'` need a
+	// caller-facing override — a factory has no real parse to capture a
+	// per-instance fact from, and a fixed default can't be right for every
+	// caller (e.g. rust `tuple_expression`'s single-element case structurally
+	// NEEDS `trailing: true` to disambiguate from a parenthesized
+	// expression, while a 3-element tuple structurally wants `false`).
+	// Mirrors `emitSeparatedListFactory`'s existing `options: {leading?,
+	// trailing?}` pattern for the kind-level case — same flat shape,
+	// scoped to the (today, always singular) flank-optional field on this
+	// factory. Only wired for the `singleField`/`config` shapes below;
+	// `containerFacts` factories have no flank-optional field in any
+	// current grammar and keep today's un-configurable `false` default.
+	const flankOptionField = fields.find((f) => f.trailingMode === 'optional' || f.leadingMode === 'optional');
+	const hasLeadingOption = flankOptionField?.leadingMode === 'optional';
+	const hasTrailingOption = flankOptionField?.trailingMode === 'optional';
+	const hasFlankOptions = !containerFacts && flankOptionField !== undefined;
+	const flankOptionsTypeParts: string[] = [];
+	if (hasLeadingOption) flankOptionsTypeParts.push('leading?: boolean');
+	if (hasTrailingOption) flankOptionsTypeParts.push('trailing?: boolean');
+	const flankOptionsType = `{ ${flankOptionsTypeParts.join('; ')} }`;
+	const flankSourceFor = (f: AssembledNonterminal, side: 'leading' | 'trailing'): string =>
+		hasFlankOptions && f === flankOptionField ? `options.${side} ?? false` : 'false';
+
 	let signature: string;
 	let valueSourceFor: (f: AssembledNonterminal) => string;
 	let withLines: string[];
@@ -671,7 +694,9 @@ function emitFieldCarryingFactory(
 		const elemType = `T.${node.typeName}.Config['${singleField.configKey}']`;
 		const paramName = singleField.paramName;
 		const optMark = isRequired(singleField) ? '' : '?';
-		signature = `export function ${fn}(${paramName}${optMark}: ${elemType}) {`;
+		signature = hasFlankOptions
+			? `export function ${fn}(${paramName}${optMark}: ${elemType}, options: ${flankOptionsType} = {}) {`
+			: `export function ${fn}(${paramName}${optMark}: ${elemType}) {`;
 		valueSourceFor = (f) =>
 			f === singleField
 				? slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries)
@@ -679,7 +704,17 @@ function emitFieldCarryingFactory(
 		const setterType = setterElemType(singleField, elemType, fn, nodeMap, true);
 		withLines = [
 			'    $with: {',
-			`      ${singleField.propertyName}: (${setterValueSignature(singleField, setterType)}) => ${fn}(value),`,
+			`      ${singleField.propertyName}: (${setterValueSignature(singleField, setterType)}) => ${fn}(value${hasFlankOptions ? ', options' : ''}),`,
+			...(hasFlankOptions
+				? [
+						...(hasLeadingOption
+							? [`      leading: (v: boolean) => ${fn}(${paramName}, { ...options, leading: v }),`]
+							: []),
+						...(hasTrailingOption
+							? [`      trailing: (v: boolean) => ${fn}(${paramName}, { ...options, trailing: v }),`]
+							: [])
+					]
+				: []),
 			'    },'
 		];
 	} else {
@@ -690,10 +725,11 @@ function emitFieldCarryingFactory(
 		// the default when the body actually reads from config — avoids dead code
 		// when all fields auto-stamp.
 		const hasConfigReads = fields.some((f) => autoStampExpression(f, nodeMap) === undefined);
+		const flankOptionsParam = hasFlankOptions ? `, options: ${flankOptionsType} = {}` : '';
 		signature =
 			opt === '?' && hasConfigReads
-				? `export function ${fn}(config: Partial<${configType}> = {}) {`
-				: `export function ${fn}(config${opt}: ${configType}) {`;
+				? `export function ${fn}(config: Partial<${configType}> = {}${flankOptionsParam}) {`
+				: `export function ${fn}(config${opt}: ${configType}${flankOptionsParam}) {`;
 		const configAccess = 'config';
 		valueSourceFor = (f) => {
 			const stamp = autoStampExpression(f, nodeMap);
@@ -707,6 +743,7 @@ function emitFieldCarryingFactory(
 		// the combined getter/setter method; under shape A getters are pure and
 		// the setter is purely a rebuild). Auto-stamp fields are skipped — no
 		// setter exposed because the value is fixed.
+		const flankOptionsArg = hasFlankOptions ? ', options' : '';
 		withLines = ['    $with: {'];
 		for (const f of fields) {
 			if (autoStampExpression(f, nodeMap) !== undefined) continue;
@@ -717,13 +754,21 @@ function emitFieldCarryingFactory(
 				const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
 				const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
 				withLines.push(
-					`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }),`
+					`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }${flankOptionsArg}),`
 				);
 			} else {
 				const elemType = setterElemType(f, fieldElementType(f, nodeMap), fn, nodeMap);
 				withLines.push(
-					`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }),`
+					`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }${flankOptionsArg}),`
 				);
+			}
+		}
+		if (hasFlankOptions) {
+			if (hasLeadingOption) {
+				withLines.push(`      leading: (v: boolean) => ${fn}(${configAccess}, { ...options, leading: v }),`);
+			}
+			if (hasTrailingOption) {
+				withLines.push(`      trailing: (v: boolean) => ${fn}(${configAccess}, { ...options, trailing: v }),`);
 			}
 		}
 		// Post-unification: the legacy `children` setter is gone — per-slot setters
@@ -750,6 +795,21 @@ function emitFieldCarryingFactory(
 	if (variantName) lines.push(`    $variant: '${variantName}' as const,`);
 	for (const f of fieldsToEmit) {
 		lines.push(`    ${f.storageKey},`);
+		// Factory-constructed elements carry no captured wire data — the
+		// per-instance flank facts wrap.ts populates from a real parse (see
+		// emitFieldFlankCaptureLines' doc comment) default to `false` unless
+		// the caller overrides via `options` (only wired for the field
+		// `flankOptionField` resolved to — see its doc comment above; no
+		// current kind has more than one such field per factory). Mirrors
+		// `emitSeparatedListFactory`'s `options.trailing ?? false` for the
+		// kind-level case. Without this the field is simply absent, which
+		// the validator's factory-vs-read storage comparison flags as a
+		// structural gap — and for a kind like rust `tuple_expression`,
+		// where a single-element instance structurally REQUIRES `trailing:
+		// true` to disambiguate from a parenthesized expression, a fixed
+		// `false` default is actively wrong, not just incomplete.
+		if (f.trailingMode === 'optional') lines.push(`    ${f.storageKey}_trailing_sep: ${flankSourceFor(f, 'trailing')},`);
+		if (f.leadingMode === 'optional') lines.push(`    ${f.storageKey}_leading_sep: ${flankSourceFor(f, 'leading')},`);
 	}
 	lines.push(...withLines);
 	lines.push('  }, {');

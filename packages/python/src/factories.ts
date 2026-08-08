@@ -50,6 +50,7 @@ export function buildSimpleStatements(...children: (T.SimpleStatement | '\n')[])
 				$source: 2 as const,
 				$named: true as const,
 				_simple_statement,
+				_simple_statement_trailing_sep: false,
 				$with: { $children: (...vs: (T.SimpleStatement | '\n')[]) => buildSimpleStatements(...vs) }
 			},
 			{
@@ -60,7 +61,7 @@ export function buildSimpleStatements(...children: (T.SimpleStatement | '\n')[])
 	);
 }
 
-export function buildImportStatement(config: T.ImportStatement.Config) {
+export function buildImportStatement(config: T.ImportStatement.Config, options: { trailing?: boolean } = {}) {
 	const _name = config.name ?? [];
 	return withMethods(
 		withAccessors(
@@ -69,9 +70,11 @@ export function buildImportStatement(config: T.ImportStatement.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_name,
+				_name_trailing_sep: options.trailing ?? false,
 				$with: {
 					names: (...values: NonEmptyArray<T.DottedName | T.AliasedImport>) =>
-						buildImportStatement({ ...config, name: values })
+						buildImportStatement({ ...config, name: values }, options),
+					trailing: (v: boolean) => buildImportStatement(config, { ...options, trailing: v })
 				}
 			},
 			{
@@ -121,7 +124,10 @@ export function buildRelativeImport(config: T.RelativeImport.Config) {
 	);
 }
 
-export function buildFutureImportStatement(config: Partial<T.FutureImportStatement.Config> = {}) {
+export function buildFutureImportStatement(
+	config: Partial<T.FutureImportStatement.Config> = {},
+	options: { trailing?: boolean } = {}
+) {
 	const _name = config.name ?? [];
 	const _import_list = config.importList;
 	return withMethods(
@@ -131,11 +137,13 @@ export function buildFutureImportStatement(config: Partial<T.FutureImportStateme
 				$source: 2 as const,
 				$named: true as const,
 				_name,
+				_name_trailing_sep: options.trailing ?? false,
 				_import_list,
 				$with: {
 					names: (...values: (T.DottedName | T.AliasedImport)[]) =>
-						buildFutureImportStatement({ ...config, name: values }),
-					importList: (value?: T.ImportList) => buildFutureImportStatement({ ...config, importList: value })
+						buildFutureImportStatement({ ...config, name: values }, options),
+					importList: (value?: T.ImportList) => buildFutureImportStatement({ ...config, importList: value }, options),
+					trailing: (v: boolean) => buildFutureImportStatement(config, { ...options, trailing: v })
 				}
 			},
 			{
@@ -147,7 +155,7 @@ export function buildFutureImportStatement(config: Partial<T.FutureImportStateme
 	);
 }
 
-export function buildImportFromStatement(config: T.ImportFromStatement.Config) {
+export function buildImportFromStatement(config: T.ImportFromStatement.Config, options: { trailing?: boolean } = {}) {
 	const _module_name = config.moduleName;
 	const _wildcard_import = coerceBooleanKeywordStorage(config.wildcardImport);
 	const _name = config.name ?? [];
@@ -161,15 +169,17 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config) {
 				_module_name,
 				_wildcard_import,
 				_name,
+				_name_trailing_sep: options.trailing ?? false,
 				_import_list,
 				$with: {
 					moduleName: (value: T.RelativeImport | T.DottedName) =>
-						buildImportFromStatement({ ...config, moduleName: value }),
+						buildImportFromStatement({ ...config, moduleName: value }, options),
 					wildcardImport: (value?: NonNullable<Parameters<typeof buildImportFromStatement>[0]>['wildcardImport']) =>
-						buildImportFromStatement({ ...config, wildcardImport: value }),
+						buildImportFromStatement({ ...config, wildcardImport: value }, options),
 					names: (...values: (T.DottedName | T.AliasedImport)[]) =>
-						buildImportFromStatement({ ...config, name: values }),
-					importList: (value?: T.ImportList) => buildImportFromStatement({ ...config, importList: value })
+						buildImportFromStatement({ ...config, name: values }, options),
+					importList: (value?: T.ImportList) => buildImportFromStatement({ ...config, importList: value }, options),
+					trailing: (v: boolean) => buildImportFromStatement(config, { ...options, trailing: v })
 				}
 			},
 			{
@@ -183,7 +193,7 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config) {
 	);
 }
 
-export function buildImportList(config: T.ImportList.Config) {
+export function buildImportList(config: T.ImportList.Config, options: { trailing?: boolean } = {}) {
 	const _name = config.name ?? [];
 	return withMethods(
 		withAccessors(
@@ -192,9 +202,11 @@ export function buildImportList(config: T.ImportList.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_name,
+				_name_trailing_sep: options.trailing ?? false,
 				$with: {
 					names: (...values: NonEmptyArray<T.DottedName | T.AliasedImport>) =>
-						buildImportList({ ...config, name: values })
+						buildImportList({ ...config, name: values }, options),
+					trailing: (v: boolean) => buildImportList(config, { ...options, trailing: v })
 				}
 			},
 			{
@@ -516,7 +528,7 @@ export function buildElseClause(body: T.ElseClause.Config['body']) {
 	);
 }
 
-export function buildMatchStatement(config: T.MatchStatement.Config) {
+export function buildMatchStatement(config: T.MatchStatement.Config, options: { trailing?: boolean } = {}) {
 	const _subject = config.subject ?? [];
 	const _body = config.body;
 	return withMethods(
@@ -526,10 +538,13 @@ export function buildMatchStatement(config: T.MatchStatement.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_subject,
+				_subject_trailing_sep: options.trailing ?? false,
 				_body,
 				$with: {
-					subjects: (...values: NonEmptyArray<T.Expression>) => buildMatchStatement({ ...config, subject: values }),
-					body: (value: T.MatchBlock) => buildMatchStatement({ ...config, body: value })
+					subjects: (...values: NonEmptyArray<T.Expression>) =>
+						buildMatchStatement({ ...config, subject: values }, options),
+					body: (value: T.MatchBlock) => buildMatchStatement({ ...config, body: value }, options),
+					trailing: (v: boolean) => buildMatchStatement(config, { ...options, trailing: v })
 				}
 			},
 			{
@@ -560,7 +575,7 @@ export function buildMatchBlock(child: T.MatchBlockBlock | '\n') {
 	);
 }
 
-export function buildCaseClause(config: T.CaseClause.Config) {
+export function buildCaseClause(config: T.CaseClause.Config, options: { trailing?: boolean } = {}) {
 	const _case_pattern = config.casePattern ?? [];
 	const _guard = config.guard;
 	const _consequence = config.consequence;
@@ -571,14 +586,16 @@ export function buildCaseClause(config: T.CaseClause.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_case_pattern,
+				_case_pattern_trailing_sep: options.trailing ?? false,
 				_guard,
 				_consequence,
 				$with: {
 					casePatterns: (...values: NonEmptyArray<T.CasePattern>) =>
-						buildCaseClause({ ...config, casePattern: values }),
-					guard: (value?: T.IfClause) => buildCaseClause({ ...config, guard: value }),
+						buildCaseClause({ ...config, casePattern: values }, options),
+					guard: (value?: T.IfClause) => buildCaseClause({ ...config, guard: value }, options),
 					consequence: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
-						buildCaseClause({ ...config, consequence: value })
+						buildCaseClause({ ...config, consequence: value }, options),
+					trailing: (v: boolean) => buildCaseClause(config, { ...options, trailing: v })
 				}
 			},
 			{
@@ -1078,6 +1095,7 @@ export function buildTypeParameter(...children: T.Type[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_type,
+				_type_trailing_sep: false,
 				$with: { $children: (...vs: T.Type[]) => buildTypeParameter(...vs) }
 			},
 			{
@@ -2023,7 +2041,7 @@ export function buildAttribute(config: T.Attribute.Config) {
 	);
 }
 
-export function buildSubscript(config: T.Subscript.Config) {
+export function buildSubscript(config: T.Subscript.Config, options: { trailing?: boolean } = {}) {
 	const _value = config.value;
 	const _subscript = config.subscript ?? [];
 	return withMethods(
@@ -2034,10 +2052,12 @@ export function buildSubscript(config: T.Subscript.Config) {
 				$named: true as const,
 				_value,
 				_subscript,
+				_subscript_trailing_sep: options.trailing ?? false,
 				$with: {
-					value: (value: T.PrimaryExpression) => buildSubscript({ ...config, value: value }),
+					value: (value: T.PrimaryExpression) => buildSubscript({ ...config, value: value }, options),
 					subscripts: (...values: NonEmptyArray<T.Expression | T.Slice>) =>
-						buildSubscript({ ...config, subscript: values })
+						buildSubscript({ ...config, subscript: values }, options),
+					trailing: (v: boolean) => buildSubscript(config, { ...options, trailing: v })
 				}
 			},
 			{
@@ -3169,6 +3189,7 @@ export function buildCaseTuplePattern(...children: T.CasePattern[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_case_pattern,
+				_case_pattern_trailing_sep: false,
 				$with: { $children: (...vs: T.CasePattern[]) => buildCaseTuplePattern(...vs) }
 			},
 			{
@@ -3188,6 +3209,7 @@ export function buildCaseListPattern(...children: T.CasePattern[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_case_pattern,
+				_case_pattern_trailing_sep: false,
 				$with: { $children: (...vs: T.CasePattern[]) => buildCaseListPattern(...vs) }
 			},
 			{
@@ -3242,7 +3264,7 @@ export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClau
 	);
 }
 
-export function buildPrintStatementGroup1(config: T.PrintStatementGroup1.Config) {
+export function buildPrintStatementGroup1(config: T.PrintStatementGroup1.Config, options: { trailing?: boolean } = {}) {
 	const _chevron = config.chevron;
 	const _argument = config.argument ?? [];
 	return withMethods(
@@ -3253,9 +3275,11 @@ export function buildPrintStatementGroup1(config: T.PrintStatementGroup1.Config)
 				$named: true as const,
 				_chevron,
 				_argument,
+				_argument_trailing_sep: options.trailing ?? false,
 				$with: {
-					chevron: (value: T.Chevron) => buildPrintStatementGroup1({ ...config, chevron: value }),
-					arguments: (...values: T.Expression[]) => buildPrintStatementGroup1({ ...config, argument: values })
+					chevron: (value: T.Chevron) => buildPrintStatementGroup1({ ...config, chevron: value }, options),
+					arguments: (...values: T.Expression[]) => buildPrintStatementGroup1({ ...config, argument: values }, options),
+					trailing: (v: boolean) => buildPrintStatementGroup1(config, { ...options, trailing: v })
 				}
 			},
 			{
@@ -3267,7 +3291,10 @@ export function buildPrintStatementGroup1(config: T.PrintStatementGroup1.Config)
 	);
 }
 
-export function buildPrintStatementGroup2(config: Partial<T.PrintStatementGroup2.Config> = {}) {
+export function buildPrintStatementGroup2(
+	config: Partial<T.PrintStatementGroup2.Config> = {},
+	options: { trailing?: boolean } = {}
+) {
 	const _argument = config.argument ?? [];
 	return withMethods(
 		withAccessors(
@@ -3276,8 +3303,10 @@ export function buildPrintStatementGroup2(config: Partial<T.PrintStatementGroup2
 				$source: 2 as const,
 				$named: true as const,
 				_argument,
+				_argument_trailing_sep: options.trailing ?? false,
 				$with: {
-					arguments: (...values: T.Expression[]) => buildPrintStatementGroup2({ ...config, argument: values })
+					arguments: (...values: T.Expression[]) => buildPrintStatementGroup2({ ...config, argument: values }, options),
+					trailing: (v: boolean) => buildPrintStatementGroup2(config, { ...options, trailing: v })
 				}
 			},
 			{
@@ -3418,6 +3447,7 @@ export function buildWithClauseParen(...children: T.WithItem[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_with_item,
+				_with_item_trailing_sep: false,
 				$with: { $children: (...vs: T.WithItem[]) => buildWithClauseParen(...vs) }
 			},
 			{

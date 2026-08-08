@@ -2875,7 +2875,7 @@ export const FIELD_MAP: Record<
 	try_expression: [{ name: 'value', required: true, multiple: false }],
 	tuple_expression: [
 		{ name: 'attributes', required: false, multiple: true },
-		{ name: 'elements', required: false, multiple: true }
+		{ name: 'elements', required: true, multiple: true }
 	],
 	tuple_pattern: [{ name: 'elements', required: false, multiple: false }],
 	tuple_struct_pattern: [

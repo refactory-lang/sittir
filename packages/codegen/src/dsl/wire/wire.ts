@@ -437,11 +437,15 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 	//
 	// (Auto-group-synthesis — `applyAutoGroups` — was retired physically in
 	// auto-group-visibility Chunk 3 / PR-M φ2 Phase B. Enrich now hoists every
-	// `optional(seq)`/`repeat(seq)`/`repeat1(seq)`: inline-SAFE into a hidden
+	// `optional(seq)` (both the bare form and tree-sitter's `choice(seq, blank())`
+	// desugaring, per `peelOptionalSeq`): inline-SAFE into a hidden
 	// `_<parent>_optional<N>` symbol, inline-UNSAFE into a visible content-alias
 	// `alias(<content>, $._<parent>_group<N>)` that link's `mintContentAliasKinds`
-	// registers as a real IR kind. The old wire-time pass ran BEFORE link and
-	// pre-consumed the very inline-unsafe seqs link must see as inline content.)
+	// registers as a real IR kind. `repeat`/`repeat1` are NOT hoisted — the hoist
+	// only descends through them transparently to reach a nested `optional(seq)`;
+	// a bare `repeat(seq(...))` with no `optional` wrapper is untouched. The old
+	// wire-time pass ran BEFORE link and pre-consumed the very inline-unsafe
+	// seqs link must see as inline content.)
 	if (baseArg) {
 		for (const name of getEnrichClauseGroups(base)) {
 			context.syntheticInline.add(name);

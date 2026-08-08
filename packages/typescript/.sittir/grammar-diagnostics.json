@@ -1,38 +1,6 @@
 [
   {
     "scope": "grammar",
-    "code": "seq-with-nested-seq",
-    "severity": "error",
-    "grammar": "typescript",
-    "ownerKind": "export_specifier",
-    "ruleId": "rule:export_specifier:root",
-    "message": "Kind 'export_specifier' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
-    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
-    "canProceed": true,
-    "details": {
-      "rawShape": "seq-with-nested-seq",
-      "ruleType": "SEQ",
-      "context": "fields"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "seq-with-nested-seq",
-    "severity": "error",
-    "grammar": "typescript",
-    "ownerKind": "for_in_statement",
-    "ruleId": "rule:for_in_statement:root",
-    "message": "Kind 'for_in_statement' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
-    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
-    "canProceed": true,
-    "details": {
-      "rawShape": "seq-with-nested-seq",
-      "ruleType": "SEQ",
-      "context": "fields"
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "union-slot-mixed-row",
     "severity": "warning",
     "grammar": "typescript",
