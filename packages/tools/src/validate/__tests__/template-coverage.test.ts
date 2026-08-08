@@ -120,3 +120,54 @@ describe('checkRule — child-delegated (polymorph) field exemption', () => {
 		]);
 	});
 });
+
+// checkRule's alias-dealiased field exemption (computeAliasDealiasedFields):
+// a field declared only by a DIFFERENT rule that reaches this kind's
+// display name via a named alias at one grammar position (e.g. rust's
+// `generic_type_with_turbofish` aliased to `generic_type` inside
+// `scoped_identifier`) is unconditionally exempt — unlike union-slot
+// routing or child delegation, there is no shared slot on THIS kind's own
+// template that could ever carry the field, since a node produced by the
+// alias source is restamped to its own kind and rendered by its own
+// template before this template is ever reached.
+describe('checkRule — alias-dealiased field exemption', () => {
+	const entry: RawNodeEntry = {
+		type: 'generic_type',
+		named: true,
+		fields: {
+			type: { required: true, multiple: false, types: [] },
+			type_arguments: { required: true, multiple: false, types: [] },
+			turbofish: { required: false, multiple: false, types: [] }
+		}
+	};
+
+	it('exempts a field declared only by the named-alias source rule', () => {
+		const rule: TemplateRule = { template: '$TYPE$TYPE_ARGUMENTS' };
+		const aliasDealiased = new Set(['turbofish']);
+		const issues = checkRule(entry, rule, new Set(), undefined, undefined, undefined, 'test.jinja', aliasDealiased);
+		expect(issues).toEqual([]);
+	});
+
+	it('still reports missing-field when the field is not in the alias-dealiased set', () => {
+		const rule: TemplateRule = { template: '$TYPE$TYPE_ARGUMENTS' };
+		const aliasDealiased = new Set(['other_field']);
+		const issues = checkRule(entry, rule, new Set(), undefined, undefined, undefined, 'test.jinja', aliasDealiased);
+		expect(issues).toEqual([
+			expect.objectContaining({
+				type: 'missing-field',
+				message: expect.stringContaining("field 'turbofish' declared but not referenced")
+			})
+		]);
+	});
+
+	it('still reports missing-field when there is no alias-dealiased fact at all for the kind', () => {
+		const rule: TemplateRule = { template: '$TYPE$TYPE_ARGUMENTS' };
+		const issues = checkRule(entry, rule, new Set(), undefined, undefined, undefined, 'test.jinja');
+		expect(issues).toEqual([
+			expect.objectContaining({
+				type: 'missing-field',
+				message: expect.stringContaining("field 'turbofish' declared but not referenced")
+			})
+		]);
+	});
+});

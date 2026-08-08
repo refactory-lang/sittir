@@ -156,6 +156,11 @@ export function validateTemplateCoverage(grammar: string, templatesPath: string)
 	const unionSlotRoutedByKind = loadUnionSlotRoutedFields(grammar);
 	const nodeModelFacts = loadNodeModelFacts(grammar);
 	const childDelegatedByKind = computeChildDelegatedFields(entries, nodeModelFacts.factorySlots, nodeModelFacts.polymorphVariants);
+	const aliasDealiasedByKind = computeAliasDealiasedFields(
+		grammarJson,
+		nodeModelFacts.fieldAliasMap,
+		nodeModelFacts.factorySlots
+	);
 
 	const issues: CoverageIssue[] = [];
 	let total = 0;
@@ -190,7 +195,8 @@ export function validateTemplateCoverage(grammar: string, templatesPath: string)
 			unionSlotRoutedByKind.get(entry.type),
 			childDelegatedByKind.get(entry.type),
 			rawTemplate,
-			templatePath
+			templatePath,
+			aliasDealiasedByKind.get(entry.type)
 		);
 		if (kindIssues.length === 0) {
 			pass++;
@@ -269,7 +275,8 @@ export function checkRule(
 	unionSlotRouted: { unionSlot: string; fields: Set<string> } | undefined,
 	childDelegated: { contentSlot: string; fields: Set<string> } | undefined,
 	rawTemplate: string | undefined,
-	templatePath: string
+	templatePath: string,
+	aliasDealiased: Set<string> | undefined = undefined
 ): CoverageIssue[] {
 	const fields = entry.fields ?? {};
 	const fieldNames = Object.keys(fields);
@@ -324,6 +331,14 @@ export function checkRule(
 		// name. Exempt ONLY when that slot is itself referenced — a
 		// template that dropped `content` too renders nothing, a real bug.
 		if (childDelegated?.fields.has(fname) && unionPlaceholders.has(childDelegated.contentSlot)) continue;
+		// Alias-dealiased field (computeAliasDealiasedFields): `fname` is
+		// declared only by a DIFFERENT rule that reaches this kind's display
+		// name via a named alias at one grammar position — a node from that
+		// position is restamped to the alias source's own kind before render,
+		// so it's rendered by that kind's own template, never this one.
+		// Unconditional exempt (no template-reference check): this kind's
+		// template has no slot that could ever carry the field.
+		if (aliasDealiased?.has(fname)) continue;
 		// Quote the real jinja source so the message points at what's
 		// actually on disk — `variants[].template` is this checker's own
 		// `$NAME`/`$$$NAME` placeholder DSL (see `jinjaBodyToLegacyRule`),
@@ -575,6 +590,102 @@ function computeChildDelegatedFields(
 }
 
 /**
+ * Compute, for each kind K that is a named-alias RESTAMP TARGET somewhere
+ * in the grammar (`node-model.json5`'s `fieldAliasMap` records `{K: K'}`
+ * pairs at the slot where tree-sitter's own kind id gets a DIFFERENT
+ * rule's content restamped onto K's display name — e.g. rust's
+ * `scoped_identifier.path` restamps `generic_type` to
+ * `generic_type_with_turbofish`), the set of field names declared by K'
+ * that are NOT part of K's own grammar.json production.
+ *
+ * @remarks
+ * tree-sitter's node-types.json generator unions field sets across every
+ * production that shares a display kind name — including a completely
+ * separate rule K' that only reaches K's name via a named alias at one
+ * particular grammar position. A node produced by K' in that position is
+ * restamped (at wrap time, via the same `fieldAliasMap` pairs) from K to
+ * K' before render, so it's rendered by K''s OWN template — K's template
+ * can never see K''s fields, and never needs to. Exempt unconditionally
+ * once a field is confirmed to belong only to K' (not K's own production):
+ * unlike `unionSlotRouted`/`childDelegated`, there is no shared slot on K's
+ * template that could still reference it.
+ */
+function computeAliasDealiasedFields(
+	grammarJson: GrammarJson | null,
+	fieldAliasMap: Record<string, Record<string, string>>,
+	factorySlots: Record<string, Record<string, unknown>>
+): Map<string, Set<string>> {
+	const out = new Map<string, Set<string>>();
+	if (!grammarJson) return out;
+	const rules = grammarJson.rules;
+	const ownFieldsByKind = new Map<string, Set<string>>();
+	function ownFieldsOf(kind: string): Set<string> {
+		let cached = ownFieldsByKind.get(kind);
+		if (cached) return cached;
+		cached = new Set<string>();
+		const rule = rules[kind];
+		if (rule !== undefined) collectOwnDeclaredFieldNames(rule, rules, cached, new Set());
+		ownFieldsByKind.set(kind, cached);
+		return cached;
+	}
+	for (const restamps of Object.values(fieldAliasMap)) {
+		for (const [target, source] of Object.entries(restamps)) {
+			const sourceFields = new Set(Object.keys(factorySlots[source] ?? {}));
+			if (sourceFields.size === 0) continue;
+			const targetOwnFields = ownFieldsOf(target);
+			const dealiased = new Set<string>();
+			for (const fname of sourceFields) {
+				if (!targetOwnFields.has(fname)) dealiased.add(fname);
+			}
+			if (dealiased.size === 0) continue;
+			const existing = out.get(target);
+			if (existing) for (const f of dealiased) existing.add(f);
+			else out.set(target, dealiased);
+		}
+	}
+	return out;
+}
+
+/**
+ * Collect every field name K's OWN `grammar.json` production declares,
+ * following hidden `_*` symbol inlining (tree-sitter splices a hidden
+ * rule's body into every parent that references it) but never crossing a
+ * NAMED alias — that's a structurally distinct rule with its own field
+ * namespace, not part of K's own declaration.
+ */
+function collectOwnDeclaredFieldNames(
+	node: unknown,
+	rules: Record<string, unknown>,
+	out: Set<string>,
+	visited: Set<string>
+): void {
+	if (!node || typeof node !== 'object') return;
+	if (isField(node)) {
+		out.add(node.name);
+		collectOwnDeclaredFieldNames(node.content, rules, out, visited);
+		return;
+	}
+	if (isAlias(node)) {
+		if (node.named) return;
+		collectOwnDeclaredFieldNames(node.content, rules, out, visited);
+		return;
+	}
+	if (isSymbol(node)) {
+		if (!node.name.startsWith('_')) return;
+		if (visited.has(node.name)) return;
+		const target = rules[node.name];
+		if (target === undefined) return;
+		const next = new Set(visited);
+		next.add(node.name);
+		collectOwnDeclaredFieldNames(target, rules, out, next);
+		return;
+	}
+	const n = node as { content?: unknown; members?: unknown[] };
+	if (n.content !== undefined) collectOwnDeclaredFieldNames(n.content, rules, out, visited);
+	if (Array.isArray(n.members)) for (const m of n.members) collectOwnDeclaredFieldNames(m, rules, out, visited);
+}
+
+/**
  * Walk a rule node, recording every FIELD whose simplify-hoist
  * condition fires. Hidden `_*` symbols are inlined (their bodies are
  * spliced into the parent at parse time, so any field hoist they
@@ -783,18 +894,19 @@ function loadGrammarJson(grammar: string): GrammarJson | null {
 interface NodeModelFacts {
 	readonly factorySlots: Record<string, Record<string, unknown>>;
 	readonly polymorphVariants: PolymorphVariantMap;
+	readonly fieldAliasMap: Record<string, Record<string, string>>;
 }
 
-const EMPTY_NODE_MODEL_FACTS: NodeModelFacts = { factorySlots: {}, polymorphVariants: {} };
+const EMPTY_NODE_MODEL_FACTS: NodeModelFacts = { factorySlots: {}, polymorphVariants: {}, fieldAliasMap: {} };
 
 /**
- * Load the `factorySlots` / `polymorphVariants` sections of a grammar's
- * `node-model.json5` (`packages/<grammar>/src/`) — the same stamped facts
- * `validate/common.ts`'s `loadNodeModel` reads for the live NodeMap-backed
- * validators. This validator is a lightweight file reader (no live
- * `NodeMap`, see the module doc), so it reads the two sections it needs
- * directly and synchronously rather than pulling in that async loader.
- * Returns empty maps when the file is unavailable — mirrors
+ * Load the `factorySlots` / `polymorphVariants` / `fieldAliasMap` sections
+ * of a grammar's `node-model.json5` (`packages/<grammar>/src/`) — the same
+ * stamped facts `validate/common.ts`'s `loadNodeModel` reads for the live
+ * NodeMap-backed validators. This validator is a lightweight file reader
+ * (no live `NodeMap`, see the module doc), so it reads the sections it
+ * needs directly and synchronously rather than pulling in that async
+ * loader. Returns empty maps when the file is unavailable — mirrors
  * `loadGrammarJson`'s fail-soft behavior for fresh checkouts.
  */
 function loadNodeModelFacts(grammar: string): NodeModelFacts {
@@ -803,7 +915,8 @@ function loadNodeModelFacts(grammar: string): NodeModelFacts {
 	const parsed = JSON.parse(readFileSync(path, 'utf8')) as Partial<NodeModelFacts>;
 	return {
 		factorySlots: parsed.factorySlots ?? {},
-		polymorphVariants: parsed.polymorphVariants ?? {}
+		polymorphVariants: parsed.polymorphVariants ?? {},
+		fieldAliasMap: parsed.fieldAliasMap ?? {}
 	};
 }
 
