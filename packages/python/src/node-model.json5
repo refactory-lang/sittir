@@ -89,6 +89,9 @@
     }
   },
   "fieldAliasMap": {
+    "module.statements": {
+      "statement_group1": "_simple_statements"
+    },
     "_simple_statements.newline": {
       "newline": "_newline"
     },
@@ -195,11 +198,30 @@
       "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
+    "block.statements": {
+      "statement_group1": "_simple_statements"
+    },
     "expression_list.tail": {
       "expression_list_group1": "_expression_list_group1"
     },
+    "case_pattern.content": {
+      "simple_pattern_negative": "_simple_pattern_negative",
+      "wildcard_pattern": "_wildcard_pattern"
+    },
+    "union_pattern.simple_pattern": {
+      "simple_pattern_negative": "_simple_pattern_negative",
+      "wildcard_pattern": "_wildcard_pattern"
+    },
     "dict_pattern.dict_pattern_group2": {
       "dict_pattern_group2": "_dict_pattern_group2"
+    },
+    "_key_value_pattern.key": {
+      "simple_pattern_negative": "_simple_pattern_negative",
+      "wildcard_pattern": "_wildcard_pattern"
+    },
+    "keyword_pattern.simple_pattern": {
+      "simple_pattern_negative": "_simple_pattern_negative",
+      "wildcard_pattern": "_wildcard_pattern"
     },
     "class_pattern.arguments": {
       "list_pattern_group1": "_list_pattern_group1"

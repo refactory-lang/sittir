@@ -354,13 +354,30 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			// emit a slot REFERENCE — not inline text. Previously pattern→'' and
 			// enum→first-literal dropped the slot; once collectSlots makes them real
 			// slots that fails slot-preservation. Prefer the registered slot (named
-			// via field() → `{{ operator }}`, else the deterministic unnamed
-			// `content` fallback). emitSlotReference handles multiplicity.
+			// via field() → `{{ operator }}`, else the owner's sole slot when
+			// lookupSlot's id/name-based paths all miss — emitSlotReference
+			// handles multiplicity either way.
 			const slot = lookupSlot(rule, ctx);
 			if (slot !== undefined) return emitSlotReference(rule, slot, ctx);
 			const patternFieldName = (rule as { fieldName?: string }).fieldName;
 			if (patternFieldName !== undefined) return emitFieldNameSlot(patternFieldName.toLowerCase(), rule);
-			return emitScalarSlot('content');
+			// No field name and no lookupSlot hit — this PATTERN can only be
+			// rendering its owner's OWN registered slot (e.g. a polymorph
+			// parent's single discriminating union slot). Read that slot's
+			// real storageName directly rather than guessing a name: when
+			// the owner has exactly one slot, it's unambiguous; anything
+			// else means lookupSlot's fallbacks have a real gap to fix, not
+			// a case to paper over with a hardcoded placeholder.
+			const ownerSlotNames = ctx.ownerSlots ? Object.keys(ctx.ownerSlots) : [];
+			if (ownerSlotNames.length === 1) {
+				return emitSlotReference(rule, ctx.ownerSlots![ownerSlotNames[0]!]!, ctx);
+			}
+			throw new Error(
+				`emitRule: PATTERN with no field name and no lookupSlot hit for kind '${ctx.currentKind ?? '(unknown)'}' — ` +
+					`owner has ${ownerSlotNames.length} registered slot(s) [${ownerSlotNames.join(', ')}], not exactly ` +
+					`one, so there is no unambiguous slot to read. Extend lookupSlot's fallbacks for this shape instead ` +
+					`of reaching for a hardcoded placeholder name.`
+			);
 		}
 		// PR-P: ENUM handled as CHOICE below via isEnumChoiceRule guard.
 

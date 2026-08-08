@@ -41,7 +41,8 @@ import type {
 	Repeat1Rule,
 	SymbolRule,
 	StringRule,
-	RepeatRule
+	RepeatRule,
+	RuleId
 } from '../types/rule.ts';
 import {
 	isSeq,
@@ -1430,7 +1431,7 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 			// (`kindId`), independent of whether the source rule survives
 			// as its own addressable parser symbol.
 			if (rule.named && rule.value && !rule.value.startsWith('_')) {
-				return resolveNamedAliasWithProvenance(rule.content, ctx, rule.value);
+				return resolveNamedAliasWithProvenance(rule.content, ctx, rule.value, rule.id);
 			}
 			// Unnamed alias with a non-word literal value (e.g. typescript
 			// `alias(_ternary_qmark, '?')` — relabels a hidden external-
@@ -1480,11 +1481,17 @@ function resolveRepeat1PreservingNonEmpty(rule: Repeat1Rule, ctx: LinkCtx, curre
 	};
 }
 
-function resolveNamedAliasWithProvenance(content: Rule<'link'>, ctx: LinkCtx, targetName: string): Rule<'link'> {
+function resolveNamedAliasWithProvenance(
+	content: Rule<'link'>,
+	ctx: LinkCtx,
+	targetName: string,
+	id: RuleId | undefined
+): Rule<'link'> {
 	const aliasedFrom = extractAliasedFromName(content, ctx.supertypes);
+	const idAttrs = id !== undefined ? { id } : {};
 	const sym: SymbolRule<'link'> = aliasedFrom
-		? { type: SYMBOL, name: targetName, aliasedFrom, inline: false }
-		: { type: SYMBOL, name: targetName, inline: false };
+		? { type: SYMBOL, name: targetName, aliasedFrom, inline: false, ...idAttrs }
+		: { type: SYMBOL, name: targetName, inline: false, ...idAttrs };
 	return sym;
 }
 

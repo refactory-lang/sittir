@@ -18,16 +18,11 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledEnum, AssembledNode, AssembledSupertype } from '../compiler/model/node-map.ts';
 import type { AssembledSeparatedList } from '../compiler/model/node-map.ts';
-import {
-	AssembledNonterminal,
-	aliasTargetToSourceMapOf,
-	valueParseKindsOf,
-	valueParseLabelsOf
-} from '../compiler/model/node-map.ts';
+import { AssembledNonterminal, valueParseKindsOf, valueParseLabelsOf } from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
 
 type BranchLikeForWrap = Extract<AssembledNode, { modelType: 'branch' }>;
-import { deriveUnnamedChildrenCardinality } from '../compiler/model/node-map.ts';
+import { deriveUnnamedChildrenCardinality, resolveSlotAliasPairs } from '../compiler/model/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
 	isMultiple,
@@ -362,32 +357,7 @@ function resolveSlotAliasRewrite(
 	slot: AssembledNonterminal,
 	nodeMap: NodeMap
 ): readonly (readonly [string, string])[] | undefined {
-	// A slot can have MULTIPLE simultaneously-aliased candidate kinds — e.g. a
-	// polymorphic choice where several (or all) arms each alias onto their own
-	// shared canonical name (type_query's content: subscript_expression,
-	// member_expression, call_expression, and instantiation_expression are ALL
-	// aliased). Return every pair — drillAs/drillAsAll try each in turn and at
-	// most one can match a given node's actual (single) real kind.
-	const pairs: (readonly [string, string])[] = Object.entries(aliasTargetToSourceMapOf(slot));
-	// A slot can ALSO reference a hidden rule (e.g. `_tuple_type_member`,
-	// `type`) that's itself modeled as a supertype-like node (an inlined
-	// hidden choice, same mechanism tree-sitter's own `supertype` nodes use)
-	// rather than expanding directly into concrete arm NodeRefs — the slot's
-	// OWN .values then contains one opaque unresolved-ref whose parseKind
-	// equals its storageKind (no divergence visible at THIS level). The real
-	// per-arm alias info lives one level down, in that node's
-	// `subtypeParseNames` map (storageKind -> parseKind), which already
-	// records exactly which arms diverge (e.g. `tuple_parameter` ->
-	// `required_parameter`). Expand through it.
-	for (const parseKind of valueParseKindsOf(slot)) {
-		const normalized = parseKind.startsWith('_') ? parseKind.slice(1) : parseKind;
-		const node = nodeMap.nodes.get(parseKind) ?? nodeMap.nodes.get(normalized);
-		if (node?.modelType !== 'supertype') continue;
-		for (const [storageKind, parseName] of Object.entries(node.subtypeParseNames ?? {})) {
-			if (storageKind !== parseName) pairs.push([parseName, storageKind]);
-		}
-	}
-	return pairs.length > 0 ? pairs : undefined;
+	return resolveSlotAliasPairs(slot, nodeMap);
 }
 
 // Same alias-rewrite need as resolveSlotAliasRewrite, but for the unnamed

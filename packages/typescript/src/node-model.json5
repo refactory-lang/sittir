@@ -243,8 +243,14 @@
     "object_pattern.properties": {
       "shorthand_property_identifier_pattern": "_shorthand_property_identifier_pattern"
     },
+    "assignment_pattern.left": {
+      "for_header_group1": "_lhs_expression"
+    },
     "object_assignment_pattern.left": {
       "shorthand_property_identifier_pattern": "_shorthand_property_identifier_pattern"
+    },
+    "array_pattern.elements": {
+      "for_header_group1": "_lhs_expression"
     },
     "jsx_opening_element.jsx_opening_element_content": {
       "jsx_opening_element_content": "_jsx_opening_element_content"
@@ -255,8 +261,17 @@
     "nested_identifier.property": {
       "property_identifier": "identifier"
     },
+    "jsx_closing_element.name": {
+      "member_expression": "nested_identifier"
+    },
     "jsx_self_closing_element.jsx_opening_element_content": {
       "jsx_opening_element_content": "_jsx_opening_element_content"
+    },
+    "jsx_attribute.jsx_attribute_name": {
+      "property_identifier": "_jsx_identifier"
+    },
+    "jsx_attribute.jsx_attribute_value": {
+      "string": "_jsx_string"
     },
     "class.name": {
       "type_identifier": "identifier"
@@ -285,11 +300,24 @@
       "call_expression_template_call": "_call_expression_template_call",
       "call_expression_member": "_call_expression_member"
     },
+    "new_expression.constructor": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "member_expression.object": {
+      "reserved_identifier": "_reserved_identifier"
+    },
     "member_expression.property": {
       "property_identifier": "identifier"
     },
+    "subscript_expression.object": {
+      "reserved_identifier": "_reserved_identifier"
+    },
     "assignment_expression.left": {
-      "for_header_group1": "_lhs_expression"
+      "for_header_group1": "_lhs_expression",
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "augmented_assignment_expression.left": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "binary_expression.binary_expression_group1": {
       "binary_expression_group1": "_binary_expression_group1"
@@ -328,11 +356,29 @@
       "class_body_method_sig": "_class_body_method_sig",
       "class_body_member": "_class_body_member"
     },
+    "field_definition.property": {
+      "property_identifier": "_property_identifier"
+    },
     "formal_parameters.formal_parameters_group1": {
       "formal_parameters_group1": "_formal_parameters_group1"
     },
     "class_static_block.automatic_semicolon": {
       "automatic_semicolon": "_automatic_semicolon"
+    },
+    "rest_pattern.lhs_expression": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "method_definition.name": {
+      "property_identifier": "_property_identifier"
+    },
+    "pair.key": {
+      "property_identifier": "_property_identifier"
+    },
+    "pair_pattern.key": {
+      "property_identifier": "_property_identifier"
+    },
+    "pair_pattern.value": {
+      "for_header_group1": "_lhs_expression"
     },
     "public_field_definition.visibility_prefix": {
       "public_field_definition_declare_first": "_public_field_definition_declare_first",
@@ -343,8 +389,17 @@
       "public_field_definition_abstract_first": "_public_field_definition_abstract_first",
       "public_field_definition_readonly_first": "_public_field_definition_readonly_first"
     },
+    "public_field_definition.name": {
+      "property_identifier": "_property_identifier"
+    },
     "_jsx_start_opening_element.jsx_opening_element_content": {
       "jsx_opening_element_content": "_jsx_opening_element_content"
+    },
+    "method_signature.name": {
+      "property_identifier": "_property_identifier"
+    },
+    "abstract_method_signature.name": {
+      "property_identifier": "_property_identifier"
     },
     "function_signature.semicolon": {
       "function_signature_automatic_semicolon": "_function_signature_automatic_semicolon"
@@ -353,8 +408,20 @@
       "member_expression": "decorator_member_expression",
       "call_expression": "decorator_call_expression"
     },
+    "as_expression.type_annotation": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "satisfies_expression.type_annotation": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
     "extends_clause.extends_clause_single": {
       "extends_clause_single": "_extends_clause_single"
+    },
+    "implements_clause.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "ambient_declaration.content": {
       "ambient_declaration_global": "_ambient_declaration_global",
@@ -378,8 +445,40 @@
     "enum_body.enum_body_group1": {
       "enum_body_group1": "_enum_body_group1"
     },
+    "enum_assignment.name": {
+      "property_identifier": "_property_identifier"
+    },
     "type_alias_declaration.name": {
       "type_identifier": "identifier"
+    },
+    "type_alias_declaration.value": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "required_parameter.pattern": {
+      "for_header_group1": "_lhs_expression"
+    },
+    "optional_parameter.pattern": {
+      "for_header_group1": "_lhs_expression"
+    },
+    "_parameter_name.pattern": {
+      "for_header_group1": "_lhs_expression"
+    },
+    "omitting_type_annotation.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "adding_type_annotation.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "opting_type_annotation.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "type_annotation.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "_type_query_member_expression_in_type_annotation.object": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
@@ -391,14 +490,53 @@
     "_type_query_call_expression_in_type_annotation.function": {
       "member_expression": "_type_query_member_expression_in_type_annotation"
     },
+    "optional_type.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "rest_type.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "constructor_type.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "template_type.content": {
+      "this_type": "this"
+    },
     "template_literal_type.elements": {
       "string_fragment": "_template_chars"
     },
     "infer_type.type_identifier": {
       "type_identifier": "identifier"
     },
+    "infer_type.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "conditional_type.left": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "conditional_type.right": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "conditional_type.consequence": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "conditional_type.alternative": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
     "generic_type.name": {
       "type_identifier": "identifier"
+    },
+    "type_predicate.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "_type_query_member_expression.object": {
       "subscript_expression": "_type_query_subscript_expression",
@@ -427,26 +565,112 @@
       "call_expression": "_type_query_call_expression",
       "instantiation_expression": "_type_query_instantiation_expression"
     },
+    "index_type_query.primary_type": {
+      "this_type": "this"
+    },
+    "lookup_type.primary_type": {
+      "this_type": "this"
+    },
+    "lookup_type.index_type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
     "mapped_type_clause.name": {
       "type_identifier": "identifier"
+    },
+    "mapped_type_clause.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "mapped_type_clause.alias": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "literal_type.content": {
       "unary_expression": "_number"
     },
+    "flow_maybe_type.primary_type": {
+      "this_type": "this"
+    },
+    "parenthesized_type.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "type_arguments.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "property_signature.name": {
+      "property_identifier": "_property_identifier"
+    },
     "type_parameter.name": {
       "type_identifier": "identifier"
+    },
+    "default_type.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "constraint.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "index_signature.content": {
       "index_signature_colon": "_index_signature_colon"
     },
+    "array_type.primary_type": {
+      "this_type": "this"
+    },
     "tuple_type.tuple_type_group1": {
       "tuple_type_group1": "_tuple_type_group1"
+    },
+    "readonly_type.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "union_type.left": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "union_type.right": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "intersection_type.left": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "intersection_type.right": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "function_type.return_type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "_jsx_start_opening_element_group1.name": {
       "member_expression": "nested_identifier"
     },
+    "_enum_body_group1.content": {
+      "property_identifier": "_property_identifier"
+    },
+    "_infer_type_optional1.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "_mapped_type_clause_optional1.alias": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "_tuple_type_group1.tuple_type_member": {
+      "required_parameter": "tuple_parameter",
+      "optional_parameter": "optional_tuple_parameter"
+    },
     "_ambient_declaration_module.name": {
       "property_identifier": "identifier"
+    },
+    "_ambient_declaration_module.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "_export_statement_default.content": {
       "export_statement_default_from_arm": "_export_statement_default_from_arm",
@@ -460,6 +684,10 @@
     },
     "_index_signature_colon.name": {
       "reserved_identifier": "_reserved_identifier"
+    },
+    "_index_signature_colon.index_type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "_export_statement_default_from_arm.content": {
       "export_statement_default_star_from": "_export_statement_default_star_from",
@@ -476,10 +704,17 @@
       "function_signature_automatic_semicolon": "_function_signature_automatic_semicolon"
     },
     "_for_header_lhs.left": {
-      "for_header_group1": "_lhs_expression"
+      "for_header_group1": "_lhs_expression",
+      "reserved_identifier": "_reserved_identifier"
     },
     "_for_header_let_const_kind.automatic_semicolon": {
       "automatic_semicolon": "_automatic_semicolon"
+    },
+    "_call_expression_template_call.function": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "_call_expression_member.function": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "_jsx_opening_element_content.jsx_start_opening_element_group1": {
       "jsx_start_opening_element_group1": "_jsx_start_opening_element_group1"
