@@ -96,14 +96,23 @@ describe('emitRule — string', () => {
 });
 
 describe('emitRule — pattern', () => {
-	it('emits an unnamed content slot reference when no slot is registered', () => {
+	it('throws when no slot is registered and the owner has no unambiguous single slot', () => {
 		// Patterns are nonterminal slots (classifyByType) — they emit a slot
-		// REFERENCE, not inline text, so collectSlots-registered pattern slots
-		// survive emission. With no registered slot and no fieldName, the
-		// deterministic unnamed `content` fallback fires (see emitRule's
-		// PATTERN case).
+		// REFERENCE, not inline text. With no registered slot, no fieldName,
+		// and no single owner slot to fall back to, there is no unambiguous
+		// storageName to read — emitRule throws rather than guessing a
+		// hardcoded placeholder name (see emitRule's PATTERN case).
 		const rule: PatternRule = { type: PATTERN, value: '[a-z]+' };
-		expect(emitRule(rule, makeCtx())).toBe('{{ content }}');
+		expect(() => emitRule(rule, makeCtx())).toThrow(/no unambiguous slot to read/);
+	});
+
+	it("reads the owner's sole registered slot by its stamped storageName when lookupSlot misses", () => {
+		// Same no-lookupSlot-hit, no-fieldName shape as above, but the owner
+		// has exactly one registered slot — unambiguous, so its stamped
+		// storageName is read directly rather than a hardcoded placeholder.
+		const rule: PatternRule = { type: PATTERN, value: '[a-z]+' };
+		const slot = makeSlot({ storageName: 'body' });
+		expect(emitRule(rule, makeCtx({ ownerSlots: { body: slot } }))).toBe('{{ body }}');
 	});
 });
 

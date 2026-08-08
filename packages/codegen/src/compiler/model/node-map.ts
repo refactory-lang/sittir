@@ -1805,6 +1805,48 @@ export function aliasTargetToSourceMapOf(slot: {
 	return out;
 }
 
+/**
+ * Resolve every {parseName -> storageName} restamp pair a slot's runtime
+ * value can require — the same fact `wrap.ts`'s drillAs/drillAsAll
+ * accessors key their alias restamp on. Two sources, unioned:
+ *
+ * 1. {@link aliasTargetToSourceMapOf} — the slot's own values, where a
+ *    NodeRef's stamped parse-kind differs from its storage kind (a
+ *    directly-aliased arm, e.g. a polymorphic choice where several arms
+ *    each alias onto their own shared canonical name).
+ * 2. A slot whose value is a single opaque reference to a hidden
+ *    supertype-modeled node (e.g. `_tuple_type_member`) rather than
+ *    expanding directly into concrete arm NodeRefs — the per-arm alias
+ *    info there lives one level down, in that node's own
+ *    `subtypeParseNames` map (storageKind -> parseKind), which already
+ *    records exactly which arms diverge (e.g. `tuple_parameter` ->
+ *    `required_parameter`).
+ *
+ * `ctx.nodes` is duck-typed against `NodeMap['nodes']` rather than
+ * importing the `NodeMap` type directly — `NodeMap` (in
+ * `compiler/types.ts`) references `AssembledNode`, which is defined in
+ * THIS module, so a direct import here would be circular.
+ */
+export interface SlotAliasPairsCtx {
+	readonly nodes: ReadonlyMap<string, { modelType: string; subtypeParseNames?: Readonly<Record<string, string>> }>;
+}
+
+export function resolveSlotAliasPairs(
+	slot: { values: readonly NodeOrTerminal[] },
+	ctx: SlotAliasPairsCtx
+): readonly (readonly [string, string])[] | undefined {
+	const pairs: (readonly [string, string])[] = Object.entries(aliasTargetToSourceMapOf(slot));
+	for (const parseKind of valueParseKindsOf(slot)) {
+		const normalized = parseKind.startsWith('_') ? parseKind.slice(1) : parseKind;
+		const node = ctx.nodes.get(parseKind) ?? ctx.nodes.get(normalized);
+		if (node?.modelType !== 'supertype') continue;
+		for (const [storageKind, parseName] of Object.entries(node.subtypeParseNames ?? {})) {
+			if (storageKind !== parseName) pairs.push([parseName, storageKind]);
+		}
+	}
+	return pairs.length > 0 ? pairs : undefined;
+}
+
 export function acceptedIdPairsByKindOf(slot: {
 	values: readonly NodeOrTerminal[];
 }): ReadonlyMap<string, readonly number[]> {

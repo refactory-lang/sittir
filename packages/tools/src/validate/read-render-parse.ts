@@ -202,8 +202,27 @@ function collectVisibleChildren(n: TSNode, namedExtras: ReadonlySet<string>): TS
 	return out;
 }
 
-function astStructuralDiff(a: TSNode, b: TSNode, namedExtras: ReadonlySet<string>, path: string = ''): string | null {
-	if (a.type !== b.type) {
+function astStructuralDiff(
+	a: TSNode,
+	b: TSNode,
+	namedExtras: ReadonlySet<string>,
+	path: string = '',
+	rootAliasPair?: readonly [string, string]
+): string | null {
+	// Root-level alias tolerance: `a`/`b` are the same underlying content —
+	// `wrapForReparse`'s synthetic wrapper context doesn't always reproduce
+	// the exact grammar position that triggered the ORIGINAL parse's named
+	// alias (see `renderedKind`/`targetKind` at this function's call site),
+	// so the reparsed root can legitimately surface under either the alias
+	// source or the alias target's display name. Scoped to path === '' —
+	// deeper mismatches are still real (`findNodeBySpanOfKind` already
+	// anchors nested lookups correctly) and must still fail.
+	const rootAliasTolerated =
+		path === '' &&
+		rootAliasPair !== undefined &&
+		((a.type === rootAliasPair[0] && b.type === rootAliasPair[1]) ||
+			(a.type === rootAliasPair[1] && b.type === rootAliasPair[0]));
+	if (a.type !== b.type && !rootAliasTolerated) {
 		return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
 	}
 	const aChildren = collectVisibleChildren(a, namedExtras);
@@ -698,7 +717,9 @@ export async function validateReadRenderParse(
 						const namedExtras = NAMED_EXTRAS_BY_GRAMMAR[grammar] ?? new Set<string>();
 						// AST comparison: only when we have a WASM source node to
 						// compare against (native path without $span skips this).
-						const diff = node1ForAst ? astStructuralDiff(node1ForAst, node2, namedExtras) : null;
+						const rootAliasPair: readonly [string, string] | undefined =
+							renderedKind !== targetKind ? [renderedKind, targetKind] : undefined;
+						const diff = node1ForAst ? astStructuralDiff(node1ForAst, node2, namedExtras, '', rootAliasPair) : null;
 						if (diff) {
 							kindAstMismatches.push({
 								kind: renderedKind,
