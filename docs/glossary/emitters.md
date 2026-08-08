@@ -1710,7 +1710,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  to a pascal conversion for bare kinds. */
 ```
 
-### `buildSlotModelSurface` (`packages/codegen/src/emitters/render-module.ts:805`)
+### `build
+
+Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
 
 ```text
 /**
@@ -1952,7 +1954,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * @param fieldMixedByName - set of field names whose slots have mixed named+anonymous
  *   content. When a field is in this set, it is always classified as heterogeneous
  *   regardless of what classifySlotForEmit returns, matching the transport struct
- *   field type emitted by rustTransportSlotType (which then chooses per-slot enum
+ *   field type emitted by rustTransport (which then chooses per-slot enum
  *   vs Box<AnyTransport> via `hasAnyConcreteChildKind`).
  * @param childrenCls - slot classification for the children slot. Falls back
  *   to heterogeneous when not provided.

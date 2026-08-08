@@ -634,7 +634,13 @@ function unifyChoiceArmFieldNames(content: unknown, unifiedName: string): unknow
 	if (!Array.isArray(members)) return content;
 	let anyChanged = false;
 	const newMembers = members.map((m) => {
-		if (isEnrichShapedFieldWrapper(m) && m.name !== unifiedName) {
+		// Any field-wrapped arm gets unified, not just enrich-shaped ones
+		// (name === symbol name) — a hand-authored, meaningfully-named field
+		// from the base grammar (e.g. `field('source', $.string)`) is just as
+		// much "already fielded under its own differing name" as an
+		// enrich-numbered one, and this function's whole job (per its
+		// callers) is to unify those under the override's chosen name.
+		if (isFieldLike(m) && m.name !== unifiedName) {
 			anyChanged = true;
 			return { ...m, name: unifiedName, metadata: makeRuleMetadata({ fieldSource: 'override' }) };
 		}
@@ -650,28 +656,38 @@ function resolveFieldPlaceholder(
 	precStack?: readonly RuntimeRule[]
 ): RuntimeRule {
 	let content: unknown = originalMember;
-	if (isEnrichShapedFieldWrapper(content)) {
-		// Override landing on a position that is already structurally
-		// enrich-shaped (see `isEnrichShapedFieldWrapper`) is redundant —
-		// the one-line entry could be deleted and enrich's auto-inference
-		// pass would produce the same FIELD automatically. Warn so the
-		// author can clean it up on the next cycle. Gated on SITTIR_QUIET
-		// like the enrich reportSkip helper. Per the 2026-07-02 user
-		// decision, transparency is structural: a user-authored wrapper
+	if (isFieldLike(content)) {
+		// Override landing on a position that already carries a FIELD —
+		// whether from enrich's auto-inference or straight from the base
+		// grammar (e.g. tree-sitter-rust's `field('pattern', choice(...))`
+		// on `parameter`) — replaces that field rather than nesting a new
+		// one around it. Nesting (`field('name', field('pattern', ...))`)
+		// is what a one-arg `field(name)` placeholder degenerates to if the
+		// existing FIELD isn't unwrapped first; even where tree-sitter's own
+		// field-resolution happens to prefer the outer name and the parser
+		// ends up correct, the emitted grammar.json still carries the dead
+		// inner field, which is wrong on its own terms. Per the 2026-07-02
+		// user decision, transparency is structural: a user-authored wrapper
 		// shape-identical to enrich's output is treated the same as one
 		// enrich actually produced — neither should leak into the override
 		// result as a nested wrapper.
 		const overrideName = patch.name;
-		const enrichName = (content as { name?: string }).name ?? '(unknown)';
-		// Only warn for the redundant-duplicate case (override matches enrich's
-		// auto-name). The rename case (override picks a different name like
-		// 'object'/'index' instead of enrich's 'expression1'/'expression2') is
-		// the intended override-trumps-enrich behavior — silent by design.
-		if (overrideName === enrichName && !process.env.SITTIR_QUIET) {
+		const existingName = (content as { name?: string }).name ?? '(unknown)';
+		const isEnrichShaped = isEnrichShapedFieldWrapper(content);
+		// Only warn for the redundant-duplicate case (override matches the
+		// existing field's name). The rename case (override picks a
+		// different name like 'object'/'index'/'name' instead of the
+		// existing 'expression1'/'expression2'/'pattern') is the intended
+		// override-trumps-existing behavior — silent by design.
+		if (overrideName === existingName && !process.env.SITTIR_QUIET) {
 			const parentKind = wireGetCurrentRuleKind() ?? '(unknown)';
+			const label = isEnrichShaped ? 'an enrich-labeled FIELD' : 'an existing FIELD';
+			const advice = isEnrichShaped
+				? 'enrich will cover it automatically.'
+				: 'it already has this name.';
 			process.stderr.write(
-				`transform: override field('${overrideName}') on '${parentKind}' wraps an enrich-labeled FIELD — ` +
-					`duplicate name ('${overrideName}'). Drop the override entry; enrich will cover it automatically.\n`
+				`transform: override field('${overrideName}') on '${parentKind}' wraps ${label} — ` +
+					`duplicate name ('${overrideName}'). Drop the override entry; ${advice}\n`
 			);
 		}
 		content = content.content;

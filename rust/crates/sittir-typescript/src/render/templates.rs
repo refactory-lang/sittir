@@ -271,6 +271,13 @@ pub struct ExportStatementTypeExportTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_extends_clause_single.jinja", escape = "none")]
+pub struct ExtendsClauseSingleTemplate<'a> {
+    pub type_arguments: OptionalNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_for_header_let_const_kind.jinja", escape = "none")]
 pub struct ForHeaderLetConstKindTemplate<'a> {
     pub automatic_semicolon: OptionalNonterminalView<'a>,
@@ -835,8 +842,7 @@ pub struct ExpressionStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "extends_clause.jinja", escape = "none")]
 pub struct ExtendsClauseTemplate<'a> {
-    pub type_arguments: ListNonterminalView<'a>,
-    pub value: ListNonterminalView<'a>,
+    pub extends_clause_single: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -988,6 +994,7 @@ pub struct ImportAliasTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "import_attribute.jinja", escape = "none")]
 pub struct ImportAttributeTemplate<'a> {
+    pub attribute_kind: SingleNonterminalView<'a>,
     pub object: SingleNonterminalView<'a>,
 }
 

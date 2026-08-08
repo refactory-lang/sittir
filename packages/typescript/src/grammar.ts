@@ -359,13 +359,8 @@ export type TypescriptGrammar = {
 	readonly asserts_annotation: {
 		type: 'asserts_annotation';
 		named: true;
-		fields: {
-			asserts: {
-				multiple: true;
-				required: true;
-				types: [{ type: ':'; named: false }, { type: 'asserts'; named: true }];
-			};
-		};
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'asserts'; named: true }] };
 	};
 	readonly assignment_expression: {
 		type: 'assignment_expression';
@@ -1029,9 +1024,15 @@ export type TypescriptGrammar = {
 	readonly extends_clause: {
 		type: 'extends_clause';
 		named: true;
+		fields: {};
+		children: { multiple: true; required: true; types: [{ type: 'extends_clause_single'; named: true }] };
+	};
+	readonly extends_clause_single: {
+		type: 'extends_clause_single';
+		named: true;
 		fields: {
-			type_arguments: { multiple: true; required: false; types: [{ type: 'type_arguments'; named: true }] };
-			value: { multiple: true; required: true; types: [{ type: 'expression'; named: true }] };
+			type_arguments: { multiple: false; required: false; types: [{ type: 'type_arguments'; named: true }] };
+			value: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
 		};
 	};
 	readonly extends_type_clause: {
@@ -1379,11 +1380,12 @@ export type TypescriptGrammar = {
 		type: 'import_attribute';
 		named: true;
 		fields: {
-			object: {
-				multiple: true;
+			attribute_kind: {
+				multiple: false;
 				required: true;
-				types: [{ type: 'assert'; named: false }, { type: 'object'; named: true }, { type: 'with'; named: false }];
+				types: [{ type: 'assert'; named: false }, { type: 'with'; named: false }];
 			};
+			object: { multiple: false; required: true; types: [{ type: 'object'; named: true }] };
 		};
 	};
 	readonly import_clause: {
@@ -1462,8 +1464,12 @@ export type TypescriptGrammar = {
 		fields: {
 			from_clause: {
 				multiple: false;
-				required: false;
-				types: [{ type: 'import_require_clause'; named: true }, { type: 'import_statement_group1'; named: true }];
+				required: true;
+				types: [
+					{ type: 'import_require_clause'; named: true },
+					{ type: 'import_statement_group1'; named: true },
+					{ type: 'string'; named: true }
+				];
 			};
 			import_attribute: { multiple: false; required: false; types: [{ type: 'import_attribute'; named: true }] };
 			import_clause: {
@@ -1476,7 +1482,6 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
 			};
-			source: { multiple: false; required: false; types: [{ type: 'string'; named: true }] };
 		};
 	};
 	readonly import_statement_group1: {
@@ -2519,13 +2524,8 @@ export type TypescriptGrammar = {
 	readonly type_predicate_annotation: {
 		type: 'type_predicate_annotation';
 		named: true;
-		fields: {
-			type_predicate: {
-				multiple: true;
-				required: true;
-				types: [{ type: ':'; named: false }, { type: 'type_predicate'; named: true }];
-			};
-		};
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'type_predicate'; named: true }] };
 	};
 	readonly type_query: {
 		type: 'type_query';

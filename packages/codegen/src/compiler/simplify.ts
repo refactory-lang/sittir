@@ -596,7 +596,7 @@ function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx(
 export function simplifyRules(rules: Record<string, RenderRule>, ctx?: SimplifyCtx): Record<string, RenderRule> {
 	const out: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
-		out[name] = normalizeToFixpoint(rule, ctx, rules);
+		out[name] = simplifyToFixpoint(rule, ctx, rules);
 	}
 	return out;
 }
@@ -660,7 +660,7 @@ export function computeSimplifiedRules(ctx: SimplifyCtx): Record<string, Simplif
 	return canonicalized;
 }
 
-function normalizeToFixpoint(
+function simplifyToFixpoint(
 	rule: RenderRule,
 	ctx: SimplifyCtx | undefined,
 	rules: Readonly<Record<string, RenderRule>>
@@ -674,7 +674,7 @@ function normalizeToFixpoint(
 		current = next;
 	}
 	console.warn(
-		`[simplify] normalizeToFixpoint: ${MAX_ITERS} iterations reached without convergence — returning last iteration`
+		`[simplify] simplifyToFixpoint: ${MAX_ITERS} iterations reached without convergence — returning last iteration`
 	);
 	return current;
 }

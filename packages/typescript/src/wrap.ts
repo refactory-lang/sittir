@@ -1620,6 +1620,16 @@ export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.ImportAttribute as const,
+			_attribute_kind: projectKindEnumStorage(
+				normalizeSingularWrapSlot(
+					data._attribute_kind ?? readTerminalFromOther(data, [TSKindId.With, TSKindId.Assert]),
+					'attribute_kind',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'attribute_kind', span: (data as _NodeData).$span }
+				),
+				{ with: 11, assert: 12 }
+			),
 			_object: normalizeSingularWrapSlot(data._object, 'object', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -1627,10 +1637,15 @@ export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle) {
 				span: (data as _NodeData).$span
 			}),
 
+			attributeKind() {
+				return this._attribute_kind;
+			},
 			object() {
-				return drillIn<'with' | 'assert' | T.Object>(this._object, tree);
+				return drillIn<T.Object>(this._object, tree);
 			},
 			$with: {
+				attributeKind: (v: NonNullable<T.ImportAttribute['_attribute_kind']>) =>
+					wrapImportAttribute({ ...data, _attribute_kind: v }, tree),
 				object: (v: NonNullable<T.ImportAttribute['_object']>) => wrapImportAttribute({ ...data, _object: v }, tree)
 			}
 		},
@@ -7253,72 +7268,21 @@ export function wrapExtendsClause(data: T.ExtendsClause, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.ExtendsClause as const,
-			_value: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._value, [
-					'expression',
-					'as_expression',
-					'satisfies_expression',
-					'instantiation_expression',
-					'internal_module',
-					'type_assertion',
-					'primary_expression',
-					'subscript_expression',
-					'member_expression',
-					'parenthesized_expression',
-					'_identifier',
-					'undefined',
-					'identifier',
-					'_reserved_identifier',
-					'this',
-					'super',
-					'number',
-					'string',
-					'template_string',
-					'regex',
-					'true',
-					'false',
-					'null',
-					'object',
-					'array',
-					'function_expression',
-					'arrow_function',
-					'generator_function',
-					'class',
-					'meta_property',
-					'call_expression',
-					'non_null_expression',
-					'assignment_expression',
-					'augmented_assignment_expression',
-					'await_expression',
-					'unary_expression',
-					'binary_expression',
-					'ternary_expression',
-					'update_expression',
-					'new_expression',
-					'yield_expression'
-				]),
+			_extends_clause_single: normalizeRepeatedWrapSlot(
+				_filterWrapChildrenByKind(data._extends_clause_single, ['_extends_clause_single', 'extends_clause_single']),
 				true,
-				'value',
-				{ tree, nodeType: data.$type, slotName: 'value', span: (data as _NodeData).$span }
-			),
-			_type_arguments: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._type_arguments, ['type_arguments']),
-				false,
-				'type_arguments',
-				{ tree, nodeType: data.$type, slotName: 'type_arguments', span: (data as _NodeData).$span }
+				'extends_clause_single',
+				{ tree, nodeType: data.$type, slotName: 'extends_clause_single', span: (data as _NodeData).$span }
 			),
 
-			values() {
-				return drillInAll<T.Expression>(this._value as readonly T.Expression[] | undefined, tree);
-			},
-			typeArguments() {
-				return drillInAll<T.TypeArguments>(this._type_arguments as readonly T.TypeArguments[] | undefined, tree);
+			extendsClauseSingles() {
+				return drillAsAll<T.ExtendsClauseSingle>(this._extends_clause_single, tree, [
+					{ from: 'extends_clause_single', to: '_extends_clause_single' }
+				]);
 			},
 			$with: {
-				values: (...v: NonEmptyArray<NonNullable<T.ExtendsClause['_value']>[number]>) =>
-					wrapExtendsClause({ ...data, _value: v }, tree),
-				typeArguments: (...v: NonNullable<T.ExtendsClause['_type_arguments']>[number][]) =>
-					wrapExtendsClause({ ...data, _type_arguments: v }, tree)
+				extendsClauseSingles: (...v: NonEmptyArray<NonNullable<T.ExtendsClause['_extends_clause_single']>[number]>) =>
+					wrapExtendsClause({ ...data, _extends_clause_single: v }, tree)
 			}
 		},
 		methodsEngine
@@ -8626,7 +8590,7 @@ export function wrapAssertsAnnotation(data: T.AssertsAnnotation, tree: TreeHandl
 			}),
 
 			asserts() {
-				return drillIn<':' | T.Asserts>(this._asserts, tree);
+				return drillIn<T.Asserts>(this._asserts, tree);
 			},
 			$with: {
 				asserts: (v: NonNullable<T.AssertsAnnotation['_asserts']>) =>
@@ -9282,7 +9246,7 @@ export function wrapTypePredicateAnnotation(data: T.TypePredicateAnnotation, tre
 			}),
 
 			typePredicate() {
-				return drillIn<':' | T.TypePredicate>(this._type_predicate, tree);
+				return drillIn<T.TypePredicate>(this._type_predicate, tree);
 			},
 			$with: {
 				typePredicate: (v: NonNullable<T.TypePredicateAnnotation['_type_predicate']>) =>
@@ -13515,6 +13479,7 @@ const _aliasTargetToSource: Record<string, string> = {
 	export_statement_namespace_export: '_export_statement_namespace_export',
 	export_statement_type_export: '_export_statement_type_export',
 	expressions: '_expressions',
+	extends_clause_single: '_extends_clause_single',
 	for_header_let_const_kind: '_for_header_let_const_kind',
 	for_header_lhs: '_for_header_lhs',
 	for_header_operator: '__for_header_operator',

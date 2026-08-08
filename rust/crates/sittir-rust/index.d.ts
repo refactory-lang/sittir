@@ -1533,7 +1533,6 @@ export interface OrderedFieldDeclarationListGroup1Transport {
   '$triviaData'?: TransportTrivia
   _attributed_ordered_field: Array<AttributedOrderedFieldTransport>
   _attributed_ordered_field_trailing_sep?: boolean
-  _type?: _TypeTransport
   _trailing_sep?: boolean
 }
 
@@ -1615,7 +1614,7 @@ export interface ParameterTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _mutable_specifier?: MutableSpecifierTransport
-  _pattern: ParameterPatternTransportSlot
+  _name: ParameterNameTransportSlot
   _type: _TypeTransport
 }
 

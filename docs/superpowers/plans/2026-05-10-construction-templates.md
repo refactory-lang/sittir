@@ -852,7 +852,7 @@ Expected: PASS (extractor doesn't care about supertype vs concrete kind — it r
 ```bash
 git add packages/codegen/src/__tests__/templates/extract-slots.test.ts
 git commit -m "test(codegen): supertype-position slot extraction (Phase 2.4)"
-```
+d```
 
 #### Task 2.5: `deriveSlotType` — single-kind field
 

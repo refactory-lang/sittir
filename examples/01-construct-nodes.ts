@@ -18,23 +18,23 @@ export function explicitMainFunction() {
 
 export function nestedGreetFunction() {
 	return ir.functionItem.strict({
-		visibilityModifier: ir.visibilityModifier.pub(),
+		visibilityModifier: ir.visibilityModifier.pub(), /* TODO: elevate choice arms to 'subfactories'  */
 		name: ir.identifier('greet'),
 		parameters: ir.parameters.strict(
-			ir.parameter.from({ pattern: 'name', type: 'String' }),
+			ir.parameter({ pattern: 'name', type: 'String' }),
 		),
 		body: ir.block.strict(),
 	});
 }
 
 export function fromGreetFunction() {
-	return ir.functionItem.from({
+	return ir.functionItem({
 		visibilityModifier: 'pub',
 		name: 'greet',
-		parameters: ir.parameters.strict(
-			ir.parameter.from({ pattern: 'name', type: 'String' }),
+		parameters: ir.parameters(
+			ir.parameter({ pattern: 'name', type: 'String' }),
 		),
-		body: ir.block.strict(),
+		body: ir.block(),
 	});
 }
 
@@ -42,7 +42,7 @@ export function minimalMainFunction() {
 	return ir.functionItem({
 		name: 'main',
 		parameters: ir.parameters(), /* parameters takes rest parameters, so likely ir.* mapped to strict api instead of from */
-		body: ir.block({}) /* from api should permit empty block, but it doesn't currently - likely need an overload for single slot array parameters in the from api*/,
+		body: ir.block({})
 	});
 }
 

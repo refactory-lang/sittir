@@ -1084,7 +1084,7 @@ pub struct OrderedFieldDeclarationListTemplate<'a> {
 #[template(path = "parameter.jinja", escape = "none")]
 pub struct ParameterTemplate<'a> {
     pub mutable_specifier: OptionalNonterminalView<'a>,
-    pub pattern: SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
     pub type_: SingleNonterminalView<'a>,
 }
 

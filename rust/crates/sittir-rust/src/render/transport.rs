@@ -15074,7 +15074,7 @@ impl RenderableTransport for SelfParameterReferenceTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ParameterPatternTransportSlot {
+pub enum ParameterNameTransportSlot {
     StringLiteral(StringLiteralTransport),
     RawStringLiteral(RawStringLiteralTransport),
     CharLiteral(CharLiteralTransport),
@@ -15105,7 +15105,7 @@ pub enum ParameterPatternTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ParameterPatternTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ParameterNameTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -15204,7 +15204,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterPatternTransportSlot {
                         Self_Transport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ParameterPatternTransportSlot",
+                        "unknown kind id {other} in ParameterNameTransportSlot",
                     ))),
                 }
             }
@@ -15215,7 +15215,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterPatternTransportSlot {
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ParameterPatternTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ParameterNameTransportSlot")
                 )?;
                 match kind_id {
                     312 => Ok(Self::StringLiteral(
@@ -15309,110 +15309,110 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterPatternTransportSlot {
                         Self_Transport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ParameterPatternTransportSlot",
+                        "unknown kind id {other} in ParameterNameTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ParameterPatternTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("ParameterNameTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ParameterPatternTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ParameterNameTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ParameterPatternTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ParameterNameTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ParameterPatternTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ParameterNameTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ParameterPatternTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ParameterNameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ParameterPatternTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ParameterNameTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ParameterPatternTransportSlot::to_napi_value(env, *val)
+        ParameterNameTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn parameter_pattern_transport_slot_to_any(t: ParameterPatternTransportSlot) -> AnyTransport {
+fn parameter_name_transport_slot_to_any(t: ParameterNameTransportSlot) -> AnyTransport {
     match t {
-        ParameterPatternTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
-        ParameterPatternTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
-        ParameterPatternTransportSlot::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
-        ParameterPatternTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
-        ParameterPatternTransportSlot::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
-        ParameterPatternTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
-        ParameterPatternTransportSlot::NegativeLiteral(inner) => AnyTransport::NegativeLiteral(inner),
-        ParameterPatternTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ParameterPatternTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
-        ParameterPatternTransportSlot::GenericPattern(inner) => AnyTransport::GenericPattern(inner),
-        ParameterPatternTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
-        ParameterPatternTransportSlot::TupleStructPattern(inner) => AnyTransport::TupleStructPattern(inner),
-        ParameterPatternTransportSlot::StructPattern(inner) => AnyTransport::StructPattern(inner),
-        ParameterPatternTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
-        ParameterPatternTransportSlot::RefPattern(inner) => AnyTransport::RefPattern(inner),
-        ParameterPatternTransportSlot::SlicePattern(inner) => AnyTransport::SlicePattern(inner),
-        ParameterPatternTransportSlot::CapturedPattern(inner) => AnyTransport::CapturedPattern(inner),
-        ParameterPatternTransportSlot::ReferencePattern(inner) => AnyTransport::ReferencePattern(inner),
-        ParameterPatternTransportSlot::RemainingFieldPattern(inner) => AnyTransport::RemainingFieldPattern(inner),
-        ParameterPatternTransportSlot::MutPattern(inner) => AnyTransport::MutPattern(inner),
-        ParameterPatternTransportSlot::RangePattern(inner) => AnyTransport::RangePattern(inner),
-        ParameterPatternTransportSlot::OrPattern(inner) => AnyTransport::OrPattern(inner),
-        ParameterPatternTransportSlot::ConstBlock(inner) => AnyTransport::ConstBlock(inner),
-        ParameterPatternTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
-        ParameterPatternTransportSlot::WildcardPattern(inner) => AnyTransport::WildcardPattern(inner),
-        ParameterPatternTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
-        ParameterPatternTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        ParameterNameTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
+        ParameterNameTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
+        ParameterNameTransportSlot::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
+        ParameterNameTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
+        ParameterNameTransportSlot::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
+        ParameterNameTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
+        ParameterNameTransportSlot::NegativeLiteral(inner) => AnyTransport::NegativeLiteral(inner),
+        ParameterNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        ParameterNameTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
+        ParameterNameTransportSlot::GenericPattern(inner) => AnyTransport::GenericPattern(inner),
+        ParameterNameTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
+        ParameterNameTransportSlot::TupleStructPattern(inner) => AnyTransport::TupleStructPattern(inner),
+        ParameterNameTransportSlot::StructPattern(inner) => AnyTransport::StructPattern(inner),
+        ParameterNameTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        ParameterNameTransportSlot::RefPattern(inner) => AnyTransport::RefPattern(inner),
+        ParameterNameTransportSlot::SlicePattern(inner) => AnyTransport::SlicePattern(inner),
+        ParameterNameTransportSlot::CapturedPattern(inner) => AnyTransport::CapturedPattern(inner),
+        ParameterNameTransportSlot::ReferencePattern(inner) => AnyTransport::ReferencePattern(inner),
+        ParameterNameTransportSlot::RemainingFieldPattern(inner) => AnyTransport::RemainingFieldPattern(inner),
+        ParameterNameTransportSlot::MutPattern(inner) => AnyTransport::MutPattern(inner),
+        ParameterNameTransportSlot::RangePattern(inner) => AnyTransport::RangePattern(inner),
+        ParameterNameTransportSlot::OrPattern(inner) => AnyTransport::OrPattern(inner),
+        ParameterNameTransportSlot::ConstBlock(inner) => AnyTransport::ConstBlock(inner),
+        ParameterNameTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
+        ParameterNameTransportSlot::WildcardPattern(inner) => AnyTransport::WildcardPattern(inner),
+        ParameterNameTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
+        ParameterNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for ParameterPatternTransportSlot {
+impl RenderableTransport for ParameterNameTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ParameterPatternTransportSlot::StringLiteral(inner) => render_string_literal(inner, dest),
-            ParameterPatternTransportSlot::RawStringLiteral(inner) => render_raw_string_literal(inner, dest),
-            ParameterPatternTransportSlot::CharLiteral(inner) => render_char_literal(inner, dest),
-            ParameterPatternTransportSlot::BooleanLiteral(inner) => render_boolean_literal(inner, dest),
-            ParameterPatternTransportSlot::IntegerLiteral(inner) => render_integer_literal(inner, dest),
-            ParameterPatternTransportSlot::FloatLiteral(inner) => render_float_literal(inner, dest),
-            ParameterPatternTransportSlot::NegativeLiteral(inner) => render_negative_literal(inner, dest),
-            ParameterPatternTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ParameterPatternTransportSlot::ScopedIdentifier(inner) => render_scoped_identifier(inner, dest),
-            ParameterPatternTransportSlot::GenericPattern(inner) => render_generic_pattern(inner, dest),
-            ParameterPatternTransportSlot::TuplePattern(inner) => render_tuple_pattern(inner, dest),
-            ParameterPatternTransportSlot::TupleStructPattern(inner) => render_tuple_struct_pattern(inner, dest),
-            ParameterPatternTransportSlot::StructPattern(inner) => render_struct_pattern(inner, dest),
-            ParameterPatternTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            ParameterPatternTransportSlot::RefPattern(inner) => render_ref_pattern(inner, dest),
-            ParameterPatternTransportSlot::SlicePattern(inner) => render_slice_pattern(inner, dest),
-            ParameterPatternTransportSlot::CapturedPattern(inner) => render_captured_pattern(inner, dest),
-            ParameterPatternTransportSlot::ReferencePattern(inner) => render_reference_pattern(inner, dest),
-            ParameterPatternTransportSlot::RemainingFieldPattern(inner) => render_remaining_field_pattern(inner, dest),
-            ParameterPatternTransportSlot::MutPattern(inner) => render_mut_pattern(inner, dest),
-            ParameterPatternTransportSlot::RangePattern(inner) => render_range_pattern(inner, dest),
-            ParameterPatternTransportSlot::OrPattern(inner) => render_or_pattern(inner, dest),
-            ParameterPatternTransportSlot::ConstBlock(inner) => render_const_block(inner, dest),
-            ParameterPatternTransportSlot::MacroInvocation(inner) => render_macro_invocation(inner, dest),
-            ParameterPatternTransportSlot::WildcardPattern(inner) => render_wildcard_pattern(inner, dest),
-            ParameterPatternTransportSlot::Self_(inner) => render_self(inner, dest),
-            ParameterPatternTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            ParameterNameTransportSlot::StringLiteral(inner) => render_string_literal(inner, dest),
+            ParameterNameTransportSlot::RawStringLiteral(inner) => render_raw_string_literal(inner, dest),
+            ParameterNameTransportSlot::CharLiteral(inner) => render_char_literal(inner, dest),
+            ParameterNameTransportSlot::BooleanLiteral(inner) => render_boolean_literal(inner, dest),
+            ParameterNameTransportSlot::IntegerLiteral(inner) => render_integer_literal(inner, dest),
+            ParameterNameTransportSlot::FloatLiteral(inner) => render_float_literal(inner, dest),
+            ParameterNameTransportSlot::NegativeLiteral(inner) => render_negative_literal(inner, dest),
+            ParameterNameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            ParameterNameTransportSlot::ScopedIdentifier(inner) => render_scoped_identifier(inner, dest),
+            ParameterNameTransportSlot::GenericPattern(inner) => render_generic_pattern(inner, dest),
+            ParameterNameTransportSlot::TuplePattern(inner) => render_tuple_pattern(inner, dest),
+            ParameterNameTransportSlot::TupleStructPattern(inner) => render_tuple_struct_pattern(inner, dest),
+            ParameterNameTransportSlot::StructPattern(inner) => render_struct_pattern(inner, dest),
+            ParameterNameTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
+            ParameterNameTransportSlot::RefPattern(inner) => render_ref_pattern(inner, dest),
+            ParameterNameTransportSlot::SlicePattern(inner) => render_slice_pattern(inner, dest),
+            ParameterNameTransportSlot::CapturedPattern(inner) => render_captured_pattern(inner, dest),
+            ParameterNameTransportSlot::ReferencePattern(inner) => render_reference_pattern(inner, dest),
+            ParameterNameTransportSlot::RemainingFieldPattern(inner) => render_remaining_field_pattern(inner, dest),
+            ParameterNameTransportSlot::MutPattern(inner) => render_mut_pattern(inner, dest),
+            ParameterNameTransportSlot::RangePattern(inner) => render_range_pattern(inner, dest),
+            ParameterNameTransportSlot::OrPattern(inner) => render_or_pattern(inner, dest),
+            ParameterNameTransportSlot::ConstBlock(inner) => render_const_block(inner, dest),
+            ParameterNameTransportSlot::MacroInvocation(inner) => render_macro_invocation(inner, dest),
+            ParameterNameTransportSlot::WildcardPattern(inner) => render_wildcard_pattern(inner, dest),
+            ParameterNameTransportSlot::Self_(inner) => render_self(inner, dest),
+            ParameterNameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -30284,8 +30284,8 @@ pub struct ParameterTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
     pub mutable_specifier: Option<MutableSpecifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
-    pub pattern: ParameterPatternTransportSlot,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: ParameterNameTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: _TypeTransport,
 }
@@ -37762,8 +37762,6 @@ pub struct OrderedFieldDeclarationListGroup1Transport {
     pub attributed_ordered_field: Vec<AttributedOrderedFieldTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_ordered_field_trailing_sep"))]
     pub attributed_ordered_field_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: Option<_TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
     pub trailing_sep: Option<bool>,
 }
@@ -53415,7 +53413,7 @@ fn render_parameter(node: &ParameterTransport, dest: &mut dyn ::std::fmt::Write)
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
     };
     template.render_into(dest)

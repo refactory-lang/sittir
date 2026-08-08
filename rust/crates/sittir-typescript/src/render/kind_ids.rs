@@ -740,7 +740,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         277 => "instantiation_expression", // "instantiation_expression"
         278 => "import_require_clause", // "import_require_clause"
         279 => "extends_clause", // "extends_clause"
-        280 => "_extends_clause_single", // "_extends_clause_single"
+        280 => "extends_clause_single", // "_extends_clause_single"
         281 => "implements_clause", // "implements_clause"
         282 => "ambient_declaration", // "ambient_declaration"
         283 => "abstract_class_declaration", // "abstract_class_declaration"

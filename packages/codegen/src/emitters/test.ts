@@ -5,7 +5,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
-import { allSlotsOf } from '../compiler/model/node-map.ts';
+import { allSlotsOf, isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
@@ -256,9 +256,27 @@ function emitContainerTest(
 	const facts = unnamedChildSlotFacts(node.fields);
 	const requiredSingular = facts && !facts.multiple && facts.required;
 	const anyNonEmpty = facts?.nonEmpty ?? false;
-	const firstKindName = facts ? slotKindNames(facts.slot)[0] : undefined;
+	// Candidate kind names for the slot, preferring each value's `parseKind`
+	// (the tree-sitter-facing, constructable name) over `slotKindNames`'
+	// storage kind: for an alias-promoted slot (e.g. a hidden rule later
+	// exposed as its own visible kind), the storage kind is the
+	// pre-promotion hidden name, which the factory surface no longer
+	// accepts. Routed through `resolveConcreteKind` exactly like
+	// `dummyValueForField` — a bare supertype name (e.g. `type`) isn't
+	// itself constructable; it needs expanding to one of its subtypes.
+	const candidateKindNames = facts
+		? facts.slot.values.map((v) => v.parseKind?.name ?? (isNodeRef(v) ? storageKindOfRef(v.node) : undefined)).filter((n) => n !== undefined)
+		: [];
+	const firstKindName =
+		candidateKindNames.length > 0 ? resolveConcreteKind(candidateKindNames, nodeMap, kindEntries) : undefined;
+	// A recursively-built dummy (populating the child's own required fields,
+	// not just its type discriminant) rather than a bare `{ type: X }` —
+	// the factory's real signature expects full NodeData for this slot, not
+	// a type tag.
 	const placeholder =
-		(requiredSingular || anyNonEmpty) && firstKindName ? `{ type: ${JSON.stringify(firstKindName)} } as never` : '';
+		(requiredSingular || anyNonEmpty) && firstKindName
+			? buildDummyStub(firstKindName, nodeMap, kindEntries, 0, new Set())
+			: '';
 
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
@@ -508,7 +526,12 @@ function buildDummyStub(
 	depth: number,
 	visiting: ReadonlySet<string>
 ): string {
-	const node = nodeMap.nodes.get(kind);
+	// Canonical-hidden architecture (Option Y): an alias-promoted kind's own
+	// fields live on the pre-promotion hidden node (`_<kind>`), not on a
+	// separate model entry under the visible name — same fallback
+	// `template-coverage.ts::validateTemplateCoverage` uses for the same
+	// reason.
+	const node = nodeMap.nodes.get(kind) ?? nodeMap.nodes.get(`_${kind}`);
 	const dummyText = node ? dummyTextForKind(kind, nodeMap) : 'test';
 	const base = dummyNodeLiteral(kind, dummyText, nodeMap, kindEntries);
 	// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see

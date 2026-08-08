@@ -336,20 +336,28 @@ export function buildImportSpecifier(config: T.ImportSpecifier.Config) {
 	);
 }
 
-export function buildImportAttribute(object: T.ImportAttribute.Config['object']) {
-	const _object = object;
+export function buildImportAttribute(config: T.ImportAttribute.Config) {
+	const _attribute_kind = coerceKindEnumStorage(config.attributeKind, [
+		['with', TSKindId.With] as const,
+		['assert', TSKindId.Assert] as const
+	]);
+	const _object = config.object;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ImportAttribute as const,
 				$source: 2 as const,
 				$named: true as const,
+				_attribute_kind,
 				_object,
 				$with: {
-					object: (value: T.ImportAttribute.Config['object']) => buildImportAttribute(value)
+					attributeKind: (value: NonNullable<Parameters<typeof buildImportAttribute>[0]>['attributeKind']) =>
+						buildImportAttribute({ ...config, attributeKind: value }),
+					object: (value: T.Object) => buildImportAttribute({ ...config, object: value })
 				}
 			},
 			{
+				attributeKind: () => _attribute_kind,
 				object: () => _object
 			}
 		),
@@ -3184,25 +3192,20 @@ export function buildImportRequireClause(config: T.ImportRequireClause.Config) {
 	);
 }
 
-export function buildExtendsClause(config: T.ExtendsClause.Config) {
-	const _value = config.value ?? [];
-	const _type_arguments = config.typeArguments ?? [];
+export function buildExtendsClause(...children: T.ExtendsClauseSingle[]) {
+	_assertNonEmpty(children, 'extends_clause.children');
+	const _extends_clause_single = children;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ExtendsClause as const,
 				$source: 2 as const,
 				$named: true as const,
-				_value,
-				_type_arguments,
-				$with: {
-					values: (...values: NonEmptyArray<T.Expression>) => buildExtendsClause({ ...config, value: values }),
-					typeArguments: (...values: T.TypeArguments[]) => buildExtendsClause({ ...config, typeArguments: values })
-				}
+				_extends_clause_single,
+				$with: { $children: (...vs: T.ExtendsClauseSingle[]) => buildExtendsClause(...vs) }
 			},
 			{
-				values: () => _value,
-				typeArguments: () => _type_arguments
+				extendsClauseSingles: () => _extends_clause_single
 			}
 		),
 		methodsEngine

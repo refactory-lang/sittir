@@ -975,21 +975,16 @@
   {
     "type": "asserts_annotation",
     "named": true,
-    "fields": {
-      "asserts": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": ":",
-            "named": false
-          },
-          {
-            "type": "asserts",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "asserts",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2908,9 +2903,24 @@
   {
     "type": "extends_clause",
     "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "extends_clause_single",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "extends_clause_single",
+    "named": true,
     "fields": {
       "type_arguments": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
           {
@@ -2920,7 +2930,7 @@
         ]
       },
       "value": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
           {
@@ -3902,8 +3912,8 @@
     "type": "import_attribute",
     "named": true,
     "fields": {
-      "object": {
-        "multiple": true,
+      "attribute_kind": {
+        "multiple": false,
         "required": true,
         "types": [
           {
@@ -3911,12 +3921,18 @@
             "named": false
           },
           {
-            "type": "object",
-            "named": true
-          },
-          {
             "type": "with",
             "named": false
+          }
+        ]
+      },
+      "object": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "object",
+            "named": true
           }
         ]
       }
@@ -4079,7 +4095,7 @@
     "fields": {
       "from_clause": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "import_require_clause",
@@ -4087,6 +4103,10 @@
           },
           {
             "type": "import_statement_group1",
+            "named": true
+          },
+          {
+            "type": "string",
             "named": true
           }
         ]
@@ -4125,16 +4145,6 @@
           },
           {
             "type": "automatic_semicolon",
-            "named": true
-          }
-        ]
-      },
-      "source": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "string",
             "named": true
           }
         ]
@@ -7071,21 +7081,16 @@
   {
     "type": "type_predicate_annotation",
     "named": true,
-    "fields": {
-      "type_predicate": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": ":",
-            "named": false
-          },
-          {
-            "type": "type_predicate",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "type_predicate",
+          "named": true
+        }
+      ]
     }
   },
   {

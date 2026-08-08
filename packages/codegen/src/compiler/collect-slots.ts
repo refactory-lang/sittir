@@ -161,6 +161,13 @@ function isDegenerateFieldArm(m: AnyRule): boolean {
 	return (node as { fieldName?: string }).fieldName !== undefined && isSlotNode(node);
 }
 
+/** The field name a degenerate arm (per `isDegenerateFieldArm`) carries, unwrapping the same single-member seq nesting. */
+function degenerateArmFieldName(m: AnyRule): string | undefined {
+	let node = m;
+	while (node.type === SEQ && node.members.length === 1) node = node.members[0]!;
+	return (node as { fieldName?: string }).fieldName;
+}
+
 export function partitionChoiceArms(rule: Extract<AnyRule, { type: 'CHOICE' }>): ChoiceArmPartition {
 	const out: ChoiceArmPartition = {
 		degenerateNamedArms: [],
@@ -656,7 +663,20 @@ export function collectSlots(
 								(partition.degenerateNamedArms.length > 0
 									? ` alongside ${partition.degenerateNamedArms.length} label-routed arm(s) ` +
 										`[${partition.degenerateNamedArms.map(describeArmShape).join(', ')}] (PR 1.5)`
-									: ' (pure union)')
+									: ' (pure union)'),
+							// Stamped fact for downstream consumers (e.g. the tools
+							// package's template-coverage validator) that cannot
+							// re-derive union-slot membership themselves: which
+							// field-labeled arms actually merged into which union
+							// slot, so a field absent from the template's own
+							// placeholders but covered by the union slot isn't
+							// misreported as unreferenced.
+							details: {
+								unionSlot: 'content',
+								degenerateFields: partition.degenerateNamedArms
+									.map((m) => degenerateArmFieldName(m))
+									.filter((n): n is string => n !== undefined)
+							}
 						});
 						if (unionSlotRouting) {
 							// structuredNamedArms is empty here by construction (the

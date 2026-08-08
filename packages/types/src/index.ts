@@ -16,7 +16,7 @@
  * ```
  */
 
-import type { CamelCase } from 'type-fest';
+import type { CamelCase, SimplifyDeep } from 'type-fest';
 
 // ---------------------------------------------------------------------------
 // Runtime types — re-exported from core-types (zero runtime in this package)
@@ -638,7 +638,7 @@ export type ChildOf<T> = T extends { readonly $other?: infer C }
  * automatically and callers should not (and cannot) supply them.
  */
 export type ConfigOf<T> = T extends unknown
-	? Simplify<
+	? SimplifyDeep<
 			{
 				[K in keyof FieldsOf<T> as IsAutoStamp<FieldsOf<T>[K]> extends true
 					? never

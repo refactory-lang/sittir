@@ -366,6 +366,43 @@ describe('transform() — flat positional keys on a CHOICE with heterogeneous ar
 	});
 });
 
+describe('transform() — field() override unifies already-fielded choice arms', () => {
+	it('renames a hand-authored, differently-named field arm rather than nesting a new field around it', async () => {
+		const { field: oneArgField } = await import('../primitives/field.ts');
+		// Two arms are already fielded under names that differ from their
+		// wrapped symbol's name ('source' vs 'string', 'target' vs
+		// 'identifier') — neither is enrich-shaped (see
+		// `isEnrichShapedFieldWrapper`), so this exercises the broadened
+		// `isFieldLike` check in `unifyChoiceArmFieldNames` rather than the
+		// narrower enrich-only case already covered above. The third arm has
+		// no existing field and must be left untouched.
+		const rule = seq(
+			choice(fld('source', sym('string')), fld('target', sym('identifier')), sym('other')),
+			sym('rest')
+		);
+		const result = transform(rule, { 0: oneArgField('from_clause') as Rule<'evaluate'> });
+		const r = result as any;
+		expect(r.members[0]).toMatchObject({ type: 'FIELD', name: 'from_clause' });
+		const choiceNode = r.members[0].content;
+		expect(choiceNode.type).toBe('CHOICE');
+		expect(choiceNode.members[0]).toMatchObject({
+			type: 'FIELD',
+			name: 'from_clause',
+			content: { type: 'SYMBOL', name: 'string' }
+		});
+		expect(choiceNode.members[1]).toMatchObject({
+			type: 'FIELD',
+			name: 'from_clause',
+			content: { type: 'SYMBOL', name: 'identifier' }
+		});
+		// Not nested: each renamed arm's content is the original symbol directly.
+		expect(choiceNode.members[0].content.type).not.toBe('FIELD');
+		expect(choiceNode.members[1].content.type).not.toBe('FIELD');
+		// An arm with no existing field is left as-is.
+		expect(choiceNode.members[2]).toMatchObject({ type: 'SYMBOL', name: 'other' });
+	});
+});
+
 describe('applyPath() — kind-match + negative index', () => {
 	it('kind-match wraps every occurrence recursively (new (name) syntax)', async () => {
 		const { field: oneArgField } = await import('../primitives/field.ts');

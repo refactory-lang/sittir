@@ -2183,8 +2183,8 @@ export const enum TSFieldId {
 	FieldAlternative = 6,
 	FieldArgument = 7,
 	FieldArguments = 8,
-	FieldAsserts = 9,
-	FieldAsyncMarker = 10,
+	FieldAsyncMarker = 9,
+	FieldAttributeKind = 10,
 	FieldAutomaticSemicolon = 11,
 	FieldAwaitMarker = 12,
 	FieldBody = 13,
@@ -2255,10 +2255,9 @@ export const enum TSFieldId {
 	FieldTypeArguments = 79,
 	FieldTypeIdentifier = 80,
 	FieldTypeParameters = 81,
-	FieldTypePredicate = 82,
-	FieldUsingMarker = 83,
-	FieldValue = 84,
-	FieldVisibilityPrefix = 85
+	FieldUsingMarker = 82,
+	FieldValue = 83,
+	FieldVisibilityPrefix = 84
 }
 
 export const TREE_SITTER_FIELD_ID_BY_NAME = {
@@ -2269,8 +2268,8 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	alternative: TSFieldId.FieldAlternative,
 	argument: TSFieldId.FieldArgument,
 	arguments: TSFieldId.FieldArguments,
-	asserts: TSFieldId.FieldAsserts,
 	async_marker: TSFieldId.FieldAsyncMarker,
+	attribute_kind: TSFieldId.FieldAttributeKind,
 	automatic_semicolon: TSFieldId.FieldAutomaticSemicolon,
 	await_marker: TSFieldId.FieldAwaitMarker,
 	body: TSFieldId.FieldBody,
@@ -2341,7 +2340,6 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	type_arguments: TSFieldId.FieldTypeArguments,
 	type_identifier: TSFieldId.FieldTypeIdentifier,
 	type_parameters: TSFieldId.FieldTypeParameters,
-	type_predicate: TSFieldId.FieldTypePredicate,
 	using_marker: TSFieldId.FieldUsingMarker,
 	value: TSFieldId.FieldValue,
 	visibility_prefix: TSFieldId.FieldVisibilityPrefix
@@ -2355,8 +2353,8 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldAlternative]: 'alternative',
 	[TSFieldId.FieldArgument]: 'argument',
 	[TSFieldId.FieldArguments]: 'arguments',
-	[TSFieldId.FieldAsserts]: 'asserts',
 	[TSFieldId.FieldAsyncMarker]: 'async_marker',
+	[TSFieldId.FieldAttributeKind]: 'attribute_kind',
 	[TSFieldId.FieldAutomaticSemicolon]: 'automatic_semicolon',
 	[TSFieldId.FieldAwaitMarker]: 'await_marker',
 	[TSFieldId.FieldBody]: 'body',
@@ -2427,7 +2425,6 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldTypeArguments]: 'type_arguments',
 	[TSFieldId.FieldTypeIdentifier]: 'type_identifier',
 	[TSFieldId.FieldTypeParameters]: 'type_parameters',
-	[TSFieldId.FieldTypePredicate]: 'type_predicate',
 	[TSFieldId.FieldUsingMarker]: 'using_marker',
 	[TSFieldId.FieldValue]: 'value',
 	[TSFieldId.FieldVisibilityPrefix]: 'visibility_prefix'
@@ -2446,8 +2443,8 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'alternative', id: 6, enumName: 'FieldAlternative', cName: 'field_alternative' },
 	{ name: 'argument', id: 7, enumName: 'FieldArgument', cName: 'field_argument' },
 	{ name: 'arguments', id: 8, enumName: 'FieldArguments', cName: 'field_arguments' },
-	{ name: 'asserts', id: 9, enumName: 'FieldAsserts', cName: 'field_asserts' },
-	{ name: 'async_marker', id: 10, enumName: 'FieldAsyncMarker', cName: 'field_async_marker' },
+	{ name: 'async_marker', id: 9, enumName: 'FieldAsyncMarker', cName: 'field_async_marker' },
+	{ name: 'attribute_kind', id: 10, enumName: 'FieldAttributeKind', cName: 'field_attribute_kind' },
 	{ name: 'automatic_semicolon', id: 11, enumName: 'FieldAutomaticSemicolon', cName: 'field_automatic_semicolon' },
 	{ name: 'await_marker', id: 12, enumName: 'FieldAwaitMarker', cName: 'field_await_marker' },
 	{ name: 'body', id: 13, enumName: 'FieldBody', cName: 'field_body' },
@@ -2518,10 +2515,9 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'type_arguments', id: 79, enumName: 'FieldTypeArguments', cName: 'field_type_arguments' },
 	{ name: 'type_identifier', id: 80, enumName: 'FieldTypeIdentifier', cName: 'field_type_identifier' },
 	{ name: 'type_parameters', id: 81, enumName: 'FieldTypeParameters', cName: 'field_type_parameters' },
-	{ name: 'type_predicate', id: 82, enumName: 'FieldTypePredicate', cName: 'field_type_predicate' },
-	{ name: 'using_marker', id: 83, enumName: 'FieldUsingMarker', cName: 'field_using_marker' },
-	{ name: 'value', id: 84, enumName: 'FieldValue', cName: 'field_value' },
-	{ name: 'visibility_prefix', id: 85, enumName: 'FieldVisibilityPrefix', cName: 'field_visibility_prefix' }
+	{ name: 'using_marker', id: 82, enumName: 'FieldUsingMarker', cName: 'field_using_marker' },
+	{ name: 'value', id: 83, enumName: 'FieldValue', cName: 'field_value' },
+	{ name: 'visibility_prefix', id: 84, enumName: 'FieldVisibilityPrefix', cName: 'field_visibility_prefix' }
 ] as const;
 
 /** Per-node-kind field metadata. */
@@ -2724,10 +2720,7 @@ export const FIELD_MAP: Record<
 		{ name: 'expressions', required: true, multiple: false },
 		{ name: 'semicolon', required: true, multiple: false }
 	],
-	extends_clause: [
-		{ name: 'values', required: true, multiple: true },
-		{ name: 'typeArguments', required: false, multiple: true }
-	],
+	extends_clause: [{ name: 'extendsClauseSingles', required: true, multiple: true }],
 	extends_type_clause: [{ name: 'types', required: true, multiple: true }],
 	field_definition: [
 		{ name: 'decorators', required: false, multiple: true },
@@ -2813,7 +2806,10 @@ export const FIELD_MAP: Record<
 		{ name: 'value', required: true, multiple: false },
 		{ name: 'semicolon', required: true, multiple: false }
 	],
-	import_attribute: [{ name: 'object', required: true, multiple: false }],
+	import_attribute: [
+		{ name: 'attributeKind', required: true, multiple: false },
+		{ name: 'object', required: true, multiple: false }
+	],
 	import_clause: [{ name: 'content', required: true, multiple: false }],
 	import_require_clause: [
 		{ name: 'identifier', required: true, multiple: false },

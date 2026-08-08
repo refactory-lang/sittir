@@ -68,7 +68,7 @@ interface SymbolRuleWithRef extends SymbolRule<'evaluate'> {
 // normalize — convert raw input to a Rule<'evaluate'>
 // ---------------------------------------------------------------------------
 
-export function normalize(input: Input): Rule<'evaluate'> {
+export function coerceToRule(input: Input): Rule<'evaluate'> {
 	if (input === undefined || input === null) {
 		throw new Error('Undefined symbol');
 	}
@@ -93,7 +93,7 @@ export function normalize(input: Input): Rule<'evaluate'> {
 // ---------------------------------------------------------------------------
 
 export function seq(...members: Input[]): Rule<'evaluate'> {
-	const normalized = members.map(normalize);
+	const normalized = members.map(coerceToRule);
 
 	if (normalized.length === 1) return normalized[0]!;
 
@@ -101,7 +101,7 @@ export function seq(...members: Input[]): Rule<'evaluate'> {
 }
 
 export function choice(...members: Input[]): Rule<'evaluate'> {
-	const normalized = members.map(normalize);
+	const normalized = members.map(coerceToRule);
 
 	if (normalized.length === 1) return normalized[0]!;
 
@@ -158,7 +158,7 @@ function collapseAllFieldChoiceMembers(fieldMembers: FieldRule<'evaluate'>[]): R
 }
 
 export function optional(content: Input): Rule<'evaluate'> {
-	const resolved = normalize(content);
+	const resolved = coerceToRule(content);
 	walkRefs(resolved, (ref) => {
 		ref.optional = true;
 	});
@@ -177,7 +177,7 @@ export function optional(content: Input): Rule<'evaluate'> {
 }
 
 export function repeat(content: Input): Rule<'evaluate'> {
-	const resolved = normalize(content);
+	const resolved = coerceToRule(content);
 	walkRefs(resolved, (ref) => {
 		ref.repeated = true;
 	});
@@ -195,7 +195,7 @@ export function repeat(content: Input): Rule<'evaluate'> {
 }
 
 export function repeat1(content: Input): Rule<'evaluate'> {
-	const resolved = normalize(content);
+	const resolved = coerceToRule(content);
 	walkRefs(resolved, (ref) => {
 		ref.repeated = true;
 	});
@@ -279,7 +279,7 @@ export function field(name: string, content?: Input): FieldRule<'evaluate'> {
 			_needsContent: true
 		};
 	}
-	let resolved = normalize(content);
+	let resolved = coerceToRule(content);
 	resolved = collapseOptionalRepeatInField(resolved);
 	walkRefs(resolved, (ref) => {
 		if (ref.fieldName === undefined) ref.fieldName = name;
@@ -323,7 +323,7 @@ interface TokenFn {
 
 export const token: TokenFn = Object.assign(
 	function token(content: Input): TokenRule<'evaluate'> {
-		return { type: TOKEN, content: normalize(content), immediate: false };
+		return { type: TOKEN, content: coerceToRule(content), immediate: false };
 	},
 	{
 		// Real IMMEDIATE_TOKEN node (tree-sitter's own dsl.js shape), not
@@ -332,7 +332,7 @@ export const token: TokenFn = Object.assign(
 		// folds this into TOKEN+immediate once enrich's minting decisions
 		// (which must see the same arm shape under both runtimes) are locked in.
 		immediate(content: Input): Rule<'evaluate'> {
-			return { type: 'IMMEDIATE_TOKEN', content: normalize(content) } as Rule<'evaluate'>;
+			return { type: 'IMMEDIATE_TOKEN', content: coerceToRule(content) } as Rule<'evaluate'>;
 		}
 	}
 );
@@ -358,25 +358,25 @@ function makePrecRule(
 	value: number,
 	content: Input
 ): Rule<'evaluate'> {
-	return { type, content: normalize(content), value } as Rule<'evaluate'>;
+	return { type, content: coerceToRule(content), value } as Rule<'evaluate'>;
 }
 
 export const prec: PrecFn = Object.assign(
 	function prec(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
-		if (content === undefined) return normalize(precedenceOrContent as Input);
+		if (content === undefined) return coerceToRule(precedenceOrContent as Input);
 		return makePrecRule('PREC', precedenceOrContent as number, content);
 	},
 	{
 		left(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
-			if (content == null) return normalize(precedenceOrContent as Input);
+			if (content == null) return coerceToRule(precedenceOrContent as Input);
 			return makePrecRule('PREC_LEFT', precedenceOrContent as number, content);
 		},
 		right(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
-			if (content == null) return normalize(precedenceOrContent as Input);
+			if (content == null) return coerceToRule(precedenceOrContent as Input);
 			return makePrecRule('PREC_RIGHT', precedenceOrContent as number, content);
 		},
 		dynamic(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
-			if (content == null) return normalize(precedenceOrContent as Input);
+			if (content == null) return coerceToRule(precedenceOrContent as Input);
 			return makePrecRule('PREC_DYNAMIC', precedenceOrContent as number, content);
 		}
 	}
@@ -441,7 +441,7 @@ function normalizeImmediateTokens(rules: Record<string, Rule<'evaluate'>>): void
 // ---------------------------------------------------------------------------
 
 export function alias(rule: Input, value: string | Rule<'evaluate'>): AliasRule<'evaluate'> {
-	const content = normalize(rule);
+	const content = coerceToRule(rule);
 	if (typeof value === 'string') {
 		return { type: ALIAS, content, named: false, value };
 	}
@@ -810,7 +810,7 @@ function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<s
 
 	const result: Record<string, Rule<'evaluate'>> = {};
 	for (const [name, rawBody] of Object.entries(rawEntries)) {
-		const rule = normalize(rawBody as Input);
+		const rule = coerceToRule(rawBody as Input);
 		result[name] = rule;
 		// Inject into the rules map as a sittir-side synthesized rule so
 		// downstream pipeline phases (link, template-walker, etc.) treat
@@ -838,7 +838,7 @@ function drainVisibleExternalsMetadata(
 
 	const result: Record<string, Rule<'evaluate'>> = {};
 	for (const [name, rawBody] of Object.entries(rawEntries)) {
-		const rule = normalize(rawBody as Input);
+		const rule = coerceToRule(rawBody as Input);
 		result[name] = rule;
 		// Mirror drainRenderAsMetadata: inject the body into the rules map
 		// under the HIDDEN name, replacing the external's empty-pattern
@@ -899,7 +899,7 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 				try {
 					const result = (value as ($: unknown, previous: unknown) => unknown).call($, $, undefined);
 					if (result && typeof result === 'object' && typeof (result as { type?: unknown }).type === 'string') {
-						rules[hiddenName] = normalize(result as Input);
+						rules[hiddenName] = coerceToRule(result as Input);
 						provenanceByKind.set(hiddenName, 'evaluate-synthesized');
 						// No wire-side deposit registered `hiddenName` (the guard above would
 						// have skipped otherwise), so this local mint has no guaranteed twin.
@@ -939,7 +939,7 @@ function adoptFinalBaseRules(
 		// `rules[name]` independently must lose to the write-back, matching what
 		// the wire/parser side already does.
 		if (rules[name] !== entry && wireCtx?.authoredRuleNames.has(name)) continue;
-		rules[name] = normalize(finalRule as Input);
+		rules[name] = coerceToRule(finalRule as Input);
 	}
 }
 
@@ -1302,7 +1302,7 @@ function evaluateRuleFunctions(rules: Record<string, Rule<'evaluate'>>, ctx: Eva
 		const $ = createProxy(name, refs);
 		const baseRule = baseRules[name];
 		const result = ruleFn.call($, $, baseRule);
-		rules[name] = normalize(result);
+		rules[name] = coerceToRule(result);
 		provenanceByKind.set(name, isExtension ? 'override-authored-or-replaced' : 'grammar-authored');
 	}
 }
@@ -1344,11 +1344,11 @@ function appendDedup(sink: string[], value: string): void {
 }
 
 // Shared by `supertypes` and `inline` callback results: both accept a mixed
-// array where the callback's `previous` param carries already-normalized
+// array where the callback's `previous` param carries already-coerced
 // STRING names from the base grammar, while `$.foo` references added in the
-// override normalize to `{ type: 'SYMBOL', name: 'foo' }`. An override body
+// override coerce to `{ type: 'SYMBOL', name: 'foo' }`. An override body
 // like `previous.concat([$.foo])` produces exactly this mixed shape; without
-// the string branch the base-inherited names silently drop (normalize()
+// the string branch the base-inherited names silently drop (coerceToRule()
 // turns a bare string into a STRING rule, never SYMBOL, so `n.type ===
 // SYMBOL` is always false for them).
 function appendCallbackMetadataNames(sink: string[], result: unknown): void {
@@ -1358,7 +1358,7 @@ function appendCallbackMetadataNames(sink: string[], result: unknown): void {
 			appendDedup(sink, item);
 			continue;
 		}
-		const n = normalize(item);
+		const n = coerceToRule(item);
 		if (n.type === SYMBOL) appendDedup(sink, n.name);
 	}
 }
@@ -1379,7 +1379,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 		const result = opts.extras.call($, $, baseExtras);
 		if (Array.isArray(result)) {
 			for (const e of result) {
-				const n = normalize(e);
+				const n = coerceToRule(e);
 				if (n.type === SYMBOL) appendDedup(sinks.extras, n.name);
 				else if (n.type === PATTERN) appendDedup(sinks.extras, n.value);
 			}
@@ -1392,7 +1392,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 		const result = opts.externals.call($, $, baseExternals);
 		if (Array.isArray(result)) {
 			for (const e of result) {
-				const n = normalize(e);
+				const n = coerceToRule(e);
 				if (n.type === SYMBOL) appendDedup(sinks.externals, n.name);
 				else if (n.type === STRING) appendDedup(sinks.externals, n.value);
 			}
@@ -1421,7 +1421,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 					sinks.conflicts.push(
 						c
 							.map((r) => {
-								const n = normalize(r);
+								const n = coerceToRule(r);
 								return n.type === SYMBOL ? n.name : '';
 							})
 							.filter(Boolean)

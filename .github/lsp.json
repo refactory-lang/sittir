@@ -1,8 +1,8 @@
 {
 	"lspServers": {
 		"typescript": {
-			"command": "tsserver",
-			"args": [],
+			"command": "tsc",
+			"args": ["--lsp", "--stdio"],
 			"fileExtensions": {
 				".ts": "typescript",
 				".tsx": "typescript",
