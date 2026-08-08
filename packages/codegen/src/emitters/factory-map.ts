@@ -16,12 +16,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
-import {
-	allSlotsOf,
-	aliasTargetToSourceMapOf,
-	deriveSlotCardinality,
-	structuralFieldsOf
-} from '../compiler/model/node-map.ts';
+import { allSlotsOf, deriveSlotCardinality, resolveSlotAliasPairs, structuralFieldsOf } from '../compiler/model/node-map.ts';
 import { classifyFactoryShape, collectAliasSourceKinds, resolveFactoryFieldNames } from './shared.ts';
 import type { FactoryShape } from './shared.ts';
 import type { PolymorphVariantDescriptor, PolymorphVariantMap } from '../polymorph-variant.ts';
@@ -59,7 +54,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	const fieldAliasMap: Record<string, Record<string, string>> = {};
 	for (const [kind, node] of nodeMap.nodes) {
 		for (const f of allSlotsOf(node)) {
-			const pairs = Object.entries(aliasTargetToSourceMapOf(f)).filter(([t, s]) => t !== s);
+			const pairs = (resolveSlotAliasPairs(f, nodeMap) ?? []).filter(([t, s]) => t !== s);
 			if (pairs.length === 0) continue;
 			fieldAliasMap[`${kind}.${f.name}`] = Object.fromEntries(pairs);
 		}

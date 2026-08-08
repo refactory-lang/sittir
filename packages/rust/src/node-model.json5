@@ -207,6 +207,9 @@
       "token_tree_pattern_bracket": "_token_tree_pattern_bracket",
       "token_tree_pattern_brace": "_token_tree_pattern_brace"
     },
+    "token_repetition_pattern.token_patterns": {
+      "token_pattern_group1": "_non_special_token"
+    },
     "token_tree.content": {
       "token_tree_paren": "_token_tree_paren",
       "token_tree_bracket": "_token_tree_bracket",
@@ -214,6 +217,9 @@
       "delim_token_tree_paren": "_delim_token_tree_paren",
       "delim_token_tree_bracket": "_delim_token_tree_bracket",
       "delim_token_tree_brace": "_delim_token_tree_brace"
+    },
+    "token_repetition.tokens": {
+      "token_pattern_group1": "_non_special_token"
     },
     "attribute.attribute_group1": {
       "attribute_group1": "_attribute_group1"
@@ -247,11 +253,29 @@
     "field_declaration.name": {
       "field_identifier": "identifier"
     },
+    "field_declaration.type": {
+      "primitive_type": "_primitive_type"
+    },
     "ordered_field_declaration_list.attributes": {
       "ordered_field_declaration_list_group1": "_ordered_field_declaration_list_group1"
     },
+    "const_item.type": {
+      "primitive_type": "_primitive_type"
+    },
+    "static_item.type": {
+      "primitive_type": "_primitive_type"
+    },
     "type_item.name": {
       "type_identifier": "identifier"
+    },
+    "type_item.type": {
+      "primitive_type": "_primitive_type"
+    },
+    "function_item.return_type": {
+      "primitive_type": "_primitive_type"
+    },
+    "function_signature_item.return_type": {
+      "primitive_type": "_primitive_type"
     },
     "where_clause.where_clause_group1": {
       "where_clause_group1": "_where_clause_group1"
@@ -264,6 +288,9 @@
       "impl_item_positive_clause": "_impl_item_positive_clause",
       "impl_item_negative_clause": "_impl_item_negative_clause"
     },
+    "impl_item.type": {
+      "primitive_type": "_primitive_type"
+    },
     "impl_item.content": {
       "impl_item_body": "_impl_item_body",
       "impl_item_semi": "_impl_item_semi"
@@ -274,11 +301,32 @@
     "associated_type.name": {
       "type_identifier": "identifier"
     },
+    "trait_bounds.bounds": {
+      "primitive_type": "_primitive_type"
+    },
+    "higher_ranked_trait_bound.type": {
+      "primitive_type": "_primitive_type"
+    },
+    "removed_trait_bound.type": {
+      "primitive_type": "_primitive_type"
+    },
     "type_parameters.element": {
       "attributed_type_parameter": "_attributed_type_parameter"
     },
+    "const_parameter.type": {
+      "primitive_type": "_primitive_type"
+    },
     "type_parameter.name": {
       "type_identifier": "identifier"
+    },
+    "type_parameter.default_type": {
+      "primitive_type": "_primitive_type"
+    },
+    "let_declaration.pattern": {
+      "wildcard_pattern": "_wildcard_pattern"
+    },
+    "let_declaration.type": {
+      "primitive_type": "_primitive_type"
     },
     "use_list.use_list_group1": {
       "use_list_group1": "_use_list_group1"
@@ -286,8 +334,29 @@
     "parameters.parameters_group1": {
       "parameters_group1": "_parameters_group1"
     },
+    "variadic_parameter.pattern": {
+      "wildcard_pattern": "_wildcard_pattern"
+    },
+    "parameter.name": {
+      "wildcard_pattern": "_wildcard_pattern"
+    },
+    "parameter.type": {
+      "primitive_type": "_primitive_type"
+    },
     "visibility_modifier.content": {
       "visibility_modifier_pub": "_visibility_modifier_pub"
+    },
+    "bracketed_type.content": {
+      "primitive_type": "_primitive_type"
+    },
+    "qualified_type.type": {
+      "primitive_type": "_primitive_type"
+    },
+    "qualified_type.alias": {
+      "primitive_type": "_primitive_type"
+    },
+    "array_type.element": {
+      "primitive_type": "_primitive_type"
     },
     "function_type.function_type_trait_form": {
       "function_type_trait_form": "_function_type_trait_form"
@@ -295,11 +364,23 @@
     "function_type.function_type_fn_form": {
       "function_type_fn_form": "_function_type_fn_form"
     },
+    "function_type.return_type": {
+      "primitive_type": "_primitive_type"
+    },
+    "tuple_type.type": {
+      "primitive_type": "_primitive_type"
+    },
     "generic_type.type": {
       "type_identifier": "identifier"
     },
     "generic_type_with_turbofish.type": {
       "type_identifier": "identifier"
+    },
+    "bounded_type.left": {
+      "primitive_type": "_primitive_type"
+    },
+    "bounded_type.right": {
+      "primitive_type": "_primitive_type"
     },
     "use_bounds.bounds": {
       "use_bounds_group1": "_use_bounds_group1"
@@ -310,8 +391,17 @@
     "type_binding.name": {
       "type_identifier": "identifier"
     },
+    "type_binding.type": {
+      "primitive_type": "_primitive_type"
+    },
+    "reference_type.type": {
+      "primitive_type": "_primitive_type"
+    },
     "pointer_type.content": {
       "pointer_type_const": "_pointer_type_const"
+    },
+    "pointer_type.type": {
+      "primitive_type": "_primitive_type"
     },
     "abstract_type.trait": {
       "type_identifier": "identifier"
@@ -349,6 +439,9 @@
       "reference_expression_raw_const": "_reference_expression_raw_const",
       "reference_expression_raw_mut": "_reference_expression_raw_mut"
     },
+    "type_cast_expression.type": {
+      "primitive_type": "_primitive_type"
+    },
     "arguments.arguments_group1": {
       "arguments_group1": "_arguments_group1"
     },
@@ -366,15 +459,36 @@
     "field_initializer.field": {
       "field_identifier": "identifier"
     },
+    "if_expression.condition": {
+      "let_chain": "_let_chain"
+    },
+    "let_condition.pattern": {
+      "wildcard_pattern": "_wildcard_pattern"
+    },
     "match_block.match_block_arms": {
       "match_block_arms": "_match_block_arms"
     },
     "match_arm.content": {
       "match_arm_with_comma": "_match_arm_with_comma"
     },
+    "match_pattern.pattern": {
+      "wildcard_pattern": "_wildcard_pattern"
+    },
+    "match_pattern.condition": {
+      "let_chain": "_let_chain"
+    },
+    "while_expression.condition": {
+      "let_chain": "_let_chain"
+    },
+    "for_expression.pattern": {
+      "wildcard_pattern": "_wildcard_pattern"
+    },
     "closure_expression.content": {
       "closure_expression_block": "_closure_expression_block",
       "closure_expression_expr": "_closure_expression_expr"
+    },
+    "closure_parameters.parameters": {
+      "wildcard_pattern": "_wildcard_pattern"
     },
     "field_expression.field": {
       "field_identifier": "identifier"
@@ -401,9 +515,21 @@
       "shorthand_field_identifier": "identifier",
       "field_pattern_named": "_field_pattern_named"
     },
+    "mut_pattern.pattern": {
+      "wildcard_pattern": "_wildcard_pattern"
+    },
     "range_pattern.content": {
       "range_pattern_group2": "_range_pattern_group2",
       "range_pattern_prefix": "_range_pattern_prefix"
+    },
+    "ref_pattern.pattern": {
+      "wildcard_pattern": "_wildcard_pattern"
+    },
+    "captured_pattern.pattern": {
+      "wildcard_pattern": "_wildcard_pattern"
+    },
+    "reference_pattern.pattern": {
+      "wildcard_pattern": "_wildcard_pattern"
     },
     "or_pattern.content": {
       "or_pattern_binary": "_or_pattern_binary",
@@ -435,8 +561,20 @@
     "_ordered_field_declaration_list_group1.element": {
       "attributed_ordered_field": "_attributed_ordered_field"
     },
+    "_function_item_optional1.return_type": {
+      "primitive_type": "_primitive_type"
+    },
+    "_type_parameter_optional1.default_type": {
+      "primitive_type": "_primitive_type"
+    },
+    "_let_declaration_optional1.type": {
+      "primitive_type": "_primitive_type"
+    },
     "_parameters_group1.element": {
       "attributed_parameter": "_attributed_parameter"
+    },
+    "_variadic_parameter_optional1.pattern": {
+      "wildcard_pattern": "_wildcard_pattern"
     },
     "_visibility_modifier_group1.content": {
       "visibility_modifier_in_path": "_visibility_modifier_in_path"
@@ -446,6 +584,15 @@
     },
     "_arguments_group1.element": {
       "attributed_argument": "_attributed_argument"
+    },
+    "_match_pattern_optional1.condition": {
+      "let_chain": "_let_chain"
+    },
+    "_tuple_pattern_group1.element": {
+      "wildcard_pattern": "_wildcard_pattern"
+    },
+    "_slice_pattern_group1.pattern": {
+      "wildcard_pattern": "_wildcard_pattern"
     },
     "_range_pattern_group2.content": {
       "range_pattern_left_with_right": "_range_pattern_left_with_right",
@@ -472,11 +619,26 @@
     "_array_expression_list.arguments_group1": {
       "arguments_group1": "_arguments_group1"
     },
+    "_closure_expression_block.return_type": {
+      "primitive_type": "_primitive_type"
+    },
     "_field_pattern_named.name": {
       "field_identifier": "identifier"
     },
+    "_field_pattern_named.pattern": {
+      "wildcard_pattern": "_wildcard_pattern"
+    },
     "_function_type_trait_form.trait": {
       "type_identifier": "identifier"
+    },
+    "_or_pattern_binary.left": {
+      "wildcard_pattern": "_wildcard_pattern"
+    },
+    "_or_pattern_binary.right": {
+      "wildcard_pattern": "_wildcard_pattern"
+    },
+    "_or_pattern_prefix.right": {
+      "wildcard_pattern": "_wildcard_pattern"
     },
     "_visibility_modifier_pub.visibility_modifier_group1": {
       "visibility_modifier_group1": "_visibility_modifier_group1"
@@ -489,6 +651,42 @@
     },
     "_line_comment_doc.doc": {
       "doc_comment": "_line_doc_content"
+    },
+    "_token_tree_pattern_paren.token_pattern": {
+      "token_pattern_group1": "_non_special_token"
+    },
+    "_token_tree_pattern_bracket.token_pattern": {
+      "token_pattern_group1": "_non_special_token"
+    },
+    "_token_tree_pattern_brace.token_pattern": {
+      "token_pattern_group1": "_non_special_token"
+    },
+    "_token_tree_paren.tokens": {
+      "token_pattern_group1": "_non_special_token"
+    },
+    "_token_tree_bracket.tokens": {
+      "token_pattern_group1": "_non_special_token"
+    },
+    "_token_tree_brace.tokens": {
+      "token_pattern_group1": "_non_special_token"
+    },
+    "_delim_token_tree_paren.delim_tokens": {
+      "token_tree": "delim_token_tree"
+    },
+    "_delim_token_tree_bracket.delim_tokens": {
+      "token_tree": "delim_token_tree"
+    },
+    "_delim_token_tree_brace.delim_tokens": {
+      "token_tree": "delim_token_tree"
+    },
+    "_attributed_parameter.content": {
+      "primitive_type": "_primitive_type"
+    },
+    "_attributed_ordered_field.type": {
+      "primitive_type": "_primitive_type"
+    },
+    "_type_argument.content": {
+      "primitive_type": "_primitive_type"
     },
     "_visibility_modifier_pub_parens.visibility_modifier_group1": {
       "visibility_modifier_group1": "_visibility_modifier_group1"
