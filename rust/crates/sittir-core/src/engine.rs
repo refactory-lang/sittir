@@ -318,7 +318,14 @@ pub fn apply_render_format(
     // boundary it shifts the first token off byte 0 and breaks re-parse
     // anchoring. Trim at the one finisher every top-level render passes
     // through; nested child renders never reach this function.
-    let canonical = canonical.trim().to_string();
+    //
+    // Leading-only: a trailing trim would also strip meaningful
+    // whitespace-only trailing tokens (e.g. a zero-width ASI marker that
+    // renders as `"\n"` and lands at the very end of the string) -- those
+    // aren't separator noise, they're real grammar content, and there is
+    // no byte-0 anchoring concern on the trailing side to justify losing
+    // them.
+    let canonical = canonical.trim_start().to_string();
     let effective_format = resolve_render_format_from_source(source, engine_format, tree_format);
     match effective_format {
         Some(format) => apply_format(&canonical, format),
