@@ -3196,27 +3196,35 @@ function renderLiteralTransportStruct(_literals: readonly TransportLiteral[]): s
 }
 
 /**
- * `TriviaTransport` — one variant per grammar-`extras` kind (comments, line
- * continuations, …), sourced from `nodeMap.extras` (stamped from
- * `RawGrammar.extras`, DRY: never a hand-maintained kind list here), plus a
- * `Verbatim(VerbatimTransport)` fallback shared with every other transport
- * enum's bare-string/decode-failure path.
+ * Build one `TriviaTransport::from_napi_value` kind-id match arm: try the
+ * entry's own typed transport struct first, falling back to a verbatim
+ * `$text` extraction on decode failure — the expected outcome for a
+ * read-side extras stub, whose raw/unwrapped keys the typed struct's
+ * `#[napi(object)]`-derived `FromNapiValue` cannot deserialize. `napi_val`
+ * may also be a bare number in the raw-kind_id dispatch path (no `$text`
+ * available there); the `Object::from_napi_value` attempt then fails
+ * harmlessly and `text` stays empty, which cannot occur for a real extras
+ * node (comments always carry `$text`).
  *
- * Typed variants are needed because a factory-constructed trivia node (e.g.
- * `F.buildLineComment(...)`) carries the SAME wrapped wire shape as any other
- * node (`_content`, `$type`, …) and must render through its own template —
- * a text-only trivia carrier would silently drop that structure. The
- * `Verbatim` fallback exists because a READ-side extras stub (produced by
- * `read_node.rs`'s trivia routing) carries raw/unwrapped keys the typed
- * struct's `#[napi(object)]`-derived `FromNapiValue` cannot deserialize —
- * decode failure there is expected, not a bug, so it falls back to the
- * verbatim source text instead of erroring.
- *
- * `TransportTrivia` (leading/trailing `Vec<TriviaTransport>`) replaces the
- * old grammar-agnostic `sittir_core::types::TransportTrivia`, which could
- * only carry pre-rendered text and silently dropped factory-constructed
- * trivia at render time.
+ * @param id — the node's numeric parser kind id
+ * @param variant — the `TriviaTransport` variant name for this node
+ * @param structName — the node's typed transport struct name
  */
+function emitTriviaKindIdArm(id: number, variant: string, structName: string): string[] {
+	return [
+		`                ${id} => {`,
+		`                    if let Ok(value) = ${structName}::from_napi_value(env, napi_val) {`,
+		`                        return Ok(Self::${variant}(value));`,
+		'                    }',
+		'                    let text = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)',
+		'                        .ok()',
+		'                        .and_then(|o| o.get::<String>("$text").ok().flatten())',
+		'                        .unwrap_or_default();',
+		'                    Ok(Self::Verbatim(VerbatimTransport { text }))',
+		'                },'
+	];
+}
+
 function renderTriviaTransportSupport(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
@@ -3259,24 +3267,7 @@ function renderTriviaTransportSupport(
 	for (const node of extrasNodes) {
 		const id = kindIdByKind?.get(node.kind);
 		if (id === undefined) continue;
-		const variant = rustTransportVariantName(node);
-		const structName = rustTransportStructName(node);
-		kindIdArms.push(`                ${id} => {`);
-		kindIdArms.push(`                    if let Ok(value) = ${structName}::from_napi_value(env, napi_val) {`);
-		kindIdArms.push(`                        return Ok(Self::${variant}(value));`);
-		kindIdArms.push('                    }');
-		// Decode failure here is the expected read-side-extras-stub case (see
-		// docstring above), not an error: fall back to the verbatim source
-		// text. `napi_val` may be a bare number in the raw-kind_id dispatch
-		// path (no `$text` available there) — Object::from_napi_value fails
-		// harmlessly and `text` stays empty, which cannot occur for a real
-		// extras node (comments always carry `$text`).
-		kindIdArms.push('                    let text = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)');
-		kindIdArms.push('                        .ok()');
-		kindIdArms.push('                        .and_then(|o| o.get::<String>("$text").ok().flatten())');
-		kindIdArms.push('                        .unwrap_or_default();');
-		kindIdArms.push('                    Ok(Self::Verbatim(VerbatimTransport { text }))');
-		kindIdArms.push('                },');
+		kindIdArms.push(...emitTriviaKindIdArm(id, rustTransportVariantName(node), rustTransportStructName(node)));
 	}
 	kindIdArms.push('                other => Err(::napi::Error::from_reason(format!(');
 	kindIdArms.push('                    "unknown kind id {other} in TriviaTransport",');
@@ -3609,6 +3600,18 @@ function renderTransportDataStruct(
 	return lines;
 }
 
+/**
+ * Declares and initializes the release-mode leaf `__trivia` capture local.
+ * A leaf sent as a bare string/number/boolean carries no metadata object to
+ * read trivia from, so `__trivia` only gets populated in the object fallback
+ * branch (a factory-attached comment on a leaf node always arrives as an
+ * object — `$trivia()` forces the trivia-bearing owner off the bare-
+ * primitive fast path).
+ */
+function declareLeafTriviaCapture(): string {
+	return `        let mut __trivia: Option<TransportTrivia> = None;`;
+}
+
 function renderLeafTransportNapiImpls(
 	structName: string,
 	named: boolean,
@@ -3628,13 +3631,7 @@ function renderLeafTransportNapiImpls(
 	lines.push(`    ) -> ::napi::Result<Self> {`);
 	// typeof dispatch — never probe String::from_napi_value on a non-string
 	// (its failure path JSON.stringify's Object inputs; see transport_value_type).
-	// A leaf sent as a bare string/number/boolean carries no metadata object to
-	// read trivia from, so `__trivia` only gets populated in the object
-	// fallback branch below (a factory-attached comment on a leaf node, e.g.
-	// a doc comment before an `identifier`, always arrives as an object —
-	// $trivia() forces the trivia-bearing owner off the bare-primitive fast
-	// path).
-	lines.push(`        let mut __trivia: Option<TransportTrivia> = None;`);
+	lines.push(declareLeafTriviaCapture());
 	lines.push(`        let text = match transport_value_type(env, napi_val)? {`);
 	lines.push(`            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,`);
 	if (defaultTextLiteral !== undefined) {

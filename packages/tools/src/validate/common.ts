@@ -419,6 +419,9 @@ export function buildReadHandle(
  */
 export function readNodeAt(handle: TreeHandle, node: AnyTreeNode, nativeCoords: NativeNodeCoords | null): AnyNodeData {
 	if (nativeCoords && handle.read) {
+		if (nativeCoords.embeddedData !== undefined) {
+			return nativeCoords.embeddedData;
+		}
 		if (nativeCoords.handle === undefined) {
 			return handle.read();
 		}
@@ -443,6 +446,14 @@ export function readNodeAt(handle: TreeHandle, node: AnyTreeNode, nativeCoords: 
 export interface NativeNodeCoords {
 	handle?: number;
 	childIndex?: number;
+	/**
+	 * Set instead of `handle`/`childIndex` for a match found inside
+	 * `$triviaData` — those entries are fully materialized at read time
+	 * (not lazy stubs), so they carry no handle+child-index coordinates
+	 * to re-read them by. Callers must use this data directly rather
+	 * than calling `handle.read(handle, childIndex)`.
+	 */
+	embeddedData?: AnyNodeData;
 }
 
 function childEntries(value: unknown | readonly unknown[] | undefined): readonly unknown[] {
@@ -487,6 +498,12 @@ function collectNativeChildNodes(d: AnyNodeData): AnyNodeData[] {
 		pushNativeCandidates(trivia.trailing, out);
 	}
 	return out;
+}
+
+function isTriviaEntry(parent: AnyNodeData, child: AnyNodeData): boolean {
+	const trivia = parent.$triviaData;
+	if (!trivia) return false;
+	return (trivia.leading?.includes(child) ?? false) || (trivia.trailing?.includes(child) ?? false);
 }
 
 function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
@@ -534,6 +551,14 @@ export function findNativeNodeId(
 
 	function walk(d: AnyNodeData): NativeNodeCoords | null {
 		for (const child of collectNativeChildNodes(d)) {
+			if (kindOf(child) === kind && isTriviaEntry(d, child)) {
+				// No handle+child-index exists for this entry (see
+				// `NativeNodeCoords.embeddedData`) — return the already-
+				// materialized data directly instead of falling through to
+				// the coordinate-based match/drill logic below, which can
+				// never succeed for it.
+				return { embeddedData: child };
+			}
 			// A trivia entry's own `$nodeHandle` differs from its containing
 			// sibling's (`d`) — it was read as a child of the ENCLOSING node,
 			// not `d` — so prefer the child's own handle when present. For
@@ -988,6 +1013,25 @@ export async function loadReadTreeNode(
 	try {
 		const mod = await import(new URL(p, import.meta.url).pathname);
 		return mod.readTreeNode ?? null;
+	} catch (e) {
+		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
+		return null;
+	}
+}
+
+/**
+ * Dynamic import of a grammar's `wrapNode` entry point — the fluent-view
+ * wrapper `readTreeNode` applies after reading. Used to produce the same
+ * wrapped shape for already-materialized data (e.g. a trivia entry's
+ * `NativeNodeCoords.embeddedData`) that has no handle+child-index to read
+ * through `readTreeNode` itself.
+ */
+export async function loadWrapNode(grammar: string): Promise<((data: AnyNodeData, tree: TreeHandle) => unknown) | null> {
+	const p = WRAP_MODULE_PATHS[grammar];
+	if (!p) return null;
+	try {
+		const mod = await import(new URL(p, import.meta.url).pathname);
+		return mod.wrapNode ?? null;
 	} catch (e) {
 		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
 		return null;

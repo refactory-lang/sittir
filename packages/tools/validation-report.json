@@ -1423,18 +1423,6 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "line_comment",
-    "severity": "error",
-    "message": "native coords unresolved for alias target — comparing against a mismatched WASM id would be unsound",
-    "stage": "from",
-    "code": "from-error",
-    "label": "line_comment",
-    "sClass": "S1"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
     "kind": "field_pattern",
     "severity": "error",
     "message": "from() diverges: from() missing declared fields: ref_marker",
@@ -1975,18 +1963,6 @@
     "stage": "from",
     "code": "from-error",
     "label": "number",
-    "sClass": "S1"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "comment",
-    "severity": "error",
-    "message": "native coords unresolved for alias target — comparing against a mismatched WASM id would be unsound",
-    "stage": "from",
-    "code": "from-error",
-    "label": "comment",
     "sClass": "S1"
   },
   {
@@ -3372,18 +3348,6 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "comment",
-    "severity": "error",
-    "message": "native coords unresolved for alias target — comparing against a mismatched WASM id would be unsound",
-    "stage": "from",
-    "code": "from-error",
-    "label": "comment",
-    "sClass": "S1"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
     "kind": "escape_interpolation",
     "severity": "error",
     "message": "native coords unresolved for alias target — comparing against a mismatched WASM id would be unsound",
@@ -3414,18 +3378,6 @@
     "stage": "from",
     "code": "from-error",
     "label": "false",
-    "sClass": "S1"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "line_continuation",
-    "severity": "error",
-    "message": "native coords unresolved for alias target — comparing against a mismatched WASM id would be unsound",
-    "stage": "from",
-    "code": "from-error",
-    "label": "line_continuation",
     "sClass": "S1"
   },
   {

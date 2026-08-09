@@ -356,10 +356,10 @@ it('override-polymorph variant pairing: array_expression_list maps to "list" (no
 	expect(transport).toContain('pub enum ArrayExpressionContentTransportSlot {');
 	// Key regression guard: each variant must render via its OWN form, not
 	// both collapsing onto forms[0] (semi). Each arm now dispatches through
-	// `.render_into()` (not the per-kind render fn directly) so trivia
-	// wrapping fires (round-trip-fidelity Phase 6) — the per-variant
-	// distinctness this test guards is still visible in the ArrayExpressionList
-	// vs ArrayExpressionSemi variant/inner-type pairing itself.
+	// `.render_into()` (not the per-kind render fn directly) so leading/
+	// trailing comment trivia attached to the node renders too — the
+	// per-variant distinctness this test guards is still visible in the
+	// ArrayExpressionList vs ArrayExpressionSemi variant/inner-type pairing.
 	expect(transport).toContain(
 		'ArrayExpressionContentTransportSlot::ArrayExpressionList(inner) => inner.render_into(dest),'
 	);

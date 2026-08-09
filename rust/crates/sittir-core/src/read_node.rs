@@ -196,7 +196,7 @@ fn compute_trivia(node: tree_sitter::Node<'_>, source: &str) -> Option<NodeTrivi
 /// line continuations, etc.) never carry a field name and are always
 /// named, so without special handling they'd fall into the kind-named
 /// slot path below and collapse into an opaque, never-wrapped `_<kind>`
-/// bucket (round-trip-fidelity plan Phase 6). They are skipped entirely
+/// bucket. They are skipped entirely
 /// here; `compute_trivia` recovers them as leading/trailing trivia on
 /// the adjacent named sibling instead.
 fn read_children(
