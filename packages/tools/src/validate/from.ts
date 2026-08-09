@@ -221,6 +221,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let polymorphVariants: Record<string, unknown> = {};
 	let readTreeNode: ((tree: unknown, handle?: number, childIndex?: number) => unknown) | undefined;
+	let wrapNode: ((data: AnyNodeData, tree: unknown) => unknown) | undefined;
 	const errors: FromValidationError[] = [];
 	try {
 		const fromModule = await import(new URL(FROM_MODULE_PATHS[grammar]!, import.meta.url).pathname);
@@ -253,6 +254,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	try {
 		const wrapModule = await import(new URL(WRAP_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		readTreeNode = wrapModule.readTreeNode;
+		wrapNode = wrapModule.wrapNode;
 	} catch {
 		/* wrap module unavailable — readTreeNode falls back to raw readNode below */
 	}
@@ -315,9 +317,17 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 				// so `.from()` sees a fluent NodeData — the supported input shape
 				// per spec 008 US3. Fall back to raw readNode if the wrap module
 				// isn't loaded (bootstrap scenarios).
-				// ADR-0017: for WASM/JS path, temporarily swap rootNode to target
-				// then call with no navigation coords (reads rootNode).
-				if (nativeCoords && handle.read) {
+				// For the WASM/JS path, temporarily swap rootNode to target then
+				// call with no navigation coords (reads rootNode).
+				if (nativeCoords?.embeddedData !== undefined) {
+					// A trivia entry — already fully materialized, no
+					// handle+child-index to read through. Apply the same
+					// fluent-view wrap readTreeNode would, so `.from()` sees
+					// the same input shape as every other candidate.
+					readData = wrapNode
+						? (wrapNode(nativeCoords.embeddedData, handle) as AnyNodeData)
+						: nativeCoords.embeddedData;
+				} else if (nativeCoords && handle.read) {
 					readData = readTreeNode
 						? (readTreeNode(handle, nativeCoords.handle, nativeCoords.childIndex) as AnyNodeData)
 						: readNodeAt(handle, adaptNode(node1), nativeCoords);

@@ -33758,7 +33758,6 @@
       "$type": 108,
       "$source": 0,
       "$named": true,
-      "_comment": "# nested!",
       "_statements": [
         {
           "$type": 110,
@@ -33917,6 +33916,20 @@
             "end": 32
           },
           "$nodeHandle": 83,
+          "$triviaData": {
+            "leading": [
+              {
+                "$type": 78,
+                "$source": 0,
+                "$named": true,
+                "$text": "# nested!",
+                "$span": {
+                  "start": 0,
+                  "end": 9
+                }
+              }
+            ]
+          },
           "_simple_statement_trailing_sep": false
         },
         {
@@ -34860,7 +34873,6 @@
                                     "$source": 0,
                                     "$named": true,
                                     "_expression": "2",
-                                    "_comment": "# two",
                                     "$other": [
                                       46,
                                       47
@@ -34961,7 +34973,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "f\"a { b(f'c { e } d') } e\"\nf\"\"\"a\"{ b }c\"\"\"\nf\"\"\"a\"\"{ b }c\"\"\"\nf\"{{ }}\"\nf\"a { b }}}\"\nf\"{{{ b }\"\nf\"{{ }}\"\nf\"{{{ b }}}\"\nf\"{ c, }\"\nf\"{ yield d }\"\nf\"{ *a, }\"\ndef function():\n  return f\"\"\"\n  { \"string1\"if True else\"string2\" }\"\"\"\ndef test(self):\n  self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')"
+    "expectedOutput": "# nested!\nf\"a { b(f'c { e } d') } e\"\nf\"\"\"a\"{ b }c\"\"\"\nf\"\"\"a\"\"{ b }c\"\"\"\nf\"{{ }}\"\nf\"a { b }}}\"\nf\"{{{ b }\"\nf\"{{ }}\"\nf\"{{{ b }}}\"\nf\"{ c, }\"\nf\"{ yield d }\"\nf\"{ *a, }\"\ndef function():\n  return f\"\"\"\n  { \"string1\"if True else\"string2\" }\"\"\"\ndef test(self):\n  self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')"
   },
   {
     "kind": "roundtrip",
@@ -34969,9 +34981,9 @@
     "sourceIn": "# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\n\ndef function():\n    return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"\n\ndef test(self):\n    self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "f\"a { b(f'c { e } d') } e\"\nf\"\"\"a\"{ b }c\"\"\"\nf\"\"\"a\"\"{ b }c\"\"\"\nf\"{{ }}\"\nf\"a { b }}}\"\nf\"{{{ b }\"\nf\"{{ }}\"\nf\"{{{ b }}}\"\nf\"{ c, }\"\nf\"{ yield d }\"\nf\"{ *a, }\"\ndef function():\n  return f\"\"\"\n  { \"string1\"if True else\"string2\" }\"\"\"\ndef test(self):\n  self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')",
-    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end)))))) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation)) content: (interpolation expression: (identifier)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation)) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (expression_list (identifier))) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (yield (identifier))) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (pattern_list (list_splat_pattern (identifier)))) string_end: (string_end))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (return_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (conditional_expression body: (string string_start: (string_start) content: (string_content) string_end: (string_end)) condition: (true) alternative: (string string_start: (string_start) content: (string_content) string_end: (string_end)))) string_end: (string_end))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (identifier))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) content: (interpolation expression: (integer)) string_end: (string_end)) element: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) (newline))))))",
-    "wrappedText": "f\"a { b(f'c { e } d') } e\"\nf\"\"\"a\"{ b }c\"\"\"\nf\"\"\"a\"\"{ b }c\"\"\"\nf\"{{ }}\"\nf\"a { b }}}\"\nf\"{{{ b }\"\nf\"{{ }}\"\nf\"{{{ b }}}\"\nf\"{ c, }\"\nf\"{ yield d }\"\nf\"{ *a, }\"\ndef function():\n  return f\"\"\"\n  { \"string1\"if True else\"string2\" }\"\"\"\ndef test(self):\n  self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')",
+    "expectedSourceOut": "# nested!\nf\"a { b(f'c { e } d') } e\"\nf\"\"\"a\"{ b }c\"\"\"\nf\"\"\"a\"\"{ b }c\"\"\"\nf\"{{ }}\"\nf\"a { b }}}\"\nf\"{{{ b }\"\nf\"{{ }}\"\nf\"{{{ b }}}\"\nf\"{ c, }\"\nf\"{ yield d }\"\nf\"{ *a, }\"\ndef function():\n  return f\"\"\"\n  { \"string1\"if True else\"string2\" }\"\"\"\ndef test(self):\n  self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')",
+    "expectedReparseTree": "(module (comment) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end)))))) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation)) content: (interpolation expression: (identifier)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation)) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (expression_list (identifier))) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (yield (identifier))) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (pattern_list (list_splat_pattern (identifier)))) string_end: (string_end))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (return_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (conditional_expression body: (string string_start: (string_start) content: (string_content) string_end: (string_end)) condition: (true) alternative: (string string_start: (string_start) content: (string_content) string_end: (string_end)))) string_end: (string_end))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (identifier))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) content: (interpolation expression: (integer)) string_end: (string_end)) element: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) (newline))))))",
+    "wrappedText": "# nested!\nf\"a { b(f'c { e } d') } e\"\nf\"\"\"a\"{ b }c\"\"\"\nf\"\"\"a\"\"{ b }c\"\"\"\nf\"{{ }}\"\nf\"a { b }}}\"\nf\"{{{ b }\"\nf\"{{ }}\"\nf\"{{{ b }}}\"\nf\"{ c, }\"\nf\"{ yield d }\"\nf\"{ *a, }\"\ndef function():\n  return f\"\"\"\n  { \"string1\"if True else\"string2\" }\"\"\"\ndef test(self):\n  self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')",
     "wrappedOffset": 0
   },
   {
@@ -35894,7 +35906,6 @@
                     "$source": 0,
                     "$named": true,
                     "_expression": "2",
-                    "_comment": "# two",
                     "$other": [
                       46,
                       47
@@ -36968,7 +36979,6 @@
           "$source": 0,
           "$named": true,
           "_expression": "2",
-          "_comment": "# two",
           "$other": [
             46,
             47
@@ -37186,7 +37196,6 @@
                   "$source": 0,
                   "$named": true,
                   "_expression": "2",
-                  "_comment": "# two",
                   "$other": [
                     46,
                     47
@@ -37385,7 +37394,6 @@
                 "$source": 0,
                 "$named": true,
                 "_expression": "2",
-                "_comment": "# two",
                 "$other": [
                   46,
                   47
@@ -37765,7 +37773,6 @@
                                 "$source": 0,
                                 "$named": true,
                                 "_expression": "2",
-                                "_comment": "# two",
                                 "$other": [
                                   46,
                                   47
@@ -52881,10 +52888,23 @@
                     "end": 286
                   },
                   "$nodeHandle": 76,
+                  "$triviaData": {
+                    "trailing": [
+                      {
+                        "$type": 78,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "# The rest of your commands go here",
+                        "$span": {
+                          "start": 291,
+                          "end": 326
+                        }
+                      }
+                    ]
+                  },
                   "_case_pattern_trailing_sep": false
                 }
               ],
-              "_comment": "# The rest of your commands go here",
               "$span": {
                 "start": 22,
                 "end": 326
@@ -52910,7 +52930,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "match command.split():\n  case[\"quit\"]:\n    print(\"Goodbye!\")\n    quit_game()\n  case[\"look\"]:\n    current_room.describe()\n  case[\"get\",obj]:\n    character.get(obj,current_room)\n  case[\"go\",direction]:\n    current_room=current_room.neighbor(direction)"
+    "expectedOutput": "match command.split():\n  case[\"quit\"]:\n    print(\"Goodbye!\")\n    quit_game()\n  case[\"look\"]:\n    current_room.describe()\n  case[\"get\",obj]:\n    character.get(obj,current_room)\n  case[\"go\",direction]:\n    current_room=current_room.neighbor(direction)\n\n  # The rest of your commands go here"
   },
   {
     "kind": "roundtrip",
@@ -52918,9 +52938,9 @@
     "sourceIn": "match command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match command.split():\n  case[\"quit\"]:\n    print(\"Goodbye!\")\n    quit_game()\n  case[\"look\"]:\n    current_room.describe()\n  case[\"get\",obj]:\n    character.get(obj,current_room)\n  case[\"go\",direction]:\n    current_room=current_room.neighbor(direction)",
-    "expectedReparseTree": "(module statements: (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause case_pattern: (case_pattern (case_list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (print_statement (print_statement_group2 argument: (parenthesized_expression (string string_start: (string_start) content: (string_content) string_end: (string_end))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (case_list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (case_list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name identifier: (identifier))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_group1 element: (identifier) element: (identifier))))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (case_list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name identifier: (identifier))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_group1 element: (identifier))))))) (newline)))))))))",
-    "wrappedText": "match command.split():\n  case[\"quit\"]:\n    print(\"Goodbye!\")\n    quit_game()\n  case[\"look\"]:\n    current_room.describe()\n  case[\"get\",obj]:\n    character.get(obj,current_room)\n  case[\"go\",direction]:\n    current_room=current_room.neighbor(direction)",
+    "expectedSourceOut": "match command.split():\n  case[\"quit\"]:\n    print(\"Goodbye!\")\n    quit_game()\n  case[\"look\"]:\n    current_room.describe()\n  case[\"get\",obj]:\n    character.get(obj,current_room)\n  case[\"go\",direction]:\n    current_room=current_room.neighbor(direction)\n\n  # The rest of your commands go here",
+    "expectedReparseTree": "(module statements: (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause case_pattern: (case_pattern (case_list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (print_statement (print_statement_group2 argument: (parenthesized_expression (string string_start: (string_start) content: (string_content) string_end: (string_end))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (case_list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (case_list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name identifier: (identifier))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_group1 element: (identifier) element: (identifier))))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (case_list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name identifier: (identifier))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_group1 element: (identifier))))))) (newline))))) (comment)))))",
+    "wrappedText": "match command.split():\n  case[\"quit\"]:\n    print(\"Goodbye!\")\n    quit_game()\n  case[\"look\"]:\n    current_room.describe()\n  case[\"get\",obj]:\n    character.get(obj,current_room)\n  case[\"go\",direction]:\n    current_room=current_room.neighbor(direction)\n\n  # The rest of your commands go here",
     "wrappedOffset": 0
   },
   {
@@ -54927,7 +54947,6 @@
               "$type": 260,
               "$source": 0,
               "$named": true,
-              "_comment": "# ^ conditional",
               "_alternative": [
                 {
                   "$type": 136,
@@ -55001,10 +55020,23 @@
                           "end": 61
                         },
                         "$nodeHandle": 58,
+                        "$triviaData": {
+                          "trailing": [
+                            {
+                              "$type": 78,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "# Code omitted for brevity",
+                              "$span": {
+                                "start": 62,
+                                "end": 88
+                              }
+                            }
+                          ]
+                        },
                         "_content": "..."
                       }
                     ],
-                    "_comment": "# Code omitted for brevity",
                     "_newline": 101,
                     "$span": {
                       "start": 58,
@@ -55022,6 +55054,20 @@
                     "end": 88
                   },
                   "$nodeHandle": 49,
+                  "$triviaData": {
+                    "leading": [
+                      {
+                        "$type": 78,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "# ^ conditional",
+                        "$span": {
+                          "start": 23,
+                          "end": 38
+                        }
+                      }
+                    ]
+                  },
                   "_case_pattern_trailing_sep": false
                 },
                 {
@@ -55439,7 +55485,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "match command.split():\n  case[\"quit\"]:...\n  case[\"go\",direction]:pass\n  case[\"drop\",*objects]:pass\n  case _:\n    print(f\"Sorry, I couldn't understand { command!r }\")"
+    "expectedOutput": "match command.split():\n  # ^ conditional\n  case[\"quit\"]:...\n  # Code omitted for brevity\n\n  case[\"go\",direction]:pass\n  case[\"drop\",*objects]:pass\n  case _:\n    print(f\"Sorry, I couldn't understand { command!r }\")"
   },
   {
     "kind": "roundtrip",
@@ -55447,9 +55493,9 @@
     "sourceIn": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match command.split():\n  case[\"quit\"]:...\n  case[\"go\",direction]:pass\n  case[\"drop\",*objects]:pass\n  case _:\n    print(f\"Sorry, I couldn't understand { command!r }\")",
-    "expectedReparseTree": "(module statements: (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause case_pattern: (case_pattern (case_list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (simple_statements simple_statement: (expression_statement (ellipsis)) (newline))) alternative: (case_clause case_pattern: (case_pattern (case_list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name identifier: (identifier))))) consequence: (simple_statements simple_statement: (pass_statement) (newline))) alternative: (case_clause case_pattern: (case_pattern (case_list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (splat_pattern identifier: (identifier))))) consequence: (simple_statements simple_statement: (pass_statement) (newline))) alternative: (case_clause case_pattern: (case_pattern (wildcard_pattern)) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (print_statement (print_statement_group2 argument: (parenthesized_expression (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))) (newline)))))))))",
-    "wrappedText": "match command.split():\n  case[\"quit\"]:...\n  case[\"go\",direction]:pass\n  case[\"drop\",*objects]:pass\n  case _:\n    print(f\"Sorry, I couldn't understand { command!r }\")",
+    "expectedSourceOut": "match command.split():\n  # ^ conditional\n  case[\"quit\"]:...\n  # Code omitted for brevity\n\n  case[\"go\",direction]:pass\n  case[\"drop\",*objects]:pass\n  case _:\n    print(f\"Sorry, I couldn't understand { command!r }\")",
+    "expectedReparseTree": "(module statements: (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block (comment) alternative: (case_clause case_pattern: (case_pattern (case_list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (simple_statements simple_statement: (expression_statement (ellipsis)) (newline))) (comment) alternative: (case_clause case_pattern: (case_pattern (case_list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name identifier: (identifier))))) consequence: (simple_statements simple_statement: (pass_statement) (newline))) alternative: (case_clause case_pattern: (case_pattern (case_list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (splat_pattern identifier: (identifier))))) consequence: (simple_statements simple_statement: (pass_statement) (newline))) alternative: (case_clause case_pattern: (case_pattern (wildcard_pattern)) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (print_statement (print_statement_group2 argument: (parenthesized_expression (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))) (newline)))))))))",
+    "wrappedText": "match command.split():\n  # ^ conditional\n  case[\"quit\"]:...\n  # Code omitted for brevity\n\n  case[\"go\",direction]:pass\n  case[\"drop\",*objects]:pass\n  case _:\n    print(f\"Sorry, I couldn't understand { command!r }\")",
     "wrappedOffset": 0
   },
   {
@@ -55723,9 +55769,23 @@
         "end": 61
       },
       "$nodeHandle": 16,
+      "$triviaData": {
+        "trailing": [
+          {
+            "$type": 78,
+            "$source": 0,
+            "$named": true,
+            "$text": "# Code omitted for brevity",
+            "$span": {
+              "start": 62,
+              "end": 88
+            }
+          }
+        ]
+      },
       "_content": "..."
     },
-    "expectedOutput": "..."
+    "expectedOutput": "...\n# Code omitted for brevity"
   },
   {
     "kind": "roundtrip",
@@ -55733,9 +55793,9 @@
     "sourceIn": "...",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "...",
+    "expectedSourceOut": "...\n# Code omitted for brevity",
     "expectedReparseTree": "(expression_statement (ellipsis))",
-    "wrappedText": "...",
+    "wrappedText": "...\n# Code omitted for brevity",
     "wrappedOffset": 0
   },
   {
@@ -66716,10 +66776,23 @@
                                 "start": 249,
                                 "end": 253
                               },
-                              "$nodeHandle": 149
+                              "$nodeHandle": 149,
+                              "$triviaData": {
+                                "trailing": [
+                                  {
+                                    "$type": 78,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "$text": "# Ignore other keystrokes",
+                                    "$span": {
+                                      "start": 254,
+                                      "end": 279
+                                    }
+                                  }
+                                ]
+                              }
                             }
                           ],
-                          "_comment": "# Ignore other keystrokes",
                           "_newline": 101,
                           "$span": {
                             "start": 249,
@@ -66944,7 +67017,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "match event.get():\n  case Click(position=(x,y)):\n    handle_click_at(x,y)\n  case KeyPress(key_name=\"Q\")|Quit():\n    game.quit()\n  case KeyPress(key_name=\"up arrow\"):\n    game.go_north()\n    ...\n  case KeyPress():\n    pass\n  case other_event:\n    raise ValueError(f\"Unrecognized event: { other_event }\")"
+    "expectedOutput": "match event.get():\n  case Click(position=(x,y)):\n    handle_click_at(x,y)\n  case KeyPress(key_name=\"Q\")|Quit():\n    game.quit()\n  case KeyPress(key_name=\"up arrow\"):\n    game.go_north()\n    ...\n  case KeyPress():\n    pass\n    # Ignore other keystrokes\n\n  case other_event:\n    raise ValueError(f\"Unrecognized event: { other_event }\")"
   },
   {
     "kind": "roundtrip",
@@ -66952,9 +67025,9 @@
     "sourceIn": "match event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass # Ignore other keystrokes\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match event.get():\n  case Click(position=(x,y)):\n    handle_click_at(x,y)\n  case KeyPress(key_name=\"Q\")|Quit():\n    game.quit()\n  case KeyPress(key_name=\"up arrow\"):\n    game.go_north()\n    ...\n  case KeyPress():\n    pass\n  case other_event:\n    raise ValueError(f\"Unrecognized event: { other_event }\")",
-    "expectedReparseTree": "(module statements: (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (case_tuple_pattern (case_pattern (dotted_name identifier: (identifier))) (case_pattern (dotted_name identifier: (identifier))))))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (identifier) element: (identifier))))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (union_pattern simple_pattern: (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) simple_pattern: (class_pattern dotted_name: (dotted_name identifier: (identifier))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (string string_start: (string_start) content: (string_content) string_end: (string_end))))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (ellipsis)) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline))))) alternative: (case_clause case_pattern: (case_pattern (dotted_name identifier: (identifier))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (raise_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) string_end: (string_end)))))) (newline)))))))))",
-    "wrappedText": "match event.get():\n  case Click(position=(x,y)):\n    handle_click_at(x,y)\n  case KeyPress(key_name=\"Q\")|Quit():\n    game.quit()\n  case KeyPress(key_name=\"up arrow\"):\n    game.go_north()\n    ...\n  case KeyPress():\n    pass\n  case other_event:\n    raise ValueError(f\"Unrecognized event: { other_event }\")",
+    "expectedSourceOut": "match event.get():\n  case Click(position=(x,y)):\n    handle_click_at(x,y)\n  case KeyPress(key_name=\"Q\")|Quit():\n    game.quit()\n  case KeyPress(key_name=\"up arrow\"):\n    game.go_north()\n    ...\n  case KeyPress():\n    pass\n    # Ignore other keystrokes\n\n  case other_event:\n    raise ValueError(f\"Unrecognized event: { other_event }\")",
+    "expectedReparseTree": "(module statements: (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (case_tuple_pattern (case_pattern (dotted_name identifier: (identifier))) (case_pattern (dotted_name identifier: (identifier))))))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (identifier) element: (identifier))))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (union_pattern simple_pattern: (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) simple_pattern: (class_pattern dotted_name: (dotted_name identifier: (identifier))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (string string_start: (string_start) content: (string_content) string_end: (string_end))))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (ellipsis)) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline)) (comment)))) alternative: (case_clause case_pattern: (case_pattern (dotted_name identifier: (identifier))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (raise_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) string_end: (string_end)))))) (newline)))))))))",
+    "wrappedText": "match event.get():\n  case Click(position=(x,y)):\n    handle_click_at(x,y)\n  case KeyPress(key_name=\"Q\")|Quit():\n    game.quit()\n  case KeyPress(key_name=\"up arrow\"):\n    game.go_north()\n    ...\n  case KeyPress():\n    pass\n    # Ignore other keystrokes\n\n  case other_event:\n    raise ValueError(f\"Unrecognized event: { other_event }\")",
     "wrappedOffset": 0
   },
   {
@@ -69082,7 +69155,6 @@
                       }
                     }
                   ],
-                  "_comment": "# This is a left click",
                   "_consequence": {
                     "$type": 261,
                     "$source": 0,
@@ -69170,7 +69242,21 @@
                       "start": 86,
                       "end": 116
                     },
-                    "$nodeHandle": 57
+                    "$nodeHandle": 57,
+                    "$triviaData": {
+                      "leading": [
+                        {
+                          "$type": 78,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "# This is a left click",
+                          "$span": {
+                            "start": 64,
+                            "end": 86
+                          }
+                        }
+                      ]
+                    }
                   },
                   "$other": [
                     26,
@@ -69249,10 +69335,23 @@
                                 "start": 143,
                                 "end": 147
                               },
-                              "$nodeHandle": 70
+                              "$nodeHandle": 70,
+                              "$triviaData": {
+                                "trailing": [
+                                  {
+                                    "$type": 78,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "$text": "# ignore other clicks",
+                                    "$span": {
+                                      "start": 149,
+                                      "end": 170
+                                    }
+                                  }
+                                ]
+                              }
                             }
                           ],
-                          "_comment": "# ignore other clicks",
                           "_newline": 101,
                           "$span": {
                             "start": 143,
@@ -69311,7 +69410,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "match event.get():\n  case Click((x,y),button=Button.LEFT):\n    handle_click_at(x,y)\n  case Click():\n    pass"
+    "expectedOutput": "match event.get():\n  case Click((x,y),button=Button.LEFT):# This is a left click\n\n    handle_click_at(x,y)\n  case Click():\n    pass\n    # ignore other clicks"
   },
   {
     "kind": "roundtrip",
@@ -69319,9 +69418,9 @@
     "sourceIn": "match event.get():\n    case Click((x, y), button=Button.LEFT):  # This is a left click\n        handle_click_at(x, y)\n    case Click():\n        pass  # ignore other clicks",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match event.get():\n  case Click((x,y),button=Button.LEFT):\n    handle_click_at(x,y)\n  case Click():\n    pass",
-    "expectedReparseTree": "(module statements: (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (case_tuple_pattern (case_pattern (dotted_name identifier: (identifier))) (case_pattern (dotted_name identifier: (identifier))))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (dotted_name identifier: (identifier) identifier: (identifier))))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (identifier) element: (identifier))))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline)))))))))",
-    "wrappedText": "match event.get():\n  case Click((x,y),button=Button.LEFT):\n    handle_click_at(x,y)\n  case Click():\n    pass",
+    "expectedSourceOut": "match event.get():\n  case Click((x,y),button=Button.LEFT):# This is a left click\n\n    handle_click_at(x,y)\n  case Click():\n    pass\n    # ignore other clicks",
+    "expectedReparseTree": "(module statements: (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (case_tuple_pattern (case_pattern (dotted_name identifier: (identifier))) (case_pattern (dotted_name identifier: (identifier))))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (dotted_name identifier: (identifier) identifier: (identifier))))))) (comment) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (identifier) element: (identifier))))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline)) (comment))))))))",
+    "wrappedText": "match event.get():\n  case Click((x,y),button=Button.LEFT):# This is a left click\n\n    handle_click_at(x,y)\n  case Click():\n    pass\n    # ignore other clicks",
     "wrappedOffset": 0
   },
   {
@@ -69831,7 +69930,6 @@
                       }
                     }
                   ],
-                  "_comment": "# no args",
                   "_consequence": {
                     "$type": 261,
                     "$source": 0,
@@ -69898,7 +69996,21 @@
                       "start": 40,
                       "end": 55
                     },
-                    "$nodeHandle": 156
+                    "$nodeHandle": 156,
+                    "$triviaData": {
+                      "leading": [
+                        {
+                          "$type": 78,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "# no args",
+                          "$span": {
+                            "start": 31,
+                            "end": 40
+                          }
+                        }
+                      ]
+                    }
                   },
                   "$other": [
                     26,
@@ -69958,7 +70070,6 @@
                       }
                     }
                   ],
-                  "_comment": "# more complex class name",
                   "_consequence": {
                     "$type": 261,
                     "$source": 0,
@@ -70025,7 +70136,21 @@
                       "start": 108,
                       "end": 123
                     },
-                    "$nodeHandle": 165
+                    "$nodeHandle": 165,
+                    "$triviaData": {
+                      "leading": [
+                        {
+                          "$type": 78,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "# more complex class name",
+                          "$span": {
+                            "start": 83,
+                            "end": 108
+                          }
+                        }
+                      ]
+                    }
                   },
                   "$other": [
                     26,
@@ -70161,7 +70286,6 @@
                       }
                     }
                   ],
-                  "_comment": "# three args",
                   "_consequence": {
                     "$type": 261,
                     "$source": 0,
@@ -70228,7 +70352,21 @@
                       "start": 163,
                       "end": 178
                     },
-                    "$nodeHandle": 181
+                    "$nodeHandle": 181,
+                    "$triviaData": {
+                      "leading": [
+                        {
+                          "$type": 78,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "# three args",
+                          "$span": {
+                            "start": 151,
+                            "end": 163
+                          }
+                        }
+                      ]
+                    }
                   },
                   "$other": [
                     26,
@@ -70406,7 +70544,6 @@
                       }
                     }
                   ],
-                  "_comment": "# kw args",
                   "_consequence": {
                     "$type": 261,
                     "$source": 0,
@@ -70473,7 +70610,21 @@
                       "start": 221,
                       "end": 236
                     },
-                    "$nodeHandle": 200
+                    "$nodeHandle": 200,
+                    "$triviaData": {
+                      "leading": [
+                        {
+                          "$type": 78,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "# kw args",
+                          "$span": {
+                            "start": 212,
+                            "end": 221
+                          }
+                        }
+                      ]
+                    }
                   },
                   "$other": [
                     26,
@@ -70673,7 +70824,6 @@
                       }
                     }
                   ],
-                  "_comment": "# positional + kw args",
                   "_consequence": {
                     "$type": 261,
                     "$source": 0,
@@ -70740,7 +70890,21 @@
                       "start": 296,
                       "end": 311
                     },
-                    "$nodeHandle": 221
+                    "$nodeHandle": 221,
+                    "$triviaData": {
+                      "leading": [
+                        {
+                          "$type": 78,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "# positional + kw args",
+                          "$span": {
+                            "start": 274,
+                            "end": 296
+                          }
+                        }
+                      ]
+                    }
                   },
                   "$other": [
                     26,
@@ -70877,7 +71041,6 @@
                       }
                     }
                   ],
-                  "_comment": "# three args + trail comma",
                   "_consequence": {
                     "$type": 261,
                     "$source": 0,
@@ -70944,7 +71107,21 @@
                       "start": 366,
                       "end": 381
                     },
-                    "$nodeHandle": 237
+                    "$nodeHandle": 237,
+                    "$triviaData": {
+                      "leading": [
+                        {
+                          "$type": 78,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "# three args + trail comma",
+                          "$span": {
+                            "start": 340,
+                            "end": 366
+                          }
+                        }
+                      ]
+                    }
                   },
                   "$other": [
                     26,
@@ -71123,7 +71300,6 @@
                       }
                     }
                   ],
-                  "_comment": "# kw args + trail comma",
                   "_consequence": {
                     "$type": 261,
                     "$source": 0,
@@ -71190,7 +71366,21 @@
                       "start": 439,
                       "end": 454
                     },
-                    "$nodeHandle": 256
+                    "$nodeHandle": 256,
+                    "$triviaData": {
+                      "leading": [
+                        {
+                          "$type": 78,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "# kw args + trail comma",
+                          "$span": {
+                            "start": 416,
+                            "end": 439
+                          }
+                        }
+                      ]
+                    }
                   },
                   "$other": [
                     26,
@@ -71391,7 +71581,6 @@
                       }
                     }
                   ],
-                  "_comment": "# positional + kw args + trail comma",
                   "_consequence": {
                     "$type": 261,
                     "$source": 0,
@@ -71458,7 +71647,21 @@
                       "start": 529,
                       "end": 544
                     },
-                    "$nodeHandle": 277
+                    "$nodeHandle": 277,
+                    "$triviaData": {
+                      "leading": [
+                        {
+                          "$type": 78,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "# positional + kw args + trail comma",
+                          "$span": {
+                            "start": 493,
+                            "end": 529
+                          }
+                        }
+                      ]
+                    }
                   },
                   "$other": [
                     26,
@@ -71497,7 +71700,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "match x:\n  case Something():\n    foo1()\n  case Something.Else():\n    foo2()\n  case Point2D(0,1,2):\n    foo3()\n  case Point3D(x=0,y=0,z=0):\n    foo4()\n  case Point3D(34,x=0,y=0,z=0):\n    foo5()\n  case Point2D(0,1,2,):\n    foo6()\n  case Point3D(x=0,y=0,z=0,):\n    foo7()\n  case Point3D(34,x=0,y=0,z=0,):\n    foo8()"
+    "expectedOutput": "match x:\n  case Something():# no args\n\n    foo1()\n  case Something.Else():# more complex class name\n\n    foo2()\n  case Point2D(0,1,2):# three args\n\n    foo3()\n  case Point3D(x=0,y=0,z=0):# kw args\n\n    foo4()\n  case Point3D(34,x=0,y=0,z=0):# positional + kw args\n\n    foo5()\n  case Point2D(0,1,2,):# three args + trail comma\n\n    foo6()\n  case Point3D(x=0,y=0,z=0,):# kw args + trail comma\n\n    foo7()\n  case Point3D(34,x=0,y=0,z=0,):# positional + kw args + trail comma\n\n    foo8()"
   },
   {
     "kind": "roundtrip",
@@ -71505,9 +71708,9 @@
     "sourceIn": "match x:\n    case Something(): # no args\n        foo1()\n    case Something.Else(): # more complex class name\n        foo2()\n    case Point2D(0, 1, 2): # three args\n        foo3()\n    case Point3D(x=0, y=0, z=0): # kw args\n        foo4()\n    case Point3D(34, x=0, y=0, z=0): # positional + kw args\n        foo5()\n    case Point2D(0, 1, 2,): # three args + trail comma\n        foo6()\n    case Point3D(x=0, y=0, z=0,): # kw args + trail comma\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,): # positional + kw args + trail comma\n        foo8()",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match x:\n  case Something():\n    foo1()\n  case Something.Else():\n    foo2()\n  case Point2D(0,1,2):\n    foo3()\n  case Point3D(x=0,y=0,z=0):\n    foo4()\n  case Point3D(34,x=0,y=0,z=0):\n    foo5()\n  case Point2D(0,1,2,):\n    foo6()\n  case Point3D(x=0,y=0,z=0,):\n    foo7()\n  case Point3D(34,x=0,y=0,z=0,):\n    foo8()",
-    "expectedReparseTree": "(module statements: (match_statement subject: (identifier) body: (block (match_block_block alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier) identifier: (identifier)))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (simple_pattern_negative (integer)))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer))))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer))))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (simple_pattern_negative (integer)))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer))))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer))))))) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline)))))))))",
-    "wrappedText": "match x:\n  case Something():\n    foo1()\n  case Something.Else():\n    foo2()\n  case Point2D(0,1,2):\n    foo3()\n  case Point3D(x=0,y=0,z=0):\n    foo4()\n  case Point3D(34,x=0,y=0,z=0):\n    foo5()\n  case Point2D(0,1,2,):\n    foo6()\n  case Point3D(x=0,y=0,z=0,):\n    foo7()\n  case Point3D(34,x=0,y=0,z=0,):\n    foo8()",
+    "expectedSourceOut": "match x:\n  case Something():# no args\n\n    foo1()\n  case Something.Else():# more complex class name\n\n    foo2()\n  case Point2D(0,1,2):# three args\n\n    foo3()\n  case Point3D(x=0,y=0,z=0):# kw args\n\n    foo4()\n  case Point3D(34,x=0,y=0,z=0):# positional + kw args\n\n    foo5()\n  case Point2D(0,1,2,):# three args + trail comma\n\n    foo6()\n  case Point3D(x=0,y=0,z=0,):# kw args + trail comma\n\n    foo7()\n  case Point3D(34,x=0,y=0,z=0,):# positional + kw args + trail comma\n\n    foo8()",
+    "expectedReparseTree": "(module statements: (match_statement subject: (identifier) body: (block (match_block_block alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)))) (comment) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier) identifier: (identifier)))) (comment) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (simple_pattern_negative (integer)))))) (comment) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer))))))) (comment) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer))))))) (comment) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (simple_pattern_negative (integer)))))) (comment) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer))))))) (comment) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline))))) alternative: (case_clause case_pattern: (case_pattern (class_pattern dotted_name: (dotted_name identifier: (identifier)) arguments: (list_pattern_group1 case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer))))))) (comment) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list))) (newline)))))))))",
+    "wrappedText": "match x:\n  case Something():# no args\n\n    foo1()\n  case Something.Else():# more complex class name\n\n    foo2()\n  case Point2D(0,1,2):# three args\n\n    foo3()\n  case Point3D(x=0,y=0,z=0):# kw args\n\n    foo4()\n  case Point3D(34,x=0,y=0,z=0):# positional + kw args\n\n    foo5()\n  case Point2D(0,1,2,):# three args + trail comma\n\n    foo6()\n  case Point3D(x=0,y=0,z=0,):# kw args + trail comma\n\n    foo7()\n  case Point3D(34,x=0,y=0,z=0,):# positional + kw args + trail comma\n\n    foo8()",
     "wrappedOffset": 0
   },
   {
@@ -85277,2729 +85480,6 @@
           "$type": 145,
           "$source": 0,
           "$named": true,
-          "_name": "e",
-          "_parameters": {
-            "$type": 146,
-            "$source": 0,
-            "$named": true,
-            "$other": [
-              7,
-              8
-            ],
-            "$span": {
-              "start": 5,
-              "end": 12
-            },
-            "$nodeHandle": 85,
-            "_parameters": {
-              "$type": 172,
-              "$source": 0,
-              "$named": true,
-              "_parameter": [
-                {
-                  "$type": 176,
-                  "$source": 0,
-                  "$named": true,
-                  "$other": [
-                    7,
-                    8
-                  ],
-                  "$span": {
-                    "start": 6,
-                    "end": 11
-                  },
-                  "$nodeHandle": 87,
-                  "_patterns": {
-                    "$type": 173,
-                    "$source": 0,
-                    "$named": true,
-                    "_pattern": [
-                      "a",
-                      "b"
-                    ],
-                    "$other": [
-                      9
-                    ],
-                    "$span": {
-                      "start": 7,
-                      "end": 10
-                    },
-                    "$nodeHandle": 88,
-                    "_pattern_trailing_sep": false
-                  }
-                }
-              ],
-              "$span": {
-                "start": 6,
-                "end": 11
-              },
-              "$nodeHandle": 86,
-              "_parameter_trailing_sep": false
-            }
-          },
-          "_body": {
-            "$type": 261,
-            "$source": 0,
-            "$named": true,
-            "_block": {
-              "$type": 160,
-              "$source": 0,
-              "$named": true,
-              "_statements": [
-                {
-                  "$type": 110,
-                  "$source": 0,
-                  "$named": true,
-                  "_simple_statement": [
-                    {
-                      "$type": 125,
-                      "$source": 0,
-                      "$named": true,
-                      "$other": [
-                        15
-                      ],
-                      "$span": {
-                        "start": 16,
-                        "end": 28
-                      },
-                      "$nodeHandle": 92,
-                      "_expressions": {
-                        "$type": 214,
-                        "$source": 0,
-                        "$named": true,
-                        "$other": [
-                          7,
-                          8
-                        ],
-                        "$span": {
-                          "start": 23,
-                          "end": 28
-                        },
-                        "$nodeHandle": 93,
-                        "_collection_elements": {
-                          "$type": 222,
-                          "$source": 0,
-                          "$named": true,
-                          "_element": [
-                            "a",
-                            "b"
-                          ],
-                          "$other": [
-                            9
-                          ],
-                          "$span": {
-                            "start": 24,
-                            "end": 27
-                          },
-                          "$nodeHandle": 94,
-                          "_element_trailing_sep": false
-                        }
-                      }
-                    }
-                  ],
-                  "_newline": 101,
-                  "$span": {
-                    "start": 16,
-                    "end": 28
-                  },
-                  "$nodeHandle": 91,
-                  "_simple_statement_trailing_sep": false
-                }
-              ],
-              "$span": {
-                "start": 16,
-                "end": 28
-              },
-              "$nodeHandle": 90
-            },
-            "$span": {
-              "start": 13,
-              "end": 28
-            },
-            "$nodeHandle": 89
-          },
-          "$other": [
-            35,
-            22
-          ],
-          "$span": {
-            "start": 0,
-            "end": 28
-          },
-          "$nodeHandle": 78
-        },
-        {
-          "$type": 145,
-          "$source": 0,
-          "$named": true,
-          "_name": "e",
-          "_parameters": {
-            "$type": 146,
-            "$source": 0,
-            "$named": true,
-            "$other": [
-              7,
-              8
-            ],
-            "$span": {
-              "start": 35,
-              "end": 47
-            },
-            "$nodeHandle": 95,
-            "_parameters": {
-              "$type": 172,
-              "$source": 0,
-              "$named": true,
-              "_parameter": [
-                {
-                  "$type": 204,
-                  "$source": 0,
-                  "$named": true,
-                  "_type": {
-                    "$type": 205,
-                    "$source": 0,
-                    "$named": true,
-                    "$span": {
-                      "start": 43,
-                      "end": 46
-                    },
-                    "$nodeHandle": 98,
-                    "_content": "str"
-                  },
-                  "$other": [
-                    22
-                  ],
-                  "$span": {
-                    "start": 36,
-                    "end": 46
-                  },
-                  "$nodeHandle": 97,
-                  "_content": {
-                    "$type": 180,
-                    "$source": 0,
-                    "$named": true,
-                    "$other": [
-                      11
-                    ],
-                    "$span": {
-                      "start": 36,
-                      "end": 41
-                    },
-                    "$nodeHandle": 99,
-                    "_content": "list"
-                  }
-                }
-              ],
-              "$span": {
-                "start": 36,
-                "end": 46
-              },
-              "$nodeHandle": 96,
-              "_parameter_trailing_sep": false
-            }
-          },
-          "_body": {
-            "$type": 261,
-            "$source": 0,
-            "$named": true,
-            "_block": {
-              "$type": 160,
-              "$source": 0,
-              "$named": true,
-              "_statements": [
-                {
-                  "$type": 110,
-                  "$source": 0,
-                  "$named": true,
-                  "_simple_statement": [
-                    {
-                      "$type": 128,
-                      "$source": 0,
-                      "$named": true,
-                      "$text": "pass",
-                      "$span": {
-                        "start": 51,
-                        "end": 55
-                      },
-                      "$nodeHandle": 103
-                    }
-                  ],
-                  "_newline": 101,
-                  "$span": {
-                    "start": 51,
-                    "end": 55
-                  },
-                  "$nodeHandle": 102,
-                  "_simple_statement_trailing_sep": false
-                }
-              ],
-              "$span": {
-                "start": 51,
-                "end": 55
-              },
-              "$nodeHandle": 101
-            },
-            "$span": {
-              "start": 48,
-              "end": 55
-            },
-            "$nodeHandle": 100
-          },
-          "$other": [
-            35,
-            22
-          ],
-          "$span": {
-            "start": 30,
-            "end": 55
-          },
-          "$nodeHandle": 79
-        },
-        {
-          "$type": 145,
-          "$source": 0,
-          "$named": true,
-          "_name": "e",
-          "_parameters": {
-            "$type": 146,
-            "$source": 0,
-            "$named": true,
-            "$other": [
-              7,
-              8
-            ],
-            "$span": {
-              "start": 62,
-              "end": 75
-            },
-            "$nodeHandle": 104,
-            "_parameters": {
-              "$type": 172,
-              "$source": 0,
-              "$named": true,
-              "_parameter": [
-                {
-                  "$type": 204,
-                  "$source": 0,
-                  "$named": true,
-                  "_type": {
-                    "$type": 205,
-                    "$source": 0,
-                    "$named": true,
-                    "$span": {
-                      "start": 71,
-                      "end": 74
-                    },
-                    "$nodeHandle": 107,
-                    "_content": "str"
-                  },
-                  "$other": [
-                    22
-                  ],
-                  "$span": {
-                    "start": 63,
-                    "end": 74
-                  },
-                  "$nodeHandle": 106,
-                  "_content": {
-                    "$type": 181,
-                    "$source": 0,
-                    "$named": true,
-                    "$other": [
-                      36
-                    ],
-                    "$span": {
-                      "start": 63,
-                      "end": 69
-                    },
-                    "$nodeHandle": 108,
-                    "_content": "list"
-                  }
-                }
-              ],
-              "$span": {
-                "start": 63,
-                "end": 74
-              },
-              "$nodeHandle": 105,
-              "_parameter_trailing_sep": false
-            }
-          },
-          "_body": {
-            "$type": 261,
-            "$source": 0,
-            "$named": true,
-            "_block": {
-              "$type": 160,
-              "$source": 0,
-              "$named": true,
-              "_statements": [
-                {
-                  "$type": 110,
-                  "$source": 0,
-                  "$named": true,
-                  "_simple_statement": [
-                    {
-                      "$type": 128,
-                      "$source": 0,
-                      "$named": true,
-                      "$text": "pass",
-                      "$span": {
-                        "start": 79,
-                        "end": 83
-                      },
-                      "$nodeHandle": 112
-                    }
-                  ],
-                  "_newline": 101,
-                  "$span": {
-                    "start": 79,
-                    "end": 83
-                  },
-                  "$nodeHandle": 111,
-                  "_simple_statement_trailing_sep": false
-                }
-              ],
-              "$span": {
-                "start": 79,
-                "end": 83
-              },
-              "$nodeHandle": 110
-            },
-            "$span": {
-              "start": 76,
-              "end": 83
-            },
-            "$nodeHandle": 109
-          },
-          "$other": [
-            35,
-            22
-          ],
-          "$span": {
-            "start": 57,
-            "end": 83
-          },
-          "$nodeHandle": 80
-        },
-        {
-          "$type": 145,
-          "$source": 0,
-          "$named": true,
-          "_name": "f",
-          "_parameters": {
-            "$type": 146,
-            "$source": 0,
-            "$named": true,
-            "$text": "()",
-            "$span": {
-              "start": 90,
-              "end": 92
-            },
-            "$nodeHandle": 113
-          },
-          "_body": {
-            "$type": 261,
-            "$source": 0,
-            "$named": true,
-            "_block": {
-              "$type": 160,
-              "$source": 0,
-              "$named": true,
-              "_statements": [
-                {
-                  "$type": 110,
-                  "$source": 0,
-                  "$named": true,
-                  "_simple_statement": [
-                    {
-                      "$type": 151,
-                      "$source": 0,
-                      "$named": true,
-                      "_identifier": [
-                        "a"
-                      ],
-                      "$other": [
-                        38
-                      ],
-                      "$span": {
-                        "start": 96,
-                        "end": 106
-                      },
-                      "$nodeHandle": 117
-                    }
-                  ],
-                  "_newline": 101,
-                  "$span": {
-                    "start": 96,
-                    "end": 106
-                  },
-                  "$nodeHandle": 116,
-                  "_simple_statement_trailing_sep": false
-                }
-              ],
-              "$span": {
-                "start": 96,
-                "end": 106
-              },
-              "$nodeHandle": 115
-            },
-            "$span": {
-              "start": 93,
-              "end": 106
-            },
-            "$nodeHandle": 114
-          },
-          "$other": [
-            35,
-            22
-          ],
-          "$span": {
-            "start": 85,
-            "end": 106
-          },
-          "$nodeHandle": 81
-        },
-        {
-          "$type": 145,
-          "$source": 0,
-          "$named": true,
-          "_name": "g",
-          "_parameters": {
-            "$type": 146,
-            "$source": 0,
-            "$named": true,
-            "$other": [
-              7,
-              8
-            ],
-            "$span": {
-              "start": 113,
-              "end": 144
-            },
-            "$nodeHandle": 118,
-            "_parameters": {
-              "$type": 172,
-              "$source": 0,
-              "$named": true,
-              "_parameter": [
-                {
-                  "$type": 1,
-                  "$source": 0,
-                  "$named": true,
-                  "$text": "h",
-                  "$span": {
-                    "start": 114,
-                    "end": 115
-                  }
-                },
-                {
-                  "$type": 1,
-                  "$source": 0,
-                  "$named": true,
-                  "$text": "i",
-                  "$span": {
-                    "start": 117,
-                    "end": 118
-                  }
-                },
-                {
-                  "$type": 234,
-                  "$source": 0,
-                  "$named": true,
-                  "$text": "/",
-                  "$span": {
-                    "start": 120,
-                    "end": 121
-                  },
-                  "$nodeHandle": 120
-                },
-                {
-                  "$type": 1,
-                  "$source": 0,
-                  "$named": true,
-                  "$text": "j",
-                  "$span": {
-                    "start": 123,
-                    "end": 124
-                  }
-                },
-                {
-                  "$type": 235,
-                  "$source": 0,
-                  "$named": true,
-                  "$text": "*",
-                  "$span": {
-                    "start": 126,
-                    "end": 127
-                  },
-                  "$nodeHandle": 121
-                },
-                {
-                  "$type": 178,
-                  "$source": 0,
-                  "$named": true,
-                  "_name": "k",
-                  "_value": "100",
-                  "$other": [
-                    40
-                  ],
-                  "$span": {
-                    "start": 129,
-                    "end": 134
-                  },
-                  "$nodeHandle": 122
-                },
-                {
-                  "$type": 181,
-                  "$source": 0,
-                  "$named": true,
-                  "$other": [
-                    36
-                  ],
-                  "$span": {
-                    "start": 136,
-                    "end": 143
-                  },
-                  "$nodeHandle": 123,
-                  "_content": "kwarg"
-                }
-              ],
-              "$other": [
-                9,
-                9,
-                9,
-                9,
-                9,
-                9
-              ],
-              "$span": {
-                "start": 114,
-                "end": 143
-              },
-              "$nodeHandle": 119,
-              "_parameter_trailing_sep": false
-            }
-          },
-          "_body": {
-            "$type": 261,
-            "$source": 0,
-            "$named": true,
-            "_block": {
-              "$type": 160,
-              "$source": 0,
-              "$named": true,
-              "_statements": [
-                {
-                  "$type": 110,
-                  "$source": 0,
-                  "$named": true,
-                  "_simple_statement": [
-                    {
-                      "$type": 125,
-                      "$source": 0,
-                      "$named": true,
-                      "$other": [
-                        15
-                      ],
-                      "$span": {
-                        "start": 148,
-                        "end": 168
-                      },
-                      "$nodeHandle": 127,
-                      "_expressions": {
-                        "$type": 161,
-                        "$source": 0,
-                        "$named": true,
-                        "_tail": {
-                          "$type": 239,
-                          "$source": 0,
-                          "$named": true,
-                          "$other": [
-                            9,
-                            9,
-                            9,
-                            9
-                          ],
-                          "$span": {
-                            "start": 156,
-                            "end": 168
-                          },
-                          "$nodeHandle": 129,
-                          "_expression": [
-                            "i",
-                            "j",
-                            "k",
-                            "kwarg"
-                          ],
-                          "_trailing_sep": false
-                        },
-                        "$span": {
-                          "start": 155,
-                          "end": 168
-                        },
-                        "$nodeHandle": 128,
-                        "_expression": "h"
-                      }
-                    }
-                  ],
-                  "_newline": 101,
-                  "$span": {
-                    "start": 148,
-                    "end": 168
-                  },
-                  "$nodeHandle": 126,
-                  "_simple_statement_trailing_sep": false
-                }
-              ],
-              "$span": {
-                "start": 148,
-                "end": 168
-              },
-              "$nodeHandle": 125
-            },
-            "$span": {
-              "start": 145,
-              "end": 168
-            },
-            "$nodeHandle": 124
-          },
-          "$other": [
-            35,
-            22
-          ],
-          "$span": {
-            "start": 108,
-            "end": 168
-          },
-          "$nodeHandle": 82
-        },
-        {
-          "$type": 145,
-          "$source": 0,
-          "$named": true,
-          "_name": "h",
-          "_parameters": {
-            "$type": 146,
-            "$source": 0,
-            "$named": true,
-            "$other": [
-              7,
-              8
-            ],
-            "$span": {
-              "start": 175,
-              "end": 179
-            },
-            "$nodeHandle": 130,
-            "_parameters": {
-              "$type": 172,
-              "$source": 0,
-              "$named": true,
-              "_parameter": [
-                {
-                  "$type": 180,
-                  "$source": 0,
-                  "$named": true,
-                  "$other": [
-                    11
-                  ],
-                  "$span": {
-                    "start": 176,
-                    "end": 178
-                  },
-                  "$nodeHandle": 132,
-                  "_content": "a"
-                }
-              ],
-              "$span": {
-                "start": 176,
-                "end": 178
-              },
-              "$nodeHandle": 131,
-              "_parameter_trailing_sep": false
-            }
-          },
-          "_body": {
-            "$type": 261,
-            "$source": 0,
-            "$named": true,
-            "_block": {
-              "$type": 160,
-              "$source": 0,
-              "$named": true,
-              "_statements": [
-                {
-                  "$type": 110,
-                  "$source": 0,
-                  "$named": true,
-                  "_simple_statement": [
-                    {
-                      "$type": 122,
-                      "$source": 0,
-                      "$named": true,
-                      "$span": {
-                        "start": 183,
-                        "end": 190
-                      },
-                      "$nodeHandle": 137,
-                      "_content": {
-                        "$type": 203,
-                        "$source": 0,
-                        "$named": true,
-                        "_function": "i",
-                        "_arguments": {
-                          "$type": 157,
-                          "$source": 0,
-                          "$named": true,
-                          "_arguments": {
-                            "$type": 238,
-                            "$source": 0,
-                            "$named": true,
-                            "_element": [
-                              {
-                                "$type": 156,
-                                "$source": 0,
-                                "$named": true,
-                                "$other": [
-                                  7,
-                                  8
-                                ],
-                                "$span": {
-                                  "start": 185,
-                                  "end": 189
-                                },
-                                "$nodeHandle": 141,
-                                "_content": {
-                                  "$type": 148,
-                                  "$source": 0,
-                                  "$named": true,
-                                  "_expression": "a",
-                                  "$other": [
-                                    11
-                                  ],
-                                  "$span": {
-                                    "start": 186,
-                                    "end": 188
-                                  },
-                                  "$nodeHandle": 142
-                                }
-                              }
-                            ],
-                            "$span": {
-                              "start": 185,
-                              "end": 189
-                            },
-                            "$nodeHandle": 140,
-                            "_trailing_sep": false
-                          },
-                          "$other": [
-                            7,
-                            8
-                          ],
-                          "$span": {
-                            "start": 184,
-                            "end": 190
-                          },
-                          "$nodeHandle": 139
-                        },
-                        "$span": {
-                          "start": 183,
-                          "end": 190
-                        },
-                        "$nodeHandle": 138
-                      }
-                    }
-                  ],
-                  "_newline": 101,
-                  "$span": {
-                    "start": 183,
-                    "end": 190
-                  },
-                  "$nodeHandle": 135,
-                  "_simple_statement_trailing_sep": false
-                },
-                {
-                  "$type": 110,
-                  "$source": 0,
-                  "$named": true,
-                  "_simple_statement": [
-                    {
-                      "$type": 122,
-                      "$source": 0,
-                      "$named": true,
-                      "$span": {
-                        "start": 193,
-                        "end": 202
-                      },
-                      "$nodeHandle": 143,
-                      "_content": {
-                        "$type": 203,
-                        "$source": 0,
-                        "$named": true,
-                        "_function": "j",
-                        "_arguments": {
-                          "$type": 157,
-                          "$source": 0,
-                          "$named": true,
-                          "_arguments": {
-                            "$type": 238,
-                            "$source": 0,
-                            "$named": true,
-                            "_element": [
-                              {
-                                "$type": 156,
-                                "$source": 0,
-                                "$named": true,
-                                "$other": [
-                                  7,
-                                  8
-                                ],
-                                "$span": {
-                                  "start": 195,
-                                  "end": 201
-                                },
-                                "$nodeHandle": 147,
-                                "_content": {
-                                  "$type": 156,
-                                  "$source": 0,
-                                  "$named": true,
-                                  "$other": [
-                                    7,
-                                    8
-                                  ],
-                                  "$span": {
-                                    "start": 196,
-                                    "end": 200
-                                  },
-                                  "$nodeHandle": 148,
-                                  "_content": {
-                                    "$type": 148,
-                                    "$source": 0,
-                                    "$named": true,
-                                    "_expression": "a",
-                                    "$other": [
-                                      11
-                                    ],
-                                    "$span": {
-                                      "start": 197,
-                                      "end": 199
-                                    },
-                                    "$nodeHandle": 149
-                                  }
-                                }
-                              }
-                            ],
-                            "$span": {
-                              "start": 195,
-                              "end": 201
-                            },
-                            "$nodeHandle": 146,
-                            "_trailing_sep": false
-                          },
-                          "$other": [
-                            7,
-                            8
-                          ],
-                          "$span": {
-                            "start": 194,
-                            "end": 202
-                          },
-                          "$nodeHandle": 145
-                        },
-                        "$span": {
-                          "start": 193,
-                          "end": 202
-                        },
-                        "$nodeHandle": 144
-                      }
-                    }
-                  ],
-                  "_newline": 101,
-                  "$span": {
-                    "start": 193,
-                    "end": 202
-                  },
-                  "$nodeHandle": 136,
-                  "_simple_statement_trailing_sep": false
-                }
-              ],
-              "$span": {
-                "start": 183,
-                "end": 202
-              },
-              "$nodeHandle": 134
-            },
-            "$span": {
-              "start": 180,
-              "end": 202
-            },
-            "$nodeHandle": 133
-          },
-          "$other": [
-            35,
-            22
-          ],
-          "$span": {
-            "start": 170,
-            "end": 202
-          },
-          "$nodeHandle": 83
-        },
-        {
-          "$type": 145,
-          "$source": 0,
-          "$named": true,
-          "_name": "foo",
-          "_parameters": {
-            "$type": 146,
-            "$source": 0,
-            "$named": true,
-            "$text": "()",
-            "$span": {
-              "start": 211,
-              "end": 213
-            },
-            "$nodeHandle": 150
-          },
-          "_body": {
-            "$type": 261,
-            "$source": 0,
-            "$named": true,
-            "_block": {
-              "$type": 160,
-              "$source": 0,
-              "$named": true,
-              "_statements": [
-                {
-                  "$type": 110,
-                  "$source": 0,
-                  "$named": true,
-                  "_simple_statement": [
-                    {
-                      "$type": 128,
-                      "$source": 0,
-                      "$named": true,
-                      "$text": "pass",
-                      "$span": {
-                        "start": 219,
-                        "end": 223
-                      },
-                      "$nodeHandle": 154
-                    }
-                  ],
-                  "_newline": 101,
-                  "$span": {
-                    "start": 219,
-                    "end": 223
-                  },
-                  "$nodeHandle": 153,
-                  "_simple_statement_trailing_sep": false
-                }
-              ],
-              "$span": {
-                "start": 219,
-                "end": 223
-              },
-              "$nodeHandle": 152
-            },
-            "$span": {
-              "start": 214,
-              "end": 223
-            },
-            "$nodeHandle": 151
-          },
-          "$other": [
-            35,
-            22
-          ],
-          "$span": {
-            "start": 204,
-            "end": 223
-          },
-          "$nodeHandle": 84
-        }
-      ],
-      "_line_continuation": [
-        "\\\n",
-        "\\\n",
-        "\\"
-      ],
-      "$span": {
-        "start": 0,
-        "end": 229
-      },
-      "$nodeHandle": 0
-    },
-    "expectedOutput": "def e((a,b)):\n  return(a,b)\ndef e(*list:str):\n  pass\ndef e(**list:str):\n  pass\ndef f():\n  nonlocal a\ndef g(h,i,/,j,*,k=100,**kwarg):\n  return h,i,j,k,kwarg\ndef h(*a):\n  i((*a))\n  j(((*a)))\ndef foo():\n  pass"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n    pass \\\n\\\n\\",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "def e((a,b)):\n  return(a,b)\ndef e(*list:str):\n  pass\ndef e(**list:str):\n  pass\ndef f():\n  nonlocal a\ndef g(h,i,/,j,*,k=100,**kwarg):\n  return h,i,j,k,kwarg\ndef h(*a):\n  i((*a))\n  j(((*a)))\ndef foo():\n  pass",
-    "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (tuple_pattern (pattern_group pattern: (identifier) pattern: (identifier))))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (return_statement (tuple (element_list element: (identifier) element: (identifier)))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (typed_parameter (list_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (typed_parameter (dictionary_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (nonlocal_statement identifier: (identifier)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (identifier) parameter: (identifier) parameter: (positional_separator) parameter: (identifier) parameter: (keyword_separator) parameter: (default_parameter name: (identifier) value: (integer)) parameter: (dictionary_splat_pattern (identifier)))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (return_statement (expression_list (identifier) tail: (expression_list_group1 (identifier) (identifier) (identifier) (identifier)))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (list_splat_pattern (identifier)))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (parenthesized_list_splat (list_splat expression: (identifier))))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (parenthesized_list_splat (parenthesized_expression (list_splat expression: (identifier)))))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline))))))",
-    "wrappedText": "def e((a,b)):\n  return(a,b)\ndef e(*list:str):\n  pass\ndef e(**list:str):\n  pass\ndef f():\n  nonlocal a\ndef g(h,i,/,j,*,k=100,**kwarg):\n  return h,i,j,k,kwarg\ndef h(*a):\n  i((*a))\n  j(((*a)))\ndef foo():\n  pass",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 145,
-      "$source": 0,
-      "$named": true,
-      "_name": "e",
-      "_parameters": {
-        "$type": 146,
-        "$source": 0,
-        "$named": true,
-        "$other": [
-          7,
-          8
-        ],
-        "$span": {
-          "start": 5,
-          "end": 12
-        },
-        "$nodeHandle": 155,
-        "_parameters": {
-          "$type": 172,
-          "$source": 0,
-          "$named": true,
-          "_parameter": [
-            {
-              "$type": 176,
-              "$source": 0,
-              "$named": true,
-              "$other": [
-                7,
-                8
-              ],
-              "$span": {
-                "start": 6,
-                "end": 11
-              },
-              "$nodeHandle": 157,
-              "_patterns": {
-                "$type": 173,
-                "$source": 0,
-                "$named": true,
-                "_pattern": [
-                  "a",
-                  "b"
-                ],
-                "$other": [
-                  9
-                ],
-                "$span": {
-                  "start": 7,
-                  "end": 10
-                },
-                "$nodeHandle": 158,
-                "_pattern_trailing_sep": false
-              }
-            }
-          ],
-          "$span": {
-            "start": 6,
-            "end": 11
-          },
-          "$nodeHandle": 156,
-          "_parameter_trailing_sep": false
-        }
-      },
-      "_body": {
-        "$type": 261,
-        "$source": 0,
-        "$named": true,
-        "_block": {
-          "$type": 160,
-          "$source": 0,
-          "$named": true,
-          "_statements": [
-            {
-              "$type": 110,
-              "$source": 0,
-              "$named": true,
-              "_simple_statement": [
-                {
-                  "$type": 125,
-                  "$source": 0,
-                  "$named": true,
-                  "$other": [
-                    15
-                  ],
-                  "$span": {
-                    "start": 16,
-                    "end": 28
-                  },
-                  "$nodeHandle": 162,
-                  "_expressions": {
-                    "$type": 214,
-                    "$source": 0,
-                    "$named": true,
-                    "$other": [
-                      7,
-                      8
-                    ],
-                    "$span": {
-                      "start": 23,
-                      "end": 28
-                    },
-                    "$nodeHandle": 163,
-                    "_collection_elements": {
-                      "$type": 222,
-                      "$source": 0,
-                      "$named": true,
-                      "_element": [
-                        "a",
-                        "b"
-                      ],
-                      "$other": [
-                        9
-                      ],
-                      "$span": {
-                        "start": 24,
-                        "end": 27
-                      },
-                      "$nodeHandle": 164,
-                      "_element_trailing_sep": false
-                    }
-                  }
-                }
-              ],
-              "_newline": 101,
-              "$span": {
-                "start": 16,
-                "end": 28
-              },
-              "$nodeHandle": 161,
-              "_simple_statement_trailing_sep": false
-            }
-          ],
-          "$span": {
-            "start": 16,
-            "end": 28
-          },
-          "$nodeHandle": 160
-        },
-        "$span": {
-          "start": 13,
-          "end": 28
-        },
-        "$nodeHandle": 159
-      },
-      "$other": [
-        35,
-        22
-      ],
-      "$span": {
-        "start": 0,
-        "end": 28
-      },
-      "$nodeHandle": 1
-    },
-    "expectedOutput": "def e((a,b)):\n  return(a,b)"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def e((a,b)):\n  return (a,b)",
-    "pattern": "function_definition",
-    "edits": [],
-    "expectedSourceOut": "def e((a,b)):\n  return(a,b)",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (tuple_pattern (pattern_group pattern: (identifier) pattern: (identifier))))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (return_statement (tuple (element_list element: (identifier) element: (identifier)))) (newline)))))",
-    "wrappedText": "def e((a,b)):\n  return(a,b)",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 145,
-      "$source": 0,
-      "$named": true,
-      "_name": "e",
-      "_parameters": {
-        "$type": 146,
-        "$source": 0,
-        "$named": true,
-        "$other": [
-          7,
-          8
-        ],
-        "$span": {
-          "start": 35,
-          "end": 47
-        },
-        "$nodeHandle": 165,
-        "_parameters": {
-          "$type": 172,
-          "$source": 0,
-          "$named": true,
-          "_parameter": [
-            {
-              "$type": 204,
-              "$source": 0,
-              "$named": true,
-              "_type": {
-                "$type": 205,
-                "$source": 0,
-                "$named": true,
-                "$span": {
-                  "start": 43,
-                  "end": 46
-                },
-                "$nodeHandle": 168,
-                "_content": "str"
-              },
-              "$other": [
-                22
-              ],
-              "$span": {
-                "start": 36,
-                "end": 46
-              },
-              "$nodeHandle": 167,
-              "_content": {
-                "$type": 180,
-                "$source": 0,
-                "$named": true,
-                "$other": [
-                  11
-                ],
-                "$span": {
-                  "start": 36,
-                  "end": 41
-                },
-                "$nodeHandle": 169,
-                "_content": "list"
-              }
-            }
-          ],
-          "$span": {
-            "start": 36,
-            "end": 46
-          },
-          "$nodeHandle": 166,
-          "_parameter_trailing_sep": false
-        }
-      },
-      "_body": {
-        "$type": 261,
-        "$source": 0,
-        "$named": true,
-        "_block": {
-          "$type": 160,
-          "$source": 0,
-          "$named": true,
-          "_statements": [
-            {
-              "$type": 110,
-              "$source": 0,
-              "$named": true,
-              "_simple_statement": [
-                {
-                  "$type": 128,
-                  "$source": 0,
-                  "$named": true,
-                  "$text": "pass",
-                  "$span": {
-                    "start": 51,
-                    "end": 55
-                  },
-                  "$nodeHandle": 173
-                }
-              ],
-              "_newline": 101,
-              "$span": {
-                "start": 51,
-                "end": 55
-              },
-              "$nodeHandle": 172,
-              "_simple_statement_trailing_sep": false
-            }
-          ],
-          "$span": {
-            "start": 51,
-            "end": 55
-          },
-          "$nodeHandle": 171
-        },
-        "$span": {
-          "start": 48,
-          "end": 55
-        },
-        "$nodeHandle": 170
-      },
-      "$other": [
-        35,
-        22
-      ],
-      "$span": {
-        "start": 30,
-        "end": 55
-      },
-      "$nodeHandle": 2
-    },
-    "expectedOutput": "def e(*list:str):\n  pass"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def e(*list: str):\n  pass",
-    "pattern": "function_definition",
-    "edits": [],
-    "expectedSourceOut": "def e(*list:str):\n  pass",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (typed_parameter (list_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline)))))",
-    "wrappedText": "def e(*list:str):\n  pass",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 145,
-      "$source": 0,
-      "$named": true,
-      "_name": "e",
-      "_parameters": {
-        "$type": 146,
-        "$source": 0,
-        "$named": true,
-        "$other": [
-          7,
-          8
-        ],
-        "$span": {
-          "start": 62,
-          "end": 75
-        },
-        "$nodeHandle": 174,
-        "_parameters": {
-          "$type": 172,
-          "$source": 0,
-          "$named": true,
-          "_parameter": [
-            {
-              "$type": 204,
-              "$source": 0,
-              "$named": true,
-              "_type": {
-                "$type": 205,
-                "$source": 0,
-                "$named": true,
-                "$span": {
-                  "start": 71,
-                  "end": 74
-                },
-                "$nodeHandle": 177,
-                "_content": "str"
-              },
-              "$other": [
-                22
-              ],
-              "$span": {
-                "start": 63,
-                "end": 74
-              },
-              "$nodeHandle": 176,
-              "_content": {
-                "$type": 181,
-                "$source": 0,
-                "$named": true,
-                "$other": [
-                  36
-                ],
-                "$span": {
-                  "start": 63,
-                  "end": 69
-                },
-                "$nodeHandle": 178,
-                "_content": "list"
-              }
-            }
-          ],
-          "$span": {
-            "start": 63,
-            "end": 74
-          },
-          "$nodeHandle": 175,
-          "_parameter_trailing_sep": false
-        }
-      },
-      "_body": {
-        "$type": 261,
-        "$source": 0,
-        "$named": true,
-        "_block": {
-          "$type": 160,
-          "$source": 0,
-          "$named": true,
-          "_statements": [
-            {
-              "$type": 110,
-              "$source": 0,
-              "$named": true,
-              "_simple_statement": [
-                {
-                  "$type": 128,
-                  "$source": 0,
-                  "$named": true,
-                  "$text": "pass",
-                  "$span": {
-                    "start": 79,
-                    "end": 83
-                  },
-                  "$nodeHandle": 182
-                }
-              ],
-              "_newline": 101,
-              "$span": {
-                "start": 79,
-                "end": 83
-              },
-              "$nodeHandle": 181,
-              "_simple_statement_trailing_sep": false
-            }
-          ],
-          "$span": {
-            "start": 79,
-            "end": 83
-          },
-          "$nodeHandle": 180
-        },
-        "$span": {
-          "start": 76,
-          "end": 83
-        },
-        "$nodeHandle": 179
-      },
-      "$other": [
-        35,
-        22
-      ],
-      "$span": {
-        "start": 57,
-        "end": 83
-      },
-      "$nodeHandle": 3
-    },
-    "expectedOutput": "def e(**list:str):\n  pass"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def e(**list: str):\n  pass",
-    "pattern": "function_definition",
-    "edits": [],
-    "expectedSourceOut": "def e(**list:str):\n  pass",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (typed_parameter (dictionary_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline)))))",
-    "wrappedText": "def e(**list:str):\n  pass",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 145,
-      "$source": 0,
-      "$named": true,
-      "_name": "f",
-      "_parameters": {
-        "$type": 146,
-        "$source": 0,
-        "$named": true,
-        "$text": "()",
-        "$span": {
-          "start": 90,
-          "end": 92
-        },
-        "$nodeHandle": 183
-      },
-      "_body": {
-        "$type": 261,
-        "$source": 0,
-        "$named": true,
-        "_block": {
-          "$type": 160,
-          "$source": 0,
-          "$named": true,
-          "_statements": [
-            {
-              "$type": 110,
-              "$source": 0,
-              "$named": true,
-              "_simple_statement": [
-                {
-                  "$type": 151,
-                  "$source": 0,
-                  "$named": true,
-                  "_identifier": [
-                    "a"
-                  ],
-                  "$other": [
-                    38
-                  ],
-                  "$span": {
-                    "start": 96,
-                    "end": 106
-                  },
-                  "$nodeHandle": 187
-                }
-              ],
-              "_newline": 101,
-              "$span": {
-                "start": 96,
-                "end": 106
-              },
-              "$nodeHandle": 186,
-              "_simple_statement_trailing_sep": false
-            }
-          ],
-          "$span": {
-            "start": 96,
-            "end": 106
-          },
-          "$nodeHandle": 185
-        },
-        "$span": {
-          "start": 93,
-          "end": 106
-        },
-        "$nodeHandle": 184
-      },
-      "$other": [
-        35,
-        22
-      ],
-      "$span": {
-        "start": 85,
-        "end": 106
-      },
-      "$nodeHandle": 4
-    },
-    "expectedOutput": "def f():\n  nonlocal a"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def f():\n  nonlocal a",
-    "pattern": "function_definition",
-    "edits": [],
-    "expectedSourceOut": "def f():\n  nonlocal a",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (nonlocal_statement identifier: (identifier)) (newline)))))",
-    "wrappedText": "def f():\n  nonlocal a",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 145,
-      "$source": 0,
-      "$named": true,
-      "_name": "g",
-      "_parameters": {
-        "$type": 146,
-        "$source": 0,
-        "$named": true,
-        "$other": [
-          7,
-          8
-        ],
-        "$span": {
-          "start": 113,
-          "end": 144
-        },
-        "$nodeHandle": 188,
-        "_parameters": {
-          "$type": 172,
-          "$source": 0,
-          "$named": true,
-          "_parameter": [
-            {
-              "$type": 1,
-              "$source": 0,
-              "$named": true,
-              "$text": "h",
-              "$span": {
-                "start": 114,
-                "end": 115
-              }
-            },
-            {
-              "$type": 1,
-              "$source": 0,
-              "$named": true,
-              "$text": "i",
-              "$span": {
-                "start": 117,
-                "end": 118
-              }
-            },
-            {
-              "$type": 234,
-              "$source": 0,
-              "$named": true,
-              "$text": "/",
-              "$span": {
-                "start": 120,
-                "end": 121
-              },
-              "$nodeHandle": 190
-            },
-            {
-              "$type": 1,
-              "$source": 0,
-              "$named": true,
-              "$text": "j",
-              "$span": {
-                "start": 123,
-                "end": 124
-              }
-            },
-            {
-              "$type": 235,
-              "$source": 0,
-              "$named": true,
-              "$text": "*",
-              "$span": {
-                "start": 126,
-                "end": 127
-              },
-              "$nodeHandle": 191
-            },
-            {
-              "$type": 178,
-              "$source": 0,
-              "$named": true,
-              "_name": "k",
-              "_value": "100",
-              "$other": [
-                40
-              ],
-              "$span": {
-                "start": 129,
-                "end": 134
-              },
-              "$nodeHandle": 192
-            },
-            {
-              "$type": 181,
-              "$source": 0,
-              "$named": true,
-              "$other": [
-                36
-              ],
-              "$span": {
-                "start": 136,
-                "end": 143
-              },
-              "$nodeHandle": 193,
-              "_content": "kwarg"
-            }
-          ],
-          "$other": [
-            9,
-            9,
-            9,
-            9,
-            9,
-            9
-          ],
-          "$span": {
-            "start": 114,
-            "end": 143
-          },
-          "$nodeHandle": 189,
-          "_parameter_trailing_sep": false
-        }
-      },
-      "_body": {
-        "$type": 261,
-        "$source": 0,
-        "$named": true,
-        "_block": {
-          "$type": 160,
-          "$source": 0,
-          "$named": true,
-          "_statements": [
-            {
-              "$type": 110,
-              "$source": 0,
-              "$named": true,
-              "_simple_statement": [
-                {
-                  "$type": 125,
-                  "$source": 0,
-                  "$named": true,
-                  "$other": [
-                    15
-                  ],
-                  "$span": {
-                    "start": 148,
-                    "end": 168
-                  },
-                  "$nodeHandle": 197,
-                  "_expressions": {
-                    "$type": 161,
-                    "$source": 0,
-                    "$named": true,
-                    "_tail": {
-                      "$type": 239,
-                      "$source": 0,
-                      "$named": true,
-                      "$other": [
-                        9,
-                        9,
-                        9,
-                        9
-                      ],
-                      "$span": {
-                        "start": 156,
-                        "end": 168
-                      },
-                      "$nodeHandle": 199,
-                      "_expression": [
-                        "i",
-                        "j",
-                        "k",
-                        "kwarg"
-                      ],
-                      "_trailing_sep": false
-                    },
-                    "$span": {
-                      "start": 155,
-                      "end": 168
-                    },
-                    "$nodeHandle": 198,
-                    "_expression": "h"
-                  }
-                }
-              ],
-              "_newline": 101,
-              "$span": {
-                "start": 148,
-                "end": 168
-              },
-              "$nodeHandle": 196,
-              "_simple_statement_trailing_sep": false
-            }
-          ],
-          "$span": {
-            "start": 148,
-            "end": 168
-          },
-          "$nodeHandle": 195
-        },
-        "$span": {
-          "start": 145,
-          "end": 168
-        },
-        "$nodeHandle": 194
-      },
-      "$other": [
-        35,
-        22
-      ],
-      "$span": {
-        "start": 108,
-        "end": 168
-      },
-      "$nodeHandle": 5
-    },
-    "expectedOutput": "def g(h,i,/,j,*,k=100,**kwarg):\n  return h,i,j,k,kwarg"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg",
-    "pattern": "function_definition",
-    "edits": [],
-    "expectedSourceOut": "def g(h,i,/,j,*,k=100,**kwarg):\n  return h,i,j,k,kwarg",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (identifier) parameter: (identifier) parameter: (positional_separator) parameter: (identifier) parameter: (keyword_separator) parameter: (default_parameter name: (identifier) value: (integer)) parameter: (dictionary_splat_pattern (identifier)))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (return_statement (expression_list (identifier) tail: (expression_list_group1 (identifier) (identifier) (identifier) (identifier)))) (newline)))))",
-    "wrappedText": "def g(h,i,/,j,*,k=100,**kwarg):\n  return h,i,j,k,kwarg",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 145,
-      "$source": 0,
-      "$named": true,
-      "_name": "h",
-      "_parameters": {
-        "$type": 146,
-        "$source": 0,
-        "$named": true,
-        "$other": [
-          7,
-          8
-        ],
-        "$span": {
-          "start": 175,
-          "end": 179
-        },
-        "$nodeHandle": 200,
-        "_parameters": {
-          "$type": 172,
-          "$source": 0,
-          "$named": true,
-          "_parameter": [
-            {
-              "$type": 180,
-              "$source": 0,
-              "$named": true,
-              "$other": [
-                11
-              ],
-              "$span": {
-                "start": 176,
-                "end": 178
-              },
-              "$nodeHandle": 202,
-              "_content": "a"
-            }
-          ],
-          "$span": {
-            "start": 176,
-            "end": 178
-          },
-          "$nodeHandle": 201,
-          "_parameter_trailing_sep": false
-        }
-      },
-      "_body": {
-        "$type": 261,
-        "$source": 0,
-        "$named": true,
-        "_block": {
-          "$type": 160,
-          "$source": 0,
-          "$named": true,
-          "_statements": [
-            {
-              "$type": 110,
-              "$source": 0,
-              "$named": true,
-              "_simple_statement": [
-                {
-                  "$type": 122,
-                  "$source": 0,
-                  "$named": true,
-                  "$span": {
-                    "start": 183,
-                    "end": 190
-                  },
-                  "$nodeHandle": 207,
-                  "_content": {
-                    "$type": 203,
-                    "$source": 0,
-                    "$named": true,
-                    "_function": "i",
-                    "_arguments": {
-                      "$type": 157,
-                      "$source": 0,
-                      "$named": true,
-                      "_arguments": {
-                        "$type": 238,
-                        "$source": 0,
-                        "$named": true,
-                        "_element": [
-                          {
-                            "$type": 156,
-                            "$source": 0,
-                            "$named": true,
-                            "$other": [
-                              7,
-                              8
-                            ],
-                            "$span": {
-                              "start": 185,
-                              "end": 189
-                            },
-                            "$nodeHandle": 211,
-                            "_content": {
-                              "$type": 148,
-                              "$source": 0,
-                              "$named": true,
-                              "_expression": "a",
-                              "$other": [
-                                11
-                              ],
-                              "$span": {
-                                "start": 186,
-                                "end": 188
-                              },
-                              "$nodeHandle": 212
-                            }
-                          }
-                        ],
-                        "$span": {
-                          "start": 185,
-                          "end": 189
-                        },
-                        "$nodeHandle": 210,
-                        "_trailing_sep": false
-                      },
-                      "$other": [
-                        7,
-                        8
-                      ],
-                      "$span": {
-                        "start": 184,
-                        "end": 190
-                      },
-                      "$nodeHandle": 209
-                    },
-                    "$span": {
-                      "start": 183,
-                      "end": 190
-                    },
-                    "$nodeHandle": 208
-                  }
-                }
-              ],
-              "_newline": 101,
-              "$span": {
-                "start": 183,
-                "end": 190
-              },
-              "$nodeHandle": 205,
-              "_simple_statement_trailing_sep": false
-            },
-            {
-              "$type": 110,
-              "$source": 0,
-              "$named": true,
-              "_simple_statement": [
-                {
-                  "$type": 122,
-                  "$source": 0,
-                  "$named": true,
-                  "$span": {
-                    "start": 193,
-                    "end": 202
-                  },
-                  "$nodeHandle": 213,
-                  "_content": {
-                    "$type": 203,
-                    "$source": 0,
-                    "$named": true,
-                    "_function": "j",
-                    "_arguments": {
-                      "$type": 157,
-                      "$source": 0,
-                      "$named": true,
-                      "_arguments": {
-                        "$type": 238,
-                        "$source": 0,
-                        "$named": true,
-                        "_element": [
-                          {
-                            "$type": 156,
-                            "$source": 0,
-                            "$named": true,
-                            "$other": [
-                              7,
-                              8
-                            ],
-                            "$span": {
-                              "start": 195,
-                              "end": 201
-                            },
-                            "$nodeHandle": 217,
-                            "_content": {
-                              "$type": 156,
-                              "$source": 0,
-                              "$named": true,
-                              "$other": [
-                                7,
-                                8
-                              ],
-                              "$span": {
-                                "start": 196,
-                                "end": 200
-                              },
-                              "$nodeHandle": 218,
-                              "_content": {
-                                "$type": 148,
-                                "$source": 0,
-                                "$named": true,
-                                "_expression": "a",
-                                "$other": [
-                                  11
-                                ],
-                                "$span": {
-                                  "start": 197,
-                                  "end": 199
-                                },
-                                "$nodeHandle": 219
-                              }
-                            }
-                          }
-                        ],
-                        "$span": {
-                          "start": 195,
-                          "end": 201
-                        },
-                        "$nodeHandle": 216,
-                        "_trailing_sep": false
-                      },
-                      "$other": [
-                        7,
-                        8
-                      ],
-                      "$span": {
-                        "start": 194,
-                        "end": 202
-                      },
-                      "$nodeHandle": 215
-                    },
-                    "$span": {
-                      "start": 193,
-                      "end": 202
-                    },
-                    "$nodeHandle": 214
-                  }
-                }
-              ],
-              "_newline": 101,
-              "$span": {
-                "start": 193,
-                "end": 202
-              },
-              "$nodeHandle": 206,
-              "_simple_statement_trailing_sep": false
-            }
-          ],
-          "$span": {
-            "start": 183,
-            "end": 202
-          },
-          "$nodeHandle": 204
-        },
-        "$span": {
-          "start": 180,
-          "end": 202
-        },
-        "$nodeHandle": 203
-      },
-      "$other": [
-        35,
-        22
-      ],
-      "$span": {
-        "start": 170,
-        "end": 202
-      },
-      "$nodeHandle": 6
-    },
-    "expectedOutput": "def h(*a):\n  i((*a))\n  j(((*a)))"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def h(*a):\n  i((*a))\n  j(((*a)))",
-    "pattern": "function_definition",
-    "edits": [],
-    "expectedSourceOut": "def h(*a):\n  i((*a))\n  j(((*a)))",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (list_splat_pattern (identifier)))) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (parenthesized_list_splat (list_splat expression: (identifier))))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (parenthesized_list_splat (parenthesized_expression (list_splat expression: (identifier)))))))) (newline)))))",
-    "wrappedText": "def h(*a):\n  i((*a))\n  j(((*a)))",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 145,
-      "$source": 0,
-      "$named": true,
-      "_name": "foo",
-      "_parameters": {
-        "$type": 146,
-        "$source": 0,
-        "$named": true,
-        "$text": "()",
-        "$span": {
-          "start": 211,
-          "end": 213
-        },
-        "$nodeHandle": 220
-      },
-      "_body": {
-        "$type": 261,
-        "$source": 0,
-        "$named": true,
-        "_block": {
-          "$type": 160,
-          "$source": 0,
-          "$named": true,
-          "_statements": [
-            {
-              "$type": 110,
-              "$source": 0,
-              "$named": true,
-              "_simple_statement": [
-                {
-                  "$type": 128,
-                  "$source": 0,
-                  "$named": true,
-                  "$text": "pass",
-                  "$span": {
-                    "start": 219,
-                    "end": 223
-                  },
-                  "$nodeHandle": 224
-                }
-              ],
-              "_newline": 101,
-              "$span": {
-                "start": 219,
-                "end": 223
-              },
-              "$nodeHandle": 223,
-              "_simple_statement_trailing_sep": false
-            }
-          ],
-          "$span": {
-            "start": 219,
-            "end": 223
-          },
-          "$nodeHandle": 222
-        },
-        "$span": {
-          "start": 214,
-          "end": 223
-        },
-        "$nodeHandle": 221
-      },
-      "$other": [
-        35,
-        22
-      ],
-      "$span": {
-        "start": 204,
-        "end": 223
-      },
-      "$nodeHandle": 7
-    },
-    "expectedOutput": "def foo():\n  pass"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def foo():\n    pass",
-    "pattern": "function_definition",
-    "edits": [],
-    "expectedSourceOut": "def foo():\n  pass",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (pass_statement) (newline)))))",
-    "wrappedText": "def foo():\n  pass",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 146,
-      "$source": 0,
-      "$named": true,
-      "$other": [
-        7,
-        8
-      ],
-      "$span": {
-        "start": 5,
-        "end": 12
-      },
-      "$nodeHandle": 8,
-      "_parameters": {
-        "$type": 172,
-        "$source": 0,
-        "$named": true,
-        "_parameter": [
-          {
-            "$type": 176,
-            "$source": 0,
-            "$named": true,
-            "$other": [
-              7,
-              8
-            ],
-            "$span": {
-              "start": 6,
-              "end": 11
-            },
-            "$nodeHandle": 226,
-            "_patterns": {
-              "$type": 173,
-              "$source": 0,
-              "$named": true,
-              "_pattern": [
-                "a",
-                "b"
-              ],
-              "$other": [
-                9
-              ],
-              "$span": {
-                "start": 7,
-                "end": 10
-              },
-              "$nodeHandle": 227,
-              "_pattern_trailing_sep": false
-            }
-          }
-        ],
-        "$span": {
-          "start": 6,
-          "end": 11
-        },
-        "$nodeHandle": 225,
-        "_parameter_trailing_sep": false
-      }
-    },
-    "expectedOutput": "((a,b))"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "((a,b))",
-    "pattern": "parameters",
-    "edits": [],
-    "expectedSourceOut": "((a,b))",
-    "expectedReparseTree": "(parameters (parameter_list parameter: (tuple_pattern (pattern_group pattern: (identifier) pattern: (identifier)))))",
-    "wrappedText": "def _f((a,b)):\n    pass",
-    "wrappedOffset": 6
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 146,
-      "$source": 0,
-      "$named": true,
-      "$other": [
-        7,
-        8
-      ],
-      "$span": {
-        "start": 35,
-        "end": 47
-      },
-      "$nodeHandle": 18,
-      "_parameters": {
-        "$type": 172,
-        "$source": 0,
-        "$named": true,
-        "_parameter": [
-          {
-            "$type": 204,
-            "$source": 0,
-            "$named": true,
-            "_type": {
-              "$type": 205,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 43,
-                "end": 46
-              },
-              "$nodeHandle": 230,
-              "_content": "str"
-            },
-            "$other": [
-              22
-            ],
-            "$span": {
-              "start": 36,
-              "end": 46
-            },
-            "$nodeHandle": 229,
-            "_content": {
-              "$type": 180,
-              "$source": 0,
-              "$named": true,
-              "$other": [
-                11
-              ],
-              "$span": {
-                "start": 36,
-                "end": 41
-              },
-              "$nodeHandle": 231,
-              "_content": "list"
-            }
-          }
-        ],
-        "$span": {
-          "start": 36,
-          "end": 46
-        },
-        "$nodeHandle": 228,
-        "_parameter_trailing_sep": false
-      }
-    },
-    "expectedOutput": "(*list:str)"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "(*list: str)",
-    "pattern": "parameters",
-    "edits": [],
-    "expectedSourceOut": "(*list:str)",
-    "expectedReparseTree": "(parameters (parameter_list parameter: (typed_parameter (list_splat_pattern (identifier)) type: (type (identifier)))))",
-    "wrappedText": "def _f(*list:str):\n    pass",
-    "wrappedOffset": 6
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 146,
-      "$source": 0,
-      "$named": true,
-      "$other": [
-        7,
-        8
-      ],
-      "$span": {
-        "start": 62,
-        "end": 75
-      },
-      "$nodeHandle": 27,
-      "_parameters": {
-        "$type": 172,
-        "$source": 0,
-        "$named": true,
-        "_parameter": [
-          {
-            "$type": 204,
-            "$source": 0,
-            "$named": true,
-            "_type": {
-              "$type": 205,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 71,
-                "end": 74
-              },
-              "$nodeHandle": 234,
-              "_content": "str"
-            },
-            "$other": [
-              22
-            ],
-            "$span": {
-              "start": 63,
-              "end": 74
-            },
-            "$nodeHandle": 233,
-            "_content": {
-              "$type": 181,
-              "$source": 0,
-              "$named": true,
-              "$other": [
-                36
-              ],
-              "$span": {
-                "start": 63,
-                "end": 69
-              },
-              "$nodeHandle": 235,
-              "_content": "list"
-            }
-          }
-        ],
-        "$span": {
-          "start": 63,
-          "end": 74
-        },
-        "$nodeHandle": 232,
-        "_parameter_trailing_sep": false
-      }
-    },
-    "expectedOutput": "(**list:str)"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "(**list: str)",
-    "pattern": "parameters",
-    "edits": [],
-    "expectedSourceOut": "(**list:str)",
-    "expectedReparseTree": "(parameters (parameter_list parameter: (typed_parameter (dictionary_splat_pattern (identifier)) type: (type (identifier)))))",
-    "wrappedText": "def _f(**list:str):\n    pass",
-    "wrappedOffset": 6
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 146,
-      "$source": 0,
-      "$named": true,
-      "$text": "()",
-      "$span": {
-        "start": 90,
-        "end": 92
-      },
-      "$nodeHandle": 36
-    },
-    "expectedOutput": "()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "()",
-    "pattern": "parameters",
-    "edits": [],
-    "expectedSourceOut": "()",
-    "expectedReparseTree": "(parameters)",
-    "wrappedText": "def _f():\n    pass",
-    "wrappedOffset": 6
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 146,
-      "$source": 0,
-      "$named": true,
-      "$other": [
-        7,
-        8
-      ],
-      "$span": {
-        "start": 113,
-        "end": 144
-      },
-      "$nodeHandle": 41,
-      "_parameters": {
-        "$type": 172,
-        "$source": 0,
-        "$named": true,
-        "_parameter": [
-          {
-            "$type": 1,
-            "$source": 0,
-            "$named": true,
-            "$text": "h",
-            "$span": {
-              "start": 114,
-              "end": 115
-            }
-          },
-          {
-            "$type": 1,
-            "$source": 0,
-            "$named": true,
-            "$text": "i",
-            "$span": {
-              "start": 117,
-              "end": 118
-            }
-          },
-          {
-            "$type": 234,
-            "$source": 0,
-            "$named": true,
-            "$text": "/",
-            "$span": {
-              "start": 120,
-              "end": 121
-            },
-            "$nodeHandle": 237
-          },
-          {
-            "$type": 1,
-            "$source": 0,
-            "$named": true,
-            "$text": "j",
-            "$span": {
-              "start": 123,
-              "end": 124
-            }
-          },
-          {
-            "$type": 235,
-            "$source": 0,
-            "$named": true,
-            "$text": "*",
-            "$span": {
-              "start": 126,
-              "end": 127
-            },
-            "$nodeHandle": 238
-          },
-          {
-            "$type": 178,
-            "$source": 0,
-            "$named": true,
-            "_name": "k",
-            "_value": "100",
-            "$other": [
-              40
-            ],
-            "$span": {
-              "start": 129,
-              "end": 134
-            },
-            "$nodeHandle": 239
-          },
-          {
-            "$type": 181,
-            "$source": 0,
-            "$named": true,
-            "$other": [
-              36
-            ],
-            "$span": {
-              "start": 136,
-              "end": 143
-            },
-            "$nodeHandle": 240,
-            "_content": "kwarg"
-          }
-        ],
-        "$other": [
-          9,
-          9,
-          9,
-          9,
-          9,
-          9
-        ],
-        "$span": {
-          "start": 114,
-          "end": 143
-        },
-        "$nodeHandle": 236,
-        "_parameter_trailing_sep": false
-      }
-    },
-    "expectedOutput": "(h,i,/,j,*,k=100,**kwarg)"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "(h, i, /, j, *, k=100, **kwarg)",
-    "pattern": "parameters",
-    "edits": [],
-    "expectedSourceOut": "(h,i,/,j,*,k=100,**kwarg)",
-    "expectedReparseTree": "(parameters (parameter_list parameter: (identifier) parameter: (identifier) parameter: (positional_separator) parameter: (identifier) parameter: (keyword_separator) parameter: (default_parameter name: (identifier) value: (integer)) parameter: (dictionary_splat_pattern (identifier))))",
-    "wrappedText": "def _f(h,i,/,j,*,k=100,**kwarg):\n    pass",
-    "wrappedOffset": 6
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 146,
-      "$source": 0,
-      "$named": true,
-      "$other": [
-        7,
-        8
-      ],
-      "$span": {
-        "start": 175,
-        "end": 179
-      },
-      "$nodeHandle": 53,
-      "_parameters": {
-        "$type": 172,
-        "$source": 0,
-        "$named": true,
-        "_parameter": [
-          {
-            "$type": 180,
-            "$source": 0,
-            "$named": true,
-            "$other": [
-              11
-            ],
-            "$span": {
-              "start": 176,
-              "end": 178
-            },
-            "$nodeHandle": 242,
-            "_content": "a"
-          }
-        ],
-        "$span": {
-          "start": 176,
-          "end": 178
-        },
-        "$nodeHandle": 241,
-        "_parameter_trailing_sep": false
-      }
-    },
-    "expectedOutput": "(*a)"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "(*a)",
-    "pattern": "parameters",
-    "edits": [],
-    "expectedSourceOut": "(*a)",
-    "expectedReparseTree": "(parameters (parameter_list parameter: (list_splat_pattern (identifier))))",
-    "wrappedText": "def _f(*a):\n    pass",
-    "wrappedOffset": 6
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 146,
-      "$source": 0,
-      "$named": true,
-      "$text": "()",
-      "$span": {
-        "start": 211,
-        "end": 213
-      },
-      "$nodeHandle": 73
-    },
-    "expectedOutput": "()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "()",
-    "pattern": "parameters",
-    "edits": [],
-    "expectedSourceOut": "()",
-    "expectedReparseTree": "(parameters)",
-    "wrappedText": "def _f():\n    pass",
-    "wrappedOffset": 6
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 108,
-      "$source": 0,
-      "$named": true,
-      "_comment": [
-        "# These are not actually valid python; blocks",
-        "# must contain at least one statement. But we",
-        "# allow them because error recovery for empty",
-        "# blocks doesn't work very well otherwise."
-      ],
-      "_statements": [
-        {
-          "$type": 145,
-          "$source": 0,
-          "$named": true,
           "_name": "a",
           "_parameters": {
             "$type": 146,
@@ -88042,7 +85522,51 @@
             "start": 181,
             "end": 193
           },
-          "$nodeHandle": 13
+          "$nodeHandle": 13,
+          "$triviaData": {
+            "leading": [
+              {
+                "$type": 78,
+                "$source": 0,
+                "$named": true,
+                "$text": "# These are not actually valid python; blocks",
+                "$span": {
+                  "start": 0,
+                  "end": 45
+                }
+              },
+              {
+                "$type": 78,
+                "$source": 0,
+                "$named": true,
+                "$text": "# must contain at least one statement. But we",
+                "$span": {
+                  "start": 46,
+                  "end": 91
+                }
+              },
+              {
+                "$type": 78,
+                "$source": 0,
+                "$named": true,
+                "$text": "# allow them because error recovery for empty",
+                "$span": {
+                  "start": 92,
+                  "end": 137
+                }
+              },
+              {
+                "$type": 78,
+                "$source": 0,
+                "$named": true,
+                "$text": "# blocks doesn't work very well otherwise.",
+                "$span": {
+                  "start": 138,
+                  "end": 180
+                }
+              }
+            ]
+          }
         },
         {
           "$type": 131,
@@ -88167,7 +85691,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "def a(b,c):\nif d:\n  print e\n  while f():"
+    "expectedOutput": "# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b,c):\nif d:\n  print e\n  while f():"
   },
   {
     "kind": "roundtrip",
@@ -88175,9 +85699,9 @@
     "sourceIn": "# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b, c):\n\nif d:\n  print e\n  while f():",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "def a(b,c):\nif d:\n  print e\n  while f():",
-    "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (identifier) parameter: (identifier))) body: (newline)) statements: (if_statement condition: (identifier) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (print_statement (print_statement_group2 argument: (identifier))) (newline)) statements: (while_statement condition: (call function: (identifier) arguments: (argument_list)) body: (newline))))))",
-    "wrappedText": "def a(b,c):\nif d:\n  print e\n  while f():",
+    "expectedSourceOut": "# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b,c):\nif d:\n  print e\n  while f():",
+    "expectedReparseTree": "(module (comment) (comment) (comment) (comment) statements: (function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (identifier) parameter: (identifier))) body: (newline)) statements: (if_statement condition: (identifier) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (print_statement (print_statement_group2 argument: (identifier))) (newline)) statements: (while_statement condition: (call function: (identifier) arguments: (argument_list)) body: (newline))))))",
+    "wrappedText": "# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b,c):\nif d:\n  print e\n  while f():",
     "wrappedOffset": 0
   },
   {
@@ -88229,9 +85753,53 @@
         "start": 181,
         "end": 193
       },
-      "$nodeHandle": 1
+      "$nodeHandle": 1,
+      "$triviaData": {
+        "leading": [
+          {
+            "$type": 78,
+            "$source": 0,
+            "$named": true,
+            "$text": "# These are not actually valid python; blocks",
+            "$span": {
+              "start": 0,
+              "end": 45
+            }
+          },
+          {
+            "$type": 78,
+            "$source": 0,
+            "$named": true,
+            "$text": "# must contain at least one statement. But we",
+            "$span": {
+              "start": 46,
+              "end": 91
+            }
+          },
+          {
+            "$type": 78,
+            "$source": 0,
+            "$named": true,
+            "$text": "# allow them because error recovery for empty",
+            "$span": {
+              "start": 92,
+              "end": 137
+            }
+          },
+          {
+            "$type": 78,
+            "$source": 0,
+            "$named": true,
+            "$text": "# blocks doesn't work very well otherwise.",
+            "$span": {
+              "start": 138,
+              "end": 180
+            }
+          }
+        ]
+      }
     },
-    "expectedOutput": "def a(b,c):"
+    "expectedOutput": "# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b,c):"
   },
   {
     "kind": "roundtrip",
@@ -88239,9 +85807,9 @@
     "sourceIn": "def a(b, c):",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a(b,c):",
+    "expectedSourceOut": "# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b,c):",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameter_list parameter: (identifier) parameter: (identifier))) body: (newline))",
-    "wrappedText": "def a(b,c):",
+    "wrappedText": "# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b,c):",
     "wrappedOffset": 0
   },
   {
@@ -92006,6 +89574,20 @@
                 "end": 20
               },
               "$nodeHandle": 15,
+              "$triviaData": {
+                "trailing": [
+                  {
+                    "$type": 78,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "# bye",
+                    "$span": {
+                      "start": 21,
+                      "end": 26
+                    }
+                  }
+                ]
+              },
               "_content": {
                 "$type": 252,
                 "$source": 0,
@@ -92025,13 +89607,26 @@
               }
             }
           ],
-          "_comment": "# bye",
           "_newline": 101,
           "$span": {
             "start": 13,
             "end": 26
           },
           "$nodeHandle": 11,
+          "$triviaData": {
+            "leading": [
+              {
+                "$type": 78,
+                "$source": 0,
+                "$named": true,
+                "$text": "# hi",
+                "$span": {
+                  "start": 8,
+                  "end": 12
+                }
+              }
+            ]
+          },
           "_simple_statement_trailing_sep": false
         },
         {
@@ -92076,14 +89671,13 @@
           "_simple_statement_trailing_sep": false
         }
       ],
-      "_comment": "# hi",
       "$span": {
         "start": 0,
         "end": 34
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "print a\nprint b\nprint c"
+    "expectedOutput": "print a\n# hi\nprint b\n# bye\n\nprint c"
   },
   {
     "kind": "roundtrip",
@@ -92091,9 +89685,9 @@
     "sourceIn": "print a\n# hi\nprint b # bye\nprint c",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "print a\nprint b\nprint c",
-    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (print_statement (print_statement_group2 argument: (identifier))) (newline)) statements: (statement_group1 simple_statement: (print_statement (print_statement_group2 argument: (identifier))) (newline)) statements: (statement_group1 simple_statement: (print_statement (print_statement_group2 argument: (identifier))) (newline)))",
-    "wrappedText": "print a\nprint b\nprint c",
+    "expectedSourceOut": "print a\n# hi\nprint b\n# bye\n\nprint c",
+    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (print_statement (print_statement_group2 argument: (identifier))) (newline)) (comment) statements: (statement_group1 simple_statement: (print_statement (print_statement_group2 argument: (identifier))) (newline)) (comment) statements: (statement_group1 simple_statement: (print_statement (print_statement_group2 argument: (identifier))) (newline)))",
+    "wrappedText": "print a\n# hi\nprint b\n# bye\n\nprint c",
     "wrappedOffset": 0
   },
   {
@@ -92113,11 +89707,6 @@
             "$type": 261,
             "$source": 0,
             "$named": true,
-            "_comment": [
-              "# one",
-              "# two",
-              "# three"
-            ],
             "_block": {
               "$type": 160,
               "$source": 0,
@@ -92171,15 +89760,62 @@
                     "end": 50
                   },
                   "$nodeHandle": 12,
+                  "$triviaData": {
+                    "leading": [
+                      {
+                        "$type": 78,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "# four",
+                        "$span": {
+                          "start": 40,
+                          "end": 46
+                        }
+                      }
+                    ]
+                  },
                   "_simple_statement_trailing_sep": false
                 }
               ],
-              "_comment": "# four",
               "$span": {
                 "start": 34,
                 "end": 50
               },
-              "$nodeHandle": 10
+              "$nodeHandle": 10,
+              "$triviaData": {
+                "leading": [
+                  {
+                    "$type": 78,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "# one",
+                    "$span": {
+                      "start": 8,
+                      "end": 13
+                    }
+                  },
+                  {
+                    "$type": 78,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "# two",
+                    "$span": {
+                      "start": 14,
+                      "end": 19
+                    }
+                  },
+                  {
+                    "$type": 78,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "# three",
+                    "$span": {
+                      "start": 24,
+                      "end": 31
+                    }
+                  }
+                ]
+              }
             },
             "$span": {
               "start": 5,
@@ -92205,7 +89841,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "if a:\n  b\n  c"
+    "expectedOutput": "if a:\n  # one\n  # two\n  # three\n  b\n  # four\n  c"
   },
   {
     "kind": "roundtrip",
@@ -92213,9 +89849,9 @@
     "sourceIn": "if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "if a:\n  b\n  c",
-    "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline)) statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline))))))",
-    "wrappedText": "if a:\n  b\n  c",
+    "expectedSourceOut": "if a:\n  # one\n  # two\n  # three\n  b\n  # four\n  c",
+    "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block_with_indent (comment) (comment) (comment) (block statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline)) (comment) statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline))))))",
+    "wrappedText": "if a:\n  # one\n  # two\n  # three\n  b\n  # four\n  c",
     "wrappedOffset": 0
   },
   {
@@ -92366,17 +90002,30 @@
             "end": 18
           },
           "$nodeHandle": 9,
+          "$triviaData": {
+            "leading": [
+              {
+                "$type": 78,
+                "$source": 0,
+                "$named": true,
+                "$text": "# one",
+                "$span": {
+                  "start": 11,
+                  "end": 16
+                }
+              }
+            ]
+          },
           "_simple_statement_trailing_sep": false
         }
       ],
-      "_comment": "# one",
       "$span": {
         "start": 0,
         "end": 18
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "if a:\n  b\nc"
+    "expectedOutput": "if a:\n  b\n# one\nc"
   },
   {
     "kind": "roundtrip",
@@ -92384,9 +90033,9 @@
     "sourceIn": "if a:\n  b\n\n# one\nc",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "if a:\n  b\nc",
-    "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline))))) statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline)))",
-    "wrappedText": "if a:\n  b\nc",
+    "expectedSourceOut": "if a:\n  b\n# one\nc",
+    "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline))))) (comment) statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline)))",
+    "wrappedText": "if a:\n  b\n# one\nc",
     "wrappedOffset": 0
   },
   {
@@ -92488,12 +90137,32 @@
                     "end": 9
                   },
                   "$nodeHandle": 27,
+                  "$triviaData": {
+                    "trailing": [
+                      {
+                        "$type": 78,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "# one",
+                        "$span": {
+                          "start": 12,
+                          "end": 17
+                        }
+                      },
+                      {
+                        "$type": 78,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "# two",
+                        "$span": {
+                          "start": 20,
+                          "end": 25
+                        }
+                      }
+                    ]
+                  },
                   "_simple_statement_trailing_sep": false
                 }
-              ],
-              "_comment": [
-                "# one",
-                "# two"
               ],
               "$span": {
                 "start": 8,
@@ -92555,12 +90224,32 @@
                     "end": 36
                   },
                   "$nodeHandle": 31,
+                  "$triviaData": {
+                    "trailing": [
+                      {
+                        "$type": 78,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "# three",
+                        "$span": {
+                          "start": 41,
+                          "end": 48
+                        }
+                      },
+                      {
+                        "$type": 78,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "# four",
+                        "$span": {
+                          "start": 55,
+                          "end": 61
+                        }
+                      }
+                    ]
+                  },
                   "_simple_statement_trailing_sep": false
                 }
-              ],
-              "_comment": [
-                "# three",
-                "# four"
               ],
               "$span": {
                 "start": 35,
@@ -92638,10 +90327,23 @@
                                 "end": 91
                               },
                               "$nodeHandle": 41,
+                              "$triviaData": {
+                                "trailing": [
+                                  {
+                                    "$type": 78,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "$text": "# comment",
+                                    "$span": {
+                                      "start": 92,
+                                      "end": 101
+                                    }
+                                  }
+                                ]
+                              },
                               "_content": "b"
                             }
                           ],
-                          "_comment": "# comment",
                           "_newline": 101,
                           "$span": {
                             "start": 90,
@@ -92688,10 +90390,23 @@
                         "end": 107
                       },
                       "$nodeHandle": 42,
+                      "$triviaData": {
+                        "trailing": [
+                          {
+                            "$type": 78,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "# comment",
+                            "$span": {
+                              "start": 108,
+                              "end": 117
+                            }
+                          }
+                        ]
+                      },
                       "_content": "b"
                     }
                   ],
-                  "_comment": "# comment",
                   "_newline": 101,
                   "$span": {
                     "start": 106,
@@ -92721,17 +90436,30 @@
             "start": 63,
             "end": 117
           },
-          "$nodeHandle": 24
+          "$nodeHandle": 24,
+          "$triviaData": {
+            "trailing": [
+              {
+                "$type": 78,
+                "$source": 0,
+                "$named": true,
+                "$text": "# five",
+                "$span": {
+                  "start": 119,
+                  "end": 125
+                }
+              }
+            ]
+          }
         }
       ],
-      "_comment": "# five",
       "$span": {
         "start": 0,
         "end": 125
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "if a:\n  b\nif c:\n  d\ndef a():\n  if b:\n    b\n  b"
+    "expectedOutput": "if a:\n  b\n\n  # one\n  # two\nif c:\n  d\n\n  # three\n  # four\ndef a():\n  if b:\n    b\n    # comment\n\n  b\n  # comment\n\n\n# five"
   },
   {
     "kind": "roundtrip",
@@ -92739,9 +90467,9 @@
     "sourceIn": "if a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "if a:\n  b\nif c:\n  d\ndef a():\n  if b:\n    b\n  b",
-    "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline))))) statements: (if_statement condition: (identifier) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (if_statement condition: (identifier) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline))))) statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline))))))",
-    "wrappedText": "if a:\n  b\nif c:\n  d\ndef a():\n  if b:\n    b\n  b",
+    "expectedSourceOut": "if a:\n  b\n\n  # one\n  # two\nif c:\n  d\n\n  # three\n  # four\ndef a():\n  if b:\n    b\n    # comment\n\n  b\n  # comment\n\n\n# five",
+    "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline)) (comment) (comment)))) statements: (if_statement condition: (identifier) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline)) (comment) (comment)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (if_statement condition: (identifier) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline)) (comment)))) statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline)) (comment)))) (comment))",
+    "wrappedText": "if a:\n  b\n\n  # one\n  # two\nif c:\n  d\n\n  # three\n  # four\ndef a():\n  if b:\n    b\n    # comment\n\n  b\n  # comment\n\n\n# five",
     "wrappedOffset": 0
   },
   {
@@ -92810,9 +90538,23 @@
         "end": 91
       },
       "$nodeHandle": 20,
+      "$triviaData": {
+        "trailing": [
+          {
+            "$type": 78,
+            "$source": 0,
+            "$named": true,
+            "$text": "# comment",
+            "$span": {
+              "start": 92,
+              "end": 101
+            }
+          }
+        ]
+      },
       "_content": "b"
     },
-    "expectedOutput": "b"
+    "expectedOutput": "b\n# comment"
   },
   {
     "kind": "roundtrip",
@@ -92820,9 +90562,9 @@
     "sourceIn": "b",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "b",
+    "expectedSourceOut": "b\n# comment",
     "expectedReparseTree": "(expression_statement (identifier))",
-    "wrappedText": "b",
+    "wrappedText": "b\n# comment",
     "wrappedOffset": 0
   },
   {
@@ -92837,9 +90579,23 @@
         "end": 107
       },
       "$nodeHandle": 21,
+      "$triviaData": {
+        "trailing": [
+          {
+            "$type": 78,
+            "$source": 0,
+            "$named": true,
+            "$text": "# comment",
+            "$span": {
+              "start": 108,
+              "end": 117
+            }
+          }
+        ]
+      },
       "_content": "b"
     },
-    "expectedOutput": "b"
+    "expectedOutput": "b\n# comment"
   },
   {
     "kind": "roundtrip",
@@ -92847,9 +90603,9 @@
     "sourceIn": "b",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "b",
+    "expectedSourceOut": "b\n# comment",
     "expectedReparseTree": "(expression_statement (identifier))",
-    "wrappedText": "b",
+    "wrappedText": "b\n# comment",
     "wrappedOffset": 0
   },
   {
@@ -92908,10 +90664,23 @@
                             "end": 91
                           },
                           "$nodeHandle": 76,
+                          "$triviaData": {
+                            "trailing": [
+                              {
+                                "$type": 78,
+                                "$source": 0,
+                                "$named": true,
+                                "$text": "# comment",
+                                "$span": {
+                                  "start": 92,
+                                  "end": 101
+                                }
+                              }
+                            ]
+                          },
                           "_content": "b"
                         }
                       ],
-                      "_comment": "# comment",
                       "_newline": 101,
                       "$span": {
                         "start": 90,
@@ -92958,10 +90727,23 @@
                     "end": 107
                   },
                   "$nodeHandle": 77,
+                  "$triviaData": {
+                    "trailing": [
+                      {
+                        "$type": 78,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "# comment",
+                        "$span": {
+                          "start": 108,
+                          "end": 117
+                        }
+                      }
+                    ]
+                  },
                   "_content": "b"
                 }
               ],
-              "_comment": "# comment",
               "_newline": 101,
               "$span": {
                 "start": 106,
@@ -92991,9 +90773,23 @@
         "start": 63,
         "end": 117
       },
-      "$nodeHandle": 3
+      "$nodeHandle": 3,
+      "$triviaData": {
+        "trailing": [
+          {
+            "$type": 78,
+            "$source": 0,
+            "$named": true,
+            "$text": "# five",
+            "$span": {
+              "start": 119,
+              "end": 125
+            }
+          }
+        ]
+      }
     },
-    "expectedOutput": "def a():\n  if b:\n    b\n  b"
+    "expectedOutput": "def a():\n  if b:\n    b\n    # comment\n\n  b\n  # comment\n\n\n# five"
   },
   {
     "kind": "roundtrip",
@@ -93001,9 +90797,9 @@
     "sourceIn": "def a():\n    if b:\n        b # comment\n    b # comment",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a():\n  if b:\n    b\n  b",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (if_statement condition: (identifier) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline))))) statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline)))))",
-    "wrappedText": "def a():\n  if b:\n    b\n  b",
+    "expectedSourceOut": "def a():\n  if b:\n    b\n    # comment\n\n  b\n  # comment\n\n\n# five",
+    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (if_statement condition: (identifier) consequence: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline)) (comment)))) statements: (statement_group1 simple_statement: (expression_statement (identifier)) (newline)) (comment))))",
+    "wrappedText": "def a():\n  if b:\n    b\n    # comment\n\n  b\n  # comment\n\n\n# five",
     "wrappedOffset": 0
   },
   {
@@ -93094,17 +90890,30 @@
             "end": 9
           },
           "$nodeHandle": 5,
+          "$triviaData": {
+            "trailing": [
+              {
+                "$type": 78,
+                "$source": 0,
+                "$named": true,
+                "$text": "# We need to recognize the newline *preceding* this comment, because there's no newline after it",
+                "$span": {
+                  "start": 12,
+                  "end": 108
+                }
+              }
+            ]
+          },
           "_simple_statement_trailing_sep": false
         }
       ],
-      "_comment": "# We need to recognize the newline *preceding* this comment, because there's no newline after it",
       "$span": {
         "start": 0,
         "end": 108
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "print\"a\""
+    "expectedOutput": "print\"a\"\n\n# We need to recognize the newline *preceding* this comment, because there's no newline after it"
   },
   {
     "kind": "roundtrip",
@@ -93112,9 +90921,9 @@
     "sourceIn": "print \"a\"\n  # We need to recognize the newline *preceding* this comment, because there's no newline after it",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "print\"a\"",
-    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (print_statement (print_statement_group2 argument: (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (newline)))",
-    "wrappedText": "print\"a\"",
+    "expectedSourceOut": "print\"a\"\n\n# We need to recognize the newline *preceding* this comment, because there's no newline after it",
+    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (print_statement (print_statement_group2 argument: (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (newline)) (comment))",
+    "wrappedText": "print\"a\"\n\n# We need to recognize the newline *preceding* this comment, because there's no newline after it",
     "wrappedOffset": 0
   },
   {
@@ -94476,7 +92285,6 @@
                   },
                   "$nodeHandle": 15
                 },
-                "_line_continuation": "\\\n",
                 "_operator": 53,
                 "_right": {
                   "$type": 203,
@@ -94529,7 +92337,21 @@
                     "start": 14,
                     "end": 23
                   },
-                  "$nodeHandle": 19
+                  "$nodeHandle": 19,
+                  "$triviaData": {
+                    "leading": [
+                      {
+                        "$type": 79,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "\\\n",
+                        "$span": {
+                          "start": 9,
+                          "end": 11
+                        }
+                      }
+                    ]
+                  }
                 },
                 "$span": {
                   "start": 0,
@@ -94554,7 +92376,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "len(\"a\")or len(\"aa\")"
+    "expectedOutput": "len(\"a\")or\\\n\nlen(\"aa\")"
   },
   {
     "kind": "roundtrip",
@@ -94562,9 +92384,9 @@
     "sourceIn": "len(\"a\") \\\nor len(\"aa\")",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "len(\"a\")or len(\"aa\")",
-    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (boolean_operator left: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) string_end: (string_end))))) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) string_end: (string_end))))))) (newline)))",
-    "wrappedText": "len(\"a\")or len(\"aa\")",
+    "expectedSourceOut": "len(\"a\")or\\\n\nlen(\"aa\")",
+    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (boolean_operator left: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) string_end: (string_end))))) (line_continuation) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) string_end: (string_end))))))) (newline)))",
+    "wrappedText": "len(\"a\")or\\\n\nlen(\"aa\")",
     "wrappedOffset": 0
   },
   {
@@ -94636,7 +92458,6 @@
           },
           "$nodeHandle": 24
         },
-        "_line_continuation": "\\\n",
         "_operator": 53,
         "_right": {
           "$type": 203,
@@ -94689,7 +92510,21 @@
             "start": 14,
             "end": 23
           },
-          "$nodeHandle": 28
+          "$nodeHandle": 28,
+          "$triviaData": {
+            "leading": [
+              {
+                "$type": 79,
+                "$source": 0,
+                "$named": true,
+                "$text": "\\\n",
+                "$span": {
+                  "start": 9,
+                  "end": 11
+                }
+              }
+            ]
+          }
         },
         "$span": {
           "start": 0,
@@ -94698,7 +92533,7 @@
         "$nodeHandle": 23
       }
     },
-    "expectedOutput": "len(\"a\")or len(\"aa\")"
+    "expectedOutput": "len(\"a\")or\\\n\nlen(\"aa\")"
   },
   {
     "kind": "roundtrip",
@@ -94706,9 +92541,9 @@
     "sourceIn": "len(\"a\") \\\nor len(\"aa\")",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "len(\"a\")or len(\"aa\")",
-    "expectedReparseTree": "(expression_statement (boolean_operator left: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) string_end: (string_end))))) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))))",
-    "wrappedText": "len(\"a\")or len(\"aa\")",
+    "expectedSourceOut": "len(\"a\")or\\\n\nlen(\"aa\")",
+    "expectedReparseTree": "(expression_statement (boolean_operator left: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) string_end: (string_end))))) (line_continuation) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))))",
+    "wrappedText": "len(\"a\")or\\\n\nlen(\"aa\")",
     "wrappedOffset": 0
   },
   {
@@ -94771,7 +92606,6 @@
         },
         "$nodeHandle": 32
       },
-      "_line_continuation": "\\\n",
       "_operator": 53,
       "_right": {
         "$type": 203,
@@ -94824,7 +92658,21 @@
           "start": 14,
           "end": 23
         },
-        "$nodeHandle": 36
+        "$nodeHandle": 36,
+        "$triviaData": {
+          "leading": [
+            {
+              "$type": 79,
+              "$source": 0,
+              "$named": true,
+              "$text": "\\\n",
+              "$span": {
+                "start": 9,
+                "end": 11
+              }
+            }
+          ]
+        }
       },
       "$span": {
         "start": 0,
@@ -94832,7 +92680,7 @@
       },
       "$nodeHandle": 3
     },
-    "expectedOutput": "len(\"a\")or len(\"aa\")"
+    "expectedOutput": "len(\"a\")or\\\n\nlen(\"aa\")"
   },
   {
     "kind": "roundtrip",
@@ -94840,9 +92688,9 @@
     "sourceIn": "len(\"a\") \\\nor len(\"aa\")",
     "pattern": "boolean_operator",
     "edits": [],
-    "expectedSourceOut": "len(\"a\")or len(\"aa\")",
-    "expectedReparseTree": "(boolean_operator left: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) string_end: (string_end))))) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) string_end: (string_end))))))",
-    "wrappedText": "_ = len(\"a\")or len(\"aa\")",
+    "expectedSourceOut": "len(\"a\")or\\\n\nlen(\"aa\")",
+    "expectedReparseTree": "(boolean_operator left: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) string_end: (string_end))))) (line_continuation) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) string_end: (string_end))))))",
+    "wrappedText": "_ = len(\"a\")or\\\n\nlen(\"aa\")",
     "wrappedOffset": 4
   },
   {
@@ -94912,75 +92760,6 @@
     "expectedSourceOut": "len(\"a\")",
     "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))",
     "wrappedText": "_ = len(\"a\")",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 203,
-      "$source": 0,
-      "$named": true,
-      "_function": "len",
-      "_arguments": {
-        "$type": 157,
-        "$source": 0,
-        "$named": true,
-        "_arguments": {
-          "$type": 238,
-          "$source": 0,
-          "$named": true,
-          "_element": [
-            {
-              "$type": 227,
-              "$source": 0,
-              "$named": true,
-              "_string_start": "\"",
-              "_content": [
-                "aa"
-              ],
-              "_string_end": "\"",
-              "$span": {
-                "start": 18,
-                "end": 22
-              },
-              "$nodeHandle": 45
-            }
-          ],
-          "$span": {
-            "start": 18,
-            "end": 22
-          },
-          "$nodeHandle": 44,
-          "_trailing_sep": false
-        },
-        "$other": [
-          7,
-          8
-        ],
-        "$span": {
-          "start": 17,
-          "end": 23
-        },
-        "$nodeHandle": 43
-      },
-      "$span": {
-        "start": 14,
-        "end": 23
-      },
-      "$nodeHandle": 8
-    },
-    "expectedOutput": "len(\"aa\")"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "len(\"aa\")",
-    "pattern": "call",
-    "edits": [],
-    "expectedSourceOut": "len(\"aa\")",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))",
-    "wrappedText": "_ = len(\"aa\")",
     "wrappedOffset": 4
   },
   {

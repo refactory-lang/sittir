@@ -4,8 +4,13 @@
 //! render call with leading/trailing trivia text. Used by every
 //! struct-based `RenderableTransport::render_into` impl in grammar crates.
 
-/// Wraps a transport render call with trivia (leading/trailing comment text).
-/// Streams directly to `dest` — no intermediate buffer for trivia.
+/// Wraps a transport render call with trivia (leading/trailing comments).
+/// Streams directly to `dest` — no intermediate buffer for trivia. Each
+/// trivia entry renders via its OWN `RenderableTransport::render_into`
+/// (the same per-kind dispatch every other transport uses), not as a
+/// pre-rendered string — the concrete trivia entry type is grammar-
+/// specific (`TriviaTransport`, generated per grammar) and only needs
+/// to implement `RenderableTransport` to satisfy this macro.
 ///
 /// # Usage
 ///
@@ -19,13 +24,14 @@
 ///
 /// # Parameters
 ///
-/// - `$self` — the transport struct (must have a `transport_trivia_data: Option<TransportTrivia>` field)
+/// - `$self` — the transport struct (must have a `transport_trivia_data: Option<T>` field
+///   where `T` has `leading`/`trailing: Option<Vec<E>>` and `E: RenderableTransport`)
 /// - `$dest` — the `&mut dyn Write` target
 /// - `$render` — the actual render expression (returns `Result<(), ::askama::Error>`)
 ///
 /// # Returns
 ///
-/// `Result<(), ::askama::Error>` — propagates errors from both trivia writes and the inner render.
+/// `Result<(), ::askama::Error>` — propagates errors from both trivia renders and the inner render.
 ///
 /// # Notes
 ///
@@ -38,8 +44,8 @@ macro_rules! render_with_trivia {
         (|| -> Result<(), ::askama::Error> {
             if let Some(ref __trivia) = $self.transport_trivia_data {
                 if let Some(ref __leading) = __trivia.leading {
-                    for __text in __leading {
-                        $dest.write_str(__text).map_err(::askama::Error::from)?;
+                    for __entry in __leading {
+                        __entry.render_into($dest)?;
                         $dest.write_str("\n").map_err(::askama::Error::from)?;
                     }
                 }
@@ -47,9 +53,19 @@ macro_rules! render_with_trivia {
             $render?;
             if let Some(ref __trivia) = $self.transport_trivia_data {
                 if let Some(ref __trailing) = __trivia.trailing {
-                    for __text in __trailing {
+                    if !__trailing.is_empty() {
+                        for __entry in __trailing {
+                            $dest.write_str("\n").map_err(::askama::Error::from)?;
+                            __entry.render_into($dest)?;
+                        }
+                        // Unconditional trailing newline (symmetric with the
+                        // leading-trivia guarantee above): a line comment
+                        // silently swallows whatever text follows it on the
+                        // same physical line, so the boundary after the LAST
+                        // trailing entry must be a hard newline, not left to
+                        // the caller (SpacingWriter only guarantees a space,
+                        // not a line break).
                         $dest.write_str("\n").map_err(::askama::Error::from)?;
-                        $dest.write_str(__text).map_err(::askama::Error::from)?;
                     }
                 }
             }
@@ -60,15 +76,37 @@ macro_rules! render_with_trivia {
 
 #[cfg(test)]
 mod trivia_macro_tests {
-    use crate::types::TransportTrivia;
+    use crate::types::RenderableTransport;
     use std::fmt::Write;
 
+    /// Minimal `RenderableTransport` impl for macro-expansion tests —
+    /// real trivia entries are the generated, grammar-specific
+    /// `TriviaTransport` enum (see `render_module.ts`); this mock only
+    /// needs to prove the macro's leading/trailing/empty control flow,
+    /// not any concrete grammar's render output.
+    struct MockTrivia(String);
+
+    impl RenderableTransport for MockTrivia {
+        fn render_into(&self, dest: &mut dyn Write) -> Result<(), ::askama::Error> {
+            dest.write_str(&self.0).map_err(::askama::Error::from)
+        }
+    }
+
+    struct MockTransportTrivia {
+        leading: Option<Vec<MockTrivia>>,
+        trailing: Option<Vec<MockTrivia>>,
+    }
+
     struct MockTransport {
-        transport_trivia_data: Option<TransportTrivia>,
+        transport_trivia_data: Option<MockTransportTrivia>,
     }
 
     fn render_mock(_t: &MockTransport, dest: &mut dyn Write) -> Result<(), ::askama::Error> {
         dest.write_str("CONTENT").map_err(::askama::Error::from)
+    }
+
+    fn mock_trivia(texts: &[&str]) -> Vec<MockTrivia> {
+        texts.iter().map(|t| MockTrivia(t.to_string())).collect()
     }
 
     #[test]
@@ -78,7 +116,7 @@ mod trivia_macro_tests {
         };
         let mut buf = String::new();
         let result: Result<(), ::askama::Error> =
-            render_with_trivia!(t, buf, render_mock(&t, &mut buf));
+            render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "CONTENT");
     }
@@ -86,14 +124,14 @@ mod trivia_macro_tests {
     #[test]
     fn trivia_macro_leading() {
         let t = MockTransport {
-            transport_trivia_data: Some(TransportTrivia {
-                leading: Some(vec!["// hello".to_string()]),
+            transport_trivia_data: Some(MockTransportTrivia {
+                leading: Some(mock_trivia(&["// hello"])),
                 trailing: None,
             }),
         };
         let mut buf = String::new();
         let result: Result<(), ::askama::Error> =
-            render_with_trivia!(t, buf, render_mock(&t, &mut buf));
+            render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "// hello\nCONTENT");
     }
@@ -101,44 +139,44 @@ mod trivia_macro_tests {
     #[test]
     fn trivia_macro_trailing() {
         let t = MockTransport {
-            transport_trivia_data: Some(TransportTrivia {
+            transport_trivia_data: Some(MockTransportTrivia {
                 leading: None,
-                trailing: Some(vec!["// end".to_string()]),
+                trailing: Some(mock_trivia(&["// end"])),
             }),
         };
         let mut buf = String::new();
         let result: Result<(), ::askama::Error> =
-            render_with_trivia!(t, buf, render_mock(&t, &mut buf));
+            render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
-        assert_eq!(buf, "CONTENT\n// end");
+        assert_eq!(buf, "CONTENT\n// end\n");
     }
 
     #[test]
     fn trivia_macro_both() {
         let t = MockTransport {
-            transport_trivia_data: Some(TransportTrivia {
-                leading: Some(vec!["// top".to_string()]),
-                trailing: Some(vec!["// bottom".to_string()]),
+            transport_trivia_data: Some(MockTransportTrivia {
+                leading: Some(mock_trivia(&["// top"])),
+                trailing: Some(mock_trivia(&["// bottom"])),
             }),
         };
         let mut buf = String::new();
         let result: Result<(), ::askama::Error> =
-            render_with_trivia!(t, buf, render_mock(&t, &mut buf));
+            render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
-        assert_eq!(buf, "// top\nCONTENT\n// bottom");
+        assert_eq!(buf, "// top\nCONTENT\n// bottom\n");
     }
 
     #[test]
     fn trivia_macro_multiple_leading() {
         let t = MockTransport {
-            transport_trivia_data: Some(TransportTrivia {
-                leading: Some(vec!["// line 1".to_string(), "// line 2".to_string()]),
+            transport_trivia_data: Some(MockTransportTrivia {
+                leading: Some(mock_trivia(&["// line 1", "// line 2"])),
                 trailing: None,
             }),
         };
         let mut buf = String::new();
         let result: Result<(), ::askama::Error> =
-            render_with_trivia!(t, buf, render_mock(&t, &mut buf));
+            render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "// line 1\n// line 2\nCONTENT");
     }
@@ -146,29 +184,29 @@ mod trivia_macro_tests {
     #[test]
     fn trivia_macro_multiple_trailing() {
         let t = MockTransport {
-            transport_trivia_data: Some(TransportTrivia {
+            transport_trivia_data: Some(MockTransportTrivia {
                 leading: None,
-                trailing: Some(vec!["// end 1".to_string(), "// end 2".to_string()]),
+                trailing: Some(mock_trivia(&["// end 1", "// end 2"])),
             }),
         };
         let mut buf = String::new();
         let result: Result<(), ::askama::Error> =
-            render_with_trivia!(t, buf, render_mock(&t, &mut buf));
+            render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
-        assert_eq!(buf, "CONTENT\n// end 1\n// end 2");
+        assert_eq!(buf, "CONTENT\n// end 1\n// end 2\n");
     }
 
     #[test]
     fn trivia_macro_empty_vecs() {
         let t = MockTransport {
-            transport_trivia_data: Some(TransportTrivia {
-                leading: Some(vec![]),
-                trailing: Some(vec![]),
+            transport_trivia_data: Some(MockTransportTrivia {
+                leading: Some(Vec::<MockTrivia>::new()),
+                trailing: Some(Vec::<MockTrivia>::new()),
             }),
         };
         let mut buf = String::new();
         let result: Result<(), ::askama::Error> =
-            render_with_trivia!(t, buf, render_mock(&t, &mut buf));
+            render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "CONTENT");
     }

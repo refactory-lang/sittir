@@ -27,7 +27,7 @@
 //! - `$childIndex` — position within parent's children array on child
 //!   stubs. `None` on the returned node itself.
 
-use crate::types::{FieldValue, KindId, NodeData, Source, Span};
+use crate::types::{FieldValue, KindId, NodeData, NodeTrivia, Source, Span};
 use indexmap::IndexMap;
 
 /// Read a tree-sitter node (or the whole tree's root) into a primitive
@@ -101,9 +101,85 @@ fn read_ts_node(node: tree_sitter::Node<'_>, source: &str, node_handle: Option<u
         span: Some(span),
         node_handle,
         child_index: None,
-        // trivia_data is never set by readNode — only by $trivia() on
-        // factory-constructed nodes.
-        trivia_data: None,
+        trivia_data: compute_trivia(node, source),
+    }
+}
+
+/// Compute `node`'s own leading/trailing trivia by walking its
+/// tree-sitter siblings directly. Self-contained -- depends only on
+/// `node`'s position in the tree, not on how it was reached -- because
+/// this crate's handle+child-index re-resolution can read `node` directly
+/// (bypassing its parent's `read_children` pass entirely), and any
+/// trivia attached only as a side effect of that pass would silently
+/// vanish on such a direct read.
+///
+/// Extras (tree-sitter's grammar-`extras`-matched nodes -- comments, line
+/// continuations, etc.) never carry a field name, so `read_children`
+/// simply skips them; they are recovered here instead. A run of extras
+/// attaches as LEADING trivia to the next named non-extra sibling
+/// (anonymous non-extra siblings, e.g. `,`, are transparent -- skipped
+/// without breaking the run). A run attaches as TRAILING trivia only
+/// when `node` is the last named sibling -- i.e. no named sibling follows
+/// before the end of the parent's children -- otherwise that run belongs
+/// to the following named sibling's leading trivia instead, computed
+/// independently when that sibling is read. An extra with no named
+/// sibling in either direction (a construct whose only children are
+/// extras, e.g. `{ // only a comment }`) has nowhere to attach --
+/// `NodeTrivia` is leading/trailing OF a sibling, not an interior-content
+/// slot on the parent itself -- so such extras are dropped. This is a
+/// known, documented round-trip fidelity floor, not a silent bug;
+/// recovering it would need a different mechanism (a parent-interior
+/// content slot).
+///
+/// Trivia entries are fully materialized (recursively read via
+/// `read_ts_node`, not shallow stubs) since they are not independently
+/// addressable through the normal `_<slot>`/`$other` handle+child-index
+/// navigation -- nothing would ever drill in to hydrate a stub left here.
+fn compute_trivia(node: tree_sitter::Node<'_>, source: &str) -> Option<NodeTrivia> {
+    // An extra never carries its own trivia -- it IS trivia.
+    if node.is_extra() {
+        return None;
+    }
+
+    let mut leading: Vec<NodeData> = Vec::new();
+    let mut cursor = node.prev_sibling();
+    while let Some(sib) = cursor {
+        if sib.is_extra() {
+            leading.push(read_ts_node(sib, source, None));
+            cursor = sib.prev_sibling();
+        } else if sib.is_named() {
+            break;
+        } else {
+            cursor = sib.prev_sibling();
+        }
+    }
+    leading.reverse();
+
+    let mut trailing: Vec<NodeData> = Vec::new();
+    let mut is_last_named = true;
+    let mut cursor = node.next_sibling();
+    while let Some(sib) = cursor {
+        if sib.is_extra() {
+            trailing.push(read_ts_node(sib, source, None));
+            cursor = sib.next_sibling();
+        } else if sib.is_named() {
+            is_last_named = false;
+            break;
+        } else {
+            cursor = sib.next_sibling();
+        }
+    }
+    if !is_last_named {
+        trailing.clear();
+    }
+
+    if leading.is_empty() && trailing.is_empty() {
+        None
+    } else {
+        Some(NodeTrivia {
+            leading: if leading.is_empty() { None } else { Some(leading) },
+            trailing: if trailing.is_empty() { None } else { Some(trailing) },
+        })
     }
 }
 
@@ -115,6 +191,14 @@ fn read_ts_node(node: tree_sitter::Node<'_>, source: &str, node_handle: Option<u
 /// collapsed into `FieldValue::Multiple`; a lone child becomes
 /// `FieldValue::Single`. No-field children stay in `$other`; this
 /// native path does not invent `_<text>` fields for anonymous tokens.
+///
+/// Extras (tree-sitter's grammar-`extras`-matched nodes -- comments,
+/// line continuations, etc.) never carry a field name and are always
+/// named, so without special handling they'd fall into the kind-named
+/// slot path below and collapse into an opaque, never-wrapped `_<kind>`
+/// bucket. They are skipped entirely
+/// here; `compute_trivia` recovers them as leading/trailing trivia on
+/// the adjacent named sibling instead.
 fn read_children(
     node: tree_sitter::Node<'_>,
     source: &str,
@@ -122,28 +206,25 @@ fn read_children(
 ) -> (Option<IndexMap<String, FieldValue>>, Option<Vec<NodeData>>) {
     let mut fields_acc: IndexMap<String, Vec<NodeData>> = IndexMap::new();
     let mut children_acc: Vec<NodeData> = Vec::new();
+
     let child_count = node.child_count() as u32;
     for i in 0..child_count {
         let child = match node.child(i) {
             Some(c) => c,
             None => continue,
         };
-        let field_name = node.field_name_for_child(i);
+        if child.is_extra() {
+            continue;
+        }
+        let field_name = node.field_name_for_child(i).map(|s| s.to_string());
+        let data = if child.child_count() == 0 {
+            read_materialized_leaf(child, source)
+        } else {
+            read_child_stub(child, source, node_handle, i as u16)
+        };
         match field_name {
-            Some(name) => {
-                let data = if child.child_count() == 0 {
-                    read_materialized_leaf(child, source)
-                } else {
-                    read_child_stub(child, source, node_handle, i as u16)
-                };
-                assign_named_slot(&mut fields_acc, name, data);
-            }
+            Some(name) => assign_named_slot(&mut fields_acc, &name, data),
             None => {
-                let data = if child.child_count() == 0 {
-                    read_materialized_leaf(child, source)
-                } else {
-                    read_child_stub(child, source, node_handle, i as u16)
-                };
                 if child.is_named() {
                     // Named child without a field tag — route by kind to a `_<kind>` slot.
                     // This produces a kind-named storage entry in the serialized NodeData,

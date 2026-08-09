@@ -11,7 +11,7 @@ use ::sittir_core::filters::{
     OptionalNonterminalView,
 };
 use ::sittir_core::types::{
-    FieldValue, OneOrMany, RenderableTransport, Source, Span, NodeTrivia, TransportTrivia,
+    FieldValue, OneOrMany, RenderableTransport, Source, Span, NodeTrivia,
 };
 
 #[cfg(feature = "napi-bindings")]
@@ -2003,6 +2003,152 @@ impl ::napi::bindgen_prelude::ToNapiValue for VerbatimTransport {
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         Err(::napi::Error::from_reason("VerbatimTransport is receive-only"))
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum TriviaTransport {
+    Comment(CommentTransport),
+    HtmlComment(HtmlCommentTransport),
+    Verbatim(VerbatimTransport),
+}
+
+impl RenderableTransport for TriviaTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            TriviaTransport::Comment(t) => t.render_into(dest),
+            TriviaTransport::HtmlComment(t) => t.render_into(dest),
+            TriviaTransport::Verbatim(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    92 => {
+                        if let Ok(value) = CommentTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Comment(value));
+                        }
+                        let text = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+                            .ok()
+                            .and_then(|o| o.get::<String>("$text").ok().flatten())
+                            .unwrap_or_default();
+                        Ok(Self::Verbatim(VerbatimTransport { text }))
+                    },
+                    162 => {
+                        if let Ok(value) = HtmlCommentTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::HtmlComment(value));
+                        }
+                        let text = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+                            .ok()
+                            .and_then(|o| o.get::<String>("$text").ok().flatten())
+                            .unwrap_or_default();
+                        Ok(Self::Verbatim(VerbatimTransport { text }))
+                    },
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in TriviaTransport",
+                    ))),
+                }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in TriviaTransport")
+                )?;
+                match kind_id {
+                    92 => {
+                        if let Ok(value) = CommentTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Comment(value));
+                        }
+                        let text = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+                            .ok()
+                            .and_then(|o| o.get::<String>("$text").ok().flatten())
+                            .unwrap_or_default();
+                        Ok(Self::Verbatim(VerbatimTransport { text }))
+                    },
+                    162 => {
+                        if let Ok(value) = HtmlCommentTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::HtmlComment(value));
+                        }
+                        let text = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+                            .ok()
+                            .and_then(|o| o.get::<String>("$text").ok().flatten())
+                            .unwrap_or_default();
+                        Ok(Self::Verbatim(VerbatimTransport { text }))
+                    },
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in TriviaTransport",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("TriviaTransport: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TriviaTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct TransportTrivia {
+    pub leading: Option<Vec<TriviaTransport>>,
+    pub trailing: Option<Vec<TriviaTransport>>,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for TransportTrivia {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let leading: Option<Vec<TriviaTransport>> = obj.get("leading")?;
+        let trailing: Option<Vec<TriviaTransport>> = obj.get("trailing")?;
+        Ok(TransportTrivia { leading, trailing })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TransportTrivia {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ValidateNapiValue for TransportTrivia {}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::TypeName for TransportTrivia {
+    fn type_name() -> &'static str {
+        "TransportTrivia"
+    }
+    fn value_type() -> ::napi::ValueType {
+        ::napi::ValueType::Object
     }
 }
 
@@ -8232,10 +8378,10 @@ impl RenderableTransport for ExportStatementContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ExportStatementContentTransportSlot::ExportStatementDefault(inner) => render_export_statement_default(inner, dest),
-            ExportStatementContentTransportSlot::ExportStatementTypeExport(inner) => render_export_statement_type_export(inner, dest),
-            ExportStatementContentTransportSlot::ExportStatementEqualsExport(inner) => render_export_statement_equals_export(inner, dest),
-            ExportStatementContentTransportSlot::ExportStatementNamespaceExport(inner) => render_export_statement_namespace_export(inner, dest),
+            ExportStatementContentTransportSlot::ExportStatementDefault(inner) => inner.render_into(dest),
+            ExportStatementContentTransportSlot::ExportStatementTypeExport(inner) => inner.render_into(dest),
+            ExportStatementContentTransportSlot::ExportStatementEqualsExport(inner) => inner.render_into(dest),
+            ExportStatementContentTransportSlot::ExportStatementNamespaceExport(inner) => inner.render_into(dest),
         }
     }
 }
@@ -8517,9 +8663,9 @@ impl RenderableTransport for ImportStatementFromClauseTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ImportStatementFromClauseTransportSlot::ImportStatementGroup1(inner) => render_import_statement_group1(inner, dest),
-            ImportStatementFromClauseTransportSlot::ImportRequireClause(inner) => render_import_require_clause(inner, dest),
-            ImportStatementFromClauseTransportSlot::String(inner) => render_string(inner, dest),
+            ImportStatementFromClauseTransportSlot::ImportStatementGroup1(inner) => inner.render_into(dest),
+            ImportStatementFromClauseTransportSlot::ImportRequireClause(inner) => inner.render_into(dest),
+            ImportStatementFromClauseTransportSlot::String(inner) => inner.render_into(dest),
         }
     }
 }
@@ -8623,9 +8769,9 @@ impl RenderableTransport for ImportClauseContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ImportClauseContentTransportSlot::NamespaceImport(inner) => render_namespace_import(inner, dest),
-            ImportClauseContentTransportSlot::NamedImports(inner) => render_named_imports(inner, dest),
-            ImportClauseContentTransportSlot::ImportClauseDefaultImport(inner) => render_import_clause_default_import(inner, dest),
+            ImportClauseContentTransportSlot::NamespaceImport(inner) => inner.render_into(dest),
+            ImportClauseContentTransportSlot::NamedImports(inner) => inner.render_into(dest),
+            ImportClauseContentTransportSlot::ImportClauseDefaultImport(inner) => inner.render_into(dest),
         }
     }
 }
@@ -8816,8 +8962,8 @@ impl RenderableTransport for ImportSpecifierContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ImportSpecifierContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ImportSpecifierContentTransportSlot::ImportSpecifierAs(inner) => render_import_specifier_as(inner, dest),
+            ImportSpecifierContentTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ImportSpecifierContentTransportSlot::ImportSpecifierAs(inner) => inner.render_into(dest),
             ImportSpecifierContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -9003,8 +9149,8 @@ impl RenderableTransport for VariableDeclaratorContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            VariableDeclaratorContentTransportSlot::VariableDeclaratorGroup1(inner) => render_variable_declarator_group1(inner, dest),
-            VariableDeclaratorContentTransportSlot::VariableDeclaratorGroup2(inner) => render_variable_declarator_group2(inner, dest),
+            VariableDeclaratorContentTransportSlot::VariableDeclaratorGroup1(inner) => inner.render_into(dest),
+            VariableDeclaratorContentTransportSlot::VariableDeclaratorGroup2(inner) => inner.render_into(dest),
         }
     }
 }
@@ -9642,48 +9788,48 @@ impl RenderableTransport for ForStatementInitializerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ForStatementInitializerTransportSlot::LexicalDeclaration(inner) => render_lexical_declaration(inner, dest),
-            ForStatementInitializerTransportSlot::VariableDeclaration(inner) => render_variable_declaration(inner, dest),
-            ForStatementInitializerTransportSlot::AsExpression(inner) => render_as_expression(inner, dest),
-            ForStatementInitializerTransportSlot::SatisfiesExpression(inner) => render_satisfies_expression(inner, dest),
-            ForStatementInitializerTransportSlot::InstantiationExpression(inner) => render_instantiation_expression(inner, dest),
-            ForStatementInitializerTransportSlot::InternalModule(inner) => render_internal_module(inner, dest),
-            ForStatementInitializerTransportSlot::TypeAssertion(inner) => render_type_assertion(inner, dest),
-            ForStatementInitializerTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            ForStatementInitializerTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            ForStatementInitializerTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
-            ForStatementInitializerTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            ForStatementInitializerTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ForStatementInitializerTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            ForStatementInitializerTransportSlot::This(inner) => render_this(inner, dest),
-            ForStatementInitializerTransportSlot::Super(inner) => render_super(inner, dest),
-            ForStatementInitializerTransportSlot::Number(inner) => render_number(inner, dest),
-            ForStatementInitializerTransportSlot::String(inner) => render_string(inner, dest),
-            ForStatementInitializerTransportSlot::TemplateString(inner) => render_template_string(inner, dest),
-            ForStatementInitializerTransportSlot::Regex(inner) => render_regex(inner, dest),
-            ForStatementInitializerTransportSlot::True(inner) => render_true(inner, dest),
-            ForStatementInitializerTransportSlot::False(inner) => render_false(inner, dest),
-            ForStatementInitializerTransportSlot::Null(inner) => render_null(inner, dest),
-            ForStatementInitializerTransportSlot::Object(inner) => render_object(inner, dest),
-            ForStatementInitializerTransportSlot::Array(inner) => render_array(inner, dest),
-            ForStatementInitializerTransportSlot::FunctionExpression(inner) => render_function_expression(inner, dest),
-            ForStatementInitializerTransportSlot::ArrowFunction(inner) => render_arrow_function(inner, dest),
-            ForStatementInitializerTransportSlot::GeneratorFunction(inner) => render_generator_function(inner, dest),
-            ForStatementInitializerTransportSlot::Class(inner) => render_class(inner, dest),
-            ForStatementInitializerTransportSlot::MetaProperty(inner) => render_meta_property(inner, dest),
-            ForStatementInitializerTransportSlot::CallExpression(inner) => render_call_expression(inner, dest),
-            ForStatementInitializerTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            ForStatementInitializerTransportSlot::AssignmentExpression(inner) => render_assignment_expression(inner, dest),
-            ForStatementInitializerTransportSlot::AugmentedAssignmentExpression(inner) => render_augmented_assignment_expression(inner, dest),
-            ForStatementInitializerTransportSlot::AwaitExpression(inner) => render_await_expression(inner, dest),
-            ForStatementInitializerTransportSlot::UnaryExpression(inner) => render_unary_expression(inner, dest),
-            ForStatementInitializerTransportSlot::BinaryExpression(inner) => render_binary_expression(inner, dest),
-            ForStatementInitializerTransportSlot::TernaryExpression(inner) => render_ternary_expression(inner, dest),
-            ForStatementInitializerTransportSlot::UpdateExpression(inner) => render_update_expression(inner, dest),
-            ForStatementInitializerTransportSlot::NewExpression(inner) => render_new_expression(inner, dest),
-            ForStatementInitializerTransportSlot::YieldExpression(inner) => render_yield_expression(inner, dest),
-            ForStatementInitializerTransportSlot::SequenceExpression(inner) => render_sequence_expression(inner, dest),
-            ForStatementInitializerTransportSlot::EmptyStatement(inner) => render_empty_statement(inner, dest),
+            ForStatementInitializerTransportSlot::LexicalDeclaration(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::VariableDeclaration(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::AsExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::Undefined(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::This(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::Super(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::Number(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::String(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::Regex(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::True(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::False(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::Null(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::Object(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::Array(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::Class(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::NewExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::YieldExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::SequenceExpression(inner) => inner.render_into(dest),
+            ForStatementInitializerTransportSlot::EmptyStatement(inner) => inner.render_into(dest),
             ForStatementInitializerTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -10222,46 +10368,46 @@ impl RenderableTransport for ForStatementConditionTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ForStatementConditionTransportSlot::AsExpression(inner) => render_as_expression(inner, dest),
-            ForStatementConditionTransportSlot::SatisfiesExpression(inner) => render_satisfies_expression(inner, dest),
-            ForStatementConditionTransportSlot::InstantiationExpression(inner) => render_instantiation_expression(inner, dest),
-            ForStatementConditionTransportSlot::InternalModule(inner) => render_internal_module(inner, dest),
-            ForStatementConditionTransportSlot::TypeAssertion(inner) => render_type_assertion(inner, dest),
-            ForStatementConditionTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            ForStatementConditionTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            ForStatementConditionTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
-            ForStatementConditionTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            ForStatementConditionTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ForStatementConditionTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            ForStatementConditionTransportSlot::This(inner) => render_this(inner, dest),
-            ForStatementConditionTransportSlot::Super(inner) => render_super(inner, dest),
-            ForStatementConditionTransportSlot::Number(inner) => render_number(inner, dest),
-            ForStatementConditionTransportSlot::String(inner) => render_string(inner, dest),
-            ForStatementConditionTransportSlot::TemplateString(inner) => render_template_string(inner, dest),
-            ForStatementConditionTransportSlot::Regex(inner) => render_regex(inner, dest),
-            ForStatementConditionTransportSlot::True(inner) => render_true(inner, dest),
-            ForStatementConditionTransportSlot::False(inner) => render_false(inner, dest),
-            ForStatementConditionTransportSlot::Null(inner) => render_null(inner, dest),
-            ForStatementConditionTransportSlot::Object(inner) => render_object(inner, dest),
-            ForStatementConditionTransportSlot::Array(inner) => render_array(inner, dest),
-            ForStatementConditionTransportSlot::FunctionExpression(inner) => render_function_expression(inner, dest),
-            ForStatementConditionTransportSlot::ArrowFunction(inner) => render_arrow_function(inner, dest),
-            ForStatementConditionTransportSlot::GeneratorFunction(inner) => render_generator_function(inner, dest),
-            ForStatementConditionTransportSlot::Class(inner) => render_class(inner, dest),
-            ForStatementConditionTransportSlot::MetaProperty(inner) => render_meta_property(inner, dest),
-            ForStatementConditionTransportSlot::CallExpression(inner) => render_call_expression(inner, dest),
-            ForStatementConditionTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            ForStatementConditionTransportSlot::AssignmentExpression(inner) => render_assignment_expression(inner, dest),
-            ForStatementConditionTransportSlot::AugmentedAssignmentExpression(inner) => render_augmented_assignment_expression(inner, dest),
-            ForStatementConditionTransportSlot::AwaitExpression(inner) => render_await_expression(inner, dest),
-            ForStatementConditionTransportSlot::UnaryExpression(inner) => render_unary_expression(inner, dest),
-            ForStatementConditionTransportSlot::BinaryExpression(inner) => render_binary_expression(inner, dest),
-            ForStatementConditionTransportSlot::TernaryExpression(inner) => render_ternary_expression(inner, dest),
-            ForStatementConditionTransportSlot::UpdateExpression(inner) => render_update_expression(inner, dest),
-            ForStatementConditionTransportSlot::NewExpression(inner) => render_new_expression(inner, dest),
-            ForStatementConditionTransportSlot::YieldExpression(inner) => render_yield_expression(inner, dest),
-            ForStatementConditionTransportSlot::SequenceExpression(inner) => render_sequence_expression(inner, dest),
-            ForStatementConditionTransportSlot::EmptyStatement(inner) => render_empty_statement(inner, dest),
+            ForStatementConditionTransportSlot::AsExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::Undefined(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::This(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::Super(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::Number(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::String(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::Regex(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::True(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::False(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::Null(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::Object(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::Array(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::Class(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::NewExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::YieldExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::SequenceExpression(inner) => inner.render_into(dest),
+            ForStatementConditionTransportSlot::EmptyStatement(inner) => inner.render_into(dest),
             ForStatementConditionTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -10450,9 +10596,9 @@ impl RenderableTransport for ForInStatementContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ForInStatementContentTransportSlot::ForHeaderLhs(inner) => render_for_header_lhs(inner, dest),
-            ForInStatementContentTransportSlot::ForHeaderVarKind(inner) => render_for_header_var_kind(inner, dest),
-            ForInStatementContentTransportSlot::ForHeaderLetConstKind(inner) => render_for_header_let_const_kind(inner, dest),
+            ForInStatementContentTransportSlot::ForHeaderLhs(inner) => inner.render_into(dest),
+            ForInStatementContentTransportSlot::ForHeaderVarKind(inner) => inner.render_into(dest),
+            ForInStatementContentTransportSlot::ForHeaderLetConstKind(inner) => inner.render_into(dest),
         }
     }
 }
@@ -10556,9 +10702,9 @@ impl RenderableTransport for ForHeaderContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ForHeaderContentTransportSlot::ForHeaderLhs(inner) => render_for_header_lhs(inner, dest),
-            ForHeaderContentTransportSlot::ForHeaderVarKind(inner) => render_for_header_var_kind(inner, dest),
-            ForHeaderContentTransportSlot::ForHeaderLetConstKind(inner) => render_for_header_let_const_kind(inner, dest),
+            ForHeaderContentTransportSlot::ForHeaderLhs(inner) => inner.render_into(dest),
+            ForHeaderContentTransportSlot::ForHeaderVarKind(inner) => inner.render_into(dest),
+            ForHeaderContentTransportSlot::ForHeaderLetConstKind(inner) => inner.render_into(dest),
         }
     }
 }
@@ -10654,8 +10800,8 @@ impl RenderableTransport for SwitchBodyCasesTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            SwitchBodyCasesTransportSlot::SwitchCase(inner) => render_switch_case(inner, dest),
-            SwitchBodyCasesTransportSlot::SwitchDefault(inner) => render_switch_default(inner, dest),
+            SwitchBodyCasesTransportSlot::SwitchCase(inner) => inner.render_into(dest),
+            SwitchBodyCasesTransportSlot::SwitchDefault(inner) => inner.render_into(dest),
         }
     }
 }
@@ -10793,11 +10939,11 @@ impl RenderableTransport for ParenthesizedExpressionContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ParenthesizedExpressionContentTransportSlot::ParenthesizedExpressionTyped(inner) => render_parenthesized_expression_typed(inner, dest),
-            ParenthesizedExpressionContentTransportSlot::SequenceExpression(inner) => render_sequence_expression(inner, dest),
-            ParenthesizedExpressionContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ParenthesizedExpressionContentTransportSlot::DecoratorMemberExpression(inner) => render_decorator_member_expression(inner, dest),
-            ParenthesizedExpressionContentTransportSlot::DecoratorCallExpression(inner) => render_decorator_call_expression(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render_into(dest),
+            ParenthesizedExpressionContentTransportSlot::SequenceExpression(inner) => inner.render_into(dest),
+            ParenthesizedExpressionContentTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ParenthesizedExpressionContentTransportSlot::DecoratorMemberExpression(inner) => inner.render_into(dest),
+            ParenthesizedExpressionContentTransportSlot::DecoratorCallExpression(inner) => inner.render_into(dest),
             ParenthesizedExpressionContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -11086,11 +11232,11 @@ impl RenderableTransport for ObjectPropertiesTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ObjectPropertiesTransportSlot::Pair(inner) => render_pair(inner, dest),
-            ObjectPropertiesTransportSlot::SpreadElement(inner) => render_spread_element(inner, dest),
-            ObjectPropertiesTransportSlot::MethodDefinition(inner) => render_method_definition(inner, dest),
-            ObjectPropertiesTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ObjectPropertiesTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
+            ObjectPropertiesTransportSlot::Pair(inner) => inner.render_into(dest),
+            ObjectPropertiesTransportSlot::SpreadElement(inner) => inner.render_into(dest),
+            ObjectPropertiesTransportSlot::MethodDefinition(inner) => inner.render_into(dest),
+            ObjectPropertiesTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ObjectPropertiesTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
             ObjectPropertiesTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -11379,11 +11525,11 @@ impl RenderableTransport for ObjectPatternPropertiesTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ObjectPatternPropertiesTransportSlot::PairPattern(inner) => render_pair_pattern(inner, dest),
-            ObjectPatternPropertiesTransportSlot::RestPattern(inner) => render_rest_pattern(inner, dest),
-            ObjectPatternPropertiesTransportSlot::ObjectAssignmentPattern(inner) => render_object_assignment_pattern(inner, dest),
-            ObjectPatternPropertiesTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ObjectPatternPropertiesTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
+            ObjectPatternPropertiesTransportSlot::PairPattern(inner) => inner.render_into(dest),
+            ObjectPatternPropertiesTransportSlot::RestPattern(inner) => inner.render_into(dest),
+            ObjectPatternPropertiesTransportSlot::ObjectAssignmentPattern(inner) => inner.render_into(dest),
+            ObjectPatternPropertiesTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ObjectPatternPropertiesTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
             ObjectPatternPropertiesTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -11664,10 +11810,10 @@ impl RenderableTransport for ObjectAssignmentPatternLeftTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ObjectAssignmentPatternLeftTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ObjectAssignmentPatternLeftTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            ObjectAssignmentPatternLeftTransportSlot::ObjectPattern(inner) => render_object_pattern(inner, dest),
-            ObjectAssignmentPatternLeftTransportSlot::ArrayPattern(inner) => render_array_pattern(inner, dest),
+            ObjectAssignmentPatternLeftTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ObjectAssignmentPatternLeftTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            ObjectAssignmentPatternLeftTransportSlot::ObjectPattern(inner) => inner.render_into(dest),
+            ObjectAssignmentPatternLeftTransportSlot::ArrayPattern(inner) => inner.render_into(dest),
             ObjectAssignmentPatternLeftTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -12198,45 +12344,45 @@ impl RenderableTransport for ArrayElementsTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ArrayElementsTransportSlot::AsExpression(inner) => render_as_expression(inner, dest),
-            ArrayElementsTransportSlot::SatisfiesExpression(inner) => render_satisfies_expression(inner, dest),
-            ArrayElementsTransportSlot::InstantiationExpression(inner) => render_instantiation_expression(inner, dest),
-            ArrayElementsTransportSlot::InternalModule(inner) => render_internal_module(inner, dest),
-            ArrayElementsTransportSlot::TypeAssertion(inner) => render_type_assertion(inner, dest),
-            ArrayElementsTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            ArrayElementsTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            ArrayElementsTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
-            ArrayElementsTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            ArrayElementsTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ArrayElementsTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            ArrayElementsTransportSlot::This(inner) => render_this(inner, dest),
-            ArrayElementsTransportSlot::Super(inner) => render_super(inner, dest),
-            ArrayElementsTransportSlot::Number(inner) => render_number(inner, dest),
-            ArrayElementsTransportSlot::String(inner) => render_string(inner, dest),
-            ArrayElementsTransportSlot::TemplateString(inner) => render_template_string(inner, dest),
-            ArrayElementsTransportSlot::Regex(inner) => render_regex(inner, dest),
-            ArrayElementsTransportSlot::True(inner) => render_true(inner, dest),
-            ArrayElementsTransportSlot::False(inner) => render_false(inner, dest),
-            ArrayElementsTransportSlot::Null(inner) => render_null(inner, dest),
-            ArrayElementsTransportSlot::Object(inner) => render_object(inner, dest),
-            ArrayElementsTransportSlot::Array(inner) => render_array(inner, dest),
-            ArrayElementsTransportSlot::FunctionExpression(inner) => render_function_expression(inner, dest),
-            ArrayElementsTransportSlot::ArrowFunction(inner) => render_arrow_function(inner, dest),
-            ArrayElementsTransportSlot::GeneratorFunction(inner) => render_generator_function(inner, dest),
-            ArrayElementsTransportSlot::Class(inner) => render_class(inner, dest),
-            ArrayElementsTransportSlot::MetaProperty(inner) => render_meta_property(inner, dest),
-            ArrayElementsTransportSlot::CallExpression(inner) => render_call_expression(inner, dest),
-            ArrayElementsTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            ArrayElementsTransportSlot::AssignmentExpression(inner) => render_assignment_expression(inner, dest),
-            ArrayElementsTransportSlot::AugmentedAssignmentExpression(inner) => render_augmented_assignment_expression(inner, dest),
-            ArrayElementsTransportSlot::AwaitExpression(inner) => render_await_expression(inner, dest),
-            ArrayElementsTransportSlot::UnaryExpression(inner) => render_unary_expression(inner, dest),
-            ArrayElementsTransportSlot::BinaryExpression(inner) => render_binary_expression(inner, dest),
-            ArrayElementsTransportSlot::TernaryExpression(inner) => render_ternary_expression(inner, dest),
-            ArrayElementsTransportSlot::UpdateExpression(inner) => render_update_expression(inner, dest),
-            ArrayElementsTransportSlot::NewExpression(inner) => render_new_expression(inner, dest),
-            ArrayElementsTransportSlot::YieldExpression(inner) => render_yield_expression(inner, dest),
-            ArrayElementsTransportSlot::SpreadElement(inner) => render_spread_element(inner, dest),
+            ArrayElementsTransportSlot::AsExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::Undefined(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::This(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::Super(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::Number(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::String(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::Regex(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::True(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::False(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::Null(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::Object(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::Array(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::Class(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::NewExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::YieldExpression(inner) => inner.render_into(dest),
+            ArrayElementsTransportSlot::SpreadElement(inner) => inner.render_into(dest),
             ArrayElementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -12535,16 +12681,16 @@ impl RenderableTransport for ArrayPatternElementsTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ArrayPatternElementsTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            ArrayPatternElementsTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            ArrayPatternElementsTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            ArrayPatternElementsTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ArrayPatternElementsTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            ArrayPatternElementsTransportSlot::ObjectPattern(inner) => render_object_pattern(inner, dest),
-            ArrayPatternElementsTransportSlot::ArrayPattern(inner) => render_array_pattern(inner, dest),
-            ArrayPatternElementsTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            ArrayPatternElementsTransportSlot::RestPattern(inner) => render_rest_pattern(inner, dest),
-            ArrayPatternElementsTransportSlot::AssignmentPattern(inner) => render_assignment_pattern(inner, dest),
+            ArrayPatternElementsTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            ArrayPatternElementsTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            ArrayPatternElementsTransportSlot::Undefined(inner) => inner.render_into(dest),
+            ArrayPatternElementsTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ArrayPatternElementsTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            ArrayPatternElementsTransportSlot::ObjectPattern(inner) => inner.render_into(dest),
+            ArrayPatternElementsTransportSlot::ArrayPattern(inner) => inner.render_into(dest),
+            ArrayPatternElementsTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            ArrayPatternElementsTransportSlot::RestPattern(inner) => inner.render_into(dest),
+            ArrayPatternElementsTransportSlot::AssignmentPattern(inner) => inner.render_into(dest),
             ArrayPatternElementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -13083,46 +13229,46 @@ impl RenderableTransport for JsxExpressionExpressionTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            JsxExpressionExpressionTransportSlot::AsExpression(inner) => render_as_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::SatisfiesExpression(inner) => render_satisfies_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::InstantiationExpression(inner) => render_instantiation_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::InternalModule(inner) => render_internal_module(inner, dest),
-            JsxExpressionExpressionTransportSlot::TypeAssertion(inner) => render_type_assertion(inner, dest),
-            JsxExpressionExpressionTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            JsxExpressionExpressionTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            JsxExpressionExpressionTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            JsxExpressionExpressionTransportSlot::This(inner) => render_this(inner, dest),
-            JsxExpressionExpressionTransportSlot::Super(inner) => render_super(inner, dest),
-            JsxExpressionExpressionTransportSlot::Number(inner) => render_number(inner, dest),
-            JsxExpressionExpressionTransportSlot::String(inner) => render_string(inner, dest),
-            JsxExpressionExpressionTransportSlot::TemplateString(inner) => render_template_string(inner, dest),
-            JsxExpressionExpressionTransportSlot::Regex(inner) => render_regex(inner, dest),
-            JsxExpressionExpressionTransportSlot::True(inner) => render_true(inner, dest),
-            JsxExpressionExpressionTransportSlot::False(inner) => render_false(inner, dest),
-            JsxExpressionExpressionTransportSlot::Null(inner) => render_null(inner, dest),
-            JsxExpressionExpressionTransportSlot::Object(inner) => render_object(inner, dest),
-            JsxExpressionExpressionTransportSlot::Array(inner) => render_array(inner, dest),
-            JsxExpressionExpressionTransportSlot::FunctionExpression(inner) => render_function_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::ArrowFunction(inner) => render_arrow_function(inner, dest),
-            JsxExpressionExpressionTransportSlot::GeneratorFunction(inner) => render_generator_function(inner, dest),
-            JsxExpressionExpressionTransportSlot::Class(inner) => render_class(inner, dest),
-            JsxExpressionExpressionTransportSlot::MetaProperty(inner) => render_meta_property(inner, dest),
-            JsxExpressionExpressionTransportSlot::CallExpression(inner) => render_call_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::AssignmentExpression(inner) => render_assignment_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::AugmentedAssignmentExpression(inner) => render_augmented_assignment_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::AwaitExpression(inner) => render_await_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::UnaryExpression(inner) => render_unary_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::BinaryExpression(inner) => render_binary_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::TernaryExpression(inner) => render_ternary_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::UpdateExpression(inner) => render_update_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::NewExpression(inner) => render_new_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::YieldExpression(inner) => render_yield_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::SequenceExpression(inner) => render_sequence_expression(inner, dest),
-            JsxExpressionExpressionTransportSlot::SpreadElement(inner) => render_spread_element(inner, dest),
+            JsxExpressionExpressionTransportSlot::AsExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::Undefined(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::Identifier(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::This(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::Super(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::Number(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::String(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::Regex(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::True(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::False(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::Null(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::Object(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::Array(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::Class(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::NewExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::YieldExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::SequenceExpression(inner) => inner.render_into(dest),
+            JsxExpressionExpressionTransportSlot::SpreadElement(inner) => inner.render_into(dest),
             JsxExpressionExpressionTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -13231,8 +13377,8 @@ impl RenderableTransport for NestedIdentifierObjectTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            NestedIdentifierObjectTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            NestedIdentifierObjectTransportSlot::NestedIdentifier(inner) => render_nested_identifier(inner, dest),
+            NestedIdentifierObjectTransportSlot::Identifier(inner) => inner.render_into(dest),
+            NestedIdentifierObjectTransportSlot::NestedIdentifier(inner) => inner.render_into(dest),
             NestedIdentifierObjectTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -13323,8 +13469,8 @@ impl RenderableTransport for JsxStringElementsTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            JsxStringElementsTransportSlot::UnescapedDoubleJsxStringFragment(inner) => render_unescaped_double_jsx_string_fragment(inner, dest),
-            JsxStringElementsTransportSlot::HtmlCharacterReference(inner) => render_html_character_reference(inner, dest),
+            JsxStringElementsTransportSlot::UnescapedDoubleJsxStringFragment(inner) => inner.render_into(dest),
+            JsxStringElementsTransportSlot::HtmlCharacterReference(inner) => inner.render_into(dest),
             JsxStringElementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -13415,8 +13561,8 @@ impl RenderableTransport for JsxStringElements2TransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            JsxStringElements2TransportSlot::UnescapedSingleJsxStringFragment(inner) => render_unescaped_single_jsx_string_fragment(inner, dest),
-            JsxStringElements2TransportSlot::HtmlCharacterReference(inner) => render_html_character_reference(inner, dest),
+            JsxStringElements2TransportSlot::UnescapedSingleJsxStringFragment(inner) => inner.render_into(dest),
+            JsxStringElements2TransportSlot::HtmlCharacterReference(inner) => inner.render_into(dest),
             JsxStringElements2TransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -13597,8 +13743,8 @@ impl RenderableTransport for ClassHeritageContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ClassHeritageContentTransportSlot::ClassHeritageExtendsClause(inner) => render_class_heritage_extends_clause(inner, dest),
-            ClassHeritageContentTransportSlot::ImplementsClause(inner) => render_implements_clause(inner, dest),
+            ClassHeritageContentTransportSlot::ClassHeritageExtendsClause(inner) => inner.render_into(dest),
+            ClassHeritageContentTransportSlot::ImplementsClause(inner) => inner.render_into(dest),
         }
     }
 }
@@ -13786,9 +13932,9 @@ impl RenderableTransport for FunctionExpressionReturnTypeTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            FunctionExpressionReturnTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
-            FunctionExpressionReturnTypeTransportSlot::AssertsAnnotation(inner) => render_asserts_annotation(inner, dest),
-            FunctionExpressionReturnTypeTransportSlot::TypePredicateAnnotation(inner) => render_type_predicate_annotation(inner, dest),
+            FunctionExpressionReturnTypeTransportSlot::TypeAnnotation(inner) => inner.render_into(dest),
+            FunctionExpressionReturnTypeTransportSlot::AssertsAnnotation(inner) => inner.render_into(dest),
+            FunctionExpressionReturnTypeTransportSlot::TypePredicateAnnotation(inner) => inner.render_into(dest),
         }
     }
 }
@@ -13976,9 +14122,9 @@ impl RenderableTransport for FunctionDeclarationReturnTypeTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            FunctionDeclarationReturnTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
-            FunctionDeclarationReturnTypeTransportSlot::AssertsAnnotation(inner) => render_asserts_annotation(inner, dest),
-            FunctionDeclarationReturnTypeTransportSlot::TypePredicateAnnotation(inner) => render_type_predicate_annotation(inner, dest),
+            FunctionDeclarationReturnTypeTransportSlot::TypeAnnotation(inner) => inner.render_into(dest),
+            FunctionDeclarationReturnTypeTransportSlot::AssertsAnnotation(inner) => inner.render_into(dest),
+            FunctionDeclarationReturnTypeTransportSlot::TypePredicateAnnotation(inner) => inner.render_into(dest),
         }
     }
 }
@@ -14250,9 +14396,9 @@ impl RenderableTransport for GeneratorFunctionReturnTypeTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            GeneratorFunctionReturnTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
-            GeneratorFunctionReturnTypeTransportSlot::AssertsAnnotation(inner) => render_asserts_annotation(inner, dest),
-            GeneratorFunctionReturnTypeTransportSlot::TypePredicateAnnotation(inner) => render_type_predicate_annotation(inner, dest),
+            GeneratorFunctionReturnTypeTransportSlot::TypeAnnotation(inner) => inner.render_into(dest),
+            GeneratorFunctionReturnTypeTransportSlot::AssertsAnnotation(inner) => inner.render_into(dest),
+            GeneratorFunctionReturnTypeTransportSlot::TypePredicateAnnotation(inner) => inner.render_into(dest),
         }
     }
 }
@@ -14440,9 +14586,9 @@ impl RenderableTransport for GeneratorFunctionDeclarationReturnTypeTransportSlot
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            GeneratorFunctionDeclarationReturnTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
-            GeneratorFunctionDeclarationReturnTypeTransportSlot::AssertsAnnotation(inner) => render_asserts_annotation(inner, dest),
-            GeneratorFunctionDeclarationReturnTypeTransportSlot::TypePredicateAnnotation(inner) => render_type_predicate_annotation(inner, dest),
+            GeneratorFunctionDeclarationReturnTypeTransportSlot::TypeAnnotation(inner) => inner.render_into(dest),
+            GeneratorFunctionDeclarationReturnTypeTransportSlot::AssertsAnnotation(inner) => inner.render_into(dest),
+            GeneratorFunctionDeclarationReturnTypeTransportSlot::TypePredicateAnnotation(inner) => inner.render_into(dest),
         }
     }
 }
@@ -15140,45 +15286,45 @@ impl RenderableTransport for ArrowFunctionBodyTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ArrowFunctionBodyTransportSlot::AsExpression(inner) => render_as_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::SatisfiesExpression(inner) => render_satisfies_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::InstantiationExpression(inner) => render_instantiation_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::InternalModule(inner) => render_internal_module(inner, dest),
-            ArrowFunctionBodyTransportSlot::TypeAssertion(inner) => render_type_assertion(inner, dest),
-            ArrowFunctionBodyTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            ArrowFunctionBodyTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ArrowFunctionBodyTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            ArrowFunctionBodyTransportSlot::This(inner) => render_this(inner, dest),
-            ArrowFunctionBodyTransportSlot::Super(inner) => render_super(inner, dest),
-            ArrowFunctionBodyTransportSlot::Number(inner) => render_number(inner, dest),
-            ArrowFunctionBodyTransportSlot::String(inner) => render_string(inner, dest),
-            ArrowFunctionBodyTransportSlot::TemplateString(inner) => render_template_string(inner, dest),
-            ArrowFunctionBodyTransportSlot::Regex(inner) => render_regex(inner, dest),
-            ArrowFunctionBodyTransportSlot::True(inner) => render_true(inner, dest),
-            ArrowFunctionBodyTransportSlot::False(inner) => render_false(inner, dest),
-            ArrowFunctionBodyTransportSlot::Null(inner) => render_null(inner, dest),
-            ArrowFunctionBodyTransportSlot::Object(inner) => render_object(inner, dest),
-            ArrowFunctionBodyTransportSlot::Array(inner) => render_array(inner, dest),
-            ArrowFunctionBodyTransportSlot::FunctionExpression(inner) => render_function_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::ArrowFunction(inner) => render_arrow_function(inner, dest),
-            ArrowFunctionBodyTransportSlot::GeneratorFunction(inner) => render_generator_function(inner, dest),
-            ArrowFunctionBodyTransportSlot::Class(inner) => render_class(inner, dest),
-            ArrowFunctionBodyTransportSlot::MetaProperty(inner) => render_meta_property(inner, dest),
-            ArrowFunctionBodyTransportSlot::CallExpression(inner) => render_call_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::AssignmentExpression(inner) => render_assignment_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::AugmentedAssignmentExpression(inner) => render_augmented_assignment_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::AwaitExpression(inner) => render_await_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::UnaryExpression(inner) => render_unary_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::BinaryExpression(inner) => render_binary_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::TernaryExpression(inner) => render_ternary_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::UpdateExpression(inner) => render_update_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::NewExpression(inner) => render_new_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::YieldExpression(inner) => render_yield_expression(inner, dest),
-            ArrowFunctionBodyTransportSlot::StatementBlock(inner) => render_statement_block(inner, dest),
+            ArrowFunctionBodyTransportSlot::AsExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::Undefined(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::This(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::Super(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::Number(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::String(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::Regex(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::True(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::False(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::Null(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::Object(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::Array(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::Class(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::NewExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::YieldExpression(inner) => inner.render_into(dest),
+            ArrowFunctionBodyTransportSlot::StatementBlock(inner) => inner.render_into(dest),
             ArrowFunctionBodyTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -15275,8 +15421,8 @@ impl RenderableTransport for ArrowFunctionContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ArrowFunctionContentTransportSlot::ArrowFunctionParameter(inner) => render_arrow_function_parameter(inner, dest),
-            ArrowFunctionContentTransportSlot::ArrowFunctionUCallSignature(inner) => render_arrow_function_ucall_signature(inner, dest),
+            ArrowFunctionContentTransportSlot::ArrowFunctionParameter(inner) => inner.render_into(dest),
+            ArrowFunctionContentTransportSlot::ArrowFunctionUCallSignature(inner) => inner.render_into(dest),
         }
     }
 }
@@ -15380,9 +15526,9 @@ impl RenderableTransport for _CallSignatureReturnTypeTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            _CallSignatureReturnTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
-            _CallSignatureReturnTypeTransportSlot::AssertsAnnotation(inner) => render_asserts_annotation(inner, dest),
-            _CallSignatureReturnTypeTransportSlot::TypePredicateAnnotation(inner) => render_type_predicate_annotation(inner, dest),
+            _CallSignatureReturnTypeTransportSlot::TypeAnnotation(inner) => inner.render_into(dest),
+            _CallSignatureReturnTypeTransportSlot::AssertsAnnotation(inner) => inner.render_into(dest),
+            _CallSignatureReturnTypeTransportSlot::TypePredicateAnnotation(inner) => inner.render_into(dest),
         }
     }
 }
@@ -15486,9 +15632,9 @@ impl RenderableTransport for CallExpressionContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            CallExpressionContentTransportSlot::CallExpressionCall(inner) => render_call_expression_call(inner, dest),
-            CallExpressionContentTransportSlot::CallExpressionTemplateCall(inner) => render_call_expression_template_call(inner, dest),
-            CallExpressionContentTransportSlot::CallExpressionMember(inner) => render_call_expression_member(inner, dest),
+            CallExpressionContentTransportSlot::CallExpressionCall(inner) => inner.render_into(dest),
+            CallExpressionContentTransportSlot::CallExpressionTemplateCall(inner) => inner.render_into(dest),
+            CallExpressionContentTransportSlot::CallExpressionMember(inner) => inner.render_into(dest),
         }
     }
 }
@@ -16018,45 +16164,45 @@ impl RenderableTransport for MemberExpressionObjectTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            MemberExpressionObjectTransportSlot::AsExpression(inner) => render_as_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::SatisfiesExpression(inner) => render_satisfies_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::InstantiationExpression(inner) => render_instantiation_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::InternalModule(inner) => render_internal_module(inner, dest),
-            MemberExpressionObjectTransportSlot::TypeAssertion(inner) => render_type_assertion(inner, dest),
-            MemberExpressionObjectTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            MemberExpressionObjectTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            MemberExpressionObjectTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            MemberExpressionObjectTransportSlot::This(inner) => render_this(inner, dest),
-            MemberExpressionObjectTransportSlot::Super(inner) => render_super(inner, dest),
-            MemberExpressionObjectTransportSlot::Number(inner) => render_number(inner, dest),
-            MemberExpressionObjectTransportSlot::String(inner) => render_string(inner, dest),
-            MemberExpressionObjectTransportSlot::TemplateString(inner) => render_template_string(inner, dest),
-            MemberExpressionObjectTransportSlot::Regex(inner) => render_regex(inner, dest),
-            MemberExpressionObjectTransportSlot::True(inner) => render_true(inner, dest),
-            MemberExpressionObjectTransportSlot::False(inner) => render_false(inner, dest),
-            MemberExpressionObjectTransportSlot::Null(inner) => render_null(inner, dest),
-            MemberExpressionObjectTransportSlot::Object(inner) => render_object(inner, dest),
-            MemberExpressionObjectTransportSlot::Array(inner) => render_array(inner, dest),
-            MemberExpressionObjectTransportSlot::FunctionExpression(inner) => render_function_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::ArrowFunction(inner) => render_arrow_function(inner, dest),
-            MemberExpressionObjectTransportSlot::GeneratorFunction(inner) => render_generator_function(inner, dest),
-            MemberExpressionObjectTransportSlot::Class(inner) => render_class(inner, dest),
-            MemberExpressionObjectTransportSlot::MetaProperty(inner) => render_meta_property(inner, dest),
-            MemberExpressionObjectTransportSlot::CallExpression(inner) => render_call_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::AssignmentExpression(inner) => render_assignment_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::AugmentedAssignmentExpression(inner) => render_augmented_assignment_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::AwaitExpression(inner) => render_await_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::UnaryExpression(inner) => render_unary_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::BinaryExpression(inner) => render_binary_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::TernaryExpression(inner) => render_ternary_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::UpdateExpression(inner) => render_update_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::NewExpression(inner) => render_new_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::YieldExpression(inner) => render_yield_expression(inner, dest),
-            MemberExpressionObjectTransportSlot::Import(inner) => render_import(inner, dest),
+            MemberExpressionObjectTransportSlot::AsExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::Undefined(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::Identifier(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::This(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::Super(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::Number(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::String(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::Regex(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::True(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::False(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::Null(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::Object(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::Array(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::Class(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::NewExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::YieldExpression(inner) => inner.render_into(dest),
+            MemberExpressionObjectTransportSlot::Import(inner) => inner.render_into(dest),
             MemberExpressionObjectTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -16149,7 +16295,7 @@ impl RenderableTransport for MemberExpressionSeparatorTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            MemberExpressionSeparatorTransportSlot::OptionalChain(inner) => render_optional_chain(inner, dest),
+            MemberExpressionSeparatorTransportSlot::OptionalChain(inner) => inner.render_into(dest),
             MemberExpressionSeparatorTransportSlot::Literal7_2e => dest.write_str(".").map_err(::askama::Error::from),
         }
     }
@@ -16258,8 +16404,8 @@ impl RenderableTransport for MemberExpressionPropertyTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            MemberExpressionPropertyTransportSlot::PrivatePropertyIdentifier(inner) => render_private_property_identifier(inner, dest),
-            MemberExpressionPropertyTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            MemberExpressionPropertyTransportSlot::PrivatePropertyIdentifier(inner) => inner.render_into(dest),
+            MemberExpressionPropertyTransportSlot::Identifier(inner) => inner.render_into(dest),
             MemberExpressionPropertyTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -16782,44 +16928,44 @@ impl RenderableTransport for SubscriptExpressionObjectTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            SubscriptExpressionObjectTransportSlot::AsExpression(inner) => render_as_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::SatisfiesExpression(inner) => render_satisfies_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::InstantiationExpression(inner) => render_instantiation_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::InternalModule(inner) => render_internal_module(inner, dest),
-            SubscriptExpressionObjectTransportSlot::TypeAssertion(inner) => render_type_assertion(inner, dest),
-            SubscriptExpressionObjectTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            SubscriptExpressionObjectTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            SubscriptExpressionObjectTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            SubscriptExpressionObjectTransportSlot::This(inner) => render_this(inner, dest),
-            SubscriptExpressionObjectTransportSlot::Super(inner) => render_super(inner, dest),
-            SubscriptExpressionObjectTransportSlot::Number(inner) => render_number(inner, dest),
-            SubscriptExpressionObjectTransportSlot::String(inner) => render_string(inner, dest),
-            SubscriptExpressionObjectTransportSlot::TemplateString(inner) => render_template_string(inner, dest),
-            SubscriptExpressionObjectTransportSlot::Regex(inner) => render_regex(inner, dest),
-            SubscriptExpressionObjectTransportSlot::True(inner) => render_true(inner, dest),
-            SubscriptExpressionObjectTransportSlot::False(inner) => render_false(inner, dest),
-            SubscriptExpressionObjectTransportSlot::Null(inner) => render_null(inner, dest),
-            SubscriptExpressionObjectTransportSlot::Object(inner) => render_object(inner, dest),
-            SubscriptExpressionObjectTransportSlot::Array(inner) => render_array(inner, dest),
-            SubscriptExpressionObjectTransportSlot::FunctionExpression(inner) => render_function_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::ArrowFunction(inner) => render_arrow_function(inner, dest),
-            SubscriptExpressionObjectTransportSlot::GeneratorFunction(inner) => render_generator_function(inner, dest),
-            SubscriptExpressionObjectTransportSlot::Class(inner) => render_class(inner, dest),
-            SubscriptExpressionObjectTransportSlot::MetaProperty(inner) => render_meta_property(inner, dest),
-            SubscriptExpressionObjectTransportSlot::CallExpression(inner) => render_call_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::AssignmentExpression(inner) => render_assignment_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::AugmentedAssignmentExpression(inner) => render_augmented_assignment_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::AwaitExpression(inner) => render_await_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::UnaryExpression(inner) => render_unary_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::BinaryExpression(inner) => render_binary_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::TernaryExpression(inner) => render_ternary_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::UpdateExpression(inner) => render_update_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::NewExpression(inner) => render_new_expression(inner, dest),
-            SubscriptExpressionObjectTransportSlot::YieldExpression(inner) => render_yield_expression(inner, dest),
+            SubscriptExpressionObjectTransportSlot::AsExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::Undefined(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::Identifier(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::This(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::Super(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::Number(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::String(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::Regex(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::True(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::False(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::Null(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::Object(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::Array(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::Class(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::NewExpression(inner) => inner.render_into(dest),
+            SubscriptExpressionObjectTransportSlot::YieldExpression(inner) => inner.render_into(dest),
             SubscriptExpressionObjectTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -17224,15 +17370,15 @@ impl RenderableTransport for AssignmentExpressionLeftTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            AssignmentExpressionLeftTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
-            AssignmentExpressionLeftTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            AssignmentExpressionLeftTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            AssignmentExpressionLeftTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            AssignmentExpressionLeftTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            AssignmentExpressionLeftTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            AssignmentExpressionLeftTransportSlot::ObjectPattern(inner) => render_object_pattern(inner, dest),
-            AssignmentExpressionLeftTransportSlot::ArrayPattern(inner) => render_array_pattern(inner, dest),
-            AssignmentExpressionLeftTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
+            AssignmentExpressionLeftTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            AssignmentExpressionLeftTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            AssignmentExpressionLeftTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            AssignmentExpressionLeftTransportSlot::Undefined(inner) => inner.render_into(dest),
+            AssignmentExpressionLeftTransportSlot::Identifier(inner) => inner.render_into(dest),
+            AssignmentExpressionLeftTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            AssignmentExpressionLeftTransportSlot::ObjectPattern(inner) => inner.render_into(dest),
+            AssignmentExpressionLeftTransportSlot::ArrayPattern(inner) => inner.render_into(dest),
+            AssignmentExpressionLeftTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
             AssignmentExpressionLeftTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -17528,8 +17674,8 @@ impl RenderableTransport for UpdateExpressionContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            UpdateExpressionContentTransportSlot::UpdateExpressionPostfix(inner) => render_update_expression_postfix(inner, dest),
-            UpdateExpressionContentTransportSlot::UpdateExpressionPrefix(inner) => render_update_expression_prefix(inner, dest),
+            UpdateExpressionContentTransportSlot::UpdateExpressionPostfix(inner) => inner.render_into(dest),
+            UpdateExpressionContentTransportSlot::UpdateExpressionPrefix(inner) => inner.render_into(dest),
         }
     }
 }
@@ -17625,8 +17771,8 @@ impl RenderableTransport for StringContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            StringContentTransportSlot::StringDouble(inner) => render_string_double(inner, dest),
-            StringContentTransportSlot::StringSingle(inner) => render_string_single(inner, dest),
+            StringContentTransportSlot::StringDouble(inner) => inner.render_into(dest),
+            StringContentTransportSlot::StringSingle(inner) => inner.render_into(dest),
         }
     }
 }
@@ -17736,9 +17882,9 @@ impl RenderableTransport for TemplateStringElementsTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TemplateStringElementsTransportSlot::TemplateChars(inner) => render_template_chars(inner, dest),
-            TemplateStringElementsTransportSlot::EscapeSequence(inner) => render_escape_sequence(inner, dest),
-            TemplateStringElementsTransportSlot::TemplateSubstitution(inner) => render_template_substitution(inner, dest),
+            TemplateStringElementsTransportSlot::TemplateChars(inner) => inner.render_into(dest),
+            TemplateStringElementsTransportSlot::EscapeSequence(inner) => inner.render_into(dest),
+            TemplateStringElementsTransportSlot::TemplateSubstitution(inner) => inner.render_into(dest),
             TemplateStringElementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -17841,8 +17987,8 @@ impl RenderableTransport for MetaPropertyContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            MetaPropertyContentTransportSlot::MetaPropertyGroup1(inner) => render_meta_property_group1(inner, dest),
-            MetaPropertyContentTransportSlot::MetaPropertyGroup2(inner) => render_meta_property_group2(inner, dest),
+            MetaPropertyContentTransportSlot::MetaPropertyGroup1(inner) => inner.render_into(dest),
+            MetaPropertyContentTransportSlot::MetaPropertyGroup2(inner) => inner.render_into(dest),
             MetaPropertyContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -18373,45 +18519,45 @@ impl RenderableTransport for ArgumentsArgumentsTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ArgumentsArgumentsTransportSlot::AsExpression(inner) => render_as_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::SatisfiesExpression(inner) => render_satisfies_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::InstantiationExpression(inner) => render_instantiation_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::InternalModule(inner) => render_internal_module(inner, dest),
-            ArgumentsArgumentsTransportSlot::TypeAssertion(inner) => render_type_assertion(inner, dest),
-            ArgumentsArgumentsTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            ArgumentsArgumentsTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ArgumentsArgumentsTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            ArgumentsArgumentsTransportSlot::This(inner) => render_this(inner, dest),
-            ArgumentsArgumentsTransportSlot::Super(inner) => render_super(inner, dest),
-            ArgumentsArgumentsTransportSlot::Number(inner) => render_number(inner, dest),
-            ArgumentsArgumentsTransportSlot::String(inner) => render_string(inner, dest),
-            ArgumentsArgumentsTransportSlot::TemplateString(inner) => render_template_string(inner, dest),
-            ArgumentsArgumentsTransportSlot::Regex(inner) => render_regex(inner, dest),
-            ArgumentsArgumentsTransportSlot::True(inner) => render_true(inner, dest),
-            ArgumentsArgumentsTransportSlot::False(inner) => render_false(inner, dest),
-            ArgumentsArgumentsTransportSlot::Null(inner) => render_null(inner, dest),
-            ArgumentsArgumentsTransportSlot::Object(inner) => render_object(inner, dest),
-            ArgumentsArgumentsTransportSlot::Array(inner) => render_array(inner, dest),
-            ArgumentsArgumentsTransportSlot::FunctionExpression(inner) => render_function_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::ArrowFunction(inner) => render_arrow_function(inner, dest),
-            ArgumentsArgumentsTransportSlot::GeneratorFunction(inner) => render_generator_function(inner, dest),
-            ArgumentsArgumentsTransportSlot::Class(inner) => render_class(inner, dest),
-            ArgumentsArgumentsTransportSlot::MetaProperty(inner) => render_meta_property(inner, dest),
-            ArgumentsArgumentsTransportSlot::CallExpression(inner) => render_call_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::AssignmentExpression(inner) => render_assignment_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::AugmentedAssignmentExpression(inner) => render_augmented_assignment_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::AwaitExpression(inner) => render_await_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::UnaryExpression(inner) => render_unary_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::BinaryExpression(inner) => render_binary_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::TernaryExpression(inner) => render_ternary_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::UpdateExpression(inner) => render_update_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::NewExpression(inner) => render_new_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::YieldExpression(inner) => render_yield_expression(inner, dest),
-            ArgumentsArgumentsTransportSlot::SpreadElement(inner) => render_spread_element(inner, dest),
+            ArgumentsArgumentsTransportSlot::AsExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::Undefined(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::This(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::Super(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::Number(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::String(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::Regex(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::True(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::False(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::Null(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::Object(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::Array(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::Class(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::NewExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::YieldExpression(inner) => inner.render_into(dest),
+            ArgumentsArgumentsTransportSlot::SpreadElement(inner) => inner.render_into(dest),
             ArgumentsArgumentsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -18548,10 +18694,10 @@ impl RenderableTransport for DecoratorContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            DecoratorContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            DecoratorContentTransportSlot::DecoratorMemberExpression(inner) => render_decorator_member_expression(inner, dest),
-            DecoratorContentTransportSlot::DecoratorCallExpression(inner) => render_decorator_call_expression(inner, dest),
-            DecoratorContentTransportSlot::DecoratorParenthesizedExpression(inner) => render_decorator_parenthesized_expression(inner, dest),
+            DecoratorContentTransportSlot::Identifier(inner) => inner.render_into(dest),
+            DecoratorContentTransportSlot::DecoratorMemberExpression(inner) => inner.render_into(dest),
+            DecoratorContentTransportSlot::DecoratorCallExpression(inner) => inner.render_into(dest),
+            DecoratorContentTransportSlot::DecoratorParenthesizedExpression(inner) => inner.render_into(dest),
             DecoratorContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -18660,8 +18806,8 @@ impl RenderableTransport for DecoratorMemberExpressionObjectTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            DecoratorMemberExpressionObjectTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            DecoratorMemberExpressionObjectTransportSlot::DecoratorMemberExpression(inner) => render_decorator_member_expression(inner, dest),
+            DecoratorMemberExpressionObjectTransportSlot::Identifier(inner) => inner.render_into(dest),
+            DecoratorMemberExpressionObjectTransportSlot::DecoratorMemberExpression(inner) => inner.render_into(dest),
             DecoratorMemberExpressionObjectTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -18770,8 +18916,8 @@ impl RenderableTransport for DecoratorCallExpressionFunctionTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            DecoratorCallExpressionFunctionTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            DecoratorCallExpressionFunctionTransportSlot::DecoratorMemberExpression(inner) => render_decorator_member_expression(inner, dest),
+            DecoratorCallExpressionFunctionTransportSlot::Identifier(inner) => inner.render_into(dest),
+            DecoratorCallExpressionFunctionTransportSlot::DecoratorMemberExpression(inner) => inner.render_into(dest),
             DecoratorCallExpressionFunctionTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -18888,10 +19034,10 @@ impl RenderableTransport for ClassBodyContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ClassBodyContentTransportSlot::ClassBodyMethod(inner) => render_class_body_method(inner, dest),
-            ClassBodyContentTransportSlot::ClassBodyMethodSig(inner) => render_class_body_method_sig(inner, dest),
-            ClassBodyContentTransportSlot::ClassStaticBlock(inner) => render_class_static_block(inner, dest),
-            ClassBodyContentTransportSlot::ClassBodyMember(inner) => render_class_body_member(inner, dest),
+            ClassBodyContentTransportSlot::ClassBodyMethod(inner) => inner.render_into(dest),
+            ClassBodyContentTransportSlot::ClassBodyMethodSig(inner) => inner.render_into(dest),
+            ClassBodyContentTransportSlot::ClassStaticBlock(inner) => inner.render_into(dest),
+            ClassBodyContentTransportSlot::ClassBodyMember(inner) => inner.render_into(dest),
             ClassBodyContentTransportSlot::Literal33_3b => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
@@ -19594,9 +19740,9 @@ impl RenderableTransport for MethodDefinitionReturnTypeTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            MethodDefinitionReturnTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
-            MethodDefinitionReturnTypeTransportSlot::AssertsAnnotation(inner) => render_asserts_annotation(inner, dest),
-            MethodDefinitionReturnTypeTransportSlot::TypePredicateAnnotation(inner) => render_type_predicate_annotation(inner, dest),
+            MethodDefinitionReturnTypeTransportSlot::TypeAnnotation(inner) => inner.render_into(dest),
+            MethodDefinitionReturnTypeTransportSlot::AssertsAnnotation(inner) => inner.render_into(dest),
+            MethodDefinitionReturnTypeTransportSlot::TypePredicateAnnotation(inner) => inner.render_into(dest),
         }
     }
 }
@@ -19894,16 +20040,16 @@ impl RenderableTransport for PairPatternValueTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            PairPatternValueTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            PairPatternValueTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            PairPatternValueTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            PairPatternValueTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            PairPatternValueTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            PairPatternValueTransportSlot::ObjectPattern(inner) => render_object_pattern(inner, dest),
-            PairPatternValueTransportSlot::ArrayPattern(inner) => render_array_pattern(inner, dest),
-            PairPatternValueTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            PairPatternValueTransportSlot::RestPattern(inner) => render_rest_pattern(inner, dest),
-            PairPatternValueTransportSlot::AssignmentPattern(inner) => render_assignment_pattern(inner, dest),
+            PairPatternValueTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            PairPatternValueTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            PairPatternValueTransportSlot::Undefined(inner) => inner.render_into(dest),
+            PairPatternValueTransportSlot::Identifier(inner) => inner.render_into(dest),
+            PairPatternValueTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            PairPatternValueTransportSlot::ObjectPattern(inner) => inner.render_into(dest),
+            PairPatternValueTransportSlot::ArrayPattern(inner) => inner.render_into(dest),
+            PairPatternValueTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            PairPatternValueTransportSlot::RestPattern(inner) => inner.render_into(dest),
+            PairPatternValueTransportSlot::AssignmentPattern(inner) => inner.render_into(dest),
             PairPatternValueTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -20000,8 +20146,8 @@ impl RenderableTransport for PublicFieldDefinitionVisibilityPrefixTransportSlot 
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            PublicFieldDefinitionVisibilityPrefixTransportSlot::PublicFieldDefinitionDeclareFirst(inner) => render_public_field_definition_declare_first(inner, dest),
-            PublicFieldDefinitionVisibilityPrefixTransportSlot::PublicFieldDefinitionAccessFirst(inner) => render_public_field_definition_access_first(inner, dest),
+            PublicFieldDefinitionVisibilityPrefixTransportSlot::PublicFieldDefinitionDeclareFirst(inner) => inner.render_into(dest),
+            PublicFieldDefinitionVisibilityPrefixTransportSlot::PublicFieldDefinitionAccessFirst(inner) => inner.render_into(dest),
         }
     }
 }
@@ -20198,9 +20344,9 @@ impl RenderableTransport for PublicFieldDefinitionContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionStaticMods(inner) => render_public_field_definition_static_mods(inner, dest),
-            PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionAbstractFirst(inner) => render_public_field_definition_abstract_first(inner, dest),
-            PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionReadonlyFirst(inner) => render_public_field_definition_readonly_first(inner, dest),
+            PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionStaticMods(inner) => inner.render_into(dest),
+            PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionAbstractFirst(inner) => inner.render_into(dest),
+            PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionReadonlyFirst(inner) => inner.render_into(dest),
             PublicFieldDefinitionContentTransportSlot::Literal39_61_63_63_65_73_73_6f_72 => dest.write_str("accessor").map_err(::askama::Error::from),
         }
     }
@@ -20735,9 +20881,9 @@ impl RenderableTransport for MethodSignatureReturnTypeTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            MethodSignatureReturnTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
-            MethodSignatureReturnTypeTransportSlot::AssertsAnnotation(inner) => render_asserts_annotation(inner, dest),
-            MethodSignatureReturnTypeTransportSlot::TypePredicateAnnotation(inner) => render_type_predicate_annotation(inner, dest),
+            MethodSignatureReturnTypeTransportSlot::TypeAnnotation(inner) => inner.render_into(dest),
+            MethodSignatureReturnTypeTransportSlot::AssertsAnnotation(inner) => inner.render_into(dest),
+            MethodSignatureReturnTypeTransportSlot::TypePredicateAnnotation(inner) => inner.render_into(dest),
         }
     }
 }
@@ -21019,9 +21165,9 @@ impl RenderableTransport for AbstractMethodSignatureReturnTypeTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            AbstractMethodSignatureReturnTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
-            AbstractMethodSignatureReturnTypeTransportSlot::AssertsAnnotation(inner) => render_asserts_annotation(inner, dest),
-            AbstractMethodSignatureReturnTypeTransportSlot::TypePredicateAnnotation(inner) => render_type_predicate_annotation(inner, dest),
+            AbstractMethodSignatureReturnTypeTransportSlot::TypeAnnotation(inner) => inner.render_into(dest),
+            AbstractMethodSignatureReturnTypeTransportSlot::AssertsAnnotation(inner) => inner.render_into(dest),
+            AbstractMethodSignatureReturnTypeTransportSlot::TypePredicateAnnotation(inner) => inner.render_into(dest),
         }
     }
 }
@@ -21209,9 +21355,9 @@ impl RenderableTransport for FunctionSignatureReturnTypeTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            FunctionSignatureReturnTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
-            FunctionSignatureReturnTypeTransportSlot::AssertsAnnotation(inner) => render_asserts_annotation(inner, dest),
-            FunctionSignatureReturnTypeTransportSlot::TypePredicateAnnotation(inner) => render_type_predicate_annotation(inner, dest),
+            FunctionSignatureReturnTypeTransportSlot::TypeAnnotation(inner) => inner.render_into(dest),
+            FunctionSignatureReturnTypeTransportSlot::AssertsAnnotation(inner) => inner.render_into(dest),
+            FunctionSignatureReturnTypeTransportSlot::TypePredicateAnnotation(inner) => inner.render_into(dest),
         }
     }
 }
@@ -21309,7 +21455,7 @@ impl RenderableTransport for FunctionSignatureSemicolonTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            FunctionSignatureSemicolonTransportSlot::Semicolon(inner) => render_semicolon(inner, dest),
+            FunctionSignatureSemicolonTransportSlot::Semicolon(inner) => inner.render_into(dest),
             FunctionSignatureSemicolonTransportSlot::Literal42_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
@@ -21432,9 +21578,9 @@ impl RenderableTransport for DecoratorParenthesizedExpressionContentTransportSlo
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            DecoratorParenthesizedExpressionContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            DecoratorParenthesizedExpressionContentTransportSlot::DecoratorMemberExpression(inner) => render_decorator_member_expression(inner, dest),
-            DecoratorParenthesizedExpressionContentTransportSlot::DecoratorCallExpression(inner) => render_decorator_call_expression(inner, dest),
+            DecoratorParenthesizedExpressionContentTransportSlot::Identifier(inner) => inner.render_into(dest),
+            DecoratorParenthesizedExpressionContentTransportSlot::DecoratorMemberExpression(inner) => inner.render_into(dest),
+            DecoratorParenthesizedExpressionContentTransportSlot::DecoratorCallExpression(inner) => inner.render_into(dest),
             DecoratorParenthesizedExpressionContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -21785,31 +21931,31 @@ impl RenderableTransport for AsExpressionTypeAnnotationTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            AsExpressionTypeAnnotationTransportSlot::ParenthesizedType(inner) => render_parenthesized_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::PredefinedType(inner) => render_predefined_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::TypeIdentifier(inner) => render_type_identifier(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::NestedTypeIdentifier(inner) => render_nested_type_identifier(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::GenericType(inner) => render_generic_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::ObjectType(inner) => render_object_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::ArrayType(inner) => render_array_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::TupleType(inner) => render_tuple_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::FlowMaybeType(inner) => render_flow_maybe_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::TypeQuery(inner) => render_type_query(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::IndexTypeQuery(inner) => render_index_type_query(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::This(inner) => render_this(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::ExistentialType(inner) => render_existential_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::LiteralType(inner) => render_literal_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::LookupType(inner) => render_lookup_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::ConditionalType(inner) => render_conditional_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::TemplateLiteralType(inner) => render_template_literal_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::IntersectionType(inner) => render_intersection_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::UnionType(inner) => render_union_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::FunctionType(inner) => render_function_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::ReadonlyType(inner) => render_readonly_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::ConstructorType(inner) => render_constructor_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::InferType(inner) => render_infer_type(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => render_type_query_member_expression_in_type_annotation(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => render_type_query_call_expression_in_type_annotation(inner, dest),
+            AsExpressionTypeAnnotationTransportSlot::ParenthesizedType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::PredefinedType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::TypeIdentifier(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::NestedTypeIdentifier(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::GenericType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::ObjectType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::ArrayType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::TupleType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::FlowMaybeType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::TypeQuery(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::IndexTypeQuery(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::This(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::ExistentialType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::LiteralType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::LookupType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::ConditionalType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::TemplateLiteralType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::IntersectionType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::UnionType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::FunctionType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::ReadonlyType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::ConstructorType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::InferType(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => inner.render_into(dest),
+            AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.render_into(dest),
             AsExpressionTypeAnnotationTransportSlot::Literal43_63_6f_6e_73_74 => dest.write_str("const").map_err(::askama::Error::from),
             AsExpressionTypeAnnotationTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
@@ -22019,22 +22165,22 @@ impl RenderableTransport for AmbientDeclarationContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            AmbientDeclarationContentTransportSlot::FunctionDeclaration(inner) => render_function_declaration(inner, dest),
-            AmbientDeclarationContentTransportSlot::GeneratorFunctionDeclaration(inner) => render_generator_function_declaration(inner, dest),
-            AmbientDeclarationContentTransportSlot::ClassDeclaration(inner) => render_class_declaration(inner, dest),
-            AmbientDeclarationContentTransportSlot::LexicalDeclaration(inner) => render_lexical_declaration(inner, dest),
-            AmbientDeclarationContentTransportSlot::VariableDeclaration(inner) => render_variable_declaration(inner, dest),
-            AmbientDeclarationContentTransportSlot::FunctionSignature(inner) => render_function_signature(inner, dest),
-            AmbientDeclarationContentTransportSlot::AbstractClassDeclaration(inner) => render_abstract_class_declaration(inner, dest),
-            AmbientDeclarationContentTransportSlot::Module(inner) => render_module(inner, dest),
-            AmbientDeclarationContentTransportSlot::InternalModule(inner) => render_internal_module(inner, dest),
-            AmbientDeclarationContentTransportSlot::TypeAliasDeclaration(inner) => render_type_alias_declaration(inner, dest),
-            AmbientDeclarationContentTransportSlot::EnumDeclaration(inner) => render_enum_declaration(inner, dest),
-            AmbientDeclarationContentTransportSlot::InterfaceDeclaration(inner) => render_interface_declaration(inner, dest),
-            AmbientDeclarationContentTransportSlot::ImportAlias(inner) => render_import_alias(inner, dest),
-            AmbientDeclarationContentTransportSlot::AmbientDeclaration(inner) => render_ambient_declaration(inner, dest),
-            AmbientDeclarationContentTransportSlot::AmbientDeclarationGlobal(inner) => render_ambient_declaration_global(inner, dest),
-            AmbientDeclarationContentTransportSlot::AmbientDeclarationModule(inner) => render_ambient_declaration_module(inner, dest),
+            AmbientDeclarationContentTransportSlot::FunctionDeclaration(inner) => inner.render_into(dest),
+            AmbientDeclarationContentTransportSlot::GeneratorFunctionDeclaration(inner) => inner.render_into(dest),
+            AmbientDeclarationContentTransportSlot::ClassDeclaration(inner) => inner.render_into(dest),
+            AmbientDeclarationContentTransportSlot::LexicalDeclaration(inner) => inner.render_into(dest),
+            AmbientDeclarationContentTransportSlot::VariableDeclaration(inner) => inner.render_into(dest),
+            AmbientDeclarationContentTransportSlot::FunctionSignature(inner) => inner.render_into(dest),
+            AmbientDeclarationContentTransportSlot::AbstractClassDeclaration(inner) => inner.render_into(dest),
+            AmbientDeclarationContentTransportSlot::Module(inner) => inner.render_into(dest),
+            AmbientDeclarationContentTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            AmbientDeclarationContentTransportSlot::TypeAliasDeclaration(inner) => inner.render_into(dest),
+            AmbientDeclarationContentTransportSlot::EnumDeclaration(inner) => inner.render_into(dest),
+            AmbientDeclarationContentTransportSlot::InterfaceDeclaration(inner) => inner.render_into(dest),
+            AmbientDeclarationContentTransportSlot::ImportAlias(inner) => inner.render_into(dest),
+            AmbientDeclarationContentTransportSlot::AmbientDeclaration(inner) => inner.render_into(dest),
+            AmbientDeclarationContentTransportSlot::AmbientDeclarationGlobal(inner) => inner.render_into(dest),
+            AmbientDeclarationContentTransportSlot::AmbientDeclarationModule(inner) => inner.render_into(dest),
         }
     }
 }
@@ -22144,9 +22290,9 @@ impl RenderableTransport for ModuleNameTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ModuleNameTransportSlot::String(inner) => render_string(inner, dest),
-            ModuleNameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ModuleNameTransportSlot::NestedIdentifier(inner) => render_nested_identifier(inner, dest),
+            ModuleNameTransportSlot::String(inner) => inner.render_into(dest),
+            ModuleNameTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ModuleNameTransportSlot::NestedIdentifier(inner) => inner.render_into(dest),
             ModuleNameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -22257,9 +22403,9 @@ impl RenderableTransport for InternalModuleNameTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            InternalModuleNameTransportSlot::String(inner) => render_string(inner, dest),
-            InternalModuleNameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            InternalModuleNameTransportSlot::NestedIdentifier(inner) => render_nested_identifier(inner, dest),
+            InternalModuleNameTransportSlot::String(inner) => inner.render_into(dest),
+            InternalModuleNameTransportSlot::Identifier(inner) => inner.render_into(dest),
+            InternalModuleNameTransportSlot::NestedIdentifier(inner) => inner.render_into(dest),
             InternalModuleNameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -22370,9 +22516,9 @@ impl RenderableTransport for _ModuleNameTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            _ModuleNameTransportSlot::String(inner) => render_string(inner, dest),
-            _ModuleNameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            _ModuleNameTransportSlot::NestedIdentifier(inner) => render_nested_identifier(inner, dest),
+            _ModuleNameTransportSlot::String(inner) => inner.render_into(dest),
+            _ModuleNameTransportSlot::Identifier(inner) => inner.render_into(dest),
+            _ModuleNameTransportSlot::NestedIdentifier(inner) => inner.render_into(dest),
             _ModuleNameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -22475,8 +22621,8 @@ impl RenderableTransport for ImportAliasValueTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ImportAliasValueTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ImportAliasValueTransportSlot::NestedIdentifier(inner) => render_nested_identifier(inner, dest),
+            ImportAliasValueTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ImportAliasValueTransportSlot::NestedIdentifier(inner) => inner.render_into(dest),
             ImportAliasValueTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -22579,8 +22725,8 @@ impl RenderableTransport for NestedTypeIdentifierModuleTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            NestedTypeIdentifierModuleTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            NestedTypeIdentifierModuleTransportSlot::NestedIdentifier(inner) => render_nested_identifier(inner, dest),
+            NestedTypeIdentifierModuleTransportSlot::Identifier(inner) => inner.render_into(dest),
+            NestedTypeIdentifierModuleTransportSlot::NestedIdentifier(inner) => inner.render_into(dest),
             NestedTypeIdentifierModuleTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -22697,9 +22843,9 @@ impl RenderableTransport for ExtendsTypeClauseTypeTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ExtendsTypeClauseTypeTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ExtendsTypeClauseTypeTransportSlot::NestedTypeIdentifier(inner) => render_nested_type_identifier(inner, dest),
-            ExtendsTypeClauseTypeTransportSlot::GenericType(inner) => render_generic_type(inner, dest),
+            ExtendsTypeClauseTypeTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ExtendsTypeClauseTypeTransportSlot::NestedTypeIdentifier(inner) => inner.render_into(dest),
+            ExtendsTypeClauseTypeTransportSlot::GenericType(inner) => inner.render_into(dest),
             ExtendsTypeClauseTypeTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -23166,16 +23312,16 @@ impl RenderableTransport for RequiredParameterPatternTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            RequiredParameterPatternTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            RequiredParameterPatternTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            RequiredParameterPatternTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            RequiredParameterPatternTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            RequiredParameterPatternTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            RequiredParameterPatternTransportSlot::ObjectPattern(inner) => render_object_pattern(inner, dest),
-            RequiredParameterPatternTransportSlot::ArrayPattern(inner) => render_array_pattern(inner, dest),
-            RequiredParameterPatternTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            RequiredParameterPatternTransportSlot::RestPattern(inner) => render_rest_pattern(inner, dest),
-            RequiredParameterPatternTransportSlot::This(inner) => render_this(inner, dest),
+            RequiredParameterPatternTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            RequiredParameterPatternTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            RequiredParameterPatternTransportSlot::Undefined(inner) => inner.render_into(dest),
+            RequiredParameterPatternTransportSlot::Identifier(inner) => inner.render_into(dest),
+            RequiredParameterPatternTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            RequiredParameterPatternTransportSlot::ObjectPattern(inner) => inner.render_into(dest),
+            RequiredParameterPatternTransportSlot::ArrayPattern(inner) => inner.render_into(dest),
+            RequiredParameterPatternTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            RequiredParameterPatternTransportSlot::RestPattern(inner) => inner.render_into(dest),
+            RequiredParameterPatternTransportSlot::This(inner) => inner.render_into(dest),
             RequiredParameterPatternTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -23558,16 +23704,16 @@ impl RenderableTransport for OptionalParameterPatternTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            OptionalParameterPatternTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            OptionalParameterPatternTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            OptionalParameterPatternTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            OptionalParameterPatternTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            OptionalParameterPatternTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            OptionalParameterPatternTransportSlot::ObjectPattern(inner) => render_object_pattern(inner, dest),
-            OptionalParameterPatternTransportSlot::ArrayPattern(inner) => render_array_pattern(inner, dest),
-            OptionalParameterPatternTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            OptionalParameterPatternTransportSlot::RestPattern(inner) => render_rest_pattern(inner, dest),
-            OptionalParameterPatternTransportSlot::This(inner) => render_this(inner, dest),
+            OptionalParameterPatternTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            OptionalParameterPatternTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            OptionalParameterPatternTransportSlot::Undefined(inner) => inner.render_into(dest),
+            OptionalParameterPatternTransportSlot::Identifier(inner) => inner.render_into(dest),
+            OptionalParameterPatternTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            OptionalParameterPatternTransportSlot::ObjectPattern(inner) => inner.render_into(dest),
+            OptionalParameterPatternTransportSlot::ArrayPattern(inner) => inner.render_into(dest),
+            OptionalParameterPatternTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            OptionalParameterPatternTransportSlot::RestPattern(inner) => inner.render_into(dest),
+            OptionalParameterPatternTransportSlot::This(inner) => inner.render_into(dest),
             OptionalParameterPatternTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -23950,16 +24096,16 @@ impl RenderableTransport for ParameterNamePatternTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ParameterNamePatternTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            ParameterNamePatternTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            ParameterNamePatternTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            ParameterNamePatternTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ParameterNamePatternTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            ParameterNamePatternTransportSlot::ObjectPattern(inner) => render_object_pattern(inner, dest),
-            ParameterNamePatternTransportSlot::ArrayPattern(inner) => render_array_pattern(inner, dest),
-            ParameterNamePatternTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            ParameterNamePatternTransportSlot::RestPattern(inner) => render_rest_pattern(inner, dest),
-            ParameterNamePatternTransportSlot::This(inner) => render_this(inner, dest),
+            ParameterNamePatternTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            ParameterNamePatternTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            ParameterNamePatternTransportSlot::Undefined(inner) => inner.render_into(dest),
+            ParameterNamePatternTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ParameterNamePatternTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            ParameterNamePatternTransportSlot::ObjectPattern(inner) => inner.render_into(dest),
+            ParameterNamePatternTransportSlot::ArrayPattern(inner) => inner.render_into(dest),
+            ParameterNamePatternTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            ParameterNamePatternTransportSlot::RestPattern(inner) => inner.render_into(dest),
+            ParameterNamePatternTransportSlot::This(inner) => inner.render_into(dest),
             ParameterNamePatternTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -24082,9 +24228,9 @@ impl RenderableTransport for TypeQueryMemberExpressionInTypeAnnotationObjectTran
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::Import(inner) => render_import(inner, dest),
-            TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => render_type_query_member_expression_in_type_annotation(inner, dest),
-            TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => render_type_query_call_expression_in_type_annotation(inner, dest),
+            TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::Import(inner) => inner.render_into(dest),
+            TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => inner.render_into(dest),
+            TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.render_into(dest),
             TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -24193,8 +24339,8 @@ impl RenderableTransport for TypeQueryMemberExpressionInTypeAnnotationPropertyTr
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot::PrivatePropertyIdentifier(inner) => render_private_property_identifier(inner, dest),
-            TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot::PrivatePropertyIdentifier(inner) => inner.render_into(dest),
+            TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot::Identifier(inner) => inner.render_into(dest),
             TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -24303,8 +24449,8 @@ impl RenderableTransport for TypeQueryCallExpressionInTypeAnnotationFunctionTran
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot::Import(inner) => render_import(inner, dest),
-            TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => render_type_query_member_expression_in_type_annotation(inner, dest),
+            TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot::Import(inner) => inner.render_into(dest),
+            TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => inner.render_into(dest),
             TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -24415,9 +24561,9 @@ impl RenderableTransport for AssertsContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            AssertsContentTransportSlot::TypePredicate(inner) => render_type_predicate(inner, dest),
-            AssertsContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            AssertsContentTransportSlot::This(inner) => render_this(inner, dest),
+            AssertsContentTransportSlot::TypePredicate(inner) => inner.render_into(dest),
+            AssertsContentTransportSlot::Identifier(inner) => inner.render_into(dest),
+            AssertsContentTransportSlot::This(inner) => inner.render_into(dest),
             AssertsContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -24520,8 +24666,8 @@ impl RenderableTransport for TupleParameterNameTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TupleParameterNameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            TupleParameterNameTransportSlot::RestPattern(inner) => render_rest_pattern(inner, dest),
+            TupleParameterNameTransportSlot::Identifier(inner) => inner.render_into(dest),
+            TupleParameterNameTransportSlot::RestPattern(inner) => inner.render_into(dest),
             TupleParameterNameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -24912,26 +25058,26 @@ impl RenderableTransport for TemplateTypeContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TemplateTypeContentTransportSlot::ParenthesizedType(inner) => render_parenthesized_type(inner, dest),
-            TemplateTypeContentTransportSlot::PredefinedType(inner) => render_predefined_type(inner, dest),
-            TemplateTypeContentTransportSlot::TypeIdentifier(inner) => render_type_identifier(inner, dest),
-            TemplateTypeContentTransportSlot::NestedTypeIdentifier(inner) => render_nested_type_identifier(inner, dest),
-            TemplateTypeContentTransportSlot::GenericType(inner) => render_generic_type(inner, dest),
-            TemplateTypeContentTransportSlot::ObjectType(inner) => render_object_type(inner, dest),
-            TemplateTypeContentTransportSlot::ArrayType(inner) => render_array_type(inner, dest),
-            TemplateTypeContentTransportSlot::TupleType(inner) => render_tuple_type(inner, dest),
-            TemplateTypeContentTransportSlot::FlowMaybeType(inner) => render_flow_maybe_type(inner, dest),
-            TemplateTypeContentTransportSlot::TypeQuery(inner) => render_type_query(inner, dest),
-            TemplateTypeContentTransportSlot::IndexTypeQuery(inner) => render_index_type_query(inner, dest),
-            TemplateTypeContentTransportSlot::This(inner) => render_this(inner, dest),
-            TemplateTypeContentTransportSlot::ExistentialType(inner) => render_existential_type(inner, dest),
-            TemplateTypeContentTransportSlot::LiteralType(inner) => render_literal_type(inner, dest),
-            TemplateTypeContentTransportSlot::LookupType(inner) => render_lookup_type(inner, dest),
-            TemplateTypeContentTransportSlot::ConditionalType(inner) => render_conditional_type(inner, dest),
-            TemplateTypeContentTransportSlot::TemplateLiteralType(inner) => render_template_literal_type(inner, dest),
-            TemplateTypeContentTransportSlot::IntersectionType(inner) => render_intersection_type(inner, dest),
-            TemplateTypeContentTransportSlot::UnionType(inner) => render_union_type(inner, dest),
-            TemplateTypeContentTransportSlot::InferType(inner) => render_infer_type(inner, dest),
+            TemplateTypeContentTransportSlot::ParenthesizedType(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::PredefinedType(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::TypeIdentifier(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::NestedTypeIdentifier(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::GenericType(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::ObjectType(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::ArrayType(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::TupleType(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::FlowMaybeType(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::TypeQuery(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::IndexTypeQuery(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::This(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::ExistentialType(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::LiteralType(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::LookupType(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::ConditionalType(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::TemplateLiteralType(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::IntersectionType(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::UnionType(inner) => inner.render_into(dest),
+            TemplateTypeContentTransportSlot::InferType(inner) => inner.render_into(dest),
             TemplateTypeContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -25034,8 +25180,8 @@ impl RenderableTransport for TemplateLiteralTypeElementsTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TemplateLiteralTypeElementsTransportSlot::TemplateChars(inner) => render_template_chars(inner, dest),
-            TemplateLiteralTypeElementsTransportSlot::TemplateType(inner) => render_template_type(inner, dest),
+            TemplateLiteralTypeElementsTransportSlot::TemplateChars(inner) => inner.render_into(dest),
+            TemplateLiteralTypeElementsTransportSlot::TemplateType(inner) => inner.render_into(dest),
             TemplateLiteralTypeElementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -25144,8 +25290,8 @@ impl RenderableTransport for GenericTypeNameTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            GenericTypeNameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            GenericTypeNameTransportSlot::NestedTypeIdentifier(inner) => render_nested_type_identifier(inner, dest),
+            GenericTypeNameTransportSlot::Identifier(inner) => inner.render_into(dest),
+            GenericTypeNameTransportSlot::NestedTypeIdentifier(inner) => inner.render_into(dest),
             GenericTypeNameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -25316,9 +25462,9 @@ impl RenderableTransport for TypePredicateNameTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypePredicateNameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            TypePredicateNameTransportSlot::This(inner) => render_this(inner, dest),
-            TypePredicateNameTransportSlot::PredefinedType(inner) => render_predefined_type(inner, dest),
+            TypePredicateNameTransportSlot::Identifier(inner) => inner.render_into(dest),
+            TypePredicateNameTransportSlot::This(inner) => inner.render_into(dest),
+            TypePredicateNameTransportSlot::PredefinedType(inner) => inner.render_into(dest),
             TypePredicateNameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -25463,11 +25609,11 @@ impl RenderableTransport for TypeQueryMemberExpressionObjectTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypeQueryMemberExpressionObjectTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            TypeQueryMemberExpressionObjectTransportSlot::This(inner) => render_this(inner, dest),
-            TypeQueryMemberExpressionObjectTransportSlot::TypeQuerySubscriptExpression(inner) => render_type_query_subscript_expression(inner, dest),
-            TypeQueryMemberExpressionObjectTransportSlot::TypeQueryMemberExpression(inner) => render_type_query_member_expression(inner, dest),
-            TypeQueryMemberExpressionObjectTransportSlot::TypeQueryCallExpression(inner) => render_type_query_call_expression(inner, dest),
+            TypeQueryMemberExpressionObjectTransportSlot::Identifier(inner) => inner.render_into(dest),
+            TypeQueryMemberExpressionObjectTransportSlot::This(inner) => inner.render_into(dest),
+            TypeQueryMemberExpressionObjectTransportSlot::TypeQuerySubscriptExpression(inner) => inner.render_into(dest),
+            TypeQueryMemberExpressionObjectTransportSlot::TypeQueryMemberExpression(inner) => inner.render_into(dest),
+            TypeQueryMemberExpressionObjectTransportSlot::TypeQueryCallExpression(inner) => inner.render_into(dest),
             TypeQueryMemberExpressionObjectTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -25576,8 +25722,8 @@ impl RenderableTransport for TypeQueryMemberExpressionPropertyTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypeQueryMemberExpressionPropertyTransportSlot::PrivatePropertyIdentifier(inner) => render_private_property_identifier(inner, dest),
-            TypeQueryMemberExpressionPropertyTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            TypeQueryMemberExpressionPropertyTransportSlot::PrivatePropertyIdentifier(inner) => inner.render_into(dest),
+            TypeQueryMemberExpressionPropertyTransportSlot::Identifier(inner) => inner.render_into(dest),
             TypeQueryMemberExpressionPropertyTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -25811,11 +25957,11 @@ impl RenderableTransport for TypeQuerySubscriptExpressionObjectTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypeQuerySubscriptExpressionObjectTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            TypeQuerySubscriptExpressionObjectTransportSlot::This(inner) => render_this(inner, dest),
-            TypeQuerySubscriptExpressionObjectTransportSlot::TypeQuerySubscriptExpression(inner) => render_type_query_subscript_expression(inner, dest),
-            TypeQuerySubscriptExpressionObjectTransportSlot::TypeQueryMemberExpression(inner) => render_type_query_member_expression(inner, dest),
-            TypeQuerySubscriptExpressionObjectTransportSlot::TypeQueryCallExpression(inner) => render_type_query_call_expression(inner, dest),
+            TypeQuerySubscriptExpressionObjectTransportSlot::Identifier(inner) => inner.render_into(dest),
+            TypeQuerySubscriptExpressionObjectTransportSlot::This(inner) => inner.render_into(dest),
+            TypeQuerySubscriptExpressionObjectTransportSlot::TypeQuerySubscriptExpression(inner) => inner.render_into(dest),
+            TypeQuerySubscriptExpressionObjectTransportSlot::TypeQueryMemberExpression(inner) => inner.render_into(dest),
+            TypeQuerySubscriptExpressionObjectTransportSlot::TypeQueryCallExpression(inner) => inner.render_into(dest),
             TypeQuerySubscriptExpressionObjectTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -25986,9 +26132,9 @@ impl RenderableTransport for TypeQuerySubscriptExpressionIndexTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypeQuerySubscriptExpressionIndexTransportSlot::PredefinedType(inner) => render_predefined_type(inner, dest),
-            TypeQuerySubscriptExpressionIndexTransportSlot::String(inner) => render_string(inner, dest),
-            TypeQuerySubscriptExpressionIndexTransportSlot::Number(inner) => render_number(inner, dest),
+            TypeQuerySubscriptExpressionIndexTransportSlot::PredefinedType(inner) => inner.render_into(dest),
+            TypeQuerySubscriptExpressionIndexTransportSlot::String(inner) => inner.render_into(dest),
+            TypeQuerySubscriptExpressionIndexTransportSlot::Number(inner) => inner.render_into(dest),
             TypeQuerySubscriptExpressionIndexTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -26119,10 +26265,10 @@ impl RenderableTransport for TypeQueryCallExpressionFunctionTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypeQueryCallExpressionFunctionTransportSlot::Import(inner) => render_import(inner, dest),
-            TypeQueryCallExpressionFunctionTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            TypeQueryCallExpressionFunctionTransportSlot::TypeQueryMemberExpression(inner) => render_type_query_member_expression(inner, dest),
-            TypeQueryCallExpressionFunctionTransportSlot::TypeQuerySubscriptExpression(inner) => render_type_query_subscript_expression(inner, dest),
+            TypeQueryCallExpressionFunctionTransportSlot::Import(inner) => inner.render_into(dest),
+            TypeQueryCallExpressionFunctionTransportSlot::Identifier(inner) => inner.render_into(dest),
+            TypeQueryCallExpressionFunctionTransportSlot::TypeQueryMemberExpression(inner) => inner.render_into(dest),
+            TypeQueryCallExpressionFunctionTransportSlot::TypeQuerySubscriptExpression(inner) => inner.render_into(dest),
             TypeQueryCallExpressionFunctionTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -26253,10 +26399,10 @@ impl RenderableTransport for TypeQueryInstantiationExpressionFunctionTransportSl
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypeQueryInstantiationExpressionFunctionTransportSlot::Import(inner) => render_import(inner, dest),
-            TypeQueryInstantiationExpressionFunctionTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            TypeQueryInstantiationExpressionFunctionTransportSlot::TypeQueryMemberExpression(inner) => render_type_query_member_expression(inner, dest),
-            TypeQueryInstantiationExpressionFunctionTransportSlot::TypeQuerySubscriptExpression(inner) => render_type_query_subscript_expression(inner, dest),
+            TypeQueryInstantiationExpressionFunctionTransportSlot::Import(inner) => inner.render_into(dest),
+            TypeQueryInstantiationExpressionFunctionTransportSlot::Identifier(inner) => inner.render_into(dest),
+            TypeQueryInstantiationExpressionFunctionTransportSlot::TypeQueryMemberExpression(inner) => inner.render_into(dest),
+            TypeQueryInstantiationExpressionFunctionTransportSlot::TypeQuerySubscriptExpression(inner) => inner.render_into(dest),
             TypeQueryInstantiationExpressionFunctionTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -26415,12 +26561,12 @@ impl RenderableTransport for TypeQueryContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypeQueryContentTransportSlot::TypeQuerySubscriptExpression(inner) => render_type_query_subscript_expression(inner, dest),
-            TypeQueryContentTransportSlot::TypeQueryMemberExpression(inner) => render_type_query_member_expression(inner, dest),
-            TypeQueryContentTransportSlot::TypeQueryCallExpression(inner) => render_type_query_call_expression(inner, dest),
-            TypeQueryContentTransportSlot::TypeQueryInstantiationExpression(inner) => render_type_query_instantiation_expression(inner, dest),
-            TypeQueryContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            TypeQueryContentTransportSlot::This(inner) => render_this(inner, dest),
+            TypeQueryContentTransportSlot::TypeQuerySubscriptExpression(inner) => inner.render_into(dest),
+            TypeQueryContentTransportSlot::TypeQueryMemberExpression(inner) => inner.render_into(dest),
+            TypeQueryContentTransportSlot::TypeQueryCallExpression(inner) => inner.render_into(dest),
+            TypeQueryContentTransportSlot::TypeQueryInstantiationExpression(inner) => inner.render_into(dest),
+            TypeQueryContentTransportSlot::Identifier(inner) => inner.render_into(dest),
+            TypeQueryContentTransportSlot::This(inner) => inner.render_into(dest),
             TypeQueryContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -26569,13 +26715,13 @@ impl RenderableTransport for LiteralTypeContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            LiteralTypeContentTransportSlot::_Number(inner) => render__number(inner, dest),
-            LiteralTypeContentTransportSlot::Number(inner) => render_number(inner, dest),
-            LiteralTypeContentTransportSlot::String(inner) => render_string(inner, dest),
-            LiteralTypeContentTransportSlot::True(inner) => render_true(inner, dest),
-            LiteralTypeContentTransportSlot::False(inner) => render_false(inner, dest),
-            LiteralTypeContentTransportSlot::Null(inner) => render_null(inner, dest),
-            LiteralTypeContentTransportSlot::Undefined(inner) => render_undefined(inner, dest),
+            LiteralTypeContentTransportSlot::_Number(inner) => inner.render_into(dest),
+            LiteralTypeContentTransportSlot::Number(inner) => inner.render_into(dest),
+            LiteralTypeContentTransportSlot::String(inner) => inner.render_into(dest),
+            LiteralTypeContentTransportSlot::True(inner) => inner.render_into(dest),
+            LiteralTypeContentTransportSlot::False(inner) => inner.render_into(dest),
+            LiteralTypeContentTransportSlot::Null(inner) => inner.render_into(dest),
+            LiteralTypeContentTransportSlot::Undefined(inner) => inner.render_into(dest),
             LiteralTypeContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -26858,9 +27004,9 @@ impl RenderableTransport for CallSignatureReturnTypeTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            CallSignatureReturnTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
-            CallSignatureReturnTypeTransportSlot::AssertsAnnotation(inner) => render_asserts_annotation(inner, dest),
-            CallSignatureReturnTypeTransportSlot::TypePredicateAnnotation(inner) => render_type_predicate_annotation(inner, dest),
+            CallSignatureReturnTypeTransportSlot::TypeAnnotation(inner) => inner.render_into(dest),
+            CallSignatureReturnTypeTransportSlot::AssertsAnnotation(inner) => inner.render_into(dest),
+            CallSignatureReturnTypeTransportSlot::TypePredicateAnnotation(inner) => inner.render_into(dest),
         }
     }
 }
@@ -27570,10 +27716,10 @@ impl RenderableTransport for IndexSignatureTypeTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            IndexSignatureTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
-            IndexSignatureTypeTransportSlot::OmittingTypeAnnotation(inner) => render_omitting_type_annotation(inner, dest),
-            IndexSignatureTypeTransportSlot::AddingTypeAnnotation(inner) => render_adding_type_annotation(inner, dest),
-            IndexSignatureTypeTransportSlot::OptingTypeAnnotation(inner) => render_opting_type_annotation(inner, dest),
+            IndexSignatureTypeTransportSlot::TypeAnnotation(inner) => inner.render_into(dest),
+            IndexSignatureTypeTransportSlot::OmittingTypeAnnotation(inner) => inner.render_into(dest),
+            IndexSignatureTypeTransportSlot::AddingTypeAnnotation(inner) => inner.render_into(dest),
+            IndexSignatureTypeTransportSlot::OptingTypeAnnotation(inner) => inner.render_into(dest),
         }
     }
 }
@@ -27669,8 +27815,8 @@ impl RenderableTransport for IndexSignatureContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            IndexSignatureContentTransportSlot::IndexSignatureColon(inner) => render_index_signature_colon(inner, dest),
-            IndexSignatureContentTransportSlot::MappedTypeClause(inner) => render_mapped_type_clause(inner, dest),
+            IndexSignatureContentTransportSlot::IndexSignatureColon(inner) => inner.render_into(dest),
+            IndexSignatureContentTransportSlot::MappedTypeClause(inner) => inner.render_into(dest),
         }
     }
 }
@@ -28032,33 +28178,33 @@ impl RenderableTransport for FunctionTypeReturnTypeTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            FunctionTypeReturnTypeTransportSlot::ParenthesizedType(inner) => render_parenthesized_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::PredefinedType(inner) => render_predefined_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::TypeIdentifier(inner) => render_type_identifier(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::NestedTypeIdentifier(inner) => render_nested_type_identifier(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::GenericType(inner) => render_generic_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::ObjectType(inner) => render_object_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::ArrayType(inner) => render_array_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::TupleType(inner) => render_tuple_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::FlowMaybeType(inner) => render_flow_maybe_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::TypeQuery(inner) => render_type_query(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::IndexTypeQuery(inner) => render_index_type_query(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::This(inner) => render_this(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::ExistentialType(inner) => render_existential_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::LiteralType(inner) => render_literal_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::LookupType(inner) => render_lookup_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::ConditionalType(inner) => render_conditional_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::TemplateLiteralType(inner) => render_template_literal_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::IntersectionType(inner) => render_intersection_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::UnionType(inner) => render_union_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::FunctionType(inner) => render_function_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::ReadonlyType(inner) => render_readonly_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::ConstructorType(inner) => render_constructor_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::InferType(inner) => render_infer_type(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => render_type_query_member_expression_in_type_annotation(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => render_type_query_call_expression_in_type_annotation(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::Asserts(inner) => render_asserts(inner, dest),
-            FunctionTypeReturnTypeTransportSlot::TypePredicate(inner) => render_type_predicate(inner, dest),
+            FunctionTypeReturnTypeTransportSlot::ParenthesizedType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::PredefinedType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::TypeIdentifier(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::NestedTypeIdentifier(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::GenericType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::ObjectType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::ArrayType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::TupleType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::FlowMaybeType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::TypeQuery(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::IndexTypeQuery(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::This(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::ExistentialType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::LiteralType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::LookupType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::ConditionalType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::TemplateLiteralType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::IntersectionType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::UnionType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::FunctionType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::ReadonlyType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::ConstructorType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::InferType(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::Asserts(inner) => inner.render_into(dest),
+            FunctionTypeReturnTypeTransportSlot::TypePredicate(inner) => inner.render_into(dest),
             FunctionTypeReturnTypeTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -28155,8 +28301,8 @@ impl RenderableTransport for ImportClauseGroup1ContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ImportClauseGroup1ContentTransportSlot::NamespaceImport(inner) => render_namespace_import(inner, dest),
-            ImportClauseGroup1ContentTransportSlot::NamedImports(inner) => render_named_imports(inner, dest),
+            ImportClauseGroup1ContentTransportSlot::NamespaceImport(inner) => inner.render_into(dest),
+            ImportClauseGroup1ContentTransportSlot::NamedImports(inner) => inner.render_into(dest),
         }
     }
 }
@@ -28266,9 +28412,9 @@ impl RenderableTransport for VariableDeclaratorGroup1NameTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            VariableDeclaratorGroup1NameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            VariableDeclaratorGroup1NameTransportSlot::ObjectPattern(inner) => render_object_pattern(inner, dest),
-            VariableDeclaratorGroup1NameTransportSlot::ArrayPattern(inner) => render_array_pattern(inner, dest),
+            VariableDeclaratorGroup1NameTransportSlot::Identifier(inner) => inner.render_into(dest),
+            VariableDeclaratorGroup1NameTransportSlot::ObjectPattern(inner) => inner.render_into(dest),
+            VariableDeclaratorGroup1NameTransportSlot::ArrayPattern(inner) => inner.render_into(dest),
             VariableDeclaratorGroup1NameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -28379,9 +28525,9 @@ impl RenderableTransport for CatchClauseGroup1ParameterTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            CatchClauseGroup1ParameterTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            CatchClauseGroup1ParameterTransportSlot::ObjectPattern(inner) => render_object_pattern(inner, dest),
-            CatchClauseGroup1ParameterTransportSlot::ArrayPattern(inner) => render_array_pattern(inner, dest),
+            CatchClauseGroup1ParameterTransportSlot::Identifier(inner) => inner.render_into(dest),
+            CatchClauseGroup1ParameterTransportSlot::ObjectPattern(inner) => inner.render_into(dest),
+            CatchClauseGroup1ParameterTransportSlot::ArrayPattern(inner) => inner.render_into(dest),
             CatchClauseGroup1ParameterTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -28912,45 +29058,45 @@ impl RenderableTransport for BinaryExpressionGroup1LeftTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            BinaryExpressionGroup1LeftTransportSlot::AsExpression(inner) => render_as_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::SatisfiesExpression(inner) => render_satisfies_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::InstantiationExpression(inner) => render_instantiation_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::InternalModule(inner) => render_internal_module(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::TypeAssertion(inner) => render_type_assertion(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::This(inner) => render_this(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::Super(inner) => render_super(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::Number(inner) => render_number(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::String(inner) => render_string(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::TemplateString(inner) => render_template_string(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::Regex(inner) => render_regex(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::True(inner) => render_true(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::False(inner) => render_false(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::Null(inner) => render_null(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::Object(inner) => render_object(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::Array(inner) => render_array(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::FunctionExpression(inner) => render_function_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::ArrowFunction(inner) => render_arrow_function(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::GeneratorFunction(inner) => render_generator_function(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::Class(inner) => render_class(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::MetaProperty(inner) => render_meta_property(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::CallExpression(inner) => render_call_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::AssignmentExpression(inner) => render_assignment_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::AugmentedAssignmentExpression(inner) => render_augmented_assignment_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::AwaitExpression(inner) => render_await_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::UnaryExpression(inner) => render_unary_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::BinaryExpression(inner) => render_binary_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::TernaryExpression(inner) => render_ternary_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::UpdateExpression(inner) => render_update_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::NewExpression(inner) => render_new_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::YieldExpression(inner) => render_yield_expression(inner, dest),
-            BinaryExpressionGroup1LeftTransportSlot::PrivatePropertyIdentifier(inner) => render_private_property_identifier(inner, dest),
+            BinaryExpressionGroup1LeftTransportSlot::AsExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::Undefined(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::Identifier(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::This(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::Super(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::Number(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::String(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::Regex(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::True(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::False(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::Null(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::Object(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::Array(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::Class(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::NewExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::YieldExpression(inner) => inner.render_into(dest),
+            BinaryExpressionGroup1LeftTransportSlot::PrivatePropertyIdentifier(inner) => inner.render_into(dest),
             BinaryExpressionGroup1LeftTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -29143,8 +29289,8 @@ impl RenderableTransport for JsxStartOpeningElementGroup1NameTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            JsxStartOpeningElementGroup1NameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            JsxStartOpeningElementGroup1NameTransportSlot::NestedIdentifier(inner) => render_nested_identifier(inner, dest),
+            JsxStartOpeningElementGroup1NameTransportSlot::Identifier(inner) => inner.render_into(dest),
+            JsxStartOpeningElementGroup1NameTransportSlot::NestedIdentifier(inner) => inner.render_into(dest),
             JsxStartOpeningElementGroup1NameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -29419,13 +29565,13 @@ impl RenderableTransport for EnumBodyGroup1ContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            EnumBodyGroup1ContentTransportSlot::EnumAssignment(inner) => render_enum_assignment(inner, dest),
-            EnumBodyGroup1ContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            EnumBodyGroup1ContentTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            EnumBodyGroup1ContentTransportSlot::PrivatePropertyIdentifier(inner) => render_private_property_identifier(inner, dest),
-            EnumBodyGroup1ContentTransportSlot::String(inner) => render_string(inner, dest),
-            EnumBodyGroup1ContentTransportSlot::Number(inner) => render_number(inner, dest),
-            EnumBodyGroup1ContentTransportSlot::ComputedPropertyName(inner) => render_computed_property_name(inner, dest),
+            EnumBodyGroup1ContentTransportSlot::EnumAssignment(inner) => inner.render_into(dest),
+            EnumBodyGroup1ContentTransportSlot::Identifier(inner) => inner.render_into(dest),
+            EnumBodyGroup1ContentTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            EnumBodyGroup1ContentTransportSlot::PrivatePropertyIdentifier(inner) => inner.render_into(dest),
+            EnumBodyGroup1ContentTransportSlot::String(inner) => inner.render_into(dest),
+            EnumBodyGroup1ContentTransportSlot::Number(inner) => inner.render_into(dest),
+            EnumBodyGroup1ContentTransportSlot::ComputedPropertyName(inner) => inner.render_into(dest),
             EnumBodyGroup1ContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -29643,12 +29789,12 @@ impl RenderableTransport for ObjectTypeContentContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ObjectTypeContentContentTransportSlot::ExportStatement(inner) => render_export_statement(inner, dest),
-            ObjectTypeContentContentTransportSlot::PropertySignature(inner) => render_property_signature(inner, dest),
-            ObjectTypeContentContentTransportSlot::CallSignature(inner) => render_call_signature(inner, dest),
-            ObjectTypeContentContentTransportSlot::ConstructSignature(inner) => render_construct_signature(inner, dest),
-            ObjectTypeContentContentTransportSlot::IndexSignature(inner) => render_index_signature(inner, dest),
-            ObjectTypeContentContentTransportSlot::MethodSignature(inner) => render_method_signature(inner, dest),
+            ObjectTypeContentContentTransportSlot::ExportStatement(inner) => inner.render_into(dest),
+            ObjectTypeContentContentTransportSlot::PropertySignature(inner) => inner.render_into(dest),
+            ObjectTypeContentContentTransportSlot::CallSignature(inner) => inner.render_into(dest),
+            ObjectTypeContentContentTransportSlot::ConstructSignature(inner) => inner.render_into(dest),
+            ObjectTypeContentContentTransportSlot::IndexSignature(inner) => inner.render_into(dest),
+            ObjectTypeContentContentTransportSlot::MethodSignature(inner) => inner.render_into(dest),
         }
     }
 }
@@ -29744,8 +29890,8 @@ impl RenderableTransport for ExportStatementDefaultContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ExportStatementDefaultContentTransportSlot::ExportStatementDefaultFromArm(inner) => render_export_statement_default_from_arm(inner, dest),
-            ExportStatementDefaultContentTransportSlot::ExportStatementDefaultDeclArm(inner) => render_export_statement_default_decl_arm(inner, dest),
+            ExportStatementDefaultContentTransportSlot::ExportStatementDefaultFromArm(inner) => inner.render_into(dest),
+            ExportStatementDefaultContentTransportSlot::ExportStatementDefaultDeclArm(inner) => inner.render_into(dest),
         }
     }
 }
@@ -29979,8 +30125,8 @@ impl RenderableTransport for ArrowFunctionParameterParameterTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ArrowFunctionParameterParameterTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            ArrowFunctionParameterParameterTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            ArrowFunctionParameterParameterTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            ArrowFunctionParameterParameterTransportSlot::Identifier(inner) => inner.render_into(dest),
             ArrowFunctionParameterParameterTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -30085,9 +30231,9 @@ impl RenderableTransport for ArrowFunctionUCallSignatureReturnTypeTransportSlot 
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ArrowFunctionUCallSignatureReturnTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
-            ArrowFunctionUCallSignatureReturnTypeTransportSlot::AssertsAnnotation(inner) => render_asserts_annotation(inner, dest),
-            ArrowFunctionUCallSignatureReturnTypeTransportSlot::TypePredicateAnnotation(inner) => render_type_predicate_annotation(inner, dest),
+            ArrowFunctionUCallSignatureReturnTypeTransportSlot::TypeAnnotation(inner) => inner.render_into(dest),
+            ArrowFunctionUCallSignatureReturnTypeTransportSlot::AssertsAnnotation(inner) => inner.render_into(dest),
+            ArrowFunctionUCallSignatureReturnTypeTransportSlot::TypePredicateAnnotation(inner) => inner.render_into(dest),
         }
     }
 }
@@ -30189,8 +30335,8 @@ impl RenderableTransport for ImportSpecifierAsNameTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ImportSpecifierAsNameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ImportSpecifierAsNameTransportSlot::String(inner) => render_string(inner, dest),
+            ImportSpecifierAsNameTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ImportSpecifierAsNameTransportSlot::String(inner) => inner.render_into(dest),
             ImportSpecifierAsNameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -30425,8 +30571,8 @@ impl RenderableTransport for IndexSignatureColonNameTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            IndexSignatureColonNameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            IndexSignatureColonNameTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
+            IndexSignatureColonNameTransportSlot::Identifier(inner) => inner.render_into(dest),
+            IndexSignatureColonNameTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
             IndexSignatureColonNameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -30539,10 +30685,10 @@ impl RenderableTransport for ExportStatementDefaultFromArmContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ExportStatementDefaultFromArmContentTransportSlot::ExportStatementDefaultStarFrom(inner) => render_export_statement_default_star_from(inner, dest),
-            ExportStatementDefaultFromArmContentTransportSlot::ExportStatementDefaultNsFrom(inner) => render_export_statement_default_ns_from(inner, dest),
-            ExportStatementDefaultFromArmContentTransportSlot::ExportStatementDefaultClauseFrom(inner) => render_export_statement_default_clause_from(inner, dest),
-            ExportStatementDefaultFromArmContentTransportSlot::ExportClause(inner) => render_export_clause(inner, dest),
+            ExportStatementDefaultFromArmContentTransportSlot::ExportStatementDefaultStarFrom(inner) => inner.render_into(dest),
+            ExportStatementDefaultFromArmContentTransportSlot::ExportStatementDefaultNsFrom(inner) => inner.render_into(dest),
+            ExportStatementDefaultFromArmContentTransportSlot::ExportStatementDefaultClauseFrom(inner) => inner.render_into(dest),
+            ExportStatementDefaultFromArmContentTransportSlot::ExportClause(inner) => inner.render_into(dest),
         }
     }
 }
@@ -30742,21 +30888,21 @@ impl RenderableTransport for ExportStatementDefaultDeclArmContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ExportStatementDefaultDeclArmContentTransportSlot::ExportStatementDefaultDefaultKw(inner) => render_export_statement_default_default_kw(inner, dest),
-            ExportStatementDefaultDeclArmContentTransportSlot::FunctionDeclaration(inner) => render_function_declaration(inner, dest),
-            ExportStatementDefaultDeclArmContentTransportSlot::GeneratorFunctionDeclaration(inner) => render_generator_function_declaration(inner, dest),
-            ExportStatementDefaultDeclArmContentTransportSlot::ClassDeclaration(inner) => render_class_declaration(inner, dest),
-            ExportStatementDefaultDeclArmContentTransportSlot::LexicalDeclaration(inner) => render_lexical_declaration(inner, dest),
-            ExportStatementDefaultDeclArmContentTransportSlot::VariableDeclaration(inner) => render_variable_declaration(inner, dest),
-            ExportStatementDefaultDeclArmContentTransportSlot::FunctionSignature(inner) => render_function_signature(inner, dest),
-            ExportStatementDefaultDeclArmContentTransportSlot::AbstractClassDeclaration(inner) => render_abstract_class_declaration(inner, dest),
-            ExportStatementDefaultDeclArmContentTransportSlot::Module(inner) => render_module(inner, dest),
-            ExportStatementDefaultDeclArmContentTransportSlot::InternalModule(inner) => render_internal_module(inner, dest),
-            ExportStatementDefaultDeclArmContentTransportSlot::TypeAliasDeclaration(inner) => render_type_alias_declaration(inner, dest),
-            ExportStatementDefaultDeclArmContentTransportSlot::EnumDeclaration(inner) => render_enum_declaration(inner, dest),
-            ExportStatementDefaultDeclArmContentTransportSlot::InterfaceDeclaration(inner) => render_interface_declaration(inner, dest),
-            ExportStatementDefaultDeclArmContentTransportSlot::ImportAlias(inner) => render_import_alias(inner, dest),
-            ExportStatementDefaultDeclArmContentTransportSlot::AmbientDeclaration(inner) => render_ambient_declaration(inner, dest),
+            ExportStatementDefaultDeclArmContentTransportSlot::ExportStatementDefaultDefaultKw(inner) => inner.render_into(dest),
+            ExportStatementDefaultDeclArmContentTransportSlot::FunctionDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDeclArmContentTransportSlot::GeneratorFunctionDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDeclArmContentTransportSlot::ClassDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDeclArmContentTransportSlot::LexicalDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDeclArmContentTransportSlot::VariableDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDeclArmContentTransportSlot::FunctionSignature(inner) => inner.render_into(dest),
+            ExportStatementDefaultDeclArmContentTransportSlot::AbstractClassDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDeclArmContentTransportSlot::Module(inner) => inner.render_into(dest),
+            ExportStatementDefaultDeclArmContentTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            ExportStatementDefaultDeclArmContentTransportSlot::TypeAliasDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDeclArmContentTransportSlot::EnumDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDeclArmContentTransportSlot::InterfaceDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDeclArmContentTransportSlot::ImportAlias(inner) => inner.render_into(dest),
+            ExportStatementDefaultDeclArmContentTransportSlot::AmbientDeclaration(inner) => inner.render_into(dest),
         }
     }
 }
@@ -30956,21 +31102,21 @@ impl RenderableTransport for ExportStatementDefaultDefaultKwContentTransportSlot
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ExportStatementDefaultDefaultKwContentTransportSlot::ExportStatementDefaultValue(inner) => render_export_statement_default_value(inner, dest),
-            ExportStatementDefaultDefaultKwContentTransportSlot::FunctionDeclaration(inner) => render_function_declaration(inner, dest),
-            ExportStatementDefaultDefaultKwContentTransportSlot::GeneratorFunctionDeclaration(inner) => render_generator_function_declaration(inner, dest),
-            ExportStatementDefaultDefaultKwContentTransportSlot::ClassDeclaration(inner) => render_class_declaration(inner, dest),
-            ExportStatementDefaultDefaultKwContentTransportSlot::LexicalDeclaration(inner) => render_lexical_declaration(inner, dest),
-            ExportStatementDefaultDefaultKwContentTransportSlot::VariableDeclaration(inner) => render_variable_declaration(inner, dest),
-            ExportStatementDefaultDefaultKwContentTransportSlot::FunctionSignature(inner) => render_function_signature(inner, dest),
-            ExportStatementDefaultDefaultKwContentTransportSlot::AbstractClassDeclaration(inner) => render_abstract_class_declaration(inner, dest),
-            ExportStatementDefaultDefaultKwContentTransportSlot::Module(inner) => render_module(inner, dest),
-            ExportStatementDefaultDefaultKwContentTransportSlot::InternalModule(inner) => render_internal_module(inner, dest),
-            ExportStatementDefaultDefaultKwContentTransportSlot::TypeAliasDeclaration(inner) => render_type_alias_declaration(inner, dest),
-            ExportStatementDefaultDefaultKwContentTransportSlot::EnumDeclaration(inner) => render_enum_declaration(inner, dest),
-            ExportStatementDefaultDefaultKwContentTransportSlot::InterfaceDeclaration(inner) => render_interface_declaration(inner, dest),
-            ExportStatementDefaultDefaultKwContentTransportSlot::ImportAlias(inner) => render_import_alias(inner, dest),
-            ExportStatementDefaultDefaultKwContentTransportSlot::AmbientDeclaration(inner) => render_ambient_declaration(inner, dest),
+            ExportStatementDefaultDefaultKwContentTransportSlot::ExportStatementDefaultValue(inner) => inner.render_into(dest),
+            ExportStatementDefaultDefaultKwContentTransportSlot::FunctionDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDefaultKwContentTransportSlot::GeneratorFunctionDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDefaultKwContentTransportSlot::ClassDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDefaultKwContentTransportSlot::LexicalDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDefaultKwContentTransportSlot::VariableDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDefaultKwContentTransportSlot::FunctionSignature(inner) => inner.render_into(dest),
+            ExportStatementDefaultDefaultKwContentTransportSlot::AbstractClassDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDefaultKwContentTransportSlot::Module(inner) => inner.render_into(dest),
+            ExportStatementDefaultDefaultKwContentTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            ExportStatementDefaultDefaultKwContentTransportSlot::TypeAliasDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDefaultKwContentTransportSlot::EnumDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDefaultKwContentTransportSlot::InterfaceDeclaration(inner) => inner.render_into(dest),
+            ExportStatementDefaultDefaultKwContentTransportSlot::ImportAlias(inner) => inner.render_into(dest),
+            ExportStatementDefaultDefaultKwContentTransportSlot::AmbientDeclaration(inner) => inner.render_into(dest),
         }
     }
 }
@@ -31157,7 +31303,7 @@ impl RenderableTransport for ClassBodyMemberTerminatorTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ClassBodyMemberTerminatorTransportSlot::Semicolon(inner) => render_semicolon(inner, dest),
+            ClassBodyMemberTerminatorTransportSlot::Semicolon(inner) => inner.render_into(dest),
             ClassBodyMemberTerminatorTransportSlot::Literal54_2c => dest.write_str(",").map_err(::askama::Error::from),
         }
     }
@@ -31270,10 +31416,10 @@ impl RenderableTransport for ClassBodyMemberContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ClassBodyMemberContentTransportSlot::AbstractMethodSignature(inner) => render_abstract_method_signature(inner, dest),
-            ClassBodyMemberContentTransportSlot::IndexSignature(inner) => render_index_signature(inner, dest),
-            ClassBodyMemberContentTransportSlot::MethodSignature(inner) => render_method_signature(inner, dest),
-            ClassBodyMemberContentTransportSlot::PublicFieldDefinition(inner) => render_public_field_definition(inner, dest),
+            ClassBodyMemberContentTransportSlot::AbstractMethodSignature(inner) => inner.render_into(dest),
+            ClassBodyMemberContentTransportSlot::IndexSignature(inner) => inner.render_into(dest),
+            ClassBodyMemberContentTransportSlot::MethodSignature(inner) => inner.render_into(dest),
+            ClassBodyMemberContentTransportSlot::PublicFieldDefinition(inner) => inner.render_into(dest),
         }
     }
 }
@@ -31593,15 +31739,15 @@ impl RenderableTransport for ForHeaderLhsLeftTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ForHeaderLhsLeftTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            ForHeaderLhsLeftTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            ForHeaderLhsLeftTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            ForHeaderLhsLeftTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ForHeaderLhsLeftTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            ForHeaderLhsLeftTransportSlot::ObjectPattern(inner) => render_object_pattern(inner, dest),
-            ForHeaderLhsLeftTransportSlot::ArrayPattern(inner) => render_array_pattern(inner, dest),
-            ForHeaderLhsLeftTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            ForHeaderLhsLeftTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
+            ForHeaderLhsLeftTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            ForHeaderLhsLeftTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            ForHeaderLhsLeftTransportSlot::Undefined(inner) => inner.render_into(dest),
+            ForHeaderLhsLeftTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ForHeaderLhsLeftTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            ForHeaderLhsLeftTransportSlot::ObjectPattern(inner) => inner.render_into(dest),
+            ForHeaderLhsLeftTransportSlot::ArrayPattern(inner) => inner.render_into(dest),
+            ForHeaderLhsLeftTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            ForHeaderLhsLeftTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
             ForHeaderLhsLeftTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -31796,9 +31942,9 @@ impl RenderableTransport for ForHeaderVarKindLeftTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ForHeaderVarKindLeftTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ForHeaderVarKindLeftTransportSlot::ObjectPattern(inner) => render_object_pattern(inner, dest),
-            ForHeaderVarKindLeftTransportSlot::ArrayPattern(inner) => render_array_pattern(inner, dest),
+            ForHeaderVarKindLeftTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ForHeaderVarKindLeftTransportSlot::ObjectPattern(inner) => inner.render_into(dest),
+            ForHeaderVarKindLeftTransportSlot::ArrayPattern(inner) => inner.render_into(dest),
             ForHeaderVarKindLeftTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -31909,9 +32055,9 @@ impl RenderableTransport for ForHeaderLetConstKindLeftTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ForHeaderLetConstKindLeftTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ForHeaderLetConstKindLeftTransportSlot::ObjectPattern(inner) => render_object_pattern(inner, dest),
-            ForHeaderLetConstKindLeftTransportSlot::ArrayPattern(inner) => render_array_pattern(inner, dest),
+            ForHeaderLetConstKindLeftTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ForHeaderLetConstKindLeftTransportSlot::ObjectPattern(inner) => inner.render_into(dest),
+            ForHeaderLetConstKindLeftTransportSlot::ArrayPattern(inner) => inner.render_into(dest),
             ForHeaderLetConstKindLeftTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -33114,45 +33260,45 @@ impl RenderableTransport for CallExpressionCallFunctionTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            CallExpressionCallFunctionTransportSlot::AsExpression(inner) => render_as_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::SatisfiesExpression(inner) => render_satisfies_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::InstantiationExpression(inner) => render_instantiation_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::InternalModule(inner) => render_internal_module(inner, dest),
-            CallExpressionCallFunctionTransportSlot::TypeAssertion(inner) => render_type_assertion(inner, dest),
-            CallExpressionCallFunctionTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            CallExpressionCallFunctionTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            CallExpressionCallFunctionTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            CallExpressionCallFunctionTransportSlot::This(inner) => render_this(inner, dest),
-            CallExpressionCallFunctionTransportSlot::Super(inner) => render_super(inner, dest),
-            CallExpressionCallFunctionTransportSlot::Number(inner) => render_number(inner, dest),
-            CallExpressionCallFunctionTransportSlot::String(inner) => render_string(inner, dest),
-            CallExpressionCallFunctionTransportSlot::TemplateString(inner) => render_template_string(inner, dest),
-            CallExpressionCallFunctionTransportSlot::Regex(inner) => render_regex(inner, dest),
-            CallExpressionCallFunctionTransportSlot::True(inner) => render_true(inner, dest),
-            CallExpressionCallFunctionTransportSlot::False(inner) => render_false(inner, dest),
-            CallExpressionCallFunctionTransportSlot::Null(inner) => render_null(inner, dest),
-            CallExpressionCallFunctionTransportSlot::Object(inner) => render_object(inner, dest),
-            CallExpressionCallFunctionTransportSlot::Array(inner) => render_array(inner, dest),
-            CallExpressionCallFunctionTransportSlot::FunctionExpression(inner) => render_function_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::ArrowFunction(inner) => render_arrow_function(inner, dest),
-            CallExpressionCallFunctionTransportSlot::GeneratorFunction(inner) => render_generator_function(inner, dest),
-            CallExpressionCallFunctionTransportSlot::Class(inner) => render_class(inner, dest),
-            CallExpressionCallFunctionTransportSlot::MetaProperty(inner) => render_meta_property(inner, dest),
-            CallExpressionCallFunctionTransportSlot::CallExpression(inner) => render_call_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::AssignmentExpression(inner) => render_assignment_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::AugmentedAssignmentExpression(inner) => render_augmented_assignment_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::AwaitExpression(inner) => render_await_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::UnaryExpression(inner) => render_unary_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::BinaryExpression(inner) => render_binary_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::TernaryExpression(inner) => render_ternary_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::UpdateExpression(inner) => render_update_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::NewExpression(inner) => render_new_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::YieldExpression(inner) => render_yield_expression(inner, dest),
-            CallExpressionCallFunctionTransportSlot::Import(inner) => render_import(inner, dest),
+            CallExpressionCallFunctionTransportSlot::AsExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::Undefined(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::Identifier(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::This(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::Super(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::Number(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::String(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::Regex(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::True(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::False(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::Null(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::Object(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::Array(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::Class(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::NewExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::YieldExpression(inner) => inner.render_into(dest),
+            CallExpressionCallFunctionTransportSlot::Import(inner) => inner.render_into(dest),
             CallExpressionCallFunctionTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -33571,31 +33717,31 @@ impl RenderableTransport for CallExpressionTemplateCallFunctionTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            CallExpressionTemplateCallFunctionTransportSlot::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::MemberExpression(inner) => render_member_expression(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::Undefined(inner) => render_undefined(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::This(inner) => render_this(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::Super(inner) => render_super(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::Number(inner) => render_number(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::String(inner) => render_string(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::TemplateString(inner) => render_template_string(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::Regex(inner) => render_regex(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::True(inner) => render_true(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::False(inner) => render_false(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::Null(inner) => render_null(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::Object(inner) => render_object(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::Array(inner) => render_array(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::FunctionExpression(inner) => render_function_expression(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::ArrowFunction(inner) => render_arrow_function(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::GeneratorFunction(inner) => render_generator_function(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::Class(inner) => render_class(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::MetaProperty(inner) => render_meta_property(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::CallExpression(inner) => render_call_expression(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-            CallExpressionTemplateCallFunctionTransportSlot::NewExpression(inner) => render_new_expression(inner, dest),
+            CallExpressionTemplateCallFunctionTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::Undefined(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::Identifier(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::This(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::Super(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::Number(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::String(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::Regex(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::True(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::False(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::Null(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::Object(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::Array(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::Class(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            CallExpressionTemplateCallFunctionTransportSlot::NewExpression(inner) => inner.render_into(dest),
             CallExpressionTemplateCallFunctionTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -33698,8 +33844,8 @@ impl RenderableTransport for StringDoubleElementsTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            StringDoubleElementsTransportSlot::UnescapedDoubleStringFragment(inner) => render_unescaped_double_string_fragment(inner, dest),
-            StringDoubleElementsTransportSlot::EscapeSequence(inner) => render_escape_sequence(inner, dest),
+            StringDoubleElementsTransportSlot::UnescapedDoubleStringFragment(inner) => inner.render_into(dest),
+            StringDoubleElementsTransportSlot::EscapeSequence(inner) => inner.render_into(dest),
             StringDoubleElementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -33802,8 +33948,8 @@ impl RenderableTransport for StringSingleElements2TransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            StringSingleElements2TransportSlot::UnescapedSingleStringFragment(inner) => render_unescaped_single_string_fragment(inner, dest),
-            StringSingleElements2TransportSlot::EscapeSequence(inner) => render_escape_sequence(inner, dest),
+            StringSingleElements2TransportSlot::UnescapedSingleStringFragment(inner) => inner.render_into(dest),
+            StringSingleElements2TransportSlot::EscapeSequence(inner) => inner.render_into(dest),
             StringSingleElements2TransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -33902,9 +34048,9 @@ impl RenderableTransport for JsxOpeningElementContentNameTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            JsxOpeningElementContentNameTransportSlot::JsxIdentifier(inner) => render_jsx_identifier(inner, dest),
-            JsxOpeningElementContentNameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            JsxOpeningElementContentNameTransportSlot::JsxNamespaceName(inner) => render_jsx_namespace_name(inner, dest),
+            JsxOpeningElementContentNameTransportSlot::JsxIdentifier(inner) => inner.render_into(dest),
+            JsxOpeningElementContentNameTransportSlot::Identifier(inner) => inner.render_into(dest),
+            JsxOpeningElementContentNameTransportSlot::JsxNamespaceName(inner) => inner.render_into(dest),
             JsxOpeningElementContentNameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -33989,10 +34135,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for HashBangLineTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -34002,7 +34150,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for HashBangLineTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -34296,12 +34444,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "import".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "import".to_string())
             }
         };
@@ -34311,7 +34461,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -35815,12 +35965,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ";".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| ";".to_string())
             }
         };
@@ -35830,7 +35982,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -36686,10 +36838,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for HtmlCharacterReferenceTransport 
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -36699,7 +36853,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for HtmlCharacterReferenceTransport 
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -36891,10 +37045,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxIdentifierTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -36904,7 +37060,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxIdentifierTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -37304,10 +37460,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnescapedDoubleJsxStringFragment
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -37317,7 +37475,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnescapedDoubleJsxStringFragment
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -37405,10 +37563,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnescapedSingleJsxStringFragment
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -37418,7 +37578,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnescapedSingleJsxStringFragment
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -38026,6 +38186,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
@@ -38038,6 +38199,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "?.".to_string())
             }
         };
@@ -38047,7 +38209,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -38946,10 +39108,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnescapedDoubleStringFragmentTra
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -38959,7 +39123,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnescapedDoubleStringFragmentTra
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -39047,10 +39211,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnescapedSingleStringFragmentTra
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -39060,7 +39226,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnescapedSingleStringFragmentTra
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -39148,10 +39314,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeSequenceTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -39161,7 +39329,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeSequenceTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -39249,10 +39417,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommentTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -39262,7 +39432,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommentTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -39502,10 +39672,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for RegexPatternTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -39515,7 +39687,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RegexPatternTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -39603,10 +39775,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for RegexFlagsTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -39616,7 +39790,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RegexFlagsTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -39704,10 +39878,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -39717,7 +39893,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -39805,10 +39981,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -39818,7 +39996,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -39906,10 +40084,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrivatePropertyIdentifierTranspo
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -39919,7 +40099,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrivatePropertyIdentifierTranspo
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -40057,12 +40237,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThisTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "this".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "this".to_string())
             }
         };
@@ -40072,7 +40254,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThisTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -40160,12 +40342,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "super".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "super".to_string())
             }
         };
@@ -40175,7 +40359,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -40263,12 +40447,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TrueTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "true".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "true".to_string())
             }
         };
@@ -40278,7 +40464,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TrueTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -40366,12 +40552,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FalseTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "false".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "false".to_string())
             }
         };
@@ -40381,7 +40569,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FalseTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -40469,12 +40657,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for NullTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "null".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "null".to_string())
             }
         };
@@ -40484,7 +40674,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NullTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -40572,12 +40762,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for UndefinedTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "undefined".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "undefined".to_string())
             }
         };
@@ -40587,7 +40779,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UndefinedTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -43300,6 +43492,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OverrideModifierTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
@@ -43312,6 +43505,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OverrideModifierTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "override".to_string())
             }
         };
@@ -43321,7 +43515,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OverrideModifierTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -45164,12 +45358,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExistentialTypeTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "*".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "*".to_string())
             }
         };
@@ -45179,7 +45375,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExistentialTypeTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -46368,10 +46564,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeIdentifierTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -46381,7 +46579,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeIdentifierTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -46469,6 +46667,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
@@ -46481,6 +46680,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "async".to_string())
             }
         };
@@ -46490,7 +46690,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -46607,6 +46807,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
@@ -46619,6 +46820,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "static".to_string())
             }
         };
@@ -46628,7 +46830,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -46745,6 +46947,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwReadonlyMarkerTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
@@ -46757,6 +46960,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwReadonlyMarkerTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "readonly".to_string())
             }
         };
@@ -46766,7 +46970,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwReadonlyMarkerTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -46883,6 +47087,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAbstractMarkerTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
@@ -46895,6 +47100,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAbstractMarkerTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "abstract".to_string())
             }
         };
@@ -46904,7 +47110,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAbstractMarkerTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -47021,6 +47227,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwConstMarkerTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
@@ -47033,6 +47240,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwConstMarkerTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "const".to_string())
             }
         };
@@ -47042,7 +47250,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwConstMarkerTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -47631,12 +47839,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup1Transport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "new . target".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "new . target".to_string())
             }
         };
@@ -47646,7 +47856,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup1Transport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -47734,12 +47944,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup2Transport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "import . meta".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "import . meta".to_string())
             }
         };
@@ -47749,7 +47961,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup2Transport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -50313,6 +50525,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwOptionalMarkerTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
@@ -50325,6 +50538,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwOptionalMarkerTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "?".to_string())
             }
         };
@@ -50334,7 +50548,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwOptionalMarkerTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -51081,6 +51295,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AutomaticSemicolonTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
@@ -51093,6 +51308,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AutomaticSemicolonTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "\n".to_string())
             }
         };
@@ -51102,7 +51318,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AutomaticSemicolonTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -51219,12 +51435,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureAutomaticSemico
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "\n".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "\n".to_string())
             }
         };
@@ -51234,7 +51452,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureAutomaticSemico
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -51322,10 +51540,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateCharsTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -51335,7 +51555,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateCharsTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -51423,10 +51643,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TernaryQmarkTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -51436,7 +51658,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TernaryQmarkTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -51524,10 +51746,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for HtmlCommentTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -51537,7 +51761,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for HtmlCommentTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -51625,10 +51849,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for OrorTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -51638,7 +51864,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OrorTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -51726,10 +51952,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxTextTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -51739,7 +51967,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxTextTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -51827,10 +52055,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ErrorRecoveryTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -51840,7 +52070,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ErrorRecoveryTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -51928,12 +52158,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "*".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "*".to_string())
             }
         };
@@ -51943,7 +52175,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -52031,12 +52263,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "as".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "as".to_string())
             }
         };
@@ -52046,7 +52280,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -52134,12 +52368,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbraceTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "{".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "{".to_string())
             }
         };
@@ -52149,7 +52385,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbraceTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -52237,12 +52473,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbraceTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "}".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "}".to_string())
             }
         };
@@ -52252,7 +52490,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbraceTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -52340,12 +52578,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonImportTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "import".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "import".to_string())
             }
         };
@@ -52355,7 +52595,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonImportTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -52443,12 +52683,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "from".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "from".to_string())
             }
         };
@@ -52458,7 +52700,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -52546,12 +52788,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for VarTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "var".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "var".to_string())
             }
         };
@@ -52561,7 +52805,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for VarTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -52649,12 +52893,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "else".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "else".to_string())
             }
         };
@@ -52664,7 +52910,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -52752,12 +52998,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "if".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "if".to_string())
             }
         };
@@ -52767,7 +53015,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -52855,12 +53103,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "switch".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "switch".to_string())
             }
         };
@@ -52870,7 +53120,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -52958,12 +53208,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "for".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "for".to_string())
             }
         };
@@ -52973,7 +53225,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -53061,12 +53313,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "(".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "(".to_string())
             }
         };
@@ -53076,7 +53330,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -53164,12 +53418,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SemiTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ";".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| ";".to_string())
             }
         };
@@ -53179,7 +53435,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SemiTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -53267,12 +53523,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ")".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| ")".to_string())
             }
         };
@@ -53282,7 +53540,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -53370,12 +53628,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "await".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "await".to_string())
             }
         };
@@ -53385,7 +53645,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -53473,12 +53733,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "while".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "while".to_string())
             }
         };
@@ -53488,7 +53750,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -53576,12 +53838,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "do".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "do".to_string())
             }
         };
@@ -53591,7 +53855,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -53679,12 +53943,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "try".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "try".to_string())
             }
         };
@@ -53694,7 +53960,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -53782,12 +54048,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "with".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "with".to_string())
             }
         };
@@ -53797,7 +54065,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -53885,12 +54153,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "break".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "break".to_string())
             }
         };
@@ -53900,7 +54170,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -53988,12 +54258,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "continue".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "continue".to_string())
             }
         };
@@ -54003,7 +54275,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -54091,12 +54363,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DebuggerTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "debugger".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "debugger".to_string())
             }
         };
@@ -54106,7 +54380,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DebuggerTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -54194,12 +54468,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "return".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "return".to_string())
             }
         };
@@ -54209,7 +54485,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -54297,12 +54573,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "throw".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "throw".to_string())
             }
         };
@@ -54312,7 +54590,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -54400,12 +54678,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ":".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| ":".to_string())
             }
         };
@@ -54415,7 +54695,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -54503,12 +54783,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "case".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "case".to_string())
             }
         };
@@ -54518,7 +54800,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -54606,12 +54888,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "default".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "default".to_string())
             }
         };
@@ -54621,7 +54905,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -54709,12 +54993,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CatchTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "catch".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "catch".to_string())
             }
         };
@@ -54724,7 +55010,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CatchTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -54812,12 +55098,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "finally".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "finally".to_string())
             }
         };
@@ -54827,7 +55115,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -54915,12 +55203,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "yield".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "yield".to_string())
             }
         };
@@ -54930,7 +55220,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -55018,12 +55308,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "=".to_string())
             }
         };
@@ -55033,7 +55325,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -55121,12 +55413,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "[".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "[".to_string())
             }
         };
@@ -55136,7 +55430,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -55224,12 +55518,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "]".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "]".to_string())
             }
         };
@@ -55239,7 +55535,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -55327,12 +55623,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ">".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| ">".to_string())
             }
         };
@@ -55342,7 +55640,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -55430,12 +55728,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ".".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| ".".to_string())
             }
         };
@@ -55445,7 +55745,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -55533,12 +55833,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokLtSlashTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "</".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "</".to_string())
             }
         };
@@ -55548,7 +55850,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokLtSlashTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -55636,12 +55938,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSlashGtTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "/>".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "/>".to_string())
             }
         };
@@ -55651,7 +55955,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSlashGtTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -55739,12 +56043,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DquoteTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "\"".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "\"".to_string())
             }
         };
@@ -55754,7 +56060,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DquoteTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -55842,12 +56148,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SquoteTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "'".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "'".to_string())
             }
         };
@@ -55857,7 +56165,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SquoteTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -55945,12 +56253,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonClassTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "class".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "class".to_string())
             }
         };
@@ -55960,7 +56270,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonClassTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -56048,12 +56358,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "function".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "function".to_string())
             }
         };
@@ -56063,7 +56375,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -56151,12 +56463,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqGtTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "=>".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "=>".to_string())
             }
         };
@@ -56166,7 +56480,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqGtTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -56254,12 +56568,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkDotTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "?.".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "?.".to_string())
             }
         };
@@ -56269,7 +56585,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkDotTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -56357,12 +56673,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "new".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "new".to_string())
             }
         };
@@ -56372,7 +56690,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -56460,12 +56778,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for UsingTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "using".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "using".to_string())
             }
         };
@@ -56475,7 +56795,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UsingTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -56563,12 +56883,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotDotDotTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "...".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "...".to_string())
             }
         };
@@ -56578,7 +56900,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotDotDotTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -56666,12 +56988,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "?".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "?".to_string())
             }
         };
@@ -56681,7 +57005,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -56769,12 +57093,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpAmpTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "&&".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "&&".to_string())
             }
         };
@@ -56784,7 +57110,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpAmpTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -56872,12 +57198,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipePipeTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "||".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "||".to_string())
             }
         };
@@ -56887,7 +57215,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipePipeTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -56975,12 +57303,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ">>".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| ">>".to_string())
             }
         };
@@ -56990,7 +57320,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -57078,12 +57408,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtGtTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ">>>".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| ">>>".to_string())
             }
         };
@@ -57093,7 +57425,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtGtTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -57181,12 +57513,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "<<".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "<<".to_string())
             }
         };
@@ -57196,7 +57530,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -57284,12 +57618,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "&".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "&".to_string())
             }
         };
@@ -57299,7 +57635,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -57387,12 +57723,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "^".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "^".to_string())
             }
         };
@@ -57402,7 +57740,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -57490,12 +57828,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "|".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "|".to_string())
             }
         };
@@ -57505,7 +57845,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -57593,12 +57933,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "+".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "+".to_string())
             }
         };
@@ -57608,7 +57950,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -57696,12 +58038,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "-".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "-".to_string())
             }
         };
@@ -57711,7 +58055,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -57799,12 +58143,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "/".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "/".to_string())
             }
         };
@@ -57814,7 +58160,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -57902,12 +58248,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "%".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "%".to_string())
             }
         };
@@ -57917,7 +58265,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -58005,12 +58353,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "**".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "**".to_string())
             }
         };
@@ -58020,7 +58370,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -58108,12 +58458,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "<".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "<".to_string())
             }
         };
@@ -58123,7 +58475,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -58211,12 +58563,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtEqTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "<=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "<=".to_string())
             }
         };
@@ -58226,7 +58580,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtEqTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -58314,12 +58668,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "==".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "==".to_string())
             }
         };
@@ -58329,7 +58685,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -58417,12 +58773,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqEqTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "===".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "===".to_string())
             }
         };
@@ -58432,7 +58790,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqEqTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -58520,12 +58878,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "!=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "!=".to_string())
             }
         };
@@ -58535,7 +58895,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -58623,12 +58983,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqEqTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "!==".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "!==".to_string())
             }
         };
@@ -58638,7 +59000,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqEqTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -58726,12 +59088,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtEqTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ">=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| ">=".to_string())
             }
         };
@@ -58741,7 +59105,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtEqTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -58829,12 +59193,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkQmarkTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "??".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "??".to_string())
             }
         };
@@ -58844,7 +59210,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkQmarkTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -58932,12 +59298,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for InstanceofTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "instanceof".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "instanceof".to_string())
             }
         };
@@ -58947,7 +59315,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InstanceofTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -59035,12 +59403,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BquoteTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "`".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "`".to_string())
             }
         };
@@ -59050,7 +59420,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BquoteTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -59138,12 +59508,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DollarLbraceTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "${".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "${".to_string())
             }
         };
@@ -59153,7 +59525,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DollarLbraceTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -59241,12 +59613,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "@".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "@".to_string())
             }
         };
@@ -59256,7 +59630,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -59344,12 +59718,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "static".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "static".to_string())
             }
         };
@@ -59359,7 +59735,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -59447,12 +59823,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AccessorTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "accessor".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "accessor".to_string())
             }
         };
@@ -59462,7 +59840,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AccessorTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -59550,12 +59928,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "!".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "!".to_string())
             }
         };
@@ -59565,7 +59945,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -59653,12 +60033,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "abstract".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "abstract".to_string())
             }
         };
@@ -59668,7 +60050,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -59756,12 +60138,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "const".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "const".to_string())
             }
         };
@@ -59771,7 +60155,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -59859,12 +60243,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SatisfiesTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "satisfies".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "satisfies".to_string())
             }
         };
@@ -59874,7 +60260,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SatisfiesTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -59962,12 +60348,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequireTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "require".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "require".to_string())
             }
         };
@@ -59977,7 +60365,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequireTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -60065,12 +60453,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExtendsTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "extends".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "extends".to_string())
             }
         };
@@ -60080,7 +60470,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExtendsTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -60168,12 +60558,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplementsTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "implements".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "implements".to_string())
             }
         };
@@ -60183,7 +60575,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplementsTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -60271,12 +60663,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeclareTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "declare".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "declare".to_string())
             }
         };
@@ -60286,7 +60680,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeclareTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -60374,12 +60768,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonModuleTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "module".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "module".to_string())
             }
         };
@@ -60389,7 +60785,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonModuleTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -60477,12 +60873,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamespaceTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "namespace".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "namespace".to_string())
             }
         };
@@ -60492,7 +60890,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamespaceTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -60580,12 +60978,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterfaceTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "interface".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "interface".to_string())
             }
         };
@@ -60595,7 +60995,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterfaceTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -60683,12 +61083,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "enum".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "enum".to_string())
             }
         };
@@ -60698,7 +61100,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -60786,12 +61188,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonTypeTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "type".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "type".to_string())
             }
         };
@@ -60801,7 +61205,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonTypeTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -60889,12 +61293,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for OverrideTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "override".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "override".to_string())
             }
         };
@@ -60904,7 +61310,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OverrideTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -60992,12 +61398,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashQmarkColonTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "-?:".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "-?:".to_string())
             }
         };
@@ -61007,7 +61415,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashQmarkColonTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -61095,12 +61503,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusQmarkColonTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "+?:".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "+?:".to_string())
             }
         };
@@ -61110,7 +61520,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusQmarkColonTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -61198,12 +61608,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkColonTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "?:".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "?:".to_string())
             }
         };
@@ -61213,7 +61625,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkColonTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -61301,12 +61713,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonAssertsTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "asserts".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "asserts".to_string())
             }
         };
@@ -61316,7 +61730,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonAssertsTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -61404,12 +61818,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for InferTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "infer".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "infer".to_string())
             }
         };
@@ -61419,7 +61835,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InferTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -61507,12 +61923,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "is".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "is".to_string())
             }
         };
@@ -61522,7 +61940,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -61610,12 +62028,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeofTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "typeof".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "typeof".to_string())
             }
         };
@@ -61625,7 +62045,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeofTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -61713,12 +62133,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeyofTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "keyof".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "keyof".to_string())
             }
         };
@@ -61728,7 +62150,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeyofTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -61816,12 +62238,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "in".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "in".to_string())
             }
         };
@@ -61831,7 +62255,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -61919,12 +62343,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "readonly".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "readonly".to_string())
             }
         };
@@ -61934,7 +62360,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -62022,12 +62448,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "async".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "async".to_string())
             }
         };
@@ -62037,7 +62465,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -62125,12 +62553,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ",".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| ",".to_string())
             }
         };
@@ -62140,7 +62570,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -62228,12 +62658,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "global".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "global".to_string())
             }
         };
@@ -62243,7 +62675,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -62331,12 +62763,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "export".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
                 obj.get("$text")?.unwrap_or_else(|| "export".to_string())
             }
         };
@@ -62346,7 +62780,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
-            transport_trivia_data: None,
+            transport_trivia_data: __trivia,
             text,
         })
     }
@@ -65988,330 +66422,330 @@ fn render_export(t: &ExportTransport, dest: &mut dyn ::std::fmt::Write) -> Resul
 
 fn render_module_export_name(t: &ModuleExportNameTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        ModuleExportNameTransport::Identifier(inner) => render_identifier(inner, dest),
-        ModuleExportNameTransport::String(inner) => render_string(inner, dest),
+        ModuleExportNameTransport::Identifier(inner) => inner.render_into(dest),
+        ModuleExportNameTransport::String(inner) => inner.render_into(dest),
         ModuleExportNameTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render_declaration(t: &DeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        DeclarationTransport::FunctionDeclaration(inner) => render_function_declaration(inner, dest),
-        DeclarationTransport::GeneratorFunctionDeclaration(inner) => render_generator_function_declaration(inner, dest),
-        DeclarationTransport::ClassDeclaration(inner) => render_class_declaration(inner, dest),
-        DeclarationTransport::LexicalDeclaration(inner) => render_lexical_declaration(inner, dest),
-        DeclarationTransport::VariableDeclaration(inner) => render_variable_declaration(inner, dest),
-        DeclarationTransport::FunctionSignature(inner) => render_function_signature(inner, dest),
-        DeclarationTransport::AbstractClassDeclaration(inner) => render_abstract_class_declaration(inner, dest),
-        DeclarationTransport::Module(inner) => render_module(inner, dest),
-        DeclarationTransport::InternalModule(inner) => render_internal_module(inner, dest),
-        DeclarationTransport::TypeAliasDeclaration(inner) => render_type_alias_declaration(inner, dest),
-        DeclarationTransport::EnumDeclaration(inner) => render_enum_declaration(inner, dest),
-        DeclarationTransport::InterfaceDeclaration(inner) => render_interface_declaration(inner, dest),
-        DeclarationTransport::ImportAlias(inner) => render_import_alias(inner, dest),
-        DeclarationTransport::AmbientDeclaration(inner) => render_ambient_declaration(inner, dest),
+        DeclarationTransport::FunctionDeclaration(inner) => inner.render_into(dest),
+        DeclarationTransport::GeneratorFunctionDeclaration(inner) => inner.render_into(dest),
+        DeclarationTransport::ClassDeclaration(inner) => inner.render_into(dest),
+        DeclarationTransport::LexicalDeclaration(inner) => inner.render_into(dest),
+        DeclarationTransport::VariableDeclaration(inner) => inner.render_into(dest),
+        DeclarationTransport::FunctionSignature(inner) => inner.render_into(dest),
+        DeclarationTransport::AbstractClassDeclaration(inner) => inner.render_into(dest),
+        DeclarationTransport::Module(inner) => inner.render_into(dest),
+        DeclarationTransport::InternalModule(inner) => inner.render_into(dest),
+        DeclarationTransport::TypeAliasDeclaration(inner) => inner.render_into(dest),
+        DeclarationTransport::EnumDeclaration(inner) => inner.render_into(dest),
+        DeclarationTransport::InterfaceDeclaration(inner) => inner.render_into(dest),
+        DeclarationTransport::ImportAlias(inner) => inner.render_into(dest),
+        DeclarationTransport::AmbientDeclaration(inner) => inner.render_into(dest),
     }
 }
 
 fn render_statement(t: &StatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        StatementTransport::ExportStatement(inner) => render_export_statement(inner, dest),
-        StatementTransport::ImportStatement(inner) => render_import_statement(inner, dest),
-        StatementTransport::DebuggerStatement(inner) => render_debugger_statement(inner, dest),
-        StatementTransport::ExpressionStatement(inner) => render_expression_statement(inner, dest),
-        StatementTransport::Declaration(inner) => render_declaration(inner, dest),
-        StatementTransport::StatementBlock(inner) => render_statement_block(inner, dest),
-        StatementTransport::IfStatement(inner) => render_if_statement(inner, dest),
-        StatementTransport::SwitchStatement(inner) => render_switch_statement(inner, dest),
-        StatementTransport::ForStatement(inner) => render_for_statement(inner, dest),
-        StatementTransport::ForInStatement(inner) => render_for_in_statement(inner, dest),
-        StatementTransport::WhileStatement(inner) => render_while_statement(inner, dest),
-        StatementTransport::DoStatement(inner) => render_do_statement(inner, dest),
-        StatementTransport::TryStatement(inner) => render_try_statement(inner, dest),
-        StatementTransport::WithStatement(inner) => render_with_statement(inner, dest),
-        StatementTransport::BreakStatement(inner) => render_break_statement(inner, dest),
-        StatementTransport::ContinueStatement(inner) => render_continue_statement(inner, dest),
-        StatementTransport::ReturnStatement(inner) => render_return_statement(inner, dest),
-        StatementTransport::ThrowStatement(inner) => render_throw_statement(inner, dest),
-        StatementTransport::EmptyStatement(inner) => render_empty_statement(inner, dest),
-        StatementTransport::LabeledStatement(inner) => render_labeled_statement(inner, dest),
+        StatementTransport::ExportStatement(inner) => inner.render_into(dest),
+        StatementTransport::ImportStatement(inner) => inner.render_into(dest),
+        StatementTransport::DebuggerStatement(inner) => inner.render_into(dest),
+        StatementTransport::ExpressionStatement(inner) => inner.render_into(dest),
+        StatementTransport::Declaration(inner) => inner.render_into(dest),
+        StatementTransport::StatementBlock(inner) => inner.render_into(dest),
+        StatementTransport::IfStatement(inner) => inner.render_into(dest),
+        StatementTransport::SwitchStatement(inner) => inner.render_into(dest),
+        StatementTransport::ForStatement(inner) => inner.render_into(dest),
+        StatementTransport::ForInStatement(inner) => inner.render_into(dest),
+        StatementTransport::WhileStatement(inner) => inner.render_into(dest),
+        StatementTransport::DoStatement(inner) => inner.render_into(dest),
+        StatementTransport::TryStatement(inner) => inner.render_into(dest),
+        StatementTransport::WithStatement(inner) => inner.render_into(dest),
+        StatementTransport::BreakStatement(inner) => inner.render_into(dest),
+        StatementTransport::ContinueStatement(inner) => inner.render_into(dest),
+        StatementTransport::ReturnStatement(inner) => inner.render_into(dest),
+        StatementTransport::ThrowStatement(inner) => inner.render_into(dest),
+        StatementTransport::EmptyStatement(inner) => inner.render_into(dest),
+        StatementTransport::LabeledStatement(inner) => inner.render_into(dest),
     }
 }
 
 fn render_expressions(t: &ExpressionsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        ExpressionsTransport::Expression(inner) => render_expression(inner, dest),
-        ExpressionsTransport::SequenceExpression(inner) => render_sequence_expression(inner, dest),
+        ExpressionsTransport::Expression(inner) => inner.render_into(dest),
+        ExpressionsTransport::SequenceExpression(inner) => inner.render_into(dest),
         ExpressionsTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render_expression(t: &ExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        ExpressionTransport::AsExpression(inner) => render_as_expression(inner, dest),
-        ExpressionTransport::SatisfiesExpression(inner) => render_satisfies_expression(inner, dest),
-        ExpressionTransport::InstantiationExpression(inner) => render_instantiation_expression(inner, dest),
-        ExpressionTransport::InternalModule(inner) => render_internal_module(inner, dest),
-        ExpressionTransport::TypeAssertion(inner) => render_type_assertion(inner, dest),
-        ExpressionTransport::PrimaryExpression(inner) => render_primary_expression(inner, dest),
-        ExpressionTransport::AssignmentExpression(inner) => render_assignment_expression(inner, dest),
-        ExpressionTransport::AugmentedAssignmentExpression(inner) => render_augmented_assignment_expression(inner, dest),
-        ExpressionTransport::AwaitExpression(inner) => render_await_expression(inner, dest),
-        ExpressionTransport::UnaryExpression(inner) => render_unary_expression(inner, dest),
-        ExpressionTransport::BinaryExpression(inner) => render_binary_expression(inner, dest),
-        ExpressionTransport::TernaryExpression(inner) => render_ternary_expression(inner, dest),
-        ExpressionTransport::UpdateExpression(inner) => render_update_expression(inner, dest),
-        ExpressionTransport::NewExpression(inner) => render_new_expression(inner, dest),
-        ExpressionTransport::YieldExpression(inner) => render_yield_expression(inner, dest),
+        ExpressionTransport::AsExpression(inner) => inner.render_into(dest),
+        ExpressionTransport::SatisfiesExpression(inner) => inner.render_into(dest),
+        ExpressionTransport::InstantiationExpression(inner) => inner.render_into(dest),
+        ExpressionTransport::InternalModule(inner) => inner.render_into(dest),
+        ExpressionTransport::TypeAssertion(inner) => inner.render_into(dest),
+        ExpressionTransport::PrimaryExpression(inner) => inner.render_into(dest),
+        ExpressionTransport::AssignmentExpression(inner) => inner.render_into(dest),
+        ExpressionTransport::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+        ExpressionTransport::AwaitExpression(inner) => inner.render_into(dest),
+        ExpressionTransport::UnaryExpression(inner) => inner.render_into(dest),
+        ExpressionTransport::BinaryExpression(inner) => inner.render_into(dest),
+        ExpressionTransport::TernaryExpression(inner) => inner.render_into(dest),
+        ExpressionTransport::UpdateExpression(inner) => inner.render_into(dest),
+        ExpressionTransport::NewExpression(inner) => inner.render_into(dest),
+        ExpressionTransport::YieldExpression(inner) => inner.render_into(dest),
         ExpressionTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render_primary_expression(t: &PrimaryExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        PrimaryExpressionTransport::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-        PrimaryExpressionTransport::MemberExpression(inner) => render_member_expression(inner, dest),
-        PrimaryExpressionTransport::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
-        PrimaryExpressionTransport::_Identifier(inner) => render__identifier(inner, dest),
-        PrimaryExpressionTransport::Undefined(inner) => render_undefined(inner, dest),
-        PrimaryExpressionTransport::Identifier(inner) => render_identifier(inner, dest),
-        PrimaryExpressionTransport::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-        PrimaryExpressionTransport::This(inner) => render_this(inner, dest),
-        PrimaryExpressionTransport::Super(inner) => render_super(inner, dest),
-        PrimaryExpressionTransport::Number(inner) => render_number(inner, dest),
-        PrimaryExpressionTransport::String(inner) => render_string(inner, dest),
-        PrimaryExpressionTransport::TemplateString(inner) => render_template_string(inner, dest),
-        PrimaryExpressionTransport::Regex(inner) => render_regex(inner, dest),
-        PrimaryExpressionTransport::True(inner) => render_true(inner, dest),
-        PrimaryExpressionTransport::False(inner) => render_false(inner, dest),
-        PrimaryExpressionTransport::Null(inner) => render_null(inner, dest),
-        PrimaryExpressionTransport::Object(inner) => render_object(inner, dest),
-        PrimaryExpressionTransport::Array(inner) => render_array(inner, dest),
-        PrimaryExpressionTransport::FunctionExpression(inner) => render_function_expression(inner, dest),
-        PrimaryExpressionTransport::ArrowFunction(inner) => render_arrow_function(inner, dest),
-        PrimaryExpressionTransport::GeneratorFunction(inner) => render_generator_function(inner, dest),
-        PrimaryExpressionTransport::Class(inner) => render_class(inner, dest),
-        PrimaryExpressionTransport::MetaProperty(inner) => render_meta_property(inner, dest),
-        PrimaryExpressionTransport::CallExpression(inner) => render_call_expression(inner, dest),
-        PrimaryExpressionTransport::NonNullExpression(inner) => render_non_null_expression(inner, dest),
+        PrimaryExpressionTransport::SubscriptExpression(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::MemberExpression(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::ParenthesizedExpression(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::_Identifier(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::Undefined(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::Identifier(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::ReservedIdentifier(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::This(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::Super(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::Number(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::String(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::TemplateString(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::Regex(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::True(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::False(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::Null(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::Object(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::Array(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::FunctionExpression(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::ArrowFunction(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::GeneratorFunction(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::Class(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::MetaProperty(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::CallExpression(inner) => inner.render_into(dest),
+        PrimaryExpressionTransport::NonNullExpression(inner) => inner.render_into(dest),
         PrimaryExpressionTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render__jsx_element(t: &_JsxElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        _JsxElementTransport::JsxElement(inner) => render_jsx_element(inner, dest),
-        _JsxElementTransport::JsxSelfClosingElement(inner) => render_jsx_self_closing_element(inner, dest),
+        _JsxElementTransport::JsxElement(inner) => inner.render_into(dest),
+        _JsxElementTransport::JsxSelfClosingElement(inner) => inner.render_into(dest),
     }
 }
 
 fn render_jsx_child(t: &JsxChildTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        JsxChildTransport::JsxText(inner) => render_jsx_text(inner, dest),
-        JsxChildTransport::HtmlCharacterReference(inner) => render_html_character_reference(inner, dest),
-        JsxChildTransport::_JsxElement(inner) => render__jsx_element(inner, dest),
-        JsxChildTransport::JsxElement(inner) => render_jsx_element(inner, dest),
-        JsxChildTransport::JsxSelfClosingElement(inner) => render_jsx_self_closing_element(inner, dest),
-        JsxChildTransport::JsxExpression(inner) => render_jsx_expression(inner, dest),
+        JsxChildTransport::JsxText(inner) => inner.render_into(dest),
+        JsxChildTransport::HtmlCharacterReference(inner) => inner.render_into(dest),
+        JsxChildTransport::_JsxElement(inner) => inner.render_into(dest),
+        JsxChildTransport::JsxElement(inner) => inner.render_into(dest),
+        JsxChildTransport::JsxSelfClosingElement(inner) => inner.render_into(dest),
+        JsxChildTransport::JsxExpression(inner) => inner.render_into(dest),
         JsxChildTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render__jsx_identifier(t: &_JsxIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        _JsxIdentifierTransport::JsxIdentifier(inner) => render_jsx_identifier(inner, dest),
-        _JsxIdentifierTransport::Identifier(inner) => render_identifier(inner, dest),
+        _JsxIdentifierTransport::JsxIdentifier(inner) => inner.render_into(dest),
+        _JsxIdentifierTransport::Identifier(inner) => inner.render_into(dest),
         _JsxIdentifierTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render_jsx_element_name(t: &JsxElementNameTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        JsxElementNameTransport::_JsxIdentifier(inner) => render__jsx_identifier(inner, dest),
-        JsxElementNameTransport::JsxIdentifier(inner) => render_jsx_identifier(inner, dest),
-        JsxElementNameTransport::Identifier(inner) => render_identifier(inner, dest),
-        JsxElementNameTransport::NestedIdentifier(inner) => render_nested_identifier(inner, dest),
-        JsxElementNameTransport::JsxNamespaceName(inner) => render_jsx_namespace_name(inner, dest),
+        JsxElementNameTransport::_JsxIdentifier(inner) => inner.render_into(dest),
+        JsxElementNameTransport::JsxIdentifier(inner) => inner.render_into(dest),
+        JsxElementNameTransport::Identifier(inner) => inner.render_into(dest),
+        JsxElementNameTransport::NestedIdentifier(inner) => inner.render_into(dest),
+        JsxElementNameTransport::JsxNamespaceName(inner) => inner.render_into(dest),
         JsxElementNameTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render__jsx_attribute(t: &_JsxAttributeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        _JsxAttributeTransport::JsxAttribute(inner) => render_jsx_attribute(inner, dest),
-        _JsxAttributeTransport::JsxExpression(inner) => render_jsx_expression(inner, dest),
+        _JsxAttributeTransport::JsxAttribute(inner) => inner.render_into(dest),
+        _JsxAttributeTransport::JsxExpression(inner) => inner.render_into(dest),
     }
 }
 
 fn render_jsx_attribute_name(t: &JsxAttributeNameTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        JsxAttributeNameTransport::_JsxIdentifier(inner) => render__jsx_identifier(inner, dest),
-        JsxAttributeNameTransport::JsxIdentifier(inner) => render_jsx_identifier(inner, dest),
-        JsxAttributeNameTransport::Identifier(inner) => render_identifier(inner, dest),
-        JsxAttributeNameTransport::JsxNamespaceName(inner) => render_jsx_namespace_name(inner, dest),
+        JsxAttributeNameTransport::_JsxIdentifier(inner) => inner.render_into(dest),
+        JsxAttributeNameTransport::JsxIdentifier(inner) => inner.render_into(dest),
+        JsxAttributeNameTransport::Identifier(inner) => inner.render_into(dest),
+        JsxAttributeNameTransport::JsxNamespaceName(inner) => inner.render_into(dest),
         JsxAttributeNameTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render_jsx_attribute_value(t: &JsxAttributeValueTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        JsxAttributeValueTransport::JsxString(inner) => render_jsx_string(inner, dest),
-        JsxAttributeValueTransport::JsxExpression(inner) => render_jsx_expression(inner, dest),
-        JsxAttributeValueTransport::_JsxElement(inner) => render__jsx_element(inner, dest),
-        JsxAttributeValueTransport::JsxElement(inner) => render_jsx_element(inner, dest),
-        JsxAttributeValueTransport::JsxSelfClosingElement(inner) => render_jsx_self_closing_element(inner, dest),
+        JsxAttributeValueTransport::JsxString(inner) => inner.render_into(dest),
+        JsxAttributeValueTransport::JsxExpression(inner) => inner.render_into(dest),
+        JsxAttributeValueTransport::_JsxElement(inner) => inner.render_into(dest),
+        JsxAttributeValueTransport::JsxElement(inner) => inner.render_into(dest),
+        JsxAttributeValueTransport::JsxSelfClosingElement(inner) => inner.render_into(dest),
     }
 }
 
 fn render_formal_parameter(t: &FormalParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        FormalParameterTransport::RequiredParameter(inner) => render_required_parameter(inner, dest),
-        FormalParameterTransport::OptionalParameter(inner) => render_optional_parameter(inner, dest),
+        FormalParameterTransport::RequiredParameter(inner) => inner.render_into(dest),
+        FormalParameterTransport::OptionalParameter(inner) => inner.render_into(dest),
     }
 }
 
 fn render_lhs_expression(t: &LhsExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        LhsExpressionTransport::MemberExpression(inner) => render_member_expression(inner, dest),
-        LhsExpressionTransport::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-        LhsExpressionTransport::_Identifier(inner) => render__identifier(inner, dest),
-        LhsExpressionTransport::Undefined(inner) => render_undefined(inner, dest),
-        LhsExpressionTransport::Identifier(inner) => render_identifier(inner, dest),
-        LhsExpressionTransport::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-        LhsExpressionTransport::DestructuringPattern(inner) => render_destructuring_pattern(inner, dest),
-        LhsExpressionTransport::ObjectPattern(inner) => render_object_pattern(inner, dest),
-        LhsExpressionTransport::ArrayPattern(inner) => render_array_pattern(inner, dest),
-        LhsExpressionTransport::NonNullExpression(inner) => render_non_null_expression(inner, dest),
+        LhsExpressionTransport::MemberExpression(inner) => inner.render_into(dest),
+        LhsExpressionTransport::SubscriptExpression(inner) => inner.render_into(dest),
+        LhsExpressionTransport::_Identifier(inner) => inner.render_into(dest),
+        LhsExpressionTransport::Undefined(inner) => inner.render_into(dest),
+        LhsExpressionTransport::Identifier(inner) => inner.render_into(dest),
+        LhsExpressionTransport::ReservedIdentifier(inner) => inner.render_into(dest),
+        LhsExpressionTransport::DestructuringPattern(inner) => inner.render_into(dest),
+        LhsExpressionTransport::ObjectPattern(inner) => inner.render_into(dest),
+        LhsExpressionTransport::ArrayPattern(inner) => inner.render_into(dest),
+        LhsExpressionTransport::NonNullExpression(inner) => inner.render_into(dest),
         LhsExpressionTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render_augmented_assignment_lhs(t: &AugmentedAssignmentLhsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        AugmentedAssignmentLhsTransport::MemberExpression(inner) => render_member_expression(inner, dest),
-        AugmentedAssignmentLhsTransport::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-        AugmentedAssignmentLhsTransport::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-        AugmentedAssignmentLhsTransport::Identifier(inner) => render_identifier(inner, dest),
-        AugmentedAssignmentLhsTransport::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
-        AugmentedAssignmentLhsTransport::NonNullExpression(inner) => render_non_null_expression(inner, dest),
+        AugmentedAssignmentLhsTransport::MemberExpression(inner) => inner.render_into(dest),
+        AugmentedAssignmentLhsTransport::SubscriptExpression(inner) => inner.render_into(dest),
+        AugmentedAssignmentLhsTransport::ReservedIdentifier(inner) => inner.render_into(dest),
+        AugmentedAssignmentLhsTransport::Identifier(inner) => inner.render_into(dest),
+        AugmentedAssignmentLhsTransport::ParenthesizedExpression(inner) => inner.render_into(dest),
+        AugmentedAssignmentLhsTransport::NonNullExpression(inner) => inner.render_into(dest),
         AugmentedAssignmentLhsTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render_destructuring_pattern(t: &DestructuringPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        DestructuringPatternTransport::ObjectPattern(inner) => render_object_pattern(inner, dest),
-        DestructuringPatternTransport::ArrayPattern(inner) => render_array_pattern(inner, dest),
+        DestructuringPatternTransport::ObjectPattern(inner) => inner.render_into(dest),
+        DestructuringPatternTransport::ArrayPattern(inner) => inner.render_into(dest),
     }
 }
 
 fn render__identifier(t: &_IdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        _IdentifierTransport::Undefined(inner) => render_undefined(inner, dest),
-        _IdentifierTransport::Identifier(inner) => render_identifier(inner, dest),
+        _IdentifierTransport::Undefined(inner) => inner.render_into(dest),
+        _IdentifierTransport::Identifier(inner) => inner.render_into(dest),
         _IdentifierTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render_pattern(t: &PatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        PatternTransport::LhsExpression(inner) => render_lhs_expression(inner, dest),
-        PatternTransport::MemberExpression(inner) => render_member_expression(inner, dest),
-        PatternTransport::SubscriptExpression(inner) => render_subscript_expression(inner, dest),
-        PatternTransport::_Identifier(inner) => render__identifier(inner, dest),
-        PatternTransport::Undefined(inner) => render_undefined(inner, dest),
-        PatternTransport::Identifier(inner) => render_identifier(inner, dest),
-        PatternTransport::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-        PatternTransport::DestructuringPattern(inner) => render_destructuring_pattern(inner, dest),
-        PatternTransport::ObjectPattern(inner) => render_object_pattern(inner, dest),
-        PatternTransport::ArrayPattern(inner) => render_array_pattern(inner, dest),
-        PatternTransport::NonNullExpression(inner) => render_non_null_expression(inner, dest),
-        PatternTransport::RestPattern(inner) => render_rest_pattern(inner, dest),
+        PatternTransport::LhsExpression(inner) => inner.render_into(dest),
+        PatternTransport::MemberExpression(inner) => inner.render_into(dest),
+        PatternTransport::SubscriptExpression(inner) => inner.render_into(dest),
+        PatternTransport::_Identifier(inner) => inner.render_into(dest),
+        PatternTransport::Undefined(inner) => inner.render_into(dest),
+        PatternTransport::Identifier(inner) => inner.render_into(dest),
+        PatternTransport::ReservedIdentifier(inner) => inner.render_into(dest),
+        PatternTransport::DestructuringPattern(inner) => inner.render_into(dest),
+        PatternTransport::ObjectPattern(inner) => inner.render_into(dest),
+        PatternTransport::ArrayPattern(inner) => inner.render_into(dest),
+        PatternTransport::NonNullExpression(inner) => inner.render_into(dest),
+        PatternTransport::RestPattern(inner) => inner.render_into(dest),
         PatternTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render_property_name(t: &PropertyNameTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        PropertyNameTransport::_PropertyIdentifier(inner) => render__property_identifier(inner, dest),
-        PropertyNameTransport::Identifier(inner) => render_identifier(inner, dest),
-        PropertyNameTransport::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-        PropertyNameTransport::PrivatePropertyIdentifier(inner) => render_private_property_identifier(inner, dest),
-        PropertyNameTransport::String(inner) => render_string(inner, dest),
-        PropertyNameTransport::Number(inner) => render_number(inner, dest),
-        PropertyNameTransport::ComputedPropertyName(inner) => render_computed_property_name(inner, dest),
+        PropertyNameTransport::_PropertyIdentifier(inner) => inner.render_into(dest),
+        PropertyNameTransport::Identifier(inner) => inner.render_into(dest),
+        PropertyNameTransport::ReservedIdentifier(inner) => inner.render_into(dest),
+        PropertyNameTransport::PrivatePropertyIdentifier(inner) => inner.render_into(dest),
+        PropertyNameTransport::String(inner) => inner.render_into(dest),
+        PropertyNameTransport::Number(inner) => inner.render_into(dest),
+        PropertyNameTransport::ComputedPropertyName(inner) => inner.render_into(dest),
         PropertyNameTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render_statement_identifier(t: &StatementIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        StatementIdentifierTransport::Identifier(inner) => render_identifier(inner, dest),
-        StatementIdentifierTransport::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
+        StatementIdentifierTransport::Identifier(inner) => inner.render_into(dest),
+        StatementIdentifierTransport::ReservedIdentifier(inner) => inner.render_into(dest),
         StatementIdentifierTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render__property_identifier(t: &_PropertyIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        _PropertyIdentifierTransport::Identifier(inner) => render_identifier(inner, dest),
-        _PropertyIdentifierTransport::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
+        _PropertyIdentifierTransport::Identifier(inner) => inner.render_into(dest),
+        _PropertyIdentifierTransport::ReservedIdentifier(inner) => inner.render_into(dest),
         _PropertyIdentifierTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render_import_identifier(t: &ImportIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        ImportIdentifierTransport::Identifier(inner) => render_identifier(inner, dest),
+        ImportIdentifierTransport::Identifier(inner) => inner.render_into(dest),
         ImportIdentifierTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render_type(t: &TypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        TypeTransport::PrimaryType(inner) => render_primary_type(inner, dest),
-        TypeTransport::FunctionType(inner) => render_function_type(inner, dest),
-        TypeTransport::ReadonlyType(inner) => render_readonly_type(inner, dest),
-        TypeTransport::ConstructorType(inner) => render_constructor_type(inner, dest),
-        TypeTransport::InferType(inner) => render_infer_type(inner, dest),
-        TypeTransport::TypeQueryMemberExpressionInTypeAnnotation(inner) => render_type_query_member_expression_in_type_annotation(inner, dest),
-        TypeTransport::TypeQueryCallExpressionInTypeAnnotation(inner) => render_type_query_call_expression_in_type_annotation(inner, dest),
+        TypeTransport::PrimaryType(inner) => inner.render_into(dest),
+        TypeTransport::FunctionType(inner) => inner.render_into(dest),
+        TypeTransport::ReadonlyType(inner) => inner.render_into(dest),
+        TypeTransport::ConstructorType(inner) => inner.render_into(dest),
+        TypeTransport::InferType(inner) => inner.render_into(dest),
+        TypeTransport::TypeQueryMemberExpressionInTypeAnnotation(inner) => inner.render_into(dest),
+        TypeTransport::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.render_into(dest),
         TypeTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render_tuple_type_member(t: &TupleTypeMemberTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        TupleTypeMemberTransport::TupleParameter(inner) => render_tuple_parameter(inner, dest),
-        TupleTypeMemberTransport::OptionalTupleParameter(inner) => render_optional_tuple_parameter(inner, dest),
-        TupleTypeMemberTransport::OptionalType(inner) => render_optional_type(inner, dest),
-        TupleTypeMemberTransport::RestType(inner) => render_rest_type(inner, dest),
-        TupleTypeMemberTransport::Type(inner) => render_type(inner, dest),
+        TupleTypeMemberTransport::TupleParameter(inner) => inner.render_into(dest),
+        TupleTypeMemberTransport::OptionalTupleParameter(inner) => inner.render_into(dest),
+        TupleTypeMemberTransport::OptionalType(inner) => inner.render_into(dest),
+        TupleTypeMemberTransport::RestType(inner) => inner.render_into(dest),
+        TupleTypeMemberTransport::Type(inner) => inner.render_into(dest),
         TupleTypeMemberTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
 fn render_primary_type(t: &PrimaryTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        PrimaryTypeTransport::ParenthesizedType(inner) => render_parenthesized_type(inner, dest),
-        PrimaryTypeTransport::PredefinedType(inner) => render_predefined_type(inner, dest),
-        PrimaryTypeTransport::TypeIdentifier(inner) => render_type_identifier(inner, dest),
-        PrimaryTypeTransport::NestedTypeIdentifier(inner) => render_nested_type_identifier(inner, dest),
-        PrimaryTypeTransport::GenericType(inner) => render_generic_type(inner, dest),
-        PrimaryTypeTransport::ObjectType(inner) => render_object_type(inner, dest),
-        PrimaryTypeTransport::ArrayType(inner) => render_array_type(inner, dest),
-        PrimaryTypeTransport::TupleType(inner) => render_tuple_type(inner, dest),
-        PrimaryTypeTransport::FlowMaybeType(inner) => render_flow_maybe_type(inner, dest),
-        PrimaryTypeTransport::TypeQuery(inner) => render_type_query(inner, dest),
-        PrimaryTypeTransport::IndexTypeQuery(inner) => render_index_type_query(inner, dest),
-        PrimaryTypeTransport::This(inner) => render_this(inner, dest),
-        PrimaryTypeTransport::ExistentialType(inner) => render_existential_type(inner, dest),
-        PrimaryTypeTransport::LiteralType(inner) => render_literal_type(inner, dest),
-        PrimaryTypeTransport::LookupType(inner) => render_lookup_type(inner, dest),
-        PrimaryTypeTransport::ConditionalType(inner) => render_conditional_type(inner, dest),
-        PrimaryTypeTransport::TemplateLiteralType(inner) => render_template_literal_type(inner, dest),
-        PrimaryTypeTransport::IntersectionType(inner) => render_intersection_type(inner, dest),
-        PrimaryTypeTransport::UnionType(inner) => render_union_type(inner, dest),
+        PrimaryTypeTransport::ParenthesizedType(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::PredefinedType(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::TypeIdentifier(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::NestedTypeIdentifier(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::GenericType(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::ObjectType(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::ArrayType(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::TupleType(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::FlowMaybeType(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::TypeQuery(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::IndexTypeQuery(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::This(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::ExistentialType(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::LiteralType(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::LookupType(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::ConditionalType(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::TemplateLiteralType(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::IntersectionType(inner) => inner.render_into(dest),
+        PrimaryTypeTransport::UnionType(inner) => inner.render_into(dest),
         PrimaryTypeTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
@@ -66340,281 +66774,281 @@ impl RenderableTransport for AnyTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            AnyTransport::Program(t) => render_program(t, dest),
+            AnyTransport::Program(t) => t.render_into(dest),
             AnyTransport::HashBangLine(t) => t.render_into(dest),
-            AnyTransport::ExportStatement(t) => render_export_statement(t, dest),
-            AnyTransport::NamespaceExport(t) => render_namespace_export(t, dest),
-            AnyTransport::ExportClause(t) => render_export_clause(t, dest),
-            AnyTransport::ExportSpecifier(t) => render_export_specifier(t, dest),
+            AnyTransport::ExportStatement(t) => t.render_into(dest),
+            AnyTransport::NamespaceExport(t) => t.render_into(dest),
+            AnyTransport::ExportClause(t) => t.render_into(dest),
+            AnyTransport::ExportSpecifier(t) => t.render_into(dest),
             AnyTransport::Import(t) => t.render_into(dest),
-            AnyTransport::ImportStatement(t) => render_import_statement(t, dest),
-            AnyTransport::ImportClause(t) => render_import_clause(t, dest),
-            AnyTransport::FromClause(t) => render_from_clause(t, dest),
-            AnyTransport::NamespaceImport(t) => render_namespace_import(t, dest),
-            AnyTransport::NamedImports(t) => render_named_imports(t, dest),
-            AnyTransport::ImportSpecifier(t) => render_import_specifier(t, dest),
-            AnyTransport::ImportAttribute(t) => render_import_attribute(t, dest),
-            AnyTransport::ExpressionStatement(t) => render_expression_statement(t, dest),
-            AnyTransport::VariableDeclaration(t) => render_variable_declaration(t, dest),
-            AnyTransport::LexicalDeclaration(t) => render_lexical_declaration(t, dest),
-            AnyTransport::VariableDeclarator(t) => render_variable_declarator(t, dest),
-            AnyTransport::StatementBlock(t) => render_statement_block(t, dest),
-            AnyTransport::ElseClause(t) => render_else_clause(t, dest),
-            AnyTransport::IfStatement(t) => render_if_statement(t, dest),
-            AnyTransport::SwitchStatement(t) => render_switch_statement(t, dest),
-            AnyTransport::ForStatement(t) => render_for_statement(t, dest),
-            AnyTransport::ForInStatement(t) => render_for_in_statement(t, dest),
-            AnyTransport::ForHeader(t) => render_for_header(t, dest),
-            AnyTransport::WhileStatement(t) => render_while_statement(t, dest),
-            AnyTransport::DoStatement(t) => render_do_statement(t, dest),
-            AnyTransport::TryStatement(t) => render_try_statement(t, dest),
-            AnyTransport::WithStatement(t) => render_with_statement(t, dest),
-            AnyTransport::BreakStatement(t) => render_break_statement(t, dest),
-            AnyTransport::ContinueStatement(t) => render_continue_statement(t, dest),
-            AnyTransport::DebuggerStatement(t) => render_debugger_statement(t, dest),
-            AnyTransport::ReturnStatement(t) => render_return_statement(t, dest),
-            AnyTransport::ThrowStatement(t) => render_throw_statement(t, dest),
+            AnyTransport::ImportStatement(t) => t.render_into(dest),
+            AnyTransport::ImportClause(t) => t.render_into(dest),
+            AnyTransport::FromClause(t) => t.render_into(dest),
+            AnyTransport::NamespaceImport(t) => t.render_into(dest),
+            AnyTransport::NamedImports(t) => t.render_into(dest),
+            AnyTransport::ImportSpecifier(t) => t.render_into(dest),
+            AnyTransport::ImportAttribute(t) => t.render_into(dest),
+            AnyTransport::ExpressionStatement(t) => t.render_into(dest),
+            AnyTransport::VariableDeclaration(t) => t.render_into(dest),
+            AnyTransport::LexicalDeclaration(t) => t.render_into(dest),
+            AnyTransport::VariableDeclarator(t) => t.render_into(dest),
+            AnyTransport::StatementBlock(t) => t.render_into(dest),
+            AnyTransport::ElseClause(t) => t.render_into(dest),
+            AnyTransport::IfStatement(t) => t.render_into(dest),
+            AnyTransport::SwitchStatement(t) => t.render_into(dest),
+            AnyTransport::ForStatement(t) => t.render_into(dest),
+            AnyTransport::ForInStatement(t) => t.render_into(dest),
+            AnyTransport::ForHeader(t) => t.render_into(dest),
+            AnyTransport::WhileStatement(t) => t.render_into(dest),
+            AnyTransport::DoStatement(t) => t.render_into(dest),
+            AnyTransport::TryStatement(t) => t.render_into(dest),
+            AnyTransport::WithStatement(t) => t.render_into(dest),
+            AnyTransport::BreakStatement(t) => t.render_into(dest),
+            AnyTransport::ContinueStatement(t) => t.render_into(dest),
+            AnyTransport::DebuggerStatement(t) => t.render_into(dest),
+            AnyTransport::ReturnStatement(t) => t.render_into(dest),
+            AnyTransport::ThrowStatement(t) => t.render_into(dest),
             AnyTransport::EmptyStatement(t) => t.render_into(dest),
-            AnyTransport::LabeledStatement(t) => render_labeled_statement(t, dest),
-            AnyTransport::SwitchBody(t) => render_switch_body(t, dest),
-            AnyTransport::SwitchCase(t) => render_switch_case(t, dest),
-            AnyTransport::SwitchDefault(t) => render_switch_default(t, dest),
-            AnyTransport::CatchClause(t) => render_catch_clause(t, dest),
-            AnyTransport::FinallyClause(t) => render_finally_clause(t, dest),
-            AnyTransport::ParenthesizedExpression(t) => render_parenthesized_expression(t, dest),
-            AnyTransport::YieldExpression(t) => render_yield_expression(t, dest),
-            AnyTransport::Object(t) => render_object(t, dest),
-            AnyTransport::ObjectPattern(t) => render_object_pattern(t, dest),
-            AnyTransport::AssignmentPattern(t) => render_assignment_pattern(t, dest),
-            AnyTransport::ObjectAssignmentPattern(t) => render_object_assignment_pattern(t, dest),
-            AnyTransport::Array(t) => render_array(t, dest),
-            AnyTransport::ArrayPattern(t) => render_array_pattern(t, dest),
-            AnyTransport::JsxElement(t) => render_jsx_element(t, dest),
+            AnyTransport::LabeledStatement(t) => t.render_into(dest),
+            AnyTransport::SwitchBody(t) => t.render_into(dest),
+            AnyTransport::SwitchCase(t) => t.render_into(dest),
+            AnyTransport::SwitchDefault(t) => t.render_into(dest),
+            AnyTransport::CatchClause(t) => t.render_into(dest),
+            AnyTransport::FinallyClause(t) => t.render_into(dest),
+            AnyTransport::ParenthesizedExpression(t) => t.render_into(dest),
+            AnyTransport::YieldExpression(t) => t.render_into(dest),
+            AnyTransport::Object(t) => t.render_into(dest),
+            AnyTransport::ObjectPattern(t) => t.render_into(dest),
+            AnyTransport::AssignmentPattern(t) => t.render_into(dest),
+            AnyTransport::ObjectAssignmentPattern(t) => t.render_into(dest),
+            AnyTransport::Array(t) => t.render_into(dest),
+            AnyTransport::ArrayPattern(t) => t.render_into(dest),
+            AnyTransport::JsxElement(t) => t.render_into(dest),
             AnyTransport::HtmlCharacterReference(t) => t.render_into(dest),
-            AnyTransport::JsxExpression(t) => render_jsx_expression(t, dest),
-            AnyTransport::JsxOpeningElement(t) => render_jsx_opening_element(t, dest),
+            AnyTransport::JsxExpression(t) => t.render_into(dest),
+            AnyTransport::JsxOpeningElement(t) => t.render_into(dest),
             AnyTransport::JsxIdentifier(t) => t.render_into(dest),
-            AnyTransport::NestedIdentifier(t) => render_nested_identifier(t, dest),
-            AnyTransport::JsxNamespaceName(t) => render_jsx_namespace_name(t, dest),
-            AnyTransport::JsxClosingElement(t) => render_jsx_closing_element(t, dest),
-            AnyTransport::JsxSelfClosingElement(t) => render_jsx_self_closing_element(t, dest),
-            AnyTransport::JsxAttribute(t) => render_jsx_attribute(t, dest),
-            AnyTransport::JsxString(t) => render_jsx_string(t, dest),
+            AnyTransport::NestedIdentifier(t) => t.render_into(dest),
+            AnyTransport::JsxNamespaceName(t) => t.render_into(dest),
+            AnyTransport::JsxClosingElement(t) => t.render_into(dest),
+            AnyTransport::JsxSelfClosingElement(t) => t.render_into(dest),
+            AnyTransport::JsxAttribute(t) => t.render_into(dest),
+            AnyTransport::JsxString(t) => t.render_into(dest),
             AnyTransport::UnescapedDoubleJsxStringFragment(t) => t.render_into(dest),
             AnyTransport::UnescapedSingleJsxStringFragment(t) => t.render_into(dest),
-            AnyTransport::Class(t) => render_class(t, dest),
-            AnyTransport::ClassDeclaration(t) => render_class_declaration(t, dest),
-            AnyTransport::ClassHeritage(t) => render_class_heritage(t, dest),
-            AnyTransport::FunctionExpression(t) => render_function_expression(t, dest),
-            AnyTransport::FunctionDeclaration(t) => render_function_declaration(t, dest),
-            AnyTransport::GeneratorFunction(t) => render_generator_function(t, dest),
-            AnyTransport::GeneratorFunctionDeclaration(t) => render_generator_function_declaration(t, dest),
-            AnyTransport::ArrowFunction(t) => render_arrow_function(t, dest),
-            AnyTransport::_CallSignature(t) => render__call_signature(t, dest),
+            AnyTransport::Class(t) => t.render_into(dest),
+            AnyTransport::ClassDeclaration(t) => t.render_into(dest),
+            AnyTransport::ClassHeritage(t) => t.render_into(dest),
+            AnyTransport::FunctionExpression(t) => t.render_into(dest),
+            AnyTransport::FunctionDeclaration(t) => t.render_into(dest),
+            AnyTransport::GeneratorFunction(t) => t.render_into(dest),
+            AnyTransport::GeneratorFunctionDeclaration(t) => t.render_into(dest),
+            AnyTransport::ArrowFunction(t) => t.render_into(dest),
+            AnyTransport::_CallSignature(t) => t.render_into(dest),
             AnyTransport::OptionalChain(t) => t.render_into(dest),
-            AnyTransport::CallExpression(t) => render_call_expression(t, dest),
-            AnyTransport::NewExpression(t) => render_new_expression(t, dest),
-            AnyTransport::AwaitExpression(t) => render_await_expression(t, dest),
-            AnyTransport::MemberExpression(t) => render_member_expression(t, dest),
-            AnyTransport::SubscriptExpression(t) => render_subscript_expression(t, dest),
-            AnyTransport::AssignmentExpression(t) => render_assignment_expression(t, dest),
-            AnyTransport::AugmentedAssignmentExpression(t) => render_augmented_assignment_expression(t, dest),
-            AnyTransport::Initializer(t) => render_initializer(t, dest),
-            AnyTransport::SpreadElement(t) => render_spread_element(t, dest),
-            AnyTransport::TernaryExpression(t) => render_ternary_expression(t, dest),
-            AnyTransport::BinaryExpression(t) => render_binary_expression(t, dest),
-            AnyTransport::UnaryExpression(t) => render_unary_expression(t, dest),
-            AnyTransport::UpdateExpression(t) => render_update_expression(t, dest),
-            AnyTransport::SequenceExpression(t) => render_sequence_expression(t, dest),
-            AnyTransport::String(t) => render_string(t, dest),
+            AnyTransport::CallExpression(t) => t.render_into(dest),
+            AnyTransport::NewExpression(t) => t.render_into(dest),
+            AnyTransport::AwaitExpression(t) => t.render_into(dest),
+            AnyTransport::MemberExpression(t) => t.render_into(dest),
+            AnyTransport::SubscriptExpression(t) => t.render_into(dest),
+            AnyTransport::AssignmentExpression(t) => t.render_into(dest),
+            AnyTransport::AugmentedAssignmentExpression(t) => t.render_into(dest),
+            AnyTransport::Initializer(t) => t.render_into(dest),
+            AnyTransport::SpreadElement(t) => t.render_into(dest),
+            AnyTransport::TernaryExpression(t) => t.render_into(dest),
+            AnyTransport::BinaryExpression(t) => t.render_into(dest),
+            AnyTransport::UnaryExpression(t) => t.render_into(dest),
+            AnyTransport::UpdateExpression(t) => t.render_into(dest),
+            AnyTransport::SequenceExpression(t) => t.render_into(dest),
+            AnyTransport::String(t) => t.render_into(dest),
             AnyTransport::UnescapedDoubleStringFragment(t) => t.render_into(dest),
             AnyTransport::UnescapedSingleStringFragment(t) => t.render_into(dest),
             AnyTransport::EscapeSequence(t) => t.render_into(dest),
             AnyTransport::Comment(t) => t.render_into(dest),
-            AnyTransport::TemplateString(t) => render_template_string(t, dest),
-            AnyTransport::TemplateSubstitution(t) => render_template_substitution(t, dest),
-            AnyTransport::Regex(t) => render_regex(t, dest),
+            AnyTransport::TemplateString(t) => t.render_into(dest),
+            AnyTransport::TemplateSubstitution(t) => t.render_into(dest),
+            AnyTransport::Regex(t) => t.render_into(dest),
             AnyTransport::RegexPattern(t) => t.render_into(dest),
             AnyTransport::RegexFlags(t) => t.render_into(dest),
             AnyTransport::Number(t) => t.render_into(dest),
             AnyTransport::Identifier(t) => t.render_into(dest),
             AnyTransport::PrivatePropertyIdentifier(t) => t.render_into(dest),
-            AnyTransport::MetaProperty(t) => render_meta_property(t, dest),
+            AnyTransport::MetaProperty(t) => t.render_into(dest),
             AnyTransport::This(t) => t.render_into(dest),
             AnyTransport::Super(t) => t.render_into(dest),
             AnyTransport::True(t) => t.render_into(dest),
             AnyTransport::False(t) => t.render_into(dest),
             AnyTransport::Null(t) => t.render_into(dest),
             AnyTransport::Undefined(t) => t.render_into(dest),
-            AnyTransport::Arguments(t) => render_arguments(t, dest),
-            AnyTransport::Decorator(t) => render_decorator(t, dest),
-            AnyTransport::DecoratorMemberExpression(t) => render_decorator_member_expression(t, dest),
-            AnyTransport::DecoratorCallExpression(t) => render_decorator_call_expression(t, dest),
-            AnyTransport::ClassBody(t) => render_class_body(t, dest),
-            AnyTransport::FieldDefinition(t) => render_field_definition(t, dest),
-            AnyTransport::FormalParameters(t) => render_formal_parameters(t, dest),
-            AnyTransport::ClassStaticBlock(t) => render_class_static_block(t, dest),
-            AnyTransport::RestPattern(t) => render_rest_pattern(t, dest),
-            AnyTransport::MethodDefinition(t) => render_method_definition(t, dest),
-            AnyTransport::Pair(t) => render_pair(t, dest),
-            AnyTransport::PairPattern(t) => render_pair_pattern(t, dest),
-            AnyTransport::ComputedPropertyName(t) => render_computed_property_name(t, dest),
+            AnyTransport::Arguments(t) => t.render_into(dest),
+            AnyTransport::Decorator(t) => t.render_into(dest),
+            AnyTransport::DecoratorMemberExpression(t) => t.render_into(dest),
+            AnyTransport::DecoratorCallExpression(t) => t.render_into(dest),
+            AnyTransport::ClassBody(t) => t.render_into(dest),
+            AnyTransport::FieldDefinition(t) => t.render_into(dest),
+            AnyTransport::FormalParameters(t) => t.render_into(dest),
+            AnyTransport::ClassStaticBlock(t) => t.render_into(dest),
+            AnyTransport::RestPattern(t) => t.render_into(dest),
+            AnyTransport::MethodDefinition(t) => t.render_into(dest),
+            AnyTransport::Pair(t) => t.render_into(dest),
+            AnyTransport::PairPattern(t) => t.render_into(dest),
+            AnyTransport::ComputedPropertyName(t) => t.render_into(dest),
             AnyTransport::ReservedIdentifier(t) => t.render_into(dest),
             AnyTransport::Semicolon(t) => t.render_into(dest),
-            AnyTransport::PublicFieldDefinition(t) => render_public_field_definition(t, dest),
-            AnyTransport::JsxStartOpeningElement(t) => render_jsx_start_opening_element(t, dest),
-            AnyTransport::NonNullExpression(t) => render_non_null_expression(t, dest),
-            AnyTransport::MethodSignature(t) => render_method_signature(t, dest),
-            AnyTransport::AbstractMethodSignature(t) => render_abstract_method_signature(t, dest),
-            AnyTransport::FunctionSignature(t) => render_function_signature(t, dest),
-            AnyTransport::DecoratorParenthesizedExpression(t) => render_decorator_parenthesized_expression(t, dest),
-            AnyTransport::TypeAssertion(t) => render_type_assertion(t, dest),
-            AnyTransport::AsExpression(t) => render_as_expression(t, dest),
-            AnyTransport::SatisfiesExpression(t) => render_satisfies_expression(t, dest),
-            AnyTransport::InstantiationExpression(t) => render_instantiation_expression(t, dest),
-            AnyTransport::ImportRequireClause(t) => render_import_require_clause(t, dest),
-            AnyTransport::ExtendsClause(t) => render_extends_clause(t, dest),
-            AnyTransport::ExtendsClauseSingle(t) => render_extends_clause_single(t, dest),
-            AnyTransport::ImplementsClause(t) => render_implements_clause(t, dest),
-            AnyTransport::AmbientDeclaration(t) => render_ambient_declaration(t, dest),
-            AnyTransport::AbstractClassDeclaration(t) => render_abstract_class_declaration(t, dest),
-            AnyTransport::Module(t) => render_module(t, dest),
-            AnyTransport::InternalModule(t) => render_internal_module(t, dest),
-            AnyTransport::_Module(t) => render__module(t, dest),
-            AnyTransport::ImportAlias(t) => render_import_alias(t, dest),
-            AnyTransport::NestedTypeIdentifier(t) => render_nested_type_identifier(t, dest),
-            AnyTransport::InterfaceDeclaration(t) => render_interface_declaration(t, dest),
-            AnyTransport::ExtendsTypeClause(t) => render_extends_type_clause(t, dest),
-            AnyTransport::EnumDeclaration(t) => render_enum_declaration(t, dest),
-            AnyTransport::EnumBody(t) => render_enum_body(t, dest),
-            AnyTransport::EnumAssignment(t) => render_enum_assignment(t, dest),
-            AnyTransport::TypeAliasDeclaration(t) => render_type_alias_declaration(t, dest),
+            AnyTransport::PublicFieldDefinition(t) => t.render_into(dest),
+            AnyTransport::JsxStartOpeningElement(t) => t.render_into(dest),
+            AnyTransport::NonNullExpression(t) => t.render_into(dest),
+            AnyTransport::MethodSignature(t) => t.render_into(dest),
+            AnyTransport::AbstractMethodSignature(t) => t.render_into(dest),
+            AnyTransport::FunctionSignature(t) => t.render_into(dest),
+            AnyTransport::DecoratorParenthesizedExpression(t) => t.render_into(dest),
+            AnyTransport::TypeAssertion(t) => t.render_into(dest),
+            AnyTransport::AsExpression(t) => t.render_into(dest),
+            AnyTransport::SatisfiesExpression(t) => t.render_into(dest),
+            AnyTransport::InstantiationExpression(t) => t.render_into(dest),
+            AnyTransport::ImportRequireClause(t) => t.render_into(dest),
+            AnyTransport::ExtendsClause(t) => t.render_into(dest),
+            AnyTransport::ExtendsClauseSingle(t) => t.render_into(dest),
+            AnyTransport::ImplementsClause(t) => t.render_into(dest),
+            AnyTransport::AmbientDeclaration(t) => t.render_into(dest),
+            AnyTransport::AbstractClassDeclaration(t) => t.render_into(dest),
+            AnyTransport::Module(t) => t.render_into(dest),
+            AnyTransport::InternalModule(t) => t.render_into(dest),
+            AnyTransport::_Module(t) => t.render_into(dest),
+            AnyTransport::ImportAlias(t) => t.render_into(dest),
+            AnyTransport::NestedTypeIdentifier(t) => t.render_into(dest),
+            AnyTransport::InterfaceDeclaration(t) => t.render_into(dest),
+            AnyTransport::ExtendsTypeClause(t) => t.render_into(dest),
+            AnyTransport::EnumDeclaration(t) => t.render_into(dest),
+            AnyTransport::EnumBody(t) => t.render_into(dest),
+            AnyTransport::EnumAssignment(t) => t.render_into(dest),
+            AnyTransport::TypeAliasDeclaration(t) => t.render_into(dest),
             AnyTransport::AccessibilityModifier(t) => t.render_into(dest),
             AnyTransport::OverrideModifier(t) => t.render_into(dest),
-            AnyTransport::RequiredParameter(t) => render_required_parameter(t, dest),
-            AnyTransport::OptionalParameter(t) => render_optional_parameter(t, dest),
-            AnyTransport::ParameterName(t) => render_parameter_name(t, dest),
-            AnyTransport::OmittingTypeAnnotation(t) => render_omitting_type_annotation(t, dest),
-            AnyTransport::AddingTypeAnnotation(t) => render_adding_type_annotation(t, dest),
-            AnyTransport::OptingTypeAnnotation(t) => render_opting_type_annotation(t, dest),
-            AnyTransport::TypeAnnotation(t) => render_type_annotation(t, dest),
-            AnyTransport::TypeQueryMemberExpressionInTypeAnnotation(t) => render_type_query_member_expression_in_type_annotation(t, dest),
-            AnyTransport::TypeQueryCallExpressionInTypeAnnotation(t) => render_type_query_call_expression_in_type_annotation(t, dest),
-            AnyTransport::Asserts(t) => render_asserts(t, dest),
-            AnyTransport::AssertsAnnotation(t) => render_asserts_annotation(t, dest),
-            AnyTransport::TupleParameter(t) => render_tuple_parameter(t, dest),
-            AnyTransport::OptionalTupleParameter(t) => render_optional_tuple_parameter(t, dest),
-            AnyTransport::OptionalType(t) => render_optional_type(t, dest),
-            AnyTransport::RestType(t) => render_rest_type(t, dest),
-            AnyTransport::ConstructorType(t) => render_constructor_type(t, dest),
-            AnyTransport::TemplateType(t) => render_template_type(t, dest),
-            AnyTransport::TemplateLiteralType(t) => render_template_literal_type(t, dest),
-            AnyTransport::InferType(t) => render_infer_type(t, dest),
-            AnyTransport::ConditionalType(t) => render_conditional_type(t, dest),
-            AnyTransport::GenericType(t) => render_generic_type(t, dest),
-            AnyTransport::TypePredicate(t) => render_type_predicate(t, dest),
-            AnyTransport::TypePredicateAnnotation(t) => render_type_predicate_annotation(t, dest),
-            AnyTransport::TypeQueryMemberExpression(t) => render_type_query_member_expression(t, dest),
-            AnyTransport::TypeQuerySubscriptExpression(t) => render_type_query_subscript_expression(t, dest),
-            AnyTransport::TypeQueryCallExpression(t) => render_type_query_call_expression(t, dest),
-            AnyTransport::TypeQueryInstantiationExpression(t) => render_type_query_instantiation_expression(t, dest),
-            AnyTransport::TypeQuery(t) => render_type_query(t, dest),
-            AnyTransport::IndexTypeQuery(t) => render_index_type_query(t, dest),
-            AnyTransport::LookupType(t) => render_lookup_type(t, dest),
-            AnyTransport::MappedTypeClause(t) => render_mapped_type_clause(t, dest),
-            AnyTransport::LiteralType(t) => render_literal_type(t, dest),
-            AnyTransport::_Number(t) => render__number(t, dest),
+            AnyTransport::RequiredParameter(t) => t.render_into(dest),
+            AnyTransport::OptionalParameter(t) => t.render_into(dest),
+            AnyTransport::ParameterName(t) => t.render_into(dest),
+            AnyTransport::OmittingTypeAnnotation(t) => t.render_into(dest),
+            AnyTransport::AddingTypeAnnotation(t) => t.render_into(dest),
+            AnyTransport::OptingTypeAnnotation(t) => t.render_into(dest),
+            AnyTransport::TypeAnnotation(t) => t.render_into(dest),
+            AnyTransport::TypeQueryMemberExpressionInTypeAnnotation(t) => t.render_into(dest),
+            AnyTransport::TypeQueryCallExpressionInTypeAnnotation(t) => t.render_into(dest),
+            AnyTransport::Asserts(t) => t.render_into(dest),
+            AnyTransport::AssertsAnnotation(t) => t.render_into(dest),
+            AnyTransport::TupleParameter(t) => t.render_into(dest),
+            AnyTransport::OptionalTupleParameter(t) => t.render_into(dest),
+            AnyTransport::OptionalType(t) => t.render_into(dest),
+            AnyTransport::RestType(t) => t.render_into(dest),
+            AnyTransport::ConstructorType(t) => t.render_into(dest),
+            AnyTransport::TemplateType(t) => t.render_into(dest),
+            AnyTransport::TemplateLiteralType(t) => t.render_into(dest),
+            AnyTransport::InferType(t) => t.render_into(dest),
+            AnyTransport::ConditionalType(t) => t.render_into(dest),
+            AnyTransport::GenericType(t) => t.render_into(dest),
+            AnyTransport::TypePredicate(t) => t.render_into(dest),
+            AnyTransport::TypePredicateAnnotation(t) => t.render_into(dest),
+            AnyTransport::TypeQueryMemberExpression(t) => t.render_into(dest),
+            AnyTransport::TypeQuerySubscriptExpression(t) => t.render_into(dest),
+            AnyTransport::TypeQueryCallExpression(t) => t.render_into(dest),
+            AnyTransport::TypeQueryInstantiationExpression(t) => t.render_into(dest),
+            AnyTransport::TypeQuery(t) => t.render_into(dest),
+            AnyTransport::IndexTypeQuery(t) => t.render_into(dest),
+            AnyTransport::LookupType(t) => t.render_into(dest),
+            AnyTransport::MappedTypeClause(t) => t.render_into(dest),
+            AnyTransport::LiteralType(t) => t.render_into(dest),
+            AnyTransport::_Number(t) => t.render_into(dest),
             AnyTransport::ExistentialType(t) => t.render_into(dest),
-            AnyTransport::FlowMaybeType(t) => render_flow_maybe_type(t, dest),
-            AnyTransport::ParenthesizedType(t) => render_parenthesized_type(t, dest),
+            AnyTransport::FlowMaybeType(t) => t.render_into(dest),
+            AnyTransport::ParenthesizedType(t) => t.render_into(dest),
             AnyTransport::PredefinedType(t) => t.render_into(dest),
-            AnyTransport::TypeArguments(t) => render_type_arguments(t, dest),
-            AnyTransport::ObjectType(t) => render_object_type(t, dest),
-            AnyTransport::CallSignature(t) => render_call_signature(t, dest),
-            AnyTransport::PropertySignature(t) => render_property_signature(t, dest),
-            AnyTransport::TypeParameters(t) => render_type_parameters(t, dest),
-            AnyTransport::TypeParameter(t) => render_type_parameter(t, dest),
-            AnyTransport::DefaultType(t) => render_default_type(t, dest),
-            AnyTransport::Constraint(t) => render_constraint(t, dest),
-            AnyTransport::ConstructSignature(t) => render_construct_signature(t, dest),
-            AnyTransport::IndexSignature(t) => render_index_signature(t, dest),
-            AnyTransport::ArrayType(t) => render_array_type(t, dest),
-            AnyTransport::TupleType(t) => render_tuple_type(t, dest),
-            AnyTransport::ReadonlyType(t) => render_readonly_type(t, dest),
-            AnyTransport::UnionType(t) => render_union_type(t, dest),
-            AnyTransport::IntersectionType(t) => render_intersection_type(t, dest),
-            AnyTransport::FunctionType(t) => render_function_type(t, dest),
+            AnyTransport::TypeArguments(t) => t.render_into(dest),
+            AnyTransport::ObjectType(t) => t.render_into(dest),
+            AnyTransport::CallSignature(t) => t.render_into(dest),
+            AnyTransport::PropertySignature(t) => t.render_into(dest),
+            AnyTransport::TypeParameters(t) => t.render_into(dest),
+            AnyTransport::TypeParameter(t) => t.render_into(dest),
+            AnyTransport::DefaultType(t) => t.render_into(dest),
+            AnyTransport::Constraint(t) => t.render_into(dest),
+            AnyTransport::ConstructSignature(t) => t.render_into(dest),
+            AnyTransport::IndexSignature(t) => t.render_into(dest),
+            AnyTransport::ArrayType(t) => t.render_into(dest),
+            AnyTransport::TupleType(t) => t.render_into(dest),
+            AnyTransport::ReadonlyType(t) => t.render_into(dest),
+            AnyTransport::UnionType(t) => t.render_into(dest),
+            AnyTransport::IntersectionType(t) => t.render_into(dest),
+            AnyTransport::FunctionType(t) => t.render_into(dest),
             AnyTransport::TypeIdentifier(t) => t.render_into(dest),
             AnyTransport::KwAsyncMarker(t) => t.render_into(dest),
             AnyTransport::KwStaticMarker(t) => t.render_into(dest),
             AnyTransport::KwReadonlyMarker(t) => t.render_into(dest),
             AnyTransport::KwAbstractMarker(t) => t.render_into(dest),
             AnyTransport::KwConstMarker(t) => t.render_into(dest),
-            AnyTransport::ExportClauseGroup1(t) => render_export_clause_group1(t, dest),
-            AnyTransport::ExportSpecifierOptional1(t) => render_export_specifier_optional1(t, dest),
-            AnyTransport::ImportStatementGroup1(t) => render_import_statement_group1(t, dest),
-            AnyTransport::ImportClauseGroup1(t) => render_import_clause_group1(t, dest),
-            AnyTransport::NamedImportsGroup1(t) => render_named_imports_group1(t, dest),
-            AnyTransport::VariableDeclaratorGroup1(t) => render_variable_declarator_group1(t, dest),
-            AnyTransport::VariableDeclaratorGroup2(t) => render_variable_declarator_group2(t, dest),
-            AnyTransport::CatchClauseGroup1(t) => render_catch_clause_group1(t, dest),
-            AnyTransport::BinaryExpressionGroup1(t) => render_binary_expression_group1(t, dest),
+            AnyTransport::ExportClauseGroup1(t) => t.render_into(dest),
+            AnyTransport::ExportSpecifierOptional1(t) => t.render_into(dest),
+            AnyTransport::ImportStatementGroup1(t) => t.render_into(dest),
+            AnyTransport::ImportClauseGroup1(t) => t.render_into(dest),
+            AnyTransport::NamedImportsGroup1(t) => t.render_into(dest),
+            AnyTransport::VariableDeclaratorGroup1(t) => t.render_into(dest),
+            AnyTransport::VariableDeclaratorGroup2(t) => t.render_into(dest),
+            AnyTransport::CatchClauseGroup1(t) => t.render_into(dest),
+            AnyTransport::BinaryExpressionGroup1(t) => t.render_into(dest),
             AnyTransport::MetaPropertyGroup1(t) => t.render_into(dest),
             AnyTransport::MetaPropertyGroup2(t) => t.render_into(dest),
-            AnyTransport::FormalParametersGroup1(t) => render_formal_parameters_group1(t, dest),
-            AnyTransport::JsxStartOpeningElementGroup1(t) => render_jsx_start_opening_element_group1(t, dest),
-            AnyTransport::EnumBodyGroup1(t) => render_enum_body_group1(t, dest),
-            AnyTransport::InferTypeOptional1(t) => render_infer_type_optional1(t, dest),
-            AnyTransport::MappedTypeClauseOptional1(t) => render_mapped_type_clause_optional1(t, dest),
-            AnyTransport::IndexSignatureOptional1(t) => render_index_signature_optional1(t, dest),
-            AnyTransport::TupleTypeGroup1(t) => render_tuple_type_group1(t, dest),
+            AnyTransport::FormalParametersGroup1(t) => t.render_into(dest),
+            AnyTransport::JsxStartOpeningElementGroup1(t) => t.render_into(dest),
+            AnyTransport::EnumBodyGroup1(t) => t.render_into(dest),
+            AnyTransport::InferTypeOptional1(t) => t.render_into(dest),
+            AnyTransport::MappedTypeClauseOptional1(t) => t.render_into(dest),
+            AnyTransport::IndexSignatureOptional1(t) => t.render_into(dest),
+            AnyTransport::TupleTypeGroup1(t) => t.render_into(dest),
             AnyTransport::Kind(t) => t.render_into(dest),
             AnyTransport::ForHeaderOperator(t) => t.render_into(dest),
             AnyTransport::AugmentedAssignmentExpressionOperator(t) => t.render_into(dest),
             AnyTransport::UnaryExpressionOperator(t) => t.render_into(dest),
             AnyTransport::NumberOperator(t) => t.render_into(dest),
             AnyTransport::Operator(t) => t.render_into(dest),
-            AnyTransport::AmbientDeclarationGlobal(t) => render_ambient_declaration_global(t, dest),
-            AnyTransport::AmbientDeclarationModule(t) => render_ambient_declaration_module(t, dest),
-            AnyTransport::ObjectTypeContent(t) => render_object_type_content(t, dest),
-            AnyTransport::ExportStatementDefault(t) => render_export_statement_default(t, dest),
-            AnyTransport::ArrowFunctionParameter(t) => render_arrow_function_parameter(t, dest),
-            AnyTransport::ArrowFunctionUCallSignature(t) => render_arrow_function_ucall_signature(t, dest),
-            AnyTransport::ClassHeritageExtendsClause(t) => render_class_heritage_extends_clause(t, dest),
-            AnyTransport::ImportClauseDefaultImport(t) => render_import_clause_default_import(t, dest),
-            AnyTransport::ImportSpecifierAs(t) => render_import_specifier_as(t, dest),
-            AnyTransport::IndexSignatureColon(t) => render_index_signature_colon(t, dest),
-            AnyTransport::ExportStatementDefaultFromArm(t) => render_export_statement_default_from_arm(t, dest),
-            AnyTransport::ExportStatementDefaultDeclArm(t) => render_export_statement_default_decl_arm(t, dest),
-            AnyTransport::ExportStatementDefaultStarFrom(t) => render_export_statement_default_star_from(t, dest),
-            AnyTransport::ExportStatementDefaultNsFrom(t) => render_export_statement_default_ns_from(t, dest),
-            AnyTransport::ExportStatementDefaultClauseFrom(t) => render_export_statement_default_clause_from(t, dest),
-            AnyTransport::ExportStatementDefaultDefaultKw(t) => render_export_statement_default_default_kw(t, dest),
-            AnyTransport::ExportStatementDefaultValue(t) => render_export_statement_default_value(t, dest),
-            AnyTransport::ClassBodyMethod(t) => render_class_body_method(t, dest),
-            AnyTransport::ClassBodyMethodSig(t) => render_class_body_method_sig(t, dest),
-            AnyTransport::ClassBodyMember(t) => render_class_body_member(t, dest),
-            AnyTransport::ForHeaderLhs(t) => render_for_header_lhs(t, dest),
-            AnyTransport::ForHeaderVarKind(t) => render_for_header_var_kind(t, dest),
-            AnyTransport::ForHeaderLetConstKind(t) => render_for_header_let_const_kind(t, dest),
-            AnyTransport::PublicFieldDefinitionDeclareFirst(t) => render_public_field_definition_declare_first(t, dest),
-            AnyTransport::PublicFieldDefinitionAccessFirst(t) => render_public_field_definition_access_first(t, dest),
-            AnyTransport::PublicFieldDefinitionStaticMods(t) => render_public_field_definition_static_mods(t, dest),
-            AnyTransport::PublicFieldDefinitionAbstractFirst(t) => render_public_field_definition_abstract_first(t, dest),
-            AnyTransport::PublicFieldDefinitionReadonlyFirst(t) => render_public_field_definition_readonly_first(t, dest),
+            AnyTransport::AmbientDeclarationGlobal(t) => t.render_into(dest),
+            AnyTransport::AmbientDeclarationModule(t) => t.render_into(dest),
+            AnyTransport::ObjectTypeContent(t) => t.render_into(dest),
+            AnyTransport::ExportStatementDefault(t) => t.render_into(dest),
+            AnyTransport::ArrowFunctionParameter(t) => t.render_into(dest),
+            AnyTransport::ArrowFunctionUCallSignature(t) => t.render_into(dest),
+            AnyTransport::ClassHeritageExtendsClause(t) => t.render_into(dest),
+            AnyTransport::ImportClauseDefaultImport(t) => t.render_into(dest),
+            AnyTransport::ImportSpecifierAs(t) => t.render_into(dest),
+            AnyTransport::IndexSignatureColon(t) => t.render_into(dest),
+            AnyTransport::ExportStatementDefaultFromArm(t) => t.render_into(dest),
+            AnyTransport::ExportStatementDefaultDeclArm(t) => t.render_into(dest),
+            AnyTransport::ExportStatementDefaultStarFrom(t) => t.render_into(dest),
+            AnyTransport::ExportStatementDefaultNsFrom(t) => t.render_into(dest),
+            AnyTransport::ExportStatementDefaultClauseFrom(t) => t.render_into(dest),
+            AnyTransport::ExportStatementDefaultDefaultKw(t) => t.render_into(dest),
+            AnyTransport::ExportStatementDefaultValue(t) => t.render_into(dest),
+            AnyTransport::ClassBodyMethod(t) => t.render_into(dest),
+            AnyTransport::ClassBodyMethodSig(t) => t.render_into(dest),
+            AnyTransport::ClassBodyMember(t) => t.render_into(dest),
+            AnyTransport::ForHeaderLhs(t) => t.render_into(dest),
+            AnyTransport::ForHeaderVarKind(t) => t.render_into(dest),
+            AnyTransport::ForHeaderLetConstKind(t) => t.render_into(dest),
+            AnyTransport::PublicFieldDefinitionDeclareFirst(t) => t.render_into(dest),
+            AnyTransport::PublicFieldDefinitionAccessFirst(t) => t.render_into(dest),
+            AnyTransport::PublicFieldDefinitionStaticMods(t) => t.render_into(dest),
+            AnyTransport::PublicFieldDefinitionAbstractFirst(t) => t.render_into(dest),
+            AnyTransport::PublicFieldDefinitionReadonlyFirst(t) => t.render_into(dest),
             AnyTransport::KwOptionalMarker(t) => t.render_into(dest),
-            AnyTransport::ParenthesizedExpressionTyped(t) => render_parenthesized_expression_typed(t, dest),
-            AnyTransport::ExportStatementTypeExport(t) => render_export_statement_type_export(t, dest),
-            AnyTransport::ExportStatementEqualsExport(t) => render_export_statement_equals_export(t, dest),
-            AnyTransport::ExportStatementNamespaceExport(t) => render_export_statement_namespace_export(t, dest),
-            AnyTransport::CallExpressionCall(t) => render_call_expression_call(t, dest),
-            AnyTransport::CallExpressionTemplateCall(t) => render_call_expression_template_call(t, dest),
-            AnyTransport::CallExpressionMember(t) => render_call_expression_member(t, dest),
-            AnyTransport::StringDouble(t) => render_string_double(t, dest),
-            AnyTransport::StringSingle(t) => render_string_single(t, dest),
-            AnyTransport::UpdateExpressionPostfix(t) => render_update_expression_postfix(t, dest),
-            AnyTransport::UpdateExpressionPrefix(t) => render_update_expression_prefix(t, dest),
-            AnyTransport::JsxOpeningElementContent(t) => render_jsx_opening_element_content(t, dest),
+            AnyTransport::ParenthesizedExpressionTyped(t) => t.render_into(dest),
+            AnyTransport::ExportStatementTypeExport(t) => t.render_into(dest),
+            AnyTransport::ExportStatementEqualsExport(t) => t.render_into(dest),
+            AnyTransport::ExportStatementNamespaceExport(t) => t.render_into(dest),
+            AnyTransport::CallExpressionCall(t) => t.render_into(dest),
+            AnyTransport::CallExpressionTemplateCall(t) => t.render_into(dest),
+            AnyTransport::CallExpressionMember(t) => t.render_into(dest),
+            AnyTransport::StringDouble(t) => t.render_into(dest),
+            AnyTransport::StringSingle(t) => t.render_into(dest),
+            AnyTransport::UpdateExpressionPostfix(t) => t.render_into(dest),
+            AnyTransport::UpdateExpressionPrefix(t) => t.render_into(dest),
+            AnyTransport::JsxOpeningElementContent(t) => t.render_into(dest),
             AnyTransport::AutomaticSemicolon(t) => t.render_into(dest),
             AnyTransport::FunctionSignatureAutomaticSemicolon(t) => t.render_into(dest),
             AnyTransport::TemplateChars(t) => t.render_into(dest),

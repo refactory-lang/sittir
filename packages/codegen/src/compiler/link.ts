@@ -381,6 +381,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		supertypes,
 		externalRoles,
 		externals: raw.externals,
+		extras: raw.extras,
 		word: raw.word,
 		wordMatcher: wordMatcherRegex,
 		references,

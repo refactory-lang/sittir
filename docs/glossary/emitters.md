@@ -2364,6 +2364,53 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  */
 ```
 
+### `emitTriviaKindIdArm` (`packages/codegen/src/emitters/render-module.ts:3213`)
+
+```text
+/**
+ * Build one `TriviaTransport::from_napi_value` kind-id match arm: try the
+ * entry's own typed transport struct first, falling back to a verbatim
+ * `$text` extraction on decode failure — the expected outcome for a
+ * read-side extras stub, whose raw/unwrapped keys the typed struct's
+ * `#[napi(object)]`-derived `FromNapiValue` cannot deserialize. `napi_val`
+ * may also be a bare number in the raw-kind_id dispatch path (no `$text`
+ * available there); the `Object::from_napi_value` attempt then fails
+ * harmlessly and `text` stays empty, which cannot occur for a real extras
+ * node (comments always carry `$text`).
+ *
+ * @param id — the node's numeric parser kind id
+ * @param variant — the `TriviaTransport` variant name for this node
+ * @param structName — the node's typed transport struct name
+ */
+```
+
+### `renderTriviaTransportSupport` (`packages/codegen/src/emitters/render-module.ts:3228`)
+
+```text
+/**
+ * `TriviaTransport` — one variant per grammar-`extras` kind (comments, line
+ * continuations, …), sourced from `nodeMap.extras` (stamped from
+ * `RawGrammar.extras`, DRY: never a hand-maintained kind list here), plus a
+ * `Verbatim(VerbatimTransport)` fallback shared with every other transport
+ * enum's bare-string/decode-failure path.
+ *
+ * Typed variants are needed because a factory-constructed trivia node (e.g.
+ * `F.buildLineComment(...)`) carries the SAME wrapped wire shape as any other
+ * node (`_content`, `$type`, …) and must render through its own template —
+ * a text-only trivia carrier would silently drop that structure. The
+ * `Verbatim` fallback exists because a READ-side extras stub (produced by
+ * `read_node.rs`'s trivia routing) carries raw/unwrapped keys the typed
+ * struct's `#[napi(object)]`-derived `FromNapiValue` cannot deserialize —
+ * decode failure there is expected, not a bug, so it falls back to the
+ * verbatim source text instead of erroring.
+ *
+ * `TransportTrivia` (leading/trailing `Vec<TriviaTransport>`) replaces the
+ * old grammar-agnostic `sittir_core::types::TransportTrivia`, which could
+ * only carry pre-rendered text and silently dropped factory-constructed
+ * trivia at render time.
+ */
+```
+
 ### `renderVerbatimTransportStruct` (`packages/codegen/src/emitters/render-module.ts:3585`)
 
 ```text
@@ -2383,6 +2430,19 @@ Surface` (`packages/codegen/src/emitters/render-module.ts:805`)
  * the variant-trial fallback silently matched whatever variant's FromNapiValue
  * happened to accept the input first (e.g., StringLiteralTransport matched
  * bare strings and rendered as `""`). Verbatim removes the ambiguity.
+ */
+```
+
+### `declareLeafTriviaCapture` (`packages/codegen/src/emitters/render-module.ts:3611`)
+
+```text
+/**
+ * Declares and initializes the release-mode leaf `__trivia` capture local.
+ * A leaf sent as a bare string/number/boolean carries no metadata object to
+ * read trivia from, so `__trivia` only gets populated in the object fallback
+ * branch (a factory-attached comment on a leaf node always arrives as an
+ * object — `$trivia()` forces the trivia-bearing owner off the bare-
+ * primitive fast path).
  */
 ```
 

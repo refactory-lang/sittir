@@ -15218,32 +15218,6 @@
             "$type": 294,
             "$source": 0,
             "$named": true,
-            "_line_comment": [
-              {
-                "$type": 315,
-                "$source": 0,
-                "$named": true,
-                "$text": "// CHECK: call void @llvm.va_start",
-                "$span": {
-                  "start": 164,
-                  "end": 198
-                },
-                "$nodeHandle": 70,
-                "$childIndex": 1
-              },
-              {
-                "$type": 315,
-                "$source": 0,
-                "$named": true,
-                "$text": "// CHECK: call void @llvm.va_end",
-                "$span": {
-                  "start": 237,
-                  "end": 269
-                },
-                "$nodeHandle": 70,
-                "$childIndex": 3
-              }
-            ],
             "_trailing_expression": {
               "$type": 257,
               "$source": 0,
@@ -15342,7 +15316,41 @@
                 "start": 203,
                 "end": 232
               },
-              "$nodeHandle": 71
+              "$nodeHandle": 71,
+              "$triviaData": {
+                "leading": [
+                  {
+                    "$type": 315,
+                    "$source": 0,
+                    "$named": true,
+                    "_line_comment_content": " CHECK: call void @llvm.va_start",
+                    "$other": [
+                      127
+                    ],
+                    "$text": "// CHECK: call void @llvm.va_start",
+                    "$span": {
+                      "start": 164,
+                      "end": 198
+                    }
+                  }
+                ],
+                "trailing": [
+                  {
+                    "$type": 315,
+                    "$source": 0,
+                    "$named": true,
+                    "_line_comment_content": " CHECK: call void @llvm.va_end",
+                    "$other": [
+                      127
+                    ],
+                    "$text": "// CHECK: call void @llvm.va_end",
+                    "$span": {
+                      "start": 237,
+                      "end": 269
+                    }
+                  }
+                ]
+              }
             },
             "$other": [
               50,
@@ -15372,7 +15380,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "extern\"C\"fn foo(){  }extern\"C\"fn printf(*const c_char,...,){  }pub unsafe extern\"C\"fn c_variadic_no_use(fmt: *const i8,mut ap: ...)->i32{ vprintf(fmt,ap.as_va_list()) }"
+    "expectedOutput": "extern\"C\"fn foo(){  }extern\"C\"fn printf(*const c_char,...,){  }pub unsafe extern\"C\"fn c_variadic_no_use(fmt: *const i8,mut ap: ...)->i32{ // CHECK: call void @llvm.va_start\nvprintf(fmt,ap.as_va_list())\n// CHECK: call void @llvm.va_end\n }"
   },
   {
     "kind": "roundtrip",
@@ -15380,9 +15388,9 @@
     "sourceIn": "extern \"C\" fn foo() {}\nextern \"C\" fn printf(\n    *const c_char,\n    ...,\n) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "extern\"C\"fn foo(){  }extern\"C\"fn printf(*const c_char,...,){  }pub unsafe extern\"C\"fn c_variadic_no_use(fmt: *const i8,mut ap: ...)->i32{ vprintf(fmt,ap.as_va_list()) }",
-    "expectedReparseTree": "(source_file statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_group1 element: (attributed_parameter (pointer_type (pointer_type_const) type: (type_identifier))) element: (attributed_parameter (variadic_parameter)))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_group1 element: (attributed_parameter (parameter name: (identifier) type: (pointer_type (pointer_type_const) type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))))))",
-    "wrappedText": "extern\"C\"fn foo(){  }extern\"C\"fn printf(*const c_char,...,){  }pub unsafe extern\"C\"fn c_variadic_no_use(fmt: *const i8,mut ap: ...)->i32{ vprintf(fmt,ap.as_va_list()) }",
+    "expectedSourceOut": "extern\"C\"fn foo(){  }extern\"C\"fn printf(*const c_char,...,){  }pub unsafe extern\"C\"fn c_variadic_no_use(fmt: *const i8,mut ap: ...)->i32{ // CHECK: call void @llvm.va_start\nvprintf(fmt,ap.as_va_list())\n// CHECK: call void @llvm.va_end\n }",
+    "expectedReparseTree": "(source_file statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_group1 element: (attributed_parameter (pointer_type (pointer_type_const) type: (type_identifier))) element: (attributed_parameter (variadic_parameter)))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_group1 element: (attributed_parameter (parameter name: (identifier) type: (pointer_type (pointer_type_const) type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_content)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_content)))))",
+    "wrappedText": "extern\"C\"fn foo(){  }extern\"C\"fn printf(*const c_char,...,){  }pub unsafe extern\"C\"fn c_variadic_no_use(fmt: *const i8,mut ap: ...)->i32{ // CHECK: call void @llvm.va_start\nvprintf(fmt,ap.as_va_list())\n// CHECK: call void @llvm.va_end\n }",
     "wrappedOffset": 0
   },
   {
@@ -15820,32 +15828,6 @@
         "$type": 294,
         "$source": 0,
         "$named": true,
-        "_line_comment": [
-          {
-            "$type": 315,
-            "$source": 0,
-            "$named": true,
-            "$text": "// CHECK: call void @llvm.va_start",
-            "$span": {
-              "start": 164,
-              "end": 198
-            },
-            "$nodeHandle": 106,
-            "$childIndex": 1
-          },
-          {
-            "$type": 315,
-            "$source": 0,
-            "$named": true,
-            "$text": "// CHECK: call void @llvm.va_end",
-            "$span": {
-              "start": 237,
-              "end": 269
-            },
-            "$nodeHandle": 106,
-            "$childIndex": 3
-          }
-        ],
         "_trailing_expression": {
           "$type": 257,
           "$source": 0,
@@ -15944,7 +15926,41 @@
             "start": 203,
             "end": 232
           },
-          "$nodeHandle": 107
+          "$nodeHandle": 107,
+          "$triviaData": {
+            "leading": [
+              {
+                "$type": 315,
+                "$source": 0,
+                "$named": true,
+                "_line_comment_content": " CHECK: call void @llvm.va_start",
+                "$other": [
+                  127
+                ],
+                "$text": "// CHECK: call void @llvm.va_start",
+                "$span": {
+                  "start": 164,
+                  "end": 198
+                }
+              }
+            ],
+            "trailing": [
+              {
+                "$type": 315,
+                "$source": 0,
+                "$named": true,
+                "_line_comment_content": " CHECK: call void @llvm.va_end",
+                "$other": [
+                  127
+                ],
+                "$text": "// CHECK: call void @llvm.va_end",
+                "$span": {
+                  "start": 237,
+                  "end": 269
+                }
+              }
+            ]
+          }
         },
         "$other": [
           50,
@@ -15967,7 +15983,7 @@
       },
       "$nodeHandle": 3
     },
-    "expectedOutput": "pub unsafe extern\"C\"fn c_variadic_no_use(fmt: *const i8,mut ap: ...)->i32{ vprintf(fmt,ap.as_va_list()) }"
+    "expectedOutput": "pub unsafe extern\"C\"fn c_variadic_no_use(fmt: *const i8,mut ap: ...)->i32{ // CHECK: call void @llvm.va_start\nvprintf(fmt,ap.as_va_list())\n// CHECK: call void @llvm.va_end\n }"
   },
   {
     "kind": "roundtrip",
@@ -15975,9 +15991,9 @@
     "sourceIn": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "pub unsafe extern\"C\"fn c_variadic_no_use(fmt: *const i8,mut ap: ...)->i32{ vprintf(fmt,ap.as_va_list()) }",
-    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_group1 element: (attributed_parameter (parameter name: (identifier) type: (pointer_type (pointer_type_const) type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))))",
-    "wrappedText": "pub unsafe extern\"C\"fn c_variadic_no_use(fmt: *const i8,mut ap: ...)->i32{ vprintf(fmt,ap.as_va_list()) }",
+    "expectedSourceOut": "pub unsafe extern\"C\"fn c_variadic_no_use(fmt: *const i8,mut ap: ...)->i32{ // CHECK: call void @llvm.va_start\nvprintf(fmt,ap.as_va_list())\n// CHECK: call void @llvm.va_end\n }",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_group1 element: (attributed_parameter (parameter name: (identifier) type: (pointer_type (pointer_type_const) type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_content)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_content))))",
+    "wrappedText": "pub unsafe extern\"C\"fn c_variadic_no_use(fmt: *const i8,mut ap: ...)->i32{ // CHECK: call void @llvm.va_start\nvprintf(fmt,ap.as_va_list())\n// CHECK: call void @llvm.va_end\n }",
     "wrappedOffset": 0
   },
   {
@@ -16371,32 +16387,6 @@
       "$type": 294,
       "$source": 0,
       "$named": true,
-      "_line_comment": [
-        {
-          "$type": 315,
-          "$source": 0,
-          "$named": true,
-          "$text": "// CHECK: call void @llvm.va_start",
-          "$span": {
-            "start": 164,
-            "end": 198
-          },
-          "$nodeHandle": 31,
-          "$childIndex": 1
-        },
-        {
-          "$type": 315,
-          "$source": 0,
-          "$named": true,
-          "$text": "// CHECK: call void @llvm.va_end",
-          "$span": {
-            "start": 237,
-            "end": 269
-          },
-          "$nodeHandle": 31,
-          "$childIndex": 3
-        }
-      ],
       "_trailing_expression": {
         "$type": 257,
         "$source": 0,
@@ -16495,7 +16485,41 @@
           "start": 203,
           "end": 232
         },
-        "$nodeHandle": 135
+        "$nodeHandle": 135,
+        "$triviaData": {
+          "leading": [
+            {
+              "$type": 315,
+              "$source": 0,
+              "$named": true,
+              "_line_comment_content": " CHECK: call void @llvm.va_start",
+              "$other": [
+                127
+              ],
+              "$text": "// CHECK: call void @llvm.va_start",
+              "$span": {
+                "start": 164,
+                "end": 198
+              }
+            }
+          ],
+          "trailing": [
+            {
+              "$type": 315,
+              "$source": 0,
+              "$named": true,
+              "_line_comment_content": " CHECK: call void @llvm.va_end",
+              "$other": [
+                127
+              ],
+              "$text": "// CHECK: call void @llvm.va_end",
+              "$span": {
+                "start": 237,
+                "end": 269
+              }
+            }
+          ]
+        }
       },
       "$other": [
         50,
@@ -16508,7 +16532,7 @@
       "$nodeHandle": 31,
       "_statements": []
     },
-    "expectedOutput": "{ vprintf(fmt,ap.as_va_list()) }"
+    "expectedOutput": "{ // CHECK: call void @llvm.va_start\nvprintf(fmt,ap.as_va_list())\n// CHECK: call void @llvm.va_end\n }"
   },
   {
     "kind": "roundtrip",
@@ -16516,9 +16540,9 @@
     "sourceIn": "{\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ vprintf(fmt,ap.as_va_list()) }",
-    "expectedReparseTree": "(block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))))",
-    "wrappedText": "fn _f() { let _ = { vprintf(fmt,ap.as_va_list()) }; }",
+    "expectedSourceOut": "{ // CHECK: call void @llvm.va_start\nvprintf(fmt,ap.as_va_list())\n// CHECK: call void @llvm.va_end\n }",
+    "expectedReparseTree": "(block (line_comment (line_comment_content)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_content)))",
+    "wrappedText": "fn _f() { let _ = { // CHECK: call void @llvm.va_start\nvprintf(fmt,ap.as_va_list())\n// CHECK: call void @llvm.va_end\n }; }",
     "wrappedOffset": 18
   },
   {
@@ -16664,6 +16688,221 @@
     "expectedReparseTree": "(parameter name: (identifier) type: (pointer_type (pointer_type_const) type: (primitive_type)))",
     "wrappedText": "fn _f(fmt: *const i8) {}",
     "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 257,
+      "$source": 0,
+      "$named": true,
+      "_function": {
+        "$type": 289,
+        "$source": 0,
+        "$named": true,
+        "_value": "ap",
+        "_field": "as_va_list",
+        "$other": [
+          115
+        ],
+        "$span": {
+          "start": 216,
+          "end": 229
+        },
+        "$nodeHandle": 152
+      },
+      "_arguments": {
+        "$type": 258,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 229,
+          "end": 231
+        },
+        "$nodeHandle": 153
+      },
+      "$span": {
+        "start": 216,
+        "end": 231
+      },
+      "$nodeHandle": 37
+    },
+    "expectedOutput": "ap.as_va_list()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "ap.as_va_list()",
+    "pattern": "call_expression",
+    "edits": [],
+    "expectedSourceOut": "ap.as_va_list()",
+    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))",
+    "wrappedText": "fn _f() { let _ = ap.as_va_list(); }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 258,
+      "$source": 0,
+      "$named": true,
+      "_arguments_group1": {
+        "$type": 335,
+        "$source": 0,
+        "$named": true,
+        "_element": [
+          {
+            "$type": 398,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 211,
+              "end": 214
+            },
+            "$nodeHandle": 155,
+            "_attribute_item": [],
+            "_expression": "fmt"
+          },
+          {
+            "$type": 398,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 216,
+              "end": 231
+            },
+            "$nodeHandle": 156,
+            "_attribute_item": [],
+            "_expression": {
+              "$type": 257,
+              "$source": 0,
+              "$named": true,
+              "_function": {
+                "$type": 289,
+                "$source": 0,
+                "$named": true,
+                "_value": "ap",
+                "_field": "as_va_list",
+                "$other": [
+                  115
+                ],
+                "$span": {
+                  "start": 216,
+                  "end": 229
+                },
+                "$nodeHandle": 158
+              },
+              "_arguments": {
+                "$type": 258,
+                "$source": 0,
+                "$named": true,
+                "$text": "()",
+                "$span": {
+                  "start": 229,
+                  "end": 231
+                },
+                "$nodeHandle": 159
+              },
+              "$span": {
+                "start": 216,
+                "end": 231
+              },
+              "$nodeHandle": 157
+            }
+          }
+        ],
+        "$other": [
+          69
+        ],
+        "$span": {
+          "start": 211,
+          "end": 231
+        },
+        "$nodeHandle": 154,
+        "_trailing_sep": false
+      },
+      "$other": [
+        7,
+        8
+      ],
+      "$span": {
+        "start": 210,
+        "end": 232
+      },
+      "$nodeHandle": 33
+    },
+    "expectedOutput": "(fmt,ap.as_va_list())"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(fmt, ap.as_va_list())",
+    "pattern": "arguments",
+    "edits": [],
+    "expectedSourceOut": "(fmt,ap.as_va_list())",
+    "expectedReparseTree": "(arguments (arguments_group1 element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))",
+    "wrappedText": "f(fmt,ap.as_va_list());",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 258,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 229,
+        "end": 231
+      },
+      "$nodeHandle": 39
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "()",
+    "pattern": "arguments",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(arguments)",
+    "wrappedText": "f();",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 289,
+      "$source": 0,
+      "$named": true,
+      "_value": "ap",
+      "_field": "as_va_list",
+      "$other": [
+        115
+      ],
+      "$span": {
+        "start": 216,
+        "end": 229
+      },
+      "$nodeHandle": 38
+    },
+    "expectedOutput": "ap.as_va_list"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "ap.as_va_list",
+    "pattern": "field_expression",
+    "edits": [],
+    "expectedSourceOut": "ap.as_va_list",
+    "expectedReparseTree": "(field_expression value: (identifier) field: (field_identifier))",
+    "wrappedText": "fn _f() { let _ = ap.as_va_list; }",
+    "wrappedOffset": 18
   },
   {
     "kind": "render",
@@ -38142,18 +38381,6 @@
       "$type": 157,
       "$source": 0,
       "$named": true,
-      "_line_comment": {
-        "$type": 315,
-        "$source": 0,
-        "$named": true,
-        "$text": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md",
-        "$span": {
-          "start": 0,
-          "end": 108
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0
-      },
       "_statements": [
         {
           "$type": 205,
@@ -38182,7 +38409,25 @@
             "start": 110,
             "end": 131
           },
-          "$nodeHandle": 68
+          "$nodeHandle": 68,
+          "$triviaData": {
+            "leading": [
+              {
+                "$type": 315,
+                "$source": 0,
+                "$named": true,
+                "_line_comment_content": " Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md",
+                "$other": [
+                  127
+                ],
+                "$text": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md",
+                "$span": {
+                  "start": 0,
+                  "end": 108
+                }
+              }
+            ]
+          }
         },
         {
           "$type": 171,
@@ -38777,7 +39022,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "use thiserror::Error;#[derive(Error,Debug)]pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }"
+    "expectedOutput": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;#[derive(Error,Debug)]pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }"
   },
   {
     "kind": "roundtrip",
@@ -38785,9 +39030,9 @@
     "sourceIn": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "use thiserror::Error;#[derive(Error,Debug)]pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }",
-    "expectedReparseTree": "(source_file statements: (use_declaration argument: (scoped_identifier path: (identifier) name: (identifier))) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier))))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_group1 element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_tree (delim_token_tree_paren (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (integer_literal))))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_group1 element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier))))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_group1 element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
-    "wrappedText": "use thiserror::Error;#[derive(Error,Debug)]pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }",
+    "expectedSourceOut": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;#[derive(Error,Debug)]pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }",
+    "expectedReparseTree": "(source_file (line_comment (line_comment_content)) statements: (use_declaration argument: (scoped_identifier path: (identifier) name: (identifier))) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier))))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_group1 element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_tree (delim_token_tree_paren (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (integer_literal))))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_group1 element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier))))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_group1 element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
+    "wrappedText": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;#[derive(Error,Debug)]pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }",
     "wrappedOffset": 0
   },
   {
@@ -46580,18 +46825,6 @@
                     "$type": 294,
                     "$source": 0,
                     "$named": true,
-                    "_line_comment": {
-                      "$type": 315,
-                      "$source": 0,
-                      "$named": true,
-                      "$text": "// Make 'default' still works as an identifier",
-                      "$span": {
-                        "start": 49,
-                        "end": 95
-                      },
-                      "$nodeHandle": 19,
-                      "$childIndex": 1
-                    },
                     "_statements": [
                       {
                         "$type": 160,
@@ -46602,6 +46835,24 @@
                           "end": 114
                         },
                         "$nodeHandle": 20,
+                        "$triviaData": {
+                          "leading": [
+                            {
+                              "$type": 315,
+                              "$source": 0,
+                              "$named": true,
+                              "_line_comment_content": " Make 'default' still works as an identifier",
+                              "$other": [
+                                127
+                              ],
+                              "$text": "// Make 'default' still works as an identifier",
+                              "$span": {
+                                "start": 49,
+                                "end": 95
+                              }
+                            }
+                          ]
+                        },
                         "_content": {
                           "$type": 380,
                           "$source": 0,
@@ -46698,7 +46949,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "impl Foo{ const default fn bar()->i32{ default.bar(); } }"
+    "expectedOutput": "impl Foo{ const default fn bar()->i32{ // Make 'default' still works as an identifier\ndefault.bar(); } }"
   },
   {
     "kind": "roundtrip",
@@ -46706,9 +46957,9 @@
     "sourceIn": "impl Foo {\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "impl Foo{ const default fn bar()->i32{ default.bar(); } }",
-    "expectedReparseTree": "(source_file statements: (impl_item type: (type_identifier) (impl_item_body (declaration_list declaration_statements: (function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))))))",
-    "wrappedText": "impl Foo{ const default fn bar()->i32{ default.bar(); } }",
+    "expectedSourceOut": "impl Foo{ const default fn bar()->i32{ // Make 'default' still works as an identifier\ndefault.bar(); } }",
+    "expectedReparseTree": "(source_file statements: (impl_item type: (type_identifier) (impl_item_body (declaration_list declaration_statements: (function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (line_comment (line_comment_content)) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))))))",
+    "wrappedText": "impl Foo{ const default fn bar()->i32{ // Make 'default' still works as an identifier\ndefault.bar(); } }",
     "wrappedOffset": 0
   },
   {
@@ -46771,18 +47022,6 @@
                 "$type": 294,
                 "$source": 0,
                 "$named": true,
-                "_line_comment": {
-                  "$type": 315,
-                  "$source": 0,
-                  "$named": true,
-                  "$text": "// Make 'default' still works as an identifier",
-                  "$span": {
-                    "start": 49,
-                    "end": 95
-                  },
-                  "$nodeHandle": 30,
-                  "$childIndex": 1
-                },
                 "_statements": [
                   {
                     "$type": 160,
@@ -46793,6 +47032,24 @@
                       "end": 114
                     },
                     "$nodeHandle": 31,
+                    "$triviaData": {
+                      "leading": [
+                        {
+                          "$type": 315,
+                          "$source": 0,
+                          "$named": true,
+                          "_line_comment_content": " Make 'default' still works as an identifier",
+                          "$other": [
+                            127
+                          ],
+                          "$text": "// Make 'default' still works as an identifier",
+                          "$span": {
+                            "start": 49,
+                            "end": 95
+                          }
+                        }
+                      ]
+                    },
                     "_content": {
                       "$type": 380,
                       "$source": 0,
@@ -46882,7 +47139,7 @@
         "$nodeHandle": 25
       }
     },
-    "expectedOutput": "impl Foo{ const default fn bar()->i32{ default.bar(); } }"
+    "expectedOutput": "impl Foo{ const default fn bar()->i32{ // Make 'default' still works as an identifier\ndefault.bar(); } }"
   },
   {
     "kind": "roundtrip",
@@ -46890,9 +47147,9 @@
     "sourceIn": "impl Foo {\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}",
     "pattern": "impl_item",
     "edits": [],
-    "expectedSourceOut": "impl Foo{ const default fn bar()->i32{ default.bar(); } }",
-    "expectedReparseTree": "(impl_item type: (type_identifier) (impl_item_body (declaration_list declaration_statements: (function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))))))",
-    "wrappedText": "impl Foo{ const default fn bar()->i32{ default.bar(); } }",
+    "expectedSourceOut": "impl Foo{ const default fn bar()->i32{ // Make 'default' still works as an identifier\ndefault.bar(); } }",
+    "expectedReparseTree": "(impl_item type: (type_identifier) (impl_item_body (declaration_list declaration_statements: (function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (line_comment (line_comment_content)) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))))))",
+    "wrappedText": "impl Foo{ const default fn bar()->i32{ // Make 'default' still works as an identifier\ndefault.bar(); } }",
     "wrappedOffset": 0
   },
   {
@@ -46933,18 +47190,6 @@
         "$type": 294,
         "$source": 0,
         "$named": true,
-        "_line_comment": {
-          "$type": 315,
-          "$source": 0,
-          "$named": true,
-          "$text": "// Make 'default' still works as an identifier",
-          "$span": {
-            "start": 49,
-            "end": 95
-          },
-          "$nodeHandle": 47,
-          "$childIndex": 1
-        },
         "_statements": [
           {
             "$type": 160,
@@ -46955,6 +47200,24 @@
               "end": 114
             },
             "$nodeHandle": 48,
+            "$triviaData": {
+              "leading": [
+                {
+                  "$type": 315,
+                  "$source": 0,
+                  "$named": true,
+                  "_line_comment_content": " Make 'default' still works as an identifier",
+                  "$other": [
+                    127
+                  ],
+                  "$text": "// Make 'default' still works as an identifier",
+                  "$span": {
+                    "start": 49,
+                    "end": 95
+                  }
+                }
+              ]
+            },
             "_content": {
               "$type": 380,
               "$source": 0,
@@ -47026,7 +47289,7 @@
       },
       "$nodeHandle": 4
     },
-    "expectedOutput": "const default fn bar()->i32{ default.bar(); }"
+    "expectedOutput": "const default fn bar()->i32{ // Make 'default' still works as an identifier\ndefault.bar(); }"
   },
   {
     "kind": "roundtrip",
@@ -47034,9 +47297,9 @@
     "sourceIn": "const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "const default fn bar()->i32{ default.bar(); }",
-    "expectedReparseTree": "(function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))",
-    "wrappedText": "const default fn bar()->i32{ default.bar(); }",
+    "expectedSourceOut": "const default fn bar()->i32{ // Make 'default' still works as an identifier\ndefault.bar(); }",
+    "expectedReparseTree": "(function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (line_comment (line_comment_content)) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))",
+    "wrappedText": "const default fn bar()->i32{ // Make 'default' still works as an identifier\ndefault.bar(); }",
     "wrappedOffset": 0
   },
   {
@@ -47073,18 +47336,6 @@
       "$type": 294,
       "$source": 0,
       "$named": true,
-      "_line_comment": {
-        "$type": 315,
-        "$source": 0,
-        "$named": true,
-        "$text": "// Make 'default' still works as an identifier",
-        "$span": {
-          "start": 49,
-          "end": 95
-        },
-        "$nodeHandle": 7,
-        "$childIndex": 1
-      },
       "_statements": [
         {
           "$type": 160,
@@ -47095,6 +47346,24 @@
             "end": 114
           },
           "$nodeHandle": 53,
+          "$triviaData": {
+            "leading": [
+              {
+                "$type": 315,
+                "$source": 0,
+                "$named": true,
+                "_line_comment_content": " Make 'default' still works as an identifier",
+                "$other": [
+                  127
+                ],
+                "$text": "// Make 'default' still works as an identifier",
+                "$span": {
+                  "start": 49,
+                  "end": 95
+                }
+              }
+            ]
+          },
           "_content": {
             "$type": 380,
             "$source": 0,
@@ -47156,7 +47425,7 @@
       },
       "$nodeHandle": 7
     },
-    "expectedOutput": "{ default.bar(); }"
+    "expectedOutput": "{ // Make 'default' still works as an identifier\ndefault.bar(); }"
   },
   {
     "kind": "roundtrip",
@@ -47164,10 +47433,120 @@
     "sourceIn": "{\n    // Make 'default' still works as an identifier\n    default.bar();\n  }",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ default.bar(); }",
-    "expectedReparseTree": "(block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))",
-    "wrappedText": "fn _f() { let _ = { default.bar(); }; }",
+    "expectedSourceOut": "{ // Make 'default' still works as an identifier\ndefault.bar(); }",
+    "expectedReparseTree": "(block (line_comment (line_comment_content)) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))",
+    "wrappedText": "fn _f() { let _ = { // Make 'default' still works as an identifier\ndefault.bar(); }; }",
     "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 257,
+      "$source": 0,
+      "$named": true,
+      "_function": {
+        "$type": 289,
+        "$source": 0,
+        "$named": true,
+        "_value": "default",
+        "_field": "bar",
+        "$other": [
+          115
+        ],
+        "$span": {
+          "start": 100,
+          "end": 111
+        },
+        "$nodeHandle": 62
+      },
+      "_arguments": {
+        "$type": 258,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 111,
+          "end": 113
+        },
+        "$nodeHandle": 63
+      },
+      "$span": {
+        "start": 100,
+        "end": 113
+      },
+      "$nodeHandle": 10
+    },
+    "expectedOutput": "default.bar()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "default.bar()",
+    "pattern": "call_expression",
+    "edits": [],
+    "expectedSourceOut": "default.bar()",
+    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))",
+    "wrappedText": "fn _f() { let _ = default.bar(); }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 289,
+      "$source": 0,
+      "$named": true,
+      "_value": "default",
+      "_field": "bar",
+      "$other": [
+        115
+      ],
+      "$span": {
+        "start": 100,
+        "end": 111
+      },
+      "$nodeHandle": 11
+    },
+    "expectedOutput": "default.bar"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "default.bar",
+    "pattern": "field_expression",
+    "edits": [],
+    "expectedSourceOut": "default.bar",
+    "expectedReparseTree": "(field_expression value: (identifier) field: (field_identifier))",
+    "wrappedText": "fn _f() { let _ = default.bar; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 258,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 111,
+        "end": 113
+      },
+      "$nodeHandle": 12
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "()",
+    "pattern": "arguments",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(arguments)",
+    "wrappedText": "f();",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -94742,6 +95121,62 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 228,
+      "$source": 0,
+      "$named": true,
+      "_type": "C",
+      "_turbofish": 73,
+      "_type_arguments": {
+        "$type": 231,
+        "$source": 0,
+        "$named": true,
+        "_element": [
+          {
+            "$type": 400,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 12,
+              "end": 13
+            },
+            "$nodeHandle": 86,
+            "_content": "D"
+          }
+        ],
+        "$other": [
+          68,
+          70
+        ],
+        "$span": {
+          "start": 11,
+          "end": 14
+        },
+        "$nodeHandle": 85,
+        "_element_trailing_sep": false
+      },
+      "$span": {
+        "start": 8,
+        "end": 14
+      },
+      "$nodeHandle": 12
+    },
+    "expectedOutput": "C:: <D>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "C::<D>",
+    "pattern": "generic_type_with_turbofish",
+    "edits": [],
+    "expectedSourceOut": "C:: <D>",
+    "expectedReparseTree": "(generic_type_with_turbofish type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier))))",
+    "wrappedText": "type _X = C:: <D>::Item;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 157,
       "$source": 0,
       "$named": true,
@@ -108069,34 +108504,6 @@
               "$type": 393,
               "$source": 0,
               "$named": true,
-              "_line_comment": {
-                "$type": 315,
-                "$source": 0,
-                "$named": true,
-                "$text": "// one",
-                "$span": {
-                  "start": 8,
-                  "end": 14
-                },
-                "$nodeHandle": 6,
-                "$childIndex": 1
-              },
-              "_block_comment": {
-                "$type": 319,
-                "$source": 0,
-                "$named": true,
-                "$text": "/* two */",
-                "$span": {
-                  "start": 17,
-                  "end": 26
-                },
-                "$nodeHandle": 6,
-                "$childIndex": 2
-              },
-              "$other": [
-                50,
-                51
-              ],
               "$span": {
                 "start": 4,
                 "end": 28
@@ -108155,34 +108562,6 @@
           "$type": 393,
           "$source": 0,
           "$named": true,
-          "_line_comment": {
-            "$type": 315,
-            "$source": 0,
-            "$named": true,
-            "$text": "// one",
-            "$span": {
-              "start": 8,
-              "end": 14
-            },
-            "$nodeHandle": 8,
-            "$childIndex": 1
-          },
-          "_block_comment": {
-            "$type": 319,
-            "$source": 0,
-            "$named": true,
-            "$text": "/* two */",
-            "$span": {
-              "start": 17,
-              "end": 26
-            },
-            "$nodeHandle": 8,
-            "$childIndex": 2
-          },
-          "$other": [
-            50,
-            51
-          ],
           "$span": {
             "start": 4,
             "end": 28
@@ -108229,34 +108608,6 @@
         "$type": 393,
         "$source": 0,
         "$named": true,
-        "_line_comment": {
-          "$type": 315,
-          "$source": 0,
-          "$named": true,
-          "$text": "// one",
-          "$span": {
-            "start": 8,
-            "end": 14
-          },
-          "$nodeHandle": 9,
-          "$childIndex": 1
-        },
-        "_block_comment": {
-          "$type": 319,
-          "$source": 0,
-          "$named": true,
-          "$text": "/* two */",
-          "$span": {
-            "start": 17,
-            "end": 26
-          },
-          "$nodeHandle": 9,
-          "$childIndex": 2
-        },
-        "$other": [
-          50,
-          51
-        ],
         "$span": {
           "start": 4,
           "end": 28
@@ -112534,6 +112885,62 @@
     "expectedReparseTree": "(scoped_identifier path: (identifier) name: (identifier))",
     "wrappedText": "fn _f() { let _ = Bar::T1; }",
     "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 228,
+      "$source": 0,
+      "$named": true,
+      "_type": "Some",
+      "_turbofish": 73,
+      "_type_arguments": {
+        "$type": 231,
+        "$source": 0,
+        "$named": true,
+        "_element": [
+          {
+            "$type": 400,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 157,
+              "end": 162
+            },
+            "$nodeHandle": 296,
+            "_content": "isize"
+          }
+        ],
+        "$other": [
+          68,
+          70
+        ],
+        "$span": {
+          "start": 156,
+          "end": 163
+        },
+        "$nodeHandle": 295,
+        "_element_trailing_sep": false
+      },
+      "$span": {
+        "start": 150,
+        "end": 163
+      },
+      "$nodeHandle": 37
+    },
+    "expectedOutput": "Some:: <isize>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "Some::<isize>",
+    "pattern": "generic_type_with_turbofish",
+    "edits": [],
+    "expectedSourceOut": "Some:: <isize>",
+    "expectedReparseTree": "(generic_type_with_turbofish type: (type_identifier) type_arguments: (type_arguments element: (type_argument (primitive_type))))",
+    "wrappedText": "type _X = Some:: <isize>::Item;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
