@@ -887,20 +887,32 @@ function selectAndApplySupertypeWrapper(
 	kindToSupertypes: Map<string, string[]>,
 	rendered: string
 ): WrapForReparseResult | null {
+	// Declaration/statement-flavored wrappers come before expression/type/
+	// pattern ones: a kind can be reachable via BOTH (e.g. typescript's
+	// `internal_module`, which upstream tree-sitter-typescript lists under
+	// both `declaration` and `expression`) without the two positions being
+	// parse-equivalent. Statement-position content can carry positional
+	// tokens (e.g. an ASI-driven `automatic_semicolon`) that the external
+	// scanner only emits in statement context — wrapping the same bytes as
+	// an expression VALUE (`let _ = ${r};`) silently drops them even though
+	// the reparse itself succeeds without error. The declaration/statement
+	// wrappers are identity (`(r) => r`) and exactly reproduce the
+	// original top-level position, so they're strictly safer to prefer
+	// whenever reachable.
 	const WRAPPER_PRIORITY = [
-		'expression',
-		'type',
 		'declaration',
 		'statement',
+		'_declaration_statement',
+		'_simple_statement',
+		'_compound_statement',
+		'expression',
+		'type',
 		'pattern',
 		'_expression',
 		'_type',
-		'_declaration_statement',
 		'_literal',
 		'_literal_pattern',
-		'_pattern',
-		'_simple_statement',
-		'_compound_statement'
+		'_pattern'
 	];
 	const reachable = new Set<string>();
 	const visited = new Set<string>([kind]);

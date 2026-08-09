@@ -14,6 +14,10 @@ export const probeKind: CommandModule = {
 			.option('--no-render', 'Skip the render pass')
 			.option('--no-wrap', 'Use core readNode directly (skip grammar readTreeNode)')
 			.option('--reparse', 'Render → re-parse → include reparsed CST')
+			.option(
+				'--validator-reparse',
+				'Render → reparse using the validator\'s own wrapForReparse + offset lookup → include the selected wrapper, offset, located node, and structural diff'
+			)
 			.option('--pretty', 'Pretty-print JSON output (2-space indent)')
 			.option('--baseline <dir>', 'Compare against a staged baseline package dir')
 			.option('--baseline-parser', 'Use baseline parser.wasm instead of current')
@@ -35,6 +39,7 @@ export const probeKind: CommandModule = {
 					render?: boolean;
 					wrap?: boolean;
 					reparse?: boolean;
+					validatorReparse?: boolean;
 					pretty?: boolean;
 					baseline?: string;
 					baselineParser?: boolean;
@@ -55,6 +60,7 @@ export const probeKind: CommandModule = {
 						noRender: opts.render === false,
 						noWrap: opts.wrap === false,
 						reparse: opts.reparse ?? false,
+						validatorReparse: opts.validatorReparse ?? false,
 						pretty: opts.pretty ?? false,
 						baseline: opts.baseline,
 						baselineParser: opts.baselineParser ?? false,

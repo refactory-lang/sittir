@@ -50,7 +50,7 @@ import {
  * kinds went through Link's push-down). Returns an empty set when no
  * variant adoption exists in the grammar.
  */
-async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<string>> {
+export async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<string>> {
 	// PR-K: read the typed `polymorphVariants` map directly instead of
 	// regex-scanning raw JSON. Only `definedBy: 'override'` descriptors carry a
 	// `childKind` map (the first-named-child dispatch table); each such parent
@@ -130,7 +130,7 @@ function findNodeBySpanOfKind(node: TSNode, startIndex: number, endIndex: number
  * re-parse failures by entry kind measures blast radius, not defects —
  * this pins the actual divergence point instead.
  */
-function firstParseDefect(node: TSNode): string | null {
+export function firstParseDefect(node: TSNode): string | null {
 	if (node.isMissing) {
 		return `MISSING "${node.type}" in ${node.parent?.type ?? 'root'}`;
 	}
@@ -185,7 +185,7 @@ function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
  * the compare's named-child filter. Only NAMED extras need explicit
  * exclusion. (016 Cluster I.)
  */
-const NAMED_EXTRAS_BY_GRAMMAR: Record<string, ReadonlySet<string>> = {
+export const NAMED_EXTRAS_BY_GRAMMAR: Record<string, ReadonlySet<string>> = {
 	rust: new Set(['line_comment', 'block_comment']),
 	typescript: new Set(['comment', 'html_comment']),
 	python: new Set(['comment', 'line_continuation'])
@@ -202,7 +202,7 @@ function collectVisibleChildren(n: TSNode, namedExtras: ReadonlySet<string>): TS
 	return out;
 }
 
-function astStructuralDiff(
+export function astStructuralDiff(
 	a: TSNode,
 	b: TSNode,
 	namedExtras: ReadonlySet<string>,
@@ -306,7 +306,7 @@ export interface ReadRenderParseResult {
  * offset-based lookup below must skip past it. Returns 0 when there's no
  * leading trivia (the common case).
  */
-function leadingTriviaRenderedWidth(data: AnyNodeData, render: (node: AnyNodeData) => string): number {
+export function leadingTriviaRenderedWidth(data: AnyNodeData, render: (node: AnyNodeData) => string): number {
 	const leading = data.$triviaData?.leading;
 	if (!leading || leading.length === 0) return 0;
 	let width = 0;
@@ -339,7 +339,7 @@ function leadingTriviaRenderedWidth(data: AnyNodeData, render: (node: AnyNodeDat
  * @param offsetAdjust - Bytes to skip past the candidate's own leading trivia.
  * @returns The TSNode at the rendered offset, or null if not found.
  */
-function findReparsedNodeAtOffset(
+export function findReparsedNodeAtOffset(
 	tree2: TSTree,
 	targetKind: string,
 	wrapped: { text: string; offset: number },
