@@ -977,10 +977,11 @@ function renderTypedDispatch(
 			// writes the static text directly via dest.write_str(match self {...}).
 			lines.push(`            AnyTransport::${variant}(t) => t.render_into(dest),`);
 		} else {
-			// Branch/container/group/polymorph: delegate to per-kind render fn
-			// which writes directly into dest (streaming — no String intermediate).
-			const fnName = rustTypedRenderFnName(node.typeName);
-			lines.push(`            AnyTransport::${variant}(t) => ${fnName}(t, dest),`);
+			// Branch/container/group/polymorph: route through render_into (not
+			// the per-kind render fn directly) so this struct's own
+			// render_with_trivia!-wrapped impl fires — otherwise leading/
+			// trailing trivia attached to this node is silently skipped.
+			lines.push(`            AnyTransport::${variant}(t) => t.render_into(dest),`);
 		}
 	}
 	for (const [index, literal] of literals.entries()) {
@@ -1764,6 +1765,7 @@ function renderTransportSupport(
 			...renderTransportValueTypeHelper(),
 			...renderVerbatimTransportStruct(),
 			...renderLiteralTransportStruct(projection.literals),
+			...renderTriviaTransportSupport(nodeMap, kindEntries),
 			'',
 			// Per-supertype transport enums must precede per-kind transport structs
 			// so struct field type references resolve correctly.
@@ -1819,7 +1821,7 @@ function commonRustUseImports(hasNumericDispatch: boolean): string {
 	lines.push('    OptionalNonterminalView,');
 	lines.push('};');
 	lines.push('use ::sittir_core::types::{');
-	lines.push('    FieldValue, OneOrMany, RenderableTransport, Source, Span, NodeTrivia, TransportTrivia,');
+	lines.push('    FieldValue, OneOrMany, RenderableTransport, Source, Span, NodeTrivia,');
 	lines.push('};');
 	lines.push('');
 	if (hasNumericDispatch) {
@@ -2395,11 +2397,12 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	lines.push(`    match t {`);
 	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
-		const concreteFn = rustTypedRenderFnName(subNode.typeName);
 		// Boxed (in-cycle) variants need `.as_ref()` to reach the inner struct;
-		// inline variants reference the inner value directly.
+		// inline variants reference the inner value directly. Route through
+		// render_into (not the per-kind render fn directly) so the concrete
+		// subtype's own render_with_trivia!-wrapped impl fires.
 		const innerExpr = boxedInEnum(subKind, ownerKind, subNode, nodeMap) ? `inner.as_ref()` : `inner`;
-		lines.push(`        ${enumName}::${variant}(inner) => ${concreteFn}(${innerExpr}, dest),`);
+		lines.push(`        ${enumName}::${variant}(inner) => ${innerExpr}.render_into(dest),`);
 	}
 	if (admitsVerbatim) {
 		lines.push(`        ${enumName}::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),`);
@@ -2956,7 +2959,9 @@ function emitPerSlotChildEnum(
 	lines.push(`}`);
 	lines.push(``);
 
-	// RenderableTransport impl — match on variant and delegate to per-kind render fn.
+	// RenderableTransport impl — match on variant and route through render_into
+	// (not the per-kind render fn directly) so the concrete variant's own
+	// render_with_trivia!-wrapped impl fires.
 	lines.push(`impl RenderableTransport for ${enumName} {`);
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
@@ -2965,9 +2970,8 @@ function emitPerSlotChildEnum(
 	lines.push(`        match self {`);
 	for (const { kind, node } of validKinds) {
 		const variant = rustTypeIdent(node.typeName);
-		const concreteFn = rustTypedRenderFnName(node.typeName);
 		const innerExpr = isBoxed(kind, node) ? 'inner.as_ref()' : 'inner';
-		lines.push(`            ${enumName}::${variant}(inner) => ${concreteFn}(${innerExpr}, dest),`);
+		lines.push(`            ${enumName}::${variant}(inner) => ${innerExpr}.render_into(dest),`);
 	}
 	for (const literal of entry.literals) {
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
@@ -3189,6 +3193,161 @@ function renderTransportEntry(): string[] {
 
 function renderLiteralTransportStruct(_literals: readonly TransportLiteral[]): string[] {
 	return [];
+}
+
+/**
+ * `TriviaTransport` — one variant per grammar-`extras` kind (comments, line
+ * continuations, …), sourced from `nodeMap.extras` (stamped from
+ * `RawGrammar.extras`, DRY: never a hand-maintained kind list here), plus a
+ * `Verbatim(VerbatimTransport)` fallback shared with every other transport
+ * enum's bare-string/decode-failure path.
+ *
+ * Typed variants are needed because a factory-constructed trivia node (e.g.
+ * `F.buildLineComment(...)`) carries the SAME wrapped wire shape as any other
+ * node (`_content`, `$type`, …) and must render through its own template —
+ * a text-only trivia carrier would silently drop that structure. The
+ * `Verbatim` fallback exists because a READ-side extras stub (produced by
+ * `read_node.rs`'s trivia routing) carries raw/unwrapped keys the typed
+ * struct's `#[napi(object)]`-derived `FromNapiValue` cannot deserialize —
+ * decode failure there is expected, not a bug, so it falls back to the
+ * verbatim source text instead of erroring.
+ *
+ * `TransportTrivia` (leading/trailing `Vec<TriviaTransport>`) replaces the
+ * old grammar-agnostic `sittir_core::types::TransportTrivia`, which could
+ * only carry pre-rendered text and silently dropped factory-constructed
+ * trivia at render time.
+ */
+function renderTriviaTransportSupport(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string[] {
+	const extrasKindNames = nodeMap.extras ?? new Set<string>();
+	const extrasNodes: AssembledNode[] = [];
+	for (const kindName of extrasKindNames) {
+		const node = nodeMap.nodes.get(kindName);
+		if (node !== undefined) extrasNodes.push(node);
+	}
+
+	const lines: string[] = [];
+	lines.push('#[derive(Debug, Clone)]');
+	lines.push('pub enum TriviaTransport {');
+	for (const node of extrasNodes) {
+		lines.push(`    ${rustTransportVariantName(node)}(${rustTransportStructName(node)}),`);
+	}
+	lines.push('    Verbatim(VerbatimTransport),');
+	lines.push('}');
+	lines.push('');
+
+	lines.push('impl RenderableTransport for TriviaTransport {');
+	lines.push('    fn render_into(');
+	lines.push('        &self,');
+	lines.push('        dest: &mut dyn ::std::fmt::Write,');
+	lines.push('    ) -> Result<(), ::askama::Error> {');
+	lines.push('        match self {');
+	for (const node of extrasNodes) {
+		const variant = rustTransportVariantName(node);
+		lines.push(`            TriviaTransport::${variant}(t) => t.render_into(dest),`);
+	}
+	lines.push('            TriviaTransport::Verbatim(t) => dest.write_str(&t.text).map_err(::askama::Error::from),');
+	lines.push('        }');
+	lines.push('    }');
+	lines.push('}');
+	lines.push('');
+
+	const kindIdByKind = kindEntries ? buildKindIdByKind(kindEntries) : undefined;
+	const kindIdArms: string[] = [];
+	for (const node of extrasNodes) {
+		const id = kindIdByKind?.get(node.kind);
+		if (id === undefined) continue;
+		const variant = rustTransportVariantName(node);
+		const structName = rustTransportStructName(node);
+		kindIdArms.push(`                ${id} => {`);
+		kindIdArms.push(`                    if let Ok(value) = ${structName}::from_napi_value(env, napi_val) {`);
+		kindIdArms.push(`                        return Ok(Self::${variant}(value));`);
+		kindIdArms.push('                    }');
+		// Decode failure here is the expected read-side-extras-stub case (see
+		// docstring above), not an error: fall back to the verbatim source
+		// text. `napi_val` may be a bare number in the raw-kind_id dispatch
+		// path (no `$text` available there) — Object::from_napi_value fails
+		// harmlessly and `text` stays empty, which cannot occur for a real
+		// extras node (comments always carry `$text`).
+		kindIdArms.push('                    let text = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)');
+		kindIdArms.push('                        .ok()');
+		kindIdArms.push('                        .and_then(|o| o.get::<String>("$text").ok().flatten())');
+		kindIdArms.push('                        .unwrap_or_default();');
+		kindIdArms.push('                    Ok(Self::Verbatim(VerbatimTransport { text }))');
+		kindIdArms.push('                },');
+	}
+	kindIdArms.push('                other => Err(::napi::Error::from_reason(format!(');
+	kindIdArms.push('                    "unknown kind id {other} in TriviaTransport",');
+	kindIdArms.push('                ))),');
+
+	lines.push('#[cfg(feature = "napi-bindings")]');
+	lines.push('impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {');
+	lines.push('    unsafe fn from_napi_value(');
+	lines.push('        env: ::napi::sys::napi_env,');
+	lines.push('        napi_val: ::napi::sys::napi_value,');
+	lines.push('    ) -> ::napi::Result<Self> {');
+	lines.push(...emitTransportEnumFromNapiValueBody('TriviaTransport', kindIdArms, true));
+	lines.push('    }');
+	lines.push('}');
+	lines.push('');
+
+	lines.push('#[cfg(feature = "napi-bindings")]');
+	lines.push('impl ::napi::bindgen_prelude::ToNapiValue for TriviaTransport {');
+	lines.push('    unsafe fn to_napi_value(');
+	lines.push('        env: ::napi::sys::napi_env,');
+	lines.push('        _val: Self,');
+	lines.push('    ) -> ::napi::Result<::napi::sys::napi_value> {');
+	lines.push('        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())');
+	lines.push('    }');
+	lines.push('}');
+	lines.push('');
+
+	lines.push('#[derive(Debug, Clone, Default)]');
+	lines.push('pub struct TransportTrivia {');
+	lines.push('    pub leading: Option<Vec<TriviaTransport>>,');
+	lines.push('    pub trailing: Option<Vec<TriviaTransport>>,');
+	lines.push('}');
+	lines.push('');
+	lines.push('#[cfg(feature = "napi-bindings")]');
+	lines.push('impl ::napi::bindgen_prelude::FromNapiValue for TransportTrivia {');
+	lines.push('    unsafe fn from_napi_value(');
+	lines.push('        env: ::napi::sys::napi_env,');
+	lines.push('        napi_val: ::napi::sys::napi_value,');
+	lines.push('    ) -> ::napi::Result<Self> {');
+	lines.push('        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;');
+	lines.push('        let leading: Option<Vec<TriviaTransport>> = obj.get("leading")?;');
+	lines.push('        let trailing: Option<Vec<TriviaTransport>> = obj.get("trailing")?;');
+	lines.push('        Ok(TransportTrivia { leading, trailing })');
+	lines.push('    }');
+	lines.push('}');
+	lines.push('');
+	lines.push('#[cfg(feature = "napi-bindings")]');
+	lines.push('impl ::napi::bindgen_prelude::ToNapiValue for TransportTrivia {');
+	lines.push('    unsafe fn to_napi_value(');
+	lines.push('        env: ::napi::sys::napi_env,');
+	lines.push('        _val: Self,');
+	lines.push('    ) -> ::napi::Result<::napi::sys::napi_value> {');
+	lines.push('        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())');
+	lines.push('    }');
+	lines.push('}');
+	lines.push('');
+	lines.push('#[cfg(feature = "napi-bindings")]');
+	lines.push('impl ::napi::bindgen_prelude::ValidateNapiValue for TransportTrivia {}');
+	lines.push('');
+	lines.push('#[cfg(feature = "napi-bindings")]');
+	lines.push('impl ::napi::bindgen_prelude::TypeName for TransportTrivia {');
+	lines.push("    fn type_name() -> &'static str {");
+	lines.push('        "TransportTrivia"');
+	lines.push('    }');
+	lines.push('    fn value_type() -> ::napi::ValueType {');
+	lines.push('        ::napi::ValueType::Object');
+	lines.push('    }');
+	lines.push('}');
+	lines.push('');
+
+	return lines;
 }
 
 function renderVerbatimTransportStruct(): string[] {
@@ -3469,6 +3628,13 @@ function renderLeafTransportNapiImpls(
 	lines.push(`    ) -> ::napi::Result<Self> {`);
 	// typeof dispatch — never probe String::from_napi_value on a non-string
 	// (its failure path JSON.stringify's Object inputs; see transport_value_type).
+	// A leaf sent as a bare string/number/boolean carries no metadata object to
+	// read trivia from, so `__trivia` only gets populated in the object
+	// fallback branch below (a factory-attached comment on a leaf node, e.g.
+	// a doc comment before an `identifier`, always arrives as an object —
+	// $trivia() forces the trivia-bearing owner off the bare-primitive fast
+	// path).
+	lines.push(`        let mut __trivia: Option<TransportTrivia> = None;`);
 	lines.push(`        let text = match transport_value_type(env, napi_val)? {`);
 	lines.push(`            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,`);
 	if (defaultTextLiteral !== undefined) {
@@ -3489,6 +3655,7 @@ function renderLeafTransportNapiImpls(
 	}
 	lines.push(`            _ => {`);
 	lines.push(`                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
+	lines.push(`                __trivia = obj.get("$triviaData")?;`);
 	lines.push(
 		defaultTextLiteral !== undefined
 			? `                obj.get("$text")?.unwrap_or_else(|| ${JSON.stringify(defaultTextLiteral)}.to_string())`
@@ -3500,6 +3667,8 @@ function renderLeafTransportNapiImpls(
 	for (const f of TRANSPORT_METADATA_FIELDS) {
 		if (f.rustName === 'transport_named') {
 			lines.push(`            transport_named: Some(${named}),`);
+		} else if (f.rustName === 'transport_trivia_data') {
+			lines.push(`            transport_trivia_data: __trivia,`);
 		} else {
 			lines.push(`            ${f.rustName}: None,`);
 		}
@@ -3635,8 +3804,9 @@ const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
 		rustType: 'Option<f64>',
 		bridgeMap: '.map(|v| v as u16)'
 	},
-	// $triviaData carries trivia text strings. TransportTrivia has a manual FromNapiValue
-	// impl that extracts $text from each JS array element — no serde_json needed.
+	// $triviaData carries leading/trailing comment nodes. TransportTrivia's
+	// manual FromNapiValue decodes each entry through TriviaTransport, which
+	// tries the entry's own typed struct before falling back to verbatim text.
 	{ jsName: '$triviaData', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' }
 ];
 

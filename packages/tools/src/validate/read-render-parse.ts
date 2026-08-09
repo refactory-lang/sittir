@@ -298,6 +298,25 @@ export interface ReadRenderParseResult {
 }
 
 /**
+ * Width, in rendered bytes, of a candidate's own leading trivia — the text
+ * `render_with_trivia!` (Rust) / its JS-engine counterpart writes BEFORE the
+ * candidate's own content, each entry followed by a `"\n"` separator. The
+ * candidate's real node starts this many bytes after where its `rendered`
+ * string (trivia included) was spliced into the reparse wrapper, so the
+ * offset-based lookup below must skip past it. Returns 0 when there's no
+ * leading trivia (the common case).
+ */
+function leadingTriviaRenderedWidth(data: AnyNodeData, render: (node: AnyNodeData) => string): number {
+	const leading = data.$triviaData?.leading;
+	if (!leading || leading.length === 0) return 0;
+	let width = 0;
+	for (const entry of leading) {
+		width += render(entry).length + 1; // +1 for the "\n" render_with_trivia! writes after each entry
+	}
+	return width;
+}
+
+/**
  * Locate the reparsed target node at the exact byte offset where the rendered
  * fragment was spliced into the wrapper.
  *
@@ -307,17 +326,26 @@ export interface ReadRenderParseResult {
  * wraps an expression in an outer `block`, making the first `block` found the
  * wrapper's body rather than the rendered fragment).
  *
+ * `offsetAdjust` shifts the lookup past a candidate's own leading trivia
+ * (comments etc. rendered before its content) — the wrapper splices in the
+ * FULL `rendered` string (trivia included), so the candidate's own node in
+ * the reparsed tree starts `offsetAdjust` bytes after the splice point, not
+ * at it. Pass `leadingTriviaRenderedWidth(data, render)` for this; 0 when
+ * the candidate has no leading trivia (the common case, no-op).
+ *
  * @param tree2 - The reparsed tree-sitter tree after rendering.
  * @param targetKind - The tree-sitter kind to search for (raw, pre-alias kind).
  * @param wrapped - The wrap result carrying the splice offset.
+ * @param offsetAdjust - Bytes to skip past the candidate's own leading trivia.
  * @returns The TSNode at the rendered offset, or null if not found.
  */
 function findReparsedNodeAtOffset(
 	tree2: TSTree,
 	targetKind: string,
-	wrapped: { text: string; offset: number }
+	wrapped: { text: string; offset: number },
+	offsetAdjust = 0
 ): TSNode | null {
-	return findNodeAt(tree2.rootNode, targetKind, wrapped.offset);
+	return findNodeAt(tree2.rootNode, targetKind, wrapped.offset + offsetAdjust);
 }
 
 /**
@@ -674,9 +702,12 @@ export async function validateReadRenderParse(
 						// doesn't re-alias — ts's interface_body rendered as
 						// object_type inside `type _X = …;`). Accept either
 						// at the rendered offset.
+						const triviaOffsetAdjust = leadingTriviaRenderedWidth(data, render);
 						const node2 =
-							findReparsedNodeAtOffset(tree2, targetKind, wrapped) ??
-							(renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, wrapped) : null);
+							findReparsedNodeAtOffset(tree2, targetKind, wrapped, triviaOffsetAdjust) ??
+							(renderedKind !== targetKind
+								? findReparsedNodeAtOffset(tree2, renderedKind, wrapped, triviaOffsetAdjust)
+								: null);
 						if (!node2) {
 							const failure = {
 								name: `${entry.name} [${renderedKind}]`,

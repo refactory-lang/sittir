@@ -11968,6 +11968,20 @@
             "end": 117
           },
           "$nodeHandle": 39,
+          "$triviaData": {
+            "leading": [
+              {
+                "$type": 92,
+                "$source": 0,
+                "$named": true,
+                "$text": "// a comment",
+                "$span": {
+                  "start": 78,
+                  "end": 90
+                }
+              }
+            ]
+          },
           "_content": {
             "$type": 380,
             "$source": 0,
@@ -12189,14 +12203,13 @@
           }
         }
       ],
-      "_comment": "// a comment",
       "$span": {
         "start": 0,
         "end": 184
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "export default function point(x:number,y:number){ return{ x,y }; }\n\nexport default class A{  }\nexport async function readFile(filename:string):Promise<Buffer>"
+    "expectedOutput": "export default function point(x:number,y:number){ return{ x,y }; }\n\n// a comment\nexport default class A{  }\nexport async function readFile(filename:string):Promise<Buffer>"
   },
   {
     "kind": "roundtrip",
@@ -12204,9 +12217,9 @@
     "sourceIn": "export default function point(x: number, y: number) {\n    return { x, y };\n}\n\n// a comment\n\nexport default class A {}\n\nexport async function readFile(filename: string): Promise<Buffer>",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "export default function point(x:number,y:number){ return{ x,y }; }\n\nexport default class A{  }\nexport async function readFile(filename:string):Promise<Buffer>",
-    "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_decl_arm (export_statement_default_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm (export_statement_default_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (type_identifier)))) semicolon: (automatic_semicolon))))))",
-    "wrappedText": "export default function point(x:number,y:number){ return{ x,y }; }\n\nexport default class A{  }\nexport async function readFile(filename:string):Promise<Buffer>",
+    "expectedSourceOut": "export default function point(x:number,y:number){ return{ x,y }; }\n\n// a comment\nexport default class A{  }\nexport async function readFile(filename:string):Promise<Buffer>",
+    "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_decl_arm (export_statement_default_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))))) (comment) statements: (export_statement (export_statement_default (export_statement_default_decl_arm (export_statement_default_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (type_identifier)))) semicolon: (automatic_semicolon))))))",
+    "wrappedText": "export default function point(x:number,y:number){ return{ x,y }; }\n\n// a comment\nexport default class A{  }\nexport async function readFile(filename:string):Promise<Buffer>",
     "wrappedOffset": 0
   },
   {
@@ -12450,6 +12463,20 @@
         "end": 117
       },
       "$nodeHandle": 2,
+      "$triviaData": {
+        "leading": [
+          {
+            "$type": 92,
+            "$source": 0,
+            "$named": true,
+            "$text": "// a comment",
+            "$span": {
+              "start": 78,
+              "end": 90
+            }
+          }
+        ]
+      },
       "_content": {
         "$type": 380,
         "$source": 0,
@@ -12515,7 +12542,7 @@
         }
       }
     },
-    "expectedOutput": "export default class A{  }"
+    "expectedOutput": "// a comment\nexport default class A{  }"
   },
   {
     "kind": "roundtrip",
@@ -12523,9 +12550,9 @@
     "sourceIn": "export default class A {}",
     "pattern": "export_statement",
     "edits": [],
-    "expectedSourceOut": "export default class A{  }",
+    "expectedSourceOut": "// a comment\nexport default class A{  }",
     "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_decl_arm (export_statement_default_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))))",
-    "wrappedText": "export default class A{  }",
+    "wrappedText": "// a comment\nexport default class A{  }",
     "wrappedOffset": 0
   },
   {
@@ -71854,6 +71881,20 @@
             "end": 47
           },
           "$nodeHandle": 15,
+          "$triviaData": {
+            "leading": [
+              {
+                "$type": 92,
+                "$source": 0,
+                "$named": true,
+                "$text": "// above is a signature",
+                "$span": {
+                  "start": 17,
+                  "end": 40
+                }
+              }
+            ]
+          },
           "_expressions": {
             "$type": 231,
             "$source": 0,
@@ -71903,7 +71944,6 @@
             },
             "$nodeHandle": 22
           },
-          "_comment": "// above is a function declaration",
           "_body": {
             "$type": 186,
             "$source": 0,
@@ -71918,6 +71958,20 @@
               "end": 103
             },
             "$nodeHandle": 23,
+            "$triviaData": {
+              "leading": [
+                {
+                  "$type": 92,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "// above is a function declaration",
+                  "$span": {
+                    "start": 66,
+                    "end": 100
+                  }
+                }
+              ]
+            },
             "_statements": []
           },
           "_automatic_semicolon": true,
@@ -71981,14 +72035,13 @@
           "$nodeHandle": 17
         }
       ],
-      "_comment": "// above is a signature",
       "$span": {
         "start": 0,
         "end": 131
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "function foo()\nfoo();function bar(){  }\n\nfunction foo():number;"
+    "expectedOutput": "function foo()\n// above is a signature\nfoo();function bar()// above is a function declaration\n{  }\n\nfunction foo():number;"
   },
   {
     "kind": "roundtrip",
@@ -71996,9 +72049,9 @@
     "sourceIn": "function foo()\n  // above is a signature\nfoo();\n\nfunction bar()\n  // above is a function declaration\n{}\n\nfunction foo()\n  : number;",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "function foo()\nfoo();function bar(){  }\n\nfunction foo():number;",
-    "expectedReparseTree": "(program statements: (function_signature name: (identifier) parameters: (formal_parameters) semicolon: (automatic_semicolon)) statements: (expression_statement (call_expression (call_expression_call function: (identifier) arguments: (arguments)))) statements: (function_declaration name: (identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)) statements: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))",
-    "wrappedText": "function foo()\nfoo();function bar(){  }\n\nfunction foo():number;",
+    "expectedSourceOut": "function foo()\n// above is a signature\nfoo();function bar()// above is a function declaration\n{  }\n\nfunction foo():number;",
+    "expectedReparseTree": "(program statements: (function_signature name: (identifier) parameters: (formal_parameters) semicolon: (automatic_semicolon)) (comment) statements: (expression_statement (call_expression (call_expression_call function: (identifier) arguments: (arguments)))) statements: (function_declaration name: (identifier) parameters: (formal_parameters) (comment) body: (statement_block automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)) statements: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))",
+    "wrappedText": "function foo()\n// above is a signature\nfoo();function bar()// above is a function declaration\n{  }\n\nfunction foo():number;",
     "wrappedOffset": 0
   },
   {
@@ -72203,6 +72256,20 @@
         "end": 47
       },
       "$nodeHandle": 2,
+      "$triviaData": {
+        "leading": [
+          {
+            "$type": 92,
+            "$source": 0,
+            "$named": true,
+            "$text": "// above is a signature",
+            "$span": {
+              "start": 17,
+              "end": 40
+            }
+          }
+        ]
+      },
       "_expressions": {
         "$type": 231,
         "$source": 0,
@@ -72236,7 +72303,7 @@
         }
       }
     },
-    "expectedOutput": "foo();"
+    "expectedOutput": "// above is a signature\nfoo();"
   },
   {
     "kind": "roundtrip",
@@ -72244,9 +72311,9 @@
     "sourceIn": "foo();",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "foo();",
+    "expectedSourceOut": "// above is a signature\nfoo();",
     "expectedReparseTree": "(expression_statement (call_expression (call_expression_call function: (identifier) arguments: (arguments))))",
-    "wrappedText": "foo();",
+    "wrappedText": "// above is a signature\nfoo();",
     "wrappedOffset": 0
   },
   {
@@ -72343,7 +72410,6 @@
         },
         "$nodeHandle": 36
       },
-      "_comment": "// above is a function declaration",
       "_body": {
         "$type": 186,
         "$source": 0,
@@ -72358,6 +72424,20 @@
           "end": 103
         },
         "$nodeHandle": 37,
+        "$triviaData": {
+          "leading": [
+            {
+              "$type": 92,
+              "$source": 0,
+              "$named": true,
+              "$text": "// above is a function declaration",
+              "$span": {
+                "start": 66,
+                "end": 100
+              }
+            }
+          ]
+        },
         "_statements": []
       },
       "_automatic_semicolon": true,
@@ -72370,7 +72450,7 @@
       },
       "$nodeHandle": 3
     },
-    "expectedOutput": "function bar(){  }"
+    "expectedOutput": "function bar()// above is a function declaration\n{  }"
   },
   {
     "kind": "roundtrip",
@@ -72378,9 +72458,9 @@
     "sourceIn": "function bar()\n  // above is a function declaration\n{}",
     "pattern": "function_declaration",
     "edits": [],
-    "expectedSourceOut": "function bar(){  }",
-    "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))",
-    "wrappedText": "function bar(){  }",
+    "expectedSourceOut": "function bar()// above is a function declaration\n{  }",
+    "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters) (comment) body: (statement_block automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))",
+    "wrappedText": "function bar()// above is a function declaration\n{  }",
     "wrappedOffset": 0
   },
   {
@@ -72400,9 +72480,23 @@
         "end": 103
       },
       "$nodeHandle": 10,
+      "$triviaData": {
+        "leading": [
+          {
+            "$type": 92,
+            "$source": 0,
+            "$named": true,
+            "$text": "// above is a function declaration",
+            "$span": {
+              "start": 66,
+              "end": 100
+            }
+          }
+        ]
+      },
       "_statements": []
     },
-    "expectedOutput": "{  }"
+    "expectedOutput": "// above is a function declaration\n{  }"
   },
   {
     "kind": "roundtrip",
@@ -72410,9 +72504,9 @@
     "sourceIn": "{}",
     "pattern": "statement_block",
     "edits": [],
-    "expectedSourceOut": "{  }",
+    "expectedSourceOut": "// above is a function declaration\n{  }",
     "expectedReparseTree": "(statement_block automatic_semicolon: (automatic_semicolon))",
-    "wrappedText": "{  }",
+    "wrappedText": "// above is a function declaration\n{  }",
     "wrappedOffset": 0
   },
   {
@@ -112842,7 +112936,21 @@
             "start": 115,
             "end": 139
           },
-          "$nodeHandle": 37
+          "$nodeHandle": 37,
+          "$triviaData": {
+            "leading": [
+              {
+                "$type": 92,
+                "$source": 0,
+                "$named": true,
+                "$text": "// special optional and rest type syntax",
+                "$span": {
+                  "start": 74,
+                  "end": 114
+                }
+              }
+            ]
+          }
         },
         {
           "$type": 294,
@@ -112994,12 +113102,22 @@
             "start": 161,
             "end": 194
           },
-          "$nodeHandle": 38
+          "$nodeHandle": 38,
+          "$triviaData": {
+            "leading": [
+              {
+                "$type": 92,
+                "$source": 0,
+                "$named": true,
+                "$text": "// labeled elements",
+                "$span": {
+                  "start": 141,
+                  "end": 160
+                }
+              }
+            ]
+          }
         }
-      ],
-      "_comment": [
-        "// special optional and rest type syntax",
-        "// labeled elements"
       ],
       "$span": {
         "start": 0,
@@ -113007,7 +113125,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "type t=[]\ntype t=[A,]\ntype t=[A|B,C]\ntype t=readonly[A[],B.C]\ntype t=[string?,...B]\ntype t=[a:A,b?:B,...c:C[]]"
+    "expectedOutput": "type t=[]\ntype t=[A,]\ntype t=[A|B,C]\ntype t=readonly[A[],B.C]\n// special optional and rest type syntax\ntype t=[string?,...B]\n// labeled elements\ntype t=[a:A,b?:B,...c:C[]]"
   },
   {
     "kind": "roundtrip",
@@ -113015,9 +113133,9 @@
     "sourceIn": "type t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "type t=[]\ntype t=[A,]\ntype t=[A|B,C]\ntype t=readonly[A[],B.C]\ntype t=[string?,...B]\ntype t=[a:A,b?:B,...c:C[]]",
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (tuple_type) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type (tuple_type_group1 tuple_type_member: (type_identifier))) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type (tuple_type_group1 tuple_type_member: (union_type left: (type_identifier) right: (type_identifier)) tuple_type_member: (type_identifier))) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (readonly_type type: (tuple_type (tuple_type_group1 tuple_type_member: (array_type primary_type: (type_identifier)) tuple_type_member: (nested_type_identifier module: (identifier) name: (type_identifier))))) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type (tuple_type_group1 tuple_type_member: (optional_type type: (predefined_type)) tuple_type_member: (rest_type type: (type_identifier)))) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type (tuple_type_group1 tuple_type_member: (required_parameter name: (identifier) type: (type_annotation type: (type_identifier))) tuple_type_member: (optional_parameter name: (identifier) type: (type_annotation type: (type_identifier))) tuple_type_member: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (array_type primary_type: (type_identifier)))))) semicolon: (automatic_semicolon)))",
-    "wrappedText": "type t=[]\ntype t=[A,]\ntype t=[A|B,C]\ntype t=readonly[A[],B.C]\ntype t=[string?,...B]\ntype t=[a:A,b?:B,...c:C[]]",
+    "expectedSourceOut": "type t=[]\ntype t=[A,]\ntype t=[A|B,C]\ntype t=readonly[A[],B.C]\n// special optional and rest type syntax\ntype t=[string?,...B]\n// labeled elements\ntype t=[a:A,b?:B,...c:C[]]",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (tuple_type) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type (tuple_type_group1 tuple_type_member: (type_identifier))) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type (tuple_type_group1 tuple_type_member: (union_type left: (type_identifier) right: (type_identifier)) tuple_type_member: (type_identifier))) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (readonly_type type: (tuple_type (tuple_type_group1 tuple_type_member: (array_type primary_type: (type_identifier)) tuple_type_member: (nested_type_identifier module: (identifier) name: (type_identifier))))) semicolon: (automatic_semicolon)) (comment) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type (tuple_type_group1 tuple_type_member: (optional_type type: (predefined_type)) tuple_type_member: (rest_type type: (type_identifier)))) semicolon: (automatic_semicolon)) (comment) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type (tuple_type_group1 tuple_type_member: (required_parameter name: (identifier) type: (type_annotation type: (type_identifier))) tuple_type_member: (optional_parameter name: (identifier) type: (type_annotation type: (type_identifier))) tuple_type_member: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (array_type primary_type: (type_identifier)))))) semicolon: (automatic_semicolon)))",
+    "wrappedText": "type t=[]\ntype t=[A,]\ntype t=[A|B,C]\ntype t=readonly[A[],B.C]\n// special optional and rest type syntax\ntype t=[string?,...B]\n// labeled elements\ntype t=[a:A,b?:B,...c:C[]]",
     "wrappedOffset": 0
   },
   {
@@ -113403,9 +113521,23 @@
         "start": 115,
         "end": 139
       },
-      "$nodeHandle": 5
+      "$nodeHandle": 5,
+      "$triviaData": {
+        "leading": [
+          {
+            "$type": 92,
+            "$source": 0,
+            "$named": true,
+            "$text": "// special optional and rest type syntax",
+            "$span": {
+              "start": 74,
+              "end": 114
+            }
+          }
+        ]
+      }
     },
-    "expectedOutput": "type t=[string?,...B]"
+    "expectedOutput": "// special optional and rest type syntax\ntype t=[string?,...B]"
   },
   {
     "kind": "roundtrip",
@@ -113413,9 +113545,9 @@
     "sourceIn": "type t = [string?, ...B]",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type t=[string?,...B]",
+    "expectedSourceOut": "// special optional and rest type syntax\ntype t=[string?,...B]",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (tuple_type (tuple_type_group1 tuple_type_member: (optional_type type: (predefined_type)) tuple_type_member: (rest_type type: (type_identifier)))) semicolon: (automatic_semicolon))",
-    "wrappedText": "type t=[string?,...B]",
+    "wrappedText": "// special optional and rest type syntax\ntype t=[string?,...B]",
     "wrappedOffset": 0
   },
   {
@@ -113571,9 +113703,23 @@
         "start": 161,
         "end": 194
       },
-      "$nodeHandle": 6
+      "$nodeHandle": 6,
+      "$triviaData": {
+        "leading": [
+          {
+            "$type": 92,
+            "$source": 0,
+            "$named": true,
+            "$text": "// labeled elements",
+            "$span": {
+              "start": 141,
+              "end": 160
+            }
+          }
+        ]
+      }
     },
-    "expectedOutput": "type t=[a:A,b?:B,...c:C[]]"
+    "expectedOutput": "// labeled elements\ntype t=[a:A,b?:B,...c:C[]]"
   },
   {
     "kind": "roundtrip",
@@ -113581,9 +113727,9 @@
     "sourceIn": "type t = [a: A, b?: B, ...c: C[]]",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type t=[a:A,b?:B,...c:C[]]",
+    "expectedSourceOut": "// labeled elements\ntype t=[a:A,b?:B,...c:C[]]",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (tuple_type (tuple_type_group1 tuple_type_member: (required_parameter name: (identifier) type: (type_annotation type: (type_identifier))) tuple_type_member: (optional_parameter name: (identifier) type: (type_annotation type: (type_identifier))) tuple_type_member: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (array_type primary_type: (type_identifier)))))) semicolon: (automatic_semicolon))",
-    "wrappedText": "type t=[a:A,b?:B,...c:C[]]",
+    "wrappedText": "// labeled elements\ntype t=[a:A,b?:B,...c:C[]]",
     "wrappedOffset": 0
   },
   {
@@ -129615,7 +129761,6 @@
       "$type": 166,
       "$source": 0,
       "$named": true,
-      "_comment": "// These should generate the same AST aside from the parenthesized_type node",
       "_statements": [
         {
           "$type": 294,
@@ -129686,7 +129831,21 @@
             "start": 77,
             "end": 112
           },
-          "$nodeHandle": 12
+          "$nodeHandle": 12,
+          "$triviaData": {
+            "leading": [
+              {
+                "$type": 92,
+                "$source": 0,
+                "$named": true,
+                "$text": "// These should generate the same AST aside from the parenthesized_type node",
+                "$span": {
+                  "start": 0,
+                  "end": 76
+                }
+              }
+            ]
+          }
         },
         {
           "$type": 294,
@@ -129780,7 +129939,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "type X1=typeof Y[keyof typeof Z];type X2=(typeof Y)[keyof typeof Z];"
+    "expectedOutput": "// These should generate the same AST aside from the parenthesized_type node\ntype X1=typeof Y[keyof typeof Z];type X2=(typeof Y)[keyof typeof Z];"
   },
   {
     "kind": "roundtrip",
@@ -129788,9 +129947,9 @@
     "sourceIn": "// These should generate the same AST aside from the parenthesized_type node\ntype X1 = typeof Y[keyof typeof Z];\ntype X2 = (typeof Y)[keyof typeof Z];",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "type X1=typeof Y[keyof typeof Z];type X2=(typeof Y)[keyof typeof Z];",
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (lookup_type primary_type: (type_query (identifier)) index_type: (index_type_query primary_type: (type_query (identifier))))) statements: (type_alias_declaration name: (type_identifier) value: (lookup_type primary_type: (parenthesized_type type: (type_query (identifier))) index_type: (index_type_query primary_type: (type_query (identifier))))))",
-    "wrappedText": "type X1=typeof Y[keyof typeof Z];type X2=(typeof Y)[keyof typeof Z];",
+    "expectedSourceOut": "// These should generate the same AST aside from the parenthesized_type node\ntype X1=typeof Y[keyof typeof Z];type X2=(typeof Y)[keyof typeof Z];",
+    "expectedReparseTree": "(program (comment) statements: (type_alias_declaration name: (type_identifier) value: (lookup_type primary_type: (type_query (identifier)) index_type: (index_type_query primary_type: (type_query (identifier))))) statements: (type_alias_declaration name: (type_identifier) value: (lookup_type primary_type: (parenthesized_type type: (type_query (identifier))) index_type: (index_type_query primary_type: (type_query (identifier))))))",
+    "wrappedText": "// These should generate the same AST aside from the parenthesized_type node\ntype X1=typeof Y[keyof typeof Z];type X2=(typeof Y)[keyof typeof Z];",
     "wrappedOffset": 0
   },
   {
@@ -129865,9 +130024,23 @@
         "start": 77,
         "end": 112
       },
-      "$nodeHandle": 1
+      "$nodeHandle": 1,
+      "$triviaData": {
+        "leading": [
+          {
+            "$type": 92,
+            "$source": 0,
+            "$named": true,
+            "$text": "// These should generate the same AST aside from the parenthesized_type node",
+            "$span": {
+              "start": 0,
+              "end": 76
+            }
+          }
+        ]
+      }
     },
-    "expectedOutput": "type X1=typeof Y[keyof typeof Z];"
+    "expectedOutput": "// These should generate the same AST aside from the parenthesized_type node\ntype X1=typeof Y[keyof typeof Z];"
   },
   {
     "kind": "roundtrip",
@@ -129875,9 +130048,9 @@
     "sourceIn": "type X1 = typeof Y[keyof typeof Z];",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type X1=typeof Y[keyof typeof Z];",
+    "expectedSourceOut": "// These should generate the same AST aside from the parenthesized_type node\ntype X1=typeof Y[keyof typeof Z];",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (lookup_type primary_type: (type_query (identifier)) index_type: (index_type_query primary_type: (type_query (identifier)))))",
-    "wrappedText": "type X1=typeof Y[keyof typeof Z];",
+    "wrappedText": "// These should generate the same AST aside from the parenthesized_type node\ntype X1=typeof Y[keyof typeof Z];",
     "wrappedOffset": 0
   },
   {
@@ -130394,10 +130567,6 @@
       "$type": 166,
       "$source": 0,
       "$named": true,
-      "_comment": [
-        "// This is a special construct, different from both \"typeof (f<T>)\" and",
-        "// \"(typeof f)<T>\" (which are both invalid)"
-      ],
       "_statements": [
         {
           "$type": 294,
@@ -130455,7 +130624,31 @@
             "start": 116,
             "end": 137
           },
-          "$nodeHandle": 5
+          "$nodeHandle": 5,
+          "$triviaData": {
+            "leading": [
+              {
+                "$type": 92,
+                "$source": 0,
+                "$named": true,
+                "$text": "// This is a special construct, different from both \"typeof (f<T>)\" and",
+                "$span": {
+                  "start": 0,
+                  "end": 71
+                }
+              },
+              {
+                "$type": 92,
+                "$source": 0,
+                "$named": true,
+                "$text": "// \"(typeof f)<T>\" (which are both invalid)",
+                "$span": {
+                  "start": 72,
+                  "end": 115
+                }
+              }
+            ]
+          }
         }
       ],
       "$span": {
@@ -130464,7 +130657,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "type T=typeof f<T>;"
+    "expectedOutput": "// This is a special construct, different from both \"typeof (f<T>)\" and\n// \"(typeof f)<T>\" (which are both invalid)\ntype T=typeof f<T>;"
   },
   {
     "kind": "roundtrip",
@@ -130472,9 +130665,9 @@
     "sourceIn": "// This is a special construct, different from both \"typeof (f<T>)\" and\n// \"(typeof f)<T>\" (which are both invalid)\ntype T = typeof f<T>;",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "type T=typeof f<T>;",
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (type_query (instantiation_expression function: (identifier) type_arguments: (type_arguments type: (type_identifier))))))",
-    "wrappedText": "type T=typeof f<T>;",
+    "expectedSourceOut": "// This is a special construct, different from both \"typeof (f<T>)\" and\n// \"(typeof f)<T>\" (which are both invalid)\ntype T=typeof f<T>;",
+    "expectedReparseTree": "(program (comment) (comment) statements: (type_alias_declaration name: (type_identifier) value: (type_query (instantiation_expression function: (identifier) type_arguments: (type_arguments type: (type_identifier))))))",
+    "wrappedText": "// This is a special construct, different from both \"typeof (f<T>)\" and\n// \"(typeof f)<T>\" (which are both invalid)\ntype T=typeof f<T>;",
     "wrappedOffset": 0
   },
   {
@@ -130536,9 +130729,33 @@
         "start": 116,
         "end": 137
       },
-      "$nodeHandle": 1
+      "$nodeHandle": 1,
+      "$triviaData": {
+        "leading": [
+          {
+            "$type": 92,
+            "$source": 0,
+            "$named": true,
+            "$text": "// This is a special construct, different from both \"typeof (f<T>)\" and",
+            "$span": {
+              "start": 0,
+              "end": 71
+            }
+          },
+          {
+            "$type": 92,
+            "$source": 0,
+            "$named": true,
+            "$text": "// \"(typeof f)<T>\" (which are both invalid)",
+            "$span": {
+              "start": 72,
+              "end": 115
+            }
+          }
+        ]
+      }
     },
-    "expectedOutput": "type T=typeof f<T>;"
+    "expectedOutput": "// This is a special construct, different from both \"typeof (f<T>)\" and\n// \"(typeof f)<T>\" (which are both invalid)\ntype T=typeof f<T>;"
   },
   {
     "kind": "roundtrip",
@@ -130546,9 +130763,9 @@
     "sourceIn": "type T = typeof f<T>;",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type T=typeof f<T>;",
+    "expectedSourceOut": "// This is a special construct, different from both \"typeof (f<T>)\" and\n// \"(typeof f)<T>\" (which are both invalid)\ntype T=typeof f<T>;",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (type_query (instantiation_expression function: (identifier) type_arguments: (type_arguments type: (type_identifier)))))",
-    "wrappedText": "type T=typeof f<T>;",
+    "wrappedText": "// This is a special construct, different from both \"typeof (f<T>)\" and\n// \"(typeof f)<T>\" (which are both invalid)\ntype T=typeof f<T>;",
     "wrappedOffset": 0
   },
   {

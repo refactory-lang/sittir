@@ -62,4 +62,29 @@ describe('$trivia() integration', () => {
 		const rebuilt = fn.$with.name(F.buildIdentifier('other'));
 		expect((rebuilt as Record<string, unknown>).$triviaData).toBeUndefined();
 	});
+
+	// `line_comment.jinja` renders `//{{ content }}` — content is the text
+	// AFTER the `//` marker, unlike `makeComment`'s raw-`//`-prefixed text
+	// above (whose callers never render, only assert `$triviaData` shape).
+	function buildLineComment(afterSlashes: string): LineComment {
+		return F.buildLineComment(F.buildLineCommentContent(afterSlashes));
+	}
+
+	it('leading trivia renders before the node', () => {
+		const fn = makeFn('main').$trivia(buildLineComment(' hello'));
+		expect(fn.$render()).toBe('// hello\nfn main(){  }');
+	});
+
+	it('trailing trivia renders after the node', () => {
+		const fn = makeFn('main').$trivia({ trailing: [buildLineComment(' bye')] });
+		expect(fn.$render()).toBe('fn main(){  }\n// bye');
+	});
+
+	it('multiple leading and trailing entries render in order', () => {
+		const fn = makeFn('main').$trivia({
+			leading: [buildLineComment(' top1'), buildLineComment(' top2')],
+			trailing: [buildLineComment(' bottom')]
+		});
+		expect(fn.$render()).toBe('// top1\n// top2\nfn main(){  }\n// bottom');
+	});
 });

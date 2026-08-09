@@ -188,6 +188,7 @@ export interface LinkedGrammar {
 	readonly supertypes: Set<string>;
 	readonly externalRoles: Map<string, ExternalRole>;
 	readonly externals?: readonly string[];
+	readonly extras?: readonly string[];
 	readonly word: string | null;
 	readonly references: SymbolRef[];
 	readonly derivations: DerivationLog;
@@ -216,6 +217,7 @@ export interface NormalizedGrammar {
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly externals?: readonly string[];
+	readonly extras?: readonly string[];
 	readonly derivations: DerivationLog;
 	readonly aliasedHiddenKinds?: Map<string, string>;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
@@ -237,6 +239,7 @@ export interface SimplifiedGrammar {
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly externals?: readonly string[];
+	readonly extras?: readonly string[];
 	readonly derivations: DerivationLog;
 	readonly refineForms?: Map<string, RefineForm[]>;
 }
@@ -273,6 +276,7 @@ export interface NodeMap {
 	readonly wordMatcher?: RegExp;
 	readonly polymorphFormKinds: ReadonlySet<string>;
 	readonly externals?: ReadonlySet<string>;
+	readonly extras?: ReadonlySet<string>;
 	readonly refineForms?: Map<string, RefineForm[]>;
 	scc?: SCCAnalysis;
 }

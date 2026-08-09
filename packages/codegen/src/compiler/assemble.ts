@@ -531,6 +531,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			word: normalized.word,
 			wordMatcher: normalized.wordMatcher,
 			externals: normalized.externals ? new Set(normalized.externals) : undefined,
+			extras: normalized.extras ? new Set(normalized.extras) : undefined,
 			polymorphFormKinds: computePolymorphFormKinds(nodes),
 			refineForms: normalized.refineForms,
 			parseKindCollisions: drainParseKindCollisionDiagnostics(),

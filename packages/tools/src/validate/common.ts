@@ -450,6 +450,58 @@ function childEntries(value: unknown | readonly unknown[] | undefined): readonly
 	return Array.isArray(value) ? value : [value];
 }
 
+function isNativeNodeData(value: unknown): value is AnyNodeData {
+	return value != null && typeof value === 'object' && '$type' in value;
+}
+
+function pushNativeCandidates(value: unknown, out: AnyNodeData[]): void {
+	for (const entry of childEntries(value)) {
+		if (isNativeNodeData(entry)) out.push(entry);
+	}
+}
+
+/**
+ * Native NodeData's addressable child positions: named-slot (`_foo`) and
+ * legacy (`$fields`) values, the anonymous-token bucket (`$other`), and
+ * attached trivia (`$triviaData.leading`/`.trailing` — comment/extras
+ * nodes read_node.rs attaches to a SIBLING rather than re-parenting into
+ * the normal field/children tree, so this is the only place they're
+ * reachable from).
+ */
+function collectNativeChildNodes(d: AnyNodeData): AnyNodeData[] {
+	const out: AnyNodeData[] = [];
+	const rec = d as unknown as Record<string, unknown>;
+	for (const key of Object.keys(rec)) {
+		if (key.startsWith('_')) pushNativeCandidates(rec[key], out);
+	}
+	const legacyFields = rec.$fields;
+	if (legacyFields != null && typeof legacyFields === 'object') {
+		for (const value of Object.values(legacyFields as Record<string, unknown>)) {
+			pushNativeCandidates(value, out);
+		}
+	}
+	pushNativeCandidates(d.$other, out);
+	const trivia = d.$triviaData;
+	if (trivia) {
+		pushNativeCandidates(trivia.leading, out);
+		pushNativeCandidates(trivia.trailing, out);
+	}
+	return out;
+}
+
+function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
+	if (d.$other !== undefined) return true;
+	const rec = d as unknown as Record<string, unknown>;
+	for (const key of Object.keys(rec)) {
+		if (key.startsWith('_')) return true;
+	}
+	const legacyFields = rec.$fields;
+	if (legacyFields != null && typeof legacyFields === 'object') {
+		return Object.keys(legacyFields as Record<string, unknown>).length > 0;
+	}
+	return false;
+}
+
 /**
  * For a native TreeHandle (`handle.read` is present), walk the native
  * NodeData tree to find the parent-handle + child-index pair for the
@@ -472,47 +524,6 @@ export function findNativeNodeId(
 	const read = handle.read;
 	const root = handle.read();
 
-	function pushCandidates(value: unknown, out: AnyNodeData[]): void {
-		const candidates = Array.isArray(value) ? value : [value];
-		for (const candidate of candidates) {
-			if (candidate != null && typeof candidate === 'object' && '$type' in candidate) {
-				out.push(candidate as AnyNodeData);
-			}
-		}
-	}
-
-	function collectNativeChildNodes(d: AnyNodeData): AnyNodeData[] {
-		const out: AnyNodeData[] = [];
-		const rec = d as unknown as Record<string, unknown>;
-		for (const key of Object.keys(rec)) {
-			if (key.startsWith('_')) pushCandidates(rec[key], out);
-		}
-		const legacyFields = rec.$fields;
-		if (legacyFields != null && typeof legacyFields === 'object') {
-			for (const value of Object.values(legacyFields as Record<string, unknown>)) {
-				pushCandidates(value, out);
-			}
-		}
-		const children = d.$other;
-		if (children) {
-			pushCandidates(children, out);
-		}
-		return out;
-	}
-
-	function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
-		if (d.$other !== undefined) return true;
-		const rec = d as unknown as Record<string, unknown>;
-		for (const key of Object.keys(rec)) {
-			if (key.startsWith('_')) return true;
-		}
-		const legacyFields = rec.$fields;
-		if (legacyFields != null && typeof legacyFields === 'object') {
-			return Object.keys(legacyFields as Record<string, unknown>).length > 0;
-		}
-		return false;
-	}
-
 	function kindOf(d: AnyNodeData): string {
 		return typeof d.$type === 'number' ? (kindNameFromId?.(d.$type) ?? String(d.$type)) : d.$type;
 	}
@@ -523,12 +534,19 @@ export function findNativeNodeId(
 
 	function walk(d: AnyNodeData): NativeNodeCoords | null {
 		for (const child of collectNativeChildNodes(d)) {
-			if (kindOf(child) === kind && d.$nodeHandle !== undefined && child.$childIndex !== undefined) {
-				return { handle: d.$nodeHandle, childIndex: child.$childIndex };
+			// A trivia entry's own `$nodeHandle` differs from its containing
+			// sibling's (`d`) — it was read as a child of the ENCLOSING node,
+			// not `d` — so prefer the child's own handle when present. For
+			// ordinary field/children-tree entries this is always equal to
+			// `d.$nodeHandle` (both were read via the same `read_children`
+			// call), so the preference is a no-op there.
+			const handleForChild = child.$nodeHandle ?? d.$nodeHandle;
+			if (kindOf(child) === kind && handleForChild !== undefined && child.$childIndex !== undefined) {
+				return { handle: handleForChild, childIndex: child.$childIndex };
 			}
 			let drilled = child;
-			if (!hasEmbeddedNativeChildren(drilled) && d.$nodeHandle !== undefined && drilled.$childIndex !== undefined) {
-				drilled = read(d.$nodeHandle, drilled.$childIndex) as AnyNodeData;
+			if (!hasEmbeddedNativeChildren(drilled) && handleForChild !== undefined && drilled.$childIndex !== undefined) {
+				drilled = read(handleForChild, drilled.$childIndex) as AnyNodeData;
 			}
 			const found = walk(drilled);
 			if (found !== null) return found;
@@ -581,55 +599,6 @@ export function walkNativeForKind(
 		return (d as unknown as Record<string, unknown>).$span as { start: number; end: number } | undefined;
 	}
 
-	function collectNativeChildNodes(d: AnyNodeData): AnyNodeData[] {
-		const out: AnyNodeData[] = [];
-		const rec = d as unknown as Record<string, unknown>;
-		for (const key of Object.keys(rec)) {
-			if (key.startsWith('_')) {
-				const value = rec[key];
-				const entries = Array.isArray(value) ? value : [value];
-				for (const entry of entries) {
-					if (entry != null && typeof entry === 'object' && '$type' in entry) {
-						out.push(entry as AnyNodeData);
-					}
-				}
-			}
-		}
-		const legacyFields = rec.$fields;
-		if (legacyFields != null && typeof legacyFields === 'object') {
-			for (const value of Object.values(legacyFields as Record<string, unknown>)) {
-				const entries = Array.isArray(value) ? value : [value];
-				for (const entry of entries) {
-					if (entry != null && typeof entry === 'object' && '$type' in entry) {
-						out.push(entry as AnyNodeData);
-					}
-				}
-			}
-		}
-		if (d.$other) {
-			const children = Array.isArray(d.$other) ? d.$other : [d.$other];
-			for (const c of children) {
-				if (c != null && typeof c === 'object' && '$type' in c) {
-					out.push(c as unknown as AnyNodeData);
-				}
-			}
-		}
-		return out;
-	}
-
-	function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
-		if (d.$other !== undefined) return true;
-		const rec = d as unknown as Record<string, unknown>;
-		for (const key of Object.keys(rec)) {
-			if (key.startsWith('_')) return true;
-		}
-		const legacyFields = rec.$fields;
-		if (legacyFields != null && typeof legacyFields === 'object') {
-			return Object.keys(legacyFields as Record<string, unknown>).length > 0;
-		}
-		return false;
-	}
-
 	// Root-level match: coords = {} (no parent/childIndex navigation).
 	if (kindOf(root) === kind) {
 		results.push({ coords: {}, span: spanOf(root) });
@@ -639,16 +608,19 @@ export function walkNativeForKind(
 
 	function walk(d: AnyNodeData): void {
 		for (const child of collectNativeChildNodes(d)) {
-			if (kindOf(child) === kind && d.$nodeHandle !== undefined && child.$childIndex !== undefined) {
+			// See findNativeNodeId's walk() for why the child's own
+			// `$nodeHandle` is preferred over `d`'s.
+			const handleForChild = child.$nodeHandle ?? d.$nodeHandle;
+			if (kindOf(child) === kind && handleForChild !== undefined && child.$childIndex !== undefined) {
 				results.push({
-					coords: { handle: d.$nodeHandle, childIndex: child.$childIndex },
+					coords: { handle: handleForChild, childIndex: child.$childIndex },
 					span: spanOf(child)
 				});
 			}
 			// Drill when the child doesn't already carry its own sub-children.
 			let drilled = child;
-			if (!hasEmbeddedNativeChildren(drilled) && d.$nodeHandle !== undefined && drilled.$childIndex !== undefined) {
-				drilled = read(d.$nodeHandle, drilled.$childIndex) as AnyNodeData;
+			if (!hasEmbeddedNativeChildren(drilled) && handleForChild !== undefined && drilled.$childIndex !== undefined) {
+				drilled = read(handleForChild, drilled.$childIndex) as AnyNodeData;
 			}
 			walk(drilled);
 		}
