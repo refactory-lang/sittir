@@ -1,15 +1,15 @@
 {
   "grammar": "typescript",
-  "source_hash": "85aef5ac9302961bce133f6660acfbe0d341bda6628d96d2bd155650e9e4eacf",
+  "source_hash": "fcd47f893f46d5211ef13892ca72b89fe2025f1f4e2384a44d90f593f2679076",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "cf55ff02cbc44689c0baaa2c07290203a80e9dff464f98828eade4607d7c0104",
-    "packages/typescript/.sittir/grammar.js": "52f28149d81975c23f27ae63bed9f4abc6968efb1f1f43fde0c00059d48e8009",
+    "packages/typescript/.sittir/grammar.js": "512df97304bf303d6a307570b67706d9fba1e73f7a571ed18b1a0e9d174a4fe0",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
     "packages/typescript/.sittir/parser.dylib": "ba2a18d17e8b298756438461cd47288057ebc3220d75d115e9afa46a5f48ed89",
-    "packages/typescript/.sittir/parser.wasm": "a808416ab8e358fe53ec5b6880d115f0a576a2017f731468994ffc4bb92a1af8",
-    "packages/typescript/.sittir/src/grammar.json": "fceecb58fc18c4416f57d24ee7ae89e27f05dabab7579f78a98c97a46defe947",
+    "packages/typescript/.sittir/parser.wasm": "14e4f8a5fdf1da27acb3130ae9b4a3fa07940344b8441b0338b056bb9ee2fe35",
+    "packages/typescript/.sittir/src/grammar.json": "7c0ac739d63af54c6848e43b5f93fa0024f286714155806d180d90b5a9e6f1a6",
     "packages/typescript/.sittir/src/node-types.json": "d97ec89cfd4ec49795e2b74ed7b74e4d3ce24bf91b740b45ee4399375427e247",
-    "packages/typescript/.sittir/src/parser.c": "5ae634fdb89272813f4eabc54e0c0c1a5affeb7d7d651bafd32c1c759efe7971",
+    "packages/typescript/.sittir/src/parser.c": "70177d42cc965580d8de950de4293b6f928f775fe1f2ac73592a825321959baf",
     "packages/typescript/.sittir/src/scanner.c": "9125013b42cb888379d9be909f1d73dfb75a37626c2cdbf4122718a2b431a6d3",
     "packages/typescript/.sittir/src/tree_sitter/alloc.h": "b29c1c9fb7cc82f58c84b376df1297d6e2737a1d655fd356db0859e3c29c2fea",
     "packages/typescript/.sittir/src/tree_sitter/array.h": "31e60a1bff6f715afacce03b5b70efe42b58371b4f9595dd4af52a577ff9608c",
@@ -481,6 +481,7 @@
     "rust/crates/sittir-typescript/templates/yield_expression.jinja": "d43f93d8b07a10db7c8fcb63e97cf8c9656f60b9410d6b8cf8306a1032a2cae5"
   },
   "host_files": {
-    "rust/crates/sittir-typescript/sittir-typescript.darwin-arm64.node": "freshness-checked"
+    "rust/crates/sittir-typescript/sittir-typescript.darwin-arm64.node": "freshness-checked",
+    "rust/crates/sittir-typescript/sittir-typescript.node": "freshness-checked"
   }
 }

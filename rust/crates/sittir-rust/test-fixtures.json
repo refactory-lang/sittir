@@ -95121,62 +95121,6 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
-      "$type": 228,
-      "$source": 0,
-      "$named": true,
-      "_type": "C",
-      "_turbofish": 73,
-      "_type_arguments": {
-        "$type": 231,
-        "$source": 0,
-        "$named": true,
-        "_element": [
-          {
-            "$type": 400,
-            "$source": 0,
-            "$named": true,
-            "$span": {
-              "start": 12,
-              "end": 13
-            },
-            "$nodeHandle": 86,
-            "_content": "D"
-          }
-        ],
-        "$other": [
-          68,
-          70
-        ],
-        "$span": {
-          "start": 11,
-          "end": 14
-        },
-        "$nodeHandle": 85,
-        "_element_trailing_sep": false
-      },
-      "$span": {
-        "start": 8,
-        "end": 14
-      },
-      "$nodeHandle": 12
-    },
-    "expectedOutput": "C:: <D>"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "rust",
-    "sourceIn": "C::<D>",
-    "pattern": "generic_type_with_turbofish",
-    "edits": [],
-    "expectedSourceOut": "C:: <D>",
-    "expectedReparseTree": "(generic_type_with_turbofish type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier))))",
-    "wrappedText": "type _X = C:: <D>::Item;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "rust",
-    "input": {
       "$type": 157,
       "$source": 0,
       "$named": true,
@@ -112885,62 +112829,6 @@
     "expectedReparseTree": "(scoped_identifier path: (identifier) name: (identifier))",
     "wrappedText": "fn _f() { let _ = Bar::T1; }",
     "wrappedOffset": 18
-  },
-  {
-    "kind": "render",
-    "grammar": "rust",
-    "input": {
-      "$type": 228,
-      "$source": 0,
-      "$named": true,
-      "_type": "Some",
-      "_turbofish": 73,
-      "_type_arguments": {
-        "$type": 231,
-        "$source": 0,
-        "$named": true,
-        "_element": [
-          {
-            "$type": 400,
-            "$source": 0,
-            "$named": true,
-            "$span": {
-              "start": 157,
-              "end": 162
-            },
-            "$nodeHandle": 296,
-            "_content": "isize"
-          }
-        ],
-        "$other": [
-          68,
-          70
-        ],
-        "$span": {
-          "start": 156,
-          "end": 163
-        },
-        "$nodeHandle": 295,
-        "_element_trailing_sep": false
-      },
-      "$span": {
-        "start": 150,
-        "end": 163
-      },
-      "$nodeHandle": 37
-    },
-    "expectedOutput": "Some:: <isize>"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "rust",
-    "sourceIn": "Some::<isize>",
-    "pattern": "generic_type_with_turbofish",
-    "edits": [],
-    "expectedSourceOut": "Some:: <isize>",
-    "expectedReparseTree": "(generic_type_with_turbofish type: (type_identifier) type_arguments: (type_arguments element: (type_argument (primitive_type))))",
-    "wrappedText": "type _X = Some:: <isize>::Item;",
-    "wrappedOffset": 10
   },
   {
     "kind": "render",

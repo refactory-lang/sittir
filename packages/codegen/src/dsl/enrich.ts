@@ -2978,6 +2978,17 @@ function mintStructuredChoiceArm(
 	if (isPrecWrapper(arm as { type: string })) {
 		const content = (arm as { content?: Rule }).content;
 		if (!content) return null;
+		// Thread this prec wrapper down as `ambientPrec` (mirrors
+		// `applyClauseHoist`'s `innerAmbientPrec` at the analogous descent) so
+		// `visibleGroupSynthName` also applies it to the minted hidden rule's
+		// OWN body, not only to the outer alias re-wrapped below. A choice arm
+		// like `prec('call', seq(field('function', choice($.expression, ...)),
+		// ...))` carries an ambiguity (here: `expression` reaching
+		// `instantiation_expression`) INSIDE that seq — the precedence needs to
+		// stay in scope there too, not just at the arm position, or the
+		// internal conflict falls back to unrelated lookahead-sensitive
+		// tie-breaking instead of the precedence the un-extracted grammar
+		// used to resolve it with.
 		const minted = mintStructuredChoiceArm(
 			content,
 			parentKind,
@@ -2988,7 +2999,7 @@ function mintStructuredChoiceArm(
 			visibleGroupHiddenNames,
 			clauseGroupOwners,
 			collidingLeadingNames,
-			undefined,
+			arm,
 			enclosingFieldName
 		);
 		if (!minted) return null;
