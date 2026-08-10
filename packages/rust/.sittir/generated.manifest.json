@@ -448,6 +448,7 @@
     "rust/crates/sittir-rust/templates/yield_expression.jinja": "d43f93d8b07a10db7c8fcb63e97cf8c9656f60b9410d6b8cf8306a1032a2cae5"
   },
   "host_files": {
-    "rust/crates/sittir-rust/sittir-rust.darwin-arm64.node": "freshness-checked"
+    "rust/crates/sittir-rust/sittir-rust.darwin-arm64.node": "freshness-checked",
+    "rust/crates/sittir-rust/sittir-rust.node": "freshness-checked"
   }
 }

@@ -312,6 +312,7 @@
     "rust/crates/sittir-python/templates/yield.jinja": "f7997a9df88cd67540954c2c16805f1c39efe3cf7627bae143042d770846c80c"
   },
   "host_files": {
-    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "freshness-checked"
+    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "freshness-checked",
+    "rust/crates/sittir-python/sittir-python.node": "freshness-checked"
   }
 }
