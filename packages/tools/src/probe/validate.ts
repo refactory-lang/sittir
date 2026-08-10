@@ -104,6 +104,7 @@ export async function run(opts: ProbeValidateOptions): Promise<number> {
 		noRender: opts.noRender,
 		noWrap: opts.noWrap,
 		reparse: false,
+		validatorReparse: false,
 		pretty: opts.pretty,
 		baseline: undefined,
 		baselineParser: false,

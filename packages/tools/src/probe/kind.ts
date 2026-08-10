@@ -88,10 +88,21 @@ import {
 	stripStructuralNodeText,
 	loadReadTreeNode,
 	walkNativeForKind,
+	buildKindToSupertypes,
+	wrapForReparse,
 	WASM_PATHS,
 	type TSNode,
+	type TSTree,
 	type AccessorThrowRecord
 } from '../validate/common.ts';
+import {
+	loadVariantAdoptedKinds,
+	firstParseDefect,
+	astStructuralDiff,
+	findReparsedNodeAtOffset,
+	NAMED_EXTRAS_BY_GRAMMAR
+} from '../validate/read-render-parse.ts';
+import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyNodeData, AnyTreeNode } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common';
@@ -109,6 +120,13 @@ export interface ProbeKindOptions {
 	noRender: boolean;
 	noWrap: boolean;
 	reparse: boolean;
+	/** Reparse using the SAME wrapForReparse/offset-lookup mechanism the
+	 *  validator (read-render-parse.ts) uses, instead of `--reparse`'s naive
+	 *  bare `parser.parse(rendered)`. Reports the selected wrapper's text,
+	 *  splice offset, and the located reparsed node — reproducing exactly
+	 *  what the validator sees, including its "kind not found at rendered
+	 *  offset" failure mode. */
+	validatorReparse: boolean;
 	pretty: boolean;
 	baseline?: string;
 	baselineParser: boolean;
@@ -151,6 +169,7 @@ export async function run(opts: ProbeKindOptions): Promise<number> {
 		kind: opts.kind,
 		range: parsedRange,
 		reparse: opts.reparse,
+		validatorReparse: opts.validatorReparse,
 		engine: (engineRaw === 'both' ? 'js' : engineRaw) as 'js' | 'native',
 		logParse: opts.logParse
 	};
@@ -175,7 +194,7 @@ export async function run(opts: ProbeKindOptions): Promise<number> {
 	// `legacyWrapped` is the old recursive readNode walker — populated in it but
 	// empty in `wrapped` = a wrap-materialization gap.
 	const wantFull = opts.trace || opts.full;
-	if (probeOpts.kind && !wantFull) {
+	if (probeOpts.kind && !wantFull && !opts.validatorReparse) {
 		const trace = await probeTrace(grammar, source, { ...probeOpts, engine: 'native' });
 		const nativeTrace = (trace.trace as { native?: { deep?: Record<string, unknown>; wrapError?: string } } | undefined)
 			?.native;
@@ -275,6 +294,121 @@ export interface ProbeReport {
 	/** `--shipped`: parse of the same source/target via the grammar's shipped
 	 *  upstream wasm rather than the override-compiled parser. */
 	shipped?: ProbeShippedReport;
+	/** `--validator-reparse`: the validator's own wrapForReparse + offset-lookup
+	 *  reparse, reproduced exactly (see `computeValidatorWrapDiag`). */
+	wrapDiag?: ProbeWrapDiag;
+}
+
+/** See `computeValidatorWrapDiag`'s doc comment. */
+export interface ProbeWrapDiag {
+	/** Source kind (drives the render template + wrapper selection) —
+	 *  derived from the read NodeData's own `$type`. */
+	renderedKind: string;
+	/** Display kind at the probed tree-sitter node (drives post-reparse
+	 *  node location; differs from `renderedKind` for aliased kinds). */
+	targetKind: string;
+	/** The selected supertype/direct wrapper's output, or `null` when no
+	 *  wrapper exists for this kind (validator would skip the candidate). */
+	wrapped: { text: string; offset: number } | null;
+	/** True when the wrapped text itself failed to reparse cleanly. */
+	reparseHasError?: boolean;
+	/** First MISSING/ERROR node signature in the reparsed wrapper tree. */
+	parseDefect?: string | null;
+	/** Bytes skipped past the candidate's own leading trivia before the
+	 *  offset lookup. Always 0 here — see `computeValidatorWrapDiag`. */
+	triviaOffsetAdjust: number;
+	/** Whether a node of `targetKind` (or `renderedKind`) was found at the
+	 *  wrapper's splice offset. `false` reproduces the validator's "kind not
+	 *  found at rendered offset" failure. */
+	node2Found: boolean;
+	node2Kind?: string;
+	node2Sexp?: string;
+	/** Strict structural diff between the original node and the located
+	 *  reparsed node, or `null` when they match / no node was found. */
+	astDiff: string | null;
+}
+
+/**
+ * Reproduce the validator's own reparse mechanism (`wrapForReparse` +
+ * offset-based node location, see `read-render-parse.ts`) for a single
+ * probed node, instead of `--reparse`'s naive bare `parser.parse(rendered)`.
+ * `--reparse` drills for the first node of the right TYPE anywhere in the
+ * reparsed tree, which can silently match the wrong node (or the wrapper's
+ * own scaffolding) and therefore can't reproduce validator-only failures
+ * like "kind not found at rendered offset". This surfaces exactly what the
+ * validator sees: the selected wrapper, the splice offset, and whether a
+ * node of the expected kind was actually found there.
+ */
+async function computeValidatorWrapDiag(
+	grammar: string,
+	parser: { parse(text: string): TSTree | null },
+	targetNode: TSNode,
+	nodeData: unknown,
+	rendered: string
+): Promise<ProbeWrapDiag> {
+	const { loadRawEntries } = await load('nodeTypesLoader');
+	const rawEntries = loadRawEntries(grammar);
+	const kindToSupertypes = buildKindToSupertypes(rawEntries);
+	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
+	const kindNameFromId = await loadKindNameFromId(grammar);
+	const targetKind = targetNode.type;
+	const dType = (nodeData as { $type?: unknown } | undefined)?.$type;
+	const renderedKind =
+		typeof dType === 'number' && kindNameFromId ? (kindNameFromId(dType) ?? targetKind) : targetKind;
+
+	const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
+		adoptedVariantKinds: adoptedVariantKindNames,
+		targetKind
+	});
+	if (wrapped === null || rendered.trim() === '') {
+		return { renderedKind, targetKind, wrapped, triviaOffsetAdjust: 0, node2Found: false, astDiff: null };
+	}
+
+	const tree2 = parser.parse(wrapped.text) as TSTree;
+	if (tree2.rootNode.hasError) {
+		return {
+			renderedKind,
+			targetKind,
+			wrapped,
+			reparseHasError: true,
+			parseDefect: firstParseDefect(tree2.rootNode),
+			triviaOffsetAdjust: 0,
+			node2Found: false,
+			astDiff: null
+		};
+	}
+
+	// probe-kind's render dispatch is async end-to-end (native payload
+	// building, baseline template loads), unlike the validator's own
+	// synchronous `render` — leading-trivia offset adjustment
+	// (leadingTriviaRenderedWidth) needs a sync per-entry render callback,
+	// so it isn't reproduced here. Candidates with leading trivia (rendered
+	// comments) report a 0 adjustment, which can shift the located node for
+	// those cases only.
+	const triviaOffsetAdjust = 0;
+	const node2 =
+		findReparsedNodeAtOffset(tree2, targetKind, wrapped, triviaOffsetAdjust) ??
+		(renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, wrapped, triviaOffsetAdjust) : null);
+	if (!node2) {
+		return { renderedKind, targetKind, wrapped, reparseHasError: false, triviaOffsetAdjust, node2Found: false, astDiff: null };
+	}
+
+	const namedExtras = NAMED_EXTRAS_BY_GRAMMAR[grammar] ?? new Set<string>();
+	const rootAliasPair: readonly [string, string] | undefined =
+		renderedKind !== targetKind ? [renderedKind, targetKind] : undefined;
+	const astDiff = astStructuralDiff(targetNode, node2, namedExtras, '', rootAliasPair);
+
+	return {
+		renderedKind,
+		targetKind,
+		wrapped,
+		reparseHasError: false,
+		triviaOffsetAdjust,
+		node2Found: true,
+		node2Kind: node2.type,
+		node2Sexp: node2.toString(),
+		astDiff
+	};
 }
 
 export interface ProbeShippedReport {
@@ -337,6 +471,10 @@ export async function probe(
 		range?: { start: number; end: number };
 		/** Render → re-parse → include reparsed CST + structural diff. */
 		reparse?: boolean;
+		/** Render → validator-equivalent wrapForReparse + offset lookup →
+		 *  include the selected wrapper, offset, located node, and structural
+		 *  diff. See `computeValidatorWrapDiag`. */
+		validatorReparse?: boolean;
 		/** Absolute or repo-relative path to a baseline package dir
 		 *  (e.g. `packages/rust-baseline`). When set, swaps wrap.ts
 		 *  + templates/ resolution to that dir for this probe pass.
@@ -498,6 +636,7 @@ export async function probe(
 	let renderedLen: number | undefined;
 	let reparsedCst: CstNode | undefined;
 	let astDiff: ProbeReport['astDiff'] | undefined;
+	let wrapDiag: ProbeWrapDiag | undefined;
 	if (!opts.noRender) {
 		if (opts.engine === 'native') {
 			rendered = nativeEngine
@@ -535,6 +674,9 @@ export async function probe(
 				};
 			}
 		}
+		if (opts.validatorReparse) {
+			wrapDiag = await computeValidatorWrapDiag(grammar, parser, targetNode as TSNode, nodeData, rendered);
+		}
 	}
 
 	return {
@@ -548,6 +690,7 @@ export async function probe(
 		rendered,
 		reparsedCst,
 		astDiff,
+		wrapDiag,
 		diff: {
 			sourceLen: probeRange ? probeRange.text.length : source.length,
 			renderedLen,

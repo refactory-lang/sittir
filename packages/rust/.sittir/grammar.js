@@ -2642,7 +2642,7 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
       visibleGroupHiddenNames,
       clauseGroupOwners,
       collidingLeadingNames,
-      void 0,
+      arm,
       enclosingFieldName
     );
     if (!minted) return null;
