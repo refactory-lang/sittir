@@ -99,7 +99,6 @@ import {
 	loadVariantAdoptedKinds,
 	firstParseDefect,
 	astStructuralDiff,
-	leadingTriviaRenderedWidth,
 	findReparsedNodeAtOffset,
 	NAMED_EXTRAS_BY_GRAMMAR
 } from '../validate/read-render-parse.ts';
