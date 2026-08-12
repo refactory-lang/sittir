@@ -642,12 +642,15 @@ export type TypescriptGrammar = {
 	readonly class_body_method: {
 		type: 'class_body_method';
 		named: true;
-		fields: { decorator: { multiple: true; required: false; types: [{ type: 'decorator'; named: true }] } };
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'automatic_semicolon'; named: true }, { type: 'method_definition'; named: true }];
+		fields: {
+			decorator: { multiple: true; required: false; types: [{ type: 'decorator'; named: true }] };
+			semicolon: {
+				multiple: false;
+				required: false;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
 		};
+		children: { multiple: false; required: true; types: [{ type: 'method_definition'; named: true }] };
 	};
 	readonly class_body_method_sig: {
 		type: 'class_body_method_sig';

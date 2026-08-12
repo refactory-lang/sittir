@@ -1807,16 +1807,26 @@
             "named": true
           }
         ]
+      },
+      "semicolon": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": ";",
+            "named": false
+          },
+          {
+            "type": "automatic_semicolon",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "automatic_semicolon",
-          "named": true
-        },
         {
           "type": "method_definition",
           "named": true

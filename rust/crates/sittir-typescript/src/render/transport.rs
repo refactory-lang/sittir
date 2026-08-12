@@ -49942,10 +49942,10 @@ pub struct ClassBodyMethodTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<DecoratorTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_definition"))]
-    pub method_definition: MethodDefinitionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: Option<SemicolonEnum>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_definition"))]
+    pub method_definition: MethodDefinitionTransport,
 }
 
 impl RenderableTransport for ClassBodyMethodTransport {
@@ -65695,7 +65695,6 @@ fn render_class_body_method(node: &ClassBodyMethodTransport, dest: &mut dyn ::st
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ClassBodyMethodTemplate {
-        automatic_semicolon: OptionalNonterminalView::Missing,
         decorator: ListNonterminalView {
             items: decorator_buf.as_slice(),
             separator: "",
@@ -65703,6 +65702,10 @@ fn render_class_body_method(node: &ClassBodyMethodTransport, dest: &mut dyn ::st
             trailing: false,
         },
         method_definition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.method_definition)),
+        semicolon: match &node.semicolon {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
     };
     template.render_into(dest)
 }

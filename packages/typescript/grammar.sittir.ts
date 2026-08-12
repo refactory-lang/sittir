@@ -304,6 +304,7 @@ export default grammar(
 				},
 
 				class_body: {
+					'1/0/0/2': field('semicolon'),
 					'1/0/1/1': field('terminator'),
 					'1/0/3/1': field('terminator')
 				},

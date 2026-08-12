@@ -4360,6 +4360,7 @@ var grammar_sittir_default = grammar(
           1: field("expression")
         },
         class_body: {
+          "1/0/0/2": field("semicolon"),
           "1/0/1/1": field("terminator"),
           "1/0/3/1": field("terminator")
         },

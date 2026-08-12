@@ -464,8 +464,8 @@ export interface ClassBodyMethodTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _decorator?: Array<DecoratorTransport>
-  _method_definition: MethodDefinitionTransport
   _semicolon?: SemicolonEnum
+  _method_definition: MethodDefinitionTransport
 }
 
 export interface ClassBodyTransport {

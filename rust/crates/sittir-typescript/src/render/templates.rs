@@ -173,9 +173,9 @@ pub struct ClassBodyMethodSigTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_class_body_method.jinja", escape = "none")]
 pub struct ClassBodyMethodTemplate<'a> {
-    pub automatic_semicolon: OptionalNonterminalView<'a>,
     pub decorator: ListNonterminalView<'a>,
     pub method_definition: SingleNonterminalView<'a>,
+    pub semicolon: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
