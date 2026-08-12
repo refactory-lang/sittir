@@ -83,6 +83,13 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 				readonly leading?: SeparatorFlankMode;
 			};
 
+			// The deleted wrapper was an optional at the ELEMENT POSITION of a
+			// separated repeat: individual list positions may be blank (array
+			// elision, `[a, , b]`). Storage for such a slot is
+			// `Array<X | undefined>` — a hole is a real position holding no
+			// element, distinct from absence of the position.
+			readonly optionalElement?: boolean;
+
 			readonly aliasedFrom?: string;
 			readonly aliasNamed?: boolean;
 		}

@@ -9868,8 +9868,8 @@
     "edits": [],
     "expectedSourceOut": "println!(\"Got: {}\",slice)",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)))))",
-    "wrappedText": "fn _f() { let _ = println!(\"Got: {}\",slice); }",
-    "wrappedOffset": 18
+    "wrappedText": "println!(\"Got: {}\",slice)",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -37469,8 +37469,8 @@
     "edits": [],
     "expectedSourceOut": "include_str!(\"foo-doc.md\")",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))))",
-    "wrappedText": "fn _f() { let _ = include_str!(\"foo-doc.md\"); }",
-    "wrappedOffset": 18
+    "wrappedText": "include_str!(\"foo-doc.md\")",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -51886,8 +51886,8 @@
     "edits": [],
     "expectedSourceOut": "private_decl!{  }",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace)))",
-    "wrappedText": "fn _f() { let _ = private_decl!{  }; }",
-    "wrappedOffset": 18
+    "wrappedText": "private_decl!{  }",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -86772,8 +86772,8 @@
     "edits": [],
     "expectedSourceOut": "macro!(4)",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (integer_literal)))))",
-    "wrappedText": "fn _f() { let _ = macro!(4); }",
-    "wrappedOffset": 18
+    "wrappedText": "macro!(4)",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -95121,6 +95121,62 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 228,
+      "$source": 0,
+      "$named": true,
+      "_type": "C",
+      "_turbofish": 73,
+      "_type_arguments": {
+        "$type": 231,
+        "$source": 0,
+        "$named": true,
+        "_element": [
+          {
+            "$type": 400,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 12,
+              "end": 13
+            },
+            "$nodeHandle": 86,
+            "_content": "D"
+          }
+        ],
+        "$other": [
+          68,
+          70
+        ],
+        "$span": {
+          "start": 11,
+          "end": 14
+        },
+        "$nodeHandle": 85,
+        "_element_trailing_sep": false
+      },
+      "$span": {
+        "start": 8,
+        "end": 14
+      },
+      "$nodeHandle": 12
+    },
+    "expectedOutput": "C:: <D>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "C::<D>",
+    "pattern": "generic_type_with_turbofish",
+    "edits": [],
+    "expectedSourceOut": "C:: <D>",
+    "expectedReparseTree": "(generic_type_with_turbofish type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier))))",
+    "wrappedText": "type _X = C:: <D>::Item;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 157,
       "$source": 0,
       "$named": true,
@@ -95844,8 +95900,8 @@
     "edits": [],
     "expectedSourceOut": "Token! [ ]",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_bracket)))",
-    "wrappedText": "fn _f() { let _ = Token! [ ]; }",
-    "wrappedOffset": 18
+    "wrappedText": "Token! [ ]",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -106562,8 +106618,8 @@
     "edits": [],
     "expectedSourceOut": "a!()",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren)))",
-    "wrappedText": "fn _f() { let _ = a!(); }",
-    "wrappedOffset": 18
+    "wrappedText": "a!()",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -106613,8 +106669,8 @@
     "edits": [],
     "expectedSourceOut": "b! [ ]",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_bracket)))",
-    "wrappedText": "fn _f() { let _ = b! [ ]; }",
-    "wrappedOffset": 18
+    "wrappedText": "b! [ ]",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -106664,8 +106720,8 @@
     "edits": [],
     "expectedSourceOut": "c!{  }",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace)))",
-    "wrappedText": "fn _f() { let _ = c!{  }; }",
-    "wrappedOffset": 18
+    "wrappedText": "c!{  }",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -106729,8 +106785,8 @@
     "edits": [],
     "expectedSourceOut": "d::e!()",
     "expectedReparseTree": "(macro_invocation macro: (scoped_identifier path: (identifier) name: (identifier)) token_tree: (token_tree (delim_token_tree_paren)))",
-    "wrappedText": "fn _f() { let _ = d::e!(); }",
-    "wrappedOffset": 18
+    "wrappedText": "d::e!()",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -106808,8 +106864,8 @@
     "edits": [],
     "expectedSourceOut": "f::g::h!{  }",
     "expectedReparseTree": "(macro_invocation macro: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) token_tree: (token_tree (delim_token_tree_brace)))",
-    "wrappedText": "fn _f() { let _ = f::g::h!{  }; }",
-    "wrappedOffset": 18
+    "wrappedText": "f::g::h!{  }",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -107179,8 +107235,8 @@
     "edits": [],
     "expectedSourceOut": "a!(*a*)",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)))))",
-    "wrappedText": "fn _f() { let _ = a!(*a*); }",
-    "wrappedOffset": 18
+    "wrappedText": "a!(*a*)",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -107258,8 +107314,8 @@
     "edits": [],
     "expectedSourceOut": "a!(&a&)",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)))))",
-    "wrappedText": "fn _f() { let _ = a!(&a&); }",
-    "wrappedOffset": 18
+    "wrappedText": "a!(&a&)",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -107337,8 +107393,8 @@
     "edits": [],
     "expectedSourceOut": "a!(-a-)",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)))))",
-    "wrappedText": "fn _f() { let _ = a!(-a-); }",
-    "wrappedOffset": 18
+    "wrappedText": "a!(-a-)",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -107428,8 +107484,8 @@
     "edits": [],
     "expectedSourceOut": "a!(b+c++)",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (token_tree_punctuation)))))",
-    "wrappedText": "fn _f() { let _ = a!(b+c++); }",
-    "wrappedOffset": 18
+    "wrappedText": "a!(b+c++)",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -107497,8 +107553,8 @@
     "edits": [],
     "expectedSourceOut": "a!('a'..='z')",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (char_literal)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (char_literal)))))",
-    "wrappedText": "fn _f() { let _ = a!('a'..='z'); }",
-    "wrappedOffset": 18
+    "wrappedText": "a!('a'..='z')",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -107566,8 +107622,8 @@
     "edits": [],
     "expectedSourceOut": "a!('\\u{0}'..='\\u{2}')",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (char_literal)) (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (char_literal)))))",
-    "wrappedText": "fn _f() { let _ = a!('\\u{0}'..='\\u{2}'); }",
-    "wrappedOffset": 18
+    "wrappedText": "a!('\\u{0}'..='\\u{2}')",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -107634,8 +107690,8 @@
     "edits": [],
     "expectedSourceOut": "a!('lifetime)",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1) (token_pattern_group1 (identifier)))))",
-    "wrappedText": "fn _f() { let _ = a!('lifetime); }",
-    "wrappedOffset": 18
+    "wrappedText": "a!('lifetime)",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -107691,8 +107747,8 @@
     "edits": [],
     "expectedSourceOut": "default!(a)",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (identifier)))))",
-    "wrappedText": "fn _f() { let _ = default!(a); }",
-    "wrappedOffset": 18
+    "wrappedText": "default!(a)",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -107748,8 +107804,8 @@
     "edits": [],
     "expectedSourceOut": "union!(a)",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (identifier)))))",
-    "wrappedText": "fn _f() { let _ = union!(a); }",
-    "wrappedOffset": 18
+    "wrappedText": "union!(a)",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -108533,8 +108589,8 @@
     "edits": [],
     "expectedSourceOut": "ok!{  }",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace)))",
-    "wrappedText": "fn _f() { let _ = ok!{  }; }",
-    "wrappedOffset": 18
+    "wrappedText": "ok!{  }",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -112834,6 +112890,62 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 228,
+      "$source": 0,
+      "$named": true,
+      "_type": "Some",
+      "_turbofish": 73,
+      "_type_arguments": {
+        "$type": 231,
+        "$source": 0,
+        "$named": true,
+        "_element": [
+          {
+            "$type": 400,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 157,
+              "end": 162
+            },
+            "$nodeHandle": 296,
+            "_content": "isize"
+          }
+        ],
+        "$other": [
+          68,
+          70
+        ],
+        "$span": {
+          "start": 156,
+          "end": 163
+        },
+        "$nodeHandle": 295,
+        "_element_trailing_sep": false
+      },
+      "$span": {
+        "start": 150,
+        "end": 163
+      },
+      "$nodeHandle": 37
+    },
+    "expectedOutput": "Some:: <isize>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "Some::<isize>",
+    "pattern": "generic_type_with_turbofish",
+    "edits": [],
+    "expectedSourceOut": "Some:: <isize>",
+    "expectedReparseTree": "(generic_type_with_turbofish type: (type_identifier) type_arguments: (type_arguments element: (type_argument (primitive_type))))",
+    "wrappedText": "type _X = Some:: <isize>::Item;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 240,
       "$source": 0,
       "$named": true,
@@ -112900,8 +113012,8 @@
     "edits": [],
     "expectedSourceOut": "println!(\"{x}\")",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))))",
-    "wrappedText": "fn _f() { let _ = println!(\"{x}\"); }",
-    "wrappedOffset": 18
+    "wrappedText": "println!(\"{x}\")",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -123988,8 +124100,8 @@
     "edits": [],
     "expectedSourceOut": "x!()",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren)))",
-    "wrappedText": "fn _f() { let _ = x!(); }",
-    "wrappedOffset": 18
+    "wrappedText": "x!()",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -124039,8 +124151,8 @@
     "edits": [],
     "expectedSourceOut": "y!()",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren)))",
-    "wrappedText": "fn _f() { let _ = y!(); }",
-    "wrappedOffset": 18
+    "wrappedText": "y!()",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -127565,8 +127677,8 @@
     "edits": [],
     "expectedSourceOut": "println!(\"three cubed\")",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))))",
-    "wrappedText": "fn _f() { let _ = println!(\"three cubed\"); }",
-    "wrappedOffset": 18
+    "wrappedText": "println!(\"three cubed\")",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -127638,8 +127750,8 @@
     "edits": [],
     "expectedSourceOut": "println!(\"three cubed\")",
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))))",
-    "wrappedText": "fn _f() { let _ = println!(\"three cubed\"); }",
-    "wrappedOffset": 18
+    "wrappedText": "println!(\"three cubed\")",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",

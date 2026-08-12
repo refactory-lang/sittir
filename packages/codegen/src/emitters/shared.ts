@@ -24,6 +24,7 @@ import {
 	isRequired,
 	isMultiple,
 	isNonEmpty,
+	hasOptionalElements,
 	deriveSlotCardinality,
 	deriveChildrenCardinality,
 	allSlotsOf,
@@ -77,7 +78,7 @@ import type { KindEnumEntry } from './kind-discriminant.ts';
 import { hasCatalogEntry } from './kind-discriminant.ts';
 
 // Re-export derived helpers so emitters can import from one place.
-export { isRequired, isMultiple, isNonEmpty, deriveSlotCardinality, deriveChildrenCardinality };
+export { isRequired, isMultiple, isNonEmpty, hasOptionalElements, deriveSlotCardinality, deriveChildrenCardinality };
 
 export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	const out = new Set<string>();

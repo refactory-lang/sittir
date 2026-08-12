@@ -25,6 +25,7 @@ type BranchLikeForWrap = Extract<AssembledNode, { modelType: 'branch' }>;
 import { deriveUnnamedChildrenCardinality, resolveSlotAliasPairs } from '../compiler/model/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
+	hasOptionalElements,
 	isMultiple,
 	isNonEmpty,
 	isRequired,
@@ -43,6 +44,7 @@ import {
 	hasCatalogEntry,
 	kindDiscriminantExpr,
 	kindDiscriminantExprForId,
+	kindDiscriminantExprForLiteral,
 	collectCatalogKinds,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
@@ -232,6 +234,10 @@ interface ResolveSlotDrillConfig {
 	readonly reclaimKindIdsExpr?: string;
 	readonly kindEnumTextIdPairs?: readonly (readonly [string, number])[];
 	readonly forceUnknownElement?: boolean;
+	// Elidable separated-list slot (`hasOptionalElements`): emitted expression
+	// for the separator's numeric kind id(s). Presence selects the
+	// position-splitting store path over filter+normalize.
+	readonly elidedSeparatorIdsExpr?: string;
 }
 
 function resolveSlotDrillExprs(
@@ -247,6 +253,19 @@ function resolveSlotDrillExprs(
 		config.candidateStorageKeys,
 		config.forceUnknownElement
 	);
+	// Elidable separated-list positions (array elision, `[a, , b]`): the raw
+	// wire array interleaves element entries with the separator's numeric kind
+	// id. Segment on those delimiters — one position per segment, an empty
+	// segment stores `undefined` — instead of filtering the numerics away
+	// (which collapses `[a, , b]` and `[a, b]` into identical storage).
+	if (config.elidedSeparatorIdsExpr !== undefined && slot.arity === 'many') {
+		const allowedArg =
+			config.allowedKinds && config.allowedKinds.length > 0 ? JSON.stringify(config.allowedKinds) : 'undefined';
+		return {
+			storeExpr: `splitElidedWrapSlot(${slotStoreExpr}, ${config.elidedSeparatorIdsExpr}, ${allowedArg})`,
+			accessorBody: resolveSlotAccessorBody(slot, `${config.elemType} | undefined`)
+		};
+	}
 	const filteredStoreExpr =
 		config.allowedKinds && config.allowedKinds.length > 0
 			? `_filterWrapChildrenByKind(${slotStoreExpr}, ${JSON.stringify(config.allowedKinds)})`
@@ -899,7 +918,8 @@ function emitFieldStorageLines(
 			allowedKinds,
 			candidateStorageKeys,
 			reclaimKindIdsExpr,
-			kindEnumTextIdPairs: storageInfo.kind === 'kindEnum' ? kindEnumTextIdPairs(f, nodeMap, kindEntries) : undefined
+			kindEnumTextIdPairs: storageInfo.kind === 'kindEnum' ? kindEnumTextIdPairs(f, nodeMap, kindEntries) : undefined,
+			elidedSeparatorIdsExpr: elidedSeparatorIdsExprOf(f, kindEntries)
 		});
 		lines.push(`    ${f.storageKey}: ${storeExpr},`);
 	}
@@ -968,6 +988,29 @@ function emitFieldFlankCaptureLines(
 	}
 }
 
+/**
+ * Emitted `[<sep kind id>, …]` expression for an elidable separated-list
+ * slot (`hasOptionalElements`), or undefined for every other slot. Throws
+ * (via `kindDiscriminantExprForLiteral`) when the separator literal has no
+ * catalog kind id — the splitter cannot recognize delimiters without one,
+ * and silently falling back would collapse holes.
+ */
+function elidedSeparatorIdsExprOf(
+	f: AssembledNonterminal,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | undefined {
+	if (!hasOptionalElements(f) || !kindEntries) return undefined;
+	const sepTexts = [
+		...new Set(
+			f.values
+				.filter((v) => v.optionalElement === true && v.separator !== undefined)
+				.map((v) => v.separator as string)
+		)
+	];
+	if (sepTexts.length === 0) return undefined;
+	return `[${sepTexts.map((text) => kindDiscriminantExprForLiteral(text, kindEntries)).join(', ')}]`;
+}
+
 function emitFieldAccessorLines(
 	fields: readonly AssembledNonterminal[],
 	dataExpr: string,
@@ -991,7 +1034,8 @@ function emitFieldAccessorLines(
 			nonEmpty: isNonEmpty(f),
 			alias: aliasRewrite,
 			storageInfo,
-			allowedKinds
+			allowedKinds,
+			elidedSeparatorIdsExpr: elidedSeparatorIdsExprOf(f, kindEntries)
 		});
 		lines.push(`    ${propName}() { ${accessorBody}; },`);
 	}
@@ -1276,7 +1320,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesHasSeparatorFlank = /\b_hasSeparatorFlank\b/.test(bodySource);
 		const usesCoerceBoolean = /\bcoerceBooleanKeywordStorage\b/.test(bodySource);
 		const usesCoerceBitflag = /\bcoerceBitflagStorage\b/.test(bodySource);
-		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource);
+		const usesSplitElided = /\bsplitElidedWrapSlot\b/.test(bodySource);
+		// `splitElidedWrapSlot` calls `_filterWrapChildrenByKind` per segment.
+		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource) || usesSplitElided;
 		const usesNormalizeSingular = /\bnormalizeSingularWrapSlot\b/.test(bodySource);
 		const usesNormalizeRepeated = /\bnormalizeRepeatedWrapSlot\b/.test(bodySource);
 		const usesConcatInSourceOrder = /\b_concatInSourceOrder\b/.test(bodySource);
@@ -1736,6 +1782,55 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    if (kind === undefined) return false;',
 						'    return _matchesAllowedWrapKind(kind, allowedKinds);',
 						'  });',
+						'}'
+					]
+				: []),
+			...(usesSplitElided
+				? [
+						'',
+						'// Elidable separated-list positions (array elision, `[a, , b]`): the',
+						'// raw wire array interleaves element entries with the separator token —',
+						'// either as its bare numeric kind id (text-collapsed contexts) or as an',
+						'// anonymous node stub `{ $type: <id>, $named: false }` (node-stub',
+						'// contexts). Segment on those delimiters — each segment is one position',
+						'// holding 0-or-1 element; an empty position stores `undefined`.',
+						'// Idempotent over already-positional storage (a `$with` re-wrap carries',
+						'// no delimiters): with no delimiter present every entry is its own',
+						'// position, `undefined` holes intact.',
+						'function splitElidedWrapSlot<T>(',
+						'  value: T | readonly T[] | undefined,',
+						'  separatorKindIds: readonly number[],',
+						'  allowedKinds: readonly string[] | undefined',
+						'): readonly (T | undefined)[] {',
+						'  const items: readonly unknown[] = value == null ? [] : Array.isArray(value) ? value : [value];',
+						'  if (items.length === 0) return [];',
+						'  const isDelimiter = (e: unknown): boolean => {',
+						'    if (typeof e === "number") return separatorKindIds.includes(e);',
+						'    if (typeof e === "object" && e !== null) {',
+						'      const stub = e as { $type?: unknown; $named?: unknown };',
+						'      return stub.$named === false && typeof stub.$type === "number" && separatorKindIds.includes(stub.$type);',
+						'    }',
+						'    return false;',
+						'  };',
+						'  const keepFirst = (seg: readonly unknown[]): T | undefined => {',
+						'    const kept = allowedKinds ? (_filterWrapChildrenByKind(seg as readonly T[], allowedKinds) as readonly T[]) : (seg.filter((e) => e !== undefined) as readonly T[]);',
+						'    return kept.length > 0 ? kept[0] : undefined;',
+						'  };',
+						'  if (!items.some(isDelimiter)) {',
+						'    return (items as readonly (T | undefined)[]).map((e) => (e === undefined ? undefined : keepFirst([e])));',
+						'  }',
+						'  const positions: (T | undefined)[] = [];',
+						'  let segment: unknown[] = [];',
+						'  for (const entry of items) {',
+						'    if (isDelimiter(entry)) {',
+						'      positions.push(keepFirst(segment));',
+						'      segment = [];',
+						'    } else {',
+						'      segment.push(entry);',
+						'    }',
+						'  }',
+						'  positions.push(keepFirst(segment));',
+						'  return positions;',
 						'}'
 					]
 				: []),

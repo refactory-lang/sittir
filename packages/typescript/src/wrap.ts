@@ -1103,6 +1103,53 @@ function _filterWrapChildrenByKind<T>(
 	});
 }
 
+// Elidable separated-list positions (array elision, `[a, , b]`): the
+// raw wire array interleaves element entries with the separator token —
+// either as its bare numeric kind id (text-collapsed contexts) or as an
+// anonymous node stub `{ $type: <id>, $named: false }` (node-stub
+// contexts). Segment on those delimiters — each segment is one position
+// holding 0-or-1 element; an empty position stores `undefined`.
+// Idempotent over already-positional storage (a `$with` re-wrap carries
+// no delimiters): with no delimiter present every entry is its own
+// position, `undefined` holes intact.
+function splitElidedWrapSlot<T>(
+	value: T | readonly T[] | undefined,
+	separatorKindIds: readonly number[],
+	allowedKinds: readonly string[] | undefined
+): readonly (T | undefined)[] {
+	const items: readonly unknown[] = value == null ? [] : Array.isArray(value) ? value : [value];
+	if (items.length === 0) return [];
+	const isDelimiter = (e: unknown): boolean => {
+		if (typeof e === 'number') return separatorKindIds.includes(e);
+		if (typeof e === 'object' && e !== null) {
+			const stub = e as { $type?: unknown; $named?: unknown };
+			return stub.$named === false && typeof stub.$type === 'number' && separatorKindIds.includes(stub.$type);
+		}
+		return false;
+	};
+	const keepFirst = (seg: readonly unknown[]): T | undefined => {
+		const kept = allowedKinds
+			? (_filterWrapChildrenByKind(seg as readonly T[], allowedKinds) as readonly T[])
+			: (seg.filter((e) => e !== undefined) as readonly T[]);
+		return kept.length > 0 ? kept[0] : undefined;
+	};
+	if (!items.some(isDelimiter)) {
+		return (items as readonly (T | undefined)[]).map((e) => (e === undefined ? undefined : keepFirst([e])));
+	}
+	const positions: (T | undefined)[] = [];
+	let segment: unknown[] = [];
+	for (const entry of items) {
+		if (isDelimiter(entry)) {
+			positions.push(keepFirst(segment));
+			segment = [];
+		} else {
+			segment.push(entry);
+		}
+	}
+	positions.push(keepFirst(segment));
+	return positions;
+}
+
 export function wrapProgram(data: T.Program, tree: TreeHandle) {
 	const _node = withMethods(
 		{
@@ -3377,8 +3424,10 @@ export function wrapObject(data: T.Object, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.Object as const,
-			_properties: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._properties, [
+			_properties: splitElidedWrapSlot(
+				data._properties,
+				[TSKindId.Comma],
+				[
 					'pair',
 					'spread_element',
 					'method_definition',
@@ -3386,17 +3435,15 @@ export function wrapObject(data: T.Object, tree: TreeHandle) {
 					'identifier',
 					'_reserved_identifier',
 					'shorthand_property_identifier'
-				]),
-				false,
-				'properties',
-				{ tree, nodeType: data.$type, slotName: 'properties', span: (data as _NodeData).$span }
+				]
 			),
 
 			properties() {
-				return drillAsAll<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier>(
-					this._properties,
-					tree,
-					[{ from: 'shorthand_property_identifier', to: '_shorthand_property_identifier' }]
+				return drillInAll<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier | undefined>(
+					this._properties as
+						| readonly (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier | undefined)[]
+						| undefined,
+					tree
 				);
 			},
 			$with: {
@@ -3414,8 +3461,10 @@ export function wrapObjectPattern(data: T.ObjectPattern, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.ObjectPattern as const,
-			_properties: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._properties, [
+			_properties: splitElidedWrapSlot(
+				data._properties,
+				[TSKindId.Comma],
+				[
 					'pair_pattern',
 					'rest_pattern',
 					'object_assignment_pattern',
@@ -3423,18 +3472,24 @@ export function wrapObjectPattern(data: T.ObjectPattern, tree: TreeHandle) {
 					'identifier',
 					'_reserved_identifier',
 					'shorthand_property_identifier_pattern'
-				]),
-				false,
-				'properties',
-				{ tree, nodeType: data.$type, slotName: 'properties', span: (data as _NodeData).$span }
+				]
 			),
 
 			properties() {
-				return drillAsAll<
-					T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern
-				>(this._properties, tree, [
-					{ from: 'shorthand_property_identifier_pattern', to: '_shorthand_property_identifier_pattern' }
-				]);
+				return drillInAll<
+					T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern | undefined
+				>(
+					this._properties as
+						| readonly (
+								| T.PairPattern
+								| T.RestPattern
+								| T.ObjectAssignmentPattern
+								| T.ShorthandPropertyIdentifierPattern
+								| undefined
+						  )[]
+						| undefined,
+					tree
+				);
 			},
 			$with: {
 				properties: (...v: NonNullable<T.ObjectPattern['_properties']>[number][]) =>
@@ -3523,8 +3578,10 @@ export function wrapArray(data: T.Array, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.Array as const,
-			_elements: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._elements, [
+			_elements: splitElidedWrapSlot(
+				data._elements,
+				[TSKindId.Comma],
+				[
 					'expression',
 					'as_expression',
 					'satisfies_expression',
@@ -3567,15 +3624,12 @@ export function wrapArray(data: T.Array, tree: TreeHandle) {
 					'new_expression',
 					'yield_expression',
 					'spread_element'
-				]),
-				false,
-				'elements',
-				{ tree, nodeType: data.$type, slotName: 'elements', span: (data as _NodeData).$span }
+				]
 			),
 
 			elements() {
-				return drillInAll<T.Expression | T.SpreadElement>(
-					this._elements as readonly (T.Expression | T.SpreadElement)[] | undefined,
+				return drillInAll<T.Expression | T.SpreadElement | undefined>(
+					this._elements as readonly (T.Expression | T.SpreadElement | undefined)[] | undefined,
 					tree
 				);
 			},
@@ -3593,8 +3647,10 @@ export function wrapArrayPattern(data: T.ArrayPattern, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.ArrayPattern as const,
-			_elements: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._elements, [
+			_elements: splitElidedWrapSlot(
+				data._elements,
+				[TSKindId.Comma],
+				[
 					'pattern',
 					'_lhs_expression',
 					'member_expression',
@@ -3609,16 +3665,14 @@ export function wrapArrayPattern(data: T.ArrayPattern, tree: TreeHandle) {
 					'non_null_expression',
 					'rest_pattern',
 					'assignment_pattern'
-				]),
-				false,
-				'elements',
-				{ tree, nodeType: data.$type, slotName: 'elements', span: (data as _NodeData).$span }
+				]
 			),
 
 			elements() {
-				return drillAsAll<T.Pattern | T.AssignmentPattern>(this._elements, tree, [
-					{ from: 'for_header_group1', to: '_lhs_expression' }
-				]);
+				return drillInAll<T.Pattern | T.AssignmentPattern | undefined>(
+					this._elements as readonly (T.Pattern | T.AssignmentPattern | undefined)[] | undefined,
+					tree
+				);
 			},
 			$with: {
 				elements: (...v: NonNullable<T.ArrayPattern['_elements']>[number][]) =>
@@ -5450,8 +5504,10 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.Arguments as const,
-			_arguments: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._arguments, [
+			_arguments: splitElidedWrapSlot(
+				data._arguments,
+				[TSKindId.Comma],
+				[
 					'expression',
 					'as_expression',
 					'satisfies_expression',
@@ -5494,15 +5550,12 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle) {
 					'new_expression',
 					'yield_expression',
 					'spread_element'
-				]),
-				false,
-				'arguments',
-				{ tree, nodeType: data.$type, slotName: 'arguments', span: (data as _NodeData).$span }
+				]
 			),
 
 			arguments() {
-				return drillInAll<T.Expression | T.SpreadElement>(
-					this._arguments as readonly (T.Expression | T.SpreadElement)[] | undefined,
+				return drillInAll<T.Expression | T.SpreadElement | undefined>(
+					this._arguments as readonly (T.Expression | T.SpreadElement | undefined)[] | undefined,
 					tree
 				);
 			},

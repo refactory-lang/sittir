@@ -61,6 +61,7 @@ import {
 	isRequired,
 	isMultiple,
 	isNonEmpty,
+	hasOptionalElements,
 	slotKindNames,
 	slotLiteralValues,
 	resolveHiddenKeywordLiteral,
@@ -888,7 +889,10 @@ function emitInterface(
 			const opt = isRequired(f) ? '' : '?';
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
-				emitFieldArrayDeclaration(lines, f.storageKey, opt, storageType, isNonEmpty(f));
+				// Elidable separated-list positions store holes as `undefined`
+				// entries (array elision, `[a, , b]`).
+				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;
+				emitFieldArrayDeclaration(lines, f.storageKey, opt, elemType, isNonEmpty(f));
 			} else {
 				lines.push(`  readonly ${f.storageKey}${opt}: ${storageType};`);
 			}
@@ -904,7 +908,8 @@ function emitInterface(
 			const opt = isRequired(f) ? '' : '?';
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				// Multiple accessor returns the array type (same as storage type).
-				const arrType = isNonEmpty(f) ? `NonEmptyArray<${storageType}>` : `readonly (${storageType})[]`;
+				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;
+				const arrType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `readonly (${elemType})[]`;
 				lines.push(`  ${propName}(): ${arrType};`);
 			} else {
 				lines.push(`  ${propName}(): ${storageType}${opt ? ' | undefined' : ''};`);

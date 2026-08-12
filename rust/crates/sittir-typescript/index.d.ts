@@ -135,7 +135,7 @@ export interface ArgumentsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _arguments?: Array<ArgumentsArgumentsTransportSlot>
+  _arguments?: Array<ArgumentsArgumentsTransportSlot | undefined | null>
 }
 
 export interface ArrayPatternTransport {
@@ -146,7 +146,7 @@ export interface ArrayPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _elements?: Array<ArrayPatternElementsTransportSlot>
+  _elements?: Array<ArrayPatternElementsTransportSlot | undefined | null>
 }
 
 export interface ArrayTransport {
@@ -157,7 +157,7 @@ export interface ArrayTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _elements?: Array<ArrayElementsTransportSlot>
+  _elements?: Array<ArrayElementsTransportSlot | undefined | null>
 }
 
 export interface ArrayTypeTransport {
@@ -1962,7 +1962,7 @@ export interface ObjectPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _properties?: Array<ObjectPatternPropertiesTransportSlot>
+  _properties?: Array<ObjectPatternPropertiesTransportSlot | undefined | null>
 }
 
 export interface ObjectTransport {
@@ -1973,7 +1973,7 @@ export interface ObjectTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _properties?: Array<ObjectPropertiesTransportSlot>
+  _properties?: Array<ObjectPropertiesTransportSlot | undefined | null>
 }
 
 export interface ObjectTypeContentTransport {

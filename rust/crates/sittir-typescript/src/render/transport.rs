@@ -36472,7 +36472,7 @@ pub struct ObjectTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties"))]
-    pub properties: Option<Vec<ObjectPropertiesTransportSlot>>,
+    pub properties: Option<Vec<Option<ObjectPropertiesTransportSlot>>>,
 }
 
 impl RenderableTransport for ObjectTransport {
@@ -36522,7 +36522,7 @@ pub struct ObjectPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties"))]
-    pub properties: Option<Vec<ObjectPatternPropertiesTransportSlot>>,
+    pub properties: Option<Vec<Option<ObjectPatternPropertiesTransportSlot>>>,
 }
 
 impl RenderableTransport for ObjectPatternTransport {
@@ -36676,7 +36676,7 @@ pub struct ArrayTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
-    pub elements: Option<Vec<ArrayElementsTransportSlot>>,
+    pub elements: Option<Vec<Option<ArrayElementsTransportSlot>>>,
 }
 
 impl RenderableTransport for ArrayTransport {
@@ -36726,7 +36726,7 @@ pub struct ArrayPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
-    pub elements: Option<Vec<ArrayPatternElementsTransportSlot>>,
+    pub elements: Option<Vec<Option<ArrayPatternElementsTransportSlot>>>,
 }
 
 impl RenderableTransport for ArrayPatternTransport {
@@ -40859,7 +40859,7 @@ pub struct ArgumentsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
-    pub arguments: Option<Vec<ArgumentsArgumentsTransportSlot>>,
+    pub arguments: Option<Vec<Option<ArgumentsArgumentsTransportSlot>>>,
 }
 
 impl RenderableTransport for ArgumentsTransport {
@@ -63362,7 +63362,7 @@ fn render_object(node: &ObjectTransport, dest: &mut dyn ::std::fmt::Write) -> Re
     }
     let properties_owned = node.properties.as_deref().unwrap_or(&[]);
     let properties_buf: Vec<::sittir_core::filters::Renderable<'_>> = properties_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .map(|t| match t { Some(t) => ::sittir_core::filters::Renderable::Transport(t), None => ::sittir_core::filters::Renderable::Text("") })
         .collect();
     let template = ObjectTemplate {
         properties: ListNonterminalView {
@@ -63383,7 +63383,7 @@ fn render_object_pattern(node: &ObjectPatternTransport, dest: &mut dyn ::std::fm
     }
     let properties_owned = node.properties.as_deref().unwrap_or(&[]);
     let properties_buf: Vec<::sittir_core::filters::Renderable<'_>> = properties_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .map(|t| match t { Some(t) => ::sittir_core::filters::Renderable::Transport(t), None => ::sittir_core::filters::Renderable::Text("") })
         .collect();
     let template = ObjectPatternTemplate {
         properties: ListNonterminalView {
@@ -63420,7 +63420,7 @@ fn render_array(node: &ArrayTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
     }
     let elements_owned = node.elements.as_deref().unwrap_or(&[]);
     let elements_buf: Vec<::sittir_core::filters::Renderable<'_>> = elements_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .map(|t| match t { Some(t) => ::sittir_core::filters::Renderable::Transport(t), None => ::sittir_core::filters::Renderable::Text("") })
         .collect();
     let template = ArrayTemplate {
         elements: ListNonterminalView {
@@ -63441,7 +63441,7 @@ fn render_array_pattern(node: &ArrayPatternTransport, dest: &mut dyn ::std::fmt:
     }
     let elements_owned = node.elements.as_deref().unwrap_or(&[]);
     let elements_buf: Vec<::sittir_core::filters::Renderable<'_>> = elements_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .map(|t| match t { Some(t) => ::sittir_core::filters::Renderable::Transport(t), None => ::sittir_core::filters::Renderable::Text("") })
         .collect();
     let template = ArrayPatternTemplate {
         elements: ListNonterminalView {
@@ -64056,7 +64056,7 @@ fn render_arguments(node: &ArgumentsTransport, dest: &mut dyn ::std::fmt::Write)
     }
     let arguments_owned = node.arguments.as_deref().unwrap_or(&[]);
     let arguments_buf: Vec<::sittir_core::filters::Renderable<'_>> = arguments_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .map(|t| match t { Some(t) => ::sittir_core::filters::Renderable::Transport(t), None => ::sittir_core::filters::Renderable::Text("") })
         .collect();
     let template = ArgumentsTemplate {
         arguments: ListNonterminalView {

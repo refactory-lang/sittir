@@ -3685,8 +3685,8 @@ export interface YieldExpression {
 
 export interface Object {
 	readonly $type: TSKindId.Object;
-	readonly _properties?: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
-	properties(): readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
+	readonly _properties?: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier | undefined)[];
+	properties(): readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier | undefined)[];
 }
 
 export interface ObjectPattern {
@@ -3696,8 +3696,15 @@ export interface ObjectPattern {
 		| RestPattern
 		| ObjectAssignmentPattern
 		| ShorthandPropertyIdentifierPattern
+		| undefined
 	)[];
-	properties(): readonly (PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern)[];
+	properties(): readonly (
+		| PairPattern
+		| RestPattern
+		| ObjectAssignmentPattern
+		| ShorthandPropertyIdentifierPattern
+		| undefined
+	)[];
 }
 
 export interface AssignmentPattern {
@@ -3718,14 +3725,14 @@ export interface ObjectAssignmentPattern {
 
 export interface Array {
 	readonly $type: TSKindId.Array;
-	readonly _elements?: readonly (Expression | SpreadElement)[];
-	elements(): readonly (Expression | SpreadElement)[];
+	readonly _elements?: readonly (Expression | SpreadElement | undefined)[];
+	elements(): readonly (Expression | SpreadElement | undefined)[];
 }
 
 export interface ArrayPattern {
 	readonly $type: TSKindId.ArrayPattern;
-	readonly _elements?: readonly (Pattern | AssignmentPattern)[];
-	elements(): readonly (Pattern | AssignmentPattern)[];
+	readonly _elements?: readonly (Pattern | AssignmentPattern | undefined)[];
+	elements(): readonly (Pattern | AssignmentPattern | undefined)[];
 }
 
 export interface JsxElement {
@@ -4175,8 +4182,8 @@ export interface MetaProperty {
 
 export interface Arguments {
 	readonly $type: TSKindId.Arguments;
-	readonly _arguments?: readonly (Expression | SpreadElement)[];
-	arguments(): readonly (Expression | SpreadElement)[];
+	readonly _arguments?: readonly (Expression | SpreadElement | undefined)[];
+	arguments(): readonly (Expression | SpreadElement | undefined)[];
 }
 
 export interface Decorator {

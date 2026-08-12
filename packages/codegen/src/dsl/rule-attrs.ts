@@ -22,7 +22,7 @@ export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): 
 	// structurally rather than narrowing the param type, matching the
 	// established pattern (see `findRepeatFlag` in dsl/rule-transforms.ts).
 	const src = original as StampedAttrs & { id?: string };
-	const { fieldName, multiplicity, separator, id } = src;
+	const { fieldName, multiplicity, separator, optionalElement, id } = src;
 	const patch: Record<string, unknown> = {};
 	if (fieldName !== undefined && !Object.prototype.hasOwnProperty.call(result, 'fieldName'))
 		patch['fieldName'] = fieldName;
@@ -30,6 +30,12 @@ export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): 
 		patch['multiplicity'] = multiplicity;
 	if (separator !== undefined && !Object.prototype.hasOwnProperty.call(result, 'separator'))
 		patch['separator'] = separator;
+	// `nonterminal` is deliberately NOT transferred: every survivor a collapse
+	// site produces is intrinsically nonterminal (isSlotNode's structural
+	// fallback covers it). `optionalElement` has no structural fallback — the
+	// deleted-wrapper fact would die with the discarded node.
+	if (optionalElement !== undefined && !Object.prototype.hasOwnProperty.call(result, 'optionalElement'))
+		patch['optionalElement'] = optionalElement;
 	// Preserve the rule's identity through collapse: renderRule.id === collapsedRule.id
 	// so the emitter (walks renderRule) and collectSlots (reads simplifiedRule) still
 	// share one of the slot's `sourceRuleIds`, making `slotByRuleId` (the canonical,
@@ -49,7 +55,7 @@ export interface SharedArmAttrs {
 
 const MULTIPLICITY_RANK: Record<Multiplicity, number> = { single: 0, optional: 1, array: 2, nonEmptyArray: 3 };
 
-type StampedAttrs = Pick<RuleBase<'normalize'>, 'fieldName' | 'multiplicity' | 'nonterminal' | 'separator'>;
+type StampedAttrs = Pick<RuleBase<'normalize'>, 'fieldName' | 'multiplicity' | 'nonterminal' | 'separator' | 'optionalElement'>;
 
 function armsOf(rule: AnyRule): readonly AnyRule[] {
 	if (rule.type === CHOICE) return rule.members;

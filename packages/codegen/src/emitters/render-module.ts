@@ -31,6 +31,7 @@ import {
 	AssembledGroup,
 	AssembledSeparatedList,
 	deriveUnnamedChildrenCardinality,
+	hasOptionalElements,
 	isMultiple,
 	isRequired,
 	isNodeRef,
@@ -788,7 +789,7 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!node.userFacing) continue;
 		// Separator — scan slot values for stamped separators (set by
-		// deriveSlotsRawFromLeafAttr via stampSeparatorOnValues for named
+		// deriveSlotsRawFromLeafAttr via stampListFactsOnValues for named
 		// field slots). Falls back to node.separator (AssembledBranch /
 		// AssembledSeparatedList simplified-rule-or-raw-rule separator) for
 		// container-shaped nodes whose separator lives on the rule rather
@@ -1194,9 +1195,14 @@ function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: strin
 	return lines;
 }
 
-function emitListSlotBuffer(ident: string, required: boolean, filterAnon = false): string[] {
+function emitListSlotBuffer(ident: string, required: boolean, filterAnon = false, optionalElement = false): string[] {
 	const R = RENDERABLE_PREFIX;
-	const mapBody = `${R}Renderable::Transport(t)`;
+	// An elidable position (`Vec<Option<T>>`) renders a hole as empty text —
+	// it still occupies a join position, so `Joined` emits the separators
+	// around it (`[a, , b]` reproduces its bytes).
+	const mapBody = optionalElement
+		? `match t { Some(t) => ${R}Renderable::Transport(t), None => ${R}Renderable::Text("") }`
+		: `${R}Renderable::Transport(t)`;
 	if (required) {
 		return emitIterCollectBuffer(ident, `node.${ident}`, mapBody, filterAnon);
 	}
@@ -1346,7 +1352,11 @@ function buildTypedTemplateBody(
 		const rIdent = rustFieldIdent(f.storageName);
 		if (emittedBufferIdents.has(rIdent)) continue;
 		emittedBufferIdents.add(rIdent);
-		lines.push(...emitListSlotBuffer(rIdent, f.required));
+		const slotForBuf =
+			slotModel !== undefined
+				? [...slotModel.named, ...slotModel.unnamed].find((s) => s.storageName === f.storageName)
+				: undefined;
+		lines.push(...emitListSlotBuffer(rIdent, f.required, false, slotForBuf !== undefined && hasOptionalElements(slotForBuf)));
 	}
 
 	// Build template struct — all single-value fields use Renderable::Transport.
@@ -3891,7 +3901,7 @@ function renderTransportField(
 			rustTransportSlotType(
 				kindsOf(field),
 				nodeMap,
-				{ required, multiple: isMultiple(field) },
+				{ required, multiple: isMultiple(field), optionalElement: hasOptionalElements(field) },
 				parentKind,
 				typeName,
 				field.name,
@@ -3905,13 +3915,13 @@ function renderTransportField(
 function rustTransportSlotType(
 	slotKinds: readonly string[],
 	nodeMap: NodeMap,
-	cardinality: { required: boolean; multiple: boolean },
+	cardinality: { required: boolean; multiple: boolean; optionalElement?: boolean },
 	parentKind: string,
 	typeName: string,
 	fieldName: string,
 	literalTexts: readonly string[] = []
 ): string {
-	const { required, multiple } = cardinality;
+	const { required, multiple, optionalElement } = cardinality;
 	// Mixed-content override: a field with named kinds AND anonymous literal
 	// content is heterogeneous regardless of classifier (e.g. `function_modifiers.modifier`
 	// which accepts `extern_modifier` OR bare keywords like `async`/`const`/`unsafe`).
@@ -3948,7 +3958,10 @@ function rustTransportSlotType(
 
 	const wrap = (inner: string): string => {
 		if (multiple) {
-			const vec = `Vec<${inner}>`;
+			// Elidable separated-list positions (array elision, `[a, , b]`): a
+			// hole is a real position holding no element — `None` entries, which
+			// napi maps from the wire's `undefined` entries natively.
+			const vec = optionalElement ? `Vec<Option<${inner}>>` : `Vec<${inner}>`;
 			if (required) return vec;
 			return `Option<${vec}>`;
 		}

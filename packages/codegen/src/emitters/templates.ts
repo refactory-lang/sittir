@@ -665,7 +665,7 @@ function selectJoinFilter(
 	if (leading) return 'joinWithLeading';
 	// Fallback: read trailing/leading from the slot's per-value entries.
 	// This handles the case where the separator was stamped onto slot values
-	// by `stampSeparatorOnValues` but the rule itself (a rebuilt choice from
+	// by `stampListFactsOnValues` but the rule itself (a rebuilt choice from
 	// `fanOutSeqChoices`/`factorChoiceBranches`) carries no flank flags.
 	if (slot !== undefined) {
 		const multiVal = slot.values.find((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
@@ -698,7 +698,7 @@ function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonter
 		slot.values.every((v) => isTerminalValue(v) && v.immediate === true);
 	// Separator resolution: prefer the rule's own separator (directly carried),
 	// then fall back to the slot values' per-entry separator (stamped by
-	// `stampSeparatorOnValues` when the separator flowed from a repeat wrapper
+	// `stampListFactsOnValues` when the separator flowed from a repeat wrapper
 	// through wrapper-deletion). This handles the case where `fanOutSeqChoices`/
 	// `factorChoiceBranches` rebuilt a choice carrying only the rule id (not the
 	// separator), so the outer choice has no separator but the slot values do.

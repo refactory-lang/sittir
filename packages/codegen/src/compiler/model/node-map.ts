@@ -374,6 +374,12 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly separator?: string;
 	readonly trailing?: boolean;
 	readonly leading?: boolean;
+	// Separated-list positions may be individually blank (array elision,
+	// `[a, , b]`): storage is `Array<X | undefined>`, holes are `undefined`
+	// entries. Projected from the rule-level `optionalElement` stamp
+	// (wrapper-deletion) exactly as `separator` is; only meaningful on
+	// array/nonEmptyArray multiplicities.
+	readonly optionalElement?: boolean;
 	// Literal-only token-wrapper flags (see interface doc).
 	readonly immediate?: boolean;
 	readonly tokenized?: boolean;
@@ -422,6 +428,13 @@ export function isMultiple(slot: { values: readonly NodeOrTerminal[] }): boolean
 export function isNonEmpty(slot: { values: readonly NodeOrTerminal[] }): boolean {
 	const multis = slot.values.filter((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
 	return multis.length > 0 && multis.every((v) => v.multiplicity === 'nonEmptyArray');
+}
+
+/** Separated-list slot whose positions may be individually blank (array
+ *  elision, `[a, , b]`): storage is `Array<X | undefined>`, holes are
+ *  `undefined` entries. See `NodeRef.optionalElement`. */
+export function hasOptionalElements(slot: { values: readonly NodeOrTerminal[] }): boolean {
+	return slot.values.some((v) => v.optionalElement === true);
 }
 
 export interface SlotCardinality {
@@ -986,6 +999,7 @@ function structuralSignatureOfValue(value: NodeOrTerminal, ctx: DeriveCtx, stora
 		value.separator ?? '',
 		value.trailing ? 't' : '',
 		value.leading ? 'l' : '',
+		value.optionalElement ? 'oe' : '',
 		isTerminalValue(value) && value.immediate ? 'i' : '',
 		isTerminalValue(value) && value.tokenized ? 'tok' : ''
 	].join('|');
@@ -1026,11 +1040,27 @@ export function extractSeparatorString(sep: RuleBase<'normalize'>['separator']):
 	return undefined;
 }
 
-export function stampSeparatorOnValues(values: NodeOrTerminal[], separatorStr: string | undefined): NodeOrTerminal[] {
-	if (!separatorStr) return values;
-	return values.map((v) =>
-		v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray' ? { ...v, separator: separatorStr } : v
-	);
+export interface ListSlotFactsCtx {
+	readonly separator?: string;
+	readonly optionalElement?: boolean;
+}
+
+/**
+ * Stamp separated-list facts (separator literal, per-position elidability)
+ * onto array/nonEmptyArray multiplicity values. Single-value slots are left
+ * unchanged.
+ */
+export function stampListFactsOnValues(values: NodeOrTerminal[], ctx: ListSlotFactsCtx): NodeOrTerminal[] {
+	const { separator, optionalElement } = ctx;
+	if (!separator && optionalElement !== true) return values;
+	return values.map((v) => {
+		if (v.multiplicity !== 'array' && v.multiplicity !== 'nonEmptyArray') return v;
+		return {
+			...v,
+			...(separator ? { separator } : {}),
+			...(optionalElement === true ? { optionalElement: true } : {})
+		};
+	});
 }
 
 /**

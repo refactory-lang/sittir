@@ -58,7 +58,7 @@ import {
 	mergeFlankMode,
 	mergeSourceRuleIds,
 	recordAssembleWarning,
-	stampSeparatorOnValues
+	stampListFactsOnValues
 } from './model/node-map.ts';
 import { findRepeatFlag } from '../dsl/rule-transforms.ts';
 
@@ -530,7 +530,10 @@ function buildSlot(
 				`slot-value stamp path (see this guard's comment in collect-slots.ts).`
 		});
 	}
-	const values: readonly NodeOrTerminal[] = stampSeparatorOnValues([...dedupedValues], separatorStr);
+	const values: readonly NodeOrTerminal[] = stampListFactsOnValues([...dedupedValues], {
+		separator: separatorStr,
+		optionalElement: (rule as { optionalElement?: boolean }).optionalElement
+	});
 
 	// A sanctioned union slot's addressable positions are every one of its
 	// arms, not just the CHOICE root — the render-rule's per-arm scan

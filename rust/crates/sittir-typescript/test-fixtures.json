@@ -56763,6 +56763,169 @@
       "$named": true,
       "_statements": [
         {
+          "$type": 182,
+          "$source": 0,
+          "$named": true,
+          "_semicolon": 159,
+          "$span": {
+            "start": 0,
+            "end": 25
+          },
+          "$nodeHandle": 3,
+          "_expressions": {
+            "$type": 217,
+            "$source": 0,
+            "$named": true,
+            "_elements": [
+              null,
+              "a",
+              null,
+              "b",
+              null,
+              null,
+              null,
+              "s",
+              null,
+              null,
+              null
+            ],
+            "$other": [
+              37,
+              38
+            ],
+            "$span": {
+              "start": 0,
+              "end": 25
+            },
+            "$nodeHandle": 4
+          }
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 25
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "[,a,,b,,,,s,,,]\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "[, a, , b, , , , s, , , ]",
+    "pattern": "program",
+    "edits": [],
+    "expectedSourceOut": "[,a,,b,,,,s,,,]\n",
+    "expectedReparseTree": "(program statements: (expression_statement (array elements: (identifier) elements: (identifier) elements: (identifier)) semicolon: (automatic_semicolon)))",
+    "wrappedText": "[,a,,b,,,,s,,,]\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 182,
+      "$source": 0,
+      "$named": true,
+      "_semicolon": 159,
+      "$span": {
+        "start": 0,
+        "end": 25
+      },
+      "$nodeHandle": 1,
+      "_expressions": {
+        "$type": 217,
+        "$source": 0,
+        "$named": true,
+        "_elements": [
+          null,
+          "a",
+          null,
+          "b",
+          null,
+          null,
+          null,
+          "s",
+          null,
+          null,
+          null
+        ],
+        "$other": [
+          37,
+          38
+        ],
+        "$span": {
+          "start": 0,
+          "end": 25
+        },
+        "$nodeHandle": 5
+      }
+    },
+    "expectedOutput": "[,a,,b,,,,s,,,]\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "[, a, , b, , , , s, , , ]",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "[,a,,b,,,,s,,,]\n",
+    "expectedReparseTree": "(expression_statement (array elements: (identifier) elements: (identifier) elements: (identifier)) semicolon: (automatic_semicolon))",
+    "wrappedText": "[,a,,b,,,,s,,,]\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 217,
+      "$source": 0,
+      "$named": true,
+      "_elements": [
+        null,
+        "a",
+        null,
+        "b",
+        null,
+        null,
+        null,
+        "s",
+        null,
+        null,
+        null
+      ],
+      "$other": [
+        37,
+        38
+      ],
+      "$span": {
+        "start": 0,
+        "end": 25
+      },
+      "$nodeHandle": 2
+    },
+    "expectedOutput": "[,a,,b,,,,s,,,]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "[, a, , b, , , , s, , , ]",
+    "pattern": "array",
+    "edits": [],
+    "expectedSourceOut": "[,a,,b,,,,s,,,]",
+    "expectedReparseTree": "(array elements: (identifier) elements: (identifier) elements: (identifier))",
+    "wrappedText": "let _ = [,a,,b,,,,s,,,];",
+    "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 166,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
           "$type": 183,
           "$source": 0,
           "$named": true,
