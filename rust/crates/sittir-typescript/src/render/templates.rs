@@ -1031,6 +1031,7 @@ pub struct ImportStatementTemplate<'a> {
 #[template(path = "index_signature.jinja", escape = "none")]
 pub struct IndexSignatureTemplate<'a> {
     pub content: SingleNonterminalView<'a>,
+    pub readonly_marker: OptionalNonterminalView<'a>,
     pub sign: OptionalNonterminalView<'a>,
     pub type_: SingleNonterminalView<'a>,
 }
@@ -1044,7 +1045,6 @@ pub struct IndexTypeQueryTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "infer_type.jinja", escape = "none")]
 pub struct InferTypeTemplate<'a> {
-    pub constraint: OptionalNonterminalView<'a>,
     pub type_: OptionalNonterminalView<'a>,
     pub type_identifier: SingleNonterminalView<'a>,
 }

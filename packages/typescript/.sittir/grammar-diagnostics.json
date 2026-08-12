@@ -234,6 +234,19 @@
     "code": "multi-slot-nested-seq",
     "severity": "warning",
     "grammar": "typescript",
+    "ownerKind": "_index_signature_optional1",
+    "message": "Kind '_index_signature_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position.",
+    "proposal": "Kind '_index_signature_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position. Propose: register a visible groups: entry so this substructure becomes a single group slot in the parent.",
+    "canProceed": true,
+    "details": {
+      "slotCount": 2
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "multi-slot-nested-seq",
+    "severity": "warning",
+    "grammar": "typescript",
     "ownerKind": "_type_identifier",
     "message": "Kind '_type_identifier' has a multi-slot seq with 2 slots in a repeat/optional slot position.",
     "proposal": "Kind '_type_identifier' has a multi-slot seq with 2 slots in a repeat/optional slot position. Propose: register a visible groups: entry so this substructure becomes a single group slot in the parent.",
@@ -244,7 +257,7 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "39 referenced kind(s) resolved no parser kindId",
+    "message": "40 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -269,6 +282,7 @@
         "_jsx_start_opening_element_group1",
         "_jsx_string",
         "_kw_optional_marker",
+        "_kw_readonly_marker",
         "_mapped_type_clause_optional1",
         "_operator",
         "_semicolon",
@@ -325,7 +339,7 @@
   },
   {
     "code": "kindid-inline-excluded-symbols",
-    "message": "18 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "19 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -346,6 +360,7 @@
         "_jsx_identifier",
         "_jsx_start_opening_element",
         "_kw_optional_marker",
+        "_kw_readonly_marker",
         "_mapped_type_clause_optional1",
         "_semicolon"
       ]

@@ -9385,27 +9385,20 @@
             }
           },
           {
-            "type": "FIELD",
-            "name": "constraint",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "_infer_type_optional1",
-                  "metadata": {
-                    "author": "enrich",
-                    "symbolSource": "group-lift"
-                  }
-                },
-                {
-                  "type": "BLANK"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_infer_type_optional1",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
                 }
-              ]
-            },
-            "metadata": {
-              "fieldSource": "override"
-            }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           }
         ]
       }
@@ -12665,8 +12658,15 @@
           }
         },
         {
-          "type": "STRING",
-          "value": "readonly"
+          "type": "FIELD",
+          "name": "readonly_marker",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_kw_readonly_marker"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -14589,6 +14589,12 @@
       "_kw_readonly_marker"
     ],
     [
+      "method_definition",
+      "method_signature",
+      "index_signature",
+      "_public_field_definition_readonly_first"
+    ],
+    [
       "primary_expression",
       "_kw_async_marker"
     ],
@@ -16127,7 +16133,8 @@
     "_infer_type_optional1",
     "_mapped_type_clause_optional1",
     "_index_signature_optional1",
-    "_kw_optional_marker"
+    "_kw_optional_marker",
+    "_kw_readonly_marker"
   ],
   "supertypes": [
     "statement",

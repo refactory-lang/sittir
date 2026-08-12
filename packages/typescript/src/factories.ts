@@ -4977,6 +4977,7 @@ export function buildConstructSignature(config: T.ConstructSignature.Config) {
 
 export function buildIndexSignature(config: T.IndexSignature.Config) {
 	const _sign = coerceKindEnumStorage(config.sign, [['-', TSKindId.Dash] as const, ['+', TSKindId.Plus] as const]);
+	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
 	const _content = config.content;
 	const _type = config.type;
 	return withMethods(
@@ -4986,11 +4987,14 @@ export function buildIndexSignature(config: T.IndexSignature.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_sign,
+				_readonly_marker,
 				_content,
 				_type,
 				$with: {
 					sign: (value?: NonNullable<Parameters<typeof buildIndexSignature>[0]>['sign']) =>
 						buildIndexSignature({ ...config, sign: value }),
+					readonlyMarker: (value?: NonNullable<Parameters<typeof buildIndexSignature>[0]>['readonlyMarker']) =>
+						buildIndexSignature({ ...config, readonlyMarker: value }),
 					content: (value: T.IndexSignatureColon | T.MappedTypeClause) =>
 						buildIndexSignature({ ...config, content: value }),
 					type: (
@@ -5000,6 +5004,7 @@ export function buildIndexSignature(config: T.IndexSignature.Config) {
 			},
 			{
 				sign: () => _sign,
+				readonlyMarker: () => _readonly_marker,
 				content: () => _content,
 				type: () => _type
 			}
@@ -6271,9 +6276,7 @@ export function buildPublicFieldDefinitionAbstractFirst(
 export function buildPublicFieldDefinitionReadonlyFirst(
 	config: Partial<T.PublicFieldDefinitionReadonlyFirst.Config> = {}
 ) {
-	const _readonly_marker = coerceKindEnumStorage('readonly' as const, [
-		['readonly', TSKindId.KwReadonlyMarker] as const
-	]);
+	const _readonly_marker = coerceKindEnumStorage('readonly' as const, [['readonly', TSKindId.Readonly] as const]);
 	const _abstract_marker = coerceBooleanKeywordStorage(config.abstractMarker);
 	return withMethods(
 		withAccessors(

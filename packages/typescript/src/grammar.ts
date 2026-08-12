@@ -1498,6 +1498,7 @@ export type TypescriptGrammar = {
 		type: 'index_signature';
 		named: true;
 		fields: {
+			readonly_marker: { multiple: false; required: false; types: [{ type: 'readonly'; named: false }] };
 			sign: { multiple: false; required: false; types: [{ type: '+'; named: false }, { type: '-'; named: false }] };
 			type: {
 				multiple: false;
@@ -1537,11 +1538,6 @@ export type TypescriptGrammar = {
 		type: 'infer_type';
 		named: true;
 		fields: {
-			constraint: {
-				multiple: true;
-				required: false;
-				types: [{ type: 'extends'; named: false }, { type: 'type'; named: true }];
-			};
 			type: { multiple: false; required: false; types: [{ type: 'type'; named: true }] };
 			type_identifier: { multiple: false; required: true; types: [{ type: 'type_identifier'; named: true }] };
 		};

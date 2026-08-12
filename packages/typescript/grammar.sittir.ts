@@ -58,6 +58,10 @@ export default grammar(
 				[$.readonly_type, $._kw_readonly_marker],
 				[$.abstract_method_signature, $._kw_abstract_marker],
 				[$.index_signature, $._kw_readonly_marker],
+				// The fielded `readonly` in index_signature's modifier group makes
+				// `'class' '{' 'readonly' • '['` ambiguous with the sibling
+				// class-member rules that also start with a readonly modifier.
+				[$.method_definition, $.method_signature, $.index_signature, $._public_field_definition_readonly_first],
 				[$.primary_expression, $._kw_async_marker],
 				[$.primary_expression, $._property_name, $._kw_async_marker],
 				[$.primary_expression, $._kw_static_marker],
@@ -339,6 +343,15 @@ export default grammar(
 					0: field('attribute_kind')
 				},
 
+				index_signature: {
+					// Presence carrier for the bare `readonly` modifier: the
+					// enclosing optional group's only other slot (`sign`) is
+					// itself optional, so without this field a sign-less
+					// `readonly [k: string]: T` has nothing recording the
+					// group's occurrence and render drops the keyword.
+					'0/0/1': field('readonly_marker')
+				},
+
 				import_statement: {
 					1: field('import_clause'),
 					2: field('from_clause'),
@@ -346,8 +359,13 @@ export default grammar(
 				},
 
 				infer_type: {
-					1: field('type_identifier'),
-					2: field('constraint')
+					// No field on position 2 (the optional `extends` clause group):
+					// an outer field on an inlined hidden group makes tree-sitter tag
+					// every spliced child with the OUTER name, while the slot model
+					// names the slot from the inner field — the wire and the model
+					// then disagree and the clause never renders. The enrich-supplied
+					// inner field('type') is the single naming source.
+					1: field('type_identifier')
 				},
 
 				intersection_type: {

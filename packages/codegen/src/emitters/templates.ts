@@ -924,10 +924,20 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 				// symbolFieldName: when present, it's the outer FIELD's own name
 				// (e.g. `name`/`semicolon`) — prefer it over a condKey derived
 				// from the helper's inner content, since the outer field's
-				// presence is what the wire/read layer actually populates.
+				// presence is what the wire/read layer actually populates. That
+				// only holds when a slot actually carries the outer name: when
+				// the helper's INNER field names the slot instead (infer_type's
+				// `constraint` ref around a helper whose inner field is `type`),
+				// the outer name is unaddressable and its gate is never true —
+				// fall through to the helper-derived key.
 				if (multiplicity === 'optional' && helperBody) {
+					const symbolFieldKey = symbolFieldName?.toLowerCase();
+					const addressableFieldKey =
+						symbolFieldKey !== undefined && (ctx.ownerSlots === undefined || ctx.ownerSlots[symbolFieldKey] !== undefined)
+							? symbolFieldKey
+							: undefined;
 					const condKey =
-						symbolFieldName?.toLowerCase() ??
+						addressableFieldKey ??
 						pickConditionalKey(helperRenderRule, helperCtx) ??
 						(rule.name.replace(/^_+/, '') || 'children').toLowerCase();
 					return `{% if ${condKey} | isPresent %}${helperBody}{% endif %}`;
@@ -999,11 +1009,19 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 const warnedMultiSlotGroups = new Set<string>();
 function warnMultiSlotMultiplicityGroup(rule: Extract<RenderRule, { type: 'SEQ' }>, ctx: EmitCtx): void {
 	const keys = new Set<string>();
+	let hasUnitMandatoryKey = false;
 	for (const m of rule.members) {
 		const k = pickConditionalKey(m, ctx);
-		if (k) keys.add(k);
+		if (!k) continue;
+		keys.add(k);
+		const memberMult = (m as { multiplicity?: Multiplicity }).multiplicity;
+		if (memberMult !== 'optional' && memberMult !== 'array') hasUnitMandatoryKey = true;
 	}
 	if (keys.size <= 1) return;
+	// A unit-mandatory keyed member IS a sound single gate (the unit occurs
+	// exactly when it is present — pickConditionalKey selects it), so
+	// multi-slot is only unsound when every keyed member is optional.
+	if (hasUnitMandatoryKey) return;
 	// Message label: the distinct internal slot names identify the offending
 	// group precisely enough for a diagnostic (the hidden source-kind name
 	// this seq was spliced from is not available here without a metadata
@@ -1024,7 +1042,16 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	// by the enrich / push-down pass).
 	const contentFieldName = (content as { fieldName?: string }).fieldName;
 	if (contentFieldName !== undefined) {
-		return contentFieldName.toLowerCase();
+		const key = contentFieldName.toLowerCase();
+		// A fieldName no actual slot carries cannot gate anything — its
+		// `| isPresent` is never true. This happens when an override fields
+		// an optional GROUP REF (`field('constraint', optional(_helper))`)
+		// whose splice stamps the name on the seq node while the slot takes
+		// its name from the field INSIDE the helper (infer_type: gate said
+		// `constraint`, slot is `type`). Fall through to the structural
+		// search so the gate lands on a real slot; without ownerSlots
+		// (unit-test contexts) keep the historical name-trusting behavior.
+		if (ctx.ownerSlots === undefined || ctx.ownerSlots[key] !== undefined) return key;
 	}
 	// Transparent wrappers — recurse. FIELD/TOKEN/ALIAS are WrapperPhase-only
 	// (types/rule.ts) and never survive into RenderRule — applyWrapperDeletion
@@ -1035,13 +1062,24 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	if (content.type === VARIANT || content.type === GROUP) {
 		return pickConditionalKey(content.content, ctx);
 	}
-	// A seq with a member that has a field name — use that field.
+	// A seq with a member that has a field name — use that field. Prefer a
+	// UNIT-MANDATORY member (no own optional/array stamp): the unit occurs
+	// exactly when that slot is present, so it is a sound `| isPresent`
+	// gate. An optional-within-unit member can be absent while the unit
+	// still renders (index_signature's `sign` before its mandatory
+	// `readonly` marker), so gating on it drops the unit's mandatory
+	// content; it survives only as the fallback when every keyed member is
+	// optional.
 	if (content.type === SEQ) {
+		let fallback: string | undefined;
 		for (const m of content.members) {
 			const key = pickConditionalKey(m, ctx);
-			if (key) return key;
+			if (!key) continue;
+			const memberMult = (m as { multiplicity?: Multiplicity }).multiplicity;
+			if (memberMult !== 'optional' && memberMult !== 'array') return key;
+			fallback ??= key;
 		}
-		return undefined;
+		return fallback;
 	}
 	// A choice whose branches carry field names — gate on the first branch
 	// that yields a key (mirrors the seq-member loop above). Without this,

@@ -3681,6 +3681,13 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "readonly_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -7424,6 +7431,8 @@
       "factoryName": "_indexSignatureOptional1",
       "irKey": "indexSignatureOptional1",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "buildIndexSignatureOptional1()",
       "name": "_index_signature_optional1",
       "fields": [
         {
@@ -7450,6 +7459,29 @@
           "projection": {
             "typeName": "",
             "kinds": []
+          }
+        },
+        {
+          "name": "readonly_marker",
+          "propertyName": "readonlyMarker",
+          "paramName": "readonlyMarker",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_kw_readonly_marker",
+              "parseKind": "_kw_readonly_marker",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_readonly_marker"
+            ]
           }
         }
       ],
@@ -16514,6 +16546,29 @@
           "projection": {
             "typeName": "",
             "kinds": []
+          }
+        },
+        {
+          "name": "readonly_marker",
+          "propertyName": "readonlyMarker",
+          "paramName": "readonlyMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_readonly_marker",
+              "parseKind": "_kw_readonly_marker",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_readonly_marker"
+            ]
           }
         },
         {

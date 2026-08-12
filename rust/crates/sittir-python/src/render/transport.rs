@@ -33036,7 +33036,6 @@ fn render_exec_statement(node: &ExecStatementTransport, dest: &mut dyn ::std::fm
             leading: false,
             trailing: false,
         },
-        in_clause: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }

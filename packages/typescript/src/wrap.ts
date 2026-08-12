@@ -10124,6 +10124,14 @@ export function wrapIndexSignature(
 				),
 				{ '-': 71, '+': 70 }
 			),
+			_readonly_marker: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'readonly_marker',
+					span: (data as _NodeData).$span
+				})
+			),
 			_content: normalizeSingularWrapSlot(
 				data._content ?? data._index_signature_colon ?? data._mapped_type_clause,
 				'content',
@@ -10141,6 +10149,9 @@ export function wrapIndexSignature(
 			sign() {
 				return this._sign;
 			},
+			readonlyMarker() {
+				return this._readonly_marker;
+			},
 			content() {
 				return drillAs<T.IndexSignatureColon | T.MappedTypeClause>(this._content, tree, [
 					{ from: 'index_signature_colon', to: '_index_signature_colon' }
@@ -10154,6 +10165,8 @@ export function wrapIndexSignature(
 			},
 			$with: {
 				sign: (v: NonNullable<T.IndexSignature['_sign']>) => wrapIndexSignature({ ...data, _sign: v }, tree),
+				readonlyMarker: (v: NonNullable<T.IndexSignature['_readonly_marker']>) =>
+					wrapIndexSignature({ ...data, _readonly_marker: v }, tree),
 				content: (v: NonNullable<T.IndexSignature['_content']>) => wrapIndexSignature({ ...data, _content: v }, tree),
 				type: (v: NonNullable<T.IndexSignature['_type']>) => wrapIndexSignature({ ...data, _type: v }, tree)
 			}
@@ -12013,7 +12026,7 @@ export function wrapPublicFieldDefinitionAbstractFirst(data: T.PublicFieldDefini
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'abstract_marker', span: (data as _NodeData).$span }
 				),
-				{ abstract: 359 }
+				{ abstract: 358 }
 			),
 			_readonly_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
@@ -12049,13 +12062,12 @@ export function wrapPublicFieldDefinitionReadonlyFirst(data: T.PublicFieldDefini
 			$type: TSKindId.PublicFieldDefinitionReadonlyFirst as const,
 			_readonly_marker: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._readonly_marker ?? readTerminalFromOther(data, [TSKindId.KwReadonlyMarker]),
+					data._readonly_marker ?? readTerminalFromOther(data, [TSKindId.Readonly]),
 					'readonly_marker',
 					true,
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'readonly_marker', span: (data as _NodeData).$span }
-				),
-				{ readonly: 357 }
+				)
 			),
 			_abstract_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._abstract_marker, 'abstract_marker', false, data.$type, {
@@ -12931,7 +12943,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_type_identifier: (d) => ({ ...d, $type: TSKindId.TypeIdentifier as const }),
 	_kw_async_marker: (d) => ({ ...d, $type: TSKindId.KwAsyncMarker as const }),
 	_kw_static_marker: (d) => ({ ...d, $type: TSKindId.KwStaticMarker as const }),
-	_kw_readonly_marker: (d) => ({ ...d, $type: TSKindId.KwReadonlyMarker as const }),
 	_kw_abstract_marker: (d) => ({ ...d, $type: TSKindId.KwAbstractMarker as const }),
 	_kw_const_marker: (d) => ({ ...d, $type: TSKindId.KwConstMarker as const }),
 	_export_clause_group1: (d, t) => wrapExportClauseGroup1(d as unknown as T.ExportClauseGroup1, t),

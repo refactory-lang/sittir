@@ -3197,6 +3197,7 @@ export function coerceToIndexSignature(input: T.IndexSignature.Loose): ReturnTyp
 			['-', TSKindId.Dash] as const,
 			['+', TSKindId.Plus] as const
 		]),
+		readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
 		content: _requireField(
 			'index_signature',
 			'content',

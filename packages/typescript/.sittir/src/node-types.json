@@ -4194,6 +4194,16 @@
     "type": "index_signature",
     "named": true,
     "fields": {
+      "readonly_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "readonly",
+            "named": false
+          }
+        ]
+      },
       "sign": {
         "multiple": false,
         "required": false,
@@ -4296,20 +4306,6 @@
     "type": "infer_type",
     "named": true,
     "fields": {
-      "constraint": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "extends",
-            "named": false
-          },
-          {
-            "type": "type",
-            "named": true
-          }
-        ]
-      },
       "type": {
         "multiple": false,
         "required": false,

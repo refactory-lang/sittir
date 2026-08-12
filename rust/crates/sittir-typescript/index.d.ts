@@ -1426,6 +1426,7 @@ export interface IndexSignatureOptional1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _sign?: Box<AnyTransport>
+  _readonly_marker: KwReadonlyMarkerTransport
 }
 
 export interface IndexSignatureTransport {
@@ -1437,6 +1438,7 @@ export interface IndexSignatureTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _sign?: Box<AnyTransport>
+  _readonly_marker?: KwReadonlyMarkerTransport
   _type: IndexSignatureTypeTransportSlot
   _content: IndexSignatureContentTransportSlot
 }

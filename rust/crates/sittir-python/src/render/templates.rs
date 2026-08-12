@@ -535,7 +535,6 @@ pub struct ExceptClauseTemplate<'a> {
 pub struct ExecStatementTemplate<'a> {
     pub code: SingleNonterminalView<'a>,
     pub expression: ListNonterminalView<'a>,
-    pub in_clause: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
