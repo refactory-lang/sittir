@@ -76,16 +76,6 @@ A real parse+read carries these fields; reconstructing the SAME materialized dat
 
 **Status: documented exclusions — every count above is pinned by the committed ceilings; a fix must lower the matching ceiling in the same commit (the gate prints a reminder when a class drops below its ceiling).**
 
-## `Generated manifest verification failed` flakes under full-suite parallelism (python `grammar.json` MODIFIED)
-
-**Found during:** the full-suite hygiene pass after the floor-ratchet work; narrowed during the known-issues review.
-
-Under a FULL parallel vitest run, tests that call `assertGeneratedManifestsClean` at validator startup intermittently fail with `python: MODIFIED: packages/python/.sittir/src/grammar.json` — the victim set varies run to run (`validate-from.test.ts`, `corpus-validation.test.ts`'s read-projection test, `probe/probe-kind-trace.test.ts`, `native-node-coords.test.ts`, `node-to-config-promotion.test.ts` have each flapped). Every one of these passes standalone, and the on-disk hash matches the committed manifest both at rest and immediately after single-file runs — so something in the concurrent suite transiently rewrites (or transiently mid-write exposes) `grammar.json` while another worker hashes it. `vitest.setup.ts`'s per-grammar `compileParser` (which regenerates `.sittir` artifacts on every vitest startup) is the prime suspect for the concurrent writer; a same-content rewrite is not atomic, so a reader hashing mid-write sees a torn file.
-
-**Status: flake, not a deterministic failure — every affected test passes standalone.** (The 4 `nested-alias-e2e` failures and the spike-parser failure originally co-attributed to this were actually stale fixed-depth navigation pins around the deliberately-visible `statement_group1` layer — fixed by navigating via `descendantsOfType`.)
-
-**Fix, if/when prioritized:** make the setup-time `.sittir` regeneration write-if-changed (compare bytes before writing, as codegen's own `writeFile` helpers do) and/or write-to-temp-then-rename so readers never observe a torn file; alternatively serialize manifest verification against the setup step.
-
 ## `enrich()` optional keyword-prefix promotion (pass 2) no longer recurses into choice members — unit pin broken
 
 **Found during:** the same hygiene pass. `packages/codegen/src/dsl/__tests__/enrich.test.ts` ("recurses into choice members") dies at `branch0.members[0]` — the choice branch it inspects no longer has `members`, i.e. either the promotion stopped recursing into CHOICE arms (behavior regression) or a later enrich/normalize change legitimately reshapes the branch before the assertion (stale pin). Not yet triaged to either side — the failure is a TypeError in the test's own navigation, not a clean assertion diff.
