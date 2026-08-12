@@ -192,7 +192,7 @@ jobs:
 
   # Spec 054 — perf regression-checker (native only). Compares the FFI
   # roundtrip + call-count from a fresh native-backend metrics run against
-  # the committed `specs/054-post-016-perf-tracking/baselines/perf-native.json`.
+  # the committed `packages/tools/baselines/perf-native.json`.
   # Regressions > 10% on `ffi.meanRoundtripMs` or `ffi.totalCalls` fail the
   # build EXCEPT when `SITTIR_METRICS_FFI_WARN_ONLY=1` (set below for the
   # one-month calibration window per FR-008). Skipped when napi build

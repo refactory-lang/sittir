@@ -32,7 +32,11 @@ vi.mock('../src/run.ts', () => ({
 		skip: 0,
 		astMatchPass: 8,
 		errors: [],
-		astMismatches: []
+		astMismatches: [],
+		// Without this field collectValidatorFailuresForGrammar throws
+		// ("accessorThrows is not iterable") and the in-process test below
+		// silently exercises the whole-grammar CATCH path.
+		accessorThrows: []
 	}),
 	runCoverage: vi.fn().mockReturnValue({ grammar: 'rust', total: 10, pass: 10, fail: 0, issues: [] }),
 	runFactory: vi.fn().mockResolvedValue({

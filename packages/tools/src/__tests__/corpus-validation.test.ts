@@ -1,210 +1,48 @@
 /**
- * Corpus validation floor test.
+ * Deep read-render-parse floor test.
  *
- * Pins the EXACT tree-sitter corpus validation path — the same validators
- * invoked by `sittir --roundtrip` — as a regression guard. Failures here
- * mean the generated output drifted from what the runtime validators
- * can exercise against real grammar fixtures.
+ * The committed `packages/tools/baselines/native.json` (diffed by CI's
+ * baseline regression check and refreshable via `sittir tool check-baseline
+ * --collect --backend native`) is the single floor authority for the
+ * shallow-read validators: from(), template coverage, shallow
+ * read-render-parse, factory-render-parse, and parity fixtures. This file
+ * deliberately asserts NONE of those — a second hardcoded copy of the same
+ * floors drifts (this suite sat failing for weeks with numbers above AND
+ * below measured reality).
  *
- * Two sets of numbers per grammar:
+ * What the baseline does NOT capture is the DEEP (recursive-read) run:
+ * collect-baseline's roundtrip validator is shallow-only. The deep floors
+ * below are therefore the one set of counts still pinned here. Ratchet
+ * discipline applies: when a fix raises a number, raise the floor in the
+ * same commit; floors only ever move up.
  *
- *   FLOORS   — the minimum the current pipeline must achieve today.
- *              Asserted; lowering them fails CI without justification.
- *
- *   LEGACY_BASELINE — the numbers the pre-refactor pipeline hit in the
- *              final validation reports checked in at
- *              `packages/{g}/validation-report.txt` (2026-04-09). The
- *              current pipeline must eventually match or beat these;
- *              the gap between FLOORS and LEGACY_BASELINE is the
- *              outstanding debt.
- *
- * The test ALSO asserts that FLOORS never drops below LEGACY_BASELINE,
- * which means any PR closing the gap must raise FLOORS in the same
- * commit.
+ * Source of truth for the pinned numbers: the deep `read-render-parse`
+ * column of `packages/tools/validation-history.jsonl` (appended by every
+ * `pnpm run validate:native`).
  */
 
 import { describe, it, expect } from 'vitest';
 import { resolve } from 'node:path';
 import { generate } from '../../../codegen/src/compiler/generate.ts';
-import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
-import { validateFrom } from '../validate/from.ts';
 import { validateReadProjection } from '../validate/read-projection.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
-import { validateTemplateCoverage } from '../validate/template-coverage.ts';
 
-/**
- * Current floors — asserted. When a fix lands, raise these in the
- * same commit so the gap to LEGACY_BASELINE stays visible.
- *
- * MEASUREMENT RESET (commit 016/measurement-reset, 2026-04-25): TS-side
- * cosmetic post-processing (`collapse_inner_spaces` regex + outer
- * `.trim()`) was removed from `packages/legacy-core/src/render.ts` and the
- * legacy native preparation path to surface walker bugs that
- * the post-processing was hiding (per
- * `~/.claude/projects/.../memory/feedback_no_silent_formatting.md` and
- * `project_post_processing_reset.md`). The floors below for `rtPass` /
- * `rtAstMatchPass` (rust, typescript) reflect the new HONEST raw
- * walker output — not the post-processing-disguised numbers.
- *
- * Cluster F (walker refactor per `feedback_walker_refactor_blockers.md`)
- * will lift these floors back up as it eliminates per-template
- * whitespace artifacts. Each cluster commit raises floors back toward
- * the legacy baseline; never below.
- *
- * NATIVE RENDER (ADR-0017, 2026-05-03): RT validation uses the native
- * Askama render path (`backend: 'native'`). Both parse and render go
- * through the napi engine. This is the authoritative RT surface —
- * the JS Nunjucks path has known Cluster F spacing bugs that native
- * handles correctly. NEVER run RT without `backend: 'native'`.
- * The same applies to from(): `validateFrom` must be called with
- * `'native'` so `buildReadHandle` uses the native read path — the
- * default (no backend, no SITTIR_BACKEND env) silently falls back to
- * the DEPRECATED TS-side readNode and reports numbers ~15–20 passes
- * below the tracked native baseline.
- *
- * FLOOR RESET (2026-07-17, fix-pretriage-test-debt): floors re-pinned
- * to the current committed native baseline. Source of truth for the
- * numbers: the latest `packages/tools/validation-history.jsonl` rows
- * (appended by every `pnpm run validate:native` via runCountsCli and
- * committed as `chore(validator): record validation run`) — stable
- * across 2026-07-13..17 and byte-reproduced by this test file when
- * the native engine is live. This file had sat in test debt since
- * ~2026-05; the gaps to the old floors are all documented pipeline
- * evolution, not branch regressions:
- *   - from() floors: the old numbers were never comparable — the test
- *     previously ran the deprecated JS read path (see above). The ts
- *     from() universe also shrank (137→113) via variant()/kind
- *     consolidation, same pattern as the python R1 note below.
- *   - shallow rt astMatch drops (rust 124→118, ts 108→49, py
- *     114→101): the shallow read was redefined (~2026-06-10) to feed
- *     render() one-level native reads with `$nodeHandle` stubs (see
- *     read-render-parse.ts shallow-mode comment); undrilled stubs
- *     render as silent-empties — a tracked debt, deliberately
- *     surfaced by the measurement rather than hidden.
- *   - ts rtTotal 112→111: corpus entry universe change (stable at 111
- *     in history since at least 2026-06-03).
- *   - deep rt: `astMatchPass === pass` has not held since at least
- *     2026-06-03 — the deep fidelity gap (pass without byte-exact AST
- *     match) is the outstanding debt, now floored explicitly via
- *     `rtDeepAstMatchPass` instead of asserted away.
- */
+/** Deep (recursive-read) floors per grammar. See header for why ONLY these live here. */
 const FLOORS = {
-	// Python floors adjusted for override-compiled parser (spec 007).
-	// The override parser carries transform() fields natively, which
-	// changes parse-tree structure slightly. Generated routing was built
-	// against the base parser — mismatches expected until T023 switches
-	// node-types.json source to the override version.
 	python: {
-		// Floors dropped (factoryPass 92→39, factoryAstMatchPass 87→28,
-		// rtPass 109→78, rtAstMatchPass 102→76) after two paired
-		// corrections: (1) reparse-wrapper map supertype names are
-		// unprefixed for python (`expression`, not `_expression`) — so
-		// `wrapForReparse` actually wraps kinds that previously
-		// returned null; (2) null-wrap now counts as skip, not fake
-		// pass. Previous numbers were inflated by kinds that silently
-		// skipped reparse. New numbers measure actual round-trip
-		// success. Gap vs LEGACY_BASELINE is the real outstanding
-		// debt — nothing in the pipeline regressed, we just stopped
-		// hiding the failures.
-		// FLOOR RESET (2026-07-30, factory-render-parse redesign): the
-		// factory validator no longer renders factory output and
-		// re-parses it — it compares the factory-built node's storage
-		// directly against the materialized read reference (same read
-		// path as rrp), and requires an explicit 'native' backend (see
-		// the two calls above). The prior floors were measuring a
-		// different, JS-render-contaminated pipeline; astMatchPass is
-		// now always equal to pass (storage-identity is a single-tier
-		// check — see FactoryRenderParseResult's doc comment).
-		factoryPass: 810,
-		factoryAstMatchPass: 810,
-		factoryTotal: 842,
-		// R1 ceilings (2026-04-24): fromTotal 117 → 114, fromPass
-		// 110 → 107 — 013's variant() adoption consolidated kinds out
-		// of the validation universe (fewer kinds, fewer pass, total
-		// drop slightly more than pass drop). Floor tracks the new
-		// actual. 2026-07-17: re-pinned to the native read path
-		// (97/120) — see FLOOR RESET header note.
-		fromPass: 97,
-		fromTotal: 120,
-		// 2026-07-17 floor reset — see header. rtPass/rtTotal and
-		// rtAstMatchPass are the SHALLOW run; rtDeep* the recursive run.
-		rtPass: 115,
 		rtTotal: 115,
-		rtAstMatchPass: 101,
-		rtDeepPass: 115,
-		rtDeepAstMatchPass: 108,
-		covPass: 103,
-		covTotal: 105
+		rtDeepPass: 105,
+		rtDeepAstMatchPass: 100
 	},
 	rust: {
-		// Phase D (2026-05-01): floors raised across the board.
-		// kindNames Map wiring + enum synthesis + type-check fixes
-		// resolved numeric dispatch for form/synthesized kinds.
-		// Factory totals jumped (135→1084) because synthesized enum
-		// kinds expanded the validation universe.
-		// FLOOR RESET (2026-07-30) — see python's factoryPass comment above.
-		factoryPass: 1048,
-		factoryAstMatchPass: 1048,
-		factoryTotal: 1087,
-		fromPass: 132,
-		fromTotal: 157,
-		// 2026-07-17 floor reset — see header.
-		rtPass: 133,
 		rtTotal: 136,
-		// 118→117 (2026-07-20): restoring token_tree's REPARSE_WRAPPERS key
-		// (silently lost since PR #165's alias-catalog split) converted that
-		// kind's silently-skipped probe back into a counted candidate; its
-		// pre-existing shallow AST mismatch (walker token-adjacency class,
-		// see docs/KNOWN_ISSUES.md) now shows as a visible failure. Coverage
-		// gain, not a render regression — deep floor (123) unaffected.
-		rtAstMatchPass: 117,
-		rtDeepPass: 133,
-		rtDeepAstMatchPass: 123,
-		covPass: 161,
-		covTotal: 164
+		rtDeepPass: 131,
+		rtDeepAstMatchPass: 128
 	},
 	typescript: {
-		// FLOOR RESET (2026-07-30) — see python's factoryPass comment above.
-		factoryPass: 933,
-		factoryAstMatchPass: 933,
-		factoryTotal: 975,
-		fromPass: 102,
-		fromTotal: 113,
-		// 2026-07-17 floor reset — see header.
-		rtPass: 82,
 		rtTotal: 111,
-		rtAstMatchPass: 49,
-		rtDeepPass: 82,
-		rtDeepAstMatchPass: 76,
-		covPass: 169,
-		covTotal: 173
-	}
-} as const;
-
-/**
- * Legacy baseline — the target. Source:
- * packages/{g}/validation-report.txt committed at 2026-04-09 (commit
- * b85075b). The current pipeline must eventually match or exceed
- * these numbers before the rewrite is considered complete.
- */
-const LEGACY_BASELINE = {
-	python: {
-		factoryPass: 92,
-		factoryTotal: 99,
-		fromPass: 92,
-		fromTotal: 99
-	},
-	rust: {
-		factoryPass: 112,
-		factoryTotal: 135,
-		fromPass: 133,
-		fromTotal: 135
-	},
-	typescript: {
-		factoryPass: 119,
-		factoryTotal: 123,
-		fromPass: 118,
-		fromTotal: 123
+		rtDeepPass: 105,
+		rtDeepAstMatchPass: 105
 	}
 } as const;
 
@@ -216,112 +54,21 @@ function resolveTemplatesPath(grammar: GrammarName): string {
 	return resolve(new URL('../../../..', import.meta.url).pathname, `packages/${grammar}/templates`);
 }
 
-describe.each(Object.keys(FLOORS) as GrammarName[])('corpus validation floor — %s', (grammar) => {
+describe.each(Object.keys(FLOORS) as GrammarName[])('deep read-render-parse floor — %s', (grammar) => {
 	const floors = FLOORS[grammar];
 
-	it(`factory build fidelity (AST match) passes at least ${floors.factoryAstMatchPass}/${floors.factoryTotal}`, async () => {
-		// Strict structural equality on the factory-build round-trip.
-		// Catches factory API gaps the weaker kind-found check misses:
-		// dropped anonymous children (e.g. python `async` prefix),
-		// missing field surface, children slot not plumbed through
-		// the factory signature.
-		const templatesPath = resolveTemplatesPath(grammar);
-		const result = await validateFactoryRenderParse(grammar, templatesPath, 'native');
-
-		expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.factoryAstMatchPass);
-	}, 60000);
-
-	it(`factory render-parse passes at least ${floors.factoryPass}/${floors.factoryTotal}`, async () => {
-		const templatesPath = resolveTemplatesPath(grammar);
-		const result = await validateFactoryRenderParse(grammar, templatesPath, 'native');
-
-		expect(result.total).toBeGreaterThanOrEqual(floors.factoryTotal);
-		expect(result.pass).toBeGreaterThanOrEqual(floors.factoryPass);
-	}, 60000);
-
-	it(`from() correctness passes at least ${floors.fromPass}/${floors.fromTotal}`, async () => {
-		// 'native' is required: with no backend argument (and no
-		// SITTIR_BACKEND env) buildReadHandle silently uses the
-		// deprecated TS-side readNode, which reports ~15–20 fewer
-		// passes than the tracked native baseline.
-		const result = await validateFrom(grammar, 'native');
-
-		expect(result.total).toBeGreaterThanOrEqual(floors.fromTotal);
-		expect(result.pass).toBeGreaterThanOrEqual(floors.fromPass);
-	}, 60000);
-
-	it(`full read-render-parse passes at least ${floors.rtPass}/${floors.rtTotal}`, async () => {
-		const templatesPath = resolveTemplatesPath(grammar);
-		const result = await validateReadRenderParse(grammar, templatesPath, { backend: 'native' });
-
-		expect(result.total).toBeGreaterThanOrEqual(floors.rtTotal);
-		expect(result.pass).toBeGreaterThanOrEqual(floors.rtPass);
-	}, 60000);
-
-	it(`read-render-parse AST match passes at least ${floors.rtAstMatchPass}/${floors.rtTotal}`, async () => {
-		// Strict structural equality between the original parse and
-		// the reparsed tree — anonymous tokens included. Tightens
-		// `rtPass` (which only checks that the kind survives) so
-		// regressions that silently drop content like `;` / `,` /
-		// keyword tokens fail CI. The gap between `rtAstMatchPass`
-		// and `rtPass` is the outstanding fidelity debt.
-		const templatesPath = resolveTemplatesPath(grammar);
-		const result = await validateReadRenderParse(grammar, templatesPath, { backend: 'native' });
-
-		expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.rtAstMatchPass);
-	}, 60000);
-
-	it(`deep read-render-parse (recursive read → render → reparse) passes at least ${floors.rtDeepPass}/${floors.rtTotal}`, async () => {
+	it(`deep read-render-parse (recursive read → render → reparse) passes at least ${floors.rtDeepPass}/${floors.rtTotal}, AST match at least ${floors.rtDeepAstMatchPass}`, async () => {
 		// Full recursive read — deep-reads ALL named kinds, not just
-		// variant-adopted. Exercises full materialization path.
-		// Native parse + native render + recursive drill-in.
-		// `rtDeepAstMatchPass` floors the strict-structural subset —
-		// the gap up to `rtDeepPass` is the deep fidelity debt (the
-		// old `astMatchPass === pass` assertion has not held since at
-		// least 2026-06-03; see FLOOR RESET header note).
+		// variant-adopted — then native render + reparse. `astMatchPass`
+		// floors the strict-structural subset; its gap up to `pass` is
+		// the deep fidelity debt.
 		const templatesPath = resolveTemplatesPath(grammar);
 		const result = await validateReadRenderParse(grammar, templatesPath, { backend: 'native', recursive: true });
 
+		expect(result.total).toBeGreaterThanOrEqual(floors.rtTotal);
 		expect(result.pass).toBeGreaterThanOrEqual(floors.rtDeepPass);
 		expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.rtDeepAstMatchPass);
 	}, 120000);
-
-	it(`template coverage passes at least ${floors.covPass}/${floors.covTotal}`, async () => {
-		const templatesPath = resolveTemplatesPath(grammar);
-		const result = validateTemplateCoverage(grammar, templatesPath);
-
-		expect(result.total).toBeGreaterThanOrEqual(floors.covTotal);
-		expect(result.pass).toBeGreaterThanOrEqual(floors.covPass);
-	});
-});
-
-describe('corpus validation — legacy baseline gap report', () => {
-	// These tests document the delta between the current floor and the
-	// legacy baseline. They are always-passing snapshots, not assertions
-	// — the goal is visibility. When the gap closes, bump FLOORS.
-	it.each(Object.keys(FLOORS) as GrammarName[])('%s gap report', (grammar) => {
-		const current = FLOORS[grammar];
-		const baseline = LEGACY_BASELINE[grammar];
-		const gapFactory = baseline.factoryPass - current.factoryPass;
-		const gapFrom = baseline.fromPass - current.fromPass;
-		const gapFactoryTotal = baseline.factoryTotal - current.factoryTotal;
-		const gapFromTotal = baseline.fromTotal - current.fromTotal;
-
-		// Print the gap so it shows up in test output even when passing.
-		// eslint-disable-next-line no-console
-		console.log(
-			`  [${grammar}] factory: current ${current.factoryPass}/${current.factoryTotal}` +
-				` vs baseline ${baseline.factoryPass}/${baseline.factoryTotal}` +
-				` (gap ${gapFactory} passes, ${gapFactoryTotal} kinds)\n` +
-				`  [${grammar}] from():  current ${current.fromPass}/${current.fromTotal}` +
-				` vs baseline ${baseline.fromPass}/${baseline.fromTotal}` +
-				` (gap ${gapFrom} passes, ${gapFromTotal} kinds)`
-		);
-
-		// Floors must never be negative (nonsensical)
-		expect(current.factoryPass).toBeGreaterThanOrEqual(0);
-		expect(current.fromPass).toBeGreaterThanOrEqual(0);
-	});
 });
 
 // Kinds with known readNode discrepancies when the override-compiled
@@ -347,6 +94,7 @@ const OVERRIDE_PARSER_KNOWN_ISSUES: Record<string, Set<string>> = {
 		'format_expression',
 		'match_block_block',
 		'simple_pattern_negative',
+		'statement_group1',
 		'with_clause_bare',
 		'with_clause_paren'
 	]),

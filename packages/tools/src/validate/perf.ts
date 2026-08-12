@@ -1,7 +1,7 @@
 /**
  * check-perf-baseline.ts — spec 054 FR-007.
  *
- * Reads the committed `PerfBaseline` (`specs/054-post-016-perf-tracking/baselines/perf-native.json`)
+ * Reads the committed `PerfBaseline` (`packages/tools/baselines/perf-native.json`)
  * and a freshly produced `MetricsFile` (`metrics-native.json` in cwd or
  * the path provided via `--metrics`). Compares `ffi.meanRoundtripMs` and
  * `ffi.totalCalls`; exits per the verdict rules in spec FR-007:
@@ -12,7 +12,7 @@
  *   - `schemaVersion` differs                                   → exit 2
  *   - all good                                                  → exit 0 (silent)
  *
- * Default `baseline` → `specs/054-post-016-perf-tracking/baselines/perf-native.json`
+ * Default `baseline` → `packages/tools/baselines/perf-native.json`
  * Default `metrics`  → `./metrics-native.json`
  */
 
@@ -223,7 +223,7 @@ export interface CheckPerfOptions {
 }
 
 export async function run(opts: CheckPerfOptions): Promise<number> {
-	const defaultBaseline = resolve(repoRoot, 'specs/054-post-016-perf-tracking/baselines/perf-native.json');
+	const defaultBaseline = resolve(repoRoot, 'packages/tools/baselines/perf-native.json');
 	const defaultMetrics = resolve(process.cwd(), 'metrics-native.json');
 	const baselinePath = opts.baseline ? resolve(process.cwd(), opts.baseline) : defaultBaseline;
 	const metricsPath = opts.metrics ? resolve(process.cwd(), opts.metrics) : defaultMetrics;

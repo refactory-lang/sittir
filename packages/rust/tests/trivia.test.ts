@@ -77,7 +77,10 @@ describe('$trivia() integration', () => {
 
 	it('trailing trivia renders after the node', () => {
 		const fn = makeFn('main').$trivia({ trailing: [buildLineComment(' bye')] });
-		expect(fn.$render()).toBe('fn main(){  }\n// bye');
+		// A line comment is newline-terminated by the spacing model — the
+		// final `\n` is part of the comment's own rendering, so a trailing
+		// comment leaves the output newline-terminated.
+		expect(fn.$render()).toBe('fn main(){  }\n// bye\n');
 	});
 
 	it('multiple leading and trailing entries render in order', () => {
@@ -85,6 +88,6 @@ describe('$trivia() integration', () => {
 			leading: [buildLineComment(' top1'), buildLineComment(' top2')],
 			trailing: [buildLineComment(' bottom')]
 		});
-		expect(fn.$render()).toBe('// top1\n// top2\nfn main(){  }\n// bottom');
+		expect(fn.$render()).toBe('// top1\n// top2\nfn main(){  }\n// bottom\n');
 	});
 });
