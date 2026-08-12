@@ -2,7 +2,7 @@
  * collect-baseline.ts — feature 016, US1.
  *
  * Produces the per-backend `BackendBaseline` JSON committed under
- * `specs/016-parity-regressions/baselines/{ts,native}.json`. Reads
+ * `packages/tools/baselines/native.json`. Reads
  * `SITTIR_BACKEND` from the environment to select between TS-mode (the
  * default Nunjucks pipeline) and native-mode (the napi engine). Inside
  * the corpus validators, `buildReadHandle()` already does the dispatch

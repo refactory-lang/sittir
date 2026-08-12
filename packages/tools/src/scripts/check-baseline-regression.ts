@@ -2,7 +2,7 @@
  * check-baseline-regression.ts — feature 016, T009.
  *
  * Reads two `BackendBaseline` JSONs (the PR's base and head versions of
- * `specs/016-parity-regressions/baselines/<backend>.json`) and applies
+ * `packages/tools/baselines/<backend>.json`) and applies
  * the verdict rules from `contracts/baseline-json.md` (section
  * "Regression-Checker Verdict Rules").
  *

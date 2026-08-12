@@ -1,0 +1,188 @@
+{
+    "backend": "native",
+    "commit": "be9af0d",
+    "grammars": {
+        "python": {
+            "parityFixtures": {
+                "failingByKind": {},
+                "formatDeferredByKind": {},
+                "pass": 1148,
+                "total": 1148
+            },
+            "validators": {
+                "coverage": {
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 129,
+                    "total": 129
+                },
+                "factoryRoundtrip": {
+                    "astMatchPass": 1164,
+                    "failingKinds": [
+                        "_collection_elements",
+                        "_simple_pattern_negative",
+                        "_simple_statements",
+                        "case_clause"
+                    ],
+                    "formatDeferredKinds": [],
+                    "pass": 1164,
+                    "total": 1173
+                },
+                "from": {
+                    "failingKinds": [
+                        "escape_interpolation",
+                        "escape_sequence",
+                        "false",
+                        "float",
+                        "identifier",
+                        "integer",
+                        "none",
+                        "string_end",
+                        "string_start",
+                        "true",
+                        "type_conversion"
+                    ],
+                    "formatDeferredKinds": [],
+                    "pass": 111,
+                    "total": 122
+                },
+                "roundtrip": {
+                    "astMatchPass": 100,
+                    "failingKinds": [
+                        "module",
+                        "tuple_pattern"
+                    ],
+                    "formatDeferredKinds": [],
+                    "pass": 105,
+                    "total": 115
+                }
+            }
+        },
+        "rust": {
+            "parityFixtures": {
+                "failingByKind": {},
+                "formatDeferredByKind": {},
+                "pass": 1430,
+                "total": 1430
+            },
+            "validators": {
+                "coverage": {
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 200,
+                    "total": 200
+                },
+                "factoryRoundtrip": {
+                    "astMatchPass": 1441,
+                    "failingKinds": [
+                        "_macro_definition_bracket",
+                        "async_block",
+                        "field_pattern",
+                        "gen_block",
+                        "reference_pattern",
+                        "self_parameter",
+                        "tuple_expression"
+                    ],
+                    "formatDeferredKinds": [],
+                    "pass": 1441,
+                    "total": 1458
+                },
+                "from": {
+                    "failingKinds": [
+                        "block_comment",
+                        "char_literal",
+                        "crate",
+                        "escape_sequence",
+                        "field_pattern",
+                        "float_literal",
+                        "identifier",
+                        "integer_literal",
+                        "metavariable",
+                        "mutable_specifier",
+                        "self",
+                        "string_content",
+                        "super"
+                    ],
+                    "formatDeferredKinds": [],
+                    "pass": 133,
+                    "total": 146
+                },
+                "roundtrip": {
+                    "astMatchPass": 128,
+                    "failingKinds": [
+                        "source_file",
+                        "token_tree",
+                        "use_declaration"
+                    ],
+                    "formatDeferredKinds": [],
+                    "pass": 131,
+                    "total": 136
+                }
+            }
+        },
+        "typescript": {
+            "parityFixtures": {
+                "failingByKind": {},
+                "formatDeferredByKind": {},
+                "pass": 1464,
+                "total": 1464
+            },
+            "validators": {
+                "coverage": {
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 197,
+                    "total": 197
+                },
+                "factoryRoundtrip": {
+                    "astMatchPass": 1132,
+                    "failingKinds": [
+                        "_enum_body_group1",
+                        "_public_field_definition_static_mods",
+                        "class_static_block",
+                        "object_type_content",
+                        "type_arguments",
+                        "type_parameters"
+                    ],
+                    "formatDeferredKinds": [],
+                    "pass": 1132,
+                    "total": 1151
+                },
+                "from": {
+                    "failingKinds": [
+                        "call_expression",
+                        "false",
+                        "identifier",
+                        "null",
+                        "number",
+                        "private_property_identifier",
+                        "super",
+                        "this",
+                        "true",
+                        "undefined",
+                        "unescaped_double_string_fragment",
+                        "unescaped_single_string_fragment"
+                    ],
+                    "formatDeferredKinds": [],
+                    "pass": 128,
+                    "total": 140
+                },
+                "roundtrip": {
+                    "astMatchPass": 105,
+                    "failingKinds": [
+                        "program",
+                        "rest_pattern"
+                    ],
+                    "formatDeferredKinds": [],
+                    "pass": 105,
+                    "total": 111
+                }
+            }
+        }
+    },
+    "totals": {
+        "fail": 102,
+        "pass": 9018,
+        "total": 9120
+    }
+}
