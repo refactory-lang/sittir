@@ -248,12 +248,11 @@ function emitContainerTest(
 	//     input, so the no-arg form `ir.kind()` would fail at
 	//     runtime even though it type-checks.
 	//
-	// The unnamed slot backing a container factory lives at `node.fields[0]`
-	// (post-unification) — `unnamedChildSlotFacts` is the same canonical
-	// derivation `emitContainerFactory` (factories.ts) bases its real
-	// signature on. Read it here too, so the test placeholder matches what
-	// the factory actually requires.
-	const facts = unnamedChildSlotFacts(node.fields);
+	// `unnamedChildSlotFacts` is the same canonical derivation
+	// `emitFieldCarryingFactory` (factories.ts) bases its real signature
+	// on. Read it here too, so the test placeholder matches what the
+	// factory actually requires.
+	const facts = unnamedChildSlotFacts(node, nodeMap);
 	const requiredSingular = facts && !facts.multiple && facts.required;
 	const anyNonEmpty = facts?.nonEmpty ?? false;
 	// Candidate kind names for the slot, preferring each value's `parseKind`

@@ -43,6 +43,7 @@ import {
 	classifyFactoryShape,
 	classifyChildFactorySurface,
 	classifyFactoryEmission,
+	resolveDirectFactorySlot,
 	collectAliasSourceKinds,
 	warnSkippedParserSymbol,
 	unnamedChildSlotFacts,
@@ -611,28 +612,16 @@ function emitFieldCarryingFactory(
 	// polymorph FORM factories (group) are always field-carrying.
 	const containerFacts =
 		node.modelType === 'branch' && classifyChildFactorySurface(node, nodeMap) !== null
-			? unnamedChildSlotFacts(fields)
+			? unnamedChildSlotFacts(node, nodeMap)
 			: null;
 
 	// Gap 5: Single-field-no-children factories take the value directly
-	// instead of a config object. Uses the pre-computed slotClass
-	// (set by computeSlotClasses) for the sole-slot reference. The
-	// signature becomes `fn(fieldName: T)` and the $with setter rebuilds
-	// via `fn(value)`.
-	const nonStampFields = fields.filter((f) => autoStampExpression(f, nodeMap) === undefined);
-	// Exclude hidden kinds (`_`-prefixed) — they're internal infrastructure
-	// (inner children of polymorph dispatchers) whose factories are called
-	// with config objects by the polymorph form wrapper. Also exclude
-	// polymorph forms and keyword-presence / multiple fields.
-	const sc = typeof node === 'object' && node !== null && 'slotClass' in node ? node.slotClass : undefined;
-	const singleField =
-		!containerFacts &&
-		nonStampFields.length === 1 &&
-		!node.kind.startsWith('_') &&
-		sc?.tag === 'singleSlot' &&
-		sc.arity === 'singular'
-			? sc.slot
-			: undefined;
+	// instead of a config object. The signature becomes `fn(fieldName: T)`
+	// and the $with setter rebuilds via `fn(value)`.
+	// `resolveDirectFactorySlot` is the single derivation of this calling
+	// convention, shared with `classifyFactoryShape` so the emitted
+	// signature and the shape metadata can never disagree.
+	const singleField = !containerFacts ? resolveDirectFactorySlot(node, nodeMap) : undefined;
 
 	// Fields whose own separator flank is genuinely `'optional'` need a
 	// caller-facing override — a factory has no real parse to capture a

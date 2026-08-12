@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "be9af0d",
+    "commit": "2a30dbd",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -73,18 +73,13 @@
                     "total": 200
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1441,
+                    "astMatchPass": 1456,
                     "failingKinds": [
                         "_macro_definition_bracket",
-                        "async_block",
-                        "field_pattern",
-                        "gen_block",
-                        "reference_pattern",
-                        "self_parameter",
                         "tuple_expression"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 1441,
+                    "pass": 1456,
                     "total": 1458
                 },
                 "from": {
@@ -93,7 +88,6 @@
                         "char_literal",
                         "crate",
                         "escape_sequence",
-                        "field_pattern",
                         "float_literal",
                         "identifier",
                         "integer_literal",
@@ -104,7 +98,7 @@
                         "super"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 133,
+                    "pass": 134,
                     "total": 146
                 },
                 "roundtrip": {
@@ -135,17 +129,16 @@
                     "total": 197
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1132,
+                    "astMatchPass": 1133,
                     "failingKinds": [
                         "_enum_body_group1",
                         "_public_field_definition_static_mods",
-                        "class_static_block",
                         "object_type_content",
                         "type_arguments",
                         "type_parameters"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 1132,
+                    "pass": 1133,
                     "total": 1151
                 },
                 "from": {
@@ -181,8 +174,8 @@
         }
     },
     "totals": {
-        "fail": 102,
-        "pass": 9018,
+        "fail": 85,
+        "pass": 9035,
         "total": 9120
     }
 }

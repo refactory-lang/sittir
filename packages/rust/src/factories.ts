@@ -3576,19 +3576,19 @@ export function buildStructPattern(config: T.StructPattern.Config) {
 	);
 }
 
-export function buildFieldPattern(child?: 'ref' | T.MutableSpecifier | T.Identifier | T.FieldPatternNamed) {
-	const _ref_marker = child;
+export function buildFieldPattern(child: 'ref' | T.MutableSpecifier | T.Identifier | T.FieldPatternNamed) {
+	const _content = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.FieldPattern as const,
 				$source: 2 as const,
 				$named: true as const,
-				_ref_marker,
+				_content,
 				$with: { $child: (v: 'ref' | T.MutableSpecifier | T.Identifier | T.FieldPatternNamed) => buildFieldPattern(v) }
 			},
 			{
-				refMarker: () => _ref_marker
+				content: () => _content
 			}
 		),
 		methodsEngine

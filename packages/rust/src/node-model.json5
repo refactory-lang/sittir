@@ -9015,7 +9015,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
         "block"
       ]
@@ -12812,7 +12812,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
         "block"
       ]
@@ -15823,7 +15823,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
         "pattern"
       ]
@@ -16437,7 +16437,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
         "lifetime"
       ]
@@ -19240,7 +19240,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
         "pattern"
       ]

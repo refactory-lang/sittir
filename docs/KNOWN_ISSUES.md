@@ -6,15 +6,14 @@ Every entry heading starts with a stable backticked `ki-*` id — refer to an en
 
 Suggested attack order (by payoff ÷ effort; remove a line when its entry is deleted):
 
-1. `ki-factory-marker-drops` — 16 of rust's 17 remaining factory failures, likely one `nodeToConfig` trace
-2. `ki-class-static-block` — probably shares a root with the `_static_marker` rows in `ki-sclass-residuals`
-3. `ki-decorated-def-newline` — factory-side stamp for the spacing model's newline slot
-4. `ki-enrich-choice-recursion`, `ki-separator-diag-drift`, `ki-zero-visible-rules` — singleton triages, each a one-sitting fix-or-repin
-5. `ki-stale-expectdiagnostics` — one regen to confirm, then delete a line of config
-6. `ki-sclass-residuals` — the corpus clusters, biggest first (S1 native-coords, python S8 tuple_pattern)
-7. `ki-from-string-composition` — blocked on a quote-style design decision
-8. `ki-token-adjacency` — highest blast radius (shared walker), needs full three-grammar verification
-9. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
+1. `ki-class-static-block` — probably shares a root with the `_static_marker` rows in `ki-sclass-residuals`
+2. `ki-decorated-def-newline` — factory-side stamp for the spacing model's newline slot
+3. `ki-enrich-choice-recursion`, `ki-separator-diag-drift`, `ki-zero-visible-rules` — singleton triages, each a one-sitting fix-or-repin
+4. `ki-stale-expectdiagnostics` — one regen to confirm, then delete a line of config
+5. `ki-sclass-residuals` — the corpus clusters, biggest first (S1 native-coords, python S8 tuple_pattern)
+6. `ki-from-string-composition` — blocked on a quote-style design decision
+7. `ki-token-adjacency` — highest blast radius (shared walker), needs full three-grammar verification
+8. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
 
 ## `ki-token-adjacency` — Rust `generic_type_with_turbofish`'s render template injects illegal whitespace around the `::<` turbofish token — accepted regression, not a TODO
 
@@ -54,22 +53,6 @@ The generalization was verified safe for every CURRENT occurrence (`_suite`'s ow
 
 **Fix, if/when prioritized:** when a future case exercises this shape, extend `emitSymbol`'s inlining block (`packages/codegen/src/emitters/templates.ts`, the `if (rule.type === SYMBOL && rule.inline === true)` branch) to detect "target's own top-level rule is a SEQ whose members are all field-wrapped" and route each inner field through its own presence/emission logic instead of a single shared conditional — likely mirroring render-module.ts's existing "group-lift inner field hoisting" pattern (hoisting a helper's inner named fields onto the parent struct) for the template side too.
 
-## `ki-factory-marker-drops` — Boolean/keyword marker and structural-child fields dropped when factory-reconstructing several rust kinds
-
-**Found during:** the `factory-render-parse` storage-comparison redesign; census re-verified after the round-trip-fidelity program closed (this cluster is now nearly ALL of rust's remaining factory failures — 16 of 17).
-
-A real parse+read carries these fields; reconstructing the SAME materialized data through `nodeToConfig` → the kind's factory drops or mangles them:
-
-- `self_parameter._reference` — `true` expected, `undefined` produced (×7, e.g. "Functions with precise capture syntax")
-- `async_block._move_marker`, `reference_pattern._mutable_specifier` — `true` → `undefined` (×1 each)
-- `reference_pattern._pattern` — value `"x"` → `undefined` (×1)
-- `async_block._block` / `gen_block._block` — shape mismatch, a required structural `block` child reconstructs as scalar/undefined (×2)
-- three `missing on factory output` rows (same run)
-
-**Status: confirmed via storage comparison, not yet root-caused.**
-
-**Fix, if/when prioritized:** trace `nodeToConfig`'s handling of `self_parameter`/`async_block`/`reference_pattern` — likely `promoteAnonymousTokenFields` or the boolean-keyword coercion path (`coerceBooleanKeywordStorage`, referenced in the generated factories) not being exercised the same way when fed materialized wrapped-tree data as when fed the validator's old shallow native-read data.
-
 ## `ki-sclass-residuals` — Round-trip-fidelity residual inventory — the corpus failures behind the committed S-class ceilings
 
 **Found during:** the floor-ratchet + S-class-gate work that closed out the round-trip-fidelity restoration program's final phase. The live SSOT for these counts is `packages/tools/sclass-ceilings.json` (per-grammar ceilings the `validate counts` run enforces) + `packages/tools/validation-report.json` (the classified entries themselves) + `packages/tools/baselines/native.json` (exact pass floors and per-validator `failingKinds`). This entry names the failure *clusters* so each can be chipped at as its own work item — chip one, lower its ceiling in the same commit.
@@ -82,7 +65,6 @@ A real parse+read carries these fields; reconstructing the SAME materialized dat
 - **typescript `rest_pattern` reparse** (2 corpus entries × shallow+deep: "Tuple types", "Extends" — `re-parse error [ERROR in subscript_expression at "..."]`). The reparse wrapper embeds the rendered `...` in a subscript context where it can't parse — likely a wrapper-selection artifact rather than a render defect.
 - **rust rrp residuals**: `use_declaration` "Derive macro helper attributes" — `render: Missing field \`_content\`` (S6, comment-content class); "Raw string literals" reparse error; deep AST mismatches on `delim_token_tree_paren` child counts and a dropped `$` in "Macro invocation - arbitrary tokens" (token-adjacency/walker class — see the turbofish entry above); "Macro definition" reparses `token_tree_paren` where `delim_token_tree_paren` was rendered.
 - **S4 — `union-slot-mixed-row` grammar diagnostics** (python `future_import_statement`/`import_from_statement`, typescript `binary_expression`/`_jsx_opening_element_content`): static modeling warnings, order-lossy or singular mixed rows.
-- **S7 — one typescript factory AST mismatch** whose message carries `automatic_semicolon` (`root._body` shape mismatch): the factory reconstruction side of the ASI class; the render/read side was fixed by the spacing-model work.
 - **Factory trailing-separator capture gap** (~11 rows across all three grammars: `_*_trailing_sep: value true ≠ false` — python `case_pattern`/`element`/`simple_statement`, rust `elements`/`macro_rule`, typescript `content`/`type_parameter`/`type`): a read captures per-field trailing-separator presence; the factory path has no way to stamp it (the accepted factory-render-parse shortfall from the flank-capture work — needs FactoryShape support to close).
 - **typescript `_separator_kind: unexpected extra field on factory output`** (×9): the factory stamps a `_separator_kind` the read reference doesn't carry (or normalizes differently) — inverse-direction sibling of the trailing-sep gap.
 - **typescript `_static_marker: value 107 ≠ 356`** (×3): marker stamped with the wrong kind id — plausibly the same root as the `class_static_block` factory mis-dispatch entry below.

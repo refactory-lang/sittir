@@ -38,6 +38,7 @@ import {
 	classifyChildFactorySurface,
 	classifyFromEmission,
 	unnamedChildSlotFacts,
+	type UnnamedChildSlotFacts,
 	canonicalSeparatedListField
 } from './shared.ts';
 import { fieldElementType, childElementType, kindEnumTextMapExpr } from './factories.ts';
@@ -278,7 +279,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	const childSurface = branchTarget !== null ? classifyChildFactorySurface(branchTarget, nodeMap) : null;
 	if (childSurface === 'direct' || childSurface === 'spread') {
 		if (branchTarget === null) return null;
-		const facts = unnamedChildSlotFacts(branchTarget.fields);
+		const facts = unnamedChildSlotFacts(branchTarget, nodeMap);
 		if (!facts) return null;
 		// Rest params (`...children`) always accept zero args. A singular
 		// positional `child` is safe only when it's itself optional.
@@ -310,7 +311,8 @@ function emitBranchFrom(
 				typeName: node.typeName,
 				rawFactoryName: node.rawFactoryName,
 				fromFunctionName: node.fromFunctionName,
-				fields: node.fields
+				fields: node.fields,
+				childSlotFacts: unnamedChildSlotFacts(node, nodeMap)
 			},
 			kindEntries,
 			nodeMap
@@ -333,10 +335,10 @@ function emitBranchFrom(
 	const soleField = !nodeMap.polymorphFormKinds.has(node.kind)
 		? resolveSingleFieldFactorySlot(node, nodeMap)
 		: undefined;
-	const canDirectFactoryCall =
-		soleField &&
-		classifyFactoryShape(node, nodeMap) === 'direct' &&
-		!node.fields.some((field) => keywordPresenceKind(field, nodeMap) !== null);
+	// `classifyFactoryShape` returning 'direct' already guarantees the sole
+	// user slot is the only non-stamped field (resolveDirectFactorySlot) —
+	// no separate keyword-presence exclusion needed here.
+	const canDirectFactoryCall = soleField && classifyFactoryShape(node, nodeMap) === 'direct';
 	lines.push(`export function ${fn}(input${opt}: ${inputType}): ${returnType} {`);
 	if (fields.length > 0) {
 		if (canDirectFactoryCall) {
@@ -429,9 +431,11 @@ interface ContainerFromNode {
 	readonly typeName: string;
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
-	// Post-unification: the unnamed-child slot is exposed via `fields[0]`. Its
-	// `storageName` drives the `_<name>` data key we read here.
 	readonly fields?: readonly AssembledNonterminal[];
+	// The container's classified sole user slot (unnamedChildSlotFacts) —
+	// its `storageName` drives the `_<name>` data key we read here. Computed
+	// by the caller from the full node; not derivable from `fields` alone.
+	readonly childSlotFacts: UnnamedChildSlotFacts | null;
 }
 
 function containerTypeCheck(kind: string, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): string {
@@ -572,11 +576,10 @@ function emitContainerFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const tName = `T.${node.typeName}`;
-	// Post-unification: the unnamed slot lives in `node.fields[0]` with a
-	// kind-derived `storageName`. The interface declares `_<storageName>` per
-	// slot (no `$other`), so the element type is the slot's element type and
-	// the data read is `data._<storageName>`.
-	const facts = unnamedChildSlotFacts(node.fields ?? []);
+	// The interface declares `_<storageName>` per slot (no `$other`), so the
+	// element type is the slot's element type and the data read is
+	// `data._<storageName>` — keyed off the classified sole user slot.
+	const facts = node.childSlotFacts;
 	const elementType = facts
 		? childElementType({ children: node.fields ?? [] }, nodeMap)
 		: `NonNullable<T.${node.typeName}['$other']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$other']>`;
@@ -1086,7 +1089,7 @@ function collectWrapChildrenEntries(
 			// Real arity decides direct-vs-spread — see `unnamedChildSlotFacts`'s
 			// doc comment for why this reads the slot directly rather than
 			// trusting `classifyFactoryShape`'s label for the shape itself.
-			childSurface = unnamedChildSlotFacts(node.fields)?.multiple ? 'spread' : 'direct';
+			childSurface = unnamedChildSlotFacts(node, nodeMap)?.multiple ? 'spread' : 'direct';
 		}
 		entries.push({
 			kind,

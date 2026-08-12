@@ -670,6 +670,24 @@ export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: Node
 	return slot;
 }
 
+/**
+ * The single derivation of the direct-value factory calling convention:
+ * the sole named singular user slot qualifies ONLY when it is also the
+ * node's only non-stamped field. A keyword-presence marker or hidden-infra
+ * slot is caller-settable surface a direct signature has nowhere to
+ * accept, so its presence keeps the config-object surface. Both the
+ * factories emitter (signature) and `classifyFactoryShape` (metadata)
+ * consume this — they must never disagree, or every shape consumer
+ * (validators, `from()` resolvers) calls the factory with the wrong
+ * argument shape and marker fields silently drop.
+ */
+export function resolveDirectFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
+	const slot = resolveSingleFieldFactorySlot(node, nodeMap);
+	if (!slot) return undefined;
+	const nonStampFields = node.fields.filter((f) => stampExpressionFor(f, nodeMap) === undefined);
+	return nonStampFields.length === 1 ? slot : undefined;
+}
+
 export function configurableFactoryFields(
 	fields: readonly AssembledNonterminal[],
 	nodeMap: NodeMap
@@ -721,9 +739,15 @@ export interface UnnamedChildSlotFacts {
 	readonly nonEmpty: boolean;
 }
 
-export function unnamedChildSlotFacts(fields: readonly AssembledNonterminal[]): UnnamedChildSlotFacts | null {
-	const slot = fields[0];
-	if (!slot) return null;
+export function unnamedChildSlotFacts(node: AssembledNode, nodeMap: NodeMap): UnnamedChildSlotFacts | null {
+	// The container's stamped slot is the classified sole user slot — NOT
+	// positionally `fields[0]`, which can be a keyword-presence marker
+	// preceding the payload (e.g. rust field_pattern's [ref_marker,
+	// mutable_specifier, content]). Same derivation classifyBranchSlots
+	// uses to pick the container shape in the first place.
+	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
+	if (slotClass.tag !== 'singleSlot') return null;
+	const slot = slotClass.slot;
 	return { slot, multiple: isMultiple(slot), required: isRequired(slot), nonEmpty: isNonEmpty(slot) };
 }
 
@@ -759,17 +783,16 @@ export function classifyFactoryShape(
 					// not by kind-name prefix.)
 					return slotClass.arity === 'singular' ? 'direct' : 'spread';
 				}
-				// Named single field: hidden kinds keep the config-object
-				// surface — their factories are always called with a config
-				// object by the polymorph form wrapper that owns them, never
-				// the ergonomic direct-value shortcut.
-				if (!node.kind.startsWith('_') && slotClass.arity === 'singular') return 'direct';
-				return 'config';
+				// Named single field: direct only when the emitter would emit
+				// the direct-value signature (sole non-stamped field, visible
+				// kind — see resolveDirectFactorySlot). Hidden kinds and
+				// marker-carrying kinds keep the config-object surface.
+				return resolveDirectFactorySlot(node, nodeMap) ? 'direct' : 'config';
 			}
 			return 'config';
 		}
 		case 'group':
-			return resolveSingleFieldFactorySlot(node, nodeMap) ? 'direct' : 'config';
+			return resolveDirectFactorySlot(node, nodeMap) ? 'direct' : 'config';
 		default:
 			return null;
 	}

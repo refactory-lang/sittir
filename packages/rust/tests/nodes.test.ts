@@ -2341,7 +2341,12 @@ describe('struct_pattern', () => {
 
 describe('field_pattern', () => {
 	it('factory produces correct type', () => {
-		const node = ir.fieldPattern();
+		const node = ir.fieldPattern({
+			$type: TSKindId._ShorthandFieldIdentifier,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
 		expect(node.$type).toBe(TSKindId.FieldPattern);
 		expect(node.$source).toBe(2);
 	});

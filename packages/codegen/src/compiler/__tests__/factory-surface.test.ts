@@ -3,9 +3,15 @@ import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
-import { resolveGrammarJsPath } from '../resolve-grammar.ts';
+import { existsSync } from 'node:fs';
+import { resolveGrammarJsPath, resolveOverridesPath } from '../resolve-grammar.ts';
 import type { NodeMap } from '../types.ts';
-import { classifyChildFactorySurface, classifyFactoryShape, resolveFactoryFieldNames } from '../../emitters/shared.ts';
+import {
+	classifyChildFactorySurface,
+	classifyFactoryShape,
+	resolveFactoryFieldNames,
+	unnamedChildSlotFacts
+} from '../../emitters/shared.ts';
 import { buildFactoryMap } from '../../emitters/factory-map.ts';
 
 let _prevAudit: string | undefined;
@@ -22,37 +28,36 @@ let nodeMap: NodeMap;
 let typescriptNodeMap: NodeMap;
 let pythonNodeMap: NodeMap;
 
+// Same entry-path resolution the real pipeline uses (see
+// regen-templates-rs.ts): the grammar.sittir.ts overrides entry when it
+// exists, raw grammar.js otherwise. The factory surface under test is the
+// override-resolved one — the raw grammar lacks override-declared fields
+// (e.g. rust self_parameter's `reference`), which changes shape
+// classification.
+async function assembleGrammar(grammar: string): Promise<NodeMap> {
+	const overridesPath = resolveOverridesPath(grammar);
+	const entryPath = existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
+	const raw = await evaluate(entryPath);
+	const normalized = normalizeGrammar(link(raw));
+	return assemble(AssembleCtx.from(normalized));
+}
+
 beforeAll(async () => {
-	const rustGrammar = resolveGrammarJsPath('rust');
-	const rustRaw = await evaluate(rustGrammar);
-	const rustLinked = link(rustRaw);
-	const rustNormalized = normalizeGrammar(rustLinked);
-	nodeMap = assemble(AssembleCtx.from(rustNormalized));
-
-	const typescriptGrammar = resolveGrammarJsPath('typescript');
-	const typescriptRaw = await evaluate(typescriptGrammar);
-	const typescriptLinked = link(typescriptRaw);
-	const typescriptNormalized = normalizeGrammar(typescriptLinked);
-	typescriptNodeMap = assemble(AssembleCtx.from(typescriptNormalized));
-
-	const pythonGrammar = resolveGrammarJsPath('python');
-	const pythonRaw = await evaluate(pythonGrammar);
-	const pythonLinked = link(pythonRaw);
-	const pythonNormalized = normalizeGrammar(pythonLinked);
-	pythonNodeMap = assemble(AssembleCtx.from(pythonNormalized));
+	nodeMap = await assembleGrammar('rust');
+	typescriptNodeMap = await assembleGrammar('typescript');
+	pythonNodeMap = await assembleGrammar('python');
 });
 
 describe('child factory surface classification', () => {
 	it('detects spread child factories from inferred-only branches', () => {
-		// Originally asserted 'spread' for array_expression. Under the
-		// repeat(seq) group synthesis + kind-named-slots unification,
-		// array_expression's inner alternatives became their own group
-		// kinds (_array_expression_list/_array_expression_semi) and its
-		// surface is no longer a repeated-children spread — the generated
-		// buildArrayExpression takes a single direct child. declaration_list
-		// is a current inferred-only repeated-children branch.
-		expect(classifyChildFactorySurface(nodeMap.nodes.get('declaration_list')!, nodeMap)).toBe('spread');
-		expect(classifyChildFactorySurface(nodeMap.nodes.get('array_expression')!, nodeMap)).toBeNull();
+		// _token_tree_paren is a committed spread kind (repeated unnamed
+		// token children — node-model.json5 factoryShape 'spread') and
+		// array_expression a committed direct container (single unnamed
+		// child, the _array_expression_* group). declaration_list carries a
+		// named declaration_statements slot, so it is not a child surface.
+		expect(classifyChildFactorySurface(nodeMap.nodes.get('_token_tree_paren')!, nodeMap)).toBe('spread');
+		expect(classifyChildFactorySurface(nodeMap.nodes.get('array_expression')!, nodeMap)).toBe('direct');
+		expect(classifyChildFactorySurface(nodeMap.nodes.get('declaration_list')!, nodeMap)).toBeNull();
 	});
 
 	it('detects direct unnamed-child factories from inferred single-slot branches', () => {
@@ -69,17 +74,47 @@ describe('child factory surface classification', () => {
 		expect(classifyChildFactorySurface(nodeMap.nodes.get('reference_expression')!, nodeMap)).toBeNull();
 	});
 
-	it('keeps spread shape when only filtered fields remain alongside visible children', () => {
-		// Originally asserted 'spread' for typescript lexical_declaration.
-		// Its 'kind' slot (let|const) is now a per-slot enum field on the
-		// factory surface (universal per-slot enums) rather than a filtered
-		// keyword toggle, so lexical_declaration is genuinely config-shaped
-		// (slots: kind, variable_declarator, semicolon). python
-		// comparison_operator preserves the original intent: its repeated
-		// 'operators' slot is filtered as a keyword-presence field, leaving
-		// only the visible repeated children -> spread.
-		expect(classifyFactoryShape(pythonNodeMap.nodes.get('comparison_operator')!, pythonNodeMap)).toBe('spread');
+	it('keeps the config surface when markers accompany a sole named user slot', () => {
+		// The factories emitter only emits a direct-value signature when the
+		// sole user slot is also the node's ONLY non-stamped field — a
+		// keyword-presence marker (reference/move_marker/mutable_specifier)
+		// is caller-settable surface a direct signature has nowhere to
+		// accept, so these kinds' generated factories take a config object.
+		// The shape metadata must agree, or the validator (and any other
+		// shape consumer) calls a config factory with a bare value and every
+		// marker silently drops.
+		expect(classifyFactoryShape(nodeMap.nodes.get('self_parameter')!, nodeMap)).toBe('config');
+		expect(classifyFactoryShape(nodeMap.nodes.get('async_block')!, nodeMap)).toBe('config');
+		expect(classifyFactoryShape(nodeMap.nodes.get('gen_block')!, nodeMap)).toBe('config');
+		expect(classifyFactoryShape(nodeMap.nodes.get('reference_pattern')!, nodeMap)).toBe('config');
+		// Marker-free single-field kinds keep the ergonomic direct shape
+		// (mut_pattern's `mut` is auto-stamped, not caller-settable).
+		expect(classifyFactoryShape(nodeMap.nodes.get('await_expression')!, nodeMap)).toBe('direct');
+		expect(classifyFactoryShape(nodeMap.nodes.get('mut_pattern')!, nodeMap)).toBe('direct');
+	});
+
+	it('derives the container child slot from the classified sole user slot', () => {
+		// field_pattern's fields are [ref_marker, mutable_specifier, content]
+		// — the container's stamped slot must be the classified payload
+		// (content), not positionally fields[0] (ref_marker, a marker):
+		// stamping the child into `_ref_marker` while the read stores
+		// `_content` breaks every factory round-trip of the kind.
+		const facts = unnamedChildSlotFacts(nodeMap.nodes.get('field_pattern')!, nodeMap);
+		expect(facts?.slot.name).toBe('content');
+	});
+
+	it('classifies multi-user-slot branches as config', () => {
+		// python comparison_operator's surface is two real user slots
+		// (left, comparators — its operators are a filtered keyword-presence
+		// field), and typescript lexical_declaration's 'kind' slot (let|const)
+		// is a per-slot enum field. Both are config-shaped; matches the
+		// committed node-model.json5 factoryShape/factoryFields.
+		expect(classifyFactoryShape(pythonNodeMap.nodes.get('comparison_operator')!, pythonNodeMap)).toBe('config');
 		expect(classifyFactoryShape(typescriptNodeMap.nodes.get('lexical_declaration')!, typescriptNodeMap)).toBe('config');
+		// Spread survives keyword-presence/hidden-infra filtering: python
+		// string_content's non-payload entries are filtered slots, leaving
+		// the repeated unnamed content children -> spread (committed shape).
+		expect(classifyFactoryShape(pythonNodeMap.nodes.get('string_content')!, pythonNodeMap)).toBe('spread');
 	});
 });
 
@@ -116,6 +151,6 @@ describe('factory field metadata', () => {
 		// node-model.json5 factoryFields.
 		expect(map.factoryFields.reference_expression).toEqual(['content', 'value']);
 		expect(map.factoryFields.binary_expression).toEqual(['left', 'operator', 'right']);
-		expect(map.factoryFields.attribute).toEqual(['path', 'value', 'arguments']);
+		expect(map.factoryFields.attribute).toEqual(['path', 'attribute_group1']);
 	});
 });

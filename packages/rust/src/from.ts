@@ -2607,7 +2607,7 @@ export function coerceToFieldPattern(
 ): ReturnType<typeof F.buildFieldPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.FieldPattern) {
 		const data = input;
-		const child = (data as unknown as { _ref_marker?: unknown })._ref_marker;
+		const child = (data as unknown as { _content?: unknown })._content;
 		return F.buildFieldPattern(child as Parameters<typeof F.buildFieldPattern>[0]);
 	}
 	return F.buildFieldPattern(input as Parameters<typeof F.buildFieldPattern>[0]);
