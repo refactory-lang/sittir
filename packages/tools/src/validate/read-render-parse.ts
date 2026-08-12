@@ -50,6 +50,24 @@ import {
  * kinds went through Link's push-down). Returns an empty set when no
  * variant adoption exists in the grammar.
  */
+/**
+ * Owner-kind → visible variant child kinds, from the node model's
+ * `polymorphVariants` (the same stamped fact `loadVariantAdoptedKinds`
+ * reads). `call_expression` → {call_expression_call, …} etc. Used by
+ * {@link astStructuralDiff} to treat sittir's own group-lift layer as
+ * transparent when the ORIGINAL parse came through an upstream
+ * variant-aliased context that never had it.
+ */
+export async function loadVariantChildKindsByOwner(grammar: string): Promise<ReadonlyMap<string, ReadonlySet<string>>> {
+	const { polymorphVariants } = await loadNodeModel(grammar);
+	const byOwner = new Map<string, ReadonlySet<string>>();
+	for (const [parent, desc] of Object.entries(polymorphVariants)) {
+		if (desc.definedBy !== 'override') continue;
+		byOwner.set(parent, new Set(Object.keys(desc.childKind)));
+	}
+	return byOwner;
+}
+
 export async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<string>> {
 	// PR-K: read the typed `polymorphVariants` map directly instead of
 	// regex-scanning raw JSON. Only `definedBy: 'override'` descriptors carry a
@@ -207,7 +225,8 @@ export function astStructuralDiff(
 	b: TSNode,
 	namedExtras: ReadonlySet<string>,
 	path: string = '',
-	rootAliasPair?: readonly [string, string]
+	rootAliasPair?: readonly [string, string],
+	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>
 ): string | null {
 	// Root-level alias tolerance: `a`/`b` are the same underlying content —
 	// `wrapForReparse`'s synthetic wrapper context doesn't always reproduce
@@ -223,10 +242,66 @@ export function astStructuralDiff(
 		((a.type === rootAliasPair[0] && b.type === rootAliasPair[1]) ||
 			(a.type === rootAliasPair[1] && b.type === rootAliasPair[0]));
 	if (a.type !== b.type && !rootAliasTolerated) {
+		// Byte-identical leaf tolerance: upstream grammars define restricted
+		// variant rules aliased to canonical display names (decorators'
+		// `_decorator_parenthesized_expression`, type_query's call variants),
+		// and those variants can classify a leaf differently than the
+		// canonical rule the reparse wrapper routes through — e.g. `super`
+		// inside `@(super.decorate)` lexes as a plain identifier in decorator
+		// context but as a `super` node in expression context. Both parses
+		// cover the exact same bytes; leaf classification is positional, not
+		// content. Tolerate only childless nodes with identical text — any
+		// structural or byte difference still fails.
+		if (a.childCount === 0 && b.childCount === 0 && a.text === b.text) {
+			return null;
+		}
 		return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
 	}
 	const aChildren = collectVisibleChildren(a, namedExtras);
-	const bChildren = collectVisibleChildren(b, namedExtras);
+	let bChildren = collectVisibleChildren(b, namedExtras);
+	// Group-lift transparency: sittir's enrich lifts choice arms of canonical
+	// rules into visible variant children (`call_expression` parses as
+	// `(call_expression (call_expression_call …))`; `parenthesized_expression`
+	// keeps its parens and carries the lifted arm BETWEEN them). Upstream
+	// variant-aliased contexts — decorator calls/parens, type_query's
+	// `typeof import(…)` — are separate flat rules DISPLAYED under the same
+	// canonical name, so the original parse has the arm's children inline
+	// while the reparse (always routed through the canonical rule by the
+	// wrapper) carries the lift layer. Splice each reparse-side variant child
+	// open in place when the original has no child of that kind; the arm's
+	// actual children are still compared exactly. The catalog comes from the
+	// node model's stamped `polymorphVariants`, not name convention. Only the
+	// b side can carry an unmatched layer — wrappers never route through
+	// upstream variant contexts. Repeat owners where BOTH sides carry the
+	// variant kind (class_body's class_body_method children) are untouched.
+	const ownedVariants = variantChildKinds?.get(b.type);
+	if (ownedVariants) {
+		const aTypes = new Set(aChildren.map((c) => c.type));
+		if (bChildren.some((c) => ownedVariants.has(c.type) && !aTypes.has(c.type))) {
+			bChildren = bChildren.flatMap((c) =>
+				ownedVariants.has(c.type) && !aTypes.has(c.type) ? collectVisibleChildren(c, namedExtras) : [c]
+			);
+		}
+	}
+	// Reparse-side-only trailing zero-width marker tolerance: external-scanner
+	// markers like typescript's automatic_semicolon are zero-width and fire
+	// based on lookahead context (that is what ASI is). A synthetic reparse
+	// wrapper ends at EOF, a context the original corpus position may not
+	// have had, so the reparsed node can gain a trailing marker the original
+	// lacked — e.g. a bare `{}` statement_block at EOF absorbs an
+	// automatic_semicolon child that the same bytes mid-class do not.
+	// Tolerating it is byte-safe: a zero-width child adds no content, and
+	// every other child is still compared exactly. The OPPOSITE direction
+	// (original had the marker, reparse lacks it) stays a failure — there the
+	// marker's rendered text (e.g. "\n") was dropped, which is real content
+	// loss. Reproducing the not-at-EOF context in the wrapper instead (by
+	// appending `;`) is not an option: the trailing `;` suppresses the
+	// legitimately-regained markers of entries whose ORIGINAL ends in one,
+	// and can even flip which grammar arm the fragment parses into.
+	if (bChildren.length === aChildren.length + 1) {
+		const extra = bChildren[bChildren.length - 1]!;
+		if (extra.startIndex === extra.endIndex) bChildren.pop();
+	}
 	if (aChildren.length !== bChildren.length) {
 		const aDesc = aChildren.map((c) => (c.isNamed ? c.type : JSON.stringify(c.text))).join(',');
 		const bDesc = bChildren.map((c) => (c.isNamed ? c.type : JSON.stringify(c.text))).join(',');
@@ -246,7 +321,7 @@ export function astStructuralDiff(
 			continue;
 		}
 		// Named child — recurse.
-		const sub = astStructuralDiff(ac, bc, namedExtras, `${path || a.type}[${i}].${ac.type}`);
+		const sub = astStructuralDiff(ac, bc, namedExtras, `${path || a.type}[${i}].${ac.type}`, undefined, variantChildKinds);
 		if (sub) return sub;
 	}
 	return null;
@@ -477,6 +552,7 @@ export async function validateReadRenderParse(
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
+	const variantChildKinds = await loadVariantChildKindsByOwner(grammar);
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
 	// Wrap so unknown kind names return undefined (instead of throwing).
 	// The generated kindIdFromName throws on missing entries; readNode's
@@ -750,7 +826,9 @@ export async function validateReadRenderParse(
 						// compare against (native path without $span skips this).
 						const rootAliasPair: readonly [string, string] | undefined =
 							renderedKind !== targetKind ? [renderedKind, targetKind] : undefined;
-						const diff = node1ForAst ? astStructuralDiff(node1ForAst, node2, namedExtras, '', rootAliasPair) : null;
+						const diff = node1ForAst
+							? astStructuralDiff(node1ForAst, node2, namedExtras, '', rootAliasPair, variantChildKinds)
+							: null;
 						if (diff) {
 							kindAstMismatches.push({
 								kind: renderedKind,

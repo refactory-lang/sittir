@@ -97,6 +97,7 @@ import {
 } from '../validate/common.ts';
 import {
 	loadVariantAdoptedKinds,
+	loadVariantChildKindsByOwner,
 	firstParseDefect,
 	astStructuralDiff,
 	findReparsedNodeAtOffset,
@@ -396,7 +397,8 @@ async function computeValidatorWrapDiag(
 	const namedExtras = NAMED_EXTRAS_BY_GRAMMAR[grammar] ?? new Set<string>();
 	const rootAliasPair: readonly [string, string] | undefined =
 		renderedKind !== targetKind ? [renderedKind, targetKind] : undefined;
-	const astDiff = astStructuralDiff(targetNode, node2, namedExtras, '', rootAliasPair);
+	const variantChildKinds = await loadVariantChildKindsByOwner(grammar);
+	const astDiff = astStructuralDiff(targetNode, node2, namedExtras, '', rootAliasPair, variantChildKinds);
 
 	return {
 		renderedKind,
