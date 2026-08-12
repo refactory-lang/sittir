@@ -13,7 +13,7 @@ import { loadLanguageForGrammar, loadKindIdFromName, treeHandle } from '../../pa
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, '../..');
 const FIXTURES_DIR = resolve(repoRoot, 'tests/format-roundtrip/fixtures');
-const CORPUS_PATH = resolve(repoRoot, 'specs/017-format-inference/format-corpus.json');
+const CORPUS_PATH = resolve(repoRoot, 'tests/format-roundtrip/format-corpus.json');
 
 type Grammar = 'python' | 'rust' | 'typescript';
 

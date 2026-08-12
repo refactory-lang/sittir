@@ -110,3 +110,67 @@ A cluster of rust kinds lose a boolean marker field (a keyword-presence flag, no
 
 **Fix, if/when prioritized:** trace `nodeToConfig`'s handling of `self_parameter`/`async_block`/`reference_pattern`/`extern_crate_declaration` — likely `promoteAnonymousTokenFields` or the boolean-keyword coercion path (`coerceBooleanKeywordStorage`, referenced in the generated factories) not being exercised the same way when fed materialized wrapped-tree data as when fed the validator's old shallow native-read data.
 
+## Round-trip-fidelity residual inventory — the corpus failures behind the committed S-class ceilings
+
+**Found during:** the floor-ratchet + S-class-gate work that closed out the round-trip-fidelity restoration program's final phase. The live SSOT for these counts is `packages/tools/sclass-ceilings.json` (per-grammar ceilings the `validate counts` run enforces) + `packages/tools/validation-report.json` (the classified entries themselves) + `packages/tools/baselines/native.json` (exact pass floors and per-validator `failingKinds`). This entry names the failure *clusters* so each can be chipped at as its own work item — chip one, lower its ceiling in the same commit.
+
+- **S1 — `from()` "native coords unresolved for alias target"** (~11 python / ~13 rust / ~12 typescript kinds: `identifier`, literal/string fragments, `true`/`null`/`self`/`crate`, …). The from() validator refuses to compare a kind whose native coords can't be resolved for its alias target. Largest single classified cluster; the alias-identity fix sites were previously audited (raw context id vs canonical catalog id — four sites).
+- **S1 — typescript rrp transport alias-unwrap** (2 corpus entries × shallow+deep): "Accessibility modifiers as pair keywords" — `render: alias-wrapper kind id 443 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap`; "Enum declarations" — `render: unknown kind id 441 in EnumBodyGroup1ContentTransportSlot`. Known visible-alias unwrap gap in the shared transport machinery.
+- **S8 — python `tuple_pattern` "kind not found at rendered offset 16"** (3 corpus entries × shallow+deep: "lambdas", "Default Tuple Arguments", "List comprehensions"). The typescript instance of this locator class was fixed via `WRAPPER_PRIORITY` in `packages/tools/src/validate/common.ts`; python's `tuple_pattern` wrapping context still mislocates.
+- **python `dict_pattern` reparse comma drop** (2 corpus entries × shallow+deep: "Dict mappings", "Builtin classes" — `re-parse error [ERROR in dict_pattern_group1 at "message"color":"]`). Inter-entry comma vanishes on render; pre-existing, not yet root-caused.
+- **python deep AST mismatches** (5): `string` drops `string_content` ("Strings", "Raw strings"), `for_in_clause` drops its trailing comma ("Generator expression"), `simple_pattern_negative` drops the `-` ("Literals"), `exec_statement` drops the `"in" expression` tail ("Exec statements" — same outer-field class as the fixed `infer_type` constraint override).
+- **typescript `rest_pattern` reparse** (2 corpus entries × shallow+deep: "Tuple types", "Extends" — `re-parse error [ERROR in subscript_expression at "..."]`). The reparse wrapper embeds the rendered `...` in a subscript context where it can't parse — likely a wrapper-selection artifact rather than a render defect.
+- **rust rrp residuals**: `use_declaration` "Derive macro helper attributes" — `render: Missing field \`_content\`` (S6, comment-content class); "Raw string literals" reparse error; deep AST mismatches on `delim_token_tree_paren` child counts and a dropped `$` in "Macro invocation - arbitrary tokens" (token-adjacency/walker class — see the turbofish entry above); "Macro definition" reparses `token_tree_paren` where `delim_token_tree_paren` was rendered.
+- **S4 — `union-slot-mixed-row` grammar diagnostics** (python `future_import_statement`/`import_from_statement`, typescript `binary_expression`/`_jsx_opening_element_content`): static modeling warnings, order-lossy or singular mixed rows.
+- **S7 — one typescript factory AST mismatch** whose message carries `automatic_semicolon` (`root._body` shape mismatch): the factory reconstruction side of the ASI class; the render/read side was fixed by the spacing-model work.
+
+**Status: documented exclusions — every count above is pinned by the committed ceilings; a fix must lower the matching ceiling in the same commit (the gate prints a reminder when a class drops below its ceiling).**
+
+## Python `.sittir/src/grammar.json` intermittently fails generated-manifest verification, felling whole test files
+
+**Found during:** the full-suite hygiene pass after the floor-ratchet work.
+
+Tests that verify the generated manifest before touching python (e.g. `packages/tools/src/__tests__/nested-alias-e2e.test.ts` — 4 tests, `packages/tools/tests/validate-from.test.ts` — 1 test) fail with `Generated manifest verification failed: python: MODIFIED: packages/python/.sittir/src/grammar.json`, and the same error intermittently flaps OTHER files under full-suite contention (`corpus-validation.test.ts`'s read-projection test, `packages/tools/tests/probe/probe-kind-trace.test.ts` — both pass standalone). The on-disk `.sittir/src/grammar.json` hash doesn't match the committed manifest even immediately after a clean `validate:native` regen, which points at nondeterministic regen output ordering (python's transpiled `grammar.js` is already known to reorder between runs) rather than genuine drift.
+
+**Status: not root-caused.** Biggest single cluster in the remaining known-failing set (5 deterministic failures + 2 flapping files).
+
+**Fix, if/when prioritized:** determine whether python's `tree-sitter generate` output is genuinely nondeterministic across runs (diff two consecutive regens of `.sittir/src/grammar.json`); if so, fix the ordering at the transpile/generate step or make the manifest hash order-insensitive; if not, restamp the manifest and find what mutates the file post-regen.
+
+## Python `statement_group1` surfaces as a visible parse-tree kind in the override parser
+
+**Found during:** the same hygiene pass — `packages/tools/src/__tests__/spike-override-parser.test.ts` expects the override WASM to parse `x = 5` with an `expression_statement` child but gets `statement_group1`; the read-projection structural check independently reports `statement_group1` resolving `$type=0` (now allow-listed in `corpus-validation.test.ts`'s `OVERRIDE_PARSER_KNOWN_ISSUES`).
+
+A codegen-synthesized statement group is reaching the compiled override parser as a real visible node instead of staying an internal grouping. Multi-slot hoisted groups are required to be visible by design, but this one shadows `expression_statement` at module level — either the group should be inlined/hidden (single-slot rule) or the synthesis is minting a wrapper tree-sitter now materializes.
+
+**Status: not root-caused; two symptoms confirmed (parse-tree shape + `$type=0` in read projection).**
+
+**Fix, if/when prioritized:** inspect what `statement_group1` is in `packages/python/.sittir/src/grammar.json` (ground truth for what tree-sitter saw) and which synthesis minted it; decide hidden-vs-visible per the hoisted-group slot-visibility rule, then remove the two allow-list entries.
+
+## `enrich()` optional keyword-prefix promotion (pass 2) no longer recurses into choice members — unit pin broken
+
+**Found during:** the same hygiene pass. `packages/codegen/src/dsl/__tests__/enrich.test.ts` ("recurses into choice members") dies at `branch0.members[0]` — the choice branch it inspects no longer has `members`, i.e. either the promotion stopped recursing into CHOICE arms (behavior regression) or a later enrich/normalize change legitimately reshapes the branch before the assertion (stale pin). Not yet triaged to either side — the failure is a TypeError in the test's own navigation, not a clean assertion diff.
+
+**Fix, if/when prioritized:** dump the actual rule shape the test receives; if the promotion still happens under a different structure, re-pin; if `optional('<kw>')` inside a choice arm genuinely no longer promotes to `field('<kw>_marker', …)`, that's a real regression in the auto-promotion pass and corpus kinds with keyword-prefixed choice arms would show marker drops.
+
+## `generate()` non-literal-separator diagnostic count drifted (typescript surfaces 1 of the expected 2)
+
+**Found during:** the same hygiene pass. `packages/codegen/src/compiler/__tests__/generate.test.ts` pins that a typescript `generate()` run surfaces exactly 2 `non-literal-separator` warnings; the run now surfaces 1. One of the two separator sites either got fixed, consolidated, or its diagnostic suppressed — needs a one-line triage (which site disappeared and why) before deciding whether to re-pin to 1 or restore the lost diagnostic.
+
+## Evaluate with zero visible rules returns an empty rule catalog — hidden-only grammars lost their rules
+
+**Found during:** the same hygiene pass. `packages/codegen/src/compiler/__tests__/evaluate.test.ts` ("grammar with zero visible rules evaluates successfully") expects `_expr` in the catalog and gets `[]`. Plausibly a casualty of the reachability filter described in the orphaned-rules entry above: `buildRuleCatalog`'s BFS seeds from *visible* top-level rule names, so a grammar with only hidden rules has an empty seed set and every rule is "unreachable". Real grammars always have visible roots, so this is an edge-case contract question: either hidden-only grammars should seed the walk from all top-level rules, or the test's contract is obsolete.
+
+## TypeScript `class_static_block` factory builds the wrong kind and loses the method surface
+
+**Found during:** the same hygiene pass. `packages/typescript/tests/nodes.test.ts`: `ir.classStaticBlock(...)` returns a node whose `$type` is `statement_block`'s id rather than `class_static_block`'s, and the returned object has no `$render` method — the factory (or its `ir` alias) is resolving/collapsing to the wrong target kind entirely, then skipping `withMethods`. Distinct symptom from the polymorph-misselection cluster above (this is factory dispatch, not `nodeToConfig` inference).
+
+## Python `decorated_definition` render requires a `_newline` the read never populates
+
+**Found during:** the same hygiene pass. `packages/python/tests/nodes.test.ts`: rendering a factory-built `decorated_definition` throws `Missing field \`_newline\` on DecoratedDefinitionTransport._decorator` — the decorator transport declares a mandatory newline slot (statement-terminating-newline modeling) that the factory path never stamps. Factory-side counterpart of the spacing-model change; the corpus rrp path passes because a real read carries the newline.
+
+## Rust `from.string` / `from.comment` canonical factories are not emitted — composition needs a design decision
+
+**Found during:** re-pinning `packages/codegen/src/scm/__tests__/scm-roles.test.ts`. Rust's `string_literal` factory takes a config with an explicit `stringOpen` slot (the open-quote token variant: `"`, `b"`, …) plus an `elements` array, so `emitFromString` has no single-positional-child surface to compose and deliberately skips rather than inventing a default quote style (`line_comment`'s content-node shape skips `from.comment` the same way). The test now pins the absence.
+
+**Fix, if/when prioritized:** a composition rule needs an explicit decision on the default open-quote (probably plain `"` with sub-entries like `from.string.raw(...)` for other variants) — an overrides-level declaration, not an emitter heuristic. Flip the scm-roles pin when it lands.
+
