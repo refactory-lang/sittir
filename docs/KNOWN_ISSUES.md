@@ -4,6 +4,18 @@ Running list of known, non-blocking gaps discovered during feature work — docu
 
 Every entry heading starts with a stable backticked `ki-*` id — refer to an entry by that id (in conversation, commits, or across sessions); ids never renumber when neighbors are deleted, and a fixed entry's id simply disappears with it. Pick unused ids for new entries.
 
+Suggested attack order (by payoff ÷ effort; remove a line when its entry is deleted):
+
+1. `ki-factory-marker-drops` — 16 of rust's 17 remaining factory failures, likely one `nodeToConfig` trace
+2. `ki-class-static-block` — probably shares a root with the `_static_marker` rows in `ki-sclass-residuals`
+3. `ki-decorated-def-newline` — factory-side stamp for the spacing model's newline slot
+4. `ki-enrich-choice-recursion`, `ki-separator-diag-drift`, `ki-zero-visible-rules` — singleton triages, each a one-sitting fix-or-repin
+5. `ki-stale-expectdiagnostics` — one regen to confirm, then delete a line of config
+6. `ki-sclass-residuals` — the corpus clusters, biggest first (S1 native-coords, python S8 tuple_pattern)
+7. `ki-from-string-composition` — blocked on a quote-style design decision
+8. `ki-token-adjacency` — highest blast radius (shared walker), needs full three-grammar verification
+9. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
+
 ## `ki-token-adjacency` — Rust `generic_type_with_turbofish`'s render template injects illegal whitespace around the `::<` turbofish token — accepted regression, not a TODO
 
 **Found during:** [enrich base-grammar un-aliasing](superpowers/specs/2026-07-14-enrich-base-grammar-unaliasing-design.md) implementation, Task 1 rework (`packages/codegen/src/dsl/enrich.ts`'s `applyUnaliasDistinct`, single-site drop branch — unchanged, already-landed behavior for rust's one un-aliasing site, `scoped_type_identifier.path`).
