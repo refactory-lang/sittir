@@ -2,7 +2,9 @@
 
 Running list of known, non-blocking gaps discovered during feature work — documented here rather than silently forgotten, but not urgent enough to have blocked the work that found them. When one gets fixed, delete its entry rather than marking it done.
 
-## Rust `generic_type_with_turbofish`'s render template injects illegal whitespace around the `::<` turbofish token — accepted regression, not a TODO
+Every entry heading starts with a stable backticked `ki-*` id — refer to an entry by that id (in conversation, commits, or across sessions); ids never renumber when neighbors are deleted, and a fixed entry's id simply disappears with it. Pick unused ids for new entries.
+
+## `ki-token-adjacency` — Rust `generic_type_with_turbofish`'s render template injects illegal whitespace around the `::<` turbofish token — accepted regression, not a TODO
 
 **Found during:** [enrich base-grammar un-aliasing](superpowers/specs/2026-07-14-enrich-base-grammar-unaliasing-design.md) implementation, Task 1 rework (`packages/codegen/src/dsl/enrich.ts`'s `applyUnaliasDistinct`, single-site drop branch — unchanged, already-landed behavior for rust's one un-aliasing site, `scoped_type_identifier.path`).
 
@@ -22,7 +24,7 @@ This is a general "scanner-delimited / token-adjacent slot" rendering gap in the
 
 **More confirmed instances (2026-07-20, PR #169):** fixing typescript's `string` rule (an unrelated bug with an unrelated fix) let previously-parse-blocked corpus fixtures reach far enough to exercise `break_statement`, `continue_statement`, and `debugger_statement` for the first time; all three render their trailing `;` with a leading space (`"break ;"`, `"continue ;"`, `"debugger ;"` instead of `"break;"`/`"continue;"`/`"debugger;"`), and rust's `_delim_token_tree_paren.jinja` has the same shape (`"hi" , x` instead of `"hi", x`). Same root cause, same deferred status — not re-litigated here, just logged as more evidence for whoever picks up the general walker fix. `regression-checker-native`'s `format-deferred-rise` verdict flagged this as typescript's `roundtrip` failingKinds growing 7→10 on PR #169 — accepted per the same reasoning as the turbofish case above (net `roundtrip` pass count went 82→109 on the same PR; the 3 new failures are pre-existing-but-newly-reachable, not caused by the string fix itself).
 
-## Typescript `_export_statement_group2` `expectDiagnostics` allow-list entry may now be removable
+## `ki-stale-expectdiagnostics` — Typescript `_export_statement_group2` `expectDiagnostics` allow-list entry may now be removable
 
 **Found during:** typescript's nested/cascaded `polymorphs:` work. The root issue — assemble-time diagnostics firing on enrich-minted rules left orphaned (unreachable from any top-level kind) by superseding polymorph splits — was FIXED at the root: `compiler/evaluate.ts`'s `buildRuleCatalog` computes `computeReachableRuleNames` (BFS from all visible top-level rule names) and omits hidden+unreachable rules from its `.rules` map, so diagnostics never see the orphans.
 
@@ -30,7 +32,7 @@ What remains is bookkeeping: the per-instance workaround from before the fix —
 
 **Caveat:** the reachability BFS seeds from *visible* top-level rules — see the zero-visible-rules entry below for the edge case that seeding choice broke.
 
-## `emitSymbol`'s generalized hidden-helper inlining doesn't yet handle a fielded sequence inside the inlined target
+## `ki-emitsymbol-fielded-seq` — `emitSymbol`'s generalized hidden-helper inlining doesn't yet handle a fielded sequence inside the inlined target
 
 **Found during:** indent-aware rendering for python (`rrp-ast-match-sweep`), generalizing `emitSymbol` (`packages/codegen/src/emitters/templates.ts`) so a NAMED field wrapping a hidden `inline: true` target (e.g. `function_definition.body` → `_suite`) inlines the target's `renderRule` the same way an unnamed group-lift helper already does, instead of always emitting an opaque `{{ body }}` slot reference. Confirmed via a full-grammar scan: 46 total "named field → hidden inline:true target" occurrences across the 3 grammars (python 11, all → `_suite`; rust 12 and typescript 23, all → 0-slot `pattern`/`enum` leaf wrappers like `_type_identifier`/`_semicolon`) — the fix was applied generically to all 46 since the non-`_suite` targets have no internal structure to be affected by inlining.
 
@@ -40,7 +42,7 @@ The generalization was verified safe for every CURRENT occurrence (`_suite`'s ow
 
 **Fix, if/when prioritized:** when a future case exercises this shape, extend `emitSymbol`'s inlining block (`packages/codegen/src/emitters/templates.ts`, the `if (rule.type === SYMBOL && rule.inline === true)` branch) to detect "target's own top-level rule is a SEQ whose members are all field-wrapped" and route each inner field through its own presence/emission logic instead of a single shared conditional — likely mirroring render-module.ts's existing "group-lift inner field hoisting" pattern (hoisting a helper's inner named fields onto the parent struct) for the template side too.
 
-## Boolean/keyword marker and structural-child fields dropped when factory-reconstructing several rust kinds
+## `ki-factory-marker-drops` — Boolean/keyword marker and structural-child fields dropped when factory-reconstructing several rust kinds
 
 **Found during:** the `factory-render-parse` storage-comparison redesign; census re-verified after the round-trip-fidelity program closed (this cluster is now nearly ALL of rust's remaining factory failures — 16 of 17).
 
@@ -56,7 +58,7 @@ A real parse+read carries these fields; reconstructing the SAME materialized dat
 
 **Fix, if/when prioritized:** trace `nodeToConfig`'s handling of `self_parameter`/`async_block`/`reference_pattern` — likely `promoteAnonymousTokenFields` or the boolean-keyword coercion path (`coerceBooleanKeywordStorage`, referenced in the generated factories) not being exercised the same way when fed materialized wrapped-tree data as when fed the validator's old shallow native-read data.
 
-## Round-trip-fidelity residual inventory — the corpus failures behind the committed S-class ceilings
+## `ki-sclass-residuals` — Round-trip-fidelity residual inventory — the corpus failures behind the committed S-class ceilings
 
 **Found during:** the floor-ratchet + S-class-gate work that closed out the round-trip-fidelity restoration program's final phase. The live SSOT for these counts is `packages/tools/sclass-ceilings.json` (per-grammar ceilings the `validate counts` run enforces) + `packages/tools/validation-report.json` (the classified entries themselves) + `packages/tools/baselines/native.json` (exact pass floors and per-validator `failingKinds`). This entry names the failure *clusters* so each can be chipped at as its own work item — chip one, lower its ceiling in the same commit.
 
@@ -76,29 +78,29 @@ A real parse+read carries these fields; reconstructing the SAME materialized dat
 
 **Status: documented exclusions — every count above is pinned by the committed ceilings; a fix must lower the matching ceiling in the same commit (the gate prints a reminder when a class drops below its ceiling).**
 
-## `enrich()` optional keyword-prefix promotion (pass 2) no longer recurses into choice members — unit pin broken
+## `ki-enrich-choice-recursion` — `enrich()` optional keyword-prefix promotion (pass 2) no longer recurses into choice members — unit pin broken
 
 **Found during:** the same hygiene pass. `packages/codegen/src/dsl/__tests__/enrich.test.ts` ("recurses into choice members") dies at `branch0.members[0]` — the choice branch it inspects no longer has `members`, i.e. either the promotion stopped recursing into CHOICE arms (behavior regression) or a later enrich/normalize change legitimately reshapes the branch before the assertion (stale pin). Not yet triaged to either side — the failure is a TypeError in the test's own navigation, not a clean assertion diff.
 
 **Fix, if/when prioritized:** dump the actual rule shape the test receives; if the promotion still happens under a different structure, re-pin; if `optional('<kw>')` inside a choice arm genuinely no longer promotes to `field('<kw>_marker', …)`, that's a real regression in the auto-promotion pass and corpus kinds with keyword-prefixed choice arms would show marker drops.
 
-## `generate()` non-literal-separator diagnostic count drifted (typescript surfaces 1 of the expected 2)
+## `ki-separator-diag-drift` — `generate()` non-literal-separator diagnostic count drifted (typescript surfaces 1 of the expected 2)
 
 **Found during:** the same hygiene pass. `packages/codegen/src/compiler/__tests__/generate.test.ts` pins that a typescript `generate()` run surfaces exactly 2 `non-literal-separator` warnings; the run now surfaces 1. One of the two separator sites either got fixed, consolidated, or its diagnostic suppressed — needs a one-line triage (which site disappeared and why) before deciding whether to re-pin to 1 or restore the lost diagnostic.
 
-## Evaluate with zero visible rules returns an empty rule catalog — hidden-only grammars lost their rules
+## `ki-zero-visible-rules` — Evaluate with zero visible rules returns an empty rule catalog — hidden-only grammars lost their rules
 
 **Found during:** the same hygiene pass. `packages/codegen/src/compiler/__tests__/evaluate.test.ts` ("grammar with zero visible rules evaluates successfully") expects `_expr` in the catalog and gets `[]`. Plausibly a casualty of the reachability filter described in the orphaned-rules entry above: `buildRuleCatalog`'s BFS seeds from *visible* top-level rule names, so a grammar with only hidden rules has an empty seed set and every rule is "unreachable". Real grammars always have visible roots, so this is an edge-case contract question: either hidden-only grammars should seed the walk from all top-level rules, or the test's contract is obsolete.
 
-## TypeScript `class_static_block` factory builds the wrong kind and loses the method surface
+## `ki-class-static-block` — TypeScript `class_static_block` factory builds the wrong kind and loses the method surface
 
 **Found during:** the same hygiene pass. `packages/typescript/tests/nodes.test.ts`: `ir.classStaticBlock(...)` returns a node whose `$type` is `statement_block`'s id rather than `class_static_block`'s, and the returned object has no `$render` method — the factory (or its `ir` alias) is resolving/collapsing to the wrong target kind entirely, then skipping `withMethods`. Distinct symptom from the polymorph-misselection cluster above (this is factory dispatch, not `nodeToConfig` inference).
 
-## Python `decorated_definition` render requires a `_newline` the read never populates
+## `ki-decorated-def-newline` — Python `decorated_definition` render requires a `_newline` the read never populates
 
 **Found during:** the same hygiene pass. `packages/python/tests/nodes.test.ts`: rendering a factory-built `decorated_definition` throws `Missing field \`_newline\` on DecoratedDefinitionTransport._decorator` — the decorator transport declares a mandatory newline slot (statement-terminating-newline modeling) that the factory path never stamps. Factory-side counterpart of the spacing-model change; the corpus rrp path passes because a real read carries the newline.
 
-## Rust `from.string` / `from.comment` canonical factories are not emitted — composition needs a design decision
+## `ki-from-string-composition` — Rust `from.string` / `from.comment` canonical factories are not emitted — composition needs a design decision
 
 **Found during:** re-pinning `packages/codegen/src/scm/__tests__/scm-roles.test.ts`. Rust's `string_literal` factory takes a config with an explicit `stringOpen` slot (the open-quote token variant: `"`, `b"`, …) plus an `elements` array, so `emitFromString` has no single-positional-child surface to compose and deliberately skips rather than inventing a default quote style (`line_comment`'s content-node shape skips `from.comment` the same way). The test now pins the absence.
 
