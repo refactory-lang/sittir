@@ -11,11 +11,12 @@ describe('nested-alias polymorph — python assignment e2e', () => {
 		const parser = new Parser();
 		parser.setLanguage(lang as any);
 
-		// Simple assignment: x = 1 → assignment_eq variant
+		// Simple assignment: x = 1 → assignment_eq variant. Navigate by
+		// descendant type, not fixed depth — the parse tree carries a
+		// visible statement_group1 layer (the multi-slot _simple_statements
+		// group is deliberately visible so its slots stay addressable).
 		const tree = (parser as any).parse('x = 1');
-		const root = tree.rootNode;
-		const stmt = root.firstChild;
-		const assign = stmt.firstNamedChild;
+		const assign = tree.rootNode.descendantsOfType('assignment')[0];
 
 		expect(assign.type).toBe('assignment');
 
@@ -39,7 +40,7 @@ describe('nested-alias polymorph — python assignment e2e', () => {
 		parser.setLanguage(lang as any);
 
 		const tree = (parser as any).parse('x: int');
-		const assign = tree.rootNode.firstChild.firstNamedChild;
+		const assign = tree.rootNode.descendantsOfType('assignment')[0];
 
 		let variantChild = null;
 		for (let i = 0; i < assign.namedChildCount; i++) {
@@ -58,7 +59,7 @@ describe('nested-alias polymorph — python assignment e2e', () => {
 		parser.setLanguage(lang as any);
 
 		const tree = (parser as any).parse('x: int = 1');
-		const assign = tree.rootNode.firstChild.firstNamedChild;
+		const assign = tree.rootNode.descendantsOfType('assignment')[0];
 
 		let variantChild = null;
 		for (let i = 0; i < assign.namedChildCount; i++) {
@@ -77,7 +78,7 @@ describe('nested-alias polymorph — python assignment e2e', () => {
 		parser.setLanguage(lang as any);
 
 		const tree = (parser as any).parse('x = 1');
-		const assign = tree.rootNode.firstChild.firstNamedChild;
-		expect(assign.type).toBe('assignment');
+		const assign = tree.rootNode.descendantsOfType('assignment')[0];
+		expect(assign?.type).toBe('assignment');
 	});
 });
