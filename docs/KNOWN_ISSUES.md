@@ -6,13 +6,12 @@ Every entry heading starts with a stable backticked `ki-*` id — refer to an en
 
 Suggested attack order (by payoff ÷ effort; remove a line when its entry is deleted):
 
-1. `ki-decorated-def-newline` — factory-side stamp for the spacing model's newline slot
-2. `ki-enrich-choice-recursion`, `ki-separator-diag-drift`, `ki-zero-visible-rules` — singleton triages, each a one-sitting fix-or-repin
-3. `ki-stale-expectdiagnostics` — one regen to confirm, then delete a line of config
-4. `ki-sclass-residuals` — the corpus clusters, biggest first (S1 native-coords, python S8 tuple_pattern)
-5. `ki-from-string-composition` — blocked on a quote-style design decision
-6. `ki-token-adjacency` — highest blast radius (shared walker), needs full three-grammar verification
-7. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
+1. `ki-enrich-choice-recursion`, `ki-separator-diag-drift`, `ki-zero-visible-rules` — singleton triages, each a one-sitting fix-or-repin
+2. `ki-stale-expectdiagnostics` — one regen to confirm, then delete a line of config
+3. `ki-sclass-residuals` — the corpus clusters, biggest first (S1 native-coords, python S8 tuple_pattern)
+4. `ki-from-string-composition` — blocked on a quote-style design decision
+5. `ki-token-adjacency` — highest blast radius (shared walker), needs full three-grammar verification
+6. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
 
 ## `ki-token-adjacency` — Rust `generic_type_with_turbofish`'s render template injects illegal whitespace around the `::<` turbofish token — accepted regression, not a TODO
 
@@ -84,10 +83,6 @@ The generalization was verified safe for every CURRENT occurrence (`_suite`'s ow
 ## `ki-zero-visible-rules` — Evaluate with zero visible rules returns an empty rule catalog — hidden-only grammars lost their rules
 
 **Found during:** the same hygiene pass. `packages/codegen/src/compiler/__tests__/evaluate.test.ts` ("grammar with zero visible rules evaluates successfully") expects `_expr` in the catalog and gets `[]`. Plausibly a casualty of the reachability filter described in the orphaned-rules entry above: `buildRuleCatalog`'s BFS seeds from *visible* top-level rule names, so a grammar with only hidden rules has an empty seed set and every rule is "unreachable". Real grammars always have visible roots, so this is an edge-case contract question: either hidden-only grammars should seed the walk from all top-level rules, or the test's contract is obsolete.
-
-## `ki-decorated-def-newline` — Python `decorated_definition` render requires a `_newline` the read never populates
-
-**Found during:** the same hygiene pass. `packages/python/tests/nodes.test.ts`: rendering a factory-built `decorated_definition` throws `Missing field \`_newline\` on DecoratedDefinitionTransport._decorator` — the decorator transport declares a mandatory newline slot (statement-terminating-newline modeling) that the factory path never stamps. Factory-side counterpart of the spacing-model change; the corpus rrp path passes because a real read carries the newline.
 
 ## `ki-from-string-composition` — Rust `from.string` / `from.comment` canonical factories are not emitted — composition needs a design decision
 

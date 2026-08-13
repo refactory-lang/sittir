@@ -794,7 +794,8 @@ describe('decorated_definition', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+					_expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					_newline: TSKindId.Newline as never
 				} as any
 			],
 			definition: {
@@ -817,7 +818,8 @@ describe('decorated_definition', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+					_expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					_newline: TSKindId.Newline as never
 				} as any
 			],
 			definition: {

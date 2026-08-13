@@ -548,7 +548,22 @@ function buildDummyStub(
 	nextVisiting.add(kind);
 	const fieldParts: string[] = [];
 	for (const f of allSlotsOf(node)) {
-		if (!isRequired(f) || isAutoStampField(f, nodeMap)) continue;
+		if (!isRequired(f)) continue;
+		if (isAutoStampField(f, nodeMap)) {
+			// A required auto-stamp is not config surface, but this RAW stub
+			// bypasses the factory that would stamp it, and the native
+			// transport declares its storage key mandatory (python
+			// decorator's `_newline` — a factory-built or read node always
+			// carries it, so the stub must too). Emit the pre-coerced
+			// storage value inline for the coercible storage shapes;
+			// verbatim-storage stamps stay omitted (their text lives in the
+			// template, not the wire).
+			const stampInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
+			if (stampInfo.kind === 'boolean' || stampInfo.kind === 'bitflag' || stampInfo.kind === 'kindEnum') {
+				fieldParts.push(`${f.storageKey}: ${dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting)}`);
+			}
+			continue;
+		}
 		const value = isMultiple(f)
 			? `[${dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting)}]`
 			: dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting);
