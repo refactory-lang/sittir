@@ -1529,6 +1529,11 @@ function computeReachableRuleNames(rules: Record<string, Rule<'evaluate'>>): Set
 	for (const name of Object.keys(rules)) {
 		if (!name.startsWith('_')) reachable.add(name);
 	}
+	// A hidden-only grammar has no visible roots, so an empty seed set would
+	// prune EVERY rule as "orphaned" — but nothing is orphaned relative to a
+	// nonexistent root set, and evaluate() does not decide visibility policy
+	// (classification happens at Assemble). Keep every top-level rule.
+	if (reachable.size === 0) return new Set(Object.keys(rules));
 	for (const name of Object.keys(rules)) {
 		if (name.startsWith('_')) continue;
 		const rule = rules[name];

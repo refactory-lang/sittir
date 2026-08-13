@@ -450,19 +450,31 @@ describe('enrich()', () => {
 				}
 			});
 			const out = runEnrich(input);
+			// Structured multi-slot choice arms are group-lifted by
+			// mintStructuredChoiceArm into synthesized hidden rules
+			// referenced via named aliases — the promotion recurses into
+			// the arms FIRST and lands inside the lifted rules, each
+			// `optional('<kw>')` becoming
+			// `optional(field('<kw>_marker', $._kw_<kw>_marker))`.
 			const rule = out.grammar.rules.stmt as {
 				type: 'CHOICE';
-				members: Array<{ type: 'SEQ'; members: Rule[] }>;
+				members: Array<{ type: 'ALIAS'; content: { type: 'SYMBOL'; name: string } }>;
 			};
-			// Both choice branches get the optional-keyword promotion
-			// (named `<token>_marker`).
-			const branch0 = rule.members[0]!;
-			const branch1 = rule.members[1]!;
-			expect(branch0.members[0]).toMatchObject({
+			expect(rule.members[0]).toMatchObject({
+				type: 'ALIAS',
+				content: { type: 'SYMBOL', name: '_stmt_group1' }
+			});
+			expect(rule.members[1]).toMatchObject({
+				type: 'ALIAS',
+				content: { type: 'SYMBOL', name: '_stmt_group2' }
+			});
+			const group1 = out.grammar.rules._stmt_group1 as { type: 'SEQ'; members: Rule[] };
+			const group2 = out.grammar.rules._stmt_group2 as { type: 'SEQ'; members: Rule[] };
+			expect(group1.members[0]).toMatchObject({
 				type: 'OPTIONAL',
 				content: { type: 'FIELD', name: 'let_marker' }
 			});
-			expect(branch1.members[0]).toMatchObject({
+			expect(group2.members[0]).toMatchObject({
 				type: 'OPTIONAL',
 				content: { type: 'FIELD', name: 'const_marker' }
 			});

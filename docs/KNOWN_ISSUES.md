@@ -6,12 +6,11 @@ Every entry heading starts with a stable backticked `ki-*` id — refer to an en
 
 Suggested attack order (by payoff ÷ effort; remove a line when its entry is deleted):
 
-1. `ki-enrich-choice-recursion`, `ki-separator-diag-drift`, `ki-zero-visible-rules` — singleton triages, each a one-sitting fix-or-repin
-2. `ki-stale-expectdiagnostics` — one regen to confirm, then delete a line of config
-3. `ki-sclass-residuals` — the corpus clusters, biggest first (S1 native-coords, python S8 tuple_pattern)
-4. `ki-from-string-composition` — blocked on a quote-style design decision
-5. `ki-token-adjacency` — highest blast radius (shared walker), needs full three-grammar verification
-6. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
+1. `ki-stale-expectdiagnostics` — one regen to confirm, then delete a line of config
+2. `ki-sclass-residuals` — the corpus clusters, biggest first (S1 native-coords, python S8 tuple_pattern)
+3. `ki-from-string-composition` — blocked on a quote-style design decision
+4. `ki-token-adjacency` — highest blast radius (shared walker), needs full three-grammar verification
+5. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
 
 ## `ki-token-adjacency` — Rust `generic_type_with_turbofish`'s render template injects illegal whitespace around the `::<` turbofish token — accepted regression, not a TODO
 
@@ -39,7 +38,7 @@ This is a general "scanner-delimited / token-adjacent slot" rendering gap in the
 
 What remains is bookkeeping: the per-instance workaround from before the fix — the `_export_statement_group2`/`storagename-collision` `expectDiagnostics` allow-list entry in `packages/typescript/grammar.sittir.ts` — was never removed. If the orphan is now filtered before diagnostics run, the allow-list entry is dead and should go (a stale `expectDiagnostics` row can mask a FUTURE real collision under the same key). Removing it needs a typescript regen + `validate counts` to confirm nothing fires.
 
-**Caveat:** the reachability BFS seeds from *visible* top-level rules — see the zero-visible-rules entry below for the edge case that seeding choice broke.
+**Caveat:** the reachability BFS seeds from *visible* top-level rules; a hidden-only grammar (empty seed set) falls back to keeping every top-level rule, so the filter never prunes a grammar whole.
 
 ## `ki-emitsymbol-fielded-seq` — `emitSymbol`'s generalized hidden-helper inlining doesn't yet handle a fielded sequence inside the inlined target
 
@@ -69,20 +68,6 @@ The generalization was verified safe for every CURRENT occurrence (`_suite`'s ow
 - **python `_content: value "0"/"3"/"3j" ≠ {}`** (×5): scalar text content where the read reference materializes a node.
 
 **Status: documented exclusions — every count above is pinned by the committed ceilings; a fix must lower the matching ceiling in the same commit (the gate prints a reminder when a class drops below its ceiling).**
-
-## `ki-enrich-choice-recursion` — `enrich()` optional keyword-prefix promotion (pass 2) no longer recurses into choice members — unit pin broken
-
-**Found during:** the same hygiene pass. `packages/codegen/src/dsl/__tests__/enrich.test.ts` ("recurses into choice members") dies at `branch0.members[0]` — the choice branch it inspects no longer has `members`, i.e. either the promotion stopped recursing into CHOICE arms (behavior regression) or a later enrich/normalize change legitimately reshapes the branch before the assertion (stale pin). Not yet triaged to either side — the failure is a TypeError in the test's own navigation, not a clean assertion diff.
-
-**Fix, if/when prioritized:** dump the actual rule shape the test receives; if the promotion still happens under a different structure, re-pin; if `optional('<kw>')` inside a choice arm genuinely no longer promotes to `field('<kw>_marker', …)`, that's a real regression in the auto-promotion pass and corpus kinds with keyword-prefixed choice arms would show marker drops.
-
-## `ki-separator-diag-drift` — `generate()` non-literal-separator diagnostic count drifted (typescript surfaces 1 of the expected 2)
-
-**Found during:** the same hygiene pass. `packages/codegen/src/compiler/__tests__/generate.test.ts` pins that a typescript `generate()` run surfaces exactly 2 `non-literal-separator` warnings; the run now surfaces 1. One of the two separator sites either got fixed, consolidated, or its diagnostic suppressed — needs a one-line triage (which site disappeared and why) before deciding whether to re-pin to 1 or restore the lost diagnostic.
-
-## `ki-zero-visible-rules` — Evaluate with zero visible rules returns an empty rule catalog — hidden-only grammars lost their rules
-
-**Found during:** the same hygiene pass. `packages/codegen/src/compiler/__tests__/evaluate.test.ts` ("grammar with zero visible rules evaluates successfully") expects `_expr` in the catalog and gets `[]`. Plausibly a casualty of the reachability filter described in the orphaned-rules entry above: `buildRuleCatalog`'s BFS seeds from *visible* top-level rule names, so a grammar with only hidden rules has an empty seed set and every rule is "unreachable". Real grammars always have visible roots, so this is an edge-case contract question: either hidden-only grammars should seed the walk from all top-level rules, or the test's contract is obsolete.
 
 ## `ki-from-string-composition` — Rust `from.string` / `from.comment` canonical factories are not emitted — composition needs a design decision
 

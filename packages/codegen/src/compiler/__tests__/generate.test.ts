@@ -157,34 +157,25 @@ describe('generate() — non-literal-separator diagnostic surfacing (PR-S task 5
 		expect(rendered).toContain('(link)');
 	});
 
-	it('rust and python generate() runs are silent; typescript surfaces exactly the known object_type/interface_body gap', async () => {
+	it('rust and python generate() runs are silent; typescript surfaces exactly one known non-literal-separator gap', async () => {
 		// Empirical "0 witnesses" proof for rust and python. TypeScript is
-		// NOT silent — ground truth (verified empirically, not assumed): its
-		// `object_type` override (packages/typescript/grammar.sittir.ts) splits the
-		// member list into `object_type_content_comma` / `_semi` visible rules
-		// specifically so each carries its own single-literal separator
-		// template (see that file's comment on `object_type_content`). But
-		// `interface_body` is a tree-sitter ALIAS TARGET of `object_type` with
-		// no override of its own — it inherits `object_type`'s PRE-refine parse
-		// shape (tree-sitter-typescript's upstream `sepBy1(choice(',',
-		// $._semicolon), member)`), which surfaces here as the synthesized
-		// `_object_type_optional1` wrapper kind. Its separator genuinely IS a
-		// CHOICE, not a StringRule — a real, already-documented gap (see
-		// object_type's override comment: "If per-form factory support for
-		// interface_body is needed, a follow-up can add a codegen pass...").
-		// This diagnostic is expected to keep firing here until that follow-up
-		// (or PR-T) lands; the assertion below pins the count so a REGRESSION
-		// (more occurrences, or occurrences in rust/python) fails loudly.
-		//
-		// Both occurrences emit byte-identical diagnostic text (the message
-		// carries no per-kind label) -- verified via a direct capture that both
-		// fire on separate sites: object_type's own inherited shape and
-		// interface_body's synthesized _object_type_optional1 wrapper, the exact
-		// two known gaps described above.
+		// NOT silent — ground truth (verified empirically, not assumed): one
+		// repeat shape still carries a genuine CHOICE separator (a real,
+		// documented rendering gap — tracked in the diagnostic itself via the
+		// non-slot-separator-rules design doc). This used to be TWO sites:
+		// `object_type`'s inherited pre-refine shape and `interface_body`'s
+		// synthesized `_object_type_optional1` wrapper. The object_type
+		// rewrite replaced that wrapper with the `object_type_content`
+		// separated-list kind, whose separator is a captured runtime slot
+		// (`_separator_kind`) rather than an unsupported CHOICE template —
+		// the wrapper kind no longer exists in grammar.json/node-model, so
+		// its diagnostic legitimately stopped firing. The assertion pins the
+		// count so a REGRESSION (more occurrences, or occurrences in
+		// rust/python) fails loudly.
 		const cases: readonly [string, number][] = [
 			['rust', 0],
 			['python', 0],
-			['typescript', 2]
+			['typescript', 1]
 		];
 		for (const [grammar, expectedCount] of cases) {
 			const capture = captureStderr();
