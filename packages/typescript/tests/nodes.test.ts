@@ -1519,21 +1519,15 @@ describe('formal_parameters', () => {
 describe('class_static_block', () => {
 	it('factory produces correct type', () => {
 		const node = ir.classStaticBlock({
-			$type: TSKindId.StatementBlock,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
+		});
 		expect(node.$type).toBe(TSKindId.ClassStaticBlock);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.classStaticBlock({
-			$type: TSKindId.StatementBlock,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
+		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

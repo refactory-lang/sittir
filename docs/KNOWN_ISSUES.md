@@ -6,14 +6,13 @@ Every entry heading starts with a stable backticked `ki-*` id — refer to an en
 
 Suggested attack order (by payoff ÷ effort; remove a line when its entry is deleted):
 
-1. `ki-class-static-block` — probably shares a root with the `_static_marker` rows in `ki-sclass-residuals`
-2. `ki-decorated-def-newline` — factory-side stamp for the spacing model's newline slot
-3. `ki-enrich-choice-recursion`, `ki-separator-diag-drift`, `ki-zero-visible-rules` — singleton triages, each a one-sitting fix-or-repin
-4. `ki-stale-expectdiagnostics` — one regen to confirm, then delete a line of config
-5. `ki-sclass-residuals` — the corpus clusters, biggest first (S1 native-coords, python S8 tuple_pattern)
-6. `ki-from-string-composition` — blocked on a quote-style design decision
-7. `ki-token-adjacency` — highest blast radius (shared walker), needs full three-grammar verification
-8. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
+1. `ki-decorated-def-newline` — factory-side stamp for the spacing model's newline slot
+2. `ki-enrich-choice-recursion`, `ki-separator-diag-drift`, `ki-zero-visible-rules` — singleton triages, each a one-sitting fix-or-repin
+3. `ki-stale-expectdiagnostics` — one regen to confirm, then delete a line of config
+4. `ki-sclass-residuals` — the corpus clusters, biggest first (S1 native-coords, python S8 tuple_pattern)
+5. `ki-from-string-composition` — blocked on a quote-style design decision
+6. `ki-token-adjacency` — highest blast radius (shared walker), needs full three-grammar verification
+7. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
 
 ## `ki-token-adjacency` — Rust `generic_type_with_turbofish`'s render template injects illegal whitespace around the `::<` turbofish token — accepted regression, not a TODO
 
@@ -67,7 +66,7 @@ The generalization was verified safe for every CURRENT occurrence (`_suite`'s ow
 - **S4 — `union-slot-mixed-row` grammar diagnostics** (python `future_import_statement`/`import_from_statement`, typescript `binary_expression`/`_jsx_opening_element_content`): static modeling warnings, order-lossy or singular mixed rows.
 - **Factory trailing-separator capture gap** (~11 rows across all three grammars: `_*_trailing_sep: value true ≠ false` — python `case_pattern`/`element`/`simple_statement`, rust `elements`/`macro_rule`, typescript `content`/`type_parameter`/`type`): a read captures per-field trailing-separator presence; the factory path has no way to stamp it (the accepted factory-render-parse shortfall from the flank-capture work — needs FactoryShape support to close).
 - **typescript `_separator_kind: unexpected extra field on factory output`** (×9): the factory stamps a `_separator_kind` the read reference doesn't carry (or normalizes differently) — inverse-direction sibling of the trailing-sep gap.
-- **typescript `_static_marker: value 107 ≠ 356`** (×3): marker stamped with the wrong kind id — plausibly the same root as the `class_static_block` factory mis-dispatch entry below.
+- **typescript `_static_marker: value 107 ≠ 356`** (×3): marker stamped with the wrong kind id, on `_public_field_definition_static_mods` (the `class_static_block` factory mis-dispatch once suspected as a shared root turned out to be a generated-test call-shape bug, fixed separately — these rows are their own defect).
 - **python `_content: value "0"/"3"/"3j" ≠ {}`** (×5): scalar text content where the read reference materializes a node.
 
 **Status: documented exclusions — every count above is pinned by the committed ceilings; a fix must lower the matching ceiling in the same commit (the gate prints a reminder when a class drops below its ceiling).**
@@ -85,10 +84,6 @@ The generalization was verified safe for every CURRENT occurrence (`_suite`'s ow
 ## `ki-zero-visible-rules` — Evaluate with zero visible rules returns an empty rule catalog — hidden-only grammars lost their rules
 
 **Found during:** the same hygiene pass. `packages/codegen/src/compiler/__tests__/evaluate.test.ts` ("grammar with zero visible rules evaluates successfully") expects `_expr` in the catalog and gets `[]`. Plausibly a casualty of the reachability filter described in the orphaned-rules entry above: `buildRuleCatalog`'s BFS seeds from *visible* top-level rule names, so a grammar with only hidden rules has an empty seed set and every rule is "unreachable". Real grammars always have visible roots, so this is an edge-case contract question: either hidden-only grammars should seed the walk from all top-level rules, or the test's contract is obsolete.
-
-## `ki-class-static-block` — TypeScript `class_static_block` factory builds the wrong kind and loses the method surface
-
-**Found during:** the same hygiene pass. `packages/typescript/tests/nodes.test.ts`: `ir.classStaticBlock(...)` returns a node whose `$type` is `statement_block`'s id rather than `class_static_block`'s, and the returned object has no `$render` method — the factory (or its `ir` alias) is resolving/collapsing to the wrong target kind entirely, then skipping `withMethods`. Distinct symptom from the polymorph-misselection cluster above (this is factory dispatch, not `nodeToConfig` inference).
 
 ## `ki-decorated-def-newline` — Python `decorated_definition` render requires a `_newline` the read never populates
 

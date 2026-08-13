@@ -17,7 +17,7 @@ import {
 import {
 	isValidIdent,
 	isAutoStampField,
-	resolveSingleFieldFactorySlot,
+	resolveDirectFactorySlot,
 	classifyChildFactorySurface,
 	isRequired,
 	isMultiple,
@@ -168,6 +168,11 @@ function emitBranchTest(
 
 	// Gap 5: single-field-no-children factories take the value directly.
 	// Detect and emit a direct-value call instead of a config-object.
+	// `resolveDirectFactorySlot` is the same derivation the factories and
+	// from emitters use for the calling convention — a marker-carrying kind
+	// (e.g. class_static_block's automatic_semicolon) is config-shaped, and
+	// a direct-value call against its config coercion would hit the
+	// NodeData passthrough and return the child unchanged.
 	//
 	// Excludes a sole field backed by a KindEnum (e.g. debugger_statement's
 	// `semicolon`, coerced via coerceKindEnumStorage in the emitted
@@ -178,7 +183,7 @@ function emitBranchTest(
 	// (untested here) matches Gap 5's premise for that shape. The
 	// object-config form below is always type-correct regardless of field
 	// shape, since coerceToXxx checks `input.<fieldName>` first.
-	const singleFieldSlot = resolveSingleFieldFactorySlot(node, nodeMap);
+	const singleFieldSlot = resolveDirectFactorySlot(node, nodeMap);
 	const singleFieldIsKindEnum =
 		singleFieldSlot !== undefined && kindEnumTextIdPairs(singleFieldSlot, nodeMap, kindEntries).length > 0;
 

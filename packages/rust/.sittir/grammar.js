@@ -4495,15 +4495,6 @@ var grammar_sittir_default = grammar(
           )
         )
       },
-      //TODO: remove
-      expectTestFailures: {
-        async_block: "#130 \u2014 factory returns block $type / no $render accessor",
-        block_comment: "#130 \u2014 factory output has no $render accessor",
-        gen_block: "#130 \u2014 factory returns block $type / no $render accessor",
-        reference_pattern: "#130 \u2014 factory returns wrong $type / no $render accessor",
-        self_parameter: "#130 \u2014 factory output has no $render accessor",
-        variadic_parameter: "#130 \u2014 factory output has no $render accessor"
-      },
       renderAs: (_$) => ({
         _inner_line_doc_comment_marker: string("!"),
         _outer_block_doc_comment_marker: string("*"),
