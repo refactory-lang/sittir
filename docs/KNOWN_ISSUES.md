@@ -6,11 +6,10 @@ Every entry heading starts with a stable backticked `ki-*` id — refer to an en
 
 Suggested attack order (by payoff ÷ effort; remove a line when its entry is deleted):
 
-1. `ki-stale-expectdiagnostics` — one regen to confirm, then delete a line of config
-2. `ki-sclass-residuals` — the corpus clusters, biggest first (S1 native-coords, python S8 tuple_pattern)
-3. `ki-from-string-composition` — blocked on a quote-style design decision
-4. `ki-token-adjacency` — highest blast radius (shared walker), needs full three-grammar verification
-5. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
+1. `ki-sclass-residuals` — the corpus clusters, biggest first (S1 native-coords, python S8 tuple_pattern)
+2. `ki-from-string-composition` — blocked on a quote-style design decision
+3. `ki-token-adjacency` — highest blast radius (shared walker), needs full three-grammar verification
+4. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
 
 ## `ki-token-adjacency` — Rust `generic_type_with_turbofish`'s render template injects illegal whitespace around the `::<` turbofish token — accepted regression, not a TODO
 
@@ -31,14 +30,6 @@ This is a general "scanner-delimited / token-adjacent slot" rendering gap in the
 **Fix, if/when prioritized:** give the template-emission walker a way to mark a FIELD slot (or the anonymous token it wraps) as requiring token-adjacent rendering — likely keyed off `token.immediate` or a similar existing marker already tracked for other scanner-delimited cases (see project memory "Preserve token wrappers" and "Template walker adjacency — scanner-delimited kinds need adjacent rendering"). Verify against all 3 grammars' deep-AST counts before landing, given the walker's blast radius.
 
 **More confirmed instances (2026-07-20, PR #169):** fixing typescript's `string` rule (an unrelated bug with an unrelated fix) let previously-parse-blocked corpus fixtures reach far enough to exercise `break_statement`, `continue_statement`, and `debugger_statement` for the first time; all three render their trailing `;` with a leading space (`"break ;"`, `"continue ;"`, `"debugger ;"` instead of `"break;"`/`"continue;"`/`"debugger;"`), and rust's `_delim_token_tree_paren.jinja` has the same shape (`"hi" , x` instead of `"hi", x`). Same root cause, same deferred status — not re-litigated here, just logged as more evidence for whoever picks up the general walker fix. `regression-checker-native`'s `format-deferred-rise` verdict flagged this as typescript's `roundtrip` failingKinds growing 7→10 on PR #169 — accepted per the same reasoning as the turbofish case above (net `roundtrip` pass count went 82→109 on the same PR; the 3 new failures are pre-existing-but-newly-reachable, not caused by the string fix itself).
-
-## `ki-stale-expectdiagnostics` — Typescript `_export_statement_group2` `expectDiagnostics` allow-list entry may now be removable
-
-**Found during:** typescript's nested/cascaded `polymorphs:` work. The root issue — assemble-time diagnostics firing on enrich-minted rules left orphaned (unreachable from any top-level kind) by superseding polymorph splits — was FIXED at the root: `compiler/evaluate.ts`'s `buildRuleCatalog` computes `computeReachableRuleNames` (BFS from all visible top-level rule names) and omits hidden+unreachable rules from its `.rules` map, so diagnostics never see the orphans.
-
-What remains is bookkeeping: the per-instance workaround from before the fix — the `_export_statement_group2`/`storagename-collision` `expectDiagnostics` allow-list entry in `packages/typescript/grammar.sittir.ts` — was never removed. If the orphan is now filtered before diagnostics run, the allow-list entry is dead and should go (a stale `expectDiagnostics` row can mask a FUTURE real collision under the same key). Removing it needs a typescript regen + `validate counts` to confirm nothing fires.
-
-**Caveat:** the reachability BFS seeds from *visible* top-level rules; a hidden-only grammar (empty seed set) falls back to keeping every top-level rule, so the filter never prunes a grammar whole.
 
 ## `ki-emitsymbol-fielded-seq` — `emitSymbol`'s generalized hidden-helper inlining doesn't yet handle a fielded sequence inside the inlined target
 

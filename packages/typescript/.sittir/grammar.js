@@ -4590,9 +4590,6 @@ var grammar_sittir_default = grammar(
         string: "#170 \u2014 StringContentTransportSlot rejects stub ($type property missing)",
         enum_body_group1: "#170 \u2014 multi-field separatedList (name/enum_assignment); emitSeparatedListFactory only fixes the single-field-storage case, needs a real per-field partition of the flat elements array"
       },
-      expectDiagnostics: {
-        "storagename-collision": ["_export_statement_group2"]
-      },
       rules: {
         _reserved_identifier: ($, original) => {
           const members = original.members;
