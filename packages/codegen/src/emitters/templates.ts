@@ -1101,6 +1101,40 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	return undefined;
 }
 
+// True when the fragment can stand alone as a template: it never closes an
+// `{% if %}` it didn't open, and closes every one it did.
+function isTagBalanced(fragment: string): boolean {
+	const tagRe = /\{%-?\s*(if|endif)\b[^%]*?%\}/g;
+	let depth = 0;
+	for (let m = tagRe.exec(fragment); m !== null; m = tagRe.exec(fragment)) {
+		if (m[1] === 'if') depth++;
+		else if (--depth < 0) return false;
+	}
+	return depth === 0;
+}
+
+// Longest common trailing suffix across all bodies, trimmed forward to the
+// earliest `{{`/`{%` boundary from which the fragment is tag-balanced —
+// i.e. the largest shared tail that can be lifted out of every body and
+// emitted as a standalone template fragment.
+function commonBalancedTrailingTail(bodies: readonly string[]): string {
+	if (bodies.length < 2) return '';
+	let suffix = bodies[0]!;
+	for (let i = 1; i < bodies.length; i++) {
+		const b = bodies[i]!;
+		let n = 0;
+		while (n < suffix.length && n < b.length && suffix[suffix.length - 1 - n] === b[b.length - 1 - n]) n++;
+		suffix = suffix.slice(suffix.length - n);
+		if (suffix === '') return '';
+	}
+	for (let p = 0; p < suffix.length; p++) {
+		if (!suffix.startsWith('{{', p) && !suffix.startsWith('{%', p)) continue;
+		const cand = suffix.slice(p);
+		if (isTagBalanced(cand)) return cand;
+	}
+	return '';
+}
+
 function scanArmBody(body: string): { key: string | undefined; needsGate: boolean; discriminatorKey: string | undefined } {
 	const tagRe = /\{\{-?\s*([A-Za-z_]\w*)[^}]*\}\}|\{%-?\s*(if|endif)\b[^%]*?%\}/g;
 	let depth = 0;
@@ -1316,9 +1350,24 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			}
 			armInfos.push({ key, discriminatorKey, body, needsGate, delta });
 		}
+		let hoistedTail = '';
 		if (!ungateableArm) {
 			const countByKey = new Map<string, number>();
 			for (const info of armInfos) countByKey.set(info.key, (countByKey.get(info.key) ?? 0) + 1);
+			// EVERY arm keying on the same ungated trailing reference means
+			// that reference is not arm content at all — it is a slot of the
+			// enclosing SEQ that the choice fan-out distributed into each arm
+			// (rust `function_type`: both form arms end in `{{ parameters }}`).
+			// Gating it inside the arm blocks renders NOTHING for that slot
+			// when no arm slot is stamped, even though the model derived it as
+			// required. Lift the largest shared balanced tail out of every arm
+			// body and emit it once, ungated, after the blocks — for a
+			// well-formed node (exactly one arm present) the output is the
+			// same text, one tail render either way.
+			const sharedTailKey =
+				armInfos.length >= 2 && countByKey.size === 1 && literalFallback === undefined
+					? armInfos[0]!.key
+					: undefined;
 			for (const info of armInfos) {
 				if (
 					(countByKey.get(info.key) ?? 0) > 1 &&
@@ -1327,6 +1376,15 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 					ctx.ownerSlots?.[info.discriminatorKey] !== undefined
 				) {
 					info.key = info.discriminatorKey;
+				}
+			}
+			if (sharedTailKey !== undefined) {
+				const tail = commonBalancedTrailingTail(armInfos.map((i) => i.body));
+				if (tail !== '' && new RegExp(`\\{\\{-?\\s*${escapeRegex(sharedTailKey)}\\b`).test(tail)) {
+					hoistedTail = tail;
+					for (const info of armInfos) {
+						info.body = info.body.slice(0, info.body.length - tail.length);
+					}
 				}
 			}
 		}
@@ -1343,6 +1401,9 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 		// into the returned text.
 		const arraySlotDeltaByKey = new Map<string, AssembledNonterminal[]>();
 		for (const info of armInfos) {
+			// An arm whose whole body was the hoisted shared tail has nothing
+			// arm-specific left to gate — the unconditional tail covers it.
+			if (info.body === '') continue;
 			const block = info.needsGate ? `{% if ${info.key} | isPresent %}${info.body}{% endif %}` : info.body;
 			const prev = blockByKey.get(info.key);
 			if (prev === undefined || block.length > prev.length) {
@@ -1369,11 +1430,11 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			parts.push(`{% else %}${literalFallback}{% endif %}`);
 			return parts.join('');
 		}
-		if (!ungateableArm && blockByKey.size >= 2) {
+		if (!ungateableArm && (blockByKey.size >= 2 || (hoistedTail !== '' && blockByKey.size >= 1))) {
 			for (const delta of arraySlotDeltaByKey.values()) {
 				for (const s of delta) ctx.emittedArraySlots.add(s);
 			}
-			return [...blockByKey.values()].join('');
+			return [...blockByKey.values()].join('') + hoistedTail;
 		}
 		// ungateableArm, or fewer than 2 distinct keys with no usable literal
 		// fallback: falls through to the first-arm-wins loop below. Every
