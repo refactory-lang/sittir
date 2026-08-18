@@ -18,14 +18,18 @@
 pub struct WordMatcher {
     ascii: [bool; 128],
     unicode_fallback: fn(char) -> bool,
-    /// Characters that participate in some multi-character anonymous token
-    /// of this grammar (e.g. rust's `.` and `=` from `..`/`..=`/`=>`).
-    /// Two such characters adjacent at a write seam risk the SAME
-    /// maximal-munch collision the word-class check guards against: a
-    /// longer real token could start where the two writes meet. Derived at
-    /// emit time from the grammar's own anonymous-literal inventory — see
-    /// `WordMatcher::new` callers — never hand-picked.
-    symbol_ascii: [bool; 128],
+    /// Ordered pairs of DIFFERING punctuation characters that appear
+    /// adjacent inside some multi-character anonymous token of this
+    /// grammar (e.g. rust's `('.', '=')` from `..=`). A seam whose
+    /// boundary chars form such a pair risks a maximal-munch collision:
+    /// the lexer's munch continues across the seam exactly when some real
+    /// token contains that transition (`..` + `=>` re-lexes as `..=` plus
+    /// a dangling `>`). A pair occurring in NO token (`!`+`[` in rust's
+    /// `#![...]`, `:`+`<` in the turbofish `::<`) cannot extend any munch
+    /// and stays tight. Derived at emit time from the grammar's own
+    /// anonymous-literal inventory (shared.ts `symbolHazardPairs`) — never
+    /// hand-picked.
+    symbol_pairs: &'static [(u8, u8)],
 }
 
 impl WordMatcher {
@@ -33,12 +37,12 @@ impl WordMatcher {
         Self {
             ascii,
             unicode_fallback,
-            symbol_ascii: [false; 128],
+            symbol_pairs: &[],
         }
     }
 
-    pub const fn with_symbol_class(mut self, symbol_ascii: [bool; 128]) -> Self {
-        self.symbol_ascii = symbol_ascii;
+    pub const fn with_symbol_pairs(mut self, symbol_pairs: &'static [(u8, u8)]) -> Self {
+        self.symbol_pairs = symbol_pairs;
         self
     }
 
@@ -61,8 +65,12 @@ impl WordMatcher {
     }
 
     #[inline]
-    pub fn is_symbol_char(&self, c: char) -> bool {
-        (c as u32) < 128 && self.symbol_ascii[c as usize]
+    pub fn is_hazard_pair(&self, left: char, right: char) -> bool {
+        if (left as u32) >= 128 || (right as u32) >= 128 {
+            return false;
+        }
+        let (l, r) = (left as u8, right as u8);
+        self.symbol_pairs.iter().any(|&(a, b)| a == l && b == r)
     }
 }
 
@@ -103,15 +111,13 @@ impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
         if let Some(last) = self.last {
             let word_seam = self.word.is_word(last) && self.word.is_word(first);
             // Identical-char seams (e.g. `>` closing nested generics in
-            // `Vec<Vec<T>>`) are excluded: a real doubled-char token like
-            // rust's `>>` shift operator only exists as its own grammar
-            // rule with its own disambiguation context, not as a blind
-            // concatenation hazard — spacing every repeated symbol char
-            // would make already-common, unambiguous constructs noisy for
-            // no correctness gain.
-            let symbol_seam = last != first
-                && self.word.is_symbol_char(last)
-                && self.word.is_symbol_char(first);
+            // `Vec<Vec<T>>`) are excluded (never in `symbol_pairs`): a real
+            // doubled-char token like rust's `>>` shift operator only
+            // exists as its own grammar rule with its own disambiguation
+            // context, not as a blind concatenation hazard — spacing every
+            // repeated symbol char would make already-common, unambiguous
+            // constructs noisy for no correctness gain.
+            let symbol_seam = last != first && self.word.is_hazard_pair(last, first);
             if word_seam || symbol_seam {
                 self.inner.write_str(" ")?;
             }
@@ -173,14 +179,12 @@ mod tests {
         assert_eq!(spaced(&["_a", "_b"]), "_a _b");
     }
 
-    // A small symbol class covering rust's `.`/`=`/`>` — enough to exercise
-    // seam behavior without depending on the real emitted per-grammar table.
-    fn with_dot_eq_gt_symbol_class() -> WordMatcher {
-        let mut ascii = [false; 128];
-        ascii[b'.' as usize] = true;
-        ascii[b'=' as usize] = true;
-        ascii[b'>' as usize] = true;
-        WordMatcher::new(default_ascii_table(), char::is_alphanumeric).with_symbol_class(ascii)
+    // A small hazard-pair set matching rust's `..=`/`=>` token transitions —
+    // enough to exercise seam behavior without depending on the real emitted
+    // per-grammar table.
+    fn with_range_arrow_pairs() -> WordMatcher {
+        WordMatcher::new(default_ascii_table(), char::is_alphanumeric)
+            .with_symbol_pairs(&[(b'.', b'='), (b'=', b'>')])
     }
 
     fn spaced_with(word: &WordMatcher, parts: &[&str]) -> String {
@@ -193,16 +197,26 @@ mod tests {
     }
 
     #[test]
-    fn symbol_symbol_seam_inserts() {
-        let word = with_dot_eq_gt_symbol_class();
+    fn hazard_pair_seam_inserts() {
+        let word = with_range_arrow_pairs();
         // `d..` (bare range-to-end pattern) immediately followed by `=>`
-        // would re-lex as `..=` + a dangling `>` without this insert.
+        // would re-lex as `..=` + a dangling `>` without this insert — the
+        // `.`→`=` transition exists inside the `..=` token.
         assert_eq!(spaced_with(&word, &["..", "=>"]), ".. =>");
     }
 
     #[test]
+    fn non_hazard_symbol_seam_does_not_insert() {
+        let word = with_range_arrow_pairs();
+        // Differing punctuation whose transition occurs in NO token stays
+        // tight: `>` then `.` (method call on a generic result) cannot
+        // extend any munch.
+        assert_eq!(spaced_with(&word, &[">", "."]), ">.");
+    }
+
+    #[test]
     fn identical_symbol_seam_does_not_insert() {
-        let word = with_dot_eq_gt_symbol_class();
+        let word = with_range_arrow_pairs();
         // Closing nested generics (`Vec<Vec<T>>`) must stay tight — a real
         // doubled-char token like `>>` only exists in its own disambiguated
         // grammar rule, not as a blind concatenation hazard.
@@ -211,15 +225,15 @@ mod tests {
 
     #[test]
     fn symbol_word_seam_does_not_insert() {
-        let word = with_dot_eq_gt_symbol_class();
+        let word = with_range_arrow_pairs();
         assert_eq!(spaced_with(&word, &["=>", "a"]), "=>a");
         assert_eq!(spaced_with(&word, &["pub", "("]), "pub(");
     }
 
     #[test]
-    fn default_matcher_has_no_symbol_class() {
-        // WordMatcher::default_ident() carries an empty symbol class —
-        // grammars opt in via with_symbol_class at emit time.
+    fn default_matcher_has_no_hazard_pairs() {
+        // WordMatcher::default_ident() carries an empty pair set —
+        // grammars opt in via with_symbol_pairs at emit time.
         assert_eq!(spaced(&["..", "=>"]), "..=>");
     }
 }

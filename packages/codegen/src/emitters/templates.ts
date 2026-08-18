@@ -59,7 +59,8 @@ import type {
 } from '../compiler/model/node-map.ts';
 import type { Rule, RuleBase, RenderRule, Multiplicity } from '../types/rule.ts';
 import type { CodegenEmitter } from './emitter.ts';
-import { classifyTemplateEmission, wordCharAsciiTable } from './shared.ts';
+import { classifyTemplateEmission, symbolHazardPairs, wordCharAsciiTable } from './shared.ts';
+import { getTransportProjection } from './transport-projection-cache.ts';
 
 export interface EmitTemplatesConfig {
 	grammar: string;
@@ -75,6 +76,12 @@ export interface EmitCtx {
 	readonly nodeMap: NodeMap;
 	readonly wordMatcher: RegExp;
 	readonly isWordChar: (c: string) => boolean;
+	// Same merge-hazard pairs the emitted SpacingWriter table uses (one
+	// derivation: symbolHazardPairs over the transport literal inventory) —
+	// consumed by the static-seam join so emit-time and render-time apply
+	// ONE seam law: space only where the seam's char transition occurs
+	// inside some real token of the grammar.
+	readonly isHazardPair: (l: string, r: string) => boolean;
 	readonly externals: readonly string[];
 	readonly rules: Record<string, RenderRule>;
 	readonly visitingHelpers: Set<string>;
@@ -187,6 +194,13 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			isWordChar: (() => {
 				const table = wordCharAsciiTable(this.#wordMatcher);
 				return (c: string) => (c.charCodeAt(0) < 128 ? table[c.charCodeAt(0)]! : /[\p{L}\p{N}]/u.test(c));
+			})(),
+			isHazardPair: (() => {
+				const pairs = new Set(
+					symbolHazardPairs(getTransportProjection(config.nodeMap).literals).map(([a, b]) => a * 128 + b)
+				);
+				return (l: string, r: string) =>
+					l.charCodeAt(0) < 128 && r.charCodeAt(0) < 128 && pairs.has(l.charCodeAt(0) * 128 + r.charCodeAt(0));
 			})(),
 			externals: [...(config.nodeMap.externals ?? [])],
 			rules: config.nodeMap.normalizedRules ?? {},
@@ -422,17 +436,28 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			// Static-static seams only (spec v2 note: "space baked into the
 			// literal"): askama compiles adjacent template literals into ONE
 			// write, so the render-time writer never sees a seam between two
-			// static words ('abstract' + 'class' glued to 'abstractclass').
-			// Apply the writer's exact invariant to the statically-known seam
-			// chars. Template syntax chars ('{' of '{%'/'{{') are not
-			// word-class, so conditional/slot boundaries fall through to the
-			// runtime writer untouched.
+			// static tokens — neither two words ('abstract' + 'class' glued to
+			// 'abstractclass') nor a punctuation merge-hazard pair ('..' +
+			// '=>' glued to '..=>', which re-lexes as '..=' plus a dangling
+			// '>'). Apply the writer's exact invariant — BOTH halves, word
+			// seam and hazard-pair seam — to the statically-known seam chars.
+			// A '}' left edge or '{' right edge is always TEMPLATE SYNTAX
+			// ('}}'/'%}' and '{{'/'{%'), never a real brace: escapeLiteral pads
+			// real braces with spaces ('{ '/' }'), which makes them seam-inert.
+			// Tag boundaries are dynamic and belong to the runtime writer,
+			// which sees the real rendered characters.
 			const joinParts = (segments: string[]): string => {
 				let body = segments[0]!;
 				for (let i = 1; i < segments.length; i++) {
 					const l = body[body.length - 1]!;
 					const r = segments[i]![0]!;
-					if (ctx.isWordChar(l) && ctx.isWordChar(r)) body += ' ';
+					if (l === '}' || r === '{') {
+						body += segments[i]!;
+						continue;
+					}
+					const wordSeam = ctx.isWordChar(l) && ctx.isWordChar(r);
+					const symbolSeam = l !== r && ctx.isHazardPair(l, r);
+					if (wordSeam || symbolSeam) body += ' ';
 					body += segments[i]!;
 				}
 				return body;

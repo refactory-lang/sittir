@@ -943,35 +943,50 @@ export function wordCharAsciiTable(wordMatcher: RegExp): boolean[] {
 }
 
 /**
- * Per-grammar symbol-character class: every ASCII PUNCTUATION character
- * that participates in some multi-character anonymous literal token (e.g.
- * rust's `.` and `=` from `..`/`..=`/`=>`). Two such characters adjacent at
- * a SpacingWriter write seam risk the same maximal-munch collision the
- * word-class table guards against — a longer real token could start
- * exactly where two independently-rendered writes meet (e.g. a bare
- * range-pattern `..` immediately followed by a match arm's `=>` re-lexes
- * as `..=` plus a dangling `>`). Derived from the grammar's own
- * anonymous-literal inventory — never hand-picked.
+ * Per-grammar punctuation merge-hazard pairs: every ordered pair of
+ * DIFFERING ASCII punctuation characters that appear adjacent inside some
+ * multi-character anonymous literal token. A seam whose boundary chars
+ * form such a pair risks the same maximal-munch collision the word-class
+ * table guards against — the lexer's munch at the seam continues past the
+ * left char into the right exactly when some real token contains that
+ * transition (e.g. a bare range-pattern `..` immediately followed by a
+ * match arm's `=>` re-lexes as `..=` plus a dangling `>`, via the `.`→`=`
+ * transition inside `..=`). A pair occurring in NO token (`!`→`[`, rust's
+ * `#![...]`; `:`→`<`, the turbofish) cannot extend any munch and stays
+ * tight. Derived from the grammar's own anonymous-literal inventory —
+ * never hand-picked.
+ *
+ * Identical-char pairs are deliberately excluded: a real doubled-char
+ * token (rust's `>>`) only exists with its own disambiguation context in
+ * the grammar (nested-generic `>` `>` re-lexes correctly), and spacing
+ * every repeated symbol char would make already-common constructs noisy
+ * for no correctness gain — same exemption the SpacingWriter's seam check
+ * applies.
  *
  * Word-class and whitespace characters are excluded even when they occur
  * inside a multi-character literal (e.g. python's `alias($._not_in, 'not
  * in')` — a compound-keyword token whose spelling embeds a literal space
  * and letters): those characters are either already covered by the
- * word-class table or, for whitespace, never risk a token-fusion seam —
- * including them corrupted indentation-sensitive rendering by flagging
- * plain spaces as merge-hazardous.
+ * word-class table or, for whitespace, never risk a token-fusion seam.
+ *
+ * Returns sorted `[left, right]` char-code pairs — the single derivation
+ * behind BOTH the emitted SpacingWriter pair table (render-module.ts) and
+ * the template emitter's static-seam join (templates.ts).
  */
-export function symbolCharAsciiTable(literals: readonly { readonly text: string }[]): boolean[] {
-	const table: boolean[] = Array.from({ length: 128 }, () => false);
+export function symbolHazardPairs(literals: readonly { readonly text: string }[]): [number, number][] {
+	const excluded = /[A-Za-z0-9_\s]/;
+	const pairs = new Set<number>();
 	for (const literal of literals) {
 		if (literal.text.length < 2) continue;
-		for (const ch of literal.text) {
-			const code = ch.charCodeAt(0);
-			if (code >= 128 || /[A-Za-z0-9_\s]/.test(ch)) continue;
-			table[code] = true;
+		for (let i = 0; i + 1 < literal.text.length; i++) {
+			const a = literal.text.charCodeAt(i);
+			const b = literal.text.charCodeAt(i + 1);
+			if (a === b || a >= 128 || b >= 128) continue;
+			if (excluded.test(literal.text[i]!) || excluded.test(literal.text[i + 1]!)) continue;
+			pairs.add(a * 128 + b);
 		}
 	}
-	return table;
+	return [...pairs].sort((x, y) => x - y).map((p) => [Math.floor(p / 128), p % 128]);
 }
 
 /**
