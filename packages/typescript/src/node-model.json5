@@ -7245,18 +7245,16 @@
               "unresolved": true
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
+              "value": "type",
+              "parseKind": "identifier"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_module_export_name",
-              "identifier"
+              "_module_export_name"
             ]
           }
         },

@@ -4386,6 +4386,26 @@ var grammar_sittir_default = grammar(
             members: [...members.slice(0, 8), $._token_keywords]
           };
         },
+        // `$` is the one token-tree token the base grammar keeps OUT of
+        // `_non_special_token` (in macro-definition patterns `$` must stay
+        // bindable as the metavariable sigil) and splices into invocation
+        // token trees as a bare STRING arm instead. A bare literal arm has
+        // no kind identity, so the read's array capture cannot materialize
+        // it into `_delim_tokens` — `a!($)` read back and re-rendered as
+        // `a!()`. Alias the STRING itself to the same visible punctuation
+        // kind its 44 sibling tokens already use: the parse content stays
+        // the literal `'$'` (only the node's name changes — no lexing or LR
+        // impact), and definition-context `$` is untouched. NOT the
+        // transform-spec `alias('name')` helper — that substitutes an
+        // aliased reference to the whole `_token_tree_punctuation` RULE,
+        // which makes every punctuation token doubly derivable here and is
+        // a real LR ambiguity.
+        _non_delim_token: ($, original) => ({
+          ...original,
+          members: original.members.map(
+            (m) => m.type === "STRING" && m.value === "$" ? alias2("$", $.token_tree_punctuation) : m
+          )
+        }),
         _token_keywords: ($) => choice(
           "'",
           "as",

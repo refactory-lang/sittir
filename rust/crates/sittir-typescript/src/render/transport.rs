@@ -30406,6 +30406,7 @@ impl RenderableTransport for ArrowFunctionUCallSignatureReturnTypeTransportSlot 
 pub enum ImportSpecifierAsNameTransportSlot {
     Identifier(IdentifierTransport),
     String(StringTransport),
+    Literal0_74_79_70_65,
     Verbatim(VerbatimTransport),
 }
 
@@ -30424,6 +30425,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportSpecifierAsNameTransportSl
                     248 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
+                    7 => Ok(Self::Literal0_74_79_70_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ImportSpecifierAsNameTransportSlot",
                     ))),
@@ -30445,6 +30447,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportSpecifierAsNameTransportSl
                     248 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
+                    7 => Ok(Self::Literal0_74_79_70_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ImportSpecifierAsNameTransportSlot",
                     ))),
@@ -30489,6 +30492,7 @@ fn import_specifier_as_name_transport_slot_to_any(t: ImportSpecifierAsNameTransp
     match t {
         ImportSpecifierAsNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
         ImportSpecifierAsNameTransportSlot::String(inner) => AnyTransport::String(inner),
+        ImportSpecifierAsNameTransportSlot::Literal0_74_79_70_65 => AnyTransport::Literal0_74_79_70_65,
         ImportSpecifierAsNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -30501,6 +30505,7 @@ impl RenderableTransport for ImportSpecifierAsNameTransportSlot {
         match self {
             ImportSpecifierAsNameTransportSlot::Identifier(inner) => inner.render_into(dest),
             ImportSpecifierAsNameTransportSlot::String(inner) => inner.render_into(dest),
+            ImportSpecifierAsNameTransportSlot::Literal0_74_79_70_65 => dest.write_str("type").map_err(::askama::Error::from),
             ImportSpecifierAsNameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }

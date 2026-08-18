@@ -819,8 +819,19 @@ function collectHiddenChoicesWithNamedAliasMembers(rawRules: Record<string, Rule
 	const out = new Set<string>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
-		// Only pure alias-dispatch choices: every member must be a named alias.
-		if (rule.type === CHOICE && rule.members.length > 0 && rule.members.every((m) => m.type === ALIAS && m.named)) {
+		// Only pure alias-dispatch choices: every member must be a named alias
+		// OF A RULE (content is a SYMBOL). An alias-of-terminal member
+		// (`alias('$', $.token_tree_punctuation)`) is a renamed token, not a
+		// dispatch arm — a choice carrying one is a plain union whose literal
+		// arm happens to have a kind identity, and blocking its supertype
+		// promotion reclassifies the whole union as a branch (observed:
+		// `_non_delim_token` losing its supertype shape and with it the
+		// repeat slot's per-kind wrap routing).
+		if (
+			rule.type === CHOICE &&
+			rule.members.length > 0 &&
+			rule.members.every((m) => m.type === ALIAS && m.named && m.content.type === SYMBOL)
+		) {
 			out.add(name);
 		}
 	}
@@ -1488,8 +1499,19 @@ function resolveNamedAliasWithProvenance(
 	targetName: string,
 	id: RuleId | undefined
 ): Rule<'link'> {
-	const aliasedFrom = extractAliasedFromName(content, ctx.supertypes);
 	const idAttrs = id !== undefined ? { id } : {};
+	// Alias-of-terminal (`alias('$', $.token_tree_punctuation)`): there is no
+	// storage rule to record provenance for, and dropping the text would
+	// leave a dangling bare ref (the visible target often has no rules-bag
+	// entry of its own — it exists only as other alias sites' parse name).
+	// Collapse to the literal-carrying SYMBOL instead — the same vehicle
+	// canonicalizeRuleLiterals stamps kindIds onto, which subtype collection,
+	// enum admission, and storage classification all already serve. The
+	// parse kind is the alias target; the render text is the literal.
+	if (content.type === STRING) {
+		return { type: SYMBOL, name: targetName, literal: content.value, inline: false, ...idAttrs };
+	}
+	const aliasedFrom = extractAliasedFromName(content, ctx.supertypes);
 	const sym: SymbolRule<'link'> = aliasedFrom
 		? { type: SYMBOL, name: targetName, aliasedFrom, inline: false, ...idAttrs }
 		: { type: SYMBOL, name: targetName, inline: false, ...idAttrs };

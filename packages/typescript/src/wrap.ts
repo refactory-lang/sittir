@@ -11236,7 +11236,7 @@ export function wrapImportSpecifierAs(data: T.ImportSpecifierAs, tree: TreeHandl
 			}),
 
 			name() {
-				return drillIn<T.ModuleExportName | T.Identifier>(this._name, tree);
+				return drillIn<T.ModuleExportName | 'type'>(this._name, tree);
 			},
 			alias() {
 				return drillIn<T.ImportIdentifier>(this._alias, tree);

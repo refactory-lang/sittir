@@ -633,7 +633,11 @@ export type RustGrammar = {
 		children: {
 			multiple: true;
 			required: false;
-			types: [{ type: 'token_pattern_group1'; named: true }, { type: 'token_tree'; named: true }];
+			types: [
+				{ type: 'token_pattern_group1'; named: true },
+				{ type: 'token_tree'; named: true },
+				{ type: 'token_tree_punctuation'; named: true }
+			];
 		};
 	};
 	readonly delim_token_tree_bracket: {
@@ -643,7 +647,11 @@ export type RustGrammar = {
 		children: {
 			multiple: true;
 			required: false;
-			types: [{ type: 'token_pattern_group1'; named: true }, { type: 'token_tree'; named: true }];
+			types: [
+				{ type: 'token_pattern_group1'; named: true },
+				{ type: 'token_tree'; named: true },
+				{ type: 'token_tree_punctuation'; named: true }
+			];
 		};
 	};
 	readonly delim_token_tree_paren: {
@@ -653,7 +661,11 @@ export type RustGrammar = {
 		children: {
 			multiple: true;
 			required: false;
-			types: [{ type: 'token_pattern_group1'; named: true }, { type: 'token_tree'; named: true }];
+			types: [
+				{ type: 'token_pattern_group1'; named: true },
+				{ type: 'token_tree'; named: true },
+				{ type: 'token_tree_punctuation'; named: true }
+			];
 		};
 	};
 	readonly dynamic_type: {

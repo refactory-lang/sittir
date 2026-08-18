@@ -5177,8 +5177,8 @@
       "subtypes": [
         "_non_delim_token",
         "delim_token_tree",
-        "dollar",
-        "token_pattern_group1"
+        "token_pattern_group1",
+        "token_tree_punctuation"
       ]
     },
     {
@@ -6480,7 +6480,6 @@
         "boolean_literal",
         "char_literal",
         "crate",
-        "dollar",
         "float_literal",
         "identifier",
         "integer_literal",
@@ -6488,7 +6487,8 @@
         "raw_string_literal",
         "self",
         "string_literal",
-        "super"
+        "super",
+        "token_tree_punctuation"
       ]
     },
     {

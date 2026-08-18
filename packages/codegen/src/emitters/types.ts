@@ -742,7 +742,14 @@ function emitSupertypeUnionDeclarations(
 		generatedTypes.add(typeName);
 
 		const resolvedSubs = st.subtypes.map((sub) => {
-			const n = nodeMap.nodes.get(sub);
+			// Canonical-hidden fallback (Option Y): an alias-target subtype's
+			// node lives under the pre-promotion hidden name (`_<sub>`) when
+			// no visible node was minted for the target — e.g. rust's
+			// `alias('$', $.token_tree_punctuation)` arm names the parse kind,
+			// whose only NodeMap entry is the hidden `_token_tree_punctuation`
+			// rule. Same fallback buildDummyStub (test.ts) and
+			// validateTemplateCoverage use.
+			const n = nodeMap.nodes.get(sub) ?? nodeMap.nodes.get(`_${sub}`);
 			if (!n) {
 				throw new Error(`types: supertype '${st.kind}' references subtype '${sub}' which is not in NodeMap.`);
 			}

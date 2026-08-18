@@ -5756,7 +5756,7 @@ export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config) {
 				_name,
 				_alias,
 				$with: {
-					name: (value: T.ModuleExportName | T.Identifier) => buildImportSpecifierAs({ ...config, name: value }),
+					name: (value: T.ModuleExportName | 'type') => buildImportSpecifierAs({ ...config, name: value }),
 					alias: (value: T.ImportIdentifier) => buildImportSpecifierAs({ ...config, alias: value })
 				}
 			},

@@ -107811,6 +107811,63 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_macro": "a",
+      "_token_tree": {
+        "$type": 241,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 126,
+          "end": 129
+        },
+        "$nodeHandle": 411,
+        "_content": {
+          "$type": 391,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            7,
+            8
+          ],
+          "$span": {
+            "start": 126,
+            "end": 129
+          },
+          "$nodeHandle": 412,
+          "_delim_tokens": [
+            "$"
+          ]
+        }
+      },
+      "$other": [
+        48
+      ],
+      "$span": {
+        "start": 124,
+        "end": 129
+      },
+      "$nodeHandle": 85
+    },
+    "expectedOutput": "a!($)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "a!($)",
+    "pattern": "macro_invocation",
+    "edits": [],
+    "expectedSourceOut": "a!($)",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (token_tree_punctuation))))",
+    "wrappedText": "a!($)",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 241,
       "$source": 0,
       "$named": true,
@@ -108327,6 +108384,49 @@
     "expectedSourceOut": "(a)",
     "expectedReparseTree": "(token_tree (delim_token_tree_paren (token_pattern_group1 (identifier))))",
     "wrappedText": "fn _f() { mac! (a) }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 241,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 126,
+        "end": 129
+      },
+      "$nodeHandle": 86,
+      "_content": {
+        "$type": 391,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 126,
+          "end": 129
+        },
+        "$nodeHandle": 487,
+        "_delim_tokens": [
+          "$"
+        ]
+      }
+    },
+    "expectedOutput": "($)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "($)",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "($)",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren (token_tree_punctuation)))",
+    "wrappedText": "fn _f() { mac! ($) }",
     "wrappedOffset": 15
   },
   {

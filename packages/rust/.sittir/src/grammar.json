@@ -4916,8 +4916,13 @@
           }
         },
         {
-          "type": "STRING",
-          "value": "$"
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "$"
+          },
+          "named": true,
+          "value": "token_tree_punctuation"
         }
       ]
     },

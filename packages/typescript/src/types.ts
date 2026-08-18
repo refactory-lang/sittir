@@ -5350,9 +5350,9 @@ export interface ImportClauseDefaultImport {
 
 export interface ImportSpecifierAs {
 	readonly $type: TSKindId.ImportSpecifierAs;
-	readonly _name: ModuleExportName | Identifier;
+	readonly _name: ModuleExportName | 'type';
 	readonly _alias: ImportIdentifier;
-	name(): ModuleExportName | Identifier;
+	name(): ModuleExportName | 'type';
 	alias(): ImportIdentifier;
 }
 

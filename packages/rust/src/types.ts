@@ -3216,7 +3216,7 @@ export const enum ExpressionEndingWithBlockKind {
 export const enum DelimTokensKind {
 	NonDelimToken = '_non_delim_token',
 	TokenPatternGroup1 = 'token_pattern_group1',
-	Dollar = 'dollar',
+	TokenTreePunctuation = 'token_tree_punctuation',
 	DelimTokenTree = 'delim_token_tree'
 }
 
@@ -3236,8 +3236,7 @@ export const enum NonDelimTokenKind {
 	Crate = 'crate',
 	PrimitiveType = '_primitive_type',
 	TokenTreePunctuation = '_token_tree_punctuation',
-	TokenKeywords = '_token_keywords',
-	Dollar = 'dollar'
+	TokenKeywords = '_token_keywords'
 }
 
 export const enum ConditionKind {
@@ -6573,9 +6572,9 @@ export type ExpressionEndingWithBlockTree =
 	| ForExpressionTree
 	| ConstBlockTree;
 
-export type DelimTokens = DelimTokenTree;
+export type DelimTokens = TokenTreePunctuation | DelimTokenTree;
 
-export type DelimTokensTree = DelimTokenTreeTree;
+export type DelimTokensTree = TokenTreePunctuationTree | DelimTokenTreeTree;
 
 export type NonDelimToken =
 	| NonSpecialToken
@@ -6592,7 +6591,8 @@ export type NonDelimToken =
 	| Crate
 	| PrimitiveType
 	| TokenTreePunctuation
-	| TokenKeywords;
+	| TokenKeywords
+	| TokenTreePunctuation;
 
 export type NonDelimTokenTree =
 	| NonSpecialTokenTree
@@ -6609,7 +6609,8 @@ export type NonDelimTokenTree =
 	| CrateTree
 	| PrimitiveTypeTree
 	| TokenTreePunctuationTree
-	| TokenKeywordsTree;
+	| TokenKeywordsTree
+	| TokenTreePunctuationTree;
 
 export type Condition =
 	| Expression
@@ -6852,10 +6853,6 @@ export interface NeverTypeTree extends AnyTreeNode {
 export type RemainingFieldPattern = Terminal<TSKindId.RemainingFieldPattern>;
 export interface RemainingFieldPatternTree extends AnyTreeNode {
 	readonly type: 'remaining_field_pattern';
-}
-export type Dollar = Terminal<TSKindId.Dollar>;
-export interface DollarTree extends AnyTreeNode {
-	readonly type: 'dollar';
 }
 
 export type RustNode =

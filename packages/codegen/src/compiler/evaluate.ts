@@ -688,7 +688,17 @@ function rewriteInlineAliases(
 				// Synthesizing `_existingKind` would collide with /
 				// over-ride the existing kind's meaning.
 				const targetAlreadyExists = rules[rule.value] !== undefined;
-				if (!targetAlreadyExists && !isBareSymbolToKnownSource) {
+				// A STRING body is self-carrying — link collapses the alias to a
+				// literal-carrying SYMBOL (parse kind = target, render text = the
+				// literal), so no hidden source is needed. Synthesizing here is
+				// not just unnecessary: when `_${target}` already exists with a
+				// DIFFERENT body (rust `alias('$', $.token_tree_punctuation)` vs
+				// the real `_token_tree_punctuation` punctuation choice), the
+				// unconditional content rewrite below would silently retarget
+				// the alias at that unrelated rule and DISCARD the literal —
+				// diverging from the parser, which keeps the string.
+				const isStringBody = inner.type === STRING;
+				if (!targetAlreadyExists && !isBareSymbolToKnownSource && !isStringBody) {
 					const syntheticHiddenName = `_${rule.value}`;
 					if (!rules[syntheticHiddenName]) {
 						rules[syntheticHiddenName] = recurse(rule.content);

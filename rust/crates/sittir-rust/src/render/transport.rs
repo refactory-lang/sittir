@@ -8309,7 +8309,6 @@ impl RenderableTransport for ExpressionEndingWithBlockTransport {
 pub enum DelimTokensTransport {
     NonDelimToken(NonDelimTokenTransport),
     TokenPatternGroup1(TokenPatternGroup1Transport),
-    Dollar(DollarTransport),
     DelimTokenTree(DelimTokenTreeTransport),
     Verbatim(VerbatimTransport),
 }
@@ -8324,9 +8323,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     242 => {
-                        if let Ok(value) = DollarTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Dollar(value));
-                        }
                         if let Ok(value) = DelimTokenTreeTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::DelimTokenTree(value));
                         }
@@ -8377,9 +8373,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                     344 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    6 => Ok(Self::NonDelimToken(
-                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
-                    )),
                     243 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
@@ -8390,6 +8383,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     28 => Ok(Self::NonDelimToken(
+                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    6 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     241 => Ok(Self::DelimTokenTree(
@@ -8414,9 +8410,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                 )?;
                 match kind_id {
                     242 => {
-                        if let Ok(value) = DollarTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Dollar(value));
-                        }
                         if let Ok(value) = DelimTokenTreeTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::DelimTokenTree(value));
                         }
@@ -8467,9 +8460,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                     344 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    6 => Ok(Self::NonDelimToken(
-                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
-                    )),
                     243 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
@@ -8480,6 +8470,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     28 => Ok(Self::NonDelimToken(
+                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    6 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     241 => Ok(Self::DelimTokenTree(
@@ -8554,7 +8547,6 @@ pub enum NonDelimTokenTransport {
     PrimitiveType(PrimitiveTypeEnum),
     TokenTreePunctuation(TokenTreePunctuationEnum),
     TokenKeywords(TokenKeywordsEnum),
-    Dollar(DollarTransport),
     Verbatim(VerbatimTransport),
 }
 
@@ -8610,9 +8602,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = DollarTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Dollar(value));
-                        }
                         if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NonSpecialToken(value));
                         }
@@ -8660,9 +8649,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         }
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
-                        }
-                        if let Ok(value) = DollarTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Dollar(value));
                         }
                         if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NonSpecialToken(value));
@@ -8986,9 +8972,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                     )),
                     110 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
-                    )),
-                    6 => Ok(Self::Dollar(
-                        DollarTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in NonDelimTokenTransport",
@@ -9048,9 +9031,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = DollarTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Dollar(value));
-                        }
                         if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NonSpecialToken(value));
                         }
@@ -9098,9 +9078,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         }
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
-                        }
-                        if let Ok(value) = DollarTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Dollar(value));
                         }
                         if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NonSpecialToken(value));
@@ -9425,9 +9402,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                     110 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
-                    6 => Ok(Self::Dollar(
-                        DollarTransport::from_napi_value(env, napi_val)?
-                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in NonDelimTokenTransport",
                     ))),
@@ -9485,7 +9459,6 @@ fn non_delim_token_transport_to_any(t: NonDelimTokenTransport) -> AnyTransport {
         NonDelimTokenTransport::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
         NonDelimTokenTransport::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
         NonDelimTokenTransport::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
-        NonDelimTokenTransport::Dollar(inner) => AnyTransport::Dollar(inner),
         NonDelimTokenTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -56762,7 +56735,6 @@ fn render_delim_tokens(t: &DelimTokensTransport, dest: &mut dyn ::std::fmt::Writ
     match t {
         DelimTokensTransport::NonDelimToken(inner) => inner.render_into(dest),
         DelimTokensTransport::TokenPatternGroup1(inner) => inner.render_into(dest),
-        DelimTokensTransport::Dollar(inner) => inner.render_into(dest),
         DelimTokensTransport::DelimTokenTree(inner) => inner.render_into(dest),
         DelimTokensTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
@@ -56785,7 +56757,6 @@ fn render_non_delim_token(t: &NonDelimTokenTransport, dest: &mut dyn ::std::fmt:
         NonDelimTokenTransport::PrimitiveType(inner) => inner.render_into(dest),
         NonDelimTokenTransport::TokenTreePunctuation(inner) => inner.render_into(dest),
         NonDelimTokenTransport::TokenKeywords(inner) => inner.render_into(dest),
-        NonDelimTokenTransport::Dollar(inner) => inner.render_into(dest),
         NonDelimTokenTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
