@@ -2997,6 +2997,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                     12 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
+                    6 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
                     76 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
@@ -3460,6 +3463,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     12 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    6 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     76 => Ok(Self::TokenKeywords(
@@ -3927,6 +3933,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
                     12 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
+                    6 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
                     76 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
@@ -4324,6 +4333,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     12 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    6 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     76 => Ok(Self::TokenKeywords(
@@ -4805,6 +4817,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenTransport {
                     12 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
+                    6 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
                     344 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
@@ -5223,6 +5238,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenTransport {
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     12 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    6 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     344 => Ok(Self::TokenKeywords(
@@ -8886,6 +8904,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                     12 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
+                    6 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
                     76 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
@@ -9313,6 +9334,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     12 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    6 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     76 => Ok(Self::TokenKeywords(
@@ -11696,6 +11720,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternGroup1Transport {
                     12 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
+                    6 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
                     344 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
@@ -12114,6 +12141,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternGroup1Transport {
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     12 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    6 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     344 => Ok(Self::TokenKeywords(
@@ -39414,6 +39444,7 @@ pub enum TokenTreePunctuationEnum {
     FatArrow,
     Hash,
     Question,
+    Dollar,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -39470,6 +39501,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePunctuationEnum {
                         4 => return Ok(Self::FatArrow), // "=>"
                         45 => return Ok(Self::Hash), // "#"
                         12 => return Ok(Self::Question), // "?"
+                        6 => return Ok(Self::Dollar), // "$"
                         _ => {}
                     }
                 }
@@ -39520,6 +39552,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePunctuationEnum {
                     "=>" => return Ok(Self::FatArrow),
                     "#" => return Ok(Self::Hash),
                     "?" => return Ok(Self::Question),
+                    "$" => return Ok(Self::Dollar),
                     _ => {}
                 }
             }
@@ -39571,6 +39604,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePunctuationEnum {
                         4 => return Ok(Self::FatArrow), // "=>"
                         45 => return Ok(Self::Hash), // "#"
                         12 => return Ok(Self::Question), // "?"
+                        6 => return Ok(Self::Dollar), // "$"
                         _ => {}
                     }
                 }
@@ -39620,6 +39654,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePunctuationEnum {
                         "=>" => return Ok(Self::FatArrow),
                         "#" => return Ok(Self::Hash),
                         "?" => return Ok(Self::Question),
+                        "$" => return Ok(Self::Dollar),
                         _ => {}
                     }
                 }
@@ -39667,6 +39702,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePunctuationEnum {
                 if obj.get::<::napi::bindgen_prelude::Object>("_=>")?.is_some() { return Ok(Self::FatArrow); }
                 if obj.get::<::napi::bindgen_prelude::Object>("_#")?.is_some() { return Ok(Self::Hash); }
                 if obj.get::<::napi::bindgen_prelude::Object>("_?")?.is_some() { return Ok(Self::Question); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_$")?.is_some() { return Ok(Self::Dollar); }
             }
             _ => {}
         }
@@ -39731,6 +39767,7 @@ impl ::std::fmt::Display for TokenTreePunctuationEnum {
             Self::FatArrow => "=>",
             Self::Hash => "#",
             Self::Question => "?",
+            Self::Dollar => "$",
         })
     }
 }
@@ -39785,6 +39822,7 @@ impl RenderableTransport for TokenTreePunctuationEnum {
             Self::FatArrow => "=>",
             Self::Hash => "#",
             Self::Question => "?",
+            Self::Dollar => "$",
         }).map_err(::askama::Error::from)
     }
 }

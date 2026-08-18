@@ -490,6 +490,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'eq_gt',
 		'pound',
 		'qmark',
+		'dollar',
 		'_token_keywords',
 		'token_keywords',
 		'squote',
@@ -609,6 +610,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'eq_gt',
 		'pound',
 		'qmark',
+		'dollar',
 		'_token_keywords',
 		'token_keywords',
 		'squote',
@@ -723,6 +725,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'eq_gt',
 		'pound',
 		'qmark',
+		'dollar',
 		'_token_keywords',
 		'token_keywords',
 		'squote',
@@ -1028,6 +1031,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'eq_gt',
 		'pound',
 		'qmark',
+		'dollar',
 		'_token_keywords',
 		'token_keywords',
 		'squote',
@@ -1146,6 +1150,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'eq_gt',
 		'pound',
 		'qmark',
+		'dollar',
 		'_token_keywords',
 		'token_keywords',
 		'squote',
@@ -1395,6 +1400,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'eq_gt',
 		'pound',
 		'qmark',
+		'dollar',
 		'_token_keywords',
 		'token_keywords',
 		'squote',
@@ -10557,82 +10563,17 @@ export function wrapLineCommentDoc(data: T.LineCommentDoc, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapTokenTreePatternParen(
-	data: T.TokenTreePatternParen & {
-		readonly _token_pattern_group1?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_tree_pattern?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_repetition_pattern?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_binding_pattern?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _metavariable?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _primitive_type?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_tree_punctuation?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _string_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _raw_string_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _char_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _boolean_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _integer_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _float_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _identifier?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _mutable_specifier?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _self?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _super?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _crate?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_keywords?: T.TokenPattern | readonly T.TokenPattern[];
-	},
-	tree: TreeHandle
-) {
+export function wrapTokenTreePatternParen(data: T.TokenTreePatternParen, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_boolean_literal',
-				'_char_literal',
-				'_crate',
-				'_float_literal',
-				'_identifier',
-				'_integer_literal',
-				'_metavariable',
-				'_mutable_specifier',
-				'_primitive_type',
-				'_raw_string_literal',
-				'_self',
-				'_string_literal',
-				'_super',
-				'_token_binding_pattern',
-				'_token_keywords',
-				'_token_pattern_group1',
-				'_token_repetition_pattern',
-				'_token_tree_pattern',
-				'_token_tree_punctuation'
-			]),
+			...data,
 			$type: TSKindId.TokenTreePatternParen as const,
-			_token_pattern: normalizeRepeatedWrapSlot(
-				data._token_pattern !== undefined
-					? _toArr(data._token_pattern)
-					: _concatInSourceOrder([
-							data._token_pattern_group1,
-							data._token_tree_pattern,
-							data._token_repetition_pattern,
-							data._token_binding_pattern,
-							data._metavariable,
-							data._primitive_type,
-							data._token_tree_punctuation,
-							data._string_literal,
-							data._raw_string_literal,
-							data._char_literal,
-							data._boolean_literal,
-							data._integer_literal,
-							data._float_literal,
-							data._identifier,
-							data._mutable_specifier,
-							data._self,
-							data._super,
-							data._crate,
-							data._token_keywords
-						]),
-				false,
-				'token_pattern',
-				{ tree, nodeType: data.$type, slotName: 'token_pattern', span: (data as _NodeData).$span }
-			),
+			_token_pattern: normalizeRepeatedWrapSlot(data._token_pattern, false, 'token_pattern', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'token_pattern',
+				span: (data as _NodeData).$span
+			}),
 
 			tokenPatterns() {
 				return drillAsAll<T.TokenPattern>(this._token_pattern, tree, [
@@ -10649,82 +10590,17 @@ export function wrapTokenTreePatternParen(
 	return _node;
 }
 
-export function wrapTokenTreePatternBracket(
-	data: T.TokenTreePatternBracket & {
-		readonly _token_pattern_group1?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_tree_pattern?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_repetition_pattern?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_binding_pattern?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _metavariable?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _primitive_type?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_tree_punctuation?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _string_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _raw_string_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _char_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _boolean_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _integer_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _float_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _identifier?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _mutable_specifier?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _self?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _super?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _crate?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_keywords?: T.TokenPattern | readonly T.TokenPattern[];
-	},
-	tree: TreeHandle
-) {
+export function wrapTokenTreePatternBracket(data: T.TokenTreePatternBracket, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_boolean_literal',
-				'_char_literal',
-				'_crate',
-				'_float_literal',
-				'_identifier',
-				'_integer_literal',
-				'_metavariable',
-				'_mutable_specifier',
-				'_primitive_type',
-				'_raw_string_literal',
-				'_self',
-				'_string_literal',
-				'_super',
-				'_token_binding_pattern',
-				'_token_keywords',
-				'_token_pattern_group1',
-				'_token_repetition_pattern',
-				'_token_tree_pattern',
-				'_token_tree_punctuation'
-			]),
+			...data,
 			$type: TSKindId.TokenTreePatternBracket as const,
-			_token_pattern: normalizeRepeatedWrapSlot(
-				data._token_pattern !== undefined
-					? _toArr(data._token_pattern)
-					: _concatInSourceOrder([
-							data._token_pattern_group1,
-							data._token_tree_pattern,
-							data._token_repetition_pattern,
-							data._token_binding_pattern,
-							data._metavariable,
-							data._primitive_type,
-							data._token_tree_punctuation,
-							data._string_literal,
-							data._raw_string_literal,
-							data._char_literal,
-							data._boolean_literal,
-							data._integer_literal,
-							data._float_literal,
-							data._identifier,
-							data._mutable_specifier,
-							data._self,
-							data._super,
-							data._crate,
-							data._token_keywords
-						]),
-				false,
-				'token_pattern',
-				{ tree, nodeType: data.$type, slotName: 'token_pattern', span: (data as _NodeData).$span }
-			),
+			_token_pattern: normalizeRepeatedWrapSlot(data._token_pattern, false, 'token_pattern', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'token_pattern',
+				span: (data as _NodeData).$span
+			}),
 
 			tokenPatterns() {
 				return drillAsAll<T.TokenPattern>(this._token_pattern, tree, [
@@ -10741,82 +10617,17 @@ export function wrapTokenTreePatternBracket(
 	return _node;
 }
 
-export function wrapTokenTreePatternBrace(
-	data: T.TokenTreePatternBrace & {
-		readonly _token_pattern_group1?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_tree_pattern?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_repetition_pattern?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_binding_pattern?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _metavariable?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _primitive_type?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_tree_punctuation?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _string_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _raw_string_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _char_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _boolean_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _integer_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _float_literal?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _identifier?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _mutable_specifier?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _self?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _super?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _crate?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly _token_keywords?: T.TokenPattern | readonly T.TokenPattern[];
-	},
-	tree: TreeHandle
-) {
+export function wrapTokenTreePatternBrace(data: T.TokenTreePatternBrace, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_boolean_literal',
-				'_char_literal',
-				'_crate',
-				'_float_literal',
-				'_identifier',
-				'_integer_literal',
-				'_metavariable',
-				'_mutable_specifier',
-				'_primitive_type',
-				'_raw_string_literal',
-				'_self',
-				'_string_literal',
-				'_super',
-				'_token_binding_pattern',
-				'_token_keywords',
-				'_token_pattern_group1',
-				'_token_repetition_pattern',
-				'_token_tree_pattern',
-				'_token_tree_punctuation'
-			]),
+			...data,
 			$type: TSKindId.TokenTreePatternBrace as const,
-			_token_pattern: normalizeRepeatedWrapSlot(
-				data._token_pattern !== undefined
-					? _toArr(data._token_pattern)
-					: _concatInSourceOrder([
-							data._token_pattern_group1,
-							data._token_tree_pattern,
-							data._token_repetition_pattern,
-							data._token_binding_pattern,
-							data._metavariable,
-							data._primitive_type,
-							data._token_tree_punctuation,
-							data._string_literal,
-							data._raw_string_literal,
-							data._char_literal,
-							data._boolean_literal,
-							data._integer_literal,
-							data._float_literal,
-							data._identifier,
-							data._mutable_specifier,
-							data._self,
-							data._super,
-							data._crate,
-							data._token_keywords
-						]),
-				false,
-				'token_pattern',
-				{ tree, nodeType: data.$type, slotName: 'token_pattern', span: (data as _NodeData).$span }
-			),
+			_token_pattern: normalizeRepeatedWrapSlot(data._token_pattern, false, 'token_pattern', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'token_pattern',
+				span: (data as _NodeData).$span
+			}),
 
 			tokenPatterns() {
 				return drillAsAll<T.TokenPattern>(this._token_pattern, tree, [
@@ -10833,79 +10644,17 @@ export function wrapTokenTreePatternBrace(
 	return _node;
 }
 
-export function wrapTokenTreeParen(
-	data: T.TokenTreeParen & {
-		readonly _token_pattern_group1?: T.Tokens | readonly T.Tokens[];
-		readonly _token_tree?: T.Tokens | readonly T.Tokens[];
-		readonly _token_repetition?: T.Tokens | readonly T.Tokens[];
-		readonly _metavariable?: T.Tokens | readonly T.Tokens[];
-		readonly _primitive_type?: T.Tokens | readonly T.Tokens[];
-		readonly _token_tree_punctuation?: T.Tokens | readonly T.Tokens[];
-		readonly _string_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _raw_string_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _char_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _boolean_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _integer_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _float_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _identifier?: T.Tokens | readonly T.Tokens[];
-		readonly _mutable_specifier?: T.Tokens | readonly T.Tokens[];
-		readonly _self?: T.Tokens | readonly T.Tokens[];
-		readonly _super?: T.Tokens | readonly T.Tokens[];
-		readonly _crate?: T.Tokens | readonly T.Tokens[];
-		readonly _token_keywords?: T.Tokens | readonly T.Tokens[];
-	},
-	tree: TreeHandle
-) {
+export function wrapTokenTreeParen(data: T.TokenTreeParen, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_boolean_literal',
-				'_char_literal',
-				'_crate',
-				'_float_literal',
-				'_identifier',
-				'_integer_literal',
-				'_metavariable',
-				'_mutable_specifier',
-				'_primitive_type',
-				'_raw_string_literal',
-				'_self',
-				'_string_literal',
-				'_super',
-				'_token_keywords',
-				'_token_pattern_group1',
-				'_token_repetition',
-				'_token_tree',
-				'_token_tree_punctuation'
-			]),
+			...data,
 			$type: TSKindId.TokenTreeParen as const,
-			_tokens: normalizeRepeatedWrapSlot(
-				data._tokens !== undefined
-					? _toArr(data._tokens)
-					: _concatInSourceOrder([
-							data._token_pattern_group1,
-							data._token_tree,
-							data._token_repetition,
-							data._metavariable,
-							data._primitive_type,
-							data._token_tree_punctuation,
-							data._string_literal,
-							data._raw_string_literal,
-							data._char_literal,
-							data._boolean_literal,
-							data._integer_literal,
-							data._float_literal,
-							data._identifier,
-							data._mutable_specifier,
-							data._self,
-							data._super,
-							data._crate,
-							data._token_keywords
-						]),
-				false,
-				'tokens',
-				{ tree, nodeType: data.$type, slotName: 'tokens', span: (data as _NodeData).$span }
-			),
+			_tokens: normalizeRepeatedWrapSlot(data._tokens, false, 'tokens', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'tokens',
+				span: (data as _NodeData).$span
+			}),
 
 			tokens() {
 				return drillAsAll<T.Tokens>(this._tokens, tree, [{ from: 'token_pattern_group1', to: '_non_special_token' }]);
@@ -10920,79 +10669,17 @@ export function wrapTokenTreeParen(
 	return _node;
 }
 
-export function wrapTokenTreeBracket(
-	data: T.TokenTreeBracket & {
-		readonly _token_pattern_group1?: T.Tokens | readonly T.Tokens[];
-		readonly _token_tree?: T.Tokens | readonly T.Tokens[];
-		readonly _token_repetition?: T.Tokens | readonly T.Tokens[];
-		readonly _metavariable?: T.Tokens | readonly T.Tokens[];
-		readonly _primitive_type?: T.Tokens | readonly T.Tokens[];
-		readonly _token_tree_punctuation?: T.Tokens | readonly T.Tokens[];
-		readonly _string_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _raw_string_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _char_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _boolean_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _integer_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _float_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _identifier?: T.Tokens | readonly T.Tokens[];
-		readonly _mutable_specifier?: T.Tokens | readonly T.Tokens[];
-		readonly _self?: T.Tokens | readonly T.Tokens[];
-		readonly _super?: T.Tokens | readonly T.Tokens[];
-		readonly _crate?: T.Tokens | readonly T.Tokens[];
-		readonly _token_keywords?: T.Tokens | readonly T.Tokens[];
-	},
-	tree: TreeHandle
-) {
+export function wrapTokenTreeBracket(data: T.TokenTreeBracket, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_boolean_literal',
-				'_char_literal',
-				'_crate',
-				'_float_literal',
-				'_identifier',
-				'_integer_literal',
-				'_metavariable',
-				'_mutable_specifier',
-				'_primitive_type',
-				'_raw_string_literal',
-				'_self',
-				'_string_literal',
-				'_super',
-				'_token_keywords',
-				'_token_pattern_group1',
-				'_token_repetition',
-				'_token_tree',
-				'_token_tree_punctuation'
-			]),
+			...data,
 			$type: TSKindId.TokenTreeBracket as const,
-			_tokens: normalizeRepeatedWrapSlot(
-				data._tokens !== undefined
-					? _toArr(data._tokens)
-					: _concatInSourceOrder([
-							data._token_pattern_group1,
-							data._token_tree,
-							data._token_repetition,
-							data._metavariable,
-							data._primitive_type,
-							data._token_tree_punctuation,
-							data._string_literal,
-							data._raw_string_literal,
-							data._char_literal,
-							data._boolean_literal,
-							data._integer_literal,
-							data._float_literal,
-							data._identifier,
-							data._mutable_specifier,
-							data._self,
-							data._super,
-							data._crate,
-							data._token_keywords
-						]),
-				false,
-				'tokens',
-				{ tree, nodeType: data.$type, slotName: 'tokens', span: (data as _NodeData).$span }
-			),
+			_tokens: normalizeRepeatedWrapSlot(data._tokens, false, 'tokens', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'tokens',
+				span: (data as _NodeData).$span
+			}),
 
 			tokens() {
 				return drillAsAll<T.Tokens>(this._tokens, tree, [{ from: 'token_pattern_group1', to: '_non_special_token' }]);
@@ -11007,79 +10694,17 @@ export function wrapTokenTreeBracket(
 	return _node;
 }
 
-export function wrapTokenTreeBrace(
-	data: T.TokenTreeBrace & {
-		readonly _token_pattern_group1?: T.Tokens | readonly T.Tokens[];
-		readonly _token_tree?: T.Tokens | readonly T.Tokens[];
-		readonly _token_repetition?: T.Tokens | readonly T.Tokens[];
-		readonly _metavariable?: T.Tokens | readonly T.Tokens[];
-		readonly _primitive_type?: T.Tokens | readonly T.Tokens[];
-		readonly _token_tree_punctuation?: T.Tokens | readonly T.Tokens[];
-		readonly _string_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _raw_string_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _char_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _boolean_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _integer_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _float_literal?: T.Tokens | readonly T.Tokens[];
-		readonly _identifier?: T.Tokens | readonly T.Tokens[];
-		readonly _mutable_specifier?: T.Tokens | readonly T.Tokens[];
-		readonly _self?: T.Tokens | readonly T.Tokens[];
-		readonly _super?: T.Tokens | readonly T.Tokens[];
-		readonly _crate?: T.Tokens | readonly T.Tokens[];
-		readonly _token_keywords?: T.Tokens | readonly T.Tokens[];
-	},
-	tree: TreeHandle
-) {
+export function wrapTokenTreeBrace(data: T.TokenTreeBrace, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_boolean_literal',
-				'_char_literal',
-				'_crate',
-				'_float_literal',
-				'_identifier',
-				'_integer_literal',
-				'_metavariable',
-				'_mutable_specifier',
-				'_primitive_type',
-				'_raw_string_literal',
-				'_self',
-				'_string_literal',
-				'_super',
-				'_token_keywords',
-				'_token_pattern_group1',
-				'_token_repetition',
-				'_token_tree',
-				'_token_tree_punctuation'
-			]),
+			...data,
 			$type: TSKindId.TokenTreeBrace as const,
-			_tokens: normalizeRepeatedWrapSlot(
-				data._tokens !== undefined
-					? _toArr(data._tokens)
-					: _concatInSourceOrder([
-							data._token_pattern_group1,
-							data._token_tree,
-							data._token_repetition,
-							data._metavariable,
-							data._primitive_type,
-							data._token_tree_punctuation,
-							data._string_literal,
-							data._raw_string_literal,
-							data._char_literal,
-							data._boolean_literal,
-							data._integer_literal,
-							data._float_literal,
-							data._identifier,
-							data._mutable_specifier,
-							data._self,
-							data._super,
-							data._crate,
-							data._token_keywords
-						]),
-				false,
-				'tokens',
-				{ tree, nodeType: data.$type, slotName: 'tokens', span: (data as _NodeData).$span }
-			),
+			_tokens: normalizeRepeatedWrapSlot(data._tokens, false, 'tokens', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'tokens',
+				span: (data as _NodeData).$span
+			}),
 
 			tokens() {
 				return drillAsAll<T.Tokens>(this._tokens, tree, [{ from: 'token_pattern_group1', to: '_non_special_token' }]);
@@ -11094,76 +10719,17 @@ export function wrapTokenTreeBrace(
 	return _node;
 }
 
-export function wrapDelimTokenTreeParen(
-	data: T.DelimTokenTreeParen & {
-		readonly _token_tree?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _token_pattern_group1?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _primitive_type?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _token_tree_punctuation?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _string_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _raw_string_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _char_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _boolean_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _integer_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _float_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _identifier?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _mutable_specifier?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _self?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _super?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _crate?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _token_keywords?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _delim_token_tree?: T.DelimTokens | readonly T.DelimTokens[];
-	},
-	tree: TreeHandle
-) {
+export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_boolean_literal',
-				'_char_literal',
-				'_crate',
-				'_delim_token_tree',
-				'_float_literal',
-				'_identifier',
-				'_integer_literal',
-				'_mutable_specifier',
-				'_primitive_type',
-				'_raw_string_literal',
-				'_self',
-				'_string_literal',
-				'_super',
-				'_token_keywords',
-				'_token_pattern_group1',
-				'_token_tree',
-				'_token_tree_punctuation'
-			]),
+			...data,
 			$type: TSKindId.DelimTokenTreeParen as const,
-			_delim_tokens: normalizeRepeatedWrapSlot(
-				data._delim_tokens !== undefined
-					? _toArr(data._delim_tokens)
-					: _concatInSourceOrder([
-							data._token_tree,
-							data._token_pattern_group1,
-							data._primitive_type,
-							data._token_tree_punctuation,
-							data._string_literal,
-							data._raw_string_literal,
-							data._char_literal,
-							data._boolean_literal,
-							data._integer_literal,
-							data._float_literal,
-							data._identifier,
-							data._mutable_specifier,
-							data._self,
-							data._super,
-							data._crate,
-							data._token_keywords,
-							data._delim_token_tree
-						]),
-				false,
-				'delim_tokens',
-				{ tree, nodeType: data.$type, slotName: 'delim_tokens', span: (data as _NodeData).$span }
-			),
+			_delim_tokens: normalizeRepeatedWrapSlot(data._delim_tokens, false, 'delim_tokens', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'delim_tokens',
+				span: (data as _NodeData).$span
+			}),
 
 			delimTokens() {
 				return drillAsAll<T.DelimTokens>(this._delim_tokens, tree, [{ from: 'token_tree', to: 'delim_token_tree' }]);
@@ -11178,76 +10744,17 @@ export function wrapDelimTokenTreeParen(
 	return _node;
 }
 
-export function wrapDelimTokenTreeBracket(
-	data: T.DelimTokenTreeBracket & {
-		readonly _token_tree?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _token_pattern_group1?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _primitive_type?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _token_tree_punctuation?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _string_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _raw_string_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _char_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _boolean_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _integer_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _float_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _identifier?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _mutable_specifier?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _self?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _super?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _crate?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _token_keywords?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _delim_token_tree?: T.DelimTokens | readonly T.DelimTokens[];
-	},
-	tree: TreeHandle
-) {
+export function wrapDelimTokenTreeBracket(data: T.DelimTokenTreeBracket, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_boolean_literal',
-				'_char_literal',
-				'_crate',
-				'_delim_token_tree',
-				'_float_literal',
-				'_identifier',
-				'_integer_literal',
-				'_mutable_specifier',
-				'_primitive_type',
-				'_raw_string_literal',
-				'_self',
-				'_string_literal',
-				'_super',
-				'_token_keywords',
-				'_token_pattern_group1',
-				'_token_tree',
-				'_token_tree_punctuation'
-			]),
+			...data,
 			$type: TSKindId.DelimTokenTreeBracket as const,
-			_delim_tokens: normalizeRepeatedWrapSlot(
-				data._delim_tokens !== undefined
-					? _toArr(data._delim_tokens)
-					: _concatInSourceOrder([
-							data._token_tree,
-							data._token_pattern_group1,
-							data._primitive_type,
-							data._token_tree_punctuation,
-							data._string_literal,
-							data._raw_string_literal,
-							data._char_literal,
-							data._boolean_literal,
-							data._integer_literal,
-							data._float_literal,
-							data._identifier,
-							data._mutable_specifier,
-							data._self,
-							data._super,
-							data._crate,
-							data._token_keywords,
-							data._delim_token_tree
-						]),
-				false,
-				'delim_tokens',
-				{ tree, nodeType: data.$type, slotName: 'delim_tokens', span: (data as _NodeData).$span }
-			),
+			_delim_tokens: normalizeRepeatedWrapSlot(data._delim_tokens, false, 'delim_tokens', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'delim_tokens',
+				span: (data as _NodeData).$span
+			}),
 
 			delimTokens() {
 				return drillAsAll<T.DelimTokens>(this._delim_tokens, tree, [{ from: 'token_tree', to: 'delim_token_tree' }]);
@@ -11262,76 +10769,17 @@ export function wrapDelimTokenTreeBracket(
 	return _node;
 }
 
-export function wrapDelimTokenTreeBrace(
-	data: T.DelimTokenTreeBrace & {
-		readonly _token_tree?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _token_pattern_group1?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _primitive_type?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _token_tree_punctuation?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _string_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _raw_string_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _char_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _boolean_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _integer_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _float_literal?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _identifier?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _mutable_specifier?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _self?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _super?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _crate?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _token_keywords?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _delim_token_tree?: T.DelimTokens | readonly T.DelimTokens[];
-	},
-	tree: TreeHandle
-) {
+export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_boolean_literal',
-				'_char_literal',
-				'_crate',
-				'_delim_token_tree',
-				'_float_literal',
-				'_identifier',
-				'_integer_literal',
-				'_mutable_specifier',
-				'_primitive_type',
-				'_raw_string_literal',
-				'_self',
-				'_string_literal',
-				'_super',
-				'_token_keywords',
-				'_token_pattern_group1',
-				'_token_tree',
-				'_token_tree_punctuation'
-			]),
+			...data,
 			$type: TSKindId.DelimTokenTreeBrace as const,
-			_delim_tokens: normalizeRepeatedWrapSlot(
-				data._delim_tokens !== undefined
-					? _toArr(data._delim_tokens)
-					: _concatInSourceOrder([
-							data._token_tree,
-							data._token_pattern_group1,
-							data._primitive_type,
-							data._token_tree_punctuation,
-							data._string_literal,
-							data._raw_string_literal,
-							data._char_literal,
-							data._boolean_literal,
-							data._integer_literal,
-							data._float_literal,
-							data._identifier,
-							data._mutable_specifier,
-							data._self,
-							data._super,
-							data._crate,
-							data._token_keywords,
-							data._delim_token_tree
-						]),
-				false,
-				'delim_tokens',
-				{ tree, nodeType: data.$type, slotName: 'delim_tokens', span: (data as _NodeData).$span }
-			),
+			_delim_tokens: normalizeRepeatedWrapSlot(data._delim_tokens, false, 'delim_tokens', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'delim_tokens',
+				span: (data as _NodeData).$span
+			}),
 
 			delimTokens() {
 				return drillAsAll<T.DelimTokens>(this._delim_tokens, tree, [{ from: 'token_tree', to: 'delim_token_tree' }]);

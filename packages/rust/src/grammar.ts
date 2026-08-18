@@ -629,43 +629,46 @@ export type RustGrammar = {
 	readonly delim_token_tree_brace: {
 		type: 'delim_token_tree_brace';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [
-				{ type: 'token_pattern_group1'; named: true },
-				{ type: 'token_tree'; named: true },
-				{ type: 'token_tree_punctuation'; named: true }
-			];
+		fields: {
+			delim_tokens: {
+				multiple: true;
+				required: false;
+				types: [
+					{ type: 'token_pattern_group1'; named: true },
+					{ type: 'token_tree'; named: true },
+					{ type: 'token_tree_punctuation'; named: true }
+				];
+			};
 		};
 	};
 	readonly delim_token_tree_bracket: {
 		type: 'delim_token_tree_bracket';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [
-				{ type: 'token_pattern_group1'; named: true },
-				{ type: 'token_tree'; named: true },
-				{ type: 'token_tree_punctuation'; named: true }
-			];
+		fields: {
+			delim_tokens: {
+				multiple: true;
+				required: false;
+				types: [
+					{ type: 'token_pattern_group1'; named: true },
+					{ type: 'token_tree'; named: true },
+					{ type: 'token_tree_punctuation'; named: true }
+				];
+			};
 		};
 	};
 	readonly delim_token_tree_paren: {
 		type: 'delim_token_tree_paren';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [
-				{ type: 'token_pattern_group1'; named: true },
-				{ type: 'token_tree'; named: true },
-				{ type: 'token_tree_punctuation'; named: true }
-			];
+		fields: {
+			delim_tokens: {
+				multiple: true;
+				required: false;
+				types: [
+					{ type: 'token_pattern_group1'; named: true },
+					{ type: 'token_tree'; named: true },
+					{ type: 'token_tree_punctuation'; named: true }
+				];
+			};
 		};
 	};
 	readonly dynamic_type: {
@@ -1967,46 +1970,49 @@ export type RustGrammar = {
 	readonly token_tree_brace: {
 		type: 'token_tree_brace';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [
-				{ type: 'metavariable'; named: true },
-				{ type: 'token_pattern_group1'; named: true },
-				{ type: 'token_repetition'; named: true },
-				{ type: 'token_tree'; named: true }
-			];
+		fields: {
+			tokens: {
+				multiple: true;
+				required: false;
+				types: [
+					{ type: 'metavariable'; named: true },
+					{ type: 'token_pattern_group1'; named: true },
+					{ type: 'token_repetition'; named: true },
+					{ type: 'token_tree'; named: true }
+				];
+			};
 		};
 	};
 	readonly token_tree_bracket: {
 		type: 'token_tree_bracket';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [
-				{ type: 'metavariable'; named: true },
-				{ type: 'token_pattern_group1'; named: true },
-				{ type: 'token_repetition'; named: true },
-				{ type: 'token_tree'; named: true }
-			];
+		fields: {
+			tokens: {
+				multiple: true;
+				required: false;
+				types: [
+					{ type: 'metavariable'; named: true },
+					{ type: 'token_pattern_group1'; named: true },
+					{ type: 'token_repetition'; named: true },
+					{ type: 'token_tree'; named: true }
+				];
+			};
 		};
 	};
 	readonly token_tree_paren: {
 		type: 'token_tree_paren';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [
-				{ type: 'metavariable'; named: true },
-				{ type: 'token_pattern_group1'; named: true },
-				{ type: 'token_repetition'; named: true },
-				{ type: 'token_tree'; named: true }
-			];
+		fields: {
+			tokens: {
+				multiple: true;
+				required: false;
+				types: [
+					{ type: 'metavariable'; named: true },
+					{ type: 'token_pattern_group1'; named: true },
+					{ type: 'token_repetition'; named: true },
+					{ type: 'token_tree'; named: true }
+				];
+			};
 		};
 	};
 	readonly token_tree_pattern: {
@@ -2026,49 +2032,52 @@ export type RustGrammar = {
 	readonly token_tree_pattern_brace: {
 		type: 'token_tree_pattern_brace';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [
-				{ type: 'metavariable'; named: true },
-				{ type: 'token_binding_pattern'; named: true },
-				{ type: 'token_pattern_group1'; named: true },
-				{ type: 'token_repetition_pattern'; named: true },
-				{ type: 'token_tree_pattern'; named: true }
-			];
+		fields: {
+			token_pattern: {
+				multiple: true;
+				required: false;
+				types: [
+					{ type: 'metavariable'; named: true },
+					{ type: 'token_binding_pattern'; named: true },
+					{ type: 'token_pattern_group1'; named: true },
+					{ type: 'token_repetition_pattern'; named: true },
+					{ type: 'token_tree_pattern'; named: true }
+				];
+			};
 		};
 	};
 	readonly token_tree_pattern_bracket: {
 		type: 'token_tree_pattern_bracket';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [
-				{ type: 'metavariable'; named: true },
-				{ type: 'token_binding_pattern'; named: true },
-				{ type: 'token_pattern_group1'; named: true },
-				{ type: 'token_repetition_pattern'; named: true },
-				{ type: 'token_tree_pattern'; named: true }
-			];
+		fields: {
+			token_pattern: {
+				multiple: true;
+				required: false;
+				types: [
+					{ type: 'metavariable'; named: true },
+					{ type: 'token_binding_pattern'; named: true },
+					{ type: 'token_pattern_group1'; named: true },
+					{ type: 'token_repetition_pattern'; named: true },
+					{ type: 'token_tree_pattern'; named: true }
+				];
+			};
 		};
 	};
 	readonly token_tree_pattern_paren: {
 		type: 'token_tree_pattern_paren';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [
-				{ type: 'metavariable'; named: true },
-				{ type: 'token_binding_pattern'; named: true },
-				{ type: 'token_pattern_group1'; named: true },
-				{ type: 'token_repetition_pattern'; named: true },
-				{ type: 'token_tree_pattern'; named: true }
-			];
+		fields: {
+			token_pattern: {
+				multiple: true;
+				required: false;
+				types: [
+					{ type: 'metavariable'; named: true },
+					{ type: 'token_binding_pattern'; named: true },
+					{ type: 'token_pattern_group1'; named: true },
+					{ type: 'token_repetition_pattern'; named: true },
+					{ type: 'token_tree_pattern'; named: true }
+				];
+			};
 		};
 	};
 	readonly token_tree_punctuation: { type: 'token_tree_punctuation'; named: true; fields: {} };

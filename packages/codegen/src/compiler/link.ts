@@ -768,6 +768,62 @@ function classifyAndLogHiddenRules(rules: Record<string, Rule<'link'>>, ctx: Lin
 			}
 		}
 	}
+	foldAliasLiteralsIntoEnumRules(rules);
+}
+
+const aliasLiteralWalker = new RuleWalker<Rule<'link'>>();
+
+/**
+ * An enum kind's member set is its GRAMMAR-WIDE realization set, not just
+ * its defining rule's literals. An alias-of-terminal occurrence
+ * (`alias('$', $.token_tree_punctuation)`, collapsed by resolveRule to a
+ * literal-carrying SYMBOL) realizes the enum kind with a text the defining
+ * rule never lists — without folding it in, the emitted transport enum has
+ * no variant for that text and every read stub carrying it fails
+ * deserialization ("unknown enum payload"). Append the missing texts as
+ * ordinary STRING members so AssembledEnum, the transport enum, and every
+ * kindEnum consumer see one uniform member list.
+ */
+function foldAliasLiteralsIntoEnumRules(rules: Record<string, Rule<'link'>>): void {
+	const extras = new Map<string, Set<string>>();
+	const considerSymbol = (r: Rule<'link'>): void => {
+		if (r.type !== SYMBOL) return;
+		const sym = r as SymbolRule<'link'>;
+		if (sym.literal === undefined) return;
+		const target =
+			rules[sym.name] !== undefined ? sym.name : rules[`_${sym.name}`] !== undefined ? `_${sym.name}` : undefined;
+		if (target === undefined) return;
+		const targetRule = rules[target]!;
+		if (!isEnumChoiceRule(targetRule)) return;
+		const known = new Set(
+			(targetRule as ChoiceRule<'link'>).members.map((m) => literalTextOf(m)).filter((t): t is string => t !== undefined)
+		);
+		if (!known.has(sym.literal)) {
+			const set = extras.get(target) ?? new Set<string>();
+			set.add(sym.literal);
+			extras.set(target, set);
+		}
+	};
+	for (const rule of Object.values(rules)) {
+		// SUPERTYPE keeps its arms in the bespoke `subtypes` field the generic
+		// walker does not descend into — the classified-supertype arm is
+		// exactly where an alias-of-terminal subtype lives.
+		if (rule.type === SUPERTYPE) {
+			for (const sub of (rule as SupertypeRule<'link'>).subtypes) considerSymbol(sub);
+			continue;
+		}
+		aliasLiteralWalker.find(rule, (r) => {
+			considerSymbol(r);
+			return false; // exhaustive walk — never short-circuit
+		});
+	}
+	for (const [target, texts] of extras) {
+		const targetRule = rules[target] as ChoiceRule<'link'>;
+		rules[target] = {
+			...targetRule,
+			members: [...targetRule.members, ...[...texts].map((value) => ({ type: STRING, value }) as Rule<'link'>)]
+		} as Rule<'link'>;
+	}
 }
 
 function markSupertypeRefsNonInline(rules: Record<string, Rule<'link'>>): void {

@@ -4515,6 +4515,7 @@ export function buildTokenTreePunctuation(
 		| '=>'
 		| '#'
 		| '?'
+		| '$'
 ) {
 	return withMethods(
 		{
@@ -5311,8 +5312,8 @@ export function buildLineCommentContent(text: string) {
 	);
 }
 
-export function buildTokenTreePatternParen(...children: T.TokenPattern[]) {
-	const _token_pattern = children;
+export function buildTokenTreePatternParen(config: Partial<T.TokenTreePatternParen.Config> = {}) {
+	const _token_pattern = config.tokenPattern ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -5320,7 +5321,10 @@ export function buildTokenTreePatternParen(...children: T.TokenPattern[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_token_pattern,
-				$with: { $children: (...vs: T.TokenPattern[]) => buildTokenTreePatternParen(...vs) }
+				$with: {
+					tokenPatterns: (...values: T.TokenPattern[]) =>
+						buildTokenTreePatternParen({ ...config, tokenPattern: values })
+				}
 			},
 			{
 				tokenPatterns: () => _token_pattern
@@ -5330,8 +5334,8 @@ export function buildTokenTreePatternParen(...children: T.TokenPattern[]) {
 	);
 }
 
-export function buildTokenTreePatternBracket(...children: T.TokenPattern[]) {
-	const _token_pattern = children;
+export function buildTokenTreePatternBracket(config: Partial<T.TokenTreePatternBracket.Config> = {}) {
+	const _token_pattern = config.tokenPattern ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -5339,7 +5343,10 @@ export function buildTokenTreePatternBracket(...children: T.TokenPattern[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_token_pattern,
-				$with: { $children: (...vs: T.TokenPattern[]) => buildTokenTreePatternBracket(...vs) }
+				$with: {
+					tokenPatterns: (...values: T.TokenPattern[]) =>
+						buildTokenTreePatternBracket({ ...config, tokenPattern: values })
+				}
 			},
 			{
 				tokenPatterns: () => _token_pattern
@@ -5349,8 +5356,8 @@ export function buildTokenTreePatternBracket(...children: T.TokenPattern[]) {
 	);
 }
 
-export function buildTokenTreePatternBrace(...children: T.TokenPattern[]) {
-	const _token_pattern = children;
+export function buildTokenTreePatternBrace(config: Partial<T.TokenTreePatternBrace.Config> = {}) {
+	const _token_pattern = config.tokenPattern ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -5358,7 +5365,10 @@ export function buildTokenTreePatternBrace(...children: T.TokenPattern[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_token_pattern,
-				$with: { $children: (...vs: T.TokenPattern[]) => buildTokenTreePatternBrace(...vs) }
+				$with: {
+					tokenPatterns: (...values: T.TokenPattern[]) =>
+						buildTokenTreePatternBrace({ ...config, tokenPattern: values })
+				}
 			},
 			{
 				tokenPatterns: () => _token_pattern
@@ -5368,8 +5378,8 @@ export function buildTokenTreePatternBrace(...children: T.TokenPattern[]) {
 	);
 }
 
-export function buildTokenTreeParen(...children: T.Tokens[]) {
-	const _tokens = children;
+export function buildTokenTreeParen(config: Partial<T.TokenTreeParen.Config> = {}) {
+	const _tokens = config.tokens ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -5377,7 +5387,9 @@ export function buildTokenTreeParen(...children: T.Tokens[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_tokens,
-				$with: { $children: (...vs: T.Tokens[]) => buildTokenTreeParen(...vs) }
+				$with: {
+					tokens: (...values: T.Tokens[]) => buildTokenTreeParen({ ...config, tokens: values })
+				}
 			},
 			{
 				tokens: () => _tokens
@@ -5387,8 +5399,8 @@ export function buildTokenTreeParen(...children: T.Tokens[]) {
 	);
 }
 
-export function buildTokenTreeBracket(...children: T.Tokens[]) {
-	const _tokens = children;
+export function buildTokenTreeBracket(config: Partial<T.TokenTreeBracket.Config> = {}) {
+	const _tokens = config.tokens ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -5396,7 +5408,9 @@ export function buildTokenTreeBracket(...children: T.Tokens[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_tokens,
-				$with: { $children: (...vs: T.Tokens[]) => buildTokenTreeBracket(...vs) }
+				$with: {
+					tokens: (...values: T.Tokens[]) => buildTokenTreeBracket({ ...config, tokens: values })
+				}
 			},
 			{
 				tokens: () => _tokens
@@ -5406,8 +5420,8 @@ export function buildTokenTreeBracket(...children: T.Tokens[]) {
 	);
 }
 
-export function buildTokenTreeBrace(...children: T.Tokens[]) {
-	const _tokens = children;
+export function buildTokenTreeBrace(config: Partial<T.TokenTreeBrace.Config> = {}) {
+	const _tokens = config.tokens ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -5415,7 +5429,9 @@ export function buildTokenTreeBrace(...children: T.Tokens[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_tokens,
-				$with: { $children: (...vs: T.Tokens[]) => buildTokenTreeBrace(...vs) }
+				$with: {
+					tokens: (...values: T.Tokens[]) => buildTokenTreeBrace({ ...config, tokens: values })
+				}
 			},
 			{
 				tokens: () => _tokens
@@ -5425,8 +5441,8 @@ export function buildTokenTreeBrace(...children: T.Tokens[]) {
 	);
 }
 
-export function buildDelimTokenTreeParen(...children: T.DelimTokens[]) {
-	const _delim_tokens = children;
+export function buildDelimTokenTreeParen(config: Partial<T.DelimTokenTreeParen.Config> = {}) {
+	const _delim_tokens = config.delimTokens ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -5434,7 +5450,9 @@ export function buildDelimTokenTreeParen(...children: T.DelimTokens[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_delim_tokens,
-				$with: { $children: (...vs: T.DelimTokens[]) => buildDelimTokenTreeParen(...vs) }
+				$with: {
+					delimTokens: (...values: T.DelimTokens[]) => buildDelimTokenTreeParen({ ...config, delimTokens: values })
+				}
 			},
 			{
 				delimTokens: () => _delim_tokens
@@ -5444,8 +5462,8 @@ export function buildDelimTokenTreeParen(...children: T.DelimTokens[]) {
 	);
 }
 
-export function buildDelimTokenTreeBracket(...children: T.DelimTokens[]) {
-	const _delim_tokens = children;
+export function buildDelimTokenTreeBracket(config: Partial<T.DelimTokenTreeBracket.Config> = {}) {
+	const _delim_tokens = config.delimTokens ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -5453,7 +5471,9 @@ export function buildDelimTokenTreeBracket(...children: T.DelimTokens[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_delim_tokens,
-				$with: { $children: (...vs: T.DelimTokens[]) => buildDelimTokenTreeBracket(...vs) }
+				$with: {
+					delimTokens: (...values: T.DelimTokens[]) => buildDelimTokenTreeBracket({ ...config, delimTokens: values })
+				}
 			},
 			{
 				delimTokens: () => _delim_tokens
@@ -5463,8 +5483,8 @@ export function buildDelimTokenTreeBracket(...children: T.DelimTokens[]) {
 	);
 }
 
-export function buildDelimTokenTreeBrace(...children: T.DelimTokens[]) {
-	const _delim_tokens = children;
+export function buildDelimTokenTreeBrace(config: Partial<T.DelimTokenTreeBrace.Config> = {}) {
+	const _delim_tokens = config.delimTokens ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -5472,7 +5492,9 @@ export function buildDelimTokenTreeBrace(...children: T.DelimTokens[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_delim_tokens,
-				$with: { $children: (...vs: T.DelimTokens[]) => buildDelimTokenTreeBrace(...vs) }
+				$with: {
+					delimTokens: (...values: T.DelimTokens[]) => buildDelimTokenTreeBrace({ ...config, delimTokens: values })
+				}
 			},
 			{
 				delimTokens: () => _delim_tokens
@@ -5981,15 +6003,15 @@ export type FluentKindMap = {
 	_line_comment_regular_dslash: T.LineCommentRegularDslash;
 	_line_comment_doc: T.LineCommentDoc;
 	_line_comment_content: T.LineCommentContent;
-	_token_tree_pattern_paren: FluentNode<'_token_tree_pattern_paren', T.TokenTreePatternParen.Config>;
-	_token_tree_pattern_bracket: FluentNode<'_token_tree_pattern_bracket', T.TokenTreePatternBracket.Config>;
-	_token_tree_pattern_brace: FluentNode<'_token_tree_pattern_brace', T.TokenTreePatternBrace.Config>;
-	_token_tree_paren: FluentNode<'_token_tree_paren', T.TokenTreeParen.Config>;
-	_token_tree_bracket: FluentNode<'_token_tree_bracket', T.TokenTreeBracket.Config>;
-	_token_tree_brace: FluentNode<'_token_tree_brace', T.TokenTreeBrace.Config>;
-	_delim_token_tree_paren: FluentNode<'_delim_token_tree_paren', T.DelimTokenTreeParen.Config>;
-	_delim_token_tree_bracket: FluentNode<'_delim_token_tree_bracket', T.DelimTokenTreeBracket.Config>;
-	_delim_token_tree_brace: FluentNode<'_delim_token_tree_brace', T.DelimTokenTreeBrace.Config>;
+	_token_tree_pattern_paren: T.TokenTreePatternParen;
+	_token_tree_pattern_bracket: T.TokenTreePatternBracket;
+	_token_tree_pattern_brace: T.TokenTreePatternBrace;
+	_token_tree_paren: T.TokenTreeParen;
+	_token_tree_bracket: T.TokenTreeBracket;
+	_token_tree_brace: T.TokenTreeBrace;
+	_delim_token_tree_paren: T.DelimTokenTreeParen;
+	_delim_token_tree_bracket: T.DelimTokenTreeBracket;
+	_delim_token_tree_brace: T.DelimTokenTreeBrace;
 	_attributed_field_declaration: FluentNode<'_attributed_field_declaration', T.AttributedFieldDeclaration.Config>;
 	_attributed_enum_variant: FluentNode<'_attributed_enum_variant', T.AttributedEnumVariant.Config>;
 	_attributed_parameter: FluentNode<'_attributed_parameter', T.AttributedParameter.Config>;

@@ -4313,21 +4313,29 @@ var grammar_sittir_default = grammar(
           "1/1": variant("doc"),
           "1/2": variant("content")
         },
-        token_tree_pattern: {
-          0: variant("paren"),
-          1: variant("bracket"),
-          2: variant("brace")
-        },
-        token_tree: {
-          0: variant("paren"),
-          1: variant("bracket"),
-          2: variant("brace")
-        },
-        delim_token_tree: {
-          0: variant("paren"),
-          1: variant("bracket"),
-          2: variant("brace")
-        }
+        // Stage 1 fields the token-tree repeats (`seq('(',
+        // repeat($._delim_tokens), ')')` and siblings, addressed inside
+        // each base choice arm BEFORE the variant split mints the
+        // per-delimiter rules) so the native read keys every element into
+        // ONE field-keyed array in cursor order. Unnamed union repeats
+        // make the reader bucket children per kind and the wrap re-merge
+        // via `_concatInSourceOrder`, which cannot order text-collapsed
+        // scalar elements (no `$span`/`$childIndex`: `a!($())` rendered
+        // `a!(()$)`) and does not guarantee cross-kind interleaving even
+        // for node stubs. Field names match the previously-derived slot
+        // names, keeping storage keys stable.
+        token_tree_pattern: [
+          { "0/1": field2("token_pattern"), "1/1": field2("token_pattern"), "2/1": field2("token_pattern") },
+          { 0: variant("paren"), 1: variant("bracket"), 2: variant("brace") }
+        ],
+        token_tree: [
+          { "0/1": field2("tokens"), "1/1": field2("tokens"), "2/1": field2("tokens") },
+          { 0: variant("paren"), 1: variant("bracket"), 2: variant("brace") }
+        ],
+        delim_token_tree: [
+          { "0/1": field2("delim_tokens"), "1/1": field2("delim_tokens"), "2/1": field2("delim_tokens") },
+          { 0: variant("paren"), 1: variant("bracket"), 2: variant("brace") }
+        ]
       },
       rules: {
         _token_tree_punctuation: ($) => choice(

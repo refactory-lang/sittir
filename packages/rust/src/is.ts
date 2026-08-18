@@ -283,27 +283,6 @@ export interface IsGuards {
 	VisibilityModifierInPath<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.VisibilityModifierInPath };
-	TokenTreePatternParen<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.TokenTreePatternParen };
-	TokenTreePatternBracket<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.TokenTreePatternBracket };
-	TokenTreePatternBrace<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.TokenTreePatternBrace };
-	TokenTreeParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreeParen };
-	TokenTreeBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreeBracket };
-	TokenTreeBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreeBrace };
-	DelimTokenTreeParen<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.DelimTokenTreeParen };
-	DelimTokenTreeBracket<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.DelimTokenTreeBracket };
-	DelimTokenTreeBrace<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.DelimTokenTreeBrace };
 	AttributedFieldDeclaration<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.AttributedFieldDeclaration };
@@ -538,17 +517,6 @@ export interface AssertGuards {
 	VisibilityModifierInPath(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.VisibilityModifierInPath };
-	TokenTreePatternParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePatternParen };
-	TokenTreePatternBracket(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.TokenTreePatternBracket };
-	TokenTreePatternBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePatternBrace };
-	TokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreeParen };
-	TokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreeBracket };
-	TokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreeBrace };
-	DelimTokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeParen };
-	DelimTokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeBracket };
-	DelimTokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeBrace };
 	AttributedFieldDeclaration(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.AttributedFieldDeclaration };
@@ -1070,15 +1038,6 @@ export const is = {
 	MacroDefinitionBracket: _g(TSKindId.MacroDefinitionBracket),
 	MacroDefinitionBrace: _g(TSKindId.MacroDefinitionBrace),
 	VisibilityModifierInPath: _g(TSKindId.VisibilityModifierInPath),
-	TokenTreePatternParen: _g(TSKindId.TokenTreePatternParen),
-	TokenTreePatternBracket: _g(TSKindId.TokenTreePatternBracket),
-	TokenTreePatternBrace: _g(TSKindId.TokenTreePatternBrace),
-	TokenTreeParen: _g(TSKindId.TokenTreeParen),
-	TokenTreeBracket: _g(TSKindId.TokenTreeBracket),
-	TokenTreeBrace: _g(TSKindId.TokenTreeBrace),
-	DelimTokenTreeParen: _g(TSKindId.DelimTokenTreeParen),
-	DelimTokenTreeBracket: _g(TSKindId.DelimTokenTreeBracket),
-	DelimTokenTreeBrace: _g(TSKindId.DelimTokenTreeBrace),
 	AttributedFieldDeclaration: _g(TSKindId.AttributedFieldDeclaration),
 	AttributedEnumVariant: _g(TSKindId.AttributedEnumVariant),
 	AttributedParameter: _g(TSKindId.AttributedParameter),
@@ -1301,15 +1260,6 @@ export const assert = {
 	MacroDefinitionBracket: _makeAssert('MacroDefinitionBracket', is.MacroDefinitionBracket as _AnyGuard),
 	MacroDefinitionBrace: _makeAssert('MacroDefinitionBrace', is.MacroDefinitionBrace as _AnyGuard),
 	VisibilityModifierInPath: _makeAssert('VisibilityModifierInPath', is.VisibilityModifierInPath as _AnyGuard),
-	TokenTreePatternParen: _makeAssert('TokenTreePatternParen', is.TokenTreePatternParen as _AnyGuard),
-	TokenTreePatternBracket: _makeAssert('TokenTreePatternBracket', is.TokenTreePatternBracket as _AnyGuard),
-	TokenTreePatternBrace: _makeAssert('TokenTreePatternBrace', is.TokenTreePatternBrace as _AnyGuard),
-	TokenTreeParen: _makeAssert('TokenTreeParen', is.TokenTreeParen as _AnyGuard),
-	TokenTreeBracket: _makeAssert('TokenTreeBracket', is.TokenTreeBracket as _AnyGuard),
-	TokenTreeBrace: _makeAssert('TokenTreeBrace', is.TokenTreeBrace as _AnyGuard),
-	DelimTokenTreeParen: _makeAssert('DelimTokenTreeParen', is.DelimTokenTreeParen as _AnyGuard),
-	DelimTokenTreeBracket: _makeAssert('DelimTokenTreeBracket', is.DelimTokenTreeBracket as _AnyGuard),
-	DelimTokenTreeBrace: _makeAssert('DelimTokenTreeBrace', is.DelimTokenTreeBrace as _AnyGuard),
 	AttributedFieldDeclaration: _makeAssert('AttributedFieldDeclaration', is.AttributedFieldDeclaration as _AnyGuard),
 	AttributedEnumVariant: _makeAssert('AttributedEnumVariant', is.AttributedEnumVariant as _AnyGuard),
 	AttributedParameter: _makeAssert('AttributedParameter', is.AttributedParameter as _AnyGuard),

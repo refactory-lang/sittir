@@ -83,12 +83,6 @@ import type {
 	DeclarationList,
 	DeclarationListTree,
 	DelimTokenTree,
-	DelimTokenTreeBrace,
-	DelimTokenTreeBraceTree,
-	DelimTokenTreeBracket,
-	DelimTokenTreeBracketTree,
-	DelimTokenTreeParen,
-	DelimTokenTreeParenTree,
 	DelimTokenTreeTree,
 	DynamicType,
 	DynamicTypeTree,
@@ -327,19 +321,7 @@ import type {
 	TokenRepetitionPatternTree,
 	TokenRepetitionTree,
 	TokenTree,
-	TokenTreeBrace,
-	TokenTreeBraceTree,
-	TokenTreeBracket,
-	TokenTreeBracketTree,
-	TokenTreeParen,
-	TokenTreeParenTree,
 	TokenTreePattern,
-	TokenTreePatternBrace,
-	TokenTreePatternBraceTree,
-	TokenTreePatternBracket,
-	TokenTreePatternBracketTree,
-	TokenTreePatternParen,
-	TokenTreePatternParenTree,
 	TokenTreePatternTree,
 	TokenTreePunctuation,
 	TokenTreePunctuationTree,
@@ -669,27 +651,6 @@ export type _Type_MacroDefinitionBrace = _TypeAssert<
 export type _Type_VisibilityModifierInPath = _TypeAssert<
 	_TypeExtends<VisibilityModifierInPath['$type'], TSKindId.VisibilityModifierInPath>
 >;
-export type _Type_TokenTreePatternParen = _TypeAssert<
-	_TypeExtends<TokenTreePatternParen['$type'], TSKindId.TokenTreePatternParen>
->;
-export type _Type_TokenTreePatternBracket = _TypeAssert<
-	_TypeExtends<TokenTreePatternBracket['$type'], TSKindId.TokenTreePatternBracket>
->;
-export type _Type_TokenTreePatternBrace = _TypeAssert<
-	_TypeExtends<TokenTreePatternBrace['$type'], TSKindId.TokenTreePatternBrace>
->;
-export type _Type_TokenTreeParen = _TypeAssert<_TypeExtends<TokenTreeParen['$type'], TSKindId.TokenTreeParen>>;
-export type _Type_TokenTreeBracket = _TypeAssert<_TypeExtends<TokenTreeBracket['$type'], TSKindId.TokenTreeBracket>>;
-export type _Type_TokenTreeBrace = _TypeAssert<_TypeExtends<TokenTreeBrace['$type'], TSKindId.TokenTreeBrace>>;
-export type _Type_DelimTokenTreeParen = _TypeAssert<
-	_TypeExtends<DelimTokenTreeParen['$type'], TSKindId.DelimTokenTreeParen>
->;
-export type _Type_DelimTokenTreeBracket = _TypeAssert<
-	_TypeExtends<DelimTokenTreeBracket['$type'], TSKindId.DelimTokenTreeBracket>
->;
-export type _Type_DelimTokenTreeBrace = _TypeAssert<
-	_TypeExtends<DelimTokenTreeBrace['$type'], TSKindId.DelimTokenTreeBrace>
->;
 export type _Type_AttributedFieldDeclaration = _TypeAssert<
 	_TypeExtends<AttributedFieldDeclaration['$type'], TSKindId.AttributedFieldDeclaration>
 >;
@@ -828,6 +789,7 @@ export type _Type_TokenTreePunctuation = _TypeAssert<
 		| TSKindId.EqGt
 		| TSKindId.Pound
 		| TSKindId.Qmark
+		| TSKindId.Dollar
 	>
 >;
 export type _Type_TokenKeywords = _TypeAssert<
@@ -1120,27 +1082,6 @@ export type _Tree_MacroDefinitionBrace = _TypeAssert<
 >;
 export type _Tree_VisibilityModifierInPath = _TypeAssert<
 	_TypeExtends<VisibilityModifierInPathTree['type'], '_visibility_modifier_in_path'>
->;
-export type _Tree_TokenTreePatternParen = _TypeAssert<
-	_TypeExtends<TokenTreePatternParenTree['type'], '_token_tree_pattern_paren'>
->;
-export type _Tree_TokenTreePatternBracket = _TypeAssert<
-	_TypeExtends<TokenTreePatternBracketTree['type'], '_token_tree_pattern_bracket'>
->;
-export type _Tree_TokenTreePatternBrace = _TypeAssert<
-	_TypeExtends<TokenTreePatternBraceTree['type'], '_token_tree_pattern_brace'>
->;
-export type _Tree_TokenTreeParen = _TypeAssert<_TypeExtends<TokenTreeParenTree['type'], '_token_tree_paren'>>;
-export type _Tree_TokenTreeBracket = _TypeAssert<_TypeExtends<TokenTreeBracketTree['type'], '_token_tree_bracket'>>;
-export type _Tree_TokenTreeBrace = _TypeAssert<_TypeExtends<TokenTreeBraceTree['type'], '_token_tree_brace'>>;
-export type _Tree_DelimTokenTreeParen = _TypeAssert<
-	_TypeExtends<DelimTokenTreeParenTree['type'], '_delim_token_tree_paren'>
->;
-export type _Tree_DelimTokenTreeBracket = _TypeAssert<
-	_TypeExtends<DelimTokenTreeBracketTree['type'], '_delim_token_tree_bracket'>
->;
-export type _Tree_DelimTokenTreeBrace = _TypeAssert<
-	_TypeExtends<DelimTokenTreeBraceTree['type'], '_delim_token_tree_brace'>
 >;
 export type _Tree_AttributedFieldDeclaration = _TypeAssert<
 	_TypeExtends<AttributedFieldDeclarationTree['type'], '_attributed_field_declaration'>

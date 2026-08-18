@@ -111,7 +111,8 @@ export type LeafStringMap = {
 		| '->'
 		| '=>'
 		| '#'
-		| '?';
+		| '?'
+		| '$';
 	_token_keywords:
 		| "'"
 		| 'as'
@@ -5417,7 +5418,8 @@ export type TokenTreePunctuation = Terminal<
 	| TSKindId.DashGt
 	| TSKindId.EqGt
 	| TSKindId.Pound
-	| TSKindId.Qmark,
+	| TSKindId.Qmark
+	| TSKindId.Dollar,
 	| '+'
 	| '-'
 	| '*'
@@ -5462,6 +5464,7 @@ export type TokenTreePunctuation = Terminal<
 	| '=>'
 	| '#'
 	| '?'
+	| '$'
 >;
 export type TokenKeywords = Terminal<
 	| TSKindId.Squote

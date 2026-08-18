@@ -355,16 +355,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_macro_definition_paren: TSKindId.MacroDefinitionParen,
 	_macro_definition_bracket: TSKindId.MacroDefinitionBracket,
 	_macro_definition_brace: TSKindId.MacroDefinitionBrace,
-	_visibility_modifier_in_path: TSKindId.VisibilityModifierInPath,
-	_token_tree_pattern_paren: TSKindId.TokenTreePatternParen,
-	_token_tree_pattern_bracket: TSKindId.TokenTreePatternBracket,
-	_token_tree_pattern_brace: TSKindId.TokenTreePatternBrace,
-	_token_tree_paren: TSKindId.TokenTreeParen,
-	_token_tree_bracket: TSKindId.TokenTreeBracket,
-	_token_tree_brace: TSKindId.TokenTreeBrace,
-	_delim_token_tree_paren: TSKindId.DelimTokenTreeParen,
-	_delim_token_tree_bracket: TSKindId.DelimTokenTreeBracket,
-	_delim_token_tree_brace: TSKindId.DelimTokenTreeBrace
+	_visibility_modifier_in_path: TSKindId.VisibilityModifierInPath
 };
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
@@ -453,24 +444,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildMacroDefinitionBrace(...(children as Parameters<typeof F.buildMacroDefinitionBrace>));
 		case '_visibility_modifier_in_path':
 			return F.buildVisibilityModifierInPath(children[0] as Parameters<typeof F.buildVisibilityModifierInPath>[0]);
-		case '_token_tree_pattern_paren':
-			return F.buildTokenTreePatternParen(...(children as Parameters<typeof F.buildTokenTreePatternParen>));
-		case '_token_tree_pattern_bracket':
-			return F.buildTokenTreePatternBracket(...(children as Parameters<typeof F.buildTokenTreePatternBracket>));
-		case '_token_tree_pattern_brace':
-			return F.buildTokenTreePatternBrace(...(children as Parameters<typeof F.buildTokenTreePatternBrace>));
-		case '_token_tree_paren':
-			return F.buildTokenTreeParen(...(children as Parameters<typeof F.buildTokenTreeParen>));
-		case '_token_tree_bracket':
-			return F.buildTokenTreeBracket(...(children as Parameters<typeof F.buildTokenTreeBracket>));
-		case '_token_tree_brace':
-			return F.buildTokenTreeBrace(...(children as Parameters<typeof F.buildTokenTreeBrace>));
-		case '_delim_token_tree_paren':
-			return F.buildDelimTokenTreeParen(...(children as Parameters<typeof F.buildDelimTokenTreeParen>));
-		case '_delim_token_tree_bracket':
-			return F.buildDelimTokenTreeBracket(...(children as Parameters<typeof F.buildDelimTokenTreeBracket>));
-		case '_delim_token_tree_brace':
-			return F.buildDelimTokenTreeBrace(...(children as Parameters<typeof F.buildDelimTokenTreeBrace>));
 		default:
 			return undefined;
 	}

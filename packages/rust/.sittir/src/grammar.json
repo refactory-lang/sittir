@@ -11808,10 +11808,17 @@
           "value": "("
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "token_pattern",
           "content": {
-            "type": "SYMBOL",
-            "name": "_token_pattern"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_token_pattern"
+            }
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -11828,10 +11835,17 @@
           "value": "["
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "token_pattern",
           "content": {
-            "type": "SYMBOL",
-            "name": "_token_pattern"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_token_pattern"
+            }
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -11848,10 +11862,17 @@
           "value": "{"
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "token_pattern",
           "content": {
-            "type": "SYMBOL",
-            "name": "_token_pattern"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_token_pattern"
+            }
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -11868,10 +11889,17 @@
           "value": "("
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "tokens",
           "content": {
-            "type": "SYMBOL",
-            "name": "_tokens"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_tokens"
+            }
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -11888,10 +11916,17 @@
           "value": "["
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "tokens",
           "content": {
-            "type": "SYMBOL",
-            "name": "_tokens"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_tokens"
+            }
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -11908,10 +11943,17 @@
           "value": "{"
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "tokens",
           "content": {
-            "type": "SYMBOL",
-            "name": "_tokens"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_tokens"
+            }
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -11928,10 +11970,17 @@
           "value": "("
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "delim_tokens",
           "content": {
-            "type": "SYMBOL",
-            "name": "_delim_tokens"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_delim_tokens"
+            }
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -11948,10 +11997,17 @@
           "value": "["
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "delim_tokens",
           "content": {
-            "type": "SYMBOL",
-            "name": "_delim_tokens"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_delim_tokens"
+            }
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -11968,10 +12024,17 @@
           "value": "{"
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "delim_tokens",
           "content": {
-            "type": "SYMBOL",
-            "name": "_delim_tokens"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_delim_tokens"
+            }
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {

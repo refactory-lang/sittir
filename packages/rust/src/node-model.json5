@@ -5056,11 +5056,12 @@
     },
     {
       "kind": "_delim_token_tree_brace",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "DelimTokenTreeBrace",
-      "factoryName": "delimTokenTreeBrace",
+      "factoryName": "_delimTokenTreeBrace",
       "irKey": "delimTokenTreeBrace",
       "hidden": false,
+      "name": "_delim_token_tree_brace",
       "fields": [
         {
           "name": "delim_tokens",
@@ -5087,18 +5088,19 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "delim_tokens"
       ]
     },
     {
       "kind": "_delim_token_tree_bracket",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "DelimTokenTreeBracket",
-      "factoryName": "delimTokenTreeBracket",
+      "factoryName": "_delimTokenTreeBracket",
       "irKey": "delimTokenTreeBracket",
       "hidden": false,
+      "name": "_delim_token_tree_bracket",
       "fields": [
         {
           "name": "delim_tokens",
@@ -5125,18 +5127,19 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "delim_tokens"
       ]
     },
     {
       "kind": "_delim_token_tree_paren",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "DelimTokenTreeParen",
-      "factoryName": "delimTokenTreeParen",
+      "factoryName": "_delimTokenTreeParen",
       "irKey": "delimTokenTreeParen",
       "hidden": false,
+      "name": "_delim_token_tree_paren",
       "fields": [
         {
           "name": "delim_tokens",
@@ -5163,7 +5166,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "delim_tokens"
       ]
@@ -7606,11 +7609,12 @@
     },
     {
       "kind": "_token_tree_brace",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "TokenTreeBrace",
-      "factoryName": "tokenTreeBrace",
+      "factoryName": "_tokenTreeBrace",
       "irKey": "tokenTreeBrace",
       "hidden": false,
+      "name": "_token_tree_brace",
       "fields": [
         {
           "name": "tokens",
@@ -7637,18 +7641,19 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "tokens"
       ]
     },
     {
       "kind": "_token_tree_bracket",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "TokenTreeBracket",
-      "factoryName": "tokenTreeBracket",
+      "factoryName": "_tokenTreeBracket",
       "irKey": "tokenTreeBracket",
       "hidden": false,
+      "name": "_token_tree_bracket",
       "fields": [
         {
           "name": "tokens",
@@ -7675,18 +7680,19 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "tokens"
       ]
     },
     {
       "kind": "_token_tree_paren",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "TokenTreeParen",
-      "factoryName": "tokenTreeParen",
+      "factoryName": "_tokenTreeParen",
       "irKey": "tokenTreeParen",
       "hidden": false,
+      "name": "_token_tree_paren",
       "fields": [
         {
           "name": "tokens",
@@ -7713,18 +7719,19 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "tokens"
       ]
     },
     {
       "kind": "_token_tree_pattern_brace",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "TokenTreePatternBrace",
-      "factoryName": "tokenTreePatternBrace",
+      "factoryName": "_tokenTreePatternBrace",
       "irKey": "tokenTreePatternBrace",
       "hidden": false,
+      "name": "_token_tree_pattern_brace",
       "fields": [
         {
           "name": "token_pattern",
@@ -7751,18 +7758,19 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "token_pattern"
       ]
     },
     {
       "kind": "_token_tree_pattern_bracket",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "TokenTreePatternBracket",
-      "factoryName": "tokenTreePatternBracket",
+      "factoryName": "_tokenTreePatternBracket",
       "irKey": "tokenTreePatternBracket",
       "hidden": false,
+      "name": "_token_tree_pattern_bracket",
       "fields": [
         {
           "name": "token_pattern",
@@ -7789,18 +7797,19 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "token_pattern"
       ]
     },
     {
       "kind": "_token_tree_pattern_paren",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "TokenTreePatternParen",
-      "factoryName": "tokenTreePatternParen",
+      "factoryName": "_tokenTreePatternParen",
       "irKey": "tokenTreePatternParen",
       "hidden": false,
+      "name": "_token_tree_pattern_paren",
       "fields": [
         {
           "name": "token_pattern",
@@ -7827,7 +7836,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "token_pattern"
       ]
@@ -7883,7 +7892,8 @@
         "->",
         "=>",
         "#",
-        "?"
+        "?",
+        "$"
       ]
     },
     {

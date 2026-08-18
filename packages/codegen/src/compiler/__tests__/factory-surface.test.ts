@@ -50,13 +50,17 @@ beforeAll(async () => {
 
 describe('child factory surface classification', () => {
 	it('detects spread child factories from inferred-only branches', () => {
-		// _token_tree_paren is a committed spread kind (repeated unnamed
-		// token children — node-model.json5 factoryShape 'spread') and
-		// array_expression a committed direct container (single unnamed
-		// child, the _array_expression_* group). declaration_list carries a
-		// named declaration_statements slot, so it is not a child surface.
-		expect(classifyChildFactorySurface(nodeMap.nodes.get('_token_tree_paren')!, nodeMap)).toBe('spread');
+		// array_expression is a committed direct container (single unnamed
+		// child, the _array_expression_* group). _token_tree_paren used to be
+		// the committed spread exemplar, but the token-tree repeats are now
+		// FIELDED (grammar.sittir.ts: `{ '0/1': field('tokens') }` etc.) so
+		// the native read keys every element into one ordered array instead
+		// of per-kind buckets — a named slot, hence no child surface (the
+		// spread shape itself stays pinned via python string_content below).
+		// declaration_list carries a named declaration_statements slot, so it
+		// is not a child surface either.
 		expect(classifyChildFactorySurface(nodeMap.nodes.get('array_expression')!, nodeMap)).toBe('direct');
+		expect(classifyChildFactorySurface(nodeMap.nodes.get('_token_tree_paren')!, nodeMap)).toBeNull();
 		expect(classifyChildFactorySurface(nodeMap.nodes.get('declaration_list')!, nodeMap)).toBeNull();
 	});
 
