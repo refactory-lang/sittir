@@ -5769,7 +5769,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "content"
       ]

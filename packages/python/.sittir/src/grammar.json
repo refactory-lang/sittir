@@ -7104,19 +7104,26 @@
       ]
     },
     "comprehension_clauses": {
-      "type": "REPEAT1",
+      "type": "FIELD",
+      "name": "content",
       "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "for_in_clause"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "if_clause"
-          }
-        ]
+        "type": "REPEAT1",
+        "content": {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "for_in_clause"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "if_clause"
+            }
+          ]
+        }
+      },
+      "metadata": {
+        "fieldSource": "override"
       }
     },
     "print_statement_group1": {

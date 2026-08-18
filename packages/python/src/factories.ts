@@ -3257,8 +3257,8 @@ export function buildCaseAsPattern(config: T.CaseAsPattern.Config) {
 	);
 }
 
-export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClause)[]) {
-	const _content = children;
+export function buildComprehensionClauses(config: Partial<T.ComprehensionClauses.Config> = {}) {
+	const _content = config.content ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -3266,7 +3266,10 @@ export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClau
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $children: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...vs) }
+				$with: {
+					contents: (...values: (T.ForInClause | T.IfClause)[]) =>
+						buildComprehensionClauses({ ...config, content: values })
+				}
 			},
 			{
 				contents: () => _content

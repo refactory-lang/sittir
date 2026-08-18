@@ -21560,11 +21560,6 @@
                                     "$type": 250,
                                     "$source": 0,
                                     "$named": true,
-                                    "$span": {
-                                      "start": 90,
-                                      "end": 111
-                                    },
-                                    "$nodeHandle": 60,
                                     "_content": [
                                       {
                                         "$type": 223,
@@ -21626,7 +21621,12 @@
                                         },
                                         "$nodeHandle": 61
                                       }
-                                    ]
+                                    ],
+                                    "$span": {
+                                      "start": 90,
+                                      "end": 111
+                                    },
+                                    "$nodeHandle": 60
                                   },
                                   "$other": [
                                     7,
@@ -21692,7 +21692,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1,10)))\n",
-    "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (yield)) (newline)) statements: (statement_group1 simple_statement: (expression_statement (yield (integer))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (yield (integer))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (yield (yield_from_clause (identifier)))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (yield (yield_from_clause (parenthesized_expression (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer))))))))))))) (newline))))))",
+    "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (yield)) (newline)) statements: (statement_group1 simple_statement: (expression_statement (yield (integer))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (yield (integer))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (yield (yield_from_clause (identifier)))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (yield (yield_from_clause (parenthesized_expression (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer))))))))))))) (newline))))))",
     "wrappedText": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1,10)))\n",
     "wrappedOffset": 0
   },
@@ -21994,11 +21994,6 @@
                                 "$type": 250,
                                 "$source": 0,
                                 "$named": true,
-                                "$span": {
-                                  "start": 90,
-                                  "end": 111
-                                },
-                                "$nodeHandle": 91,
                                 "_content": [
                                   {
                                     "$type": 223,
@@ -22060,7 +22055,12 @@
                                     },
                                     "$nodeHandle": 92
                                   }
-                                ]
+                                ],
+                                "$span": {
+                                  "start": 90,
+                                  "end": 111
+                                },
+                                "$nodeHandle": 91
                               },
                               "$other": [
                                 7,
@@ -22119,7 +22119,7 @@
     "pattern": "function_definition",
     "edits": [],
     "expectedSourceOut": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1,10)))\n",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (yield)) (newline)) statements: (statement_group1 simple_statement: (expression_statement (yield (integer))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (yield (integer))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (yield (yield_from_clause (identifier)))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (yield (yield_from_clause (parenthesized_expression (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer))))))))))))) (newline)))))",
+    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (yield)) (newline)) statements: (statement_group1 simple_statement: (expression_statement (yield (integer))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (yield (integer))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (yield (yield_from_clause (identifier)))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (yield (yield_from_clause (parenthesized_expression (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer))))))))))))) (newline)))))",
     "wrappedText": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1,10)))\n",
     "wrappedOffset": 0
   },
@@ -22426,11 +22426,6 @@
                     "$type": 250,
                     "$source": 0,
                     "$named": true,
-                    "$span": {
-                      "start": 90,
-                      "end": 111
-                    },
-                    "$nodeHandle": 137,
                     "_content": [
                       {
                         "$type": 223,
@@ -22492,7 +22487,12 @@
                         },
                         "$nodeHandle": 138
                       }
-                    ]
+                    ],
+                    "$span": {
+                      "start": 90,
+                      "end": 111
+                    },
+                    "$nodeHandle": 137
                   },
                   "$other": [
                     7,
@@ -22519,7 +22519,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "yield from(yield from(x for x in range(1,10)))",
-    "expectedReparseTree": "(expression_statement (yield (yield_from_clause (parenthesized_expression (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer)))))))))))))",
+    "expectedReparseTree": "(expression_statement (yield (yield_from_clause (parenthesized_expression (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer)))))))))))))",
     "wrappedText": "yield from(yield from(x for x in range(1,10)))",
     "wrappedOffset": 0
   },
@@ -22626,11 +22626,6 @@
               "$type": 250,
               "$source": 0,
               "$named": true,
-              "$span": {
-                "start": 90,
-                "end": 111
-              },
-              "$nodeHandle": 165,
               "_content": [
                 {
                   "$type": 223,
@@ -22692,7 +22687,12 @@
                   },
                   "$nodeHandle": 166
                 }
-              ]
+              ],
+              "$span": {
+                "start": 90,
+                "end": 111
+              },
+              "$nodeHandle": 165
             },
             "$other": [
               7,
@@ -22716,7 +22716,7 @@
     "pattern": "parenthesized_expression",
     "edits": [],
     "expectedSourceOut": "(yield from(x for x in range(1,10)))",
-    "expectedReparseTree": "(parenthesized_expression (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer))))))))))",
+    "expectedReparseTree": "(parenthesized_expression (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer))))))))))",
     "wrappedText": "f((yield from(x for x in range(1,10))))",
     "wrappedOffset": 2
   },
@@ -22732,11 +22732,6 @@
         "$type": 250,
         "$source": 0,
         "$named": true,
-        "$span": {
-          "start": 90,
-          "end": 111
-        },
-        "$nodeHandle": 170,
         "_content": [
           {
             "$type": 223,
@@ -22798,7 +22793,12 @@
             },
             "$nodeHandle": 171
           }
-        ]
+        ],
+        "$span": {
+          "start": 90,
+          "end": 111
+        },
+        "$nodeHandle": 170
       },
       "$other": [
         7,
@@ -22819,7 +22819,7 @@
     "pattern": "generator_expression",
     "edits": [],
     "expectedSourceOut": "(x for x in range(1,10))",
-    "expectedReparseTree": "(generator_expression body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer)))))))",
+    "expectedReparseTree": "(generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer)))))))",
     "wrappedText": "_ = (x for x in range(1,10))",
     "wrappedOffset": 4
   },
@@ -26658,11 +26658,6 @@
                                   "$type": 250,
                                   "$source": 0,
                                   "$named": true,
-                                  "$span": {
-                                    "start": 47,
-                                    "end": 63
-                                  },
-                                  "$nodeHandle": 31,
                                   "_content": [
                                     {
                                       "$type": 223,
@@ -26683,7 +26678,12 @@
                                       },
                                       "$nodeHandle": 32
                                     }
-                                  ]
+                                  ],
+                                  "$span": {
+                                    "start": 47,
+                                    "end": 63
+                                  },
+                                  "$nodeHandle": 31
                                 },
                                 "$other": [
                                   42,
@@ -26768,7 +26768,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "async with a as b:\n  async for c in d:\n    [e async for f in g]\n",
-    "expectedReparseTree": "(module statements: (with_statement with_clause: (with_clause (with_clause_bare with_item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))))) body: (suite_block_with_indent (block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (identifier))))) (newline)))))))))",
+    "expectedReparseTree": "(module statements: (with_statement with_clause: (with_clause (with_clause_bare with_item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))))) body: (suite_block_with_indent (block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block_with_indent (block statements: (statement_group1 simple_statement: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier))))) (newline)))))))))",
     "wrappedText": "async with a as b:\n  async for c in d:\n    [e async for f in g]\n",
     "wrappedOffset": 0
   },
@@ -26824,11 +26824,6 @@
           "$type": 250,
           "$source": 0,
           "$named": true,
-          "$span": {
-            "start": 47,
-            "end": 63
-          },
-          "$nodeHandle": 76,
           "_content": [
             {
               "$type": 223,
@@ -26849,7 +26844,12 @@
               },
               "$nodeHandle": 77
             }
-          ]
+          ],
+          "$span": {
+            "start": 47,
+            "end": 63
+          },
+          "$nodeHandle": 76
         },
         "$other": [
           42,
@@ -26871,7 +26871,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "[e async for f in g]",
-    "expectedReparseTree": "(expression_statement (list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))",
     "wrappedText": "[e async for f in g]",
     "wrappedOffset": 0
   },
@@ -26887,11 +26887,6 @@
         "$type": 250,
         "$source": 0,
         "$named": true,
-        "$span": {
-          "start": 47,
-          "end": 63
-        },
-        "$nodeHandle": 78,
         "_content": [
           {
             "$type": 223,
@@ -26912,7 +26907,12 @@
             },
             "$nodeHandle": 79
           }
-        ]
+        ],
+        "$span": {
+          "start": 47,
+          "end": 63
+        },
+        "$nodeHandle": 78
       },
       "$other": [
         42,
@@ -26933,7 +26933,7 @@
     "pattern": "list_comprehension",
     "edits": [],
     "expectedSourceOut": "[e async for f in g]",
-    "expectedReparseTree": "(list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (identifier))))",
+    "expectedReparseTree": "(list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier))))",
     "wrappedText": "_ = [e async for f in g]",
     "wrappedOffset": 4
   },
@@ -45088,11 +45088,6 @@
                   "$type": 250,
                   "$source": 0,
                   "$named": true,
-                  "$span": {
-                    "start": 7,
-                    "end": 26
-                  },
-                  "$nodeHandle": 45,
                   "_content": [
                     {
                       "$type": 223,
@@ -45143,7 +45138,12 @@
                       },
                       "$nodeHandle": 46
                     }
-                  ]
+                  ],
+                  "$span": {
+                    "start": 7,
+                    "end": 26
+                  },
+                  "$nodeHandle": 45
                 },
                 "$other": [
                   42,
@@ -45188,11 +45188,6 @@
                   "$type": 250,
                   "$source": 0,
                   "$named": true,
-                  "$span": {
-                    "start": 31,
-                    "end": 52
-                  },
-                  "$nodeHandle": 51,
                   "_content": [
                     {
                       "$type": 223,
@@ -45230,7 +45225,12 @@
                       },
                       "$nodeHandle": 53
                     }
-                  ]
+                  ],
+                  "$span": {
+                    "start": 31,
+                    "end": 52
+                  },
+                  "$nodeHandle": 51
                 },
                 "$other": [
                   42,
@@ -45306,11 +45306,6 @@
                   "$type": 250,
                   "$source": 0,
                   "$named": true,
-                  "$span": {
-                    "start": 61,
-                    "end": 102
-                  },
-                  "$nodeHandle": 58,
                   "_content": [
                     {
                       "$type": 223,
@@ -45428,7 +45423,12 @@
                       },
                       "$nodeHandle": 61
                     }
-                  ]
+                  ],
+                  "$span": {
+                    "start": 61,
+                    "end": 102
+                  },
+                  "$nodeHandle": 58
                 },
                 "$other": [
                   42,
@@ -45473,11 +45473,6 @@
                   "$type": 250,
                   "$source": 0,
                   "$named": true,
-                  "$span": {
-                    "start": 107,
-                    "end": 150
-                  },
-                  "$nodeHandle": 68,
                   "_content": [
                     {
                       "$type": 223,
@@ -45561,7 +45556,12 @@
                       },
                       "$nodeHandle": 70
                     }
-                  ]
+                  ],
+                  "$span": {
+                    "start": 107,
+                    "end": 150
+                  },
+                  "$nodeHandle": 68
                 },
                 "$other": [
                   42,
@@ -45599,7 +45599,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "[a+b for(a,b)in items]\n[a for b in c for a in b]\n[(x,y)for x in[1,2,3]for y in[1,2,3]if True]\n[a for a in lambda:True,lambda:False if a()]\n",
-    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (list_comprehension body: (binary_operator left: (identifier) right: (identifier)) (comprehension_clauses (for_in_clause left: (tuple_pattern (pattern_group pattern: (identifier) pattern: (identifier))) right: (identifier))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (identifier)) (for_in_clause left: (identifier) right: (identifier))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list_comprehension body: (tuple (element_list element: (identifier) element: (identifier))) (comprehension_clauses (for_in_clause left: (identifier) right: (list (element_list element: (integer) element: (integer) element: (integer)))) (for_in_clause left: (identifier) right: (list (element_list element: (integer) element: (integer) element: (integer)))) (if_clause expression: (true))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) (if_clause expression: (call function: (identifier) arguments: (argument_list)))))) (newline)))",
+    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (list_comprehension body: (binary_operator left: (identifier) right: (identifier)) (comprehension_clauses content: (for_in_clause left: (tuple_pattern (pattern_group pattern: (identifier) pattern: (identifier))) right: (identifier))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list_comprehension body: (tuple (element_list element: (identifier) element: (identifier))) (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (element_list element: (integer) element: (integer) element: (integer)))) content: (for_in_clause left: (identifier) right: (list (element_list element: (integer) element: (integer) element: (integer)))) content: (if_clause expression: (true))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) content: (if_clause expression: (call function: (identifier) arguments: (argument_list)))))) (newline)))",
     "wrappedText": "[a+b for(a,b)in items]\n[a for b in c for a in b]\n[(x,y)for x in[1,2,3]for y in[1,2,3]if True]\n[a for a in lambda:True,lambda:False if a()]\n",
     "wrappedOffset": 0
   },
@@ -45636,11 +45636,6 @@
           "$type": 250,
           "$source": 0,
           "$named": true,
-          "$span": {
-            "start": 7,
-            "end": 26
-          },
-          "$nodeHandle": 77,
           "_content": [
             {
               "$type": 223,
@@ -45691,7 +45686,12 @@
               },
               "$nodeHandle": 78
             }
-          ]
+          ],
+          "$span": {
+            "start": 7,
+            "end": 26
+          },
+          "$nodeHandle": 77
         },
         "$other": [
           42,
@@ -45713,7 +45713,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "[a+b for(a,b)in items]",
-    "expectedReparseTree": "(expression_statement (list_comprehension body: (binary_operator left: (identifier) right: (identifier)) (comprehension_clauses (for_in_clause left: (tuple_pattern (pattern_group pattern: (identifier) pattern: (identifier))) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (list_comprehension body: (binary_operator left: (identifier) right: (identifier)) (comprehension_clauses content: (for_in_clause left: (tuple_pattern (pattern_group pattern: (identifier) pattern: (identifier))) right: (identifier)))))",
     "wrappedText": "[a+b for(a,b)in items]",
     "wrappedOffset": 0
   },
@@ -45738,11 +45738,6 @@
           "$type": 250,
           "$source": 0,
           "$named": true,
-          "$span": {
-            "start": 31,
-            "end": 52
-          },
-          "$nodeHandle": 82,
           "_content": [
             {
               "$type": 223,
@@ -45780,7 +45775,12 @@
               },
               "$nodeHandle": 84
             }
-          ]
+          ],
+          "$span": {
+            "start": 31,
+            "end": 52
+          },
+          "$nodeHandle": 82
         },
         "$other": [
           42,
@@ -45802,7 +45802,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "[a for b in c for a in b]",
-    "expectedReparseTree": "(expression_statement (list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (identifier)) (for_in_clause left: (identifier) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))",
     "wrappedText": "[a for b in c for a in b]",
     "wrappedOffset": 0
   },
@@ -45858,11 +45858,6 @@
           "$type": 250,
           "$source": 0,
           "$named": true,
-          "$span": {
-            "start": 61,
-            "end": 102
-          },
-          "$nodeHandle": 88,
           "_content": [
             {
               "$type": 223,
@@ -45980,7 +45975,12 @@
               },
               "$nodeHandle": 91
             }
-          ]
+          ],
+          "$span": {
+            "start": 61,
+            "end": 102
+          },
+          "$nodeHandle": 88
         },
         "$other": [
           42,
@@ -46002,7 +46002,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "[(x,y)for x in[1,2,3]for y in[1,2,3]if True]",
-    "expectedReparseTree": "(expression_statement (list_comprehension body: (tuple (element_list element: (identifier) element: (identifier))) (comprehension_clauses (for_in_clause left: (identifier) right: (list (element_list element: (integer) element: (integer) element: (integer)))) (for_in_clause left: (identifier) right: (list (element_list element: (integer) element: (integer) element: (integer)))) (if_clause expression: (true)))))",
+    "expectedReparseTree": "(expression_statement (list_comprehension body: (tuple (element_list element: (identifier) element: (identifier))) (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (element_list element: (integer) element: (integer) element: (integer)))) content: (for_in_clause left: (identifier) right: (list (element_list element: (integer) element: (integer) element: (integer)))) content: (if_clause expression: (true)))))",
     "wrappedText": "[(x,y)for x in[1,2,3]for y in[1,2,3]if True]",
     "wrappedOffset": 0
   },
@@ -46027,11 +46027,6 @@
           "$type": 250,
           "$source": 0,
           "$named": true,
-          "$span": {
-            "start": 107,
-            "end": 150
-          },
-          "$nodeHandle": 97,
           "_content": [
             {
               "$type": 223,
@@ -46115,7 +46110,12 @@
               },
               "$nodeHandle": 99
             }
-          ]
+          ],
+          "$span": {
+            "start": 107,
+            "end": 150
+          },
+          "$nodeHandle": 97
         },
         "$other": [
           42,
@@ -46137,7 +46137,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "[a for a in lambda:True,lambda:False if a()]",
-    "expectedReparseTree": "(expression_statement (list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) (if_clause expression: (call function: (identifier) arguments: (argument_list))))))",
+    "expectedReparseTree": "(expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) content: (if_clause expression: (call function: (identifier) arguments: (argument_list))))))",
     "wrappedText": "[a for a in lambda:True,lambda:False if a()]",
     "wrappedOffset": 0
   },
@@ -46165,11 +46165,6 @@
         "$type": 250,
         "$source": 0,
         "$named": true,
-        "$span": {
-          "start": 7,
-          "end": 26
-        },
-        "$nodeHandle": 105,
         "_content": [
           {
             "$type": 223,
@@ -46220,7 +46215,12 @@
             },
             "$nodeHandle": 106
           }
-        ]
+        ],
+        "$span": {
+          "start": 7,
+          "end": 26
+        },
+        "$nodeHandle": 105
       },
       "$other": [
         42,
@@ -46241,7 +46241,7 @@
     "pattern": "list_comprehension",
     "edits": [],
     "expectedSourceOut": "[a+b for(a,b)in items]",
-    "expectedReparseTree": "(list_comprehension body: (binary_operator left: (identifier) right: (identifier)) (comprehension_clauses (for_in_clause left: (tuple_pattern (pattern_group pattern: (identifier) pattern: (identifier))) right: (identifier))))",
+    "expectedReparseTree": "(list_comprehension body: (binary_operator left: (identifier) right: (identifier)) (comprehension_clauses content: (for_in_clause left: (tuple_pattern (pattern_group pattern: (identifier) pattern: (identifier))) right: (identifier))))",
     "wrappedText": "_ = [a+b for(a,b)in items]",
     "wrappedOffset": 4
   },
@@ -46257,11 +46257,6 @@
         "$type": 250,
         "$source": 0,
         "$named": true,
-        "$span": {
-          "start": 31,
-          "end": 52
-        },
-        "$nodeHandle": 109,
         "_content": [
           {
             "$type": 223,
@@ -46299,7 +46294,12 @@
             },
             "$nodeHandle": 111
           }
-        ]
+        ],
+        "$span": {
+          "start": 31,
+          "end": 52
+        },
+        "$nodeHandle": 109
       },
       "$other": [
         42,
@@ -46320,7 +46320,7 @@
     "pattern": "list_comprehension",
     "edits": [],
     "expectedSourceOut": "[a for b in c for a in b]",
-    "expectedReparseTree": "(list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (identifier)) (for_in_clause left: (identifier) right: (identifier))))",
+    "expectedReparseTree": "(list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))",
     "wrappedText": "_ = [a for b in c for a in b]",
     "wrappedOffset": 4
   },
@@ -46367,11 +46367,6 @@
         "$type": 250,
         "$source": 0,
         "$named": true,
-        "$span": {
-          "start": 61,
-          "end": 102
-        },
-        "$nodeHandle": 114,
         "_content": [
           {
             "$type": 223,
@@ -46489,7 +46484,12 @@
             },
             "$nodeHandle": 117
           }
-        ]
+        ],
+        "$span": {
+          "start": 61,
+          "end": 102
+        },
+        "$nodeHandle": 114
       },
       "$other": [
         42,
@@ -46510,7 +46510,7 @@
     "pattern": "list_comprehension",
     "edits": [],
     "expectedSourceOut": "[(x,y)for x in[1,2,3]for y in[1,2,3]if True]",
-    "expectedReparseTree": "(list_comprehension body: (tuple (element_list element: (identifier) element: (identifier))) (comprehension_clauses (for_in_clause left: (identifier) right: (list (element_list element: (integer) element: (integer) element: (integer)))) (for_in_clause left: (identifier) right: (list (element_list element: (integer) element: (integer) element: (integer)))) (if_clause expression: (true))))",
+    "expectedReparseTree": "(list_comprehension body: (tuple (element_list element: (identifier) element: (identifier))) (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (element_list element: (integer) element: (integer) element: (integer)))) content: (for_in_clause left: (identifier) right: (list (element_list element: (integer) element: (integer) element: (integer)))) content: (if_clause expression: (true))))",
     "wrappedText": "_ = [(x,y)for x in[1,2,3]for y in[1,2,3]if True]",
     "wrappedOffset": 4
   },
@@ -46526,11 +46526,6 @@
         "$type": 250,
         "$source": 0,
         "$named": true,
-        "$span": {
-          "start": 107,
-          "end": 150
-        },
-        "$nodeHandle": 122,
         "_content": [
           {
             "$type": 223,
@@ -46614,7 +46609,12 @@
             },
             "$nodeHandle": 124
           }
-        ]
+        ],
+        "$span": {
+          "start": 107,
+          "end": 150
+        },
+        "$nodeHandle": 122
       },
       "$other": [
         42,
@@ -46635,7 +46635,7 @@
     "pattern": "list_comprehension",
     "edits": [],
     "expectedSourceOut": "[a for a in lambda:True,lambda:False if a()]",
-    "expectedReparseTree": "(list_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) (if_clause expression: (call function: (identifier) arguments: (argument_list)))))",
+    "expectedReparseTree": "(list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) content: (if_clause expression: (call function: (identifier) arguments: (argument_list)))))",
     "wrappedText": "_ = [a for a in lambda:True,lambda:False if a()]",
     "wrappedOffset": 4
   },
@@ -48469,11 +48469,6 @@
                   "$type": 250,
                   "$source": 0,
                   "$named": true,
-                  "$span": {
-                    "start": 6,
-                    "end": 23
-                  },
-                  "$nodeHandle": 21,
                   "_content": [
                     {
                       "$type": 223,
@@ -48520,7 +48515,12 @@
                       },
                       "$nodeHandle": 22
                     }
-                  ]
+                  ],
+                  "$span": {
+                    "start": 6,
+                    "end": 23
+                  },
+                  "$nodeHandle": 21
                 },
                 "$other": [
                   46,
@@ -48579,11 +48579,6 @@
                   "$type": 250,
                   "$source": 0,
                   "$named": true,
-                  "$span": {
-                    "start": 31,
-                    "end": 56
-                  },
-                  "$nodeHandle": 28,
                   "_content": [
                     {
                       "$type": 223,
@@ -48621,7 +48616,12 @@
                       },
                       "$nodeHandle": 30
                     }
-                  ]
+                  ],
+                  "$span": {
+                    "start": 31,
+                    "end": 56
+                  },
+                  "$nodeHandle": 28
                 },
                 "$other": [
                   46,
@@ -48659,7 +48659,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "{ a:b for a,b in items }\n{ a:b for c in d for e in items }\n",
-    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) right: (identifier))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses (for_in_clause left: (identifier) right: (identifier)) (for_in_clause left: (identifier) right: (identifier))))) (newline)))",
+    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) right: (identifier))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))) (newline)))",
     "wrappedText": "{ a:b for a,b in items }\n{ a:b for c in d for e in items }\n",
     "wrappedOffset": 0
   },
@@ -48698,11 +48698,6 @@
           "$type": 250,
           "$source": 0,
           "$named": true,
-          "$span": {
-            "start": 6,
-            "end": 23
-          },
-          "$nodeHandle": 33,
           "_content": [
             {
               "$type": 223,
@@ -48749,7 +48744,12 @@
               },
               "$nodeHandle": 34
             }
-          ]
+          ],
+          "$span": {
+            "start": 6,
+            "end": 23
+          },
+          "$nodeHandle": 33
         },
         "$other": [
           46,
@@ -48771,7 +48771,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{ a:b for a,b in items }",
-    "expectedReparseTree": "(expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) right: (identifier)))))",
     "wrappedText": "{ a:b for a,b in items }",
     "wrappedOffset": 0
   },
@@ -48810,11 +48810,6 @@
           "$type": 250,
           "$source": 0,
           "$named": true,
-          "$span": {
-            "start": 31,
-            "end": 56
-          },
-          "$nodeHandle": 39,
           "_content": [
             {
               "$type": 223,
@@ -48852,7 +48847,12 @@
               },
               "$nodeHandle": 41
             }
-          ]
+          ],
+          "$span": {
+            "start": 31,
+            "end": 56
+          },
+          "$nodeHandle": 39
         },
         "$other": [
           46,
@@ -48874,7 +48874,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{ a:b for c in d for e in items }",
-    "expectedReparseTree": "(expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses (for_in_clause left: (identifier) right: (identifier)) (for_in_clause left: (identifier) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))",
     "wrappedText": "{ a:b for c in d for e in items }",
     "wrappedOffset": 0
   },
@@ -48904,11 +48904,6 @@
         "$type": 250,
         "$source": 0,
         "$named": true,
-        "$span": {
-          "start": 6,
-          "end": 23
-        },
-        "$nodeHandle": 43,
         "_content": [
           {
             "$type": 223,
@@ -48955,7 +48950,12 @@
             },
             "$nodeHandle": 44
           }
-        ]
+        ],
+        "$span": {
+          "start": 6,
+          "end": 23
+        },
+        "$nodeHandle": 43
       },
       "$other": [
         46,
@@ -48976,7 +48976,7 @@
     "pattern": "dictionary_comprehension",
     "edits": [],
     "expectedSourceOut": "{ a:b for a,b in items }",
-    "expectedReparseTree": "(dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) right: (identifier))))",
+    "expectedReparseTree": "(dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) right: (identifier))))",
     "wrappedText": "_ = { a:b for a,b in items }",
     "wrappedOffset": 4
   },
@@ -49006,11 +49006,6 @@
         "$type": 250,
         "$source": 0,
         "$named": true,
-        "$span": {
-          "start": 31,
-          "end": 56
-        },
-        "$nodeHandle": 48,
         "_content": [
           {
             "$type": 223,
@@ -49048,7 +49043,12 @@
             },
             "$nodeHandle": 50
           }
-        ]
+        ],
+        "$span": {
+          "start": 31,
+          "end": 56
+        },
+        "$nodeHandle": 48
       },
       "$other": [
         46,
@@ -49069,7 +49069,7 @@
     "pattern": "dictionary_comprehension",
     "edits": [],
     "expectedSourceOut": "{ a:b for c in d for e in items }",
-    "expectedReparseTree": "(dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses (for_in_clause left: (identifier) right: (identifier)) (for_in_clause left: (identifier) right: (identifier))))",
+    "expectedReparseTree": "(dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))",
     "wrappedText": "_ = { a:b for c in d for e in items }",
     "wrappedOffset": 4
   },
@@ -49625,11 +49625,6 @@
                   "$type": 250,
                   "$source": 0,
                   "$named": true,
-                  "$span": {
-                    "start": 9,
-                    "end": 29
-                  },
-                  "$nodeHandle": 22,
                   "_content": [
                     {
                       "$type": 223,
@@ -49678,7 +49673,12 @@
                       },
                       "$nodeHandle": 23
                     }
-                  ]
+                  ],
+                  "$span": {
+                    "start": 9,
+                    "end": 29
+                  },
+                  "$nodeHandle": 22
                 },
                 "$other": [
                   46,
@@ -49723,11 +49723,6 @@
                   "$type": 250,
                   "$source": 0,
                   "$named": true,
-                  "$span": {
-                    "start": 34,
-                    "end": 57
-                  },
-                  "$nodeHandle": 28,
                   "_content": [
                     {
                       "$type": 223,
@@ -49765,7 +49760,12 @@
                       },
                       "$nodeHandle": 30
                     }
-                  ]
+                  ],
+                  "$span": {
+                    "start": 34,
+                    "end": 57
+                  },
+                  "$nodeHandle": 28
                 },
                 "$other": [
                   46,
@@ -49803,7 +49803,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "{ a[b][c]for a,b,c in items }\n{ r for s in qs for n in ms }\n",
-    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier))) right: (identifier))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (set_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (identifier)) (for_in_clause left: (identifier) right: (identifier))))) (newline)))",
+    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier))) right: (identifier))))) (newline)) statements: (statement_group1 simple_statement: (expression_statement (set_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))) (newline)))",
     "wrappedText": "{ a[b][c]for a,b,c in items }\n{ r for s in qs for n in ms }\n",
     "wrappedOffset": 0
   },
@@ -49864,11 +49864,6 @@
           "$type": 250,
           "$source": 0,
           "$named": true,
-          "$span": {
-            "start": 9,
-            "end": 29
-          },
-          "$nodeHandle": 34,
           "_content": [
             {
               "$type": 223,
@@ -49917,7 +49912,12 @@
               },
               "$nodeHandle": 35
             }
-          ]
+          ],
+          "$span": {
+            "start": 9,
+            "end": 29
+          },
+          "$nodeHandle": 34
         },
         "$other": [
           46,
@@ -49939,7 +49939,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{ a[b][c]for a,b,c in items }",
-    "expectedReparseTree": "(expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier))) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier))) right: (identifier)))))",
     "wrappedText": "{ a[b][c]for a,b,c in items }",
     "wrappedOffset": 0
   },
@@ -49964,11 +49964,6 @@
           "$type": 250,
           "$source": 0,
           "$named": true,
-          "$span": {
-            "start": 34,
-            "end": 57
-          },
-          "$nodeHandle": 39,
           "_content": [
             {
               "$type": 223,
@@ -50006,7 +50001,12 @@
               },
               "$nodeHandle": 41
             }
-          ]
+          ],
+          "$span": {
+            "start": 34,
+            "end": 57
+          },
+          "$nodeHandle": 39
         },
         "$other": [
           46,
@@ -50028,7 +50028,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{ r for s in qs for n in ms }",
-    "expectedReparseTree": "(expression_statement (set_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (identifier)) (for_in_clause left: (identifier) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (set_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))",
     "wrappedText": "{ r for s in qs for n in ms }",
     "wrappedOffset": 0
   },
@@ -50080,11 +50080,6 @@
         "$type": 250,
         "$source": 0,
         "$named": true,
-        "$span": {
-          "start": 9,
-          "end": 29
-        },
-        "$nodeHandle": 44,
         "_content": [
           {
             "$type": 223,
@@ -50133,7 +50128,12 @@
             },
             "$nodeHandle": 45
           }
-        ]
+        ],
+        "$span": {
+          "start": 9,
+          "end": 29
+        },
+        "$nodeHandle": 44
       },
       "$other": [
         46,
@@ -50154,7 +50154,7 @@
     "pattern": "set_comprehension",
     "edits": [],
     "expectedSourceOut": "{ a[b][c]for a,b,c in items }",
-    "expectedReparseTree": "(set_comprehension body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier))) right: (identifier))))",
+    "expectedReparseTree": "(set_comprehension body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier))) right: (identifier))))",
     "wrappedText": "_ = { a[b][c]for a,b,c in items }",
     "wrappedOffset": 4
   },
@@ -50170,11 +50170,6 @@
         "$type": 250,
         "$source": 0,
         "$named": true,
-        "$span": {
-          "start": 34,
-          "end": 57
-        },
-        "$nodeHandle": 48,
         "_content": [
           {
             "$type": 223,
@@ -50212,7 +50207,12 @@
             },
             "$nodeHandle": 50
           }
-        ]
+        ],
+        "$span": {
+          "start": 34,
+          "end": 57
+        },
+        "$nodeHandle": 48
       },
       "$other": [
         46,
@@ -50233,7 +50233,7 @@
     "pattern": "set_comprehension",
     "edits": [],
     "expectedSourceOut": "{ r for s in qs for n in ms }",
-    "expectedReparseTree": "(set_comprehension body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (identifier)) (for_in_clause left: (identifier) right: (identifier))))",
+    "expectedReparseTree": "(set_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))",
     "wrappedText": "_ = { r for s in qs for n in ms }",
     "wrappedOffset": 4
   },
@@ -51004,11 +51004,6 @@
           "$type": 250,
           "$source": 0,
           "$named": true,
-          "$span": {
-            "start": 9,
-            "end": 29
-          },
-          "$nodeHandle": 70,
           "_content": [
             {
               "$type": 223,
@@ -51057,7 +51052,12 @@
               },
               "$nodeHandle": 71
             }
-          ]
+          ],
+          "$span": {
+            "start": 9,
+            "end": 29
+          },
+          "$nodeHandle": 70
         },
         "$other": [
           7,
@@ -51079,7 +51079,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "(a[b][c]for a,b,c in items)",
-    "expectedReparseTree": "(expression_statement (generator_expression body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier))) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (generator_expression body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier))) right: (identifier)))))",
     "wrappedText": "(a[b][c]for a,b,c in items)",
     "wrappedOffset": 0
   },
@@ -51140,11 +51140,6 @@
             "$type": 250,
             "$source": 0,
             "$named": true,
-            "$span": {
-              "start": 43,
-              "end": 56
-            },
-            "$nodeHandle": 78,
             "_content": [
               {
                 "$type": 223,
@@ -51191,7 +51186,12 @@
                 },
                 "$nodeHandle": 79
               }
-            ]
+            ],
+            "$span": {
+              "start": 43,
+              "end": 56
+            },
+            "$nodeHandle": 78
           },
           "$other": [
             7,
@@ -51219,7 +51219,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "dict((a,b)for a,b in d)",
-    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (generator_expression body: (tuple (element_list element: (identifier) element: (identifier))) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) right: (identifier))))))",
+    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (generator_expression body: (tuple (element_list element: (identifier) element: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) right: (identifier))))))",
     "wrappedText": "dict((a,b)for a,b in d)",
     "wrappedOffset": 0
   },
@@ -51244,11 +51244,6 @@
           "$type": 250,
           "$source": 0,
           "$named": true,
-          "$span": {
-            "start": 88,
-            "end": 109
-          },
-          "$nodeHandle": 87,
           "_content": [
             {
               "$type": 223,
@@ -51310,7 +51305,12 @@
               },
               "$nodeHandle": 88
             }
-          ]
+          ],
+          "$span": {
+            "start": 88,
+            "end": 109
+          },
+          "$nodeHandle": 87
         },
         "$other": [
           7,
@@ -51332,7 +51332,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "(x for x in range(1,10))",
-    "expectedReparseTree": "(expression_statement (generator_expression body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer))))))))",
+    "expectedReparseTree": "(expression_statement (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer))))))))",
     "wrappedText": "(x for x in range(1,10))",
     "wrappedOffset": 0
   },
@@ -51384,11 +51384,6 @@
         "$type": 250,
         "$source": 0,
         "$named": true,
-        "$span": {
-          "start": 9,
-          "end": 29
-        },
-        "$nodeHandle": 94,
         "_content": [
           {
             "$type": 223,
@@ -51437,7 +51432,12 @@
             },
             "$nodeHandle": 95
           }
-        ]
+        ],
+        "$span": {
+          "start": 9,
+          "end": 29
+        },
+        "$nodeHandle": 94
       },
       "$other": [
         7,
@@ -51458,7 +51458,7 @@
     "pattern": "generator_expression",
     "edits": [],
     "expectedSourceOut": "(a[b][c]for a,b,c in items)",
-    "expectedReparseTree": "(generator_expression body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier))) right: (identifier))))",
+    "expectedReparseTree": "(generator_expression body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier))) right: (identifier))))",
     "wrappedText": "_ = (a[b][c]for a,b,c in items)",
     "wrappedOffset": 4
   },
@@ -51505,11 +51505,6 @@
         "$type": 250,
         "$source": 0,
         "$named": true,
-        "$span": {
-          "start": 43,
-          "end": 56
-        },
-        "$nodeHandle": 100,
         "_content": [
           {
             "$type": 223,
@@ -51556,7 +51551,12 @@
             },
             "$nodeHandle": 101
           }
-        ]
+        ],
+        "$span": {
+          "start": 43,
+          "end": 56
+        },
+        "$nodeHandle": 100
       },
       "$other": [
         7,
@@ -51577,7 +51577,7 @@
     "pattern": "generator_expression",
     "edits": [],
     "expectedSourceOut": "((a,b)for a,b in d)",
-    "expectedReparseTree": "(generator_expression body: (tuple (element_list element: (identifier) element: (identifier))) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) right: (identifier))))",
+    "expectedReparseTree": "(generator_expression body: (tuple (element_list element: (identifier) element: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) right: (identifier))))",
     "wrappedText": "_ = ((a,b)for a,b in d)",
     "wrappedOffset": 4
   },
@@ -51593,11 +51593,6 @@
         "$type": 250,
         "$source": 0,
         "$named": true,
-        "$span": {
-          "start": 88,
-          "end": 109
-        },
-        "$nodeHandle": 107,
         "_content": [
           {
             "$type": 223,
@@ -51659,7 +51654,12 @@
             },
             "$nodeHandle": 108
           }
-        ]
+        ],
+        "$span": {
+          "start": 88,
+          "end": 109
+        },
+        "$nodeHandle": 107
       },
       "$other": [
         7,
@@ -51680,7 +51680,7 @@
     "pattern": "generator_expression",
     "edits": [],
     "expectedSourceOut": "(x for x in range(1,10))",
-    "expectedReparseTree": "(generator_expression body: (identifier) (comprehension_clauses (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer)))))))",
+    "expectedReparseTree": "(generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 element: (integer) element: (integer)))))))",
     "wrappedText": "_ = (x for x in range(1,10))",
     "wrappedOffset": 4
   },
@@ -51820,11 +51820,6 @@
           "$type": 250,
           "$source": 0,
           "$named": true,
-          "$span": {
-            "start": 43,
-            "end": 56
-          },
-          "$nodeHandle": 137,
           "_content": [
             {
               "$type": 223,
@@ -51871,7 +51866,12 @@
               },
               "$nodeHandle": 138
             }
-          ]
+          ],
+          "$span": {
+            "start": 43,
+            "end": 56
+          },
+          "$nodeHandle": 137
         },
         "$other": [
           7,
@@ -51898,7 +51898,7 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "dict((a,b)for a,b in d)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (generator_expression body: (tuple (element_list element: (identifier) element: (identifier))) (comprehension_clauses (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) right: (identifier)))))",
+    "expectedReparseTree": "(call function: (identifier) arguments: (generator_expression body: (tuple (element_list element: (identifier) element: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) right: (identifier)))))",
     "wrappedText": "_ = dict((a,b)for a,b in d)",
     "wrappedOffset": 4
   },

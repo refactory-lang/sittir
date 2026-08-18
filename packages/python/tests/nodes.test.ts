@@ -2084,9 +2084,13 @@ describe('case_as_pattern', () => {
 
 describe('comprehension_clauses', () => {
 	it('factory produces correct type', () => {
-		const node = ir.comprehensionClauses();
+		const node = ir.comprehensionClauses({});
 		expect(node.$type).toBe(TSKindId.ComprehensionClauses);
 		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.comprehensionClauses({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 

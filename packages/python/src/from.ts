@@ -297,7 +297,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_dictionary_group1: TSKindId.DictionaryGroup1,
 	case_tuple_pattern: TSKindId.CaseTuplePattern,
 	case_list_pattern: TSKindId.CaseListPattern,
-	comprehension_clauses: TSKindId.ComprehensionClauses,
 	_suite_block_with_indent: TSKindId.SuiteBlockWithIndent,
 	_simple_pattern_negative: TSKindId.SimplePatternNegative,
 	_yield_from_clause: TSKindId.YieldFromClause
@@ -369,8 +368,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildCaseTuplePattern(...(children as Parameters<typeof F.buildCaseTuplePattern>));
 		case 'case_list_pattern':
 			return F.buildCaseListPattern(...(children as Parameters<typeof F.buildCaseListPattern>));
-		case 'comprehension_clauses':
-			return F.buildComprehensionClauses(...(children as Parameters<typeof F.buildComprehensionClauses>));
 		case '_suite_block_with_indent':
 			return F.buildSuiteBlockWithIndent(children[0] as Parameters<typeof F.buildSuiteBlockWithIndent>[0]);
 		case '_simple_pattern_negative':
@@ -713,6 +710,7 @@ const _K25: readonly string[] = [
 	'pattern_list',
 	'yield'
 ];
+const _K26: readonly string[] = ['for_in_clause', 'if_clause'];
 
 export function coerceToModule(input?: T.Module.Loose): ReturnType<typeof F.buildModule> {
 	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildModule>;
@@ -2124,15 +2122,13 @@ export function coerceToCaseAsPattern(input: T.CaseAsPattern.Loose): ReturnType<
 }
 
 export function coerceToComprehensionClauses(
-	...input: readonly ((T.ForInClause | T.IfClause) | T.ComprehensionClauses)[]
+	input?: T.ComprehensionClauses.Loose
 ): ReturnType<typeof F.buildComprehensionClauses> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ComprehensionClauses) {
-		const data = input[0];
-		const stored = (data as unknown as { _content?: unknown })._content;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildComprehensionClauses(...(children as unknown as Parameters<typeof F.buildComprehensionClauses>));
-	}
-	return F.buildComprehensionClauses(...(input as unknown as Parameters<typeof F.buildComprehensionClauses>));
+	if (input !== undefined && isNodeData(input))
+		return input as unknown as ReturnType<typeof F.buildComprehensionClauses>;
+	return F.buildComprehensionClauses({
+		content: _resolveMany<T.ForInClause | T.IfClause>(input?.content, _K0, _K26)
+	});
 }
 
 export function coerceToPrintStatementGroup1(

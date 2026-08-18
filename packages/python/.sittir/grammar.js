@@ -4393,7 +4393,13 @@ var grammar_sittir_default = grammar(
         // if_clause becomes grammatical to the override parser; base
         // rejects it) — it can't reject anything the base accepts, so no
         // override-parser ERROR regressions are possible from it.
-        comprehension_clauses: ($) => repeat1(choice($.for_in_clause, $.if_clause)),
+        // The repeat is FIELDED so the native read keys every clause into
+        // one `_content` array in cursor order — an unnamed union repeat
+        // buckets children per kind and the wrap's merge cannot preserve
+        // cross-kind order (a `for … if … for …` clause chain would
+        // reorder). 'content' matches the sanctioned-union name the slot
+        // derivation already produces for this row.
+        comprehension_clauses: ($) => field("content", repeat1(choice($.for_in_clause, $.if_clause))),
         list_comprehension: ($) => seq("[", field("body", $.expression), $.comprehension_clauses, "]"),
         dictionary_comprehension: ($) => seq("{", field("body", $.pair), $.comprehension_clauses, "}"),
         set_comprehension: ($) => seq("{", field("body", $.expression), $.comprehension_clauses, "}"),

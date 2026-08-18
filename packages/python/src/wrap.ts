@@ -7288,25 +7288,17 @@ export function wrapCaseAsPattern(data: T.CaseAsPattern, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapComprehensionClauses(
-	data: T.ComprehensionClauses & {
-		readonly _for_in_clause?: T.ForInClause | T.IfClause | readonly (T.ForInClause | T.IfClause)[];
-		readonly _if_clause?: T.ForInClause | T.IfClause | readonly (T.ForInClause | T.IfClause)[];
-	},
-	tree: TreeHandle
-) {
+export function wrapComprehensionClauses(data: T.ComprehensionClauses, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_for_in_clause', '_if_clause']),
+			...data,
 			$type: TSKindId.ComprehensionClauses as const,
-			_content: normalizeRepeatedWrapSlot(
-				data._content !== undefined
-					? _toArr(data._content)
-					: _concatInSourceOrder([data._for_in_clause, data._if_clause]),
-				false,
-				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeRepeatedWrapSlot(data._content, false, 'content', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			contents() {
 				return drillInAll<T.ForInClause | T.IfClause>(

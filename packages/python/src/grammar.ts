@@ -493,11 +493,12 @@ export type PythonGrammar = {
 	readonly comprehension_clauses: {
 		type: 'comprehension_clauses';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'for_in_clause'; named: true }, { type: 'if_clause'; named: true }];
+		fields: {
+			content: {
+				multiple: true;
+				required: true;
+				types: [{ type: 'for_in_clause'; named: true }, { type: 'if_clause'; named: true }];
+			};
 		};
 	};
 	readonly concatenated_string: {
