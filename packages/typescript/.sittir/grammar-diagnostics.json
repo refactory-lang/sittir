@@ -257,7 +257,7 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "40 referenced kind(s) resolved no parser kindId",
+    "message": "39 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -285,7 +285,6 @@
         "_kw_readonly_marker",
         "_mapped_type_clause_optional1",
         "_operator",
-        "_semicolon",
         "_unary_expression_operator",
         "html_character_reference",
         "jsx_attribute",
@@ -339,7 +338,7 @@
   },
   {
     "code": "kindid-inline-excluded-symbols",
-    "message": "19 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "18 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -361,8 +360,7 @@
         "_jsx_start_opening_element",
         "_kw_optional_marker",
         "_kw_readonly_marker",
-        "_mapped_type_clause_optional1",
-        "_semicolon"
+        "_mapped_type_clause_optional1"
       ]
     },
     "scope": "grammar",

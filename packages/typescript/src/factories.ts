@@ -2498,10 +2498,8 @@ export function buildDecoratorCallExpression(config: T.DecoratorCallExpression.C
 	);
 }
 
-export function buildClassBody(
-	...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]
-) {
-	const _content = children;
+export function buildClassBody(config: Partial<T.ClassBody.Config> = {}) {
+	const _content = config.content ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -2510,8 +2508,9 @@ export function buildClassBody(
 				$named: true as const,
 				_content,
 				$with: {
-					$children: (...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]) =>
-						buildClassBody(...vs)
+					contents: (
+						...values: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[]
+					) => buildClassBody({ ...config, content: values })
 				}
 			},
 			{
@@ -2768,6 +2767,18 @@ export function buildReservedIdentifier(
 	return withMethods(
 		{
 			$type: TSKindId.ReservedIdentifier as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildSemicolon(text: '\n' | ';') {
+	return withMethods(
+		{
+			$type: TSKindId.Semicolon as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -6796,6 +6807,7 @@ export type FluentKindMap = {
 	pair_pattern: FluentNode<'pair_pattern', T.PairPattern.Config>;
 	computed_property_name: FluentNode<'computed_property_name', T.ComputedPropertyName.Config>;
 	_reserved_identifier: T.ReservedIdentifier;
+	_semicolon: T.Semicolon;
 	public_field_definition: FluentNode<'public_field_definition', T.PublicFieldDefinition.Config>;
 	non_null_expression: FluentNode<'non_null_expression', T.NonNullExpression.Config>;
 	method_signature: FluentNode<'method_signature', T.MethodSignature.Config>;
@@ -7064,6 +7076,7 @@ export const _factoryMap = {
 	pair_pattern: buildPairPattern,
 	computed_property_name: buildComputedPropertyName,
 	_reserved_identifier: buildReservedIdentifier,
+	_semicolon: buildSemicolon,
 	public_field_definition: buildPublicFieldDefinition,
 	non_null_expression: buildNonNullExpression,
 	method_signature: buildMethodSignature,

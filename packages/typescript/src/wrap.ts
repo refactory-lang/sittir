@@ -5715,70 +5715,17 @@ export function wrapDecoratorCallExpression(data: T.DecoratorCallExpression, tre
 	return _node;
 }
 
-export function wrapClassBody(
-	data: T.ClassBody & {
-		readonly _class_body_method?:
-			| T.ClassBodyMethod
-			| T.ClassBodyMethodSig
-			| T.ClassStaticBlock
-			| T.ClassBodyMember
-			| ';'
-			| readonly (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[];
-		readonly _class_body_method_sig?:
-			| T.ClassBodyMethod
-			| T.ClassBodyMethodSig
-			| T.ClassStaticBlock
-			| T.ClassBodyMember
-			| ';'
-			| readonly (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[];
-		readonly _class_static_block?:
-			| T.ClassBodyMethod
-			| T.ClassBodyMethodSig
-			| T.ClassStaticBlock
-			| T.ClassBodyMember
-			| ';'
-			| readonly (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[];
-		readonly _class_body_member?:
-			| T.ClassBodyMethod
-			| T.ClassBodyMethodSig
-			| T.ClassStaticBlock
-			| T.ClassBodyMember
-			| ';'
-			| readonly (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[];
-		readonly _semi?:
-			| T.ClassBodyMethod
-			| T.ClassBodyMethodSig
-			| T.ClassStaticBlock
-			| T.ClassBodyMember
-			| ';'
-			| readonly (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[];
-	},
-	tree: TreeHandle
-) {
+export function wrapClassBody(data: T.ClassBody, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_class_body_member',
-				'_class_body_method',
-				'_class_body_method_sig',
-				'_class_static_block',
-				'_semi'
-			]),
+			...data,
 			$type: TSKindId.ClassBody as const,
-			_content: normalizeRepeatedWrapSlot(
-				data._content !== undefined
-					? _toArr(data._content)
-					: _concatInSourceOrder([
-							data._class_body_method,
-							data._class_body_method_sig,
-							data._class_static_block,
-							data._class_body_member,
-							data._semi
-						]),
-				false,
-				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeRepeatedWrapSlot(data._content, false, 'content', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			contents() {
 				return drillAsAll<T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';'>(
@@ -12843,6 +12790,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_property_name: (d, t) => wrapPropertyName(d as unknown as T.PropertyName, t),
 	computed_property_name: (d, t) => wrapComputedPropertyName(d as unknown as T.ComputedPropertyName, t),
 	_reserved_identifier: (d) => ({ ...d, $type: TSKindId.ReservedIdentifier as const }),
+	_semicolon: (d) => ({ ...d, $type: TSKindId.Semicolon as const }),
 	_statement_identifier: (d, t) => wrapStatementIdentifier(d as unknown as T.StatementIdentifier, t),
 	_shorthand_property_identifier: (d, t) =>
 		wrapShorthandPropertyIdentifier(d as unknown as T.ShorthandPropertyIdentifier, t),

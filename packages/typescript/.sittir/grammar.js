@@ -4368,10 +4368,13 @@ var grammar_sittir_default = grammar(
           "1/2/1": "default_kw",
           "1/2/1/1/1": "value"
         },
+        // Paths traverse the `content` field the transforms stage below
+        // adds around the member repeat (polymorph paths apply AFTER the
+        // path patches — see the transform pipeline's ordering).
         class_body: {
-          "1/0/0": "method",
-          "1/0/1": "method_sig",
-          "1/0/3": "member"
+          "1/content:/0/0": "method",
+          "1/content:/0/1": "method_sig",
+          "1/content:/0/3": "member"
         },
         _for_header: {
           "1/0": "lhs",
@@ -4418,11 +4421,20 @@ var grammar_sittir_default = grammar(
         jsx_expression: {
           1: field("expression")
         },
-        class_body: {
-          "1/0/0/2": field("semicolon"),
-          "1/0/1/1": field("terminator"),
-          "1/0/3/1": field("terminator")
-        },
+        // Stage 2 fields the member repeat AFTER the arm-level paths of
+        // stage 1 resolve against the un-fielded shape: with the `';'`
+        // arm alias-identified (see the `class_body` rules: override),
+        // every element — members and stray semicolons alike — keys into
+        // one ordered `_content` array, retiring this kind's per-kind
+        // bucket merge.
+        class_body: [
+          {
+            "1/0/0/2": field("semicolon"),
+            "1/0/1/1": field("terminator"),
+            "1/0/3/1": field("terminator")
+          },
+          { 1: field("content") }
+        ],
         abstract_method_signature: {
           "3/0": field("accessor_kind"),
           "5/0": field("optional_marker")
@@ -4646,6 +4658,32 @@ var grammar_sittir_default = grammar(
         enum_body_group1: "#170 \u2014 multi-field separatedList (name/enum_assignment); emitSeparatedListFactory only fixes the single-field-storage case, needs a real per-field partition of the flat elements array"
       },
       rules: {
+        // The class-body repeat's bare `';'` arm (stray member-separator
+        // semicolons) has no kind identity, so the read's array capture
+        // cannot materialize it. Alias the STRING in place to the visible
+        // `semicolon` kind — the existing `_semicolon` enum (values
+        // `'\n'`/`';'`) already owns that name and member text, so the
+        // canonical-hidden lookup and enum transport serve it with no new
+        // machinery. An alias on a string renames the node only — no
+        // lexing/LR change — and the arm keeps its position, so the
+        // `class_body` path patches below stay valid. (NOT the one-arg
+        // `alias('semicolon')` patch helper — that synthesizes/reuses a
+        // `_semicolon` RULE for the arm, which would make class bodies
+        // accept automatic semicolons.)
+        class_body: ($, original) => ({
+          ...original,
+          members: original.members.map(
+            (m) => m.type === "REPEAT" ? {
+              ...m,
+              content: {
+                ...m.content,
+                members: m.content.members.map(
+                  (arm) => arm.type === "STRING" && arm.value === ";" ? { type: "ALIAS", content: arm, named: true, value: "semicolon" } : arm
+                )
+              }
+            } : m
+          )
+        }),
         _reserved_identifier: ($, original) => {
           const members = original.members;
           const last = members[members.length - 1];

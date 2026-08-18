@@ -450,11 +450,12 @@ pub const _FOR_HEADER_GROUP1: KindId = KindId(439);
 pub const _INTERFACE_BODY: KindId = KindId(440);
 pub const _PROPERTY_IDENTIFIER: KindId = KindId(441);
 pub const _RESERVED_IDENTIFIER: KindId = KindId(442);
-pub const _SHORTHAND_PROPERTY_IDENTIFIER: KindId = KindId(443);
-pub const _SHORTHAND_PROPERTY_IDENTIFIER_PATTERN: KindId = KindId(444);
-pub const _STATEMENT_IDENTIFIER: KindId = KindId(445);
-pub const _THIS_TYPE: KindId = KindId(446);
-pub const _TYPE_IDENTIFIER: KindId = KindId(447);
+pub const _SEMICOLON: KindId = KindId(443);
+pub const _SHORTHAND_PROPERTY_IDENTIFIER: KindId = KindId(444);
+pub const _SHORTHAND_PROPERTY_IDENTIFIER_PATTERN: KindId = KindId(445);
+pub const _STATEMENT_IDENTIFIER: KindId = KindId(446);
+pub const _THIS_TYPE: KindId = KindId(447);
+pub const _TYPE_IDENTIFIER: KindId = KindId(448);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -902,11 +903,12 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         440 => "interface_body", // "_interface_body"
         441 => "property_identifier", // "_property_identifier"
         442 => "reserved_identifier", // "_reserved_identifier"
-        443 => "shorthand_property_identifier", // "_shorthand_property_identifier"
-        444 => "shorthand_property_identifier_pattern", // "_shorthand_property_identifier_pattern"
-        445 => "statement_identifier", // "_statement_identifier"
-        446 => "this_type", // "_this_type"
-        447 => "type_identifier", // "_type_identifier"
+        443 => "semicolon", // "_semicolon"
+        444 => "shorthand_property_identifier", // "_shorthand_property_identifier"
+        445 => "shorthand_property_identifier_pattern", // "_shorthand_property_identifier_pattern"
+        446 => "statement_identifier", // "_statement_identifier"
+        447 => "this_type", // "_this_type"
+        448 => "type_identifier", // "_type_identifier"
         _ => "<unknown>",
     }
 }

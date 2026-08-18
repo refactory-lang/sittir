@@ -925,11 +925,12 @@ export const enum TSKindId {
 	_InterfaceBody = 440,
 	_PropertyIdentifier = 441,
 	ReservedIdentifier = 442,
-	ShorthandPropertyIdentifier = 443,
-	ShorthandPropertyIdentifierPattern = 444,
-	StatementIdentifier = 445,
-	_ThisType = 446,
-	TypeIdentifier = 447
+	Semicolon = 443,
+	ShorthandPropertyIdentifier = 444,
+	ShorthandPropertyIdentifierPattern = 445,
+	StatementIdentifier = 446,
+	_ThisType = 447,
+	TypeIdentifier = 448
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -1375,11 +1376,12 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[440, '_interface_body'],
 	[441, '_property_identifier'],
 	[442, '_reserved_identifier'],
-	[443, '_shorthand_property_identifier'],
-	[444, '_shorthand_property_identifier_pattern'],
-	[445, '_statement_identifier'],
-	[446, '_this_type'],
-	[447, '_type_identifier']
+	[443, '_semicolon'],
+	[444, '_shorthand_property_identifier'],
+	[445, '_shorthand_property_identifier_pattern'],
+	[446, '_statement_identifier'],
+	[447, '_this_type'],
+	[448, '_type_identifier']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1826,11 +1828,12 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[440, 'interface_body'],
 	[441, 'property_identifier'],
 	[442, 'reserved_identifier'],
-	[443, 'shorthand_property_identifier'],
-	[444, 'shorthand_property_identifier_pattern'],
-	[445, 'statement_identifier'],
-	[446, 'this_type'],
-	[447, 'type_identifier']
+	[443, 'semicolon'],
+	[444, 'shorthand_property_identifier'],
+	[445, 'shorthand_property_identifier_pattern'],
+	[446, 'statement_identifier'],
+	[447, 'this_type'],
+	[448, 'type_identifier']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -2725,6 +2728,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._PropertyIdentifier;
 		case '_reserved_identifier':
 			return TSKindId.ReservedIdentifier;
+		case '_semicolon':
+			return TSKindId.Semicolon;
 		case '_shorthand_property_identifier':
 			return TSKindId.ShorthandPropertyIdentifier;
 		case '_shorthand_property_identifier_pattern':
@@ -2989,6 +2994,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._PropertyIdentifier;
 		case 'reserved_identifier':
 			return TSKindId.ReservedIdentifier;
+		case 'semicolon':
+			return TSKindId.Semicolon;
 		case 'shorthand_property_identifier':
 			return TSKindId.ShorthandPropertyIdentifier;
 		case 'shorthand_property_identifier_pattern':

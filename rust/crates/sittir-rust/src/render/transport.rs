@@ -8403,9 +8403,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                     28 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    6 => Ok(Self::NonDelimToken(
-                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
-                    )),
                     241 => Ok(Self::DelimTokenTree(
                         DelimTokenTreeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -8488,9 +8485,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     28 => Ok(Self::NonDelimToken(
-                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
-                    )),
-                    6 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     241 => Ok(Self::DelimTokenTree(

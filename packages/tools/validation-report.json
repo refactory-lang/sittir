@@ -558,7 +558,7 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "40 referenced kind(s) resolved no parser kindId",
+    "message": "39 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -586,7 +586,6 @@
         "_kw_readonly_marker",
         "_mapped_type_clause_optional1",
         "_operator",
-        "_semicolon",
         "_unary_expression_operator",
         "html_character_reference",
         "jsx_attribute",
@@ -644,7 +643,7 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-inline-excluded-symbols",
-    "message": "19 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "18 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -666,8 +665,7 @@
         "_jsx_start_opening_element",
         "_kw_optional_marker",
         "_kw_readonly_marker",
-        "_mapped_type_clause_optional1",
-        "_semicolon"
+        "_mapped_type_clause_optional1"
       ]
     },
     "scope": "grammar"
@@ -1771,7 +1769,7 @@
     "grammar": "typescript",
     "backend": "native",
     "name": "Accessibility modifiers as pair keywords [program]",
-    "message": "render: alias-wrapper kind id 443 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap on ObjectTransport._properties on AssignmentExpressionTransport._right on ExpressionStatementTransport._expressions on ProgramTransport._statements",
+    "message": "render: alias-wrapper kind id 444 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap on ObjectTransport._properties on AssignmentExpressionTransport._right on ExpressionStatementTransport._expressions on ProgramTransport._statements",
     "input": "x = { name, description, private: private_ }",
     "stage": "read-render-parse",
     "code": "read-render-parse-error",
@@ -1823,7 +1821,7 @@
     "grammar": "typescript",
     "backend": "native",
     "name": "Accessibility modifiers as pair keywords [program]",
-    "message": "render: alias-wrapper kind id 443 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap on ObjectTransport._properties on AssignmentExpressionTransport._right on ExpressionStatementTransport._expressions on ProgramTransport._statements",
+    "message": "render: alias-wrapper kind id 444 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap on ObjectTransport._properties on AssignmentExpressionTransport._right on ExpressionStatementTransport._expressions on ProgramTransport._statements",
     "input": "x = { name, description, private: private_ }",
     "stage": "read-render-parse-shallow",
     "code": "read-render-parse-shallow-error",

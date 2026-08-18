@@ -1502,9 +1502,13 @@ describe('decorator_call_expression', () => {
 
 describe('class_body', () => {
 	it('factory produces correct type', () => {
-		const node = ir.classBody();
+		const node = ir.classBody({});
 		expect(node.$type).toBe(TSKindId.ClassBody);
 		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.classBody({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 

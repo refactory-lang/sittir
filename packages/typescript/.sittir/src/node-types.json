@@ -1724,28 +1724,33 @@
   {
     "type": "class_body",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "class_body_member",
-          "named": true
-        },
-        {
-          "type": "class_body_method",
-          "named": true
-        },
-        {
-          "type": "class_body_method_sig",
-          "named": true
-        },
-        {
-          "type": "class_static_block",
-          "named": true
-        }
-      ]
+    "fields": {
+      "content": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "class_body_member",
+            "named": true
+          },
+          {
+            "type": "class_body_method",
+            "named": true
+          },
+          {
+            "type": "class_body_method_sig",
+            "named": true
+          },
+          {
+            "type": "class_static_block",
+            "named": true
+          },
+          {
+            "type": "semicolon",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -8013,6 +8018,10 @@
   {
     "type": "satisfies",
     "named": false
+  },
+  {
+    "type": "semicolon",
+    "named": true
   },
   {
     "type": "set",

@@ -606,16 +606,18 @@ export type TypescriptGrammar = {
 	readonly class_body: {
 		type: 'class_body';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: false;
-			types: [
-				{ type: 'class_body_member'; named: true },
-				{ type: 'class_body_method'; named: true },
-				{ type: 'class_body_method_sig'; named: true },
-				{ type: 'class_static_block'; named: true }
-			];
+		fields: {
+			content: {
+				multiple: true;
+				required: false;
+				types: [
+					{ type: 'class_body_member'; named: true },
+					{ type: 'class_body_method'; named: true },
+					{ type: 'class_body_method_sig'; named: true },
+					{ type: 'class_static_block'; named: true },
+					{ type: 'semicolon'; named: true }
+				];
+			};
 		};
 	};
 	readonly class_body_member: {
@@ -2819,6 +2821,7 @@ export type TypescriptGrammar = {
 	readonly _anonymous_require: { type: 'require'; named: false };
 	readonly _anonymous_return: { type: 'return'; named: false };
 	readonly _anonymous_satisfies: { type: 'satisfies'; named: false };
+	readonly semicolon: { type: 'semicolon'; named: true };
 	readonly _anonymous_set: { type: 'set'; named: false };
 	readonly shorthand_property_identifier: { type: 'shorthand_property_identifier'; named: true };
 	readonly shorthand_property_identifier_pattern: { type: 'shorthand_property_identifier_pattern'; named: true };

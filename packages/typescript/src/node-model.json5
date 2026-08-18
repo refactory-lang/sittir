@@ -12000,7 +12000,7 @@
               "kind": "terminal",
               "multiplicity": "array",
               "value": ";",
-              "parseKind": "semi"
+              "parseKind": "semicolon"
             }
           ],
           "projection": {
@@ -12015,7 +12015,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
         "content"
       ]

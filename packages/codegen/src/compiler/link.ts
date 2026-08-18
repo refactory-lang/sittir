@@ -454,6 +454,9 @@ function stampSymbolRefKindIds(
 	// same-spelled NAMED rule) — same resolution deriveValuesForRule
 	// applies to these.
 	if (rule.literal !== undefined) {
+		// An alias-of-terminal mint stamps its kindId from the alias target
+		// name (a NAMED parse kind); that stamp wins over text resolution.
+		if (rule.kindId !== undefined) return rule;
 		const entry = findEntryForLiteralText(kindEntries, rule.literal);
 		if (entry === undefined) {
 			misses.literals.add(rule.literal);
@@ -1565,7 +1568,14 @@ function resolveNamedAliasWithProvenance(
 	// enum admission, and storage classification all already serve. The
 	// parse kind is the alias target; the render text is the literal.
 	if (content.type === STRING) {
-		return { type: SYMBOL, name: targetName, literal: content.value, inline: false, ...idAttrs };
+		// The alias target is this occurrence's parse kind — a NAMED node
+		// distinct from the literal text's anonymous token — so the kindId
+		// must be stamped from the target name here at the mint. The generic
+		// literal-symbol stamp resolves by text (anon-token identity), which
+		// is correct for link-minted literals but wrong for this shape.
+		const nameEntry = findEntryForKindName(ctx.kindEntries, targetName);
+		const kindIdAttrs = nameEntry !== undefined ? { kindId: nameEntry.parseId ?? nameEntry.id } : {};
+		return { type: SYMBOL, name: targetName, literal: content.value, inline: false, ...kindIdAttrs, ...idAttrs };
 	}
 	const aliasedFrom = extractAliasedFromName(content, ctx.supertypes);
 	const sym: SymbolRule<'link'> = aliasedFrom

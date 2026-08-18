@@ -28,15 +28,6 @@
               "$type": 257,
               "$source": 0,
               "$named": true,
-              "$other": [
-                5,
-                6
-              ],
-              "$span": {
-                "start": 20,
-                "end": 47
-              },
-              "$nodeHandle": 149,
               "_content": [
                 {
                   "$type": 395,
@@ -75,7 +66,16 @@
                     "_decorator": []
                   }
                 }
-              ]
+              ],
+              "$other": [
+                5,
+                6
+              ],
+              "$span": {
+                "start": 20,
+                "end": 47
+              },
+              "$nodeHandle": 149
             },
             "_automatic_semicolon": true,
             "$other": [
@@ -815,15 +815,6 @@
               "$type": 257,
               "$source": 0,
               "$named": true,
-              "$other": [
-                5,
-                6
-              ],
-              "$span": {
-                "start": 444,
-                "end": 525
-              },
-              "$nodeHandle": 207,
               "_content": [
                 {
                   "$type": 395,
@@ -1014,7 +1005,16 @@
                     "$nodeHandle": 221
                   }
                 }
-              ]
+              ],
+              "$other": [
+                5,
+                6
+              ],
+              "$span": {
+                "start": 444,
+                "end": 525
+              },
+              "$nodeHandle": 207
             },
             "_automatic_semicolon": true,
             "$other": [
@@ -1779,7 +1779,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "declare class Error{ constructor:Function\n }\ndeclare var foo:number;declare const bar=\"baz\";declare function greet(greeting:string):void;declare namespace myLib{ function makeGreeting(s:string):string;let numberOfGreetings:number;interface LogOptions{verbose?:boolean;}interface AlertOptions{modal:boolean;title?:string;color?:string;} }\ndeclare class Greeter{ constructor(greeting:string);greeting:string;showGreeting():void; }\ndeclare module Foo.Bar{ export var foo; };declare module Foo{ break;continue;debugger;do{  }while(true);for(x in null){  }\nfor(;;){  }\nif(true){  }else{  }\n1;return;switch(x){ case 1:break;default:break; }throw\"hello\";try{  }\ncatch(e){  }\nfinally{  }\n }\n",
-    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment))))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))))) (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier)))))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (for_header_group1 (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause statement: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group1 parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment))))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier)))))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (for_header_group1 (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause statement: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group1 parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))))",
     "wrappedText": "declare class Error{ constructor:Function\n }\ndeclare var foo:number;declare const bar=\"baz\";declare function greet(greeting:string):void;declare namespace myLib{ function makeGreeting(s:string):string;let numberOfGreetings:number;interface LogOptions{verbose?:boolean;}interface AlertOptions{modal:boolean;title?:string;color?:string;} }\ndeclare class Greeter{ constructor(greeting:string);greeting:string;showGreeting():void; }\ndeclare module Foo.Bar{ export var foo; };declare module Foo{ break;continue;debugger;do{  }while(true);for(x in null){  }\nfor(;;){  }\nif(true){  }else{  }\n1;return;switch(x){ case 1:break;default:break; }throw\"hello\";try{  }\ncatch(e){  }\nfinally{  }\n }\n",
     "wrappedOffset": 0
   },
@@ -1807,15 +1807,6 @@
           "$type": 257,
           "$source": 0,
           "$named": true,
-          "$other": [
-            5,
-            6
-          ],
-          "$span": {
-            "start": 20,
-            "end": 47
-          },
-          "$nodeHandle": 278,
           "_content": [
             {
               "$type": 395,
@@ -1854,7 +1845,16 @@
                 "_decorator": []
               }
             }
-          ]
+          ],
+          "$other": [
+            5,
+            6
+          ],
+          "$span": {
+            "start": 20,
+            "end": 47
+          },
+          "$nodeHandle": 278
         },
         "_automatic_semicolon": true,
         "$other": [
@@ -1877,7 +1877,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare class Error{ constructor:Function\n }\n",
-    "expectedReparseTree": "(ambient_declaration (class_declaration name: (type_identifier) body: (class_body (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "declare class Error{ constructor:Function\n }\n",
     "wrappedOffset": 0
   },
@@ -2674,15 +2674,6 @@
           "$type": 257,
           "$source": 0,
           "$named": true,
-          "$other": [
-            5,
-            6
-          ],
-          "$span": {
-            "start": 444,
-            "end": 525
-          },
-          "$nodeHandle": 336,
           "_content": [
             {
               "$type": 395,
@@ -2873,7 +2864,16 @@
                 "$nodeHandle": 350
               }
             }
-          ]
+          ],
+          "$other": [
+            5,
+            6
+          ],
+          "$span": {
+            "start": 444,
+            "end": 525
+          },
+          "$nodeHandle": 336
         },
         "_automatic_semicolon": true,
         "$other": [
@@ -2896,7 +2896,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare class Greeter{ constructor(greeting:string);greeting:string;showGreeting():void; }\n",
-    "expectedReparseTree": "(ambient_declaration (class_declaration name: (type_identifier) body: (class_body (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))))) (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "declare class Greeter{ constructor(greeting:string);greeting:string;showGreeting():void; }\n",
     "wrappedOffset": 0
   },
@@ -3668,15 +3668,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 20,
-          "end": 47
-        },
-        "$nodeHandle": 406,
         "_content": [
           {
             "$type": 395,
@@ -3715,7 +3706,16 @@
               "_decorator": []
             }
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 20,
+          "end": 47
+        },
+        "$nodeHandle": 406
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -3737,7 +3737,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Error{ constructor:Function\n }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Error{ constructor:Function\n }\n",
     "wrappedOffset": 0
   },
@@ -3753,15 +3753,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 444,
-          "end": 525
-        },
-        "$nodeHandle": 410,
         "_content": [
           {
             "$type": 395,
@@ -3952,7 +3943,16 @@
               "$nodeHandle": 424
             }
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 444,
+          "end": 525
+        },
+        "$nodeHandle": 410
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -3974,7 +3974,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Greeter{ constructor(greeting:string);greeting:string;showGreeting():void; }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))))) (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Greeter{ constructor(greeting:string);greeting:string;showGreeting():void; }\n",
     "wrappedOffset": 0
   },
@@ -3985,15 +3985,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 20,
-        "end": 47
-      },
-      "$nodeHandle": 11,
       "_content": [
         {
           "$type": 395,
@@ -4032,7 +4023,16 @@
             "_decorator": []
           }
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 20,
+        "end": 47
+      },
+      "$nodeHandle": 11
     },
     "expectedOutput": "{ constructor:Function\n }"
   },
@@ -4043,7 +4043,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ constructor:Function\n }",
-    "expectedReparseTree": "(class_body (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon)))",
     "wrappedText": "class _C { constructor:Function\n }",
     "wrappedOffset": 9
   },
@@ -4054,15 +4054,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 444,
-        "end": 525
-      },
-      "$nodeHandle": 69,
       "_content": [
         {
           "$type": 395,
@@ -4253,7 +4244,16 @@
             "$nodeHandle": 444
           }
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 444,
+        "end": 525
+      },
+      "$nodeHandle": 69
     },
     "expectedOutput": "{ constructor(greeting:string);greeting:string;showGreeting():void; }"
   },
@@ -4264,7 +4264,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ constructor(greeting:string);greeting:string;showGreeting():void; }",
-    "expectedReparseTree": "(class_body (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))))) (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))))",
+    "expectedReparseTree": "(class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))))",
     "wrappedText": "class _C { constructor(greeting:string);greeting:string;showGreeting():void; }",
     "wrappedOffset": 9
   },
@@ -10928,15 +10928,6 @@
               "$type": 257,
               "$source": 0,
               "$named": true,
-              "$other": [
-                5,
-                6
-              ],
-              "$span": {
-                "start": 78,
-                "end": 112
-              },
-              "$nodeHandle": 37,
               "_content": [
                 {
                   "$type": 395,
@@ -11042,7 +11033,16 @@
                     "$nodeHandle": 44
                   }
                 }
-              ]
+              ],
+              "$other": [
+                5,
+                6
+              ],
+              "$span": {
+                "start": 78,
+                "end": 112
+              },
+              "$nodeHandle": 37
             },
             "_automatic_semicolon": true,
             "$other": [
@@ -11072,7 +11072,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "declare interface IFoo{bar():number,baz():IBaz,}declare class Foo{ bar():number,baz():Baz, }\n",
-    "expectedReparseTree": "(program statements: (ambient_declaration (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))) (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))) (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "declare interface IFoo{bar():number,baz():IBaz,}declare class Foo{ bar():number,baz():Baz, }\n",
     "wrappedOffset": 0
   },
@@ -11256,15 +11256,6 @@
           "$type": 257,
           "$source": 0,
           "$named": true,
-          "$other": [
-            5,
-            6
-          ],
-          "$span": {
-            "start": 78,
-            "end": 112
-          },
-          "$nodeHandle": 58,
           "_content": [
             {
               "$type": 395,
@@ -11370,7 +11361,16 @@
                 "$nodeHandle": 65
               }
             }
-          ]
+          ],
+          "$other": [
+            5,
+            6
+          ],
+          "$span": {
+            "start": 78,
+            "end": 112
+          },
+          "$nodeHandle": 58
         },
         "_automatic_semicolon": true,
         "$other": [
@@ -11393,7 +11393,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare class Foo{ bar():number,baz():Baz, }\n",
-    "expectedReparseTree": "(ambient_declaration (class_declaration name: (type_identifier) body: (class_body (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "declare class Foo{ bar():number,baz():Baz, }\n",
     "wrappedOffset": 0
   },
@@ -11929,15 +11929,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 78,
-          "end": 112
-        },
-        "$nodeHandle": 104,
         "_content": [
           {
             "$type": 395,
@@ -12043,7 +12034,16 @@
               "$nodeHandle": 111
             }
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 78,
+          "end": 112
+        },
+        "$nodeHandle": 104
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -12065,7 +12065,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Foo{ bar():number,baz():Baz, }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Foo{ bar():number,baz():Baz, }\n",
     "wrappedOffset": 0
   },
@@ -12076,15 +12076,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 78,
-        "end": 112
-      },
-      "$nodeHandle": 14,
       "_content": [
         {
           "$type": 395,
@@ -12190,7 +12181,16 @@
             "$nodeHandle": 120
           }
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 78,
+        "end": 112
+      },
+      "$nodeHandle": 14
     },
     "expectedOutput": "{ bar():number,baz():Baz, }"
   },
@@ -12201,7 +12201,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ bar():number,baz():Baz, }",
-    "expectedReparseTree": "(class_body (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))",
+    "expectedReparseTree": "(class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))",
     "wrappedText": "class _C { bar():number,baz():Baz, }",
     "wrappedOffset": 9
   },
@@ -14740,15 +14740,6 @@
               "$type": 257,
               "$source": 0,
               "$named": true,
-              "$other": [
-                5,
-                6
-              ],
-              "$span": {
-                "start": 21,
-                "end": 80
-              },
-              "$nodeHandle": 11,
               "_content": [
                 {
                   "$type": 395,
@@ -14811,7 +14802,16 @@
                     }
                   }
                 }
-              ]
+              ],
+              "$other": [
+                5,
+                6
+              ],
+              "$span": {
+                "start": 21,
+                "end": 80
+              },
+              "$nodeHandle": 11
             },
             "_automatic_semicolon": true,
             "$other": [
@@ -14841,7 +14841,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "declare class Linter{ static findConfiguration:typeof findConfiguration; }\n",
-    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body (class_body_member (public_field_definition (public_field_definition_static_mods) name: (property_identifier) type: (type_annotation type: (type_query (identifier)))))) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition (public_field_definition_static_mods) name: (property_identifier) type: (type_annotation type: (type_query (identifier)))))) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "declare class Linter{ static findConfiguration:typeof findConfiguration; }\n",
     "wrappedOffset": 0
   },
@@ -14869,15 +14869,6 @@
           "$type": 257,
           "$source": 0,
           "$named": true,
-          "$other": [
-            5,
-            6
-          ],
-          "$span": {
-            "start": 21,
-            "end": 80
-          },
-          "$nodeHandle": 18,
           "_content": [
             {
               "$type": 395,
@@ -14940,7 +14931,16 @@
                 }
               }
             }
-          ]
+          ],
+          "$other": [
+            5,
+            6
+          ],
+          "$span": {
+            "start": 21,
+            "end": 80
+          },
+          "$nodeHandle": 18
         },
         "_automatic_semicolon": true,
         "$other": [
@@ -14963,7 +14963,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare class Linter{ static findConfiguration:typeof findConfiguration; }\n",
-    "expectedReparseTree": "(ambient_declaration (class_declaration name: (type_identifier) body: (class_body (class_body_member (public_field_definition (public_field_definition_static_mods) name: (property_identifier) type: (type_annotation type: (type_query (identifier)))))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition (public_field_definition_static_mods) name: (property_identifier) type: (type_annotation type: (type_query (identifier)))))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "declare class Linter{ static findConfiguration:typeof findConfiguration; }\n",
     "wrappedOffset": 0
   },
@@ -14979,15 +14979,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 21,
-          "end": 80
-        },
-        "$nodeHandle": 24,
         "_content": [
           {
             "$type": 395,
@@ -15050,7 +15041,16 @@
               }
             }
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 21,
+          "end": 80
+        },
+        "$nodeHandle": 24
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -15072,7 +15072,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Linter{ static findConfiguration:typeof findConfiguration; }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body (class_body_member (public_field_definition (public_field_definition_static_mods) name: (property_identifier) type: (type_annotation type: (type_query (identifier)))))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition (public_field_definition_static_mods) name: (property_identifier) type: (type_annotation type: (type_query (identifier)))))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Linter{ static findConfiguration:typeof findConfiguration; }\n",
     "wrappedOffset": 0
   },
@@ -15083,15 +15083,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 21,
-        "end": 80
-      },
-      "$nodeHandle": 3,
       "_content": [
         {
           "$type": 395,
@@ -15154,7 +15145,16 @@
             }
           }
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 21,
+        "end": 80
+      },
+      "$nodeHandle": 3
     },
     "expectedOutput": "{ static findConfiguration:typeof findConfiguration; }"
   },
@@ -15165,7 +15165,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ static findConfiguration:typeof findConfiguration; }",
-    "expectedReparseTree": "(class_body (class_body_member (public_field_definition (public_field_definition_static_mods) name: (property_identifier) type: (type_annotation type: (type_query (identifier))))))",
+    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition (public_field_definition_static_mods) name: (property_identifier) type: (type_annotation type: (type_query (identifier))))))",
     "wrappedText": "class _C { static findConfiguration:typeof findConfiguration; }",
     "wrappedOffset": 9
   },
@@ -16757,15 +16757,6 @@
                   "$type": 257,
                   "$source": 0,
                   "$named": true,
-                  "$other": [
-                    5,
-                    6
-                  ],
-                  "$span": {
-                    "start": 108,
-                    "end": 156
-                  },
-                  "$nodeHandle": 36,
                   "_content": [
                     {
                       "$type": 395,
@@ -16837,7 +16828,16 @@
                         }
                       }
                     }
-                  ]
+                  ],
+                  "$other": [
+                    5,
+                    6
+                  ],
+                  "$span": {
+                    "start": 108,
+                    "end": 156
+                  },
+                  "$nodeHandle": 36
                 },
                 "_automatic_semicolon": true,
                 "$other": [
@@ -16869,7 +16869,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export interface IAppState{public readonly users:ReadonlyArray<User>}export class CloningRepository{ public readonly id=CloningRepositoryID++\n }\n",
-    "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (type_identifier))))))))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) body: (class_body (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_readonly_first) name: (property_identifier) value: (update_expression (update_expression_postfix argument: (identifier)))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))))))",
+    "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (type_identifier))))))))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_readonly_first) name: (property_identifier) value: (update_expression (update_expression_postfix argument: (identifier)))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))))))",
     "wrappedText": "export interface IAppState{public readonly users:ReadonlyArray<User>}export class CloningRepository{ public readonly id=CloningRepositoryID++\n }\n",
     "wrappedOffset": 0
   },
@@ -17061,15 +17061,6 @@
               "$type": 257,
               "$source": 0,
               "$named": true,
-              "$other": [
-                5,
-                6
-              ],
-              "$span": {
-                "start": 108,
-                "end": 156
-              },
-              "$nodeHandle": 55,
               "_content": [
                 {
                   "$type": 395,
@@ -17141,7 +17132,16 @@
                     }
                   }
                 }
-              ]
+              ],
+              "$other": [
+                5,
+                6
+              ],
+              "$span": {
+                "start": 108,
+                "end": 156
+              },
+              "$nodeHandle": 55
             },
             "_automatic_semicolon": true,
             "$other": [
@@ -17166,7 +17166,7 @@
     "pattern": "export_statement",
     "edits": [],
     "expectedSourceOut": "export class CloningRepository{ public readonly id=CloningRepositoryID++\n }\n",
-    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) body: (class_body (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_readonly_first) name: (property_identifier) value: (update_expression (update_expression_postfix argument: (identifier)))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))))",
+    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_readonly_first) name: (property_identifier) value: (update_expression (update_expression_postfix argument: (identifier)))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))))",
     "wrappedText": "export class CloningRepository{ public readonly id=CloningRepositoryID++\n }\n",
     "wrappedOffset": 0
   },
@@ -17564,15 +17564,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 108,
-          "end": 156
-        },
-        "$nodeHandle": 83,
         "_content": [
           {
             "$type": 395,
@@ -17644,7 +17635,16 @@
               }
             }
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 108,
+          "end": 156
+        },
+        "$nodeHandle": 83
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -17666,7 +17666,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class CloningRepository{ public readonly id=CloningRepositoryID++\n }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_readonly_first) name: (property_identifier) value: (update_expression (update_expression_postfix argument: (identifier)))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_readonly_first) name: (property_identifier) value: (update_expression (update_expression_postfix argument: (identifier)))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class CloningRepository{ public readonly id=CloningRepositoryID++\n }\n",
     "wrappedOffset": 0
   },
@@ -17677,15 +17677,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 108,
-        "end": 156
-      },
-      "$nodeHandle": 15,
       "_content": [
         {
           "$type": 395,
@@ -17757,7 +17748,16 @@
             }
           }
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 108,
+        "end": 156
+      },
+      "$nodeHandle": 15
     },
     "expectedOutput": "{ public readonly id=CloningRepositoryID++\n }"
   },
@@ -17768,7 +17768,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ public readonly id=CloningRepositoryID++\n }",
-    "expectedReparseTree": "(class_body (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_readonly_first) name: (property_identifier) value: (update_expression (update_expression_postfix argument: (identifier)))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_readonly_first) name: (property_identifier) value: (update_expression (update_expression_postfix argument: (identifier)))) terminator: (automatic_semicolon)))",
     "wrappedText": "class _C { public readonly id=CloningRepositoryID++\n }",
     "wrappedOffset": 9
   },
@@ -28150,15 +28150,6 @@
             "$type": 257,
             "$source": 0,
             "$named": true,
-            "$other": [
-              5,
-              6
-            ],
-            "$span": {
-              "start": 10,
-              "end": 81
-            },
-            "$nodeHandle": 20,
             "_content": [
               {
                 "$type": 393,
@@ -28339,7 +28330,16 @@
                 "$nodeHandle": 23,
                 "_decorator": []
               }
-            ]
+            ],
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 10,
+              "end": 81
+            },
+            "$nodeHandle": 20
           },
           "_automatic_semicolon": true,
           "$other": [
@@ -28368,7 +28368,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class Foo{ private async(){  };get():Result{  };private set(plugin){  }; }\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block))) (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)) body: (statement_block))) (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block)))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)) body: (statement_block))) content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block)))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "class Foo{ private async(){  };get():Result{  };private set(plugin){  }; }\n",
     "wrappedOffset": 0
   },
@@ -28384,15 +28384,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 10,
-          "end": 81
-        },
-        "$nodeHandle": 37,
         "_content": [
           {
             "$type": 393,
@@ -28573,7 +28564,16 @@
             "$nodeHandle": 40,
             "_decorator": []
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 10,
+          "end": 81
+        },
+        "$nodeHandle": 37
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -28595,7 +28595,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Foo{ private async(){  };get():Result{  };private set(plugin){  }; }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block))) (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)) body: (statement_block))) (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block)))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)) body: (statement_block))) content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block)))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Foo{ private async(){  };get():Result{  };private set(plugin){  }; }\n",
     "wrappedOffset": 0
   },
@@ -28606,15 +28606,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 10,
-        "end": 81
-      },
-      "$nodeHandle": 2,
       "_content": [
         {
           "$type": 393,
@@ -28795,7 +28786,16 @@
           "$nodeHandle": 56,
           "_decorator": []
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 10,
+        "end": 81
+      },
+      "$nodeHandle": 2
     },
     "expectedOutput": "{ private async(){  };get():Result{  };private set(plugin){  }; }"
   },
@@ -28806,7 +28806,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ private async(){  };get():Result{  };private set(plugin){  }; }",
-    "expectedReparseTree": "(class_body (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block))) (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)) body: (statement_block))) (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block))))",
+    "expectedReparseTree": "(class_body content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)) body: (statement_block))) content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block))))",
     "wrappedText": "class _C { private async(){  };get():Result{  };private set(plugin){  }; }",
     "wrappedOffset": 9
   },
@@ -29075,15 +29075,6 @@
             "$type": 257,
             "$source": 0,
             "$named": true,
-            "$other": [
-              5,
-              6
-            ],
-            "$span": {
-              "start": 10,
-              "end": 283
-            },
-            "$nodeHandle": 57,
             "_content": [
               {
                 "$type": 395,
@@ -29712,7 +29703,16 @@
                   "$nodeHandle": 108
                 }
               }
-            ]
+            ],
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 10,
+              "end": 283
+            },
+            "$nodeHandle": 57
           },
           "_automatic_semicolon": true,
           "$other": [
@@ -29741,7 +29741,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class Foo{ public async waitFor<T>(func:()=>T|Promise<T|undefined>,accept?:(result:T)=>boolean|Promise<boolean>,timeoutMessage?:string,retryCount?:number):Promise<T>;public readonly async bar?<T>();private static bar();private static async bar():T; }\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (union_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (union_type left: (type_identifier) right: (literal_type (undefined))))))))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (union_type left: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (predefined_type))))))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (type_identifier)))))) (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) parameters: (formal_parameters))) (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters))) (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (union_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (union_type left: (type_identifier) right: (literal_type (undefined))))))))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (union_type left: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (predefined_type))))))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (type_identifier)))))) content: (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) parameters: (formal_parameters))) content: (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters))) content: (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "class Foo{ public async waitFor<T>(func:()=>T|Promise<T|undefined>,accept?:(result:T)=>boolean|Promise<boolean>,timeoutMessage?:string,retryCount?:number):Promise<T>;public readonly async bar?<T>();private static bar();private static async bar():T; }\n",
     "wrappedOffset": 0
   },
@@ -29757,15 +29757,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 10,
-          "end": 283
-        },
-        "$nodeHandle": 111,
         "_content": [
           {
             "$type": 395,
@@ -30394,7 +30385,16 @@
               "$nodeHandle": 162
             }
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 10,
+          "end": 283
+        },
+        "$nodeHandle": 111
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -30416,7 +30416,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Foo{ public async waitFor<T>(func:()=>T|Promise<T|undefined>,accept?:(result:T)=>boolean|Promise<boolean>,timeoutMessage?:string,retryCount?:number):Promise<T>;public readonly async bar?<T>();private static bar();private static async bar():T; }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (union_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (union_type left: (type_identifier) right: (literal_type (undefined))))))))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (union_type left: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (predefined_type))))))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (type_identifier)))))) (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) parameters: (formal_parameters))) (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters))) (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (union_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (union_type left: (type_identifier) right: (literal_type (undefined))))))))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (union_type left: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (predefined_type))))))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (type_identifier)))))) content: (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) parameters: (formal_parameters))) content: (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters))) content: (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Foo{ public async waitFor<T>(func:()=>T|Promise<T|undefined>,accept?:(result:T)=>boolean|Promise<boolean>,timeoutMessage?:string,retryCount?:number):Promise<T>;public readonly async bar?<T>();private static bar();private static async bar():T; }\n",
     "wrappedOffset": 0
   },
@@ -30427,15 +30427,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 10,
-        "end": 283
-      },
-      "$nodeHandle": 2,
       "_content": [
         {
           "$type": 395,
@@ -31064,7 +31055,16 @@
             "$nodeHandle": 215
           }
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 10,
+        "end": 283
+      },
+      "$nodeHandle": 2
     },
     "expectedOutput": "{ public async waitFor<T>(func:()=>T|Promise<T|undefined>,accept?:(result:T)=>boolean|Promise<boolean>,timeoutMessage?:string,retryCount?:number):Promise<T>;public readonly async bar?<T>();private static bar();private static async bar():T; }"
   },
@@ -31075,7 +31075,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ public async waitFor<T>(func:()=>T|Promise<T|undefined>,accept?:(result:T)=>boolean|Promise<boolean>,timeoutMessage?:string,retryCount?:number):Promise<T>;public readonly async bar?<T>();private static bar();private static async bar():T; }",
-    "expectedReparseTree": "(class_body (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (union_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (union_type left: (type_identifier) right: (literal_type (undefined))))))))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (union_type left: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (predefined_type))))))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (type_identifier)))))) (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) parameters: (formal_parameters))) (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters))) (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))",
+    "expectedReparseTree": "(class_body content: (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (union_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (union_type left: (type_identifier) right: (literal_type (undefined))))))))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (union_type left: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (predefined_type))))))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments type: (type_identifier)))))) content: (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) parameters: (formal_parameters))) content: (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters))) content: (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))",
     "wrappedText": "class _C { public async waitFor<T>(func:()=>T|Promise<T|undefined>,accept?:(result:T)=>boolean|Promise<boolean>,timeoutMessage?:string,retryCount?:number):Promise<T>;public readonly async bar?<T>();private static bar();private static async bar():T; }",
     "wrappedOffset": 9
   },
@@ -33061,15 +33061,6 @@
             "$type": 257,
             "$source": 0,
             "$named": true,
-            "$other": [
-              5,
-              6
-            ],
-            "$span": {
-              "start": 10,
-              "end": 203
-            },
-            "$nodeHandle": 42,
             "_content": [
               {
                 "$type": 395,
@@ -33556,7 +33547,16 @@
                   }
                 }
               }
-            ]
+            ],
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 10,
+              "end": 203
+            },
+            "$nodeHandle": 42
           },
           "_automatic_semicolon": true,
           "$other": [
@@ -33585,7 +33585,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class Foo{ static 2:string;public static 2:string='string';public static readonly'hello'?:int='string';static readonly'hello'?:int='string';readonly'hello'?:int='string'; }\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body (class_body_member (public_field_definition (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)))) (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) (class_body_member (public_field_definition (public_field_definition_static_mods) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) (class_body_member (public_field_definition (public_field_definition_readonly_first) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition (public_field_definition_static_mods) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition (public_field_definition_readonly_first) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "class Foo{ static 2:string;public static 2:string='string';public static readonly'hello'?:int='string';static readonly'hello'?:int='string';readonly'hello'?:int='string'; }\n",
     "wrappedOffset": 0
   },
@@ -33601,15 +33601,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 10,
-          "end": 203
-        },
-        "$nodeHandle": 81,
         "_content": [
           {
             "$type": 395,
@@ -34096,7 +34087,16 @@
               }
             }
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 10,
+          "end": 203
+        },
+        "$nodeHandle": 81
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -34118,7 +34118,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Foo{ static 2:string;public static 2:string='string';public static readonly'hello'?:int='string';static readonly'hello'?:int='string';readonly'hello'?:int='string'; }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body (class_body_member (public_field_definition (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)))) (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) (class_body_member (public_field_definition (public_field_definition_static_mods) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) (class_body_member (public_field_definition (public_field_definition_readonly_first) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition (public_field_definition_static_mods) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition (public_field_definition_readonly_first) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Foo{ static 2:string;public static 2:string='string';public static readonly'hello'?:int='string';static readonly'hello'?:int='string';readonly'hello'?:int='string'; }\n",
     "wrappedOffset": 0
   },
@@ -34129,15 +34129,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 10,
-        "end": 203
-      },
-      "$nodeHandle": 2,
       "_content": [
         {
           "$type": 395,
@@ -34624,7 +34615,16 @@
             }
           }
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 10,
+        "end": 203
+      },
+      "$nodeHandle": 2
     },
     "expectedOutput": "{ static 2:string;public static 2:string='string';public static readonly'hello'?:int='string';static readonly'hello'?:int='string';readonly'hello'?:int='string'; }"
   },
@@ -34635,7 +34635,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ static 2:string;public static 2:string='string';public static readonly'hello'?:int='string';static readonly'hello'?:int='string';readonly'hello'?:int='string'; }",
-    "expectedReparseTree": "(class_body (class_body_member (public_field_definition (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)))) (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) (class_body_member (public_field_definition (public_field_definition_static_mods) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) (class_body_member (public_field_definition (public_field_definition_readonly_first) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition (public_field_definition_static_mods) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition (public_field_definition_readonly_first) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))))",
     "wrappedText": "class _C { static 2:string;public static 2:string='string';public static readonly'hello'?:int='string';static readonly'hello'?:int='string';readonly'hello'?:int='string'; }",
     "wrappedOffset": 9
   },
@@ -35127,15 +35127,6 @@
             "$type": 257,
             "$source": 0,
             "$named": true,
-            "$other": [
-              5,
-              6
-            ],
-            "$span": {
-              "start": 10,
-              "end": 42
-            },
-            "$nodeHandle": 12,
             "_content": [
               {
                 "$type": 393,
@@ -35241,7 +35232,16 @@
                 },
                 "$nodeHandle": 13
               }
-            ]
+            ],
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 10,
+              "end": 42
+            },
+            "$nodeHandle": 12
           },
           "_automatic_semicolon": true,
           "$other": [
@@ -35270,7 +35270,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class Foo{ @bar<T>()method(){  }\n\n }\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body (class_body_method decorator: (decorator (call_expression function: (identifier) type_arguments: (type_arguments type: (type_identifier)) arguments: (arguments))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body content: (class_body_method decorator: (decorator (call_expression function: (identifier) type_arguments: (type_arguments type: (type_identifier)) arguments: (arguments))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "class Foo{ @bar<T>()method(){  }\n\n }\n",
     "wrappedOffset": 0
   },
@@ -35286,15 +35286,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 10,
-          "end": 42
-        },
-        "$nodeHandle": 21,
         "_content": [
           {
             "$type": 393,
@@ -35400,7 +35391,16 @@
             },
             "$nodeHandle": 22
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 10,
+          "end": 42
+        },
+        "$nodeHandle": 21
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -35422,7 +35422,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Foo{ @bar<T>()method(){  }\n\n }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body (class_body_method decorator: (decorator (call_expression function: (identifier) type_arguments: (type_arguments type: (type_identifier)) arguments: (arguments))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_body_method decorator: (decorator (call_expression function: (identifier) type_arguments: (type_arguments type: (type_identifier)) arguments: (arguments))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Foo{ @bar<T>()method(){  }\n\n }\n",
     "wrappedOffset": 0
   },
@@ -35433,15 +35433,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 10,
-        "end": 42
-      },
-      "$nodeHandle": 2,
       "_content": [
         {
           "$type": 393,
@@ -35547,7 +35538,16 @@
           },
           "$nodeHandle": 30
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 10,
+        "end": 42
+      },
+      "$nodeHandle": 2
     },
     "expectedOutput": "{ @bar<T>()method(){  }\n\n }"
   },
@@ -35558,7 +35558,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ @bar<T>()method(){  }\n\n }",
-    "expectedReparseTree": "(class_body (class_body_method decorator: (decorator (call_expression function: (identifier) type_arguments: (type_arguments type: (type_identifier)) arguments: (arguments))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_method decorator: (decorator (call_expression function: (identifier) type_arguments: (type_arguments type: (type_identifier)) arguments: (arguments))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
     "wrappedText": "class _C { @bar<T>()method(){  }\n\n }",
     "wrappedOffset": 9
   },
@@ -35751,15 +35751,6 @@
             "$type": 257,
             "$source": 0,
             "$named": true,
-            "$other": [
-              5,
-              6
-            ],
-            "$span": {
-              "start": 20,
-              "end": 220
-            },
-            "$nodeHandle": 51,
             "_content": [
               {
                 "$type": 395,
@@ -36298,7 +36289,16 @@
                 },
                 "$nodeHandle": 55
               }
-            ]
+            ],
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 20,
+              "end": 220
+            },
+            "$nodeHandle": 51
           },
           "_automatic_semicolon": true,
           "$other": [
@@ -36326,7 +36326,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "@baz@bam class Foo{ @foo static 2:string;@bar.buzz(grue)public static 2:string='string';@readonly readonly'hello'?:int='string';@readonly fooBar(@required param:any,@optional param2?:any){  }\n\n }\n",
-    "expectedReparseTree": "(program statements: (class_declaration decorator: (decorator (identifier)) decorator: (decorator (identifier)) name: (type_identifier) body: (class_body (class_body_member (public_field_definition decorator: (decorator (identifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)))) (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))) visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) (class_body_member (public_field_definition decorator: (decorator (identifier)) (public_field_definition_readonly_first) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration decorator: (decorator (identifier)) decorator: (decorator (identifier)) name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition decorator: (decorator (identifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))) visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition decorator: (decorator (identifier)) (public_field_definition_readonly_first) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "@baz@bam class Foo{ @foo static 2:string;@bar.buzz(grue)public static 2:string='string';@readonly readonly'hello'?:int='string';@readonly fooBar(@required param:any,@optional param2?:any){  }\n\n }\n",
     "wrappedOffset": 0
   },
@@ -36372,15 +36372,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 20,
-          "end": 220
-        },
-        "$nodeHandle": 97,
         "_content": [
           {
             "$type": 395,
@@ -36919,7 +36910,16 @@
             },
             "$nodeHandle": 101
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 20,
+          "end": 220
+        },
+        "$nodeHandle": 97
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -36940,7 +36940,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "@baz@bam class Foo{ @foo static 2:string;@bar.buzz(grue)public static 2:string='string';@readonly readonly'hello'?:int='string';@readonly fooBar(@required param:any,@optional param2?:any){  }\n\n }\n",
-    "expectedReparseTree": "(class_declaration decorator: (decorator (identifier)) decorator: (decorator (identifier)) name: (type_identifier) body: (class_body (class_body_member (public_field_definition decorator: (decorator (identifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)))) (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))) visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) (class_body_member (public_field_definition decorator: (decorator (identifier)) (public_field_definition_readonly_first) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration decorator: (decorator (identifier)) decorator: (decorator (identifier)) name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition decorator: (decorator (identifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))) visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition decorator: (decorator (identifier)) (public_field_definition_readonly_first) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "@baz@bam class Foo{ @foo static 2:string;@bar.buzz(grue)public static 2:string='string';@readonly readonly'hello'?:int='string';@readonly fooBar(@required param:any,@optional param2?:any){  }\n\n }\n",
     "wrappedOffset": 0
   },
@@ -36951,15 +36951,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 20,
-        "end": 220
-      },
-      "$nodeHandle": 4,
       "_content": [
         {
           "$type": 395,
@@ -37498,7 +37489,16 @@
           },
           "$nodeHandle": 147
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 20,
+        "end": 220
+      },
+      "$nodeHandle": 4
     },
     "expectedOutput": "{ @foo static 2:string;@bar.buzz(grue)public static 2:string='string';@readonly readonly'hello'?:int='string';@readonly fooBar(@required param:any,@optional param2?:any){  }\n\n }"
   },
@@ -37509,7 +37509,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ @foo static 2:string;@bar.buzz(grue)public static 2:string='string';@readonly readonly'hello'?:int='string';@readonly fooBar(@required param:any,@optional param2?:any){  }\n\n }",
-    "expectedReparseTree": "(class_body (class_body_member (public_field_definition decorator: (decorator (identifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)))) (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))) visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) (class_body_member (public_field_definition decorator: (decorator (identifier)) (public_field_definition_readonly_first) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition decorator: (decorator (identifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))) visibility_prefix: (public_field_definition_access_first (accessibility_modifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition decorator: (decorator (identifier)) (public_field_definition_readonly_first) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
     "wrappedText": "class _C { @foo static 2:string;@bar.buzz(grue)public static 2:string='string';@readonly readonly'hello'?:int='string';@readonly fooBar(@required param:any,@optional param2?:any){  }\n\n }",
     "wrappedOffset": 9
   },
@@ -38295,15 +38295,6 @@
             "$type": 257,
             "$source": 0,
             "$named": true,
-            "$other": [
-              5,
-              6
-            ],
-            "$span": {
-              "start": 27,
-              "end": 112
-            },
-            "$nodeHandle": 42,
             "_content": [
               {
                 "$type": 395,
@@ -38612,7 +38603,16 @@
                 "$nodeHandle": 46,
                 "_decorator": []
               }
-            ]
+            ],
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 27,
+              "end": 112
+            },
+            "$nodeHandle": 42
           },
           "_automatic_semicolon": true,
           "$other": [
@@ -38641,7 +38641,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class Foo<Bar>extends Baz{ bar=5;static one(a){ return a; };two(b){ return b; }three(c){ return c; }\n\n }\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body (class_body_member (public_field_definition name: (property_identifier) value: (number))) (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier))))) (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier))))) (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier)) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) value: (number))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier))))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier))))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier)) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "class Foo<Bar>extends Baz{ bar=5;static one(a){ return a; };two(b){ return b; }three(c){ return c; }\n\n }\n",
     "wrappedOffset": 0
   },
@@ -38731,15 +38731,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 27,
-          "end": 112
-        },
-        "$nodeHandle": 75,
         "_content": [
           {
             "$type": 395,
@@ -39048,7 +39039,16 @@
             "$nodeHandle": 79,
             "_decorator": []
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 27,
+          "end": 112
+        },
+        "$nodeHandle": 75
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -39070,7 +39070,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Foo<Bar>extends Baz{ bar=5;static one(a){ return a; };two(b){ return b; }three(c){ return c; }\n\n }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body (class_body_member (public_field_definition name: (property_identifier) value: (number))) (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier))))) (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier))))) (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier)) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) value: (number))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier))))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier))))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier)) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Foo<Bar>extends Baz{ bar=5;static one(a){ return a; };two(b){ return b; }three(c){ return c; }\n\n }\n",
     "wrappedOffset": 0
   },
@@ -39125,15 +39125,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 27,
-        "end": 112
-      },
-      "$nodeHandle": 8,
       "_content": [
         {
           "$type": 395,
@@ -39442,7 +39433,16 @@
           "$nodeHandle": 110,
           "_decorator": []
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 27,
+        "end": 112
+      },
+      "$nodeHandle": 8
     },
     "expectedOutput": "{ bar=5;static one(a){ return a; };two(b){ return b; }three(c){ return c; }\n\n }"
   },
@@ -39453,7 +39453,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ bar=5;static one(a){ return a; };two(b){ return b; }three(c){ return c; }\n\n }",
-    "expectedReparseTree": "(class_body (class_body_member (public_field_definition name: (property_identifier) value: (number))) (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier))))) (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier))))) (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier)) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition name: (property_identifier) value: (number))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier))))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier))))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier))))) body: (statement_block statements: (return_statement (identifier)) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
     "wrappedText": "class _C { bar=5;static one(a){ return a; };two(b){ return b; }three(c){ return c; }\n\n }",
     "wrappedOffset": 9
   },
@@ -39958,15 +39958,6 @@
             "$type": 257,
             "$source": 0,
             "$named": true,
-            "$other": [
-              5,
-              6
-            ],
-            "$span": {
-              "start": 10,
-              "end": 79
-            },
-            "$nodeHandle": 19,
             "_content": [
               {
                 "$type": 259,
@@ -40141,7 +40132,16 @@
                 },
                 "$nodeHandle": 21
               }
-            ]
+            ],
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 10,
+              "end": 79
+            },
+            "$nodeHandle": 19
           },
           "_automatic_semicolon": true,
           "$other": [
@@ -40170,7 +40170,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class Foo{ static{ this.#bar=''; }\nstatic{ this.baz(); }\n }\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body (class_static_block body: (statement_block statements: (expression_statement (assignment_expression left: (for_header_group1 (member_expression object: (this) property: (private_property_identifier))) right: (string (string_single)))) automatic_semicolon: (automatic_semicolon))) (class_static_block body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (this) property: (property_identifier)) arguments: (arguments)))) automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body content: (class_static_block body: (statement_block statements: (expression_statement (assignment_expression left: (for_header_group1 (member_expression object: (this) property: (private_property_identifier))) right: (string (string_single)))) automatic_semicolon: (automatic_semicolon))) content: (class_static_block body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (this) property: (property_identifier)) arguments: (arguments)))) automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "class Foo{ static{ this.#bar=''; }\nstatic{ this.baz(); }\n }\n",
     "wrappedOffset": 0
   },
@@ -40186,15 +40186,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 10,
-          "end": 79
-        },
-        "$nodeHandle": 35,
         "_content": [
           {
             "$type": 259,
@@ -40369,7 +40360,16 @@
             },
             "$nodeHandle": 37
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 10,
+          "end": 79
+        },
+        "$nodeHandle": 35
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -40391,7 +40391,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Foo{ static{ this.#bar=''; }\nstatic{ this.baz(); }\n }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body (class_static_block body: (statement_block statements: (expression_statement (assignment_expression left: (for_header_group1 (member_expression object: (this) property: (private_property_identifier))) right: (string (string_single)))) automatic_semicolon: (automatic_semicolon))) (class_static_block body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (this) property: (property_identifier)) arguments: (arguments)))) automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_static_block body: (statement_block statements: (expression_statement (assignment_expression left: (for_header_group1 (member_expression object: (this) property: (private_property_identifier))) right: (string (string_single)))) automatic_semicolon: (automatic_semicolon))) content: (class_static_block body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (this) property: (property_identifier)) arguments: (arguments)))) automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Foo{ static{ this.#bar=''; }\nstatic{ this.baz(); }\n }\n",
     "wrappedOffset": 0
   },
@@ -40402,15 +40402,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 10,
-        "end": 79
-      },
-      "$nodeHandle": 2,
       "_content": [
         {
           "$type": 259,
@@ -40585,7 +40576,16 @@
           },
           "$nodeHandle": 52
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 10,
+        "end": 79
+      },
+      "$nodeHandle": 2
     },
     "expectedOutput": "{ static{ this.#bar=''; }\nstatic{ this.baz(); }\n }"
   },
@@ -40596,7 +40596,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ static{ this.#bar=''; }\nstatic{ this.baz(); }\n }",
-    "expectedReparseTree": "(class_body (class_static_block body: (statement_block statements: (expression_statement (assignment_expression left: (for_header_group1 (member_expression object: (this) property: (private_property_identifier))) right: (string (string_single)))) automatic_semicolon: (automatic_semicolon))) (class_static_block body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (this) property: (property_identifier)) arguments: (arguments)))) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(class_body content: (class_static_block body: (statement_block statements: (expression_statement (assignment_expression left: (for_header_group1 (member_expression object: (this) property: (private_property_identifier))) right: (string (string_single)))) automatic_semicolon: (automatic_semicolon))) content: (class_static_block body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (this) property: (property_identifier)) arguments: (arguments)))) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "class _C { static{ this.#bar=''; }\nstatic{ this.baz(); }\n }",
     "wrappedOffset": 9
   },
@@ -41373,15 +41373,6 @@
             "$type": 257,
             "$source": 0,
             "$named": true,
-            "$other": [
-              5,
-              6
-            ],
-            "$span": {
-              "start": 46,
-              "end": 303
-            },
-            "$nodeHandle": 49,
             "_content": [
               {
                 "$type": 395,
@@ -41835,7 +41826,16 @@
                 "$nodeHandle": 55,
                 "_decorator": []
               }
-            ]
+            ],
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 46,
+              "end": 303
+            },
+            "$nodeHandle": 49
           },
           "$other": [
             128,
@@ -41906,7 +41906,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "abstract class Foo{  }abstract class Animal{ readonly abstract prop:string;requiredProp!:string;abstract makeSound():void;abstract get readonlyProp():string;protected abstract readonlyProp?():string;move():void{ console.log(\"roaming the earth...\"); }\n\n }@bar abstract class Foo{  }",
-    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body)) statements: (abstract_class_declaration name: (type_identifier) body: (class_body (class_body_member (public_field_definition (public_field_definition_readonly_first) name: (property_identifier) type: (type_annotation type: (predefined_type)))) (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_member (abstract_method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))) statements: (abstract_class_declaration decorator: (decorator (identifier)) name: (type_identifier) body: (class_body)))",
+    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body)) statements: (abstract_class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition (public_field_definition_readonly_first) name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))) statements: (abstract_class_declaration decorator: (decorator (identifier)) name: (type_identifier) body: (class_body)))",
     "wrappedText": "abstract class Foo{  }abstract class Animal{ readonly abstract prop:string;requiredProp!:string;abstract makeSound():void;abstract get readonlyProp():string;protected abstract readonlyProp?():string;move():void{ console.log(\"roaming the earth...\"); }\n\n }@bar abstract class Foo{  }",
     "wrappedOffset": 0
   },
@@ -41965,15 +41965,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 46,
-          "end": 303
-        },
-        "$nodeHandle": 90,
         "_content": [
           {
             "$type": 395,
@@ -42427,7 +42418,16 @@
             "$nodeHandle": 96,
             "_decorator": []
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 46,
+          "end": 303
+        },
+        "$nodeHandle": 90
       },
       "$other": [
         128,
@@ -42449,7 +42449,7 @@
     "pattern": "abstract_class_declaration",
     "edits": [],
     "expectedSourceOut": "abstract class Animal{ readonly abstract prop:string;requiredProp!:string;abstract makeSound():void;abstract get readonlyProp():string;protected abstract readonlyProp?():string;move():void{ console.log(\"roaming the earth...\"); }\n\n }",
-    "expectedReparseTree": "(abstract_class_declaration name: (type_identifier) body: (class_body (class_body_member (public_field_definition (public_field_definition_readonly_first) name: (property_identifier) type: (type_annotation type: (predefined_type)))) (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_member (abstract_method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(abstract_class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition (public_field_definition_readonly_first) name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))))",
     "wrappedText": "abstract class Animal{ readonly abstract prop:string;requiredProp!:string;abstract makeSound():void;abstract get readonlyProp():string;protected abstract readonlyProp?():string;move():void{ console.log(\"roaming the earth...\"); }\n\n }",
     "wrappedOffset": 0
   },
@@ -42545,15 +42545,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 46,
-        "end": 303
-      },
-      "$nodeHandle": 5,
       "_content": [
         {
           "$type": 395,
@@ -43007,7 +42998,16 @@
           "$nodeHandle": 135,
           "_decorator": []
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 46,
+        "end": 303
+      },
+      "$nodeHandle": 5
     },
     "expectedOutput": "{ readonly abstract prop:string;requiredProp!:string;abstract makeSound():void;abstract get readonlyProp():string;protected abstract readonlyProp?():string;move():void{ console.log(\"roaming the earth...\"); }\n\n }"
   },
@@ -43018,7 +43018,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ readonly abstract prop:string;requiredProp!:string;abstract makeSound():void;abstract get readonlyProp():string;protected abstract readonlyProp?():string;move():void{ console.log(\"roaming the earth...\"); }\n\n }",
-    "expectedReparseTree": "(class_body (class_body_member (public_field_definition (public_field_definition_readonly_first) name: (property_identifier) type: (type_annotation type: (predefined_type)))) (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_member (abstract_method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition (public_field_definition_readonly_first) name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
     "wrappedText": "class _C { readonly abstract prop:string;requiredProp!:string;abstract makeSound():void;abstract get readonlyProp():string;protected abstract readonlyProp?():string;move():void{ console.log(\"roaming the earth...\"); }\n\n }",
     "wrappedOffset": 9
   },
@@ -43860,15 +43860,6 @@
             "$type": 257,
             "$source": 0,
             "$named": true,
-            "$other": [
-              5,
-              6
-            ],
-            "$span": {
-              "start": 8,
-              "end": 51
-            },
-            "$nodeHandle": 11,
             "_content": [
               {
                 "$type": 393,
@@ -43963,7 +43954,16 @@
                 },
                 "$nodeHandle": 12
               }
-            ]
+            ],
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 8,
+              "end": 51
+            },
+            "$nodeHandle": 11
           },
           "_automatic_semicolon": true,
           "$other": [
@@ -43992,7 +43992,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class C{ @(super.decorate)method2(){  }\n\n }\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body (class_body_method decorator: (decorator (parenthesized_expression (member_expression object: (identifier) property: (property_identifier)))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body content: (class_body_method decorator: (decorator (parenthesized_expression (member_expression object: (identifier) property: (property_identifier)))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "class C{ @(super.decorate)method2(){  }\n\n }\n",
     "wrappedOffset": 0
   },
@@ -44008,15 +44008,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 8,
-          "end": 51
-        },
-        "$nodeHandle": 19,
         "_content": [
           {
             "$type": 393,
@@ -44111,7 +44102,16 @@
             },
             "$nodeHandle": 20
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 8,
+          "end": 51
+        },
+        "$nodeHandle": 19
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -44133,7 +44133,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class C{ @(super.decorate)method2(){  }\n\n }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body (class_body_method decorator: (decorator (parenthesized_expression (member_expression object: (identifier) property: (property_identifier)))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_body_method decorator: (decorator (parenthesized_expression (member_expression object: (identifier) property: (property_identifier)))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class C{ @(super.decorate)method2(){  }\n\n }\n",
     "wrappedOffset": 0
   },
@@ -44144,15 +44144,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 8,
-        "end": 51
-      },
-      "$nodeHandle": 2,
       "_content": [
         {
           "$type": 393,
@@ -44247,7 +44238,16 @@
           },
           "$nodeHandle": 27
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 8,
+        "end": 51
+      },
+      "$nodeHandle": 2
     },
     "expectedOutput": "{ @(super.decorate)method2(){  }\n\n }"
   },
@@ -44258,7 +44258,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ @(super.decorate)method2(){  }\n\n }",
-    "expectedReparseTree": "(class_body (class_body_method decorator: (decorator (parenthesized_expression (member_expression object: (identifier) property: (property_identifier)))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_method decorator: (decorator (parenthesized_expression (member_expression object: (identifier) property: (property_identifier)))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
     "wrappedText": "class _C { @(super.decorate)method2(){  }\n\n }",
     "wrappedOffset": 9
   },
@@ -44456,7 +44456,7 @@
                       "$named": true,
                       "_type": [
                         {
-                          "$type": 447,
+                          "$type": 448,
                           "$source": 0,
                           "$named": true,
                           "$text": "Base",
@@ -44618,7 +44618,7 @@
                   "$named": true,
                   "_type": [
                     {
-                      "$type": 447,
+                      "$type": 448,
                       "$source": 0,
                       "$named": true,
                       "$text": "Base",
@@ -44742,7 +44742,7 @@
             "$named": true,
             "_type": [
               {
-                "$type": 447,
+                "$type": 448,
                 "$source": 0,
                 "$named": true,
                 "$text": "Base",
@@ -44858,7 +44858,7 @@
           "$named": true,
           "_type": [
             {
-              "$type": 447,
+              "$type": 448,
               "$source": 0,
               "$named": true,
               "$text": "Base",
@@ -44959,7 +44959,7 @@
         "$named": true,
         "_type": [
           {
-            "$type": 447,
+            "$type": 448,
             "$source": 0,
             "$named": true,
             "$text": "Base",
@@ -49999,15 +49999,6 @@
             "$type": 257,
             "$source": 0,
             "$named": true,
-            "$other": [
-              5,
-              6
-            ],
-            "$span": {
-              "start": 10,
-              "end": 36
-            },
-            "$nodeHandle": 8,
             "_content": [
               {
                 "$type": 393,
@@ -50060,7 +50051,16 @@
                 "$nodeHandle": 9,
                 "_decorator": []
               }
-            ]
+            ],
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 10,
+              "end": 36
+            },
+            "$nodeHandle": 8
           },
           "_automatic_semicolon": true,
           "$other": [
@@ -50089,7 +50089,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class Foo{ public bar(){  }\n\n }\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "class Foo{ public bar(){  }\n\n }\n",
     "wrappedOffset": 0
   },
@@ -50105,15 +50105,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 10,
-          "end": 36
-        },
-        "$nodeHandle": 13,
         "_content": [
           {
             "$type": 393,
@@ -50166,7 +50157,16 @@
             "$nodeHandle": 14,
             "_decorator": []
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 10,
+          "end": 36
+        },
+        "$nodeHandle": 13
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -50188,7 +50188,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Foo{ public bar(){  }\n\n }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Foo{ public bar(){  }\n\n }\n",
     "wrappedOffset": 0
   },
@@ -50199,15 +50199,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 10,
-        "end": 36
-      },
-      "$nodeHandle": 2,
       "_content": [
         {
           "$type": 393,
@@ -50260,7 +50251,16 @@
           "$nodeHandle": 18,
           "_decorator": []
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 10,
+        "end": 36
+      },
+      "$nodeHandle": 2
     },
     "expectedOutput": "{ public bar(){  }\n\n }"
   },
@@ -50271,7 +50271,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ public bar(){  }\n\n }",
-    "expectedReparseTree": "(class_body (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
     "wrappedText": "class _C { public bar(){  }\n\n }",
     "wrappedOffset": 9
   },
@@ -50351,15 +50351,6 @@
             "$type": 257,
             "$source": 0,
             "$named": true,
-            "$other": [
-              5,
-              6
-            ],
-            "$span": {
-              "start": 19,
-              "end": 46
-            },
-            "$nodeHandle": 20,
             "_content": [
               {
                 "$type": 395,
@@ -50421,7 +50412,16 @@
                   "$nodeHandle": 22
                 }
               }
-            ]
+            ],
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 19,
+              "end": 46
+            },
+            "$nodeHandle": 20
           },
           "$other": [
             128,
@@ -50489,15 +50489,6 @@
             "$type": 257,
             "$source": 0,
             "$named": true,
-            "$other": [
-              5,
-              6
-            ],
-            "$span": {
-              "start": 70,
-              "end": 93
-            },
-            "$nodeHandle": 30,
             "_content": [
               {
                 "$type": 393,
@@ -50550,7 +50541,16 @@
                 "$nodeHandle": 31,
                 "_decorator": []
               }
-            ]
+            ],
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 70,
+              "end": 93
+            },
+            "$nodeHandle": 30
           },
           "_automatic_semicolon": true,
           "$other": [
@@ -50579,7 +50579,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "abstract class Foo{ abstract baz():void; }class Bar extends Foo{ override baz(){  }\n\n }\n",
-    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))))) statements: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body (class_body_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))))) statements: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body content: (class_body_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "abstract class Foo{ abstract baz():void; }class Bar extends Foo{ override baz(){  }\n\n }\n",
     "wrappedOffset": 0
   },
@@ -50595,15 +50595,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 19,
-          "end": 46
-        },
-        "$nodeHandle": 35,
         "_content": [
           {
             "$type": 395,
@@ -50665,7 +50656,16 @@
               "$nodeHandle": 37
             }
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 19,
+          "end": 46
+        },
+        "$nodeHandle": 35
       },
       "$other": [
         128,
@@ -50687,7 +50687,7 @@
     "pattern": "abstract_class_declaration",
     "edits": [],
     "expectedSourceOut": "abstract class Foo{ abstract baz():void; }",
-    "expectedReparseTree": "(abstract_class_declaration name: (type_identifier) body: (class_body (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))))",
+    "expectedReparseTree": "(abstract_class_declaration name: (type_identifier) body: (class_body content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))))",
     "wrappedText": "abstract class Foo{ abstract baz():void; }",
     "wrappedOffset": 0
   },
@@ -50698,15 +50698,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 19,
-        "end": 46
-      },
-      "$nodeHandle": 3,
       "_content": [
         {
           "$type": 395,
@@ -50768,7 +50759,16 @@
             "$nodeHandle": 42
           }
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 19,
+        "end": 46
+      },
+      "$nodeHandle": 3
     },
     "expectedOutput": "{ abstract baz():void; }"
   },
@@ -50779,7 +50779,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ abstract baz():void; }",
-    "expectedReparseTree": "(class_body (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))))",
+    "expectedReparseTree": "(class_body content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))))",
     "wrappedText": "class _C { abstract baz():void; }",
     "wrappedOffset": 9
   },
@@ -50790,15 +50790,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 70,
-        "end": 93
-      },
-      "$nodeHandle": 13,
       "_content": [
         {
           "$type": 393,
@@ -50851,7 +50842,16 @@
           "$nodeHandle": 46,
           "_decorator": []
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 70,
+        "end": 93
+      },
+      "$nodeHandle": 13
     },
     "expectedOutput": "{ override baz(){  }\n\n }"
   },
@@ -50862,7 +50862,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ override baz(){  }\n\n }",
-    "expectedReparseTree": "(class_body (class_body_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
     "wrappedText": "class _C { override baz(){  }\n\n }",
     "wrappedOffset": 9
   },
@@ -51018,15 +51018,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 70,
-          "end": 93
-        },
-        "$nodeHandle": 58,
         "_content": [
           {
             "$type": 393,
@@ -51079,7 +51070,16 @@
             "$nodeHandle": 59,
             "_decorator": []
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 70,
+          "end": 93
+        },
+        "$nodeHandle": 58
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -51101,7 +51101,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Bar extends Foo{ override baz(){  }\n\n }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body (class_body_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body content: (class_body_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Bar extends Foo{ override baz(){  }\n\n }\n",
     "wrappedOffset": 0
   },
@@ -60606,7 +60606,7 @@
                         "$nodeHandle": 34
                       },
                       {
-                        "$type": 447,
+                        "$type": 448,
                         "$source": 0,
                         "$named": true,
                         "$text": "Error",
@@ -60893,7 +60893,7 @@
                     "$nodeHandle": 48
                   },
                   {
-                    "$type": 447,
+                    "$type": 448,
                     "$source": 0,
                     "$named": true,
                     "$text": "Error",
@@ -61139,7 +61139,7 @@
                 "$nodeHandle": 59
               },
               {
-                "$type": 447,
+                "$type": 448,
                 "$source": 0,
                 "$named": true,
                 "$text": "Error",
@@ -61315,7 +61315,7 @@
             "$nodeHandle": 64
           },
           {
-            "$type": 447,
+            "$type": 448,
             "$source": 0,
             "$named": true,
             "$text": "Error",
@@ -70882,15 +70882,6 @@
             "$type": 257,
             "$source": 0,
             "$named": true,
-            "$other": [
-              5,
-              6
-            ],
-            "$span": {
-              "start": 18,
-              "end": 165
-            },
-            "$nodeHandle": 43,
             "_content": [
               {
                 "$type": 393,
@@ -71255,7 +71246,16 @@
                 "$nodeHandle": 45,
                 "_decorator": []
               }
-            ]
+            ],
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 18,
+              "end": 165
+            },
+            "$nodeHandle": 43
           },
           "_automatic_semicolon": true,
           "$other": [
@@ -71284,7 +71284,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class A extends B{ constructor(x:number,y:number){ super(x); }\n\npublic toString(){ return super.toString()+\" y=\"+this.y; }\n\n }\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier))))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)) (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double elements: (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier))))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)) content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double elements: (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "class A extends B{ constructor(x:number,y:number){ super(x); }\n\npublic toString(){ return super.toString()+\" y=\"+this.y; }\n\n }\n",
     "wrappedOffset": 0
   },
@@ -71346,15 +71346,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 18,
-          "end": 165
-        },
-        "$nodeHandle": 79,
         "_content": [
           {
             "$type": 393,
@@ -71719,7 +71710,16 @@
             "$nodeHandle": 81,
             "_decorator": []
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 18,
+          "end": 165
+        },
+        "$nodeHandle": 79
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -71741,7 +71741,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A extends B{ constructor(x:number,y:number){ super(x); }\n\npublic toString(){ return super.toString()+\" y=\"+this.y; }\n\n }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier))))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)) (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double elements: (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier))))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)) content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double elements: (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class A extends B{ constructor(x:number,y:number){ super(x); }\n\npublic toString(){ return super.toString()+\" y=\"+this.y; }\n\n }\n",
     "wrappedOffset": 0
   },
@@ -71752,15 +71752,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 18,
-        "end": 165
-      },
-      "$nodeHandle": 6,
       "_content": [
         {
           "$type": 393,
@@ -72125,7 +72116,16 @@
           "$nodeHandle": 116,
           "_decorator": []
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 18,
+        "end": 165
+      },
+      "$nodeHandle": 6
     },
     "expectedOutput": "{ constructor(x:number,y:number){ super(x); }\n\npublic toString(){ return super.toString()+\" y=\"+this.y; }\n\n }"
   },
@@ -72136,7 +72136,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ constructor(x:number,y:number){ super(x); }\n\npublic toString(){ return super.toString()+\" y=\"+this.y; }\n\n }",
-    "expectedReparseTree": "(class_body (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier))))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)) (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double elements: (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier))))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)) content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double elements: (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
     "wrappedText": "class _C { constructor(x:number,y:number){ super(x); }\n\npublic toString(){ return super.toString()+\" y=\"+this.y; }\n\n }",
     "wrappedOffset": 9
   },
@@ -103831,7 +103831,7 @@
                                   "$named": true,
                                   "_type": [
                                     {
-                                      "$type": 447,
+                                      "$type": 448,
                                       "$source": 0,
                                       "$named": true,
                                       "$text": "bool",
@@ -104426,7 +104426,7 @@
                       "$named": true,
                       "_type": [
                         {
-                          "$type": 447,
+                          "$type": 448,
                           "$source": 0,
                           "$named": true,
                           "$text": "bool",
@@ -104707,7 +104707,7 @@
                     "$named": true,
                     "_type": [
                       {
-                        "$type": 447,
+                        "$type": 448,
                         "$source": 0,
                         "$named": true,
                         "$text": "bool",
@@ -104840,7 +104840,7 @@
               "$named": true,
               "_type": [
                 {
-                  "$type": 447,
+                  "$type": 448,
                   "$source": 0,
                   "$named": true,
                   "$text": "bool",
@@ -104944,7 +104944,7 @@
         "$named": true,
         "_type": [
           {
-            "$type": 447,
+            "$type": 448,
             "$source": 0,
             "$named": true,
             "$text": "bool",
@@ -105131,7 +105131,7 @@
                               "$named": true,
                               "_type": [
                                 {
-                                  "$type": 447,
+                                  "$type": 448,
                                   "$source": 0,
                                   "$named": true,
                                   "$text": "bool",
@@ -105330,7 +105330,7 @@
                           "$named": true,
                           "_type": [
                             {
-                              "$type": 447,
+                              "$type": 448,
                               "$source": 0,
                               "$named": true,
                               "$text": "bool",
@@ -111811,15 +111811,6 @@
             "$type": 257,
             "$source": 0,
             "$named": true,
-            "$other": [
-              5,
-              6
-            ],
-            "$span": {
-              "start": 58,
-              "end": 84
-            },
-            "$nodeHandle": 49,
             "_content": [
               {
                 "$type": 393,
@@ -111899,7 +111890,16 @@
                 "$nodeHandle": 50,
                 "_decorator": []
               }
-            ]
+            ],
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 58,
+              "end": 84
+            },
+            "$nodeHandle": 49
           },
           "_automatic_semicolon": true,
           "$other": [
@@ -112056,7 +112056,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "function f(x:any):asserts x is number{  }\n\nclass Foo<T>{ test():this is T{  }\n\n }\nfunction isT(t:T):t is T{ return true\n }\n\n",
-    "expectedReparseTree": "(program statements: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts_annotation (asserts (type_predicate name: (identifier) type: (predefined_type)))) body: (statement_block automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)) statements: (class_declaration name: (type_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) body: (class_body (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_predicate_annotation (type_predicate name: (this) type: (type_identifier))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)) statements: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (type_predicate_annotation (type_predicate name: (identifier) type: (type_identifier))) body: (statement_block statements: (return_statement (true) semicolon: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts_annotation (asserts (type_predicate name: (identifier) type: (predefined_type)))) body: (statement_block automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)) statements: (class_declaration name: (type_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) body: (class_body content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_predicate_annotation (type_predicate name: (this) type: (type_identifier))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)) statements: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_group1 formal_parameter: (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (type_predicate_annotation (type_predicate name: (identifier) type: (type_identifier))) body: (statement_block statements: (return_statement (true) semicolon: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))",
     "wrappedText": "function f(x:any):asserts x is number{  }\n\nclass Foo<T>{ test():this is T{  }\n\n }\nfunction isT(t:T):t is T{ return true\n }\n\n",
     "wrappedOffset": 0
   },
@@ -112856,15 +112856,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 58,
-          "end": 84
-        },
-        "$nodeHandle": 109,
         "_content": [
           {
             "$type": 393,
@@ -112944,7 +112935,16 @@
             "$nodeHandle": 110,
             "_decorator": []
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 58,
+          "end": 84
+        },
+        "$nodeHandle": 109
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -112966,7 +112966,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Foo<T>{ test():this is T{  }\n\n }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) body: (class_body (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_predicate_annotation (type_predicate name: (this) type: (type_identifier))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) type_parameters: (type_parameters type_parameter: (type_parameter name: (type_identifier))) body: (class_body content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_predicate_annotation (type_predicate name: (this) type: (type_identifier))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Foo<T>{ test():this is T{  }\n\n }\n",
     "wrappedOffset": 0
   },
@@ -113021,15 +113021,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 58,
-        "end": 84
-      },
-      "$nodeHandle": 17,
       "_content": [
         {
           "$type": 393,
@@ -113109,7 +113100,16 @@
           "$nodeHandle": 117,
           "_decorator": []
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 58,
+        "end": 84
+      },
+      "$nodeHandle": 17
     },
     "expectedOutput": "{ test():this is T{  }\n\n }"
   },
@@ -113120,7 +113120,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ test():this is T{  }\n\n }",
-    "expectedReparseTree": "(class_body (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_predicate_annotation (type_predicate name: (this) type: (type_identifier))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_predicate_annotation (type_predicate name: (this) type: (type_identifier))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
     "wrappedText": "class _C { test():this is T{  }\n\n }",
     "wrappedOffset": 9
   },
@@ -117752,7 +117752,7 @@
                   "$nodeHandle": 44
                 },
                 {
-                  "$type": 447,
+                  "$type": 448,
                   "$source": 0,
                   "$named": true,
                   "$text": "C",
@@ -118305,7 +118305,7 @@
               "$nodeHandle": 70
             },
             {
-              "$type": 447,
+              "$type": 448,
               "$source": 0,
               "$named": true,
               "$text": "C",
@@ -118862,7 +118862,7 @@
             "$nodeHandle": 93
           },
           {
-            "$type": 447,
+            "$type": 448,
             "$source": 0,
             "$named": true,
             "$text": "C",
@@ -139178,15 +139178,6 @@
             "$type": 257,
             "$source": 0,
             "$named": true,
-            "$other": [
-              5,
-              6
-            ],
-            "$span": {
-              "start": 8,
-              "end": 116
-            },
-            "$nodeHandle": 31,
             "_content": [
               {
                 "$type": 395,
@@ -139538,7 +139529,16 @@
                   "_decorator": []
                 }
               }
-            ]
+            ],
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 8,
+              "end": 116
+            },
+            "$nodeHandle": 31
           },
           "_automatic_semicolon": true,
           "$other": [
@@ -139567,7 +139567,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class A{ colors:[{color:\"green\",code:\"#E5F8F2\"}]\ncolor:(typeof this.colors)[number]=this.colors[0]\n }\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (tuple_type (tuple_type_group1 tuple_type_member: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))) (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))))))))) terminator: (automatic_semicolon)) (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (lookup_type primary_type: (parenthesized_type type: (type_query (member_expression object: (this) property: (property_identifier)))) index_type: (predefined_type))) value: (subscript_expression object: (member_expression object: (this) property: (property_identifier)) index: (number))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (tuple_type (tuple_type_group1 tuple_type_member: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))) (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))))))))) terminator: (automatic_semicolon)) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (lookup_type primary_type: (parenthesized_type type: (type_query (member_expression object: (this) property: (property_identifier)))) index_type: (predefined_type))) value: (subscript_expression object: (member_expression object: (this) property: (property_identifier)) index: (number))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "class A{ colors:[{color:\"green\",code:\"#E5F8F2\"}]\ncolor:(typeof this.colors)[number]=this.colors[0]\n }\n",
     "wrappedOffset": 0
   },
@@ -139583,15 +139583,6 @@
         "$type": 257,
         "$source": 0,
         "$named": true,
-        "$other": [
-          5,
-          6
-        ],
-        "$span": {
-          "start": 8,
-          "end": 116
-        },
-        "$nodeHandle": 59,
         "_content": [
           {
             "$type": 395,
@@ -139943,7 +139934,16 @@
               "_decorator": []
             }
           }
-        ]
+        ],
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 8,
+          "end": 116
+        },
+        "$nodeHandle": 59
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -139965,7 +139965,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A{ colors:[{color:\"green\",code:\"#E5F8F2\"}]\ncolor:(typeof this.colors)[number]=this.colors[0]\n }\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (tuple_type (tuple_type_group1 tuple_type_member: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))) (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))))))))) terminator: (automatic_semicolon)) (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (lookup_type primary_type: (parenthesized_type type: (type_query (member_expression object: (this) property: (property_identifier)))) index_type: (predefined_type))) value: (subscript_expression object: (member_expression object: (this) property: (property_identifier)) index: (number))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (tuple_type (tuple_type_group1 tuple_type_member: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))) (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))))))))) terminator: (automatic_semicolon)) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (lookup_type primary_type: (parenthesized_type type: (type_query (member_expression object: (this) property: (property_identifier)))) index_type: (predefined_type))) value: (subscript_expression object: (member_expression object: (this) property: (property_identifier)) index: (number))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class A{ colors:[{color:\"green\",code:\"#E5F8F2\"}]\ncolor:(typeof this.colors)[number]=this.colors[0]\n }\n",
     "wrappedOffset": 0
   },
@@ -139976,15 +139976,6 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
-      "$other": [
-        5,
-        6
-      ],
-      "$span": {
-        "start": 8,
-        "end": 116
-      },
-      "$nodeHandle": 2,
       "_content": [
         {
           "$type": 395,
@@ -140336,7 +140327,16 @@
             "_decorator": []
           }
         }
-      ]
+      ],
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 8,
+        "end": 116
+      },
+      "$nodeHandle": 2
     },
     "expectedOutput": "{ colors:[{color:\"green\",code:\"#E5F8F2\"}]\ncolor:(typeof this.colors)[number]=this.colors[0]\n }"
   },
@@ -140347,7 +140347,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{ colors:[{color:\"green\",code:\"#E5F8F2\"}]\ncolor:(typeof this.colors)[number]=this.colors[0]\n }",
-    "expectedReparseTree": "(class_body (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (tuple_type (tuple_type_group1 tuple_type_member: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))) (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))))))))) terminator: (automatic_semicolon)) (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (lookup_type primary_type: (parenthesized_type type: (type_query (member_expression object: (this) property: (property_identifier)))) index_type: (predefined_type))) value: (subscript_expression object: (member_expression object: (this) property: (property_identifier)) index: (number))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (tuple_type (tuple_type_group1 tuple_type_member: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))) (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))))))))) terminator: (automatic_semicolon)) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (lookup_type primary_type: (parenthesized_type type: (type_query (member_expression object: (this) property: (property_identifier)))) index_type: (predefined_type))) value: (subscript_expression object: (member_expression object: (this) property: (property_identifier)) index: (number))) terminator: (automatic_semicolon)))",
     "wrappedText": "class _C { colors:[{color:\"green\",code:\"#E5F8F2\"}]\ncolor:(typeof this.colors)[number]=this.colors[0]\n }",
     "wrappedOffset": 9
   },

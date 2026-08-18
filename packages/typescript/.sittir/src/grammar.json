@@ -6383,60 +6383,69 @@
           "value": "{"
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "content",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_class_body_method"
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_class_body_method"
+                  },
+                  "named": true,
+                  "value": "class_body_method"
                 },
-                "named": true,
-                "value": "class_body_method"
-              },
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_class_body_method_sig",
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_class_body_method_sig",
+                    "metadata": {
+                      "author": "enrich",
+                      "symbolSource": "group-lift"
+                    }
+                  },
+                  "named": true,
+                  "value": "class_body_method_sig",
                   "metadata": {
-                    "author": "enrich",
-                    "symbolSource": "group-lift"
+                    "author": "enrich"
                   }
                 },
-                "named": true,
-                "value": "class_body_method_sig",
-                "metadata": {
-                  "author": "enrich"
-                }
-              },
-              {
-                "type": "SYMBOL",
-                "name": "class_static_block"
-              },
-              {
-                "type": "ALIAS",
-                "content": {
+                {
                   "type": "SYMBOL",
-                  "name": "_class_body_member",
+                  "name": "class_static_block"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_class_body_member",
+                    "metadata": {
+                      "author": "enrich",
+                      "symbolSource": "group-lift"
+                    }
+                  },
+                  "named": true,
+                  "value": "class_body_member",
                   "metadata": {
-                    "author": "enrich",
-                    "symbolSource": "group-lift"
+                    "author": "enrich"
                   }
                 },
-                "named": true,
-                "value": "class_body_member",
-                "metadata": {
-                  "author": "enrich"
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "STRING",
+                    "value": ";"
+                  },
+                  "named": true,
+                  "value": "semicolon"
                 }
-              },
-              {
-                "type": "STRING",
-                "value": ";"
-              }
-            ]
+              ]
+            }
           }
         },
         {
