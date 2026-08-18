@@ -448,6 +448,11 @@ function applyEnrichPasses(
 		// either a seq/repeat(seq) or a choice, never both), so ordering
 		// within this loop doesn't matter.
 		r = applyChoiceArmFieldWrap(ruleName, r, supertypeNames, rulesBag);
+		// Repeat-union field promotion (pass 6) — see
+		// `applyRepeatUnionFieldPromotion`'s doc comment. Targets a shape no
+		// other pass touches (bare `repeat($._union)` content, including in
+		// hidden rules), so loop ordering doesn't matter.
+		r = applyRepeatUnionFieldPromotion(ruleName, r, rulesBag);
 		// Bare leading-keyword pass intentionally omitted — the docstring
 		// above explains why: wrapping bare leading literals as FIELD(SYM)
 		// adds `_kw_<name>` hidden rules that shift tree-sitter's parser-
@@ -1244,6 +1249,99 @@ export function nativeRuleFn<F>(...names: string[]): F {
 function makeField(name: string, content: unknown): Rule {
 	const field = nativeRuleFn<(n: string, c: unknown) => Rule>('field');
 	return { ...field(name, content), metadata: makeRuleMetadata({ fieldSource: 'enriched' }) };
+}
+
+/**
+ * Pass 6 — repeat-union field promotion: an un-fielded `repeat($._union)`
+ * (bare hidden-CHOICE symbol content) gets the whole repeat wrapped in
+ * `field('<stripped>', repeat(...))`.
+ *
+ * An unnamed union repeat forces the native read to bucket children
+ * per concrete kind and the wrap to re-merge them (`_concatInSourceOrder`),
+ * which cannot order text-collapsed scalar elements (no `$span` /
+ * `$childIndex`) and does not guarantee cross-kind interleaving even for
+ * node stubs. A field-keyed read delivers ONE array in cursor order and
+ * never enters that path. The field name is the union symbol's name
+ * stripped of leading underscores — the same name wrapper-deletion
+ * derives for the slot, so storage keys are stable.
+ *
+ * Positions already under a `field()` (authored or override-applied) are
+ * owned — never re-wrapped. Grammar-declared supertype repeats that reach
+ * enrich un-fielded are equally eligible: "bare at enrich time" IS the
+ * unnamed-slot population, since differently-named positions get their
+ * field from overrides before enrich runs.
+ */
+function applyRepeatUnionFieldPromotion(ruleName: string, rule: Rule, rulesBag: Record<string, Rule>): Rule {
+	// Names owned by fields that existed BEFORE this pass — those positions
+	// (or their siblings) claimed the name deliberately; never shadow them.
+	const preExistingFieldNames = new Set<string>();
+	const collectNames = (node: Rule): void => {
+		const n = node as unknown as {
+			type: string;
+			name?: unknown;
+			content?: Rule;
+			members?: Rule[];
+			metadata?: { fieldSource?: string };
+		};
+		if (isFieldType(n.type) && typeof n.name === 'string' && n.metadata?.fieldSource !== 'enriched') {
+			preExistingFieldNames.add(n.name);
+		}
+		if (n.members) for (const m of n.members) collectNames(m);
+		else if (n.content) collectNames(n.content);
+	};
+	collectNames(rule);
+	// This pass's own mints, keyed by the union symbol they name. The SAME
+	// name recurring for the SAME symbol across sibling CHOICE arms is the
+	// normal shape (each delimiter arm of a token tree carries the same
+	// repeat) — mutually exclusive at parse time, one shared slot at model
+	// time. A DIFFERENT symbol wanting an already-minted name is a real
+	// collision and skips.
+	const mintedBySymbol = new Map<string, string>();
+	const mintedNames = new Set<string>();
+
+	const rebuild = (node: Rule): Rule => {
+		const n = node as unknown as { type: string; content?: Rule; members?: Rule[] };
+		// A fielded position is owned — its content is that field's business.
+		if (isFieldType(n.type)) return node;
+		if (isRepeatType(n.type) && n.content) {
+			let inner: Rule = n.content;
+			while (isPrecWrapper(inner as { type: string })) inner = (inner as unknown as { content: Rule }).content;
+			const sym = inner as unknown as { type: string; name?: unknown };
+			if (sym.type === 'SYMBOL' && typeof sym.name === 'string' && sym.name.startsWith('_')) {
+				const target = rulesBag[sym.name];
+				if (target !== undefined && isChoiceType((target as { type: string }).type)) {
+					// Repeated/array slots get plural names — same convention
+					// pluralizeFieldName serves everywhere else in enrich.
+					const fieldName = mintedBySymbol.get(sym.name) ?? pluralizeFieldName(sym.name.replace(/^_+/, ''));
+					const mintedForOther = mintedNames.has(fieldName) && mintedBySymbol.get(sym.name) !== fieldName;
+					if (preExistingFieldNames.has(fieldName) || mintedForOther) {
+						reportSkip('repeat-union-field', ruleName, `field '${fieldName}' already exists`);
+						return node;
+					}
+					mintedBySymbol.set(sym.name, fieldName);
+					mintedNames.add(fieldName);
+					return makeField(fieldName, node);
+				}
+			}
+			const content = rebuild(n.content);
+			return content === n.content ? node : ({ ...node, content } as Rule);
+		}
+		if (n.members) {
+			let changed = false;
+			const members = n.members.map((m) => {
+				const r = rebuild(m);
+				if (r !== m) changed = true;
+				return r;
+			});
+			return changed ? ({ ...node, members } as Rule) : node;
+		}
+		if (n.content) {
+			const content = rebuild(n.content);
+			return content === n.content ? node : ({ ...node, content } as Rule);
+		}
+		return node;
+	};
+	return rebuild(rule);
 }
 
 function makeSymbol(name: string): Rule {

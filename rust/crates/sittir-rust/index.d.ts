@@ -2138,7 +2138,7 @@ export interface TokenTreePatternBraceTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _token_pattern?: Array<TokenPatternTransport>
+  _token_patterns?: Array<TokenPatternTransport>
 }
 
 export interface TokenTreePatternBracketTransport {
@@ -2149,7 +2149,7 @@ export interface TokenTreePatternBracketTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _token_pattern?: Array<TokenPatternTransport>
+  _token_patterns?: Array<TokenPatternTransport>
 }
 
 export interface TokenTreePatternParenTransport {
@@ -2160,7 +2160,7 @@ export interface TokenTreePatternParenTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _token_pattern?: Array<TokenPatternTransport>
+  _token_patterns?: Array<TokenPatternTransport>
 }
 
 export interface TokenTreePatternTransport {

@@ -2033,7 +2033,7 @@ export type RustGrammar = {
 		type: 'token_tree_pattern_brace';
 		named: true;
 		fields: {
-			token_pattern: {
+			token_patterns: {
 				multiple: true;
 				required: false;
 				types: [
@@ -2050,7 +2050,7 @@ export type RustGrammar = {
 		type: 'token_tree_pattern_bracket';
 		named: true;
 		fields: {
-			token_pattern: {
+			token_patterns: {
 				multiple: true;
 				required: false;
 				types: [
@@ -2067,7 +2067,7 @@ export type RustGrammar = {
 		type: 'token_tree_pattern_paren';
 		named: true;
 		fields: {
-			token_pattern: {
+			token_patterns: {
 				multiple: true;
 				required: false;
 				types: [

@@ -5313,21 +5313,21 @@ export function buildLineCommentContent(text: string) {
 }
 
 export function buildTokenTreePatternParen(config: Partial<T.TokenTreePatternParen.Config> = {}) {
-	const _token_pattern = config.tokenPattern ?? [];
+	const _token_patterns = config.tokenPatterns ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.TokenTreePatternParen as const,
 				$source: 2 as const,
 				$named: true as const,
-				_token_pattern,
+				_token_patterns,
 				$with: {
 					tokenPatterns: (...values: T.TokenPattern[]) =>
-						buildTokenTreePatternParen({ ...config, tokenPattern: values })
+						buildTokenTreePatternParen({ ...config, tokenPatterns: values })
 				}
 			},
 			{
-				tokenPatterns: () => _token_pattern
+				tokenPatterns: () => _token_patterns
 			}
 		),
 		methodsEngine
@@ -5335,21 +5335,21 @@ export function buildTokenTreePatternParen(config: Partial<T.TokenTreePatternPar
 }
 
 export function buildTokenTreePatternBracket(config: Partial<T.TokenTreePatternBracket.Config> = {}) {
-	const _token_pattern = config.tokenPattern ?? [];
+	const _token_patterns = config.tokenPatterns ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.TokenTreePatternBracket as const,
 				$source: 2 as const,
 				$named: true as const,
-				_token_pattern,
+				_token_patterns,
 				$with: {
 					tokenPatterns: (...values: T.TokenPattern[]) =>
-						buildTokenTreePatternBracket({ ...config, tokenPattern: values })
+						buildTokenTreePatternBracket({ ...config, tokenPatterns: values })
 				}
 			},
 			{
-				tokenPatterns: () => _token_pattern
+				tokenPatterns: () => _token_patterns
 			}
 		),
 		methodsEngine
@@ -5357,21 +5357,21 @@ export function buildTokenTreePatternBracket(config: Partial<T.TokenTreePatternB
 }
 
 export function buildTokenTreePatternBrace(config: Partial<T.TokenTreePatternBrace.Config> = {}) {
-	const _token_pattern = config.tokenPattern ?? [];
+	const _token_patterns = config.tokenPatterns ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.TokenTreePatternBrace as const,
 				$source: 2 as const,
 				$named: true as const,
-				_token_pattern,
+				_token_patterns,
 				$with: {
 					tokenPatterns: (...values: T.TokenPattern[]) =>
-						buildTokenTreePatternBrace({ ...config, tokenPattern: values })
+						buildTokenTreePatternBrace({ ...config, tokenPatterns: values })
 				}
 			},
 			{
-				tokenPatterns: () => _token_pattern
+				tokenPatterns: () => _token_patterns
 			}
 		),
 		methodsEngine

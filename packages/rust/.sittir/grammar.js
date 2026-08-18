@@ -1152,6 +1152,7 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     const before = r;
     r = applySymbolToField(ruleName, r, supertypeNames);
     r = applyChoiceArmFieldWrap(ruleName, r, supertypeNames, rulesBag);
+    r = applyRepeatUnionFieldPromotion(ruleName, r, rulesBag);
     r = applyOptionalKeyword(ruleName, r, kwRules, rulesBag, wordMatcher);
     if (r === before) {
       converged = true;
@@ -1569,6 +1570,60 @@ function nativeRuleFn(...names) {
 function makeField(name, content) {
   const field3 = nativeRuleFn("field");
   return { ...field3(name, content), metadata: makeRuleMetadata({ fieldSource: "enriched" }) };
+}
+function applyRepeatUnionFieldPromotion(ruleName, rule, rulesBag) {
+  const preExistingFieldNames = /* @__PURE__ */ new Set();
+  const collectNames = (node) => {
+    const n = node;
+    if (isFieldType(n.type) && typeof n.name === "string" && n.metadata?.fieldSource !== "enriched") {
+      preExistingFieldNames.add(n.name);
+    }
+    if (n.members) for (const m of n.members) collectNames(m);
+    else if (n.content) collectNames(n.content);
+  };
+  collectNames(rule);
+  const mintedBySymbol = /* @__PURE__ */ new Map();
+  const mintedNames = /* @__PURE__ */ new Set();
+  const rebuild = (node) => {
+    const n = node;
+    if (isFieldType(n.type)) return node;
+    if (isRepeatType(n.type) && n.content) {
+      let inner = n.content;
+      while (isPrecWrapper(inner)) inner = inner.content;
+      const sym = inner;
+      if (sym.type === "SYMBOL" && typeof sym.name === "string" && sym.name.startsWith("_")) {
+        const target = rulesBag[sym.name];
+        if (target !== void 0 && isChoiceType(target.type)) {
+          const fieldName = mintedBySymbol.get(sym.name) ?? pluralizeFieldName(sym.name.replace(/^_+/, ""));
+          const mintedForOther = mintedNames.has(fieldName) && mintedBySymbol.get(sym.name) !== fieldName;
+          if (preExistingFieldNames.has(fieldName) || mintedForOther) {
+            reportSkip("repeat-union-field", ruleName, `field '${fieldName}' already exists`);
+            return node;
+          }
+          mintedBySymbol.set(sym.name, fieldName);
+          mintedNames.add(fieldName);
+          return makeField(fieldName, node);
+        }
+      }
+      const content = rebuild(n.content);
+      return content === n.content ? node : { ...node, content };
+    }
+    if (n.members) {
+      let changed = false;
+      const members = n.members.map((m) => {
+        const r = rebuild(m);
+        if (r !== m) changed = true;
+        return r;
+      });
+      return changed ? { ...node, members } : node;
+    }
+    if (n.content) {
+      const content = rebuild(n.content);
+      return content === n.content ? node : { ...node, content };
+    }
+    return node;
+  };
+  return rebuild(rule);
 }
 function makeSymbol(name) {
   const symFn = nativeRuleFn("sym");
@@ -4313,29 +4368,25 @@ var grammar_sittir_default = grammar(
           "1/1": variant("doc"),
           "1/2": variant("content")
         },
-        // Stage 1 fields the token-tree repeats (`seq('(',
-        // repeat($._delim_tokens), ')')` and siblings, addressed inside
-        // each base choice arm BEFORE the variant split mints the
-        // per-delimiter rules) so the native read keys every element into
-        // ONE field-keyed array in cursor order. Unnamed union repeats
-        // make the reader bucket children per kind and the wrap re-merge
-        // via `_concatInSourceOrder`, which cannot order text-collapsed
-        // scalar elements (no `$span`/`$childIndex`: `a!($())` rendered
-        // `a!(()$)`) and does not guarantee cross-kind interleaving even
-        // for node stubs. Field names match the previously-derived slot
-        // names, keeping storage keys stable.
-        token_tree_pattern: [
-          { "0/1": field2("token_pattern"), "1/1": field2("token_pattern"), "2/1": field2("token_pattern") },
-          { 0: variant("paren"), 1: variant("bracket"), 2: variant("brace") }
-        ],
-        token_tree: [
-          { "0/1": field2("tokens"), "1/1": field2("tokens"), "2/1": field2("tokens") },
-          { 0: variant("paren"), 1: variant("bracket"), 2: variant("brace") }
-        ],
-        delim_token_tree: [
-          { "0/1": field2("delim_tokens"), "1/1": field2("delim_tokens"), "2/1": field2("delim_tokens") },
-          { 0: variant("paren"), 1: variant("bracket"), 2: variant("brace") }
-        ]
+        // The token-tree repeats' element fields (`field('delim_tokens',
+        // repeat($._delim_tokens))` and siblings) come from enrich's
+        // repeat-union field promotion (dsl/enrich.ts) — no override
+        // needed here; only the visible-variant splits remain.
+        token_tree_pattern: {
+          0: variant("paren"),
+          1: variant("bracket"),
+          2: variant("brace")
+        },
+        token_tree: {
+          0: variant("paren"),
+          1: variant("bracket"),
+          2: variant("brace")
+        },
+        delim_token_tree: {
+          0: variant("paren"),
+          1: variant("bracket"),
+          2: variant("brace")
+        }
       },
       rules: {
         _token_tree_punctuation: ($) => choice(

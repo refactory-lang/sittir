@@ -1154,6 +1154,7 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     const before = r;
     r = applySymbolToField(ruleName, r, supertypeNames);
     r = applyChoiceArmFieldWrap(ruleName, r, supertypeNames, rulesBag);
+    r = applyRepeatUnionFieldPromotion(ruleName, r, rulesBag);
     r = applyOptionalKeyword(ruleName, r, kwRules, rulesBag, wordMatcher);
     if (r === before) {
       converged = true;
@@ -1571,6 +1572,60 @@ function nativeRuleFn(...names) {
 function makeField(name, content) {
   const field2 = nativeRuleFn("field");
   return { ...field2(name, content), metadata: makeRuleMetadata({ fieldSource: "enriched" }) };
+}
+function applyRepeatUnionFieldPromotion(ruleName, rule, rulesBag) {
+  const preExistingFieldNames = /* @__PURE__ */ new Set();
+  const collectNames = (node) => {
+    const n = node;
+    if (isFieldType(n.type) && typeof n.name === "string" && n.metadata?.fieldSource !== "enriched") {
+      preExistingFieldNames.add(n.name);
+    }
+    if (n.members) for (const m of n.members) collectNames(m);
+    else if (n.content) collectNames(n.content);
+  };
+  collectNames(rule);
+  const mintedBySymbol = /* @__PURE__ */ new Map();
+  const mintedNames = /* @__PURE__ */ new Set();
+  const rebuild = (node) => {
+    const n = node;
+    if (isFieldType(n.type)) return node;
+    if (isRepeatType(n.type) && n.content) {
+      let inner = n.content;
+      while (isPrecWrapper(inner)) inner = inner.content;
+      const sym = inner;
+      if (sym.type === "SYMBOL" && typeof sym.name === "string" && sym.name.startsWith("_")) {
+        const target = rulesBag[sym.name];
+        if (target !== void 0 && isChoiceType(target.type)) {
+          const fieldName = mintedBySymbol.get(sym.name) ?? pluralizeFieldName(sym.name.replace(/^_+/, ""));
+          const mintedForOther = mintedNames.has(fieldName) && mintedBySymbol.get(sym.name) !== fieldName;
+          if (preExistingFieldNames.has(fieldName) || mintedForOther) {
+            reportSkip("repeat-union-field", ruleName, `field '${fieldName}' already exists`);
+            return node;
+          }
+          mintedBySymbol.set(sym.name, fieldName);
+          mintedNames.add(fieldName);
+          return makeField(fieldName, node);
+        }
+      }
+      const content = rebuild(n.content);
+      return content === n.content ? node : { ...node, content };
+    }
+    if (n.members) {
+      let changed = false;
+      const members = n.members.map((m) => {
+        const r = rebuild(m);
+        if (r !== m) changed = true;
+        return r;
+      });
+      return changed ? { ...node, members } : node;
+    }
+    if (n.content) {
+      const content = rebuild(n.content);
+      return content === n.content ? node : { ...node, content };
+    }
+    return node;
+  };
+  return rebuild(rule);
 }
 function makeSymbol(name) {
   const symFn = nativeRuleFn("sym");

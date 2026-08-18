@@ -10568,21 +10568,21 @@ export function wrapTokenTreePatternParen(data: T.TokenTreePatternParen, tree: T
 		{
 			...data,
 			$type: TSKindId.TokenTreePatternParen as const,
-			_token_pattern: normalizeRepeatedWrapSlot(data._token_pattern, false, 'token_pattern', {
+			_token_patterns: normalizeRepeatedWrapSlot(data._token_patterns, false, 'token_patterns', {
 				tree,
 				nodeType: data.$type,
-				slotName: 'token_pattern',
+				slotName: 'token_patterns',
 				span: (data as _NodeData).$span
 			}),
 
 			tokenPatterns() {
-				return drillAsAll<T.TokenPattern>(this._token_pattern, tree, [
+				return drillAsAll<T.TokenPattern>(this._token_patterns, tree, [
 					{ from: 'token_pattern_group1', to: '_non_special_token' }
 				]);
 			},
 			$with: {
-				tokenPatterns: (...v: NonNullable<T.TokenTreePatternParen['_token_pattern']>[number][]) =>
-					wrapTokenTreePatternParen({ ...data, _token_pattern: v }, tree)
+				tokenPatterns: (...v: NonNullable<T.TokenTreePatternParen['_token_patterns']>[number][]) =>
+					wrapTokenTreePatternParen({ ...data, _token_patterns: v }, tree)
 			}
 		},
 		methodsEngine
@@ -10595,21 +10595,21 @@ export function wrapTokenTreePatternBracket(data: T.TokenTreePatternBracket, tre
 		{
 			...data,
 			$type: TSKindId.TokenTreePatternBracket as const,
-			_token_pattern: normalizeRepeatedWrapSlot(data._token_pattern, false, 'token_pattern', {
+			_token_patterns: normalizeRepeatedWrapSlot(data._token_patterns, false, 'token_patterns', {
 				tree,
 				nodeType: data.$type,
-				slotName: 'token_pattern',
+				slotName: 'token_patterns',
 				span: (data as _NodeData).$span
 			}),
 
 			tokenPatterns() {
-				return drillAsAll<T.TokenPattern>(this._token_pattern, tree, [
+				return drillAsAll<T.TokenPattern>(this._token_patterns, tree, [
 					{ from: 'token_pattern_group1', to: '_non_special_token' }
 				]);
 			},
 			$with: {
-				tokenPatterns: (...v: NonNullable<T.TokenTreePatternBracket['_token_pattern']>[number][]) =>
-					wrapTokenTreePatternBracket({ ...data, _token_pattern: v }, tree)
+				tokenPatterns: (...v: NonNullable<T.TokenTreePatternBracket['_token_patterns']>[number][]) =>
+					wrapTokenTreePatternBracket({ ...data, _token_patterns: v }, tree)
 			}
 		},
 		methodsEngine
@@ -10622,21 +10622,21 @@ export function wrapTokenTreePatternBrace(data: T.TokenTreePatternBrace, tree: T
 		{
 			...data,
 			$type: TSKindId.TokenTreePatternBrace as const,
-			_token_pattern: normalizeRepeatedWrapSlot(data._token_pattern, false, 'token_pattern', {
+			_token_patterns: normalizeRepeatedWrapSlot(data._token_patterns, false, 'token_patterns', {
 				tree,
 				nodeType: data.$type,
-				slotName: 'token_pattern',
+				slotName: 'token_patterns',
 				span: (data as _NodeData).$span
 			}),
 
 			tokenPatterns() {
-				return drillAsAll<T.TokenPattern>(this._token_pattern, tree, [
+				return drillAsAll<T.TokenPattern>(this._token_patterns, tree, [
 					{ from: 'token_pattern_group1', to: '_non_special_token' }
 				]);
 			},
 			$with: {
-				tokenPatterns: (...v: NonNullable<T.TokenTreePatternBrace['_token_pattern']>[number][]) =>
-					wrapTokenTreePatternBrace({ ...data, _token_pattern: v }, tree)
+				tokenPatterns: (...v: NonNullable<T.TokenTreePatternBrace['_token_patterns']>[number][]) =>
+					wrapTokenTreePatternBrace({ ...data, _token_patterns: v }, tree)
 			}
 		},
 		methodsEngine

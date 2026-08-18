@@ -13,7 +13,7 @@
 #define ALIAS_COUNT 4
 #define TOKEN_COUNT 157
 #define EXTERNAL_TOKEN_COUNT 10
-#define FIELD_COUNT 82
+#define FIELD_COUNT 81
 #define MAX_ALIAS_SEQUENCE_LENGTH 10
 #define MAX_RESERVED_WORD_SET_SIZE 0
 #define PRODUCTION_ID_COUNT 449
@@ -3154,22 +3154,21 @@ enum ts_field_identifiers {
   field_string_content = 64,
   field_string_literal = 65,
   field_string_open = 66,
-  field_token_pattern = 67,
-  field_token_patterns = 68,
-  field_token_tree = 69,
-  field_tokens = 70,
-  field_trailing_expression = 71,
-  field_trailing_where_clause = 72,
-  field_trait = 73,
-  field_trait_clause = 74,
-  field_turbofish = 75,
-  field_type = 76,
-  field_type_arguments = 77,
-  field_type_parameters = 78,
-  field_unsafe_marker = 79,
-  field_value = 80,
-  field_visibility_modifier = 81,
-  field_where_clause = 82,
+  field_token_patterns = 67,
+  field_token_tree = 68,
+  field_tokens = 69,
+  field_trailing_expression = 70,
+  field_trailing_where_clause = 71,
+  field_trait = 72,
+  field_trait_clause = 73,
+  field_turbofish = 74,
+  field_type = 75,
+  field_type_arguments = 76,
+  field_type_parameters = 77,
+  field_unsafe_marker = 78,
+  field_value = 79,
+  field_visibility_modifier = 80,
+  field_where_clause = 81,
 };
 
 static const char * const ts_field_names[] = {
@@ -3240,7 +3239,6 @@ static const char * const ts_field_names[] = {
   [field_string_content] = "string_content",
   [field_string_literal] = "string_literal",
   [field_string_open] = "string_open",
-  [field_token_pattern] = "token_pattern",
   [field_token_patterns] = "token_patterns",
   [field_token_tree] = "token_tree",
   [field_tokens] = "tokens",
@@ -3952,7 +3950,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_move_marker, 0},
     {field_parameters, 1},
   [154] =
-    {field_token_pattern, 0, .inherited = true},
+    {field_token_patterns, 0, .inherited = true},
   [155] =
     {field_elements, 1},
   [156] =
@@ -4454,7 +4452,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_type, 3},
     {field_unsafe_marker, 0},
   [512] =
-    {field_token_pattern, 1},
+    {field_token_patterns, 1},
   [513] =
     {field_tokens, 0, .inherited = true},
   [514] =

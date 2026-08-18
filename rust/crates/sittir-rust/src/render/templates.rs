@@ -434,19 +434,19 @@ pub struct TokenTreeParenTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_pattern_brace.jinja", escape = "none")]
 pub struct TokenTreePatternBraceTemplate<'a> {
-    pub token_pattern: ListNonterminalView<'a>,
+    pub token_patterns: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_pattern_bracket.jinja", escape = "none")]
 pub struct TokenTreePatternBracketTemplate<'a> {
-    pub token_pattern: ListNonterminalView<'a>,
+    pub token_patterns: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_pattern_paren.jinja", escape = "none")]
 pub struct TokenTreePatternParenTemplate<'a> {
-    pub token_pattern: ListNonterminalView<'a>,
+    pub token_patterns: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

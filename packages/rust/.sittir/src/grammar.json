@@ -11809,7 +11809,7 @@
         },
         {
           "type": "FIELD",
-          "name": "token_pattern",
+          "name": "token_patterns",
           "content": {
             "type": "REPEAT",
             "content": {
@@ -11818,7 +11818,7 @@
             }
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -11836,7 +11836,7 @@
         },
         {
           "type": "FIELD",
-          "name": "token_pattern",
+          "name": "token_patterns",
           "content": {
             "type": "REPEAT",
             "content": {
@@ -11845,7 +11845,7 @@
             }
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -11863,7 +11863,7 @@
         },
         {
           "type": "FIELD",
-          "name": "token_pattern",
+          "name": "token_patterns",
           "content": {
             "type": "REPEAT",
             "content": {
@@ -11872,7 +11872,7 @@
             }
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -11899,7 +11899,7 @@
             }
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -11926,7 +11926,7 @@
             }
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -11953,7 +11953,7 @@
             }
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -11980,7 +11980,7 @@
             }
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -12007,7 +12007,7 @@
             }
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -12034,7 +12034,7 @@
             }
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {

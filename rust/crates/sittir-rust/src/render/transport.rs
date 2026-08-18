@@ -42996,8 +42996,8 @@ pub struct TokenTreePatternParenTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_pattern"))]
-    pub token_pattern: Option<Vec<TokenPatternTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns"))]
+    pub token_patterns: Option<Vec<TokenPatternTransport>>,
 }
 
 impl RenderableTransport for TokenTreePatternParenTransport {
@@ -43046,8 +43046,8 @@ pub struct TokenTreePatternBracketTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_pattern"))]
-    pub token_pattern: Option<Vec<TokenPatternTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns"))]
+    pub token_patterns: Option<Vec<TokenPatternTransport>>,
 }
 
 impl RenderableTransport for TokenTreePatternBracketTransport {
@@ -43096,8 +43096,8 @@ pub struct TokenTreePatternBraceTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_pattern"))]
-    pub token_pattern: Option<Vec<TokenPatternTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns"))]
+    pub token_patterns: Option<Vec<TokenPatternTransport>>,
 }
 
 impl RenderableTransport for TokenTreePatternBraceTransport {
@@ -55814,18 +55814,18 @@ fn render_line_comment_content(t: &LineCommentContentTransport, dest: &mut dyn :
 }
 
 fn render_token_tree_pattern_paren(node: &TokenTreePatternParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.token_pattern.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.token_patterns.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let token_pattern_owned = node.token_pattern.as_deref().unwrap_or(&[]);
-    let token_pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = token_pattern_owned.iter()
+    let token_patterns_owned = node.token_patterns.as_deref().unwrap_or(&[]);
+    let token_patterns_buf: Vec<::sittir_core::filters::Renderable<'_>> = token_patterns_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TokenTreePatternParenTemplate {
-        token_pattern: ListNonterminalView {
-            items: token_pattern_buf.as_slice(),
+        token_patterns: ListNonterminalView {
+            items: token_patterns_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
@@ -55835,18 +55835,18 @@ fn render_token_tree_pattern_paren(node: &TokenTreePatternParenTransport, dest: 
 }
 
 fn render_token_tree_pattern_bracket(node: &TokenTreePatternBracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.token_pattern.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.token_patterns.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let token_pattern_owned = node.token_pattern.as_deref().unwrap_or(&[]);
-    let token_pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = token_pattern_owned.iter()
+    let token_patterns_owned = node.token_patterns.as_deref().unwrap_or(&[]);
+    let token_patterns_buf: Vec<::sittir_core::filters::Renderable<'_>> = token_patterns_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TokenTreePatternBracketTemplate {
-        token_pattern: ListNonterminalView {
-            items: token_pattern_buf.as_slice(),
+        token_patterns: ListNonterminalView {
+            items: token_patterns_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
@@ -55856,18 +55856,18 @@ fn render_token_tree_pattern_bracket(node: &TokenTreePatternBracketTransport, de
 }
 
 fn render_token_tree_pattern_brace(node: &TokenTreePatternBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.token_pattern.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.token_patterns.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let token_pattern_owned = node.token_pattern.as_deref().unwrap_or(&[]);
-    let token_pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = token_pattern_owned.iter()
+    let token_patterns_owned = node.token_patterns.as_deref().unwrap_or(&[]);
+    let token_patterns_buf: Vec<::sittir_core::filters::Renderable<'_>> = token_patterns_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TokenTreePatternBraceTemplate {
-        token_pattern: ListNonterminalView {
-            items: token_pattern_buf.as_slice(),
+        token_patterns: ListNonterminalView {
+            items: token_patterns_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,

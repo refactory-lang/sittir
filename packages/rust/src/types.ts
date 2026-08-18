@@ -5149,19 +5149,19 @@ export interface LineCommentDoc {
 
 export interface TokenTreePatternParen {
 	readonly $type: TSKindId.TokenTreePatternParen;
-	readonly _token_pattern?: readonly TokenPattern[];
+	readonly _token_patterns?: readonly TokenPattern[];
 	tokenPatterns(): readonly TokenPattern[];
 }
 
 export interface TokenTreePatternBracket {
 	readonly $type: TSKindId.TokenTreePatternBracket;
-	readonly _token_pattern?: readonly TokenPattern[];
+	readonly _token_patterns?: readonly TokenPattern[];
 	tokenPatterns(): readonly TokenPattern[];
 }
 
 export interface TokenTreePatternBrace {
 	readonly $type: TSKindId.TokenTreePatternBrace;
-	readonly _token_pattern?: readonly TokenPattern[];
+	readonly _token_patterns?: readonly TokenPattern[];
 	tokenPatterns(): readonly TokenPattern[];
 }
 

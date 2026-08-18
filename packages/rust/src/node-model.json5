@@ -652,13 +652,13 @@
     "_line_comment_doc.doc": {
       "doc_comment": "_line_doc_content"
     },
-    "_token_tree_pattern_paren.token_pattern": {
+    "_token_tree_pattern_paren.token_patterns": {
       "token_pattern_group1": "_non_special_token"
     },
-    "_token_tree_pattern_bracket.token_pattern": {
+    "_token_tree_pattern_bracket.token_patterns": {
       "token_pattern_group1": "_non_special_token"
     },
-    "_token_tree_pattern_brace.token_pattern": {
+    "_token_tree_pattern_brace.token_patterns": {
       "token_pattern_group1": "_non_special_token"
     },
     "_token_tree_paren.tokens": {
@@ -3663,7 +3663,7 @@
       }
     },
     "_token_tree_pattern_paren": {
-      "token_pattern": {
+      "token_patterns": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3672,7 +3672,7 @@
       }
     },
     "_token_tree_pattern_bracket": {
-      "token_pattern": {
+      "token_patterns": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3681,7 +3681,7 @@
       }
     },
     "_token_tree_pattern_brace": {
-      "token_pattern": {
+      "token_patterns": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -7734,7 +7734,7 @@
       "name": "_token_tree_pattern_brace",
       "fields": [
         {
-          "name": "token_pattern",
+          "name": "token_patterns",
           "propertyName": "tokenPatterns",
           "paramName": "tokenPatterns",
           "required": false,
@@ -7760,7 +7760,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "token_pattern"
+        "token_patterns"
       ]
     },
     {
@@ -7773,7 +7773,7 @@
       "name": "_token_tree_pattern_bracket",
       "fields": [
         {
-          "name": "token_pattern",
+          "name": "token_patterns",
           "propertyName": "tokenPatterns",
           "paramName": "tokenPatterns",
           "required": false,
@@ -7799,7 +7799,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "token_pattern"
+        "token_patterns"
       ]
     },
     {
@@ -7812,7 +7812,7 @@
       "name": "_token_tree_pattern_paren",
       "fields": [
         {
-          "name": "token_pattern",
+          "name": "token_patterns",
           "propertyName": "tokenPatterns",
           "paramName": "tokenPatterns",
           "required": false,
@@ -7838,7 +7838,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "token_pattern"
+        "token_patterns"
       ]
     },
     {

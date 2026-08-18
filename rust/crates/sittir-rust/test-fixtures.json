@@ -112502,7 +112502,7 @@
                   "end": 31
                 },
                 "$nodeHandle": 206,
-                "_token_pattern": []
+                "_token_patterns": []
               }
             },
             "_right": {
@@ -112670,7 +112670,7 @@
                 "$type": 385,
                 "$source": 0,
                 "$named": true,
-                "_token_pattern": [
+                "_token_patterns": [
                   "x",
                   {
                     "$type": 343,
@@ -112838,7 +112838,7 @@
                 "$type": 385,
                 "$source": 0,
                 "$named": true,
-                "_token_pattern": [
+                "_token_patterns": [
                   "y",
                   {
                     "$type": 343,
@@ -113012,7 +113012,7 @@
     "pattern": "macro_definition",
     "edits": [],
     "expectedSourceOut": "macro_rules!foo{ (x=>$e:expr)=>(println!(\"mode X: {}\",$e));(y=>$e:expr)=>(println!(\"mode Y: {}\",$e)) }",
-    "expectedReparseTree": "(macro_definition name: (identifier) (macro_definition_brace (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_pattern: (token_pattern_group1 (identifier)) token_pattern: (token_pattern_group1 (token_tree_punctuation)) token_pattern: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))) right: (token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))))) (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_pattern: (token_pattern_group1 (identifier)) token_pattern: (token_pattern_group1 (token_tree_punctuation)) token_pattern: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))) right: (token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable))))))))",
+    "expectedReparseTree": "(macro_definition name: (identifier) (macro_definition_brace (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (token_pattern_group1 (identifier)) token_patterns: (token_pattern_group1 (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))) right: (token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))))) (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (token_pattern_group1 (identifier)) token_patterns: (token_pattern_group1 (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))) right: (token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable))))))))",
     "wrappedText": "macro_rules!foo{ (x=>$e:expr)=>(println!(\"mode X: {}\",$e));(y=>$e:expr)=>(println!(\"mode Y: {}\",$e)) }",
     "wrappedOffset": 0
   },
@@ -113054,7 +113054,7 @@
                 "$type": 385,
                 "$source": 0,
                 "$named": true,
-                "_token_pattern": [
+                "_token_patterns": [
                   {
                     "$type": 166,
                     "$source": 0,
@@ -113099,7 +113099,7 @@
                           "$type": 386,
                           "$source": 0,
                           "$named": true,
-                          "_token_pattern": [
+                          "_token_patterns": [
                             {
                               "$type": 166,
                               "$source": 0,
@@ -113294,7 +113294,7 @@
     "pattern": "macro_definition",
     "edits": [],
     "expectedSourceOut": "macro_rules!o_O{ ($($x:expr;[$($y:expr)*])*)=>{ $($($x+$e)*)* } }",
-    "expectedReparseTree": "(macro_definition name: (identifier) (macro_definition_brace (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_pattern: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (token_pattern_group1 (token_tree_punctuation)) token_patterns: (token_tree_pattern (token_tree_pattern_bracket token_pattern: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))))))) right: (token_tree (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable))))))))",
+    "expectedReparseTree": "(macro_definition name: (identifier) (macro_definition_brace (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (token_pattern_group1 (token_tree_punctuation)) token_patterns: (token_tree_pattern (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))))))) right: (token_tree (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable))))))))",
     "wrappedText": "macro_rules!o_O{ ($($x:expr;[$($y:expr)*])*)=>{ $($($x+$e)*)* } }",
     "wrappedOffset": 0
   },
