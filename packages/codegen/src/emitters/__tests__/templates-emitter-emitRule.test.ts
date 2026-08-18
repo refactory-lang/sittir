@@ -52,7 +52,7 @@ function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 		isWordChar: (c: string) => /\w/.test(c),
 		// No merge-hazard pairs by default — tests opt in via overrides,
 		// mirroring how grammars opt in at emit time.
-		isHazardPair: () => false,
+		isLiteralMergePair: () => false,
 		externals: [],
 		rules: {},
 		visitingHelpers: new Set<string>(),
@@ -177,7 +177,7 @@ describe('emitRule — seq', () => {
 		// adjacent template literals into one write, so a static '..' + '=>'
 		// seam is invisible to the runtime writer and would re-lex as '..='
 		// plus a dangling '>'. A pair in no token ('!' + '[') stays tight.
-		const hazardCtx = makeCtx({ isHazardPair: (l: string, r: string) => l === '.' && r === '=' });
+		const hazardCtx = makeCtx({ isLiteralMergePair: (l: string, r: string) => l === '.' && r === '=' });
 		const hazard: SeqRule = {
 			type: SEQ,
 			members: [

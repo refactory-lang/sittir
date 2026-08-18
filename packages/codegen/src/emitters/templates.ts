@@ -59,7 +59,7 @@ import type {
 } from '../compiler/model/node-map.ts';
 import type { Rule, RuleBase, RenderRule, Multiplicity } from '../types/rule.ts';
 import type { CodegenEmitter } from './emitter.ts';
-import { classifyTemplateEmission, symbolHazardPairs, wordCharAsciiTable } from './shared.ts';
+import { classifyTemplateEmission, literalMergePairs, wordCharAsciiTable } from './shared.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
 
 export interface EmitTemplatesConfig {
@@ -77,11 +77,11 @@ export interface EmitCtx {
 	readonly wordMatcher: RegExp;
 	readonly isWordChar: (c: string) => boolean;
 	// Same merge-hazard pairs the emitted SpacingWriter table uses (one
-	// derivation: symbolHazardPairs over the transport literal inventory) —
+	// derivation: literalMergePairs over the transport literal inventory) —
 	// consumed by the static-seam join so emit-time and render-time apply
 	// ONE seam law: space only where the seam's char transition occurs
 	// inside some real token of the grammar.
-	readonly isHazardPair: (l: string, r: string) => boolean;
+	readonly isLiteralMergePair: (l: string, r: string) => boolean;
 	readonly externals: readonly string[];
 	readonly rules: Record<string, RenderRule>;
 	readonly visitingHelpers: Set<string>;
@@ -195,9 +195,9 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				const table = wordCharAsciiTable(this.#wordMatcher);
 				return (c: string) => (c.charCodeAt(0) < 128 ? table[c.charCodeAt(0)]! : /[\p{L}\p{N}]/u.test(c));
 			})(),
-			isHazardPair: (() => {
+			isLiteralMergePair: (() => {
 				const pairs = new Set(
-					symbolHazardPairs(getTransportProjection(config.nodeMap).literals).map(([a, b]) => a * 128 + b)
+					literalMergePairs(getTransportProjection(config.nodeMap).literals).map(([a, b]) => a * 128 + b)
 				);
 				return (l: string, r: string) =>
 					l.charCodeAt(0) < 128 && r.charCodeAt(0) < 128 && pairs.has(l.charCodeAt(0) * 128 + r.charCodeAt(0));
@@ -456,7 +456,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 						continue;
 					}
 					const wordSeam = ctx.isWordChar(l) && ctx.isWordChar(r);
-					const symbolSeam = l !== r && ctx.isHazardPair(l, r);
+					const symbolSeam = l !== r && ctx.isLiteralMergePair(l, r);
 					if (wordSeam || symbolSeam) body += ' ';
 					body += segments[i]!;
 				}

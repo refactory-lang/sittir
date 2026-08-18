@@ -27,9 +27,9 @@ pub struct WordMatcher {
     /// a dangling `>`). A pair occurring in NO token (`!`+`[` in rust's
     /// `#![...]`, `:`+`<` in the turbofish `::<`) cannot extend any munch
     /// and stays tight. Derived at emit time from the grammar's own
-    /// anonymous-literal inventory (shared.ts `symbolHazardPairs`) — never
+    /// anonymous-literal inventory (shared.ts `literalMergePairs`) — never
     /// hand-picked.
-    symbol_pairs: &'static [(u8, u8)],
+    literal_merge_pairs: &'static [(u8, u8)],
 }
 
 impl WordMatcher {
@@ -37,12 +37,12 @@ impl WordMatcher {
         Self {
             ascii,
             unicode_fallback,
-            symbol_pairs: &[],
+            literal_merge_pairs: &[],
         }
     }
 
-    pub const fn with_symbol_pairs(mut self, symbol_pairs: &'static [(u8, u8)]) -> Self {
-        self.symbol_pairs = symbol_pairs;
+    pub const fn with_literal_merge_pairs(mut self, literal_merge_pairs: &'static [(u8, u8)]) -> Self {
+        self.literal_merge_pairs = literal_merge_pairs;
         self
     }
 
@@ -65,12 +65,12 @@ impl WordMatcher {
     }
 
     #[inline]
-    pub fn is_hazard_pair(&self, left: char, right: char) -> bool {
+    pub fn is_literal_merge_pair(&self, left: char, right: char) -> bool {
         if (left as u32) >= 128 || (right as u32) >= 128 {
             return false;
         }
         let (l, r) = (left as u8, right as u8);
-        self.symbol_pairs.iter().any(|&(a, b)| a == l && b == r)
+        self.literal_merge_pairs.iter().any(|&(a, b)| a == l && b == r)
     }
 }
 
@@ -111,13 +111,13 @@ impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
         if let Some(last) = self.last {
             let word_seam = self.word.is_word(last) && self.word.is_word(first);
             // Identical-char seams (e.g. `>` closing nested generics in
-            // `Vec<Vec<T>>`) are excluded (never in `symbol_pairs`): a real
+            // `Vec<Vec<T>>`) are excluded (never in `literal_merge_pairs`): a real
             // doubled-char token like rust's `>>` shift operator only
             // exists as its own grammar rule with its own disambiguation
             // context, not as a blind concatenation hazard — spacing every
             // repeated symbol char would make already-common, unambiguous
             // constructs noisy for no correctness gain.
-            let symbol_seam = last != first && self.word.is_hazard_pair(last, first);
+            let symbol_seam = last != first && self.word.is_literal_merge_pair(last, first);
             if word_seam || symbol_seam {
                 self.inner.write_str(" ")?;
             }
@@ -179,12 +179,12 @@ mod tests {
         assert_eq!(spaced(&["_a", "_b"]), "_a _b");
     }
 
-    // A small hazard-pair set matching rust's `..=`/`=>` token transitions —
+    // A small literal-merge-pair set matching rust's `..=`/`=>` token transitions —
     // enough to exercise seam behavior without depending on the real emitted
     // per-grammar table.
     fn with_range_arrow_pairs() -> WordMatcher {
         WordMatcher::new(default_ascii_table(), char::is_alphanumeric)
-            .with_symbol_pairs(&[(b'.', b'='), (b'=', b'>')])
+            .with_literal_merge_pairs(&[(b'.', b'='), (b'=', b'>')])
     }
 
     fn spaced_with(word: &WordMatcher, parts: &[&str]) -> String {
@@ -197,7 +197,7 @@ mod tests {
     }
 
     #[test]
-    fn hazard_pair_seam_inserts() {
+    fn literal_merge_seam_inserts() {
         let word = with_range_arrow_pairs();
         // `d..` (bare range-to-end pattern) immediately followed by `=>`
         // would re-lex as `..=` + a dangling `>` without this insert — the
@@ -206,7 +206,7 @@ mod tests {
     }
 
     #[test]
-    fn non_hazard_symbol_seam_does_not_insert() {
+    fn non_merge_symbol_seam_does_not_insert() {
         let word = with_range_arrow_pairs();
         // Differing punctuation whose transition occurs in NO token stays
         // tight: `>` then `.` (method call on a generic result) cannot
@@ -231,9 +231,9 @@ mod tests {
     }
 
     #[test]
-    fn default_matcher_has_no_hazard_pairs() {
+    fn default_matcher_has_no_literal_merge_pairs() {
         // WordMatcher::default_ident() carries an empty pair set —
-        // grammars opt in via with_symbol_pairs at emit time.
+        // grammars opt in via with_literal_merge_pairs at emit time.
         assert_eq!(spaced(&["..", "=>"]), "..=>");
     }
 }

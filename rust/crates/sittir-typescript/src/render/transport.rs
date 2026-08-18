@@ -66930,7 +66930,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true],
     char::is_alphanumeric,
 )
-.with_symbol_pairs(&[(33, 61), (60, 61), (62, 61), (63, 46), (123, 124), (124, 125)]); // "!=" "<=" ">=" "?." "{|" "|}"
+.with_literal_merge_pairs(&[(33, 61), (60, 61), (62, 61), (63, 46), (123, 124), (124, 125)]); // "!=" "<=" ">=" "?." "{|" "|}"
 
 pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {
     let mut s = String::new();

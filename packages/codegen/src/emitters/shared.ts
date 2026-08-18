@@ -969,11 +969,15 @@ export function wordCharAsciiTable(wordMatcher: RegExp): boolean[] {
  * and letters): those characters are either already covered by the
  * word-class table or, for whitespace, never risk a token-fusion seam.
  *
- * Returns sorted `[left, right]` char-code pairs — the single derivation
- * behind BOTH the emitted SpacingWriter pair table (render-module.ts) and
- * the template emitter's static-seam join (templates.ts).
+ * This IS the literal-spanning seam check, reduced losslessly to the
+ * junction chars: a literal spanning a seam always places its junction
+ * transition adjacent inside itself, so testing the junction pair alone
+ * misses nothing. Returns sorted `[left, right]` char-code pairs — the
+ * single derivation behind BOTH the emitted SpacingWriter pair table
+ * (render-module.ts) and the template emitter's static-seam join
+ * (templates.ts).
  */
-export function symbolHazardPairs(literals: readonly { readonly text: string }[]): [number, number][] {
+export function literalMergePairs(literals: readonly { readonly text: string }[]): [number, number][] {
 	const excluded = /[A-Za-z0-9_\s]/;
 	const pairs = new Set<number>();
 	for (const literal of literals) {

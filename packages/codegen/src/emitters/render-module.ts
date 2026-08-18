@@ -63,7 +63,7 @@ import {
 	classifyPrimitiveField,
 	type PrimitiveFieldStorage,
 	wordCharAsciiTable,
-	symbolHazardPairs,
+	literalMergePairs,
 	fieldTypeComponents
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
@@ -931,8 +931,8 @@ function renderTypedDispatch(
 	const wordTable = wordCharAsciiTable(nodeMap.wordMatcher ?? /\w/);
 	// Per-grammar punctuation merge-hazard pairs, derived from this grammar's
 	// own anonymous literal inventory (`literals`, already collected for the
-	// unit-variant arms below) — see symbolHazardPairs' doc comment.
-	const hazardPairs = symbolHazardPairs(literals);
+	// unit-variant arms below) — see literalMergePairs' doc comment.
+	const mergePairs = literalMergePairs(literals);
 	lines.push(`/// Word-class table derived from this grammar's Link-pinned word pattern.`);
 	lines.push(
 		`static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core::spacing::WordMatcher::new(`
@@ -941,10 +941,10 @@ function renderTypedDispatch(
 	lines.push(`    char::is_alphanumeric,`);
 	lines.push(`)`);
 	lines.push(
-		`.with_symbol_pairs(&[${hazardPairs.map(([a, b]) => `(${a}, ${b})`).join(', ')}]); // ${
-			hazardPairs.length === 0
+		`.with_literal_merge_pairs(&[${mergePairs.map(([a, b]) => `(${a}, ${b})`).join(', ')}]); // ${
+			mergePairs.length === 0
 				? 'no multi-char punctuation transitions in this grammar'
-				: hazardPairs.map(([a, b]) => JSON.stringify(String.fromCharCode(a) + String.fromCharCode(b))).join(' ')
+				: mergePairs.map(([a, b]) => JSON.stringify(String.fromCharCode(a) + String.fromCharCode(b))).join(' ')
 		}`
 	);
 	lines.push('');
