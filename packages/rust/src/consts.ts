@@ -17,6 +17,7 @@ export const NODE_KINDS = [
 	'_function_type_trait_form',
 	'_impl_item_body',
 	'_let_chain',
+	'_lifetimes',
 	'_macro_definition_brace',
 	'_macro_definition_bracket',
 	'_macro_definition_paren',
@@ -28,10 +29,13 @@ export const NODE_KINDS = [
 	'_struct_pattern_elements',
 	'_tuple_pattern_elements',
 	'_type_argument',
+	'_type_arguments_elements',
+	'_type_parameters_elements',
 	'_use_bounds_elements',
 	'_use_clauses',
 	'_visibility_modifier_group1',
 	'_visibility_modifier_in_path',
+	'_where_predicates',
 	'abstract_type',
 	'arguments',
 	'array_expression',
@@ -2480,6 +2484,7 @@ export const FIELD_MAP: Record<
 		{ name: 'left', required: false, multiple: false },
 		{ name: 'rights', required: false, multiple: true }
 	],
+	_lifetimes: [{ name: 'lifetimes', required: true, multiple: true }],
 	_macro_definition_brace: [{ name: 'macroRules', required: false, multiple: false }],
 	_macro_definition_bracket: [{ name: 'macroRules', required: false, multiple: false }],
 	_macro_definition_paren: [{ name: 'macroRules', required: false, multiple: false }],
@@ -2494,10 +2499,13 @@ export const FIELD_MAP: Record<
 		{ name: 'content', required: true, multiple: false },
 		{ name: 'traitBounds', required: false, multiple: false }
 	],
+	_type_arguments_elements: [{ name: 'elements', required: true, multiple: true }],
+	_type_parameters_elements: [{ name: 'elements', required: true, multiple: true }],
 	_use_bounds_elements: [{ name: 'elements', required: true, multiple: true }],
 	_use_clauses: [{ name: 'useClauses', required: true, multiple: true }],
 	_visibility_modifier_group1: [{ name: 'content', required: true, multiple: false }],
 	_visibility_modifier_in_path: [{ name: 'path', required: true, multiple: false }],
+	_where_predicates: [{ name: 'wherePredicates', required: true, multiple: true }],
 	abstract_type: [
 		{ name: 'typeParameters', required: false, multiple: false },
 		{ name: 'trait', required: true, multiple: false }

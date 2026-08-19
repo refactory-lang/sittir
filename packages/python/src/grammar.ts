@@ -443,7 +443,7 @@ export type PythonGrammar = {
 		type: 'class_pattern';
 		named: true;
 		fields: {
-			arguments: { multiple: false; required: false; types: [{ type: 'case_patterns'; named: true }] };
+			arguments: { multiple: false; required: false; types: [{ type: 'list_pattern_case_patterns'; named: true }] };
 			dotted_name: { multiple: false; required: true; types: [{ type: 'dotted_name'; named: true }] };
 		};
 	};
@@ -1121,6 +1121,11 @@ export type PythonGrammar = {
 		fields: {};
 		children: { multiple: false; required: false; types: [{ type: 'pattern_group'; named: true }] };
 	};
+	readonly list_pattern_case_patterns: {
+		type: 'list_pattern_case_patterns';
+		named: true;
+		fields: { case_pattern: { multiple: true; required: true; types: [{ type: 'case_pattern'; named: true }] } };
+	};
 	readonly list_splat: {
 		type: 'list_splat';
 		named: true;
@@ -1621,17 +1626,17 @@ export type PythonGrammar = {
 		type: 'with_clause_paren';
 		named: true;
 		fields: {};
-		children: { multiple: false; required: true; types: [{ type: 'with_items'; named: true }] };
+		children: { multiple: false; required: true; types: [{ type: 'with_clause_with_items'; named: true }] };
+	};
+	readonly with_clause_with_items: {
+		type: 'with_clause_with_items';
+		named: true;
+		fields: { with_item: { multiple: true; required: true; types: [{ type: 'with_item'; named: true }] } };
 	};
 	readonly with_item: {
 		type: 'with_item';
 		named: true;
 		fields: { value: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] } };
-	};
-	readonly with_items: {
-		type: 'with_items';
-		named: true;
-		fields: { with_item: { multiple: true; required: true; types: [{ type: 'with_item'; named: true }] } };
 	};
 	readonly with_statement: {
 		type: 'with_statement';

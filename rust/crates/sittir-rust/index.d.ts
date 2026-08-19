@@ -1299,6 +1299,7 @@ export interface LifetimesTransport {
   '$triviaData'?: TransportTrivia
   _lifetime: Array<LifetimeTransport>
   _lifetime_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface LifetimeTransport {
@@ -2332,6 +2333,7 @@ export interface TypeArgumentsElementsTransport {
   '$triviaData'?: TransportTrivia
   _element: Array<TypeArgumentTransport>
   _element_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface TypeArgumentsTransport {
@@ -2420,6 +2422,7 @@ export interface TypeParametersElementsTransport {
   '$triviaData'?: TransportTrivia
   _element: Array<AttributedTypeParameterTransport>
   _element_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface TypeParametersTransport {
@@ -2681,6 +2684,7 @@ export interface WherePredicatesTransport {
   '$triviaData'?: TransportTrivia
   _where_predicate: Array<WherePredicateTransport>
   _where_predicate_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface WherePredicateTransport {

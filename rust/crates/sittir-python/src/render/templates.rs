@@ -192,6 +192,12 @@ pub struct KeyValuePatternTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_list_pattern_case_patterns.jinja", escape = "none")]
+pub struct ListPatternCasePatternsTemplate<'a> {
+    pub case_pattern: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_match_block_block.jinja", escape = "none")]
 pub struct MatchBlockBlockTemplate<'a> {
     pub alternative: ListNonterminalView<'a>,
@@ -279,12 +285,12 @@ pub struct WithClauseBareTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_with_clause_paren.jinja", escape = "none")]
 pub struct WithClauseParenTemplate<'a> {
-    pub with_items: SingleNonterminalView<'a>,
+    pub with_clause_with_items: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_with_items.jinja", escape = "none")]
-pub struct WithItemsTemplate<'a> {
+#[template(path = "_with_clause_with_items.jinja", escape = "none")]
+pub struct WithClauseWithItemsTemplate<'a> {
     pub with_item: ListNonterminalView<'a>,
 }
 

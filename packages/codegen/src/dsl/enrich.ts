@@ -246,11 +246,29 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 				? applyFieldWrapPasses(name, rule, kwRules, supertypeNames, rulesBag, wordMatcher)
 				: rule!;
 	}
+	// Whole-body list normalization: an existing rule whose ENTIRE body is a
+	// flank-carrying separated list in the nested-head spelling
+	// (`seq(seq(elem, repeat(sep elem)), flank)`) — e.g. python's upstream
+	// `_patterns`/`_parameters`/`_import_list` helpers — flattens to the
+	// canonical head-form so the link phase's separator lift recognizes it
+	// and the kind classifies 'separatedList' (kind-level flank keys), same
+	// as the mints below. Language-identical: seq nesting is associative.
+	for (const name of Object.keys(enrichedRules)) {
+		const rule = enrichedRules[name];
+		if (!rule || enrichSkip.has(name)) continue;
+		if (!isSeqType((rule as { type?: string }).type)) continue;
+		const info = separatedListBodyInfo(rule);
+		if (!info?.flankCarrying || info.form !== 'head') continue;
+		const members = (rule as unknown as { members: Rule[] }).members;
+		if (info.flatMembers === members) continue;
+		enrichedRules[name] = { ...rule, members: info.flatMembers } as Rule;
+	}
 	// Loop 2: clause/group hoisting + base-grammar un-aliasing, per rule in the
 	// same order loop 1 ran. The separated-list name counts computed from the
 	// fully field-wrapped grammar are what let a mint claim a bare element
-	// name only when it is globally unique.
+	// name only with global uniqueness.
 	separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
+	separatedListEnrichSkip = enrichSkip;
 	try {
 		for (const name of Object.keys(enrichedRules)) {
 			const rule = enrichedRules[name];
@@ -271,6 +289,7 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 		}
 	} finally {
 		separatedListNameCounts = null;
+		separatedListEnrichSkip = null;
 	}
 	// Base-grammar un-aliasing also needs to reach clause-hoist-minted group
 	// rules, not just the original rulesBag entries above. `applyEnrichPasses`
@@ -2243,6 +2262,10 @@ interface SeparatedListBodyInfo {
 	element: Rule;
 	/** The separator rule (STRING literal or CHOICE). */
 	separatorRule: Rule;
+	/** The body's members with any nested-head seq spliced FLAT — the
+	 *  canonical head-form spelling link's separator lift recognizes.
+	 *  Language-identical to the original (seq nesting is associative). */
+	flatMembers: Rule[];
 }
 
 /**
@@ -2316,7 +2339,7 @@ function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null {
 			const flank = peelOptionalEitherSpelling(members[1]!);
 			const flankLit = flank && isStringType((flank as { type?: string }).type) ? (flank as { value?: unknown }).value : null;
 			if (flankLit === null || (separatorLiteral !== null && flankLit !== separatorLiteral)) return null;
-			return { elementName, flankCarrying: true, form: 'leading' as const, element: detected.content as Rule, separatorRule: detected.separator as Rule };
+			return { elementName, flankCarrying: true, form: 'leading' as const, element: detected.content as Rule, separatorRule: detected.separator as Rule, flatMembers: members };
 		}
 		const head = members[repeatIdx - 1]!;
 		if (separatedListElementName(head) !== elementName || elementName === null) {
@@ -2348,7 +2371,7 @@ function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null {
 			// the "whole body is one list" reading.
 			return null;
 		}
-		return { elementName, flankCarrying, form: 'head' as const, element: detected.content as Rule, separatorRule: detected.separator as Rule };
+		return { elementName, flankCarrying, form: 'head' as const, element: detected.content as Rule, separatorRule: detected.separator as Rule, flatMembers: members };
 	}
 
 	// Tail-form: repeat is seq(elem, SEP); the optional(elem) member after the
@@ -2360,7 +2383,7 @@ function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null {
 	if (tail === null) return null;
 	if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
 	if (elementName === null && ruleKey(tail as RuntimeRule) !== ruleKey(detected.content as RuntimeRule)) return null;
-	return { elementName, flankCarrying: true, form: 'tail' as const, element: detected.content as Rule, separatorRule: detected.separator as Rule };
+	return { elementName, flankCarrying: true, form: 'tail' as const, element: detected.content as Rule, separatorRule: detected.separator as Rule, flatMembers: members };
 }
 
 interface InlineSeparatedListRun {
@@ -2488,6 +2511,13 @@ function collectSeparatedListNameProposals(rules: Record<string, Rule>): Map<str
  *  precedent; null outside enrich() (standalone hoist tests keep ordinal
  *  naming). */
 let separatedListNameCounts: Map<string, number> | null = null;
+
+/** The current enrich() call's skip set — consulted by the mint-path list
+ *  flattening (a skipped kind keeps its original body spelling: the skip
+ *  exists because downstream fielding must not touch it, and the flat
+ *  spelling changes its slot derivation). Same lifecycle as
+ *  {@link separatedListNameCounts}. */
+let separatedListEnrichSkip: ReadonlySet<string> | null = null;
 
 function absorbTrailingListSeparators(members: Rule[]): Rule[] | null {
 	let changed = false;
@@ -2784,7 +2814,7 @@ function applyClauseHoist(
 							repeatFn(seqFn(run.info.separatorRule, run.info.element)),
 							optionalFn(run.info.separatorRule)
 						)
-					: run.body;
+					: seqFn(...run.info.flatMembers);
 				const names = visibleGroupSynthName(
 					body,
 					parentKind,
@@ -3335,12 +3365,12 @@ function visibleGroupSynthName(
 		return { visibleName: existing, hiddenName };
 	}
 	const base = parentKind.replace(/^_+/, '');
-	const register = (visibleName: string): { visibleName: string; hiddenName: string } => {
+	const register = (visibleName: string, body: Rule = registeredBody): { visibleName: string; hiddenName: string } => {
 		const hiddenName = `_${visibleName}`;
 		groupDedupeMap[key] = visibleName;
 		// Pass 1 — uniform hidden creation: register the seq body as a HIDDEN
 		// rule so tree-sitter sees a single named symbol to alias.
-		clauseGroupRules[hiddenName] = registeredBody;
+		clauseGroupRules[hiddenName] = body;
 		return { visibleName, hiddenName };
 	};
 	// Separated-list naming: a flank-carrying list body names its kind after
@@ -3357,8 +3387,19 @@ function visibleGroupSynthName(
 		if (bare !== null && separatedListNameCounts!.get(bare) === 1) candidates.push(bare);
 		if (bare !== null && base !== bare && !base.endsWith(`_${bare}`)) candidates.push(`${base}_${bare}`);
 		if (bare !== `${base}_elements`) candidates.push(base.endsWith('_elements') ? base : `${base}_elements`);
+		// Register the FLATTENED head-form spelling — the canonical shape the
+		// link phase's separator lift recognizes, so the kind classifies
+		// 'separatedList' (kind-level flank keys) instead of 'group' with
+		// per-field capture. Language-identical (seq nesting is associative);
+		// the ambient prec wrapper re-applies around the flat seq.
+		const flatBody = { ...content, members: listInfo.flatMembers } as Rule;
+		const registeredFlat = ambientPrec ? ({ ...ambientPrec, content: flatBody } as Rule) : flatBody;
 		for (const candidate of candidates) {
-			if (nameFree(candidate)) return register(candidate);
+			if (!nameFree(candidate)) continue;
+			const skipped =
+				separatedListEnrichSkip !== null &&
+				(separatedListEnrichSkip.has(candidate) || separatedListEnrichSkip.has(`_${candidate}`));
+			return register(candidate, skipped ? registeredBody : registeredFlat);
 		}
 	}
 	if (enclosingFieldName !== undefined) {

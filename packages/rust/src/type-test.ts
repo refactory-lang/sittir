@@ -186,6 +186,8 @@ import type {
 	LifetimeParameter,
 	LifetimeParameterTree,
 	LifetimeTree,
+	Lifetimes,
+	LifetimesTree,
 	LineComment,
 	LineCommentContent,
 	LineCommentContentTree,
@@ -349,6 +351,8 @@ import type {
 	TypeArgument,
 	TypeArgumentTree,
 	TypeArguments,
+	TypeArgumentsElements,
+	TypeArgumentsElementsTree,
 	TypeArgumentsTree,
 	TypeBinding,
 	TypeBindingTree,
@@ -361,6 +365,8 @@ import type {
 	TypeParameter,
 	TypeParameterTree,
 	TypeParameters,
+	TypeParametersElements,
+	TypeParametersElementsTree,
 	TypeParametersTree,
 	UnaryExpression,
 	UnaryExpressionTree,
@@ -398,6 +404,8 @@ import type {
 	WhereClauseTree,
 	WherePredicate,
 	WherePredicateTree,
+	WherePredicates,
+	WherePredicatesTree,
 	WhileExpression,
 	WhileExpressionTree,
 	YieldExpression,
@@ -607,6 +615,10 @@ export type _Type_FieldDeclarationListElements = _TypeAssert<
 export type _Type_OrderedFieldDeclarationListElements = _TypeAssert<
 	_TypeExtends<OrderedFieldDeclarationListElements['$type'], TSKindId.OrderedFieldDeclarationListElements>
 >;
+export type _Type_WherePredicates = _TypeAssert<_TypeExtends<WherePredicates['$type'], TSKindId.WherePredicates>>;
+export type _Type_TypeParametersElements = _TypeAssert<
+	_TypeExtends<TypeParametersElements['$type'], TSKindId.TypeParametersElements>
+>;
 export type _Type_UseClauses = _TypeAssert<_TypeExtends<UseClauses['$type'], TSKindId.UseClauses>>;
 export type _Type_ParametersElements = _TypeAssert<
 	_TypeExtends<ParametersElements['$type'], TSKindId.ParametersElements>
@@ -614,7 +626,11 @@ export type _Type_ParametersElements = _TypeAssert<
 export type _Type_VisibilityModifierGroup1 = _TypeAssert<
 	_TypeExtends<VisibilityModifierGroup1['$type'], TSKindId.VisibilityModifierGroup1>
 >;
+export type _Type_Lifetimes = _TypeAssert<_TypeExtends<Lifetimes['$type'], TSKindId.Lifetimes>>;
 export type _Type_UseBoundsElements = _TypeAssert<_TypeExtends<UseBoundsElements['$type'], TSKindId.UseBoundsElements>>;
+export type _Type_TypeArgumentsElements = _TypeAssert<
+	_TypeExtends<TypeArgumentsElements['$type'], TSKindId.TypeArgumentsElements>
+>;
 export type _Type_ArgumentsElements = _TypeAssert<_TypeExtends<ArgumentsElements['$type'], TSKindId.ArgumentsElements>>;
 export type _Type_FieldInitializerListElements = _TypeAssert<
 	_TypeExtends<FieldInitializerListElements['$type'], TSKindId.FieldInitializerListElements>
@@ -1039,6 +1055,10 @@ export type _Tree_FieldDeclarationListElements = _TypeAssert<
 export type _Tree_OrderedFieldDeclarationListElements = _TypeAssert<
 	_TypeExtends<OrderedFieldDeclarationListElementsTree['type'], '_ordered_field_declaration_list_elements'>
 >;
+export type _Tree_WherePredicates = _TypeAssert<_TypeExtends<WherePredicatesTree['type'], '_where_predicates'>>;
+export type _Tree_TypeParametersElements = _TypeAssert<
+	_TypeExtends<TypeParametersElementsTree['type'], '_type_parameters_elements'>
+>;
 export type _Tree_UseClauses = _TypeAssert<_TypeExtends<UseClausesTree['type'], '_use_clauses'>>;
 export type _Tree_ParametersElements = _TypeAssert<
 	_TypeExtends<ParametersElementsTree['type'], '_parameters_elements'>
@@ -1046,7 +1066,11 @@ export type _Tree_ParametersElements = _TypeAssert<
 export type _Tree_VisibilityModifierGroup1 = _TypeAssert<
 	_TypeExtends<VisibilityModifierGroup1Tree['type'], '_visibility_modifier_group1'>
 >;
+export type _Tree_Lifetimes = _TypeAssert<_TypeExtends<LifetimesTree['type'], '_lifetimes'>>;
 export type _Tree_UseBoundsElements = _TypeAssert<_TypeExtends<UseBoundsElementsTree['type'], '_use_bounds_elements'>>;
+export type _Tree_TypeArgumentsElements = _TypeAssert<
+	_TypeExtends<TypeArgumentsElementsTree['type'], '_type_arguments_elements'>
+>;
 export type _Tree_ArgumentsElements = _TypeAssert<_TypeExtends<ArgumentsElementsTree['type'], '_arguments_elements'>>;
 export type _Tree_FieldInitializerListElements = _TypeAssert<
 	_TypeExtends<FieldInitializerListElementsTree['type'], '_field_initializer_list_elements'>

@@ -1044,7 +1044,18 @@ function enrich(baseInput, config) {
     const rule = rulesBag[name];
     enrichedRules[name] = rule && !enrichSkip.has(name) ? applyFieldWrapPasses(name, rule, kwRules, supertypeNames, rulesBag, wordMatcher) : rule;
   }
+  for (const name of Object.keys(enrichedRules)) {
+    const rule = enrichedRules[name];
+    if (!rule || enrichSkip.has(name)) continue;
+    if (!isSeqType(rule.type)) continue;
+    const info = separatedListBodyInfo(rule);
+    if (!info?.flankCarrying || info.form !== "head") continue;
+    const members = rule.members;
+    if (info.flatMembers === members) continue;
+    enrichedRules[name] = { ...rule, members: info.flatMembers };
+  }
   separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
+  separatedListEnrichSkip = enrichSkip;
   try {
     for (const name of Object.keys(enrichedRules)) {
       const rule = enrichedRules[name];
@@ -1065,6 +1076,7 @@ function enrich(baseInput, config) {
     }
   } finally {
     separatedListNameCounts = null;
+    separatedListEnrichSkip = null;
   }
   for (const groupName of Object.keys(clauseGroupRules)) {
     const groupBody = clauseGroupRules[groupName];
@@ -2226,7 +2238,7 @@ function separatedListBodyInfo(body) {
       const flank = peelOptionalEitherSpelling(members[1]);
       const flankLit = flank && isStringType(flank.type) ? flank.value : null;
       if (flankLit === null || separatorLiteral !== null && flankLit !== separatorLiteral) return null;
-      return { elementName, flankCarrying: true, form: "leading", element: detected.content, separatorRule: detected.separator };
+      return { elementName, flankCarrying: true, form: "leading", element: detected.content, separatorRule: detected.separator, flatMembers: members };
     }
     const head = members[repeatIdx - 1];
     if (separatedListElementName(head) !== elementName || elementName === null) {
@@ -2247,14 +2259,14 @@ function separatedListBodyInfo(body) {
       }
       return null;
     }
-    return { elementName, flankCarrying, form: "head", element: detected.content, separatorRule: detected.separator };
+    return { elementName, flankCarrying, form: "head", element: detected.content, separatorRule: detected.separator, flatMembers: members };
   }
   if (repeatIdx !== 0 || members.length !== 2) return null;
   const tail = peelOptionalEitherSpelling(members[1]);
   if (tail === null) return null;
   if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
   if (elementName === null && ruleKey(tail) !== ruleKey(detected.content)) return null;
-  return { elementName, flankCarrying: true, form: "tail", element: detected.content, separatorRule: detected.separator };
+  return { elementName, flankCarrying: true, form: "tail", element: detected.content, separatorRule: detected.separator, flatMembers: members };
 }
 function detectInlineSeparatedListRuns(members) {
   const carriesRepeat = (m) => {
@@ -2326,6 +2338,7 @@ function collectSeparatedListNameProposals(rules) {
   return new Map([...keysByName].map(([name, keys]) => [name, keys.size]));
 }
 var separatedListNameCounts = null;
+var separatedListEnrichSkip = null;
 function absorbTrailingListSeparators(members) {
   let changed = false;
   const out = [];
@@ -2501,7 +2514,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
           run.info.element,
           repeatFn(seqFn(run.info.separatorRule, run.info.element)),
           optionalFn(run.info.separatorRule)
-        ) : run.body;
+        ) : seqFn(...run.info.flatMembers);
         const names = visibleGroupSynthName(
           body,
           parentKind,
@@ -2832,10 +2845,10 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
     return { visibleName: existing, hiddenName: hiddenName2 };
   }
   const base2 = parentKind.replace(/^_+/, "");
-  const register = (visibleName2) => {
+  const register = (visibleName2, body = registeredBody) => {
     const hiddenName2 = `_${visibleName2}`;
     groupDedupeMap[key] = visibleName2;
-    clauseGroupRules[hiddenName2] = registeredBody;
+    clauseGroupRules[hiddenName2] = body;
     return { visibleName: visibleName2, hiddenName: hiddenName2 };
   };
   const listInfo = separatedListNameCounts !== null ? separatedListBodyInfo(content) : null;
@@ -2846,8 +2859,12 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
     if (bare !== null && separatedListNameCounts.get(bare) === 1) candidates.push(bare);
     if (bare !== null && base2 !== bare && !base2.endsWith(`_${bare}`)) candidates.push(`${base2}_${bare}`);
     if (bare !== `${base2}_elements`) candidates.push(base2.endsWith("_elements") ? base2 : `${base2}_elements`);
+    const flatBody = { ...content, members: listInfo.flatMembers };
+    const registeredFlat = ambientPrec ? { ...ambientPrec, content: flatBody } : flatBody;
     for (const candidate of candidates) {
-      if (nameFree(candidate)) return register(candidate);
+      if (!nameFree(candidate)) continue;
+      const skipped = separatedListEnrichSkip !== null && (separatedListEnrichSkip.has(candidate) || separatedListEnrichSkip.has(`_${candidate}`));
+      return register(candidate, skipped ? registeredBody : registeredFlat);
     }
   }
   if (enclosingFieldName !== void 0) {

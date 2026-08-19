@@ -1189,7 +1189,7 @@
         "required": false,
         "types": [
           {
-            "type": "case_patterns",
+            "type": "list_pattern_case_patterns",
             "named": true
           }
         ]
@@ -2982,6 +2982,22 @@
     }
   },
   {
+    "type": "list_pattern_case_patterns",
+    "named": true,
+    "fields": {
+      "case_pattern": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "case_pattern",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "list_splat",
     "named": true,
     "fields": {
@@ -4327,10 +4343,26 @@
       "required": true,
       "types": [
         {
-          "type": "with_items",
+          "type": "with_clause_with_items",
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "with_clause_with_items",
+    "named": true,
+    "fields": {
+      "with_item": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "with_item",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -4343,22 +4375,6 @@
         "types": [
           {
             "type": "expression",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "with_items",
-    "named": true,
-    "fields": {
-      "with_item": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "with_item",
             "named": true
           }
         ]

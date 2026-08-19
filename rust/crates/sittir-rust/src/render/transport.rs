@@ -38198,6 +38198,8 @@ pub struct WherePredicatesTransport {
     pub where_predicate: Vec<WherePredicateTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate_trailing_sep"))]
     pub where_predicate_trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for WherePredicatesTransport {
@@ -38250,6 +38252,8 @@ pub struct TypeParametersElementsTransport {
     pub element: Vec<AttributedTypeParameterTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
     pub element_trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for TypeParametersElementsTransport {
@@ -38760,6 +38764,8 @@ pub struct LifetimesTransport {
     pub lifetime: Vec<LifetimeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime_trailing_sep"))]
     pub lifetime_trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for LifetimesTransport {
@@ -38866,6 +38872,8 @@ pub struct TypeArgumentsElementsTransport {
     pub element: Vec<TypeArgumentTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
     pub element_trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for TypeArgumentsElementsTransport {
@@ -55388,7 +55396,7 @@ fn render_where_predicates(node: &WherePredicatesTransport, dest: &mut dyn ::std
             items: where_predicate_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.where_predicate_trailing_sep.unwrap_or(false),
+            trailing: node.trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -55408,7 +55416,7 @@ fn render_type_parameters_elements(node: &TypeParametersElementsTransport, dest:
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.element_trailing_sep.unwrap_or(false),
+            trailing: node.trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -55505,7 +55513,7 @@ fn render_lifetimes(node: &LifetimesTransport, dest: &mut dyn ::std::fmt::Write)
             items: lifetime_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.lifetime_trailing_sep.unwrap_or(false),
+            trailing: node.trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -55545,7 +55553,7 @@ fn render_type_arguments_elements(node: &TypeArgumentsElementsTransport, dest: &
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.element_trailing_sep.unwrap_or(false),
+            trailing: node.trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)

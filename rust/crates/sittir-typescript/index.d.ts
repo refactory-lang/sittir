@@ -1114,6 +1114,7 @@ export interface FormalParametersElementsTransport {
   '$triviaData'?: TransportTrivia
   _formal_parameter: Array<FormalParameterTransport>
   _formal_parameter_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface FormalParametersTransport {
@@ -2638,6 +2639,7 @@ export interface TypeParametersElementsTransport {
   '$triviaData'?: TransportTrivia
   _type_parameter: Array<TypeParameterTransport>
   _type_parameter_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface TypeParametersTransport {
@@ -2783,6 +2785,7 @@ export interface TypesTransport {
   '$triviaData'?: TransportTrivia
   _type: Array<TypeTransport>
   _type_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface UnaryExpressionTransport {

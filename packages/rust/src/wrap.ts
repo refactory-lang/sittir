@@ -8904,76 +8904,61 @@ export function wrapOrderedFieldDeclarationListElements(
 	);
 }
 
-export function wrapWherePredicates(data: T.WherePredicates, tree: TreeHandle) {
-	const _node = withMethods(
+export function wrapWherePredicates(
+	data: T.WherePredicates & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._where_predicate, true, 'where_predicate', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'where_predicate',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
 		{
 			...data,
 			$type: TSKindId.WherePredicates as const,
-			_where_predicate: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._where_predicate, ['where_predicate']),
-				true,
-				'where_predicate',
-				{ tree, nodeType: data.$type, slotName: 'where_predicate', span: (data as _NodeData).$span }
-			),
-			_where_predicate_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._where_predicate) ? data._where_predicate : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			),
+			_where_predicate: _content,
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			wherePredicates() {
 				return drillInAll<T.WherePredicate>(this._where_predicate as readonly T.WherePredicate[] | undefined, tree);
 			},
-			$with: {
-				wherePredicates: (...v: NonEmptyArray<NonNullable<T.WherePredicates['_where_predicate']>[number]>) =>
-					wrapWherePredicates({ ...data, _where_predicate: v }, tree)
-			}
+			$with: {}
 		},
 		methodsEngine
 	);
-	return _node;
 }
 
-export function wrapTypeParametersElements(data: T.TypeParametersElements, tree: TreeHandle) {
-	const _node = withMethods(
+export function wrapTypeParametersElements(
+	data: T.TypeParametersElements & {
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._element, true, 'element', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'element',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
 		{
 			...data,
 			$type: TSKindId.TypeParametersElements as const,
-			_element: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._element, ['_attributed_type_parameter', 'attributed_type_parameter']),
-				true,
-				'element',
-				{ tree, nodeType: data.$type, slotName: 'element', span: (data as _NodeData).$span }
-			),
-			_element_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._element) ? data._element : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			),
+			_element: _content,
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			elements() {
 				return drillAsAll<T.AttributedTypeParameter>(this._element, tree, [
 					{ from: 'attributed_type_parameter', to: '_attributed_type_parameter' }
 				]);
 			},
-			$with: {
-				elements: (...v: NonEmptyArray<NonNullable<T.TypeParametersElements['_element']>[number]>) =>
-					wrapTypeParametersElements({ ...data, _element: v }, tree)
-			}
+			$with: {}
 		},
 		methodsEngine
 	);
-	return _node;
 }
 
 export function wrapUseClauses(
@@ -9069,39 +9054,30 @@ export function wrapVisibilityModifierGroup1(
 	return _node;
 }
 
-export function wrapLifetimes(data: T.Lifetimes, tree: TreeHandle) {
-	const _node = withMethods(
+export function wrapLifetimes(
+	data: T.Lifetimes & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._lifetime, true, 'lifetime', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'lifetime',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
 		{
 			...data,
 			$type: TSKindId.Lifetimes as const,
-			_lifetime: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._lifetime, ['lifetime']), true, 'lifetime', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'lifetime',
-				span: (data as _NodeData).$span
-			}),
-			_lifetime_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._lifetime) ? data._lifetime : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			),
+			_lifetime: _content,
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			lifetimes() {
 				return drillInAll<T.Lifetime>(this._lifetime as readonly T.Lifetime[] | undefined, tree);
 			},
-			$with: {
-				lifetimes: (...v: NonEmptyArray<NonNullable<T.Lifetimes['_lifetime']>[number]>) =>
-					wrapLifetimes({ ...data, _lifetime: v }, tree)
-			}
+			$with: {}
 		},
 		methodsEngine
 	);
-	return _node;
 }
 
 export function wrapUseBoundsElements(
@@ -9136,39 +9112,33 @@ export function wrapUseBoundsElements(
 	);
 }
 
-export function wrapTypeArgumentsElements(data: T.TypeArgumentsElements, tree: TreeHandle) {
-	const _node = withMethods(
+export function wrapTypeArgumentsElements(
+	data: T.TypeArgumentsElements & {
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._element, true, 'element', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'element',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
 		{
 			...data,
 			$type: TSKindId.TypeArgumentsElements as const,
-			_element: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._element, ['_type_argument', 'type_argument']),
-				true,
-				'element',
-				{ tree, nodeType: data.$type, slotName: 'element', span: (data as _NodeData).$span }
-			),
-			_element_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._element) ? data._element : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			),
+			_element: _content,
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			elements() {
 				return drillAsAll<T.TypeArgument>(this._element, tree, [{ from: 'type_argument', to: '_type_argument' }]);
 			},
-			$with: {
-				elements: (...v: NonEmptyArray<NonNullable<T.TypeArgumentsElements['_element']>[number]>) =>
-					wrapTypeArgumentsElements({ ...data, _element: v }, tree)
-			}
+			$with: {}
 		},
 		methodsEngine
 	);
-	return _node;
 }
 
 export function wrapArgumentsElements(

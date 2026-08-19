@@ -10,6 +10,7 @@ export const NODE_KINDS = [
 	'_export_statement_default_ns_from',
 	'_export_statement_default_star_from',
 	'_for_header_lhs',
+	'_formal_parameters_elements',
 	'_import_clause_default_import',
 	'_import_clause_group1',
 	'_import_specifiers',
@@ -18,6 +19,8 @@ export const NODE_KINDS = [
 	'_jsx_string',
 	'_public_field_definition_declare_first',
 	'_tuple_type_members',
+	'_type_parameters_elements',
+	'_types',
 	'abstract_class_declaration',
 	'abstract_method_signature',
 	'adding_type_annotation',
@@ -2582,6 +2585,7 @@ export const FIELD_MAP: Record<
 	],
 	_export_statement_default_star_from: [{ name: 'source', required: true, multiple: false }],
 	_for_header_lhs: [{ name: 'left', required: true, multiple: false }],
+	_formal_parameters_elements: [{ name: 'formalParameters', required: true, multiple: true }],
 	_import_clause_default_import: [
 		{ name: 'importIdentifier', required: true, multiple: false },
 		{ name: 'importClauseGroup1', required: false, multiple: false }
@@ -2599,6 +2603,8 @@ export const FIELD_MAP: Record<
 	],
 	_public_field_definition_declare_first: [{ name: 'accessibilityModifier', required: false, multiple: false }],
 	_tuple_type_members: [{ name: 'tupleTypeMembers', required: true, multiple: true }],
+	_type_parameters_elements: [{ name: 'typeParameters', required: true, multiple: true }],
+	_types: [{ name: 'types', required: true, multiple: true }],
 	abstract_class_declaration: [
 		{ name: 'decorators', required: false, multiple: true },
 		{ name: 'name', required: true, multiple: false },

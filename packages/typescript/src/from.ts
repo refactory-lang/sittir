@@ -342,6 +342,9 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_export_specifiers: TSKindId.ExportSpecifiers,
 	_import_clause_group1: TSKindId.ImportClauseGroup1,
 	_import_specifiers: TSKindId.ImportSpecifiers,
+	_formal_parameters_elements: TSKindId.FormalParametersElements,
+	_types: TSKindId.Types,
+	_type_parameters_elements: TSKindId.TypeParametersElements,
 	_tuple_type_members: TSKindId.TupleTypeMembers,
 	object_type_content: TSKindId.ObjectTypeContent,
 	_export_statement_default: TSKindId.ExportStatementDefault,
@@ -412,6 +415,12 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildImportClauseGroup1(children[0] as Parameters<typeof F.buildImportClauseGroup1>[0]);
 		case '_import_specifiers':
 			return (F.buildImportSpecifiers as (...args: unknown[]) => unknown)(...children);
+		case '_formal_parameters_elements':
+			return (F.buildFormalParametersElements as (...args: unknown[]) => unknown)(...children);
+		case '_types':
+			return (F.buildTypes as (...args: unknown[]) => unknown)(...children);
+		case '_type_parameters_elements':
+			return (F.buildTypeParametersElements as (...args: unknown[]) => unknown)(...children);
 		case '_tuple_type_members':
 			return (F.buildTupleTypeMembers as (...args: unknown[]) => unknown)(...children);
 		case 'object_type_content':

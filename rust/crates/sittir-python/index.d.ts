@@ -286,6 +286,7 @@ export interface CasePatternsTransport {
   '$triviaData'?: TransportTrivia
   _case_pattern: Array<CasePatternTransport>
   _case_pattern_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface CasePatternTransport {
@@ -345,7 +346,7 @@ export interface ClassPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _dotted_name: DottedNameTransport
-  _arguments?: CasePatternsTransport
+  _arguments?: ListPatternCasePatternsTransport
 }
 
 export interface CollectionElementsTransport {
@@ -358,6 +359,7 @@ export interface CollectionElementsTransport {
   '$triviaData'?: TransportTrivia
   _element: Array<CollectionElementsElementTransportSlot>
   _element_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface ComparisonOperatorComparatorTransport {
@@ -914,6 +916,7 @@ export interface ImportListTransport {
   '$triviaData'?: TransportTrivia
   _name: Array<ImportListNameTransportSlot>
   _name_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface ImportStatementTransport {
@@ -1024,6 +1027,19 @@ export interface ListComprehensionTransport {
   '$triviaData'?: TransportTrivia
   _body: Box<ExpressionTransport>
   _comprehension_clauses: ComprehensionClausesTransport
+}
+
+export interface ListPatternCasePatternsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _case_pattern: Array<CasePatternTransport>
+  _case_pattern_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface ListPatternTransport {
@@ -1198,6 +1214,7 @@ export interface ParametersTransport {
   '$triviaData'?: TransportTrivia
   _parameter: Array<ParameterTransport>
   _parameter_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface ParenthesizedExpressionTransport {
@@ -1257,6 +1274,7 @@ export interface PatternsTransport {
   '$triviaData'?: TransportTrivia
   _pattern: Array<PatternTransport>
   _pattern_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface PrintStatementGroup1Transport {
@@ -1386,6 +1404,7 @@ export interface SimpleStatementsElementsTransport {
   '$triviaData'?: TransportTrivia
   _simple_statement: Array<SimpleStatementTransport>
   _simple_statement_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface SimpleStatementsTransport {
@@ -1482,6 +1501,7 @@ export interface SubjectsTransport {
   '$triviaData'?: TransportTrivia
   _subject: Array<ExpressionTransport>
   _subject_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface SubscriptsTransport {
@@ -1494,6 +1514,7 @@ export interface SubscriptsTransport {
   '$triviaData'?: TransportTrivia
   _subscript: Array<SubscriptsSubscriptTransportSlot>
   _subscript_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface SubscriptTransport {
@@ -1629,6 +1650,7 @@ export interface TypesTransport {
   '$triviaData'?: TransportTrivia
   _type: Array<TypeTransport>
   _type_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface TypeTransport {
@@ -1700,6 +1722,7 @@ export interface WithClauseBareTransport {
   '$triviaData'?: TransportTrivia
   _with_item: Array<WithItemTransport>
   _with_item_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface WithClauseParenTransport {
@@ -1710,7 +1733,7 @@ export interface WithClauseParenTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _with_items: WithItemsTransport
+  _with_clause_with_items: WithClauseWithItemsTransport
   _with_item?: Array<WithItemTransport>
 }
 
@@ -1725,7 +1748,7 @@ export interface WithClauseTransport {
   _content: WithClauseContentTransportSlot
 }
 
-export interface WithItemsTransport {
+export interface WithClauseWithItemsTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1735,6 +1758,7 @@ export interface WithItemsTransport {
   '$triviaData'?: TransportTrivia
   _with_item: Array<WithItemTransport>
   _with_item_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface WithItemTransport {

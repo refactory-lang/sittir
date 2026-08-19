@@ -4643,8 +4643,23 @@ function _buildOrderedFieldDeclarationListElements(
 	);
 }
 
-export function buildWherePredicates(config: T.WherePredicates.Config, options: { trailing?: boolean } = {}) {
-	const _where_predicate = config.wherePredicate ?? [];
+export function buildWherePredicates(
+	...elements: NonEmptyArray<T.WherePredicate>
+): ReturnType<typeof _buildWherePredicates>;
+export function buildWherePredicates(
+	options: { trailing?: boolean },
+	...elements: NonEmptyArray<T.WherePredicate>
+): ReturnType<typeof _buildWherePredicates>;
+export function buildWherePredicates(...args: ({ trailing?: boolean } | T.WherePredicate)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.WherePredicate>;
+	return _buildWherePredicates(elements, options);
+}
+function _buildWherePredicates(elements: NonEmptyArray<T.WherePredicate>, options: { trailing?: boolean }) {
+	_assertNonEmpty(elements, '_where_predicates.elements');
+	const _where_predicate = elements;
+	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
 			{
@@ -4652,11 +4667,10 @@ export function buildWherePredicates(config: T.WherePredicates.Config, options: 
 				$source: 2 as const,
 				$named: true as const,
 				_where_predicate,
-				_where_predicate_trailing_sep: options.trailing ?? false,
+				_trailing_sep,
 				$with: {
-					wherePredicates: (...values: NonEmptyArray<T.WherePredicate>) =>
-						buildWherePredicates({ ...config, wherePredicate: values }, options),
-					trailing: (v: boolean) => buildWherePredicates(config, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.WherePredicate>) => buildWherePredicates(options, ...vs),
+					trailing: (v: boolean) => buildWherePredicates({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{
@@ -4668,10 +4682,25 @@ export function buildWherePredicates(config: T.WherePredicates.Config, options: 
 }
 
 export function buildTypeParametersElements(
-	config: T.TypeParametersElements.Config,
-	options: { trailing?: boolean } = {}
+	...elements: NonEmptyArray<T.AttributedTypeParameter>
+): ReturnType<typeof _buildTypeParametersElements>;
+export function buildTypeParametersElements(
+	options: { trailing?: boolean },
+	...elements: NonEmptyArray<T.AttributedTypeParameter>
+): ReturnType<typeof _buildTypeParametersElements>;
+export function buildTypeParametersElements(...args: ({ trailing?: boolean } | T.AttributedTypeParameter)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedTypeParameter>;
+	return _buildTypeParametersElements(elements, options);
+}
+function _buildTypeParametersElements(
+	elements: NonEmptyArray<T.AttributedTypeParameter>,
+	options: { trailing?: boolean }
 ) {
-	const _element = config.element ?? [];
+	_assertNonEmpty(elements, '_type_parameters_elements.elements');
+	const _element = elements;
+	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
 			{
@@ -4679,11 +4708,10 @@ export function buildTypeParametersElements(
 				$source: 2 as const,
 				$named: true as const,
 				_element,
-				_element_trailing_sep: options.trailing ?? false,
+				_trailing_sep,
 				$with: {
-					elements: (...values: NonEmptyArray<T.AttributedTypeParameter>) =>
-						buildTypeParametersElements({ ...config, element: values }, options),
-					trailing: (v: boolean) => buildTypeParametersElements(config, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.AttributedTypeParameter>) => buildTypeParametersElements(options, ...vs),
+					trailing: (v: boolean) => buildTypeParametersElements({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{
@@ -4789,8 +4817,21 @@ export function buildVisibilityModifierGroup1(child: T.Self | T.Super | T.Crate 
 	);
 }
 
-export function buildLifetimes(config: T.Lifetimes.Config, options: { trailing?: boolean } = {}) {
-	const _lifetime = config.lifetime ?? [];
+export function buildLifetimes(...elements: NonEmptyArray<T.Lifetime>): ReturnType<typeof _buildLifetimes>;
+export function buildLifetimes(
+	options: { trailing?: boolean },
+	...elements: NonEmptyArray<T.Lifetime>
+): ReturnType<typeof _buildLifetimes>;
+export function buildLifetimes(...args: ({ trailing?: boolean } | T.Lifetime)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Lifetime>;
+	return _buildLifetimes(elements, options);
+}
+function _buildLifetimes(elements: NonEmptyArray<T.Lifetime>, options: { trailing?: boolean }) {
+	_assertNonEmpty(elements, '_lifetimes.elements');
+	const _lifetime = elements;
+	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
 			{
@@ -4798,10 +4839,10 @@ export function buildLifetimes(config: T.Lifetimes.Config, options: { trailing?:
 				$source: 2 as const,
 				$named: true as const,
 				_lifetime,
-				_lifetime_trailing_sep: options.trailing ?? false,
+				_trailing_sep,
 				$with: {
-					lifetimes: (...values: NonEmptyArray<T.Lifetime>) => buildLifetimes({ ...config, lifetime: values }, options),
-					trailing: (v: boolean) => buildLifetimes(config, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.Lifetime>) => buildLifetimes(options, ...vs),
+					trailing: (v: boolean) => buildLifetimes({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{
@@ -4854,10 +4895,22 @@ function _buildUseBoundsElements(
 }
 
 export function buildTypeArgumentsElements(
-	config: T.TypeArgumentsElements.Config,
-	options: { trailing?: boolean } = {}
-) {
-	const _element = config.element ?? [];
+	...elements: NonEmptyArray<T.TypeArgument>
+): ReturnType<typeof _buildTypeArgumentsElements>;
+export function buildTypeArgumentsElements(
+	options: { trailing?: boolean },
+	...elements: NonEmptyArray<T.TypeArgument>
+): ReturnType<typeof _buildTypeArgumentsElements>;
+export function buildTypeArgumentsElements(...args: ({ trailing?: boolean } | T.TypeArgument)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.TypeArgument>;
+	return _buildTypeArgumentsElements(elements, options);
+}
+function _buildTypeArgumentsElements(elements: NonEmptyArray<T.TypeArgument>, options: { trailing?: boolean }) {
+	_assertNonEmpty(elements, '_type_arguments_elements.elements');
+	const _element = elements;
+	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
 			{
@@ -4865,11 +4918,10 @@ export function buildTypeArgumentsElements(
 				$source: 2 as const,
 				$named: true as const,
 				_element,
-				_element_trailing_sep: options.trailing ?? false,
+				_trailing_sep,
 				$with: {
-					elements: (...values: NonEmptyArray<T.TypeArgument>) =>
-						buildTypeArgumentsElements({ ...config, element: values }, options),
-					trailing: (v: boolean) => buildTypeArgumentsElements(config, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.TypeArgument>) => buildTypeArgumentsElements(options, ...vs),
+					trailing: (v: boolean) => buildTypeArgumentsElements({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{
@@ -6744,14 +6796,14 @@ export type FluentKindMap = {
 		'_ordered_field_declaration_list_elements',
 		T.OrderedFieldDeclarationListElements.Config
 	>;
-	_where_predicates: T.WherePredicates;
-	_type_parameters_elements: T.TypeParametersElements;
+	_where_predicates: FluentNode<'_where_predicates', T.WherePredicates.Config>;
+	_type_parameters_elements: FluentNode<'_type_parameters_elements', T.TypeParametersElements.Config>;
 	_use_clauses: FluentNode<'_use_clauses', T.UseClauses.Config>;
 	_parameters_elements: FluentNode<'_parameters_elements', T.ParametersElements.Config>;
 	_visibility_modifier_group1: FluentNode<'_visibility_modifier_group1', T.VisibilityModifierGroup1.Config>;
-	_lifetimes: T.Lifetimes;
+	_lifetimes: FluentNode<'_lifetimes', T.Lifetimes.Config>;
 	_use_bounds_elements: FluentNode<'_use_bounds_elements', T.UseBoundsElements.Config>;
-	_type_arguments_elements: T.TypeArgumentsElements;
+	_type_arguments_elements: FluentNode<'_type_arguments_elements', T.TypeArgumentsElements.Config>;
 	_arguments_elements: FluentNode<'_arguments_elements', T.ArgumentsElements.Config>;
 	_array_expression_group1: T.ArrayExpressionGroup1;
 	_field_initializer_list_elements: FluentNode<

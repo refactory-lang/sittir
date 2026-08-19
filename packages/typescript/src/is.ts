@@ -294,6 +294,13 @@ export interface IsGuards {
 		v: T
 	): v is T & { readonly $type: TSKindId.ImportClauseGroup1 };
 	ImportSpecifiers<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportSpecifiers };
+	FormalParametersElements<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.FormalParametersElements };
+	Types<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Types };
+	TypeParametersElements<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.TypeParametersElements };
 	TupleTypeMembers<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleTypeMembers };
 	objectTypeContent<T extends { readonly $type: number }>(
 		v: T
@@ -538,6 +545,13 @@ export interface AssertGuards {
 	ImportStatementGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportStatementGroup1 };
 	ImportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseGroup1 };
 	ImportSpecifiers(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportSpecifiers };
+	FormalParametersElements(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.FormalParametersElements };
+	Types(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Types };
+	TypeParametersElements(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.TypeParametersElements };
 	TupleTypeMembers(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleTypeMembers };
 	objectTypeContent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectTypeContent };
 	ExportStatementDefault(v: {
@@ -1109,6 +1123,9 @@ export const is = {
 	ImportStatementGroup1: _g(TSKindId.ImportStatementGroup1),
 	ImportClauseGroup1: _g(TSKindId.ImportClauseGroup1),
 	ImportSpecifiers: _g(TSKindId.ImportSpecifiers),
+	FormalParametersElements: _g(TSKindId.FormalParametersElements),
+	Types: _g(TSKindId.Types),
+	TypeParametersElements: _g(TSKindId.TypeParametersElements),
 	TupleTypeMembers: _g(TSKindId.TupleTypeMembers),
 	objectTypeContent: _g(TSKindId.ObjectTypeContent),
 	ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
@@ -1342,6 +1359,9 @@ export const assert = {
 	ImportStatementGroup1: _makeAssert('ImportStatementGroup1', is.ImportStatementGroup1 as _AnyGuard),
 	ImportClauseGroup1: _makeAssert('ImportClauseGroup1', is.ImportClauseGroup1 as _AnyGuard),
 	ImportSpecifiers: _makeAssert('ImportSpecifiers', is.ImportSpecifiers as _AnyGuard),
+	FormalParametersElements: _makeAssert('FormalParametersElements', is.FormalParametersElements as _AnyGuard),
+	Types: _makeAssert('Types', is.Types as _AnyGuard),
+	TypeParametersElements: _makeAssert('TypeParametersElements', is.TypeParametersElements as _AnyGuard),
 	TupleTypeMembers: _makeAssert('TupleTypeMembers', is.TupleTypeMembers as _AnyGuard),
 	objectTypeContent: _makeAssert('objectTypeContent', is.objectTypeContent as _AnyGuard),
 	ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),

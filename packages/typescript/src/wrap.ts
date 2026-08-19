@@ -10572,43 +10572,33 @@ export function wrapBinaryExpressionGroup1(data: T.BinaryExpressionGroup1, tree:
 	return _node;
 }
 
-export function wrapFormalParametersElements(data: T.FormalParametersElements, tree: TreeHandle) {
-	const _node = withMethods(
+export function wrapFormalParametersElements(
+	data: T.FormalParametersElements & {
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._formal_parameter, true, 'formal_parameter', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'formal_parameter',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
 		{
 			...data,
 			$type: TSKindId.FormalParametersElements as const,
-			_formal_parameter: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._formal_parameter, [
-					'_formal_parameter',
-					'required_parameter',
-					'optional_parameter'
-				]),
-				true,
-				'formal_parameter',
-				{ tree, nodeType: data.$type, slotName: 'formal_parameter', span: (data as _NodeData).$span }
-			),
-			_formal_parameter_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._formal_parameter) ? data._formal_parameter : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			),
+			_formal_parameter: _content,
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			formalParameters() {
 				return drillInAll<T.FormalParameter>(this._formal_parameter as readonly T.FormalParameter[] | undefined, tree);
 			},
-			$with: {
-				formalParameters: (...v: NonEmptyArray<NonNullable<T.FormalParametersElements['_formal_parameter']>[number]>) =>
-					wrapFormalParametersElements({ ...data, _formal_parameter: v }, tree)
-			}
+			$with: {}
 		},
 		methodsEngine
 	);
-	return _node;
 }
 
 export function wrapEnumBodyElements(
@@ -10702,55 +10692,22 @@ export function wrapEnumBodyElements(
 	return _node;
 }
 
-export function wrapTypes(data: T.Types, tree: TreeHandle) {
-	const _node = withMethods(
+export function wrapTypes(
+	data: T.Types & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._type, true, 'type', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'type',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
 		{
 			...data,
 			$type: TSKindId.Types as const,
-			_type: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._type, [
-					'type',
-					'primary_type',
-					'parenthesized_type',
-					'predefined_type',
-					'_type_identifier',
-					'nested_type_identifier',
-					'generic_type',
-					'object_type',
-					'array_type',
-					'tuple_type',
-					'flow_maybe_type',
-					'type_query',
-					'index_type_query',
-					'this',
-					'existential_type',
-					'literal_type',
-					'lookup_type',
-					'conditional_type',
-					'template_literal_type',
-					'intersection_type',
-					'union_type',
-					'function_type',
-					'readonly_type',
-					'constructor_type',
-					'infer_type',
-					'_type_query_member_expression_in_type_annotation',
-					'_type_query_call_expression_in_type_annotation'
-				]),
-				true,
-				'type',
-				{ tree, nodeType: data.$type, slotName: 'type', span: (data as _NodeData).$span }
-			),
-			_type_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._type) ? data._type : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			),
+			_type: _content,
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			types() {
 				return drillAsAll<T.Type>(this._type, tree, [
@@ -10758,48 +10715,39 @@ export function wrapTypes(data: T.Types, tree: TreeHandle) {
 					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
 				]);
 			},
-			$with: {
-				types: (...v: NonEmptyArray<NonNullable<T.Types['_type']>[number]>) => wrapTypes({ ...data, _type: v }, tree)
-			}
+			$with: {}
 		},
 		methodsEngine
 	);
-	return _node;
 }
 
-export function wrapTypeParametersElements(data: T.TypeParametersElements, tree: TreeHandle) {
-	const _node = withMethods(
+export function wrapTypeParametersElements(
+	data: T.TypeParametersElements & {
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._type_parameter, true, 'type_parameter', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'type_parameter',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
 		{
 			...data,
 			$type: TSKindId.TypeParametersElements as const,
-			_type_parameter: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._type_parameter, ['type_parameter']),
-				true,
-				'type_parameter',
-				{ tree, nodeType: data.$type, slotName: 'type_parameter', span: (data as _NodeData).$span }
-			),
-			_type_parameter_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._type_parameter) ? data._type_parameter : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			),
+			_type_parameter: _content,
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			typeParameters() {
 				return drillInAll<T.TypeParameter>(this._type_parameter as readonly T.TypeParameter[] | undefined, tree);
 			},
-			$with: {
-				typeParameters: (...v: NonEmptyArray<NonNullable<T.TypeParametersElements['_type_parameter']>[number]>) =>
-					wrapTypeParametersElements({ ...data, _type_parameter: v }, tree)
-			}
+			$with: {}
 		},
 		methodsEngine
 	);
-	return _node;
 }
 
 export function wrapTupleTypeMembers(

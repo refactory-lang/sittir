@@ -266,6 +266,7 @@ function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {
 
 const _wrapKindIds: { readonly [kind: string]: number } = {
 	_simple_statements: TSKindId.SimpleStatements,
+	_import_list: TSKindId.ImportList,
 	print_statement: TSKindId.PrintStatement,
 	expression_statement: TSKindId.ExpressionStatement,
 	return_statement: TSKindId.ReturnStatement,
@@ -278,6 +279,8 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	parenthesized_list_splat: TSKindId.ParenthesizedListSplat,
 	case_pattern: TSKindId.CasePattern,
 	dict_pattern: TSKindId.DictPattern,
+	_parameters: TSKindId._Parameters,
+	_patterns: TSKindId.Patterns,
 	tuple_pattern: TSKindId.TuplePattern,
 	list_pattern: TSKindId.ListPattern,
 	list_splat_pattern: TSKindId.ListSplatPattern,
@@ -288,17 +291,26 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	set: TSKindId.Set,
 	tuple: TSKindId.Tuple,
 	parenthesized_expression: TSKindId.ParenthesizedExpression,
+	_collection_elements: TSKindId.CollectionElements,
 	concatenated_string: TSKindId.ConcatenatedString,
 	string_content: TSKindId.StringContent,
 	format_specifier: TSKindId.FormatSpecifier,
+	_simple_statements_elements: TSKindId.SimpleStatementsElements,
+	_subjects: TSKindId.Subjects,
+	_case_patterns: TSKindId.CasePatterns,
 	_except_clause_group1: TSKindId.ExceptClauseGroup1,
+	_with_clause_with_items: TSKindId.WithClauseWithItems,
+	_types: TSKindId.Types,
 	_argument_list_elements: TSKindId.ArgumentListElements,
 	_expression_list_expressions: TSKindId.ExpressionListExpressions,
+	_list_pattern_case_patterns: TSKindId.ListPatternCasePatterns,
 	_pattern_list_patterns: TSKindId.PatternListPatterns,
+	_subscripts: TSKindId.Subscripts,
 	_slice_group1: TSKindId.SliceGroup1,
 	_dictionary_elements: TSKindId.DictionaryElements,
 	case_tuple_pattern: TSKindId.CaseTuplePattern,
 	case_list_pattern: TSKindId.CaseListPattern,
+	_with_clause_bare: TSKindId.WithClauseBare,
 	_with_clause_paren: TSKindId.WithClauseParen,
 	_suite_block_with_indent: TSKindId.SuiteBlockWithIndent,
 	_simple_pattern_negative: TSKindId.SimplePatternNegative,
@@ -309,6 +321,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 	switch (kind) {
 		case '_simple_statements':
 			return F.buildSimpleStatements(children[0] as Parameters<typeof F.buildSimpleStatements>[0]);
+		case '_import_list':
+			return (F.buildImportList as (...args: unknown[]) => unknown)(...children);
 		case 'print_statement':
 			return F.buildPrintStatement(children[0] as Parameters<typeof F.buildPrintStatement>[0]);
 		case 'expression_statement':
@@ -333,6 +347,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildCasePattern(children[0] as Parameters<typeof F.buildCasePattern>[0]);
 		case 'dict_pattern':
 			return F.buildDictPattern(children[0] as Parameters<typeof F.buildDictPattern>[0]);
+		case '_parameters':
+			return (F.build_Parameters as (...args: unknown[]) => unknown)(...children);
+		case '_patterns':
+			return (F.buildPatterns as (...args: unknown[]) => unknown)(...children);
 		case 'tuple_pattern':
 			return F.buildTuplePattern(children[0] as Parameters<typeof F.buildTuplePattern>[0]);
 		case 'list_pattern':
@@ -353,20 +371,36 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildTuple(children[0] as Parameters<typeof F.buildTuple>[0]);
 		case 'parenthesized_expression':
 			return F.buildParenthesizedExpression(children[0] as Parameters<typeof F.buildParenthesizedExpression>[0]);
+		case '_collection_elements':
+			return (F.buildCollectionElements as (...args: unknown[]) => unknown)(...children);
 		case 'concatenated_string':
 			return F.buildConcatenatedString(...(children as Parameters<typeof F.buildConcatenatedString>));
 		case 'string_content':
 			return F.buildStringContent(...(children as Parameters<typeof F.buildStringContent>));
 		case 'format_specifier':
 			return F.buildFormatSpecifier(...(children as Parameters<typeof F.buildFormatSpecifier>));
+		case '_simple_statements_elements':
+			return (F.buildSimpleStatementsElements as (...args: unknown[]) => unknown)(...children);
+		case '_subjects':
+			return (F.buildSubjects as (...args: unknown[]) => unknown)(...children);
+		case '_case_patterns':
+			return (F.buildCasePatterns as (...args: unknown[]) => unknown)(...children);
 		case '_except_clause_group1':
 			return F.buildExceptClauseGroup1(children[0] as Parameters<typeof F.buildExceptClauseGroup1>[0]);
+		case '_with_clause_with_items':
+			return (F.buildWithClauseWithItems as (...args: unknown[]) => unknown)(...children);
+		case '_types':
+			return (F.buildTypes as (...args: unknown[]) => unknown)(...children);
 		case '_argument_list_elements':
 			return (F.buildArgumentListElements as (...args: unknown[]) => unknown)(...children);
 		case '_expression_list_expressions':
 			return (F.buildExpressionListExpressions as (...args: unknown[]) => unknown)(...children);
+		case '_list_pattern_case_patterns':
+			return (F.buildListPatternCasePatterns as (...args: unknown[]) => unknown)(...children);
 		case '_pattern_list_patterns':
 			return (F.buildPatternListPatterns as (...args: unknown[]) => unknown)(...children);
+		case '_subscripts':
+			return (F.buildSubscripts as (...args: unknown[]) => unknown)(...children);
 		case '_slice_group1':
 			return F.buildSliceGroup1(children[0] as Parameters<typeof F.buildSliceGroup1>[0]);
 		case '_dictionary_elements':
@@ -375,6 +409,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildCaseTuplePattern(...(children as Parameters<typeof F.buildCaseTuplePattern>));
 		case 'case_list_pattern':
 			return F.buildCaseListPattern(...(children as Parameters<typeof F.buildCaseListPattern>));
+		case '_with_clause_bare':
+			return (F.buildWithClauseBare as (...args: unknown[]) => unknown)(...children);
 		case '_with_clause_paren':
 			return F.buildWithClauseParen(children[0] as Parameters<typeof F.buildWithClauseParen>[0]);
 		case '_suite_block_with_indent':
@@ -1349,7 +1385,7 @@ export function coerceToClassPattern(input: T.ClassPattern.Loose): ReturnType<ty
 			'dottedName',
 			_resolveOneBranch<T.DottedName>(input.dottedName, 'dotted_name')
 		),
-		arguments: _resolveOneBranch<T.CasePatterns>(input.arguments, '_case_patterns')
+		arguments: _resolveOneBranch<T.ListPatternCasePatterns>(input.arguments, '_list_pattern_case_patterns')
 	});
 }
 

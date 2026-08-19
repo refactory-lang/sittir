@@ -6121,39 +6121,19 @@
     },
     {
       "kind": "_lifetimes",
-      "modelType": "group",
+      "modelType": "separatedList",
       "typeName": "Lifetimes",
-      "factoryName": "_lifetimes",
+      "factoryName": "lifetimes",
       "irKey": "lifetimes",
       "hidden": false,
-      "name": "_lifetimes",
-      "fields": [
-        {
-          "name": "lifetime",
-          "propertyName": "lifetimes",
-          "paramName": "lifetimes",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "lifetime",
-              "parseKind": "lifetime",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "lifetime"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "lifetime"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "lifetime"
       ]
@@ -8183,39 +8163,19 @@
     },
     {
       "kind": "_type_arguments_elements",
-      "modelType": "group",
+      "modelType": "separatedList",
       "typeName": "TypeArgumentsElements",
-      "factoryName": "_typeArgumentsElements",
+      "factoryName": "typeArgumentsElements",
       "irKey": "typeArgumentsElements",
       "hidden": false,
-      "name": "_type_arguments_elements",
-      "fields": [
-        {
-          "name": "element",
-          "propertyName": "elements",
-          "paramName": "elements",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_type_argument",
-              "parseKind": "type_argument",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_type_argument"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "type_argument"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "element"
       ]
@@ -8266,39 +8226,19 @@
     },
     {
       "kind": "_type_parameters_elements",
-      "modelType": "group",
+      "modelType": "separatedList",
       "typeName": "TypeParametersElements",
-      "factoryName": "_typeParametersElements",
+      "factoryName": "typeParametersElements",
       "irKey": "typeParametersElements",
       "hidden": false,
-      "name": "_type_parameters_elements",
-      "fields": [
-        {
-          "name": "element",
-          "propertyName": "elements",
-          "paramName": "elements",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_attributed_type_parameter",
-              "parseKind": "attributed_type_parameter",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_attributed_type_parameter"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_type_parameter"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "element"
       ]
@@ -8631,39 +8571,19 @@
     },
     {
       "kind": "_where_predicates",
-      "modelType": "group",
+      "modelType": "separatedList",
       "typeName": "WherePredicates",
-      "factoryName": "_wherePredicates",
+      "factoryName": "wherePredicates",
       "irKey": "wherePredicates",
       "hidden": false,
-      "name": "_where_predicates",
-      "fields": [
-        {
-          "name": "where_predicate",
-          "propertyName": "wherePredicates",
-          "paramName": "wherePredicates",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "where_predicate",
-              "parseKind": "where_predicate",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "where_predicate"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "where_predicate"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "where_predicate"
       ]

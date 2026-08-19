@@ -237,6 +237,10 @@ export interface IsGuards {
 	OrderedFieldDeclarationListElements<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.OrderedFieldDeclarationListElements };
+	WherePredicates<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WherePredicates };
+	TypeParametersElements<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.TypeParametersElements };
 	UseClauses<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseClauses };
 	ParametersElements<T extends { readonly $type: number }>(
 		v: T
@@ -244,9 +248,13 @@ export interface IsGuards {
 	VisibilityModifierGroup1<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.VisibilityModifierGroup1 };
+	Lifetimes<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Lifetimes };
 	UseBoundsElements<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.UseBoundsElements };
+	TypeArgumentsElements<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.TypeArgumentsElements };
 	ArgumentsElements<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ArgumentsElements };
@@ -493,12 +501,18 @@ export interface AssertGuards {
 	OrderedFieldDeclarationListElements(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.OrderedFieldDeclarationListElements };
+	WherePredicates(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WherePredicates };
+	TypeParametersElements(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.TypeParametersElements };
 	UseClauses(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseClauses };
 	ParametersElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParametersElements };
 	VisibilityModifierGroup1(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.VisibilityModifierGroup1 };
+	Lifetimes(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Lifetimes };
 	UseBoundsElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseBoundsElements };
+	TypeArgumentsElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeArgumentsElements };
 	ArgumentsElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArgumentsElements };
 	FieldInitializerListElements(v: {
 		readonly $type: number;
@@ -1028,10 +1042,14 @@ export const is = {
 	EnumVariantListElements: _g(TSKindId.EnumVariantListElements),
 	FieldDeclarationListElements: _g(TSKindId.FieldDeclarationListElements),
 	OrderedFieldDeclarationListElements: _g(TSKindId.OrderedFieldDeclarationListElements),
+	WherePredicates: _g(TSKindId.WherePredicates),
+	TypeParametersElements: _g(TSKindId.TypeParametersElements),
 	UseClauses: _g(TSKindId.UseClauses),
 	ParametersElements: _g(TSKindId.ParametersElements),
 	VisibilityModifierGroup1: _g(TSKindId.VisibilityModifierGroup1),
+	Lifetimes: _g(TSKindId.Lifetimes),
 	UseBoundsElements: _g(TSKindId.UseBoundsElements),
+	TypeArgumentsElements: _g(TSKindId.TypeArgumentsElements),
 	ArgumentsElements: _g(TSKindId.ArgumentsElements),
 	FieldInitializerListElements: _g(TSKindId.FieldInitializerListElements),
 	TuplePatternElements: _g(TSKindId.TuplePatternElements),
@@ -1253,10 +1271,14 @@ export const assert = {
 		'OrderedFieldDeclarationListElements',
 		is.OrderedFieldDeclarationListElements as _AnyGuard
 	),
+	WherePredicates: _makeAssert('WherePredicates', is.WherePredicates as _AnyGuard),
+	TypeParametersElements: _makeAssert('TypeParametersElements', is.TypeParametersElements as _AnyGuard),
 	UseClauses: _makeAssert('UseClauses', is.UseClauses as _AnyGuard),
 	ParametersElements: _makeAssert('ParametersElements', is.ParametersElements as _AnyGuard),
 	VisibilityModifierGroup1: _makeAssert('VisibilityModifierGroup1', is.VisibilityModifierGroup1 as _AnyGuard),
+	Lifetimes: _makeAssert('Lifetimes', is.Lifetimes as _AnyGuard),
 	UseBoundsElements: _makeAssert('UseBoundsElements', is.UseBoundsElements as _AnyGuard),
+	TypeArgumentsElements: _makeAssert('TypeArgumentsElements', is.TypeArgumentsElements as _AnyGuard),
 	ArgumentsElements: _makeAssert('ArgumentsElements', is.ArgumentsElements as _AnyGuard),
 	FieldInitializerListElements: _makeAssert(
 		'FieldInitializerListElements',

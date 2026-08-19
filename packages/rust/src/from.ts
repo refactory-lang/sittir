@@ -344,10 +344,14 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_enum_variant_list_elements: TSKindId.EnumVariantListElements,
 	_field_declaration_list_elements: TSKindId.FieldDeclarationListElements,
 	_ordered_field_declaration_list_elements: TSKindId.OrderedFieldDeclarationListElements,
+	_where_predicates: TSKindId.WherePredicates,
+	_type_parameters_elements: TSKindId.TypeParametersElements,
 	_use_clauses: TSKindId.UseClauses,
 	_parameters_elements: TSKindId.ParametersElements,
 	_visibility_modifier_group1: TSKindId.VisibilityModifierGroup1,
+	_lifetimes: TSKindId.Lifetimes,
 	_use_bounds_elements: TSKindId.UseBoundsElements,
+	_type_arguments_elements: TSKindId.TypeArgumentsElements,
 	_arguments_elements: TSKindId.ArgumentsElements,
 	_field_initializer_list_elements: TSKindId.FieldInitializerListElements,
 	_tuple_pattern_elements: TSKindId.TuplePatternElements,
@@ -421,14 +425,22 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildFieldDeclarationListElements as (...args: unknown[]) => unknown)(...children);
 		case '_ordered_field_declaration_list_elements':
 			return (F.buildOrderedFieldDeclarationListElements as (...args: unknown[]) => unknown)(...children);
+		case '_where_predicates':
+			return (F.buildWherePredicates as (...args: unknown[]) => unknown)(...children);
+		case '_type_parameters_elements':
+			return (F.buildTypeParametersElements as (...args: unknown[]) => unknown)(...children);
 		case '_use_clauses':
 			return (F.buildUseClauses as (...args: unknown[]) => unknown)(...children);
 		case '_parameters_elements':
 			return (F.buildParametersElements as (...args: unknown[]) => unknown)(...children);
 		case '_visibility_modifier_group1':
 			return F.buildVisibilityModifierGroup1(children[0] as Parameters<typeof F.buildVisibilityModifierGroup1>[0]);
+		case '_lifetimes':
+			return (F.buildLifetimes as (...args: unknown[]) => unknown)(...children);
 		case '_use_bounds_elements':
 			return (F.buildUseBoundsElements as (...args: unknown[]) => unknown)(...children);
+		case '_type_arguments_elements':
+			return (F.buildTypeArgumentsElements as (...args: unknown[]) => unknown)(...children);
 		case '_arguments_elements':
 			return (F.buildArgumentsElements as (...args: unknown[]) => unknown)(...children);
 		case '_field_initializer_list_elements':

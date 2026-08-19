@@ -48239,6 +48239,8 @@ pub struct FormalParametersElementsTransport {
     pub formal_parameter: Vec<FormalParameterTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_trailing_sep"))]
     pub formal_parameter_trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for FormalParametersElementsTransport {
@@ -48495,6 +48497,8 @@ pub struct TypesTransport {
     pub type_: Vec<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_trailing_sep"))]
     pub type__trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for TypesTransport {
@@ -48547,6 +48551,8 @@ pub struct TypeParametersElementsTransport {
     pub type_parameter: Vec<TypeParameterTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_trailing_sep"))]
     pub type_parameter_trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for TypeParametersElementsTransport {
@@ -65696,7 +65702,7 @@ fn render_formal_parameters_elements(node: &FormalParametersElementsTransport, d
             items: formal_parameter_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.formal_parameter_trailing_sep.unwrap_or(false),
+            trailing: node.trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -65758,7 +65764,7 @@ fn render_types(node: &TypesTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
             items: type__buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.type__trailing_sep.unwrap_or(false),
+            trailing: node.trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -65778,7 +65784,7 @@ fn render_type_parameters_elements(node: &TypeParametersElementsTransport, dest:
             items: type_parameter_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.type_parameter_trailing_sep.unwrap_or(false),
+            trailing: node.trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)

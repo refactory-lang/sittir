@@ -5651,10 +5651,22 @@ export function buildMetaPropertyGroup2(text: string) {
 }
 
 export function buildFormalParametersElements(
-	config: T.FormalParametersElements.Config,
-	options: { trailing?: boolean } = {}
-) {
-	const _formal_parameter = config.formalParameter ?? [];
+	...elements: NonEmptyArray<T.FormalParameter>
+): ReturnType<typeof _buildFormalParametersElements>;
+export function buildFormalParametersElements(
+	options: { trailing?: boolean },
+	...elements: NonEmptyArray<T.FormalParameter>
+): ReturnType<typeof _buildFormalParametersElements>;
+export function buildFormalParametersElements(...args: ({ trailing?: boolean } | T.FormalParameter)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.FormalParameter>;
+	return _buildFormalParametersElements(elements, options);
+}
+function _buildFormalParametersElements(elements: NonEmptyArray<T.FormalParameter>, options: { trailing?: boolean }) {
+	_assertNonEmpty(elements, '_formal_parameters_elements.elements');
+	const _formal_parameter = elements;
+	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
 			{
@@ -5662,11 +5674,10 @@ export function buildFormalParametersElements(
 				$source: 2 as const,
 				$named: true as const,
 				_formal_parameter,
-				_formal_parameter_trailing_sep: options.trailing ?? false,
+				_trailing_sep,
 				$with: {
-					formalParameters: (...values: NonEmptyArray<T.FormalParameter>) =>
-						buildFormalParametersElements({ ...config, formalParameter: values }, options),
-					trailing: (v: boolean) => buildFormalParametersElements(config, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.FormalParameter>) => buildFormalParametersElements(options, ...vs),
+					trailing: (v: boolean) => buildFormalParametersElements({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{
@@ -5704,8 +5715,21 @@ export function buildEnumBodyElements(
 	);
 }
 
-export function buildTypes(config: T.Types.Config, options: { trailing?: boolean } = {}) {
-	const _type = config.type ?? [];
+export function buildTypes(...elements: NonEmptyArray<T.Type>): ReturnType<typeof _buildTypes>;
+export function buildTypes(
+	options: { trailing?: boolean },
+	...elements: NonEmptyArray<T.Type>
+): ReturnType<typeof _buildTypes>;
+export function buildTypes(...args: ({ trailing?: boolean } | T.Type)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Type>;
+	return _buildTypes(elements, options);
+}
+function _buildTypes(elements: NonEmptyArray<T.Type>, options: { trailing?: boolean }) {
+	_assertNonEmpty(elements, '_types.elements');
+	const _type = elements;
+	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
 			{
@@ -5713,10 +5737,10 @@ export function buildTypes(config: T.Types.Config, options: { trailing?: boolean
 				$source: 2 as const,
 				$named: true as const,
 				_type,
-				_type_trailing_sep: options.trailing ?? false,
+				_trailing_sep,
 				$with: {
-					types: (...values: NonEmptyArray<T.Type>) => buildTypes({ ...config, type: values }, options),
-					trailing: (v: boolean) => buildTypes(config, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.Type>) => buildTypes(options, ...vs),
+					trailing: (v: boolean) => buildTypes({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{
@@ -5728,10 +5752,22 @@ export function buildTypes(config: T.Types.Config, options: { trailing?: boolean
 }
 
 export function buildTypeParametersElements(
-	config: T.TypeParametersElements.Config,
-	options: { trailing?: boolean } = {}
-) {
-	const _type_parameter = config.typeParameter ?? [];
+	...elements: NonEmptyArray<T.TypeParameter>
+): ReturnType<typeof _buildTypeParametersElements>;
+export function buildTypeParametersElements(
+	options: { trailing?: boolean },
+	...elements: NonEmptyArray<T.TypeParameter>
+): ReturnType<typeof _buildTypeParametersElements>;
+export function buildTypeParametersElements(...args: ({ trailing?: boolean } | T.TypeParameter)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.TypeParameter>;
+	return _buildTypeParametersElements(elements, options);
+}
+function _buildTypeParametersElements(elements: NonEmptyArray<T.TypeParameter>, options: { trailing?: boolean }) {
+	_assertNonEmpty(elements, '_type_parameters_elements.elements');
+	const _type_parameter = elements;
+	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
 			{
@@ -5739,11 +5775,10 @@ export function buildTypeParametersElements(
 				$source: 2 as const,
 				$named: true as const,
 				_type_parameter,
-				_type_parameter_trailing_sep: options.trailing ?? false,
+				_trailing_sep,
 				$with: {
-					typeParameters: (...values: NonEmptyArray<T.TypeParameter>) =>
-						buildTypeParametersElements({ ...config, typeParameter: values }, options),
-					trailing: (v: boolean) => buildTypeParametersElements(config, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.TypeParameter>) => buildTypeParametersElements(options, ...vs),
+					trailing: (v: boolean) => buildTypeParametersElements({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{
@@ -7266,10 +7301,10 @@ export type FluentKindMap = {
 	_binary_expression_group1: T.BinaryExpressionGroup1;
 	_meta_property_group1: T.MetaPropertyGroup1;
 	_meta_property_group2: T.MetaPropertyGroup2;
-	_formal_parameters_elements: T.FormalParametersElements;
+	_formal_parameters_elements: FluentNode<'_formal_parameters_elements', T.FormalParametersElements.Config>;
 	_enum_body_elements: T.EnumBodyElements;
-	_types: T.Types;
-	_type_parameters_elements: T.TypeParametersElements;
+	_types: FluentNode<'_types', T.Types.Config>;
+	_type_parameters_elements: FluentNode<'_type_parameters_elements', T.TypeParametersElements.Config>;
 	_tuple_type_members: FluentNode<'_tuple_type_members', T.TupleTypeMembers.Config>;
 	_kind: T.Kind;
 	__for_header_operator: T.ForHeaderOperator;

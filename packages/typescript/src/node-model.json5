@@ -7033,39 +7033,19 @@
     },
     {
       "kind": "_formal_parameters_elements",
-      "modelType": "group",
+      "modelType": "separatedList",
       "typeName": "FormalParametersElements",
-      "factoryName": "_formalParametersElements",
+      "factoryName": "formalParametersElements",
       "irKey": "formalParametersElements",
       "hidden": false,
-      "name": "_formal_parameters_elements",
-      "fields": [
-        {
-          "name": "formal_parameter",
-          "propertyName": "formalParameters",
-          "paramName": "formalParameters",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_formal_parameter",
-              "parseKind": "_formal_parameter",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_formal_parameter"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "_formal_parameter"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "formal_parameter"
       ]
@@ -9040,39 +9020,19 @@
     },
     {
       "kind": "_type_parameters_elements",
-      "modelType": "group",
+      "modelType": "separatedList",
       "typeName": "TypeParametersElements",
-      "factoryName": "_typeParametersElements",
+      "factoryName": "typeParametersElements",
       "irKey": "typeParametersElements",
       "hidden": false,
-      "name": "_type_parameters_elements",
-      "fields": [
-        {
-          "name": "type_parameter",
-          "propertyName": "typeParameters",
-          "paramName": "typeParameters",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "type_parameter",
-              "parseKind": "type_parameter",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "type_parameter"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "type_parameter"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "type_parameter"
       ]
@@ -9652,39 +9612,19 @@
     },
     {
       "kind": "_types",
-      "modelType": "group",
+      "modelType": "separatedList",
       "typeName": "Types",
-      "factoryName": "_types",
+      "factoryName": "types",
       "irKey": "types",
       "hidden": false,
-      "name": "_types",
-      "fields": [
-        {
-          "name": "type",
-          "propertyName": "types",
-          "paramName": "types",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "type",
-              "parseKind": "type",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "type"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "type"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "type"
       ]
