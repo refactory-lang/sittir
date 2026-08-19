@@ -307,6 +307,39 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 				// than fall back to a mismatched WASM ID.
 				const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
 				if (nativeCoords === null && handle.read) {
+					// The native read stores most leaf kinds SCALARIZED — collapsed
+					// to text inside parent storage, no node to locate — and alias
+					// targets emit under a different rule name. For a text-shaped
+					// kind that is not a locator failure: the sound comparison
+					// needs no native node at all. Feed the WASM node's text
+					// through both from() (the real leaf-coercion route, pattern
+					// guards included) and the factory, and compare the results.
+					const leafShape = factoryShapes[kind] ?? 'config';
+					if (leafShape === 'text') {
+						try {
+							const text = node1.text;
+							const fromResult = fromMap[kind]!(text as never) as AnyNodeData;
+							const factoryResult = (factoryMap[kind]! as (t: string) => AnyNodeData)(text);
+							const diffs = structuralDiff(fromResult, factoryResult, kindNameFromId);
+							if (diffs.length > 0) {
+								divergentCount++;
+								errors.push({
+									kind,
+									severity: 'warning',
+									message: `from() diverges: ${diffs.join('; ')}`
+								});
+							} else {
+								pass++;
+							}
+						} catch (e) {
+							errors.push({
+								kind,
+								severity: 'error',
+								message: `leaf text route throws: ${(e as Error).message}`
+							});
+						}
+						continue;
+					}
 					errors.push({
 						kind,
 						severity: 'error',

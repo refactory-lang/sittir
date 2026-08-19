@@ -38,15 +38,32 @@ describe('validateFrom — module load failure sentinel', () => {
 });
 
 describe('validateFrom — unresolved native coords diagnostic', () => {
-	it('reports one error row per unresolved-alias-target kind, reconciling exactly with total - pass', async () => {
-		// python's corpus has no other from() failure mode today (no
-		// read/wrap throws, no divergent results, no factory-build
-		// throws) — every fail is this diagnostic, so fail must equal
-		// errors.length exactly, not just be covered by it.
+	it('python: scalar-materialized text leaves compare via the string route — no unresolved rows remain', async () => {
+		// The native read stores python's leaf kinds (identifier, literals,
+		// keywords) scalarized, so there is no native node to locate; the
+		// validator now routes text-shaped kinds through from(text) vs
+		// factory(text) instead of refusing to compare. python's corpus has
+		// no other from() failure mode, so the run passes fully.
 		const result = await validateFrom('python', 'native');
 
-		expect(result.fail).toBe(result.errors.length);
-		expect(result.fail).toBeGreaterThan(0);
-		expect(result.errors.every((e) => e.message.includes('native coords unresolved for alias target'))).toBe(true);
+		expect(result.fail).toBe(0);
+		expect(result.pass).toBe(result.total);
+		expect(result.errors.some((e) => e.message.includes('native coords unresolved for alias target'))).toBe(false);
+	}, 60000);
+
+	it('rust: the unresolved-coords refusal never fires for a text-shaped kind', async () => {
+		// The string route covers every text-shaped kind, so any surviving
+		// unresolved-coords row must belong to a NON-text kind (e.g.
+		// branch-shaped block_comment) — for those the guard is correct and
+		// must keep refusing the unsound comparison. Which rows survive
+		// depends on corpus content, so pin the contract, not the roster.
+		const result = await validateFrom('rust', 'native');
+		const { loadNodeModel } = await import('../src/validate/common.ts');
+		const model = await loadNodeModel('rust');
+
+		const unresolved = result.errors.filter((e) => e.message.includes('native coords unresolved for alias target'));
+		for (const e of unresolved) {
+			expect(model.factoryShapes[e.kind]).not.toBe('text');
+		}
 	}, 60000);
 });

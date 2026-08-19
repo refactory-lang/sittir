@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "ad5b682",
+    "commit": "1db5c40",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -26,21 +26,9 @@
                     "total": 1350
                 },
                 "from": {
-                    "failingKinds": [
-                        "escape_interpolation",
-                        "escape_sequence",
-                        "false",
-                        "float",
-                        "identifier",
-                        "integer",
-                        "none",
-                        "string_end",
-                        "string_start",
-                        "true",
-                        "type_conversion"
-                    ],
+                    "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 111,
+                    "pass": 122,
                     "total": 122
                 },
                 "roundtrip": {
@@ -78,21 +66,10 @@
                 },
                 "from": {
                     "failingKinds": [
-                        "block_comment",
-                        "char_literal",
-                        "crate",
-                        "escape_sequence",
-                        "float_literal",
-                        "identifier",
-                        "integer_literal",
-                        "metavariable",
-                        "mutable_specifier",
-                        "self",
-                        "string_content",
-                        "super"
+                        "block_comment"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 134,
+                    "pass": 145,
                     "total": 146
                 },
                 "roundtrip": {
@@ -134,21 +111,10 @@
                 },
                 "from": {
                     "failingKinds": [
-                        "call_expression",
-                        "false",
-                        "identifier",
-                        "null",
-                        "number",
-                        "private_property_identifier",
-                        "super",
-                        "this",
-                        "true",
-                        "undefined",
-                        "unescaped_double_string_fragment",
-                        "unescaped_single_string_fragment"
+                        "call_expression"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 128,
+                    "pass": 139,
                     "total": 140
                 },
                 "roundtrip": {
@@ -165,8 +131,8 @@
         }
     },
     "totals": {
-        "fail": 73,
-        "pass": 9349,
+        "fail": 40,
+        "pass": 9382,
         "total": 9422
     }
 }
