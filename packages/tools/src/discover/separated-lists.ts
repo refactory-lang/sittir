@@ -41,12 +41,14 @@ interface KindLevelEntry {
 	elementKinds: string[];
 	proposedName: string | undefined;
 	proposedCollision: boolean;
-	/** Set when this entry's proposed name is shared with other entries of the
-	 *  IDENTICAL list shape (element kinds + separator + flanks) — candidates
-	 *  for one shared hoisted kind instead of per-parent fallback names. */
+	/** Informational: this entry's proposed name collides with entries of the
+	 *  IDENTICAL list shape (element kinds + separator + flanks). */
 	sharedShape: boolean;
 	fallbackName: string;
 	effectiveName: string;
+	/** The composite fallback still collides (duplicate effective name or an
+	 *  existing kind) — needs a manual naming decision. */
+	unresolvedCollision?: boolean;
 	parents: { kind: string; slotCount: number }[];
 }
 
@@ -64,6 +66,8 @@ interface InlineSlotEntry {
 	sharedShape: boolean;
 	fallbackName: string;
 	effectiveName: string;
+	/** See {@link KindLevelEntry.unresolvedCollision}. */
+	unresolvedCollision?: boolean;
 }
 
 export interface SeparatedListsCensus {
@@ -158,11 +162,13 @@ function baseKindOf(listKind: string): string {
 	return listKind.replace(/^_/, '').replace(/_group\d+$/, '');
 }
 
-/** `<base>_elements`, without doubling when the base already ends in
- *  `elements` (`_collection_elements` -> `collection_elements`). */
-function fallbackNameOf(listKind: string): string {
+/** Collision fallback: the composite `<kind>_<field>`, without doubling when
+ *  the base already ends in the field spelling (`_collection_elements` with
+ *  field `elements` -> `collection_elements`, not `collection_elements_elements`). */
+function fallbackNameOf(listKind: string, pluralField: string): string {
 	const base = baseKindOf(listKind);
-	return /(?:^|_)elements$/.test(base) ? base : `${base}_elements`;
+	if (base === pluralField || base.endsWith(`_${pluralField}`)) return base;
+	return `${base}_${pluralField}`;
 }
 
 export function computeSeparatedListsCensus(grammar: string, nm: NodeMap): SeparatedListsCensus {
@@ -203,7 +209,7 @@ export function computeSeparatedListsCensus(grammar: string, nm: NodeMap): Separ
 				...new Set(slots.flatMap((s) => s.values.map((v) => refKindName(v) ?? JSON.stringify(v.value))))
 			].sort();
 			const proposedName = elementFields.length === 1 ? pluralizeFieldName(elementFields[0]!) : undefined;
-			const fallbackName = fallbackNameOf(kind);
+			const fallbackName = fallbackNameOf(kind, proposedName ?? 'elements');
 			kindLevel.push({
 				kind,
 				modelType,
@@ -235,7 +241,7 @@ export function computeSeparatedListsCensus(grammar: string, nm: NodeMap): Separ
 			if (separators.length === 0) continue;
 			const flankCarrying = slot.trailingMode === 'optional' || slot.leadingMode === 'optional';
 			const proposedName = pluralizeFieldName(slot.name);
-			const fallbackName = fallbackNameOf(kind);
+			const fallbackName = fallbackNameOf(kind, proposedName);
 			inline.push({
 				kind,
 				slot: slot.name,
@@ -258,10 +264,10 @@ export function computeSeparatedListsCensus(grammar: string, nm: NodeMap): Separ
 	}
 
 	// Cross-entry collisions: all hoist candidates (kind-level AND inline) mint
-	// visible kinds into one namespace. Entries proposing the same name with
-	// the IDENTICAL list shape are shareable (one hoisted kind serves them
-	// all -- the pattern python's `_patterns`/`_collection_elements` already
-	// use); the same name over DIFFERENT shapes is a true collision.
+	// visible kinds into one namespace, so a name proposed twice collides and
+	// takes the composite `<kind>_<field>` fallback. `sharedShape` stays
+	// informational: it marks colliding entries whose list shape (element
+	// kinds + separator + flanks) is identical.
 	const hoisting = [...kindLevel.filter((e) => e.flankCarrying), ...inline.filter((e) => e.flankCarrying)];
 	const shapeOf = (e: { elementKinds: string[]; separator: string; leading: FlankMode; trailing: FlankMode }) =>
 		`${e.elementKinds.join('|')} sep=${e.separator} ${e.leading}/${e.trailing}`;
@@ -273,23 +279,44 @@ export function computeSeparatedListsCensus(grammar: string, nm: NodeMap): Separ
 		byProposed.set(e.proposedName, group);
 	}
 	for (const group of byProposed.values()) {
-		const shapes = new Set(group.map(shapeOf));
-		if (group.length > 1 && shapes.size === 1) for (const e of group) e.sharedShape = true;
-		else if (group.length > 1) for (const e of group) e.proposedCollision = true;
+		if (group.length < 2) continue;
+		for (const e of group) e.proposedCollision = true;
+		if (new Set(group.map(shapeOf)).size === 1) for (const e of group) e.sharedShape = true;
 	}
 	for (const e of hoisting) {
 		e.effectiveName = e.proposedName !== undefined && !e.proposedCollision ? e.proposedName : e.fallbackName;
 	}
-	// Fallback names can collide too (two group arms of the same base kind);
-	// surface those rather than silently minting duplicates.
-	const effectiveCounts = new Map<string, typeof hoisting>();
+	// Composite-fallback degeneracies, resolved in order:
+	//  - field name equals the parent base (the collapse lands on an existing
+	//    kind) -> `<base>_elements`;
+	//  - two arms of the same base kind duplicate the composite -> full kind
+	//    spelling with its group suffix (`print_statement_group1_arguments`).
+	// Anything still colliding after both is surfaced as UNRESOLVED.
+	const countByEffective = () => {
+		const m = new Map<string, number>();
+		for (const e of hoisting) m.set(e.effectiveName, (m.get(e.effectiveName) ?? 0) + 1);
+		return m;
+	};
 	for (const e of hoisting) {
-		const group = effectiveCounts.get(e.effectiveName) ?? [];
-		group.push(e);
-		effectiveCounts.set(e.effectiveName, group);
+		// A kind-level hoist RENAMES its kind, so its own name is free to reuse;
+		// an inline hoist mints a NEW kind beside its (surviving) parent, so any
+		// existing kind -- the parent included -- is a conflict.
+		const isKindLevelRename = 'parents' in e && e.effectiveName === e.kind;
+		if (!isKindLevelRename && allKinds.has(e.effectiveName)) {
+			e.effectiveName = `${baseKindOf(e.kind)}_elements`;
+		}
 	}
-	for (const group of effectiveCounts.values()) {
-		if (group.length > 1 && new Set(group.map(shapeOf)).size === 1) for (const e of group) e.sharedShape = true;
+	let dupCounts = countByEffective();
+	for (const e of hoisting) {
+		if (dupCounts.get(e.effectiveName)! > 1) {
+			e.effectiveName = `${e.kind.replace(/^_/, '')}_${e.proposedName ?? 'elements'}`;
+		}
+	}
+	dupCounts = countByEffective();
+	for (const e of hoisting) {
+		e.unresolvedCollision =
+			dupCounts.get(e.effectiveName)! > 1 ||
+			(!('parents' in e && e.effectiveName === e.kind) && allKinds.has(e.effectiveName));
 	}
 
 	kindLevel.sort((a, b) => Number(b.flankCarrying) - Number(a.flankCarrying) || a.kind.localeCompare(b.kind));
@@ -311,7 +338,7 @@ function printCensus(census: SeparatedListsCensus): void {
 	for (const e of census.kindLevel) {
 		const target = e.flankCarrying ? 'hoist ' : 'stays ';
 		const name = e.flankCarrying
-			? ` -> ${e.effectiveName}${e.sharedShape ? ' [SHARED SHAPE]' : ''}${e.proposedCollision ? ` (field-name '${e.proposedName}' collides)` : ''}`
+			? ` -> ${e.effectiveName}${e.unresolvedCollision ? ' [UNRESOLVED]' : ''}${e.sharedShape ? ' [shared shape]' : ''}${e.proposedCollision ? ` (field-name '${e.proposedName}' collides)` : ''}`
 			: `  fields=[${e.elementFields.join(',')}]`;
 		const parents = e.parents
 			.map((p) => `${p.kind}${p.slotCount === 1 ? ' [single-slot->forwarded]' : ''}`)
@@ -326,7 +353,7 @@ function printCensus(census: SeparatedListsCensus): void {
 	for (const e of census.inline) {
 		const target = e.flankCarrying ? 'hoist ' : 'stays ';
 		const name = e.flankCarrying
-			? ` -> ${e.effectiveName}${e.sharedShape ? ' [SHARED SHAPE]' : ''}${e.proposedCollision ? ` (field-name '${e.proposedName}' collides)` : ''}`
+			? ` -> ${e.effectiveName}${e.unresolvedCollision ? ' [UNRESOLVED]' : ''}${e.sharedShape ? ' [shared shape]' : ''}${e.proposedCollision ? ` (field-name '${e.proposedName}' collides)` : ''}`
 			: '';
 		w(
 			`  [${target}] ${e.kind}.${e.slot}  sep=${e.separator}  leading=${e.leading} trailing=${e.trailing}${name}  elements=[${e.elementKinds.join(',')}]`
