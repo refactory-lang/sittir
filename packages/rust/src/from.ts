@@ -337,18 +337,18 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	or_pattern: TSKindId.OrPattern,
 	line_comment: TSKindId.LineComment,
 	block_comment: TSKindId.BlockComment,
-	_enum_variant_list_group1: TSKindId.EnumVariantListGroup1,
-	_field_declaration_list_group1: TSKindId.FieldDeclarationListGroup1,
-	_ordered_field_declaration_list_group1: TSKindId.OrderedFieldDeclarationListGroup1,
-	_use_list_group1: TSKindId.UseListGroup1,
-	_parameters_group1: TSKindId.ParametersGroup1,
+	_enum_variant_list_elements: TSKindId.EnumVariantListElements,
+	_field_declaration_list_elements: TSKindId.FieldDeclarationListElements,
+	_ordered_field_declaration_list_elements: TSKindId.OrderedFieldDeclarationListElements,
+	_use_clauses: TSKindId.UseClauses,
+	_parameters_elements: TSKindId.ParametersElements,
 	_visibility_modifier_group1: TSKindId.VisibilityModifierGroup1,
-	_use_bounds_group1: TSKindId.UseBoundsGroup1,
-	_arguments_group1: TSKindId.ArgumentsGroup1,
-	_field_initializer_list_group1: TSKindId.FieldInitializerListGroup1,
-	_tuple_pattern_group1: TSKindId.TuplePatternGroup1,
-	_slice_pattern_group1: TSKindId.SlicePatternGroup1,
-	_struct_pattern_group1: TSKindId.StructPatternGroup1,
+	_use_bounds_elements: TSKindId.UseBoundsElements,
+	_arguments_elements: TSKindId.ArgumentsElements,
+	_field_initializer_list_elements: TSKindId.FieldInitializerListElements,
+	_tuple_pattern_elements: TSKindId.TuplePatternElements,
+	_patterns: TSKindId.Patterns,
+	_struct_pattern_elements: TSKindId.StructPatternElements,
 	_impl_item_body: TSKindId.ImplItemBody,
 	_function_type_fn_form: TSKindId.FunctionTypeFnForm,
 	_macro_definition_paren: TSKindId.MacroDefinitionParen,
@@ -403,32 +403,32 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildLineComment(children[0] as Parameters<typeof F.buildLineComment>[0]);
 		case 'block_comment':
 			return F.buildBlockComment(children[0] as Parameters<typeof F.buildBlockComment>[0]);
-		case '_enum_variant_list_group1':
-			return F.buildEnumVariantListGroup1(children as Parameters<typeof F.buildEnumVariantListGroup1>[0]);
-		case '_field_declaration_list_group1':
-			return F.buildFieldDeclarationListGroup1(children as Parameters<typeof F.buildFieldDeclarationListGroup1>[0]);
-		case '_ordered_field_declaration_list_group1':
-			return F.buildOrderedFieldDeclarationListGroup1(
-				children as Parameters<typeof F.buildOrderedFieldDeclarationListGroup1>[0]
+		case '_enum_variant_list_elements':
+			return F.buildEnumVariantListElements(children as Parameters<typeof F.buildEnumVariantListElements>[0]);
+		case '_field_declaration_list_elements':
+			return F.buildFieldDeclarationListElements(children as Parameters<typeof F.buildFieldDeclarationListElements>[0]);
+		case '_ordered_field_declaration_list_elements':
+			return F.buildOrderedFieldDeclarationListElements(
+				children as Parameters<typeof F.buildOrderedFieldDeclarationListElements>[0]
 			);
-		case '_use_list_group1':
-			return F.buildUseListGroup1(children as Parameters<typeof F.buildUseListGroup1>[0]);
-		case '_parameters_group1':
-			return F.buildParametersGroup1(children as Parameters<typeof F.buildParametersGroup1>[0]);
+		case '_use_clauses':
+			return F.buildUseClauses(children as Parameters<typeof F.buildUseClauses>[0]);
+		case '_parameters_elements':
+			return F.buildParametersElements(children as Parameters<typeof F.buildParametersElements>[0]);
 		case '_visibility_modifier_group1':
 			return F.buildVisibilityModifierGroup1(children[0] as Parameters<typeof F.buildVisibilityModifierGroup1>[0]);
-		case '_use_bounds_group1':
-			return F.buildUseBoundsGroup1(children as Parameters<typeof F.buildUseBoundsGroup1>[0]);
-		case '_arguments_group1':
-			return F.buildArgumentsGroup1(children as Parameters<typeof F.buildArgumentsGroup1>[0]);
-		case '_field_initializer_list_group1':
-			return F.buildFieldInitializerListGroup1(children as Parameters<typeof F.buildFieldInitializerListGroup1>[0]);
-		case '_tuple_pattern_group1':
-			return F.buildTuplePatternGroup1(children as Parameters<typeof F.buildTuplePatternGroup1>[0]);
-		case '_slice_pattern_group1':
-			return F.buildSlicePatternGroup1(children as Parameters<typeof F.buildSlicePatternGroup1>[0]);
-		case '_struct_pattern_group1':
-			return F.buildStructPatternGroup1(children as Parameters<typeof F.buildStructPatternGroup1>[0]);
+		case '_use_bounds_elements':
+			return F.buildUseBoundsElements(children as Parameters<typeof F.buildUseBoundsElements>[0]);
+		case '_arguments_elements':
+			return F.buildArgumentsElements(children as Parameters<typeof F.buildArgumentsElements>[0]);
+		case '_field_initializer_list_elements':
+			return F.buildFieldInitializerListElements(children as Parameters<typeof F.buildFieldInitializerListElements>[0]);
+		case '_tuple_pattern_elements':
+			return F.buildTuplePatternElements(children as Parameters<typeof F.buildTuplePatternElements>[0]);
+		case '_patterns':
+			return F.buildPatterns(children as Parameters<typeof F.buildPatterns>[0]);
+		case '_struct_pattern_elements':
+			return F.buildStructPatternElements(children as Parameters<typeof F.buildStructPatternElements>[0]);
 		case '_impl_item_body':
 			return F.buildImplItemBody(children[0] as Parameters<typeof F.buildImplItemBody>[0]);
 		case '_function_type_fn_form':
@@ -1163,11 +1163,11 @@ export function coerceToEnumItem(input: T.EnumItem.Loose): ReturnType<typeof F.b
 }
 
 export function coerceToEnumVariantList(
-	input?: T.EnumVariantListGroup1 | T.EnumVariantList
+	input?: T.EnumVariantListElements | T.EnumVariantList
 ): ReturnType<typeof F.buildEnumVariantList> {
 	if (isNodeData(input) && input.$type === TSKindId.EnumVariantList) {
 		const data = input;
-		const child = (data as unknown as { _enum_variant_list_group1?: unknown })._enum_variant_list_group1;
+		const child = (data as unknown as { _enum_variant_list_elements?: unknown })._enum_variant_list_elements;
 		return F.buildEnumVariantList(child as Parameters<typeof F.buildEnumVariantList>[0]);
 	}
 	return F.buildEnumVariantList(input as Parameters<typeof F.buildEnumVariantList>[0]);
@@ -1184,11 +1184,11 @@ export function coerceToEnumVariant(input: T.EnumVariant.Loose): ReturnType<type
 }
 
 export function coerceToFieldDeclarationList(
-	input?: T.FieldDeclarationListGroup1 | T.FieldDeclarationList
+	input?: T.FieldDeclarationListElements | T.FieldDeclarationList
 ): ReturnType<typeof F.buildFieldDeclarationList> {
 	if (isNodeData(input) && input.$type === TSKindId.FieldDeclarationList) {
 		const data = input;
-		const child = (data as unknown as { _field_declaration_list_group1?: unknown })._field_declaration_list_group1;
+		const child = (data as unknown as { _field_declaration_list_elements?: unknown })._field_declaration_list_elements;
 		return F.buildFieldDeclarationList(child as Parameters<typeof F.buildFieldDeclarationList>[0]);
 	}
 	return F.buildFieldDeclarationList(input as Parameters<typeof F.buildFieldDeclarationList>[0]);
@@ -1213,11 +1213,11 @@ export function coerceToOrderedFieldDeclarationList(
 	)
 		return input as unknown as ReturnType<typeof F.buildOrderedFieldDeclarationList>;
 	return F.buildOrderedFieldDeclarationList(
-		_resolveOneBranch<T.OrderedFieldDeclarationListGroup1>(
+		_resolveOneBranch<T.OrderedFieldDeclarationListElements>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'attributes' in input
 				? input.attributes
 				: input,
-			'_ordered_field_declaration_list_group1'
+			'_ordered_field_declaration_list_elements'
 		)
 	);
 }
@@ -1319,12 +1319,10 @@ export function coerceToFunctionModifiers(
 	});
 }
 
-export function coerceToWhereClause(
-	input?: T.WhereClauseGroup1 | T.WhereClause
-): ReturnType<typeof F.buildWhereClause> {
+export function coerceToWhereClause(input?: T.WherePredicates | T.WhereClause): ReturnType<typeof F.buildWhereClause> {
 	if (isNodeData(input) && input.$type === TSKindId.WhereClause) {
 		const data = input;
-		const child = (data as unknown as { _where_clause_group1?: unknown })._where_clause_group1;
+		const child = (data as unknown as { _where_predicates?: unknown })._where_predicates;
 		return F.buildWhereClause(child as Parameters<typeof F.buildWhereClause>[0]);
 	}
 	return F.buildWhereClause(input as Parameters<typeof F.buildWhereClause>[0]);
@@ -1497,10 +1495,10 @@ export function coerceToScopedUseList(input: T.ScopedUseList.Loose): ReturnType<
 	});
 }
 
-export function coerceToUseList(input?: T.UseListGroup1 | T.UseList): ReturnType<typeof F.buildUseList> {
+export function coerceToUseList(input?: T.UseClauses | T.UseList): ReturnType<typeof F.buildUseList> {
 	if (isNodeData(input) && input.$type === TSKindId.UseList) {
 		const data = input;
-		const child = (data as unknown as { _use_list_group1?: unknown })._use_list_group1;
+		const child = (data as unknown as { _use_clauses?: unknown })._use_clauses;
 		return F.buildUseList(child as Parameters<typeof F.buildUseList>[0]);
 	}
 	return F.buildUseList(input as Parameters<typeof F.buildUseList>[0]);
@@ -1526,10 +1524,10 @@ export function coerceToUseWildcard(input?: T.UseWildcard.Loose): ReturnType<typ
 	);
 }
 
-export function coerceToParameters(input?: T.ParametersGroup1 | T.Parameters): ReturnType<typeof F.buildParameters> {
+export function coerceToParameters(input?: T.ParametersElements | T.Parameters): ReturnType<typeof F.buildParameters> {
 	if (isNodeData(input) && input.$type === TSKindId.Parameters) {
 		const data = input;
-		const child = (data as unknown as { _parameters_group1?: unknown })._parameters_group1;
+		const child = (data as unknown as { _parameters_elements?: unknown })._parameters_elements;
 		return F.buildParameters(child as Parameters<typeof F.buildParameters>[0]);
 	}
 	return F.buildParameters(input as Parameters<typeof F.buildParameters>[0]);
@@ -1743,9 +1741,9 @@ export function coerceToUseBounds(input?: T.UseBounds.Loose): ReturnType<typeof 
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.UseBounds)
 		return input as unknown as ReturnType<typeof F.buildUseBounds>;
 	return F.buildUseBounds(
-		_resolveOneBranch<T.UseBoundsGroup1>(
+		_resolveOneBranch<T.UseBoundsElements>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'bounds' in input ? input.bounds : input,
-			'_use_bounds_group1'
+			'_use_bounds_elements'
 		)
 	);
 }
@@ -2094,10 +2092,10 @@ export function coerceToCallExpression(input: T.CallExpression.Loose): ReturnTyp
 	});
 }
 
-export function coerceToArguments(input?: T.ArgumentsGroup1 | T.Arguments): ReturnType<typeof F.buildArguments> {
+export function coerceToArguments(input?: T.ArgumentsElements | T.Arguments): ReturnType<typeof F.buildArguments> {
 	if (isNodeData(input) && input.$type === TSKindId.Arguments) {
 		const data = input;
-		const child = (data as unknown as { _arguments_group1?: unknown })._arguments_group1;
+		const child = (data as unknown as { _arguments_elements?: unknown })._arguments_elements;
 		return F.buildArguments(child as Parameters<typeof F.buildArguments>[0]);
 	}
 	return F.buildArguments(input as Parameters<typeof F.buildArguments>[0]);
@@ -2172,11 +2170,11 @@ export function coerceToFieldInitializerList(
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.FieldInitializerList)
 		return input as unknown as ReturnType<typeof F.buildFieldInitializerList>;
 	return F.buildFieldInitializerList(
-		_resolveOneBranch<T.FieldInitializerListGroup1>(
+		_resolveOneBranch<T.FieldInitializerListElements>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'initializers' in input
 				? input.initializers
 				: input,
-			'_field_initializer_list_group1'
+			'_field_initializer_list_elements'
 		)
 	);
 }
@@ -2528,19 +2526,17 @@ export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<t
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.TuplePattern)
 		return input as unknown as ReturnType<typeof F.buildTuplePattern>;
 	return F.buildTuplePattern(
-		_resolveOneBranch<T.TuplePatternGroup1>(
+		_resolveOneBranch<T.TuplePatternElements>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'elements' in input ? input.elements : input,
-			'_tuple_pattern_group1'
+			'_tuple_pattern_elements'
 		)
 	);
 }
 
-export function coerceToSlicePattern(
-	input?: T.SlicePatternGroup1 | T.SlicePattern
-): ReturnType<typeof F.buildSlicePattern> {
+export function coerceToSlicePattern(input?: T.Patterns | T.SlicePattern): ReturnType<typeof F.buildSlicePattern> {
 	if (isNodeData(input) && input.$type === TSKindId.SlicePattern) {
 		const data = input;
-		const child = (data as unknown as { _slice_pattern_group1?: unknown })._slice_pattern_group1;
+		const child = (data as unknown as { _patterns?: unknown })._patterns;
 		return F.buildSlicePattern(child as Parameters<typeof F.buildSlicePattern>[0]);
 	}
 	return F.buildSlicePattern(input as Parameters<typeof F.buildSlicePattern>[0]);
@@ -2556,7 +2552,7 @@ export function coerceToTupleStructPattern(
 			'type',
 			_resolveOne<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>(input.type, _K26, _K35)
 		),
-		slicePatternGroup1: _resolveOneBranch<T.SlicePatternGroup1>(input.slicePatternGroup1, '_slice_pattern_group1')
+		patterns: _resolveOneBranch<T.Patterns>(input.patterns, '_patterns')
 	});
 }
 
@@ -2568,7 +2564,7 @@ export function coerceToStructPattern(input: T.StructPattern.Loose): ReturnType<
 			'type',
 			_resolveOne<T.Identifier | T.ScopedTypeIdentifier>(input.type, _K26, _K28)
 		),
-		fields: _resolveOneBranch<T.StructPatternGroup1>(input.fields, '_struct_pattern_group1')
+		fields: _resolveOneBranch<T.StructPatternElements>(input.fields, '_struct_pattern_elements')
 	});
 }
 

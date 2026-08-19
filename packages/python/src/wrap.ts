@@ -3140,8 +3140,8 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle) {
 			}),
 
 			arguments() {
-				return drillAs<T.ArgumentListGroup1 | undefined>(this._arguments, tree, [
-					{ from: 'argument_list_group1', to: '_argument_list_group1' }
+				return drillAs<T.ArgumentListElements | undefined>(this._arguments, tree, [
+					{ from: 'argument_list_elements', to: '_argument_list_elements' }
 				]);
 			},
 			$with: {
@@ -3378,8 +3378,8 @@ export function wrapExpressionList(
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			tail() {
-				return drillAs<',' | T.ExpressionListGroup1>(this._tail, tree, [
-					{ from: 'expression_list_group1', to: '_expression_list_group1' }
+				return drillAs<',' | T.ExpressionListExpressions>(this._tail, tree, [
+					{ from: 'expression_list_expressions', to: '_expression_list_expressions' }
 				]);
 			},
 			$with: {
@@ -3610,22 +3610,22 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.DictPattern as const,
-			_dict_pattern_group2: normalizeSingularWrapSlot(
-				data._dict_pattern_group2,
-				'dict_pattern_group2',
+			_dict_pattern_elements: normalizeSingularWrapSlot(
+				data._dict_pattern_elements,
+				'dict_pattern_elements',
 				false,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'dict_pattern_group2', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'dict_pattern_elements', span: (data as _NodeData).$span }
 			),
 
-			dictPatternGroup2() {
-				return drillAs<T.DictPatternGroup2 | undefined>(this._dict_pattern_group2, tree, [
-					{ from: 'dict_pattern_group2', to: '_dict_pattern_group2' }
+			dictPatternElements() {
+				return drillAs<T.DictPatternElements | undefined>(this._dict_pattern_elements, tree, [
+					{ from: 'dict_pattern_elements', to: '_dict_pattern_elements' }
 				]);
 			},
 			$with: {
-				dictPatternGroup2: (v: NonNullable<T.DictPattern['_dict_pattern_group2']>) =>
-					wrapDictPattern({ ...data, _dict_pattern_group2: v }, tree)
+				dictPatternElements: (v: NonNullable<T.DictPattern['_dict_pattern_elements']>) =>
+					wrapDictPattern({ ...data, _dict_pattern_elements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -3770,8 +3770,8 @@ export function wrapClassPattern(data: T.ClassPattern, tree: TreeHandle) {
 				return drillIn<T.DottedName>(this._dotted_name, tree);
 			},
 			arguments() {
-				return drillAs<T.ListPatternGroup1 | undefined>(this._arguments, tree, [
-					{ from: 'list_pattern_group1', to: '_list_pattern_group1' }
+				return drillAs<T.CasePatterns | undefined>(this._arguments, tree, [
+					{ from: 'case_patterns', to: '_case_patterns' }
 				]);
 			},
 			$with: {
@@ -4857,8 +4857,8 @@ export function wrapPatternList(
 				return drillIn<T.Pattern>(this._pattern, tree);
 			},
 			tail() {
-				return drillAs<',' | T.PatternListGroup1>(this._tail, tree, [
-					{ from: 'pattern_list_group1', to: '_pattern_list_group1' }
+				return drillAs<',' | T.PatternListPatterns>(this._tail, tree, [
+					{ from: 'pattern_list_patterns', to: '_pattern_list_patterns' }
 				]);
 			},
 			$with: {
@@ -5815,8 +5815,8 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle) {
 			}),
 
 			entries() {
-				return drillAs<T.DictionaryGroup1 | undefined>(this._entries, tree, [
-					{ from: 'dictionary_group1', to: '_dictionary_group1' }
+				return drillAs<T.DictionaryElements | undefined>(this._entries, tree, [
+					{ from: 'dictionary_elements', to: '_dictionary_elements' }
 				]);
 			},
 			$with: {
@@ -6688,8 +6688,8 @@ export function wrapExceptClauseGroup1(
 	return _node;
 }
 
-export function wrapArgumentListGroup1(
-	data: T.ArgumentListGroup1 & {
+export function wrapArgumentListElements(
+	data: T.ArgumentListElements & {
 		readonly $other?: _NodeData['$other'];
 		readonly $span?: { start: number; end: number };
 	},
@@ -6704,7 +6704,7 @@ export function wrapArgumentListGroup1(
 	return withMethods(
 		{
 			...data,
-			$type: TSKindId.ArgumentListGroup1 as const,
+			$type: TSKindId.ArgumentListElements as const,
 			_element: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
@@ -6724,8 +6724,8 @@ export function wrapArgumentListGroup1(
 	);
 }
 
-export function wrapExpressionListGroup1(
-	data: T.ExpressionListGroup1 & {
+export function wrapExpressionListExpressions(
+	data: T.ExpressionListExpressions & {
 		readonly _comparison_operator?: T.Expression;
 		readonly _not_operator?: T.Expression;
 		readonly _boolean_operator?: T.Expression;
@@ -6840,7 +6840,7 @@ export function wrapExpressionListGroup1(
 				'_tuple',
 				'_unary_operator'
 			]),
-			$type: TSKindId.ExpressionListGroup1 as const,
+			$type: TSKindId.ExpressionListExpressions as const,
 			_expression: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 1),
 
@@ -6853,11 +6853,11 @@ export function wrapExpressionListGroup1(
 	);
 }
 
-export function wrapListPatternGroup1(data: T.ListPatternGroup1, tree: TreeHandle) {
+export function wrapCasePatterns(data: T.CasePatterns, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId.ListPatternGroup1 as const,
+			$type: TSKindId.CasePatterns as const,
 			_case_pattern: normalizeRepeatedWrapSlot(
 				_filterWrapChildrenByKind(data._case_pattern, ['case_pattern']),
 				true,
@@ -6879,8 +6879,8 @@ export function wrapListPatternGroup1(data: T.ListPatternGroup1, tree: TreeHandl
 				return drillInAll<T.CasePattern>(this._case_pattern as readonly T.CasePattern[] | undefined, tree);
 			},
 			$with: {
-				casePatterns: (...v: NonEmptyArray<NonNullable<T.ListPatternGroup1['_case_pattern']>[number]>) =>
-					wrapListPatternGroup1({ ...data, _case_pattern: v }, tree)
+				casePatterns: (...v: NonEmptyArray<NonNullable<T.CasePatterns['_case_pattern']>[number]>) =>
+					wrapCasePatterns({ ...data, _case_pattern: v }, tree)
 			}
 		},
 		methodsEngine
@@ -6888,8 +6888,8 @@ export function wrapListPatternGroup1(data: T.ListPatternGroup1, tree: TreeHandl
 	return _node;
 }
 
-export function wrapDictPatternGroup2(
-	data: T.DictPatternGroup2 & {
+export function wrapDictPatternElements(
+	data: T.DictPatternElements & {
 		readonly _dict_pattern_group1?:
 			| T.KeyValuePattern
 			| T.SplatPattern
@@ -6901,7 +6901,7 @@ export function wrapDictPatternGroup2(
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_dict_pattern_group1', '_splat_pattern']),
-			$type: TSKindId.DictPatternGroup2 as const,
+			$type: TSKindId.DictPatternElements as const,
 			_dict_pattern_kv: normalizeSingularWrapSlot(data._dict_pattern_kv, 'dict_pattern_kv', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -6931,10 +6931,10 @@ export function wrapDictPatternGroup2(
 				]);
 			},
 			$with: {
-				dictPatternKv: (v: NonNullable<T.DictPatternGroup2['_dict_pattern_kv']>) =>
-					wrapDictPatternGroup2({ ...data, _dict_pattern_kv: v }, tree),
-				contents: (...v: NonNullable<T.DictPatternGroup2['_content']>[number][]) =>
-					wrapDictPatternGroup2({ ...data, _content: v }, tree)
+				dictPatternKv: (v: NonNullable<T.DictPatternElements['_dict_pattern_kv']>) =>
+					wrapDictPatternElements({ ...data, _dict_pattern_kv: v }, tree),
+				contents: (...v: NonNullable<T.DictPatternElements['_content']>[number][]) =>
+					wrapDictPatternElements({ ...data, _content: v }, tree)
 			}
 		},
 		methodsEngine
@@ -6942,8 +6942,8 @@ export function wrapDictPatternGroup2(
 	return _node;
 }
 
-export function wrapPatternListGroup1(
-	data: T.PatternListGroup1 & {
+export function wrapPatternListPatterns(
+	data: T.PatternListPatterns & {
 		readonly _identifier?: T.Pattern;
 		readonly _subscript?: T.Pattern;
 		readonly _attribute?: T.Pattern;
@@ -6980,7 +6980,7 @@ export function wrapPatternListGroup1(
 				'_subscript',
 				'_tuple_pattern'
 			]),
-			$type: TSKindId.PatternListGroup1 as const,
+			$type: TSKindId.PatternListPatterns as const,
 			_pattern: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 1),
 
@@ -7119,8 +7119,11 @@ export function wrapSliceGroup1(
 	return _node;
 }
 
-export function wrapDictionaryGroup1(
-	data: T.DictionaryGroup1 & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+export function wrapDictionaryElements(
+	data: T.DictionaryElements & {
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
 	tree: TreeHandle
 ) {
 	const _content = normalizeRepeatedWrapSlot(data._element, true, 'element', {
@@ -7132,7 +7135,7 @@ export function wrapDictionaryGroup1(
 	return withMethods(
 		{
 			...data,
-			$type: TSKindId.DictionaryGroup1 as const,
+			$type: TSKindId.DictionaryElements as const,
 			_element: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
@@ -8266,13 +8269,13 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	line_continuation: (d) => ({ ...d, $type: TSKindId.LineContinuation as const }),
 	_kw_async_marker: (d) => ({ ...d, $type: TSKindId.KwAsyncMarker as const }),
 	_except_clause_group1: (d, t) => wrapExceptClauseGroup1(d as unknown as T.ExceptClauseGroup1, t),
-	_argument_list_group1: (d, t) => wrapArgumentListGroup1(d as unknown as T.ArgumentListGroup1, t),
-	_expression_list_group1: (d, t) => wrapExpressionListGroup1(d as unknown as T.ExpressionListGroup1, t),
-	_list_pattern_group1: (d, t) => wrapListPatternGroup1(d as unknown as T.ListPatternGroup1, t),
-	_dict_pattern_group2: (d, t) => wrapDictPatternGroup2(d as unknown as T.DictPatternGroup2, t),
-	_pattern_list_group1: (d, t) => wrapPatternListGroup1(d as unknown as T.PatternListGroup1, t),
+	_argument_list_elements: (d, t) => wrapArgumentListElements(d as unknown as T.ArgumentListElements, t),
+	_expression_list_expressions: (d, t) => wrapExpressionListExpressions(d as unknown as T.ExpressionListExpressions, t),
+	_case_patterns: (d, t) => wrapCasePatterns(d as unknown as T.CasePatterns, t),
+	_dict_pattern_elements: (d, t) => wrapDictPatternElements(d as unknown as T.DictPatternElements, t),
+	_pattern_list_patterns: (d, t) => wrapPatternListPatterns(d as unknown as T.PatternListPatterns, t),
 	_slice_group1: (d, t) => wrapSliceGroup1(d as unknown as T.SliceGroup1, t),
-	_dictionary_group1: (d, t) => wrapDictionaryGroup1(d as unknown as T.DictionaryGroup1, t),
+	_dictionary_elements: (d, t) => wrapDictionaryElements(d as unknown as T.DictionaryElements, t),
 	_augmented_assignment_operator: (d) => ({ ...d, $type: TSKindId.AugmentedAssignmentOperator as const }),
 	_except_clause_as: (d, t) => wrapExceptClauseAs(d as unknown as T.ExceptClauseAs, t),
 	case_tuple_pattern: (d, t) => wrapCaseTuplePattern(d as unknown as T.CaseTuplePattern, t),
@@ -8311,21 +8314,22 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 const _aliasTargetToSource: Record<string, string> = {
 	_dict_pattern_group1: '_key_value_pattern',
 	_statement_group1: '_simple_statements',
-	argument_list_group1: '_argument_list_group1',
+	argument_list_elements: '_argument_list_elements',
 	assignment_eq: '_assignment_eq',
 	assignment_type: '_assignment_type',
 	assignment_typed: '_assignment_typed',
 	augmented_assignment_operator: '_augmented_assignment_operator',
+	case_patterns: '_case_patterns',
 	collection_elements: '_collection_elements',
 	comparison_operator_comparator: '_comparison_operator_comparator',
+	dict_pattern_elements: '_dict_pattern_elements',
 	dict_pattern_group1: '_key_value_pattern',
-	dict_pattern_group2: '_dict_pattern_group2',
 	dict_pattern_kv: '_dict_pattern_kv',
-	dictionary_group1: '_dictionary_group1',
+	dictionary_elements: '_dictionary_elements',
 	except_clause_as: '_except_clause_as',
 	except_clause_group1: '_except_clause_group1',
 	except_clause_list: '_except_clause_list',
-	expression_list_group1: '_expression_list_group1',
+	expression_list_expressions: '_expression_list_expressions',
 	expression_statement_tuple: '_expression_statement_tuple',
 	expression_within_for_in_clause: '_expression_within_for_in_clause',
 	expressions: '_expressions',
@@ -8334,11 +8338,10 @@ const _aliasTargetToSource: Record<string, string> = {
 	key_value_pattern: '_key_value_pattern',
 	kw_async_marker: '_kw_async_marker',
 	left_hand_side: '_left_hand_side',
-	list_pattern_group1: '_list_pattern_group1',
 	match_block: '_match_block',
 	match_block_block: '_match_block_block',
 	named_expression_lhs: '_named_expression_lhs',
-	pattern_list_group1: '_pattern_list_group1',
+	pattern_list_patterns: '_pattern_list_patterns',
 	patterns: '_patterns',
 	right_hand_side: '_right_hand_side',
 	simple_pattern: '_simple_pattern',

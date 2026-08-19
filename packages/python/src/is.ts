@@ -169,20 +169,22 @@ export interface IsGuards {
 	ExceptClauseGroup1<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ExceptClauseGroup1 };
-	ArgumentListGroup1<T extends { readonly $type: number }>(
+	ArgumentListElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.ArgumentListGroup1 };
-	ExpressionListGroup1<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.ArgumentListElements };
+	ExpressionListExpressions<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.ExpressionListGroup1 };
-	DictPatternGroup2<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.ExpressionListExpressions };
+	DictPatternElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.DictPatternGroup2 };
-	PatternListGroup1<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.DictPatternElements };
+	PatternListPatterns<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.PatternListGroup1 };
+	): v is T & { readonly $type: TSKindId.PatternListPatterns };
 	SliceGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SliceGroup1 };
-	DictionaryGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DictionaryGroup1 };
+	DictionaryElements<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.DictionaryElements };
 	caseTuplePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CaseTuplePattern };
 	caseListPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CaseListPattern };
 	caseAsPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CaseAsPattern };
@@ -337,12 +339,14 @@ export interface AssertGuards {
 	formatSpecifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FormatSpecifier };
 	await(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Await };
 	ExceptClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseGroup1 };
-	ArgumentListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArgumentListGroup1 };
-	ExpressionListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExpressionListGroup1 };
-	DictPatternGroup2(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DictPatternGroup2 };
-	PatternListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PatternListGroup1 };
+	ArgumentListElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArgumentListElements };
+	ExpressionListExpressions(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.ExpressionListExpressions };
+	DictPatternElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DictPatternElements };
+	PatternListPatterns(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PatternListPatterns };
 	SliceGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SliceGroup1 };
-	DictionaryGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DictionaryGroup1 };
+	DictionaryElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DictionaryElements };
 	caseTuplePattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CaseTuplePattern };
 	caseListPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CaseListPattern };
 	caseAsPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CaseAsPattern };
@@ -574,13 +578,13 @@ const _kindIdByKind = new Map<string, number>([
 	['await', TSKindId.Await],
 	['_kw_async_marker', TSKindId.KwAsyncMarker],
 	['_except_clause_group1', TSKindId.ExceptClauseGroup1],
-	['_argument_list_group1', TSKindId.ArgumentListGroup1],
-	['_expression_list_group1', TSKindId.ExpressionListGroup1],
-	['_list_pattern_group1', TSKindId.ListPatternGroup1],
-	['_dict_pattern_group2', TSKindId.DictPatternGroup2],
-	['_pattern_list_group1', TSKindId.PatternListGroup1],
+	['_argument_list_elements', TSKindId.ArgumentListElements],
+	['_expression_list_expressions', TSKindId.ExpressionListExpressions],
+	['_case_patterns', TSKindId.CasePatterns],
+	['_dict_pattern_elements', TSKindId.DictPatternElements],
+	['_pattern_list_patterns', TSKindId.PatternListPatterns],
 	['_slice_group1', TSKindId.SliceGroup1],
-	['_dictionary_group1', TSKindId.DictionaryGroup1],
+	['_dictionary_elements', TSKindId.DictionaryElements],
 	['_augmented_assignment_operator', TSKindId.AugmentedAssignmentOperator],
 	['_except_clause_as', TSKindId.ExceptClauseAs],
 	['case_tuple_pattern', TSKindId.CaseTuplePattern],
@@ -708,12 +712,12 @@ export const is = {
 	formatSpecifier: _g(TSKindId.FormatSpecifier),
 	await: _g(TSKindId.Await),
 	ExceptClauseGroup1: _g(TSKindId.ExceptClauseGroup1),
-	ArgumentListGroup1: _g(TSKindId.ArgumentListGroup1),
-	ExpressionListGroup1: _g(TSKindId.ExpressionListGroup1),
-	DictPatternGroup2: _g(TSKindId.DictPatternGroup2),
-	PatternListGroup1: _g(TSKindId.PatternListGroup1),
+	ArgumentListElements: _g(TSKindId.ArgumentListElements),
+	ExpressionListExpressions: _g(TSKindId.ExpressionListExpressions),
+	DictPatternElements: _g(TSKindId.DictPatternElements),
+	PatternListPatterns: _g(TSKindId.PatternListPatterns),
 	SliceGroup1: _g(TSKindId.SliceGroup1),
-	DictionaryGroup1: _g(TSKindId.DictionaryGroup1),
+	DictionaryElements: _g(TSKindId.DictionaryElements),
 	caseTuplePattern: _g(TSKindId.CaseTuplePattern),
 	caseListPattern: _g(TSKindId.CaseListPattern),
 	caseAsPattern: _g(TSKindId.CaseAsPattern),
@@ -872,12 +876,12 @@ export const assert = {
 	formatSpecifier: _makeAssert('formatSpecifier', is.formatSpecifier as _AnyGuard),
 	await: _makeAssert('await', is.await as _AnyGuard),
 	ExceptClauseGroup1: _makeAssert('ExceptClauseGroup1', is.ExceptClauseGroup1 as _AnyGuard),
-	ArgumentListGroup1: _makeAssert('ArgumentListGroup1', is.ArgumentListGroup1 as _AnyGuard),
-	ExpressionListGroup1: _makeAssert('ExpressionListGroup1', is.ExpressionListGroup1 as _AnyGuard),
-	DictPatternGroup2: _makeAssert('DictPatternGroup2', is.DictPatternGroup2 as _AnyGuard),
-	PatternListGroup1: _makeAssert('PatternListGroup1', is.PatternListGroup1 as _AnyGuard),
+	ArgumentListElements: _makeAssert('ArgumentListElements', is.ArgumentListElements as _AnyGuard),
+	ExpressionListExpressions: _makeAssert('ExpressionListExpressions', is.ExpressionListExpressions as _AnyGuard),
+	DictPatternElements: _makeAssert('DictPatternElements', is.DictPatternElements as _AnyGuard),
+	PatternListPatterns: _makeAssert('PatternListPatterns', is.PatternListPatterns as _AnyGuard),
 	SliceGroup1: _makeAssert('SliceGroup1', is.SliceGroup1 as _AnyGuard),
-	DictionaryGroup1: _makeAssert('DictionaryGroup1', is.DictionaryGroup1 as _AnyGuard),
+	DictionaryElements: _makeAssert('DictionaryElements', is.DictionaryElements as _AnyGuard),
 	caseTuplePattern: _makeAssert('caseTuplePattern', is.caseTuplePattern as _AnyGuard),
 	caseListPattern: _makeAssert('caseListPattern', is.caseListPattern as _AnyGuard),
 	caseAsPattern: _makeAssert('caseAsPattern', is.caseAsPattern as _AnyGuard),

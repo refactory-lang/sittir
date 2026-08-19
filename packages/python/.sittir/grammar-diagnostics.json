@@ -335,9 +335,9 @@
     "code": "parsekind-noninjective",
     "severity": "info",
     "grammar": "python",
-    "ownerKind": "_argument_list_group1",
+    "ownerKind": "_argument_list_elements",
     "slotName": "parenthesized_expression",
-    "message": "Slot 'parenthesized_expression' of kind '_argument_list_group1' collapses [parenthesized_expression, parenthesized_list_splat] onto parse kind 'parenthesized_expression'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
+    "message": "Slot 'parenthesized_expression' of kind '_argument_list_elements' collapses [parenthesized_expression, parenthesized_list_splat] onto parse kind 'parenthesized_expression'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
     "proposal": "Already resolved by enrich() — no action needed.",
     "canProceed": true,
     "details": {

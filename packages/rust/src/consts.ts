@@ -2,7 +2,7 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
-	'_arguments_group1',
+	'_arguments_elements',
 	'_attribute_group1',
 	'_attributed_argument',
 	'_attributed_enum_variant',
@@ -10,9 +10,9 @@ export const NODE_KINDS = [
 	'_attributed_parameter',
 	'_attributed_type_parameter',
 	'_closure_expression_expr',
-	'_enum_variant_list_group1',
-	'_field_declaration_list_group1',
-	'_field_initializer_list_group1',
+	'_enum_variant_list_elements',
+	'_field_declaration_list_elements',
+	'_field_initializer_list_elements',
 	'_function_type_fn_form',
 	'_function_type_trait_form',
 	'_impl_item_body',
@@ -20,15 +20,15 @@ export const NODE_KINDS = [
 	'_macro_definition_brace',
 	'_macro_definition_bracket',
 	'_macro_definition_paren',
-	'_ordered_field_declaration_list_group1',
-	'_parameters_group1',
+	'_ordered_field_declaration_list_elements',
+	'_parameters_elements',
+	'_patterns',
 	'_reference_expression_raw_mut',
-	'_slice_pattern_group1',
-	'_struct_pattern_group1',
-	'_tuple_pattern_group1',
+	'_struct_pattern_elements',
+	'_tuple_pattern_elements',
 	'_type_argument',
-	'_use_bounds_group1',
-	'_use_list_group1',
+	'_use_bounds_elements',
+	'_use_clauses',
 	'_visibility_modifier_group1',
 	'_visibility_modifier_in_path',
 	'abstract_type',
@@ -698,20 +698,20 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	_kw_async_marker: 324,
 	_kw_move_marker: 325,
 	_attribute_group1: 326,
-	_enum_variant_list_group1: 327,
-	_field_declaration_list_group1: 328,
-	_ordered_field_declaration_list_group1: 329,
-	_where_clause_group1: 330,
-	_use_list_group1: 331,
-	_parameters_group1: 332,
+	_enum_variant_list_elements: 327,
+	_field_declaration_list_elements: 328,
+	_ordered_field_declaration_list_elements: 329,
+	_where_predicates: 330,
+	_use_clauses: 331,
+	_parameters_elements: 332,
 	_visibility_modifier_group1: 333,
-	_use_bounds_group1: 334,
-	_arguments_group1: 335,
+	_use_bounds_elements: 334,
+	_arguments_elements: 335,
 	_array_expression_group1: 336,
-	_field_initializer_list_group1: 337,
-	_tuple_pattern_group1: 338,
-	_slice_pattern_group1: 339,
-	_struct_pattern_group1: 340,
+	_field_initializer_list_elements: 337,
+	_tuple_pattern_elements: 338,
+	_patterns: 339,
+	_struct_pattern_elements: 340,
 	_range_pattern_group2: 341,
 	_block_comment_group1: 342,
 	_token_tree_punctuation: 343,
@@ -787,19 +787,19 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	tuple_expression_repeat2: 413,
 	match_arm_repeat1: 414,
 	string_literal_repeat1: 415,
-	_enum_variant_list_group1_repeat1: 416,
-	_field_declaration_list_group1_repeat1: 417,
-	_ordered_field_declaration_list_group1_repeat1: 418,
-	_where_clause_group1_repeat1: 419,
-	_use_list_group1_repeat1: 420,
-	_parameters_group1_repeat1: 421,
-	_use_bounds_group1_repeat1: 422,
-	_arguments_group1_repeat1: 423,
-	_field_initializer_list_group1_repeat1: 424,
+	_enum_variant_list_elements_repeat1: 416,
+	_field_declaration_list_elements_repeat1: 417,
+	_ordered_field_declaration_list_elements_repeat1: 418,
+	_where_predicates_repeat1: 419,
+	_use_clauses_repeat1: 420,
+	_parameters_elements_repeat1: 421,
+	_use_bounds_elements_repeat1: 422,
+	_arguments_elements_repeat1: 423,
+	_field_initializer_list_elements_repeat1: 424,
 	_closure_parameters_optional1_repeat1: 425,
-	_tuple_pattern_group1_repeat1: 426,
-	_slice_pattern_group1_repeat1: 427,
-	_struct_pattern_group1_repeat1: 428,
+	_tuple_pattern_elements_repeat1: 426,
+	_patterns_repeat1: 427,
+	_struct_pattern_elements_repeat1: 428,
 	_macro_definition_paren_repeat1: 429,
 	_delim_token_tree_paren_repeat1: 430,
 	_match_block_arms_repeat1: 431,
@@ -1135,20 +1135,20 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[324]: '_kw_async_marker',
 	[325]: '_kw_move_marker',
 	[326]: '_attribute_group1',
-	[327]: '_enum_variant_list_group1',
-	[328]: '_field_declaration_list_group1',
-	[329]: '_ordered_field_declaration_list_group1',
-	[330]: '_where_clause_group1',
-	[331]: '_use_list_group1',
-	[332]: '_parameters_group1',
+	[327]: '_enum_variant_list_elements',
+	[328]: '_field_declaration_list_elements',
+	[329]: '_ordered_field_declaration_list_elements',
+	[330]: '_where_predicates',
+	[331]: '_use_clauses',
+	[332]: '_parameters_elements',
 	[333]: '_visibility_modifier_group1',
-	[334]: '_use_bounds_group1',
-	[335]: '_arguments_group1',
+	[334]: '_use_bounds_elements',
+	[335]: '_arguments_elements',
 	[336]: '_array_expression_group1',
-	[337]: '_field_initializer_list_group1',
-	[338]: '_tuple_pattern_group1',
-	[339]: '_slice_pattern_group1',
-	[340]: '_struct_pattern_group1',
+	[337]: '_field_initializer_list_elements',
+	[338]: '_tuple_pattern_elements',
+	[339]: '_patterns',
+	[340]: '_struct_pattern_elements',
 	[341]: '_range_pattern_group2',
 	[342]: '_block_comment_group1',
 	[343]: '_token_tree_punctuation',
@@ -1224,19 +1224,19 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[413]: 'tuple_expression_repeat2',
 	[414]: 'match_arm_repeat1',
 	[415]: 'string_literal_repeat1',
-	[416]: '_enum_variant_list_group1_repeat1',
-	[417]: '_field_declaration_list_group1_repeat1',
-	[418]: '_ordered_field_declaration_list_group1_repeat1',
-	[419]: '_where_clause_group1_repeat1',
-	[420]: '_use_list_group1_repeat1',
-	[421]: '_parameters_group1_repeat1',
-	[422]: '_use_bounds_group1_repeat1',
-	[423]: '_arguments_group1_repeat1',
-	[424]: '_field_initializer_list_group1_repeat1',
+	[416]: '_enum_variant_list_elements_repeat1',
+	[417]: '_field_declaration_list_elements_repeat1',
+	[418]: '_ordered_field_declaration_list_elements_repeat1',
+	[419]: '_where_predicates_repeat1',
+	[420]: '_use_clauses_repeat1',
+	[421]: '_parameters_elements_repeat1',
+	[422]: '_use_bounds_elements_repeat1',
+	[423]: '_arguments_elements_repeat1',
+	[424]: '_field_initializer_list_elements_repeat1',
 	[425]: '_closure_parameters_optional1_repeat1',
-	[426]: '_tuple_pattern_group1_repeat1',
-	[427]: '_slice_pattern_group1_repeat1',
-	[428]: '_struct_pattern_group1_repeat1',
+	[426]: '_tuple_pattern_elements_repeat1',
+	[427]: '_patterns_repeat1',
+	[428]: '_struct_pattern_elements_repeat1',
 	[429]: '_macro_definition_paren_repeat1',
 	[430]: '_delim_token_tree_paren_repeat1',
 	[431]: '_match_block_arms_repeat1',
@@ -1678,34 +1678,34 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: '_kw_move_marker', id: 325, enumName: 'KwMoveMarker', cName: 'sym__kw_move_marker' },
 	{ name: '_attribute_group1', id: 326, enumName: 'AttributeGroup1', cName: 'sym__attribute_group1' },
 	{
-		name: '_enum_variant_list_group1',
+		name: '_enum_variant_list_elements',
 		id: 327,
-		enumName: 'EnumVariantListGroup1',
-		cName: 'sym__enum_variant_list_group1'
+		enumName: 'EnumVariantListElements',
+		cName: 'sym__enum_variant_list_elements'
 	},
 	{
-		name: '_field_declaration_list_group1',
+		name: '_field_declaration_list_elements',
 		id: 328,
-		enumName: 'FieldDeclarationListGroup1',
-		cName: 'sym__field_declaration_list_group1'
+		enumName: 'FieldDeclarationListElements',
+		cName: 'sym__field_declaration_list_elements'
 	},
 	{
-		name: '_ordered_field_declaration_list_group1',
+		name: '_ordered_field_declaration_list_elements',
 		id: 329,
-		enumName: 'OrderedFieldDeclarationListGroup1',
-		cName: 'sym__ordered_field_declaration_list_group1'
+		enumName: 'OrderedFieldDeclarationListElements',
+		cName: 'sym__ordered_field_declaration_list_elements'
 	},
-	{ name: '_where_clause_group1', id: 330, enumName: 'WhereClauseGroup1', cName: 'sym__where_clause_group1' },
-	{ name: '_use_list_group1', id: 331, enumName: 'UseListGroup1', cName: 'sym__use_list_group1' },
-	{ name: '_parameters_group1', id: 332, enumName: 'ParametersGroup1', cName: 'sym__parameters_group1' },
+	{ name: '_where_predicates', id: 330, enumName: 'WherePredicates', cName: 'sym__where_predicates' },
+	{ name: '_use_clauses', id: 331, enumName: 'UseClauses', cName: 'sym__use_clauses' },
+	{ name: '_parameters_elements', id: 332, enumName: 'ParametersElements', cName: 'sym__parameters_elements' },
 	{
 		name: '_visibility_modifier_group1',
 		id: 333,
 		enumName: 'VisibilityModifierGroup1',
 		cName: 'sym__visibility_modifier_group1'
 	},
-	{ name: '_use_bounds_group1', id: 334, enumName: 'UseBoundsGroup1', cName: 'sym__use_bounds_group1' },
-	{ name: '_arguments_group1', id: 335, enumName: 'ArgumentsGroup1', cName: 'sym__arguments_group1' },
+	{ name: '_use_bounds_elements', id: 334, enumName: 'UseBoundsElements', cName: 'sym__use_bounds_elements' },
+	{ name: '_arguments_elements', id: 335, enumName: 'ArgumentsElements', cName: 'sym__arguments_elements' },
 	{
 		name: '_array_expression_group1',
 		id: 336,
@@ -1713,14 +1713,19 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'sym__array_expression_group1'
 	},
 	{
-		name: '_field_initializer_list_group1',
+		name: '_field_initializer_list_elements',
 		id: 337,
-		enumName: 'FieldInitializerListGroup1',
-		cName: 'sym__field_initializer_list_group1'
+		enumName: 'FieldInitializerListElements',
+		cName: 'sym__field_initializer_list_elements'
 	},
-	{ name: '_tuple_pattern_group1', id: 338, enumName: 'TuplePatternGroup1', cName: 'sym__tuple_pattern_group1' },
-	{ name: '_slice_pattern_group1', id: 339, enumName: 'SlicePatternGroup1', cName: 'sym__slice_pattern_group1' },
-	{ name: '_struct_pattern_group1', id: 340, enumName: 'StructPatternGroup1', cName: 'sym__struct_pattern_group1' },
+	{ name: '_tuple_pattern_elements', id: 338, enumName: 'TuplePatternElements', cName: 'sym__tuple_pattern_elements' },
+	{ name: '_patterns', id: 339, enumName: 'Patterns', cName: 'sym__patterns' },
+	{
+		name: '_struct_pattern_elements',
+		id: 340,
+		enumName: 'StructPatternElements',
+		cName: 'sym__struct_pattern_elements'
+	},
 	{ name: '_range_pattern_group2', id: 341, enumName: 'RangePatternGroup2', cName: 'sym__range_pattern_group2' },
 	{ name: '_block_comment_group1', id: 342, enumName: 'BlockCommentGroup1', cName: 'sym__block_comment_group1' },
 	{ name: '_token_tree_punctuation', id: 343, enumName: 'TokenTreePunctuation', cName: 'sym__token_tree_punctuation' },
@@ -1977,58 +1982,53 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'aux_sym_string_literal_repeat1'
 	},
 	{
-		name: '_enum_variant_list_group1_repeat1',
+		name: '_enum_variant_list_elements_repeat1',
 		id: 416,
-		enumName: 'AuxEnumVariantListGroup1Repeat1',
-		cName: 'aux_sym__enum_variant_list_group1_repeat1'
+		enumName: 'AuxEnumVariantListElementsRepeat1',
+		cName: 'aux_sym__enum_variant_list_elements_repeat1'
 	},
 	{
-		name: '_field_declaration_list_group1_repeat1',
+		name: '_field_declaration_list_elements_repeat1',
 		id: 417,
-		enumName: 'AuxFieldDeclarationListGroup1Repeat1',
-		cName: 'aux_sym__field_declaration_list_group1_repeat1'
+		enumName: 'AuxFieldDeclarationListElementsRepeat1',
+		cName: 'aux_sym__field_declaration_list_elements_repeat1'
 	},
 	{
-		name: '_ordered_field_declaration_list_group1_repeat1',
+		name: '_ordered_field_declaration_list_elements_repeat1',
 		id: 418,
-		enumName: 'AuxOrderedFieldDeclarationListGroup1Repeat1',
-		cName: 'aux_sym__ordered_field_declaration_list_group1_repeat1'
+		enumName: 'AuxOrderedFieldDeclarationListElementsRepeat1',
+		cName: 'aux_sym__ordered_field_declaration_list_elements_repeat1'
 	},
 	{
-		name: '_where_clause_group1_repeat1',
+		name: '_where_predicates_repeat1',
 		id: 419,
-		enumName: 'AuxWhereClauseGroup1Repeat1',
-		cName: 'aux_sym__where_clause_group1_repeat1'
+		enumName: 'AuxWherePredicatesRepeat1',
+		cName: 'aux_sym__where_predicates_repeat1'
 	},
+	{ name: '_use_clauses_repeat1', id: 420, enumName: 'AuxUseClausesRepeat1', cName: 'aux_sym__use_clauses_repeat1' },
 	{
-		name: '_use_list_group1_repeat1',
-		id: 420,
-		enumName: 'AuxUseListGroup1Repeat1',
-		cName: 'aux_sym__use_list_group1_repeat1'
-	},
-	{
-		name: '_parameters_group1_repeat1',
+		name: '_parameters_elements_repeat1',
 		id: 421,
-		enumName: 'AuxParametersGroup1Repeat1',
-		cName: 'aux_sym__parameters_group1_repeat1'
+		enumName: 'AuxParametersElementsRepeat1',
+		cName: 'aux_sym__parameters_elements_repeat1'
 	},
 	{
-		name: '_use_bounds_group1_repeat1',
+		name: '_use_bounds_elements_repeat1',
 		id: 422,
-		enumName: 'AuxUseBoundsGroup1Repeat1',
-		cName: 'aux_sym__use_bounds_group1_repeat1'
+		enumName: 'AuxUseBoundsElementsRepeat1',
+		cName: 'aux_sym__use_bounds_elements_repeat1'
 	},
 	{
-		name: '_arguments_group1_repeat1',
+		name: '_arguments_elements_repeat1',
 		id: 423,
-		enumName: 'AuxArgumentsGroup1Repeat1',
-		cName: 'aux_sym__arguments_group1_repeat1'
+		enumName: 'AuxArgumentsElementsRepeat1',
+		cName: 'aux_sym__arguments_elements_repeat1'
 	},
 	{
-		name: '_field_initializer_list_group1_repeat1',
+		name: '_field_initializer_list_elements_repeat1',
 		id: 424,
-		enumName: 'AuxFieldInitializerListGroup1Repeat1',
-		cName: 'aux_sym__field_initializer_list_group1_repeat1'
+		enumName: 'AuxFieldInitializerListElementsRepeat1',
+		cName: 'aux_sym__field_initializer_list_elements_repeat1'
 	},
 	{
 		name: '_closure_parameters_optional1_repeat1',
@@ -2037,22 +2037,17 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'aux_sym__closure_parameters_optional1_repeat1'
 	},
 	{
-		name: '_tuple_pattern_group1_repeat1',
+		name: '_tuple_pattern_elements_repeat1',
 		id: 426,
-		enumName: 'AuxTuplePatternGroup1Repeat1',
-		cName: 'aux_sym__tuple_pattern_group1_repeat1'
+		enumName: 'AuxTuplePatternElementsRepeat1',
+		cName: 'aux_sym__tuple_pattern_elements_repeat1'
 	},
+	{ name: '_patterns_repeat1', id: 427, enumName: 'AuxPatternsRepeat1', cName: 'aux_sym__patterns_repeat1' },
 	{
-		name: '_slice_pattern_group1_repeat1',
-		id: 427,
-		enumName: 'AuxSlicePatternGroup1Repeat1',
-		cName: 'aux_sym__slice_pattern_group1_repeat1'
-	},
-	{
-		name: '_struct_pattern_group1_repeat1',
+		name: '_struct_pattern_elements_repeat1',
 		id: 428,
-		enumName: 'AuxStructPatternGroup1Repeat1',
-		cName: 'aux_sym__struct_pattern_group1_repeat1'
+		enumName: 'AuxStructPatternElementsRepeat1',
+		cName: 'aux_sym__struct_pattern_elements_repeat1'
 	},
 	{
 		name: '_macro_definition_paren_repeat1',
@@ -2432,7 +2427,7 @@ export const FIELD_MAP: Record<
 		multiple: boolean;
 	}>
 > = {
-	_arguments_group1: [{ name: 'elements', required: true, multiple: true }],
+	_arguments_elements: [{ name: 'elements', required: true, multiple: true }],
 	_attribute_group1: [
 		{ name: 'value', required: false, multiple: false },
 		{ name: 'arguments', required: false, multiple: false }
@@ -2458,9 +2453,9 @@ export const FIELD_MAP: Record<
 		{ name: 'content', required: true, multiple: false }
 	],
 	_closure_expression_expr: [{ name: 'body', required: true, multiple: false }],
-	_enum_variant_list_group1: [{ name: 'elements', required: true, multiple: true }],
-	_field_declaration_list_group1: [{ name: 'elements', required: true, multiple: true }],
-	_field_initializer_list_group1: [{ name: 'elements', required: true, multiple: true }],
+	_enum_variant_list_elements: [{ name: 'elements', required: true, multiple: true }],
+	_field_declaration_list_elements: [{ name: 'elements', required: true, multiple: true }],
+	_field_initializer_list_elements: [{ name: 'elements', required: true, multiple: true }],
 	_function_type_fn_form: [{ name: 'functionModifiers', required: false, multiple: false }],
 	_function_type_trait_form: [{ name: 'trait', required: true, multiple: false }],
 	_impl_item_body: [{ name: 'declarationList', required: true, multiple: false }],
@@ -2471,25 +2466,25 @@ export const FIELD_MAP: Record<
 	_macro_definition_brace: [{ name: 'macroRules', required: false, multiple: true }],
 	_macro_definition_bracket: [{ name: 'macroRules', required: false, multiple: true }],
 	_macro_definition_paren: [{ name: 'macroRules', required: false, multiple: true }],
-	_ordered_field_declaration_list_group1: [{ name: 'elements', required: true, multiple: true }],
-	_parameters_group1: [{ name: 'elements', required: true, multiple: true }],
+	_ordered_field_declaration_list_elements: [{ name: 'elements', required: true, multiple: true }],
+	_parameters_elements: [{ name: 'elements', required: true, multiple: true }],
+	_patterns: [{ name: 'patterns', required: true, multiple: true }],
 	_reference_expression_raw_mut: [{ name: 'mutableSpecifier', required: true, multiple: false }],
-	_slice_pattern_group1: [{ name: 'patterns', required: true, multiple: true }],
-	_struct_pattern_group1: [{ name: 'elements', required: true, multiple: true }],
-	_tuple_pattern_group1: [{ name: 'elements', required: true, multiple: true }],
+	_struct_pattern_elements: [{ name: 'elements', required: true, multiple: true }],
+	_tuple_pattern_elements: [{ name: 'elements', required: true, multiple: true }],
 	_type_argument: [
 		{ name: 'content', required: true, multiple: false },
 		{ name: 'traitBounds', required: false, multiple: false }
 	],
-	_use_bounds_group1: [{ name: 'elements', required: true, multiple: true }],
-	_use_list_group1: [{ name: 'useClauses', required: true, multiple: true }],
+	_use_bounds_elements: [{ name: 'elements', required: true, multiple: true }],
+	_use_clauses: [{ name: 'useClauses', required: true, multiple: true }],
 	_visibility_modifier_group1: [{ name: 'content', required: true, multiple: false }],
 	_visibility_modifier_in_path: [{ name: 'path', required: true, multiple: false }],
 	abstract_type: [
 		{ name: 'typeParameters', required: false, multiple: false },
 		{ name: 'trait', required: true, multiple: false }
 	],
-	arguments: [{ name: 'argumentsGroup1', required: false, multiple: false }],
+	arguments: [{ name: 'argumentsElements', required: false, multiple: false }],
 	array_expression: [{ name: 'content', required: true, multiple: false }],
 	array_type: [
 		{ name: 'element', required: true, multiple: false },
@@ -2588,7 +2583,7 @@ export const FIELD_MAP: Record<
 		{ name: 'body', required: false, multiple: false },
 		{ name: 'value', required: false, multiple: false }
 	],
-	enum_variant_list: [{ name: 'enumVariantListGroup1', required: false, multiple: false }],
+	enum_variant_list: [{ name: 'enumVariantListElements', required: false, multiple: false }],
 	expression_statement: [{ name: 'content', required: true, multiple: false }],
 	extern_crate_declaration: [
 		{ name: 'visibilityModifier', required: false, multiple: false },
@@ -2602,7 +2597,7 @@ export const FIELD_MAP: Record<
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'type', required: true, multiple: false }
 	],
-	field_declaration_list: [{ name: 'fieldDeclarationListGroup1', required: false, multiple: false }],
+	field_declaration_list: [{ name: 'fieldDeclarationListElements', required: false, multiple: false }],
 	field_expression: [
 		{ name: 'value', required: true, multiple: false },
 		{ name: 'field', required: true, multiple: false }
@@ -2771,7 +2766,7 @@ export const FIELD_MAP: Record<
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'type', required: true, multiple: false }
 	],
-	parameters: [{ name: 'parametersGroup1', required: false, multiple: false }],
+	parameters: [{ name: 'parametersElements', required: false, multiple: false }],
 	parenthesized_expression: [{ name: 'expression', required: true, multiple: false }],
 	pointer_type: [
 		{ name: 'content', required: true, multiple: false },
@@ -2826,7 +2821,7 @@ export const FIELD_MAP: Record<
 		{ name: 'attributes', required: false, multiple: true },
 		{ name: 'identifier', required: true, multiple: false }
 	],
-	slice_pattern: [{ name: 'slicePatternGroup1', required: false, multiple: false }],
+	slice_pattern: [{ name: 'patterns', required: false, multiple: false }],
 	source_file: [
 		{ name: 'shebang', required: false, multiple: false },
 		{ name: 'statements', required: false, multiple: true }
@@ -2892,7 +2887,7 @@ export const FIELD_MAP: Record<
 	tuple_pattern: [{ name: 'elements', required: false, multiple: false }],
 	tuple_struct_pattern: [
 		{ name: 'type', required: true, multiple: false },
-		{ name: 'slicePatternGroup1', required: false, multiple: false }
+		{ name: 'patterns', required: false, multiple: false }
 	],
 	tuple_type: [{ name: 'types', required: true, multiple: true }],
 	type_arguments: [{ name: 'elements', required: true, multiple: true }],
@@ -2940,14 +2935,14 @@ export const FIELD_MAP: Record<
 		{ name: 'visibilityModifier', required: false, multiple: false },
 		{ name: 'argument', required: true, multiple: false }
 	],
-	use_list: [{ name: 'useListGroup1', required: false, multiple: false }],
+	use_list: [{ name: 'useClauses', required: false, multiple: false }],
 	use_wildcard: [{ name: 'path', required: false, multiple: false }],
 	variadic_parameter: [
 		{ name: 'mutableSpecifier', required: false, multiple: false },
 		{ name: 'pattern', required: false, multiple: false }
 	],
 	visibility_modifier: [{ name: 'content', required: true, multiple: false }],
-	where_clause: [{ name: 'whereClauseGroup1', required: false, multiple: false }],
+	where_clause: [{ name: 'wherePredicates', required: false, multiple: false }],
 	where_predicate: [
 		{ name: 'left', required: true, multiple: false },
 		{ name: 'bounds', required: true, multiple: false }

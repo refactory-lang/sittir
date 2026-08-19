@@ -1048,22 +1048,27 @@ function enrich(baseInput, config) {
     const rule = rulesBag[name];
     enrichedRules[name] = rule && !enrichSkip.has(name) ? applyFieldWrapPasses(name, rule, kwRules, supertypeNames, rulesBag, wordMatcher) : rule;
   }
-  for (const name of Object.keys(enrichedRules)) {
-    const rule = enrichedRules[name];
-    if (!rule || enrichSkip.has(name)) continue;
-    enrichedRules[name] = applyHoistAndUnalias(
-      name,
-      rule,
-      kwRules,
-      supertypeNames,
-      rulesBag,
-      clauseGroupRules,
-      clauseDedupeMap,
-      groupDedupeMap,
-      visibleGroupHiddenNames,
-      clauseGroupOwners,
-      unaliasSink
-    );
+  separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
+  try {
+    for (const name of Object.keys(enrichedRules)) {
+      const rule = enrichedRules[name];
+      if (!rule || enrichSkip.has(name)) continue;
+      enrichedRules[name] = applyHoistAndUnalias(
+        name,
+        rule,
+        kwRules,
+        supertypeNames,
+        rulesBag,
+        clauseGroupRules,
+        clauseDedupeMap,
+        groupDedupeMap,
+        visibleGroupHiddenNames,
+        clauseGroupOwners,
+        unaliasSink
+      );
+    }
+  } finally {
+    separatedListNameCounts = null;
   }
   for (const groupName of Object.keys(clauseGroupRules)) {
     const groupBody = clauseGroupRules[groupName];
@@ -2163,6 +2168,151 @@ function appendTrailingMemberToOptionalSeq(optSeqRule, trailingOptional) {
   const newSeqBody = { ...seqBody, members: [...seqMembers, trailingOptional] };
   return rebuildOptional(optSeqRule, newSeqBody);
 }
+function separatedListElementName(rule) {
+  const t = rule.type;
+  if (typeof t !== "string") return null;
+  if (isFieldType(t)) {
+    const name = rule.name;
+    return typeof name === "string" ? name : null;
+  }
+  if (isSymbolType(t)) {
+    const name = rule.name;
+    return typeof name === "string" ? name.replace(/^_+/, "") : null;
+  }
+  if (isChoiceType(t)) {
+    const members = rule.members;
+    if (Array.isArray(members) && members.length === 1) return separatedListElementName(members[0]);
+    return null;
+  }
+  if (isPrecWrapper(rule) || typeEq(t, "ALIAS")) {
+    const content = rule.content;
+    return content ? separatedListElementName(content) : null;
+  }
+  return null;
+}
+function peelOptionalEitherSpelling(rule) {
+  const peeled = peelOptional(rule);
+  return peeled.isOptional ? peeled.inner : null;
+}
+function separatedListBodyInfo(body) {
+  if (!isSeqType(body.type)) return null;
+  const members = body.members;
+  if (!Array.isArray(members) || members.length === 0) return null;
+  const separatorRepeatOf = (m) => {
+    if (!isRepeatType(m.type)) return null;
+    const content = m.content;
+    return content ? detectRepeatSeparator(content) : null;
+  };
+  const first = members[0];
+  if (members.length >= 2 && isSeqType(first.type)) {
+    const headMembers = first.members;
+    if (Array.isArray(headMembers) && headMembers.some((m) => separatorRepeatOf(m) !== null)) {
+      return separatedListBodyInfo({ ...body, members: [...headMembers, ...members.slice(1)] });
+    }
+  }
+  const repeatIdx = members.findIndex((m) => separatorRepeatOf(m) !== null);
+  if (repeatIdx === -1) return null;
+  const detected = separatorRepeatOf(members[repeatIdx]);
+  const separatorIsChoice = typeEq(detected.separator.type, "CHOICE");
+  const separatorLiteral = typeEq(detected.separator.type, "STRING") ? detected.separator.value : null;
+  const elementName = separatedListElementName(detected.content);
+  if (detected.trailing !== true) {
+    if (repeatIdx === 0) {
+      if (members.length !== 2) return null;
+      const flank = peelOptionalEitherSpelling(members[1]);
+      const flankLit = flank && isStringType(flank.type) ? flank.value : null;
+      if (flankLit === null || separatorLiteral !== null && flankLit !== separatorLiteral) return null;
+      return { elementName, flankCarrying: true };
+    }
+    const head = members[repeatIdx - 1];
+    if (separatedListElementName(head) !== elementName || elementName === null) {
+      if (ruleKey(head) !== ruleKey(detected.content)) return null;
+    }
+    let flankCarrying2 = separatorIsChoice;
+    for (const [i, m] of members.entries()) {
+      if (i === repeatIdx || i === repeatIdx - 1) continue;
+      if (isStringType(m.type) && m.value === separatorLiteral) {
+        continue;
+      }
+      const inner = peelOptionalEitherSpelling(m);
+      const innerLit = inner && isStringType(inner.type) ? inner.value : null;
+      if (innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral)) {
+        flankCarrying2 = true;
+        continue;
+      }
+      return null;
+    }
+    return { elementName, flankCarrying: flankCarrying2 };
+  }
+  if (repeatIdx !== 0 || members.length > 2) return null;
+  let flankCarrying = separatorIsChoice;
+  if (members.length === 2) {
+    const tail = peelOptionalEitherSpelling(members[1]);
+    if (tail === null) return null;
+    if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
+    if (elementName === null && ruleKey(tail) !== ruleKey(detected.content)) return null;
+    flankCarrying = true;
+  }
+  return { elementName, flankCarrying };
+}
+function detectInlineSeparatedListRuns(members) {
+  const runs = [];
+  let i = 0;
+  while (i < members.length) {
+    let consumed = 0;
+    for (const size of [3, 2]) {
+      if (i + size > members.length) continue;
+      const window = members.slice(i, i + size);
+      if (!window.some((m) => isRepeatType(m.type))) continue;
+      const synthetic = { type: "SEQ", members: window };
+      const info = separatedListBodyInfo(synthetic);
+      if (info?.flankCarrying) {
+        runs.push({ info, key: ruleKey(synthetic) });
+        consumed = size;
+        break;
+      }
+    }
+    i += consumed || 1;
+  }
+  return runs;
+}
+function collectSeparatedListNameProposals(rules) {
+  const keysByName = /* @__PURE__ */ new Map();
+  const record = (info, key) => {
+    if (info.elementName === null) return;
+    const plural = pluralizeFieldName(info.elementName);
+    let keys = keysByName.get(plural);
+    if (!keys) keysByName.set(plural, keys = /* @__PURE__ */ new Set());
+    keys.add(key);
+  };
+  const visit = (rule) => {
+    if (!rule || typeof rule !== "object") return;
+    const t = rule.type;
+    if (typeof t !== "string") return;
+    if (isSeqType(t)) {
+      const rawMembers = rule.members;
+      if (Array.isArray(rawMembers)) {
+        const members2 = absorbTrailingListSeparators(rawMembers) ?? rawMembers;
+        const folded = members2 === rawMembers ? rule : { ...rule, members: members2 };
+        const whole = separatedListBodyInfo(folded);
+        if (whole?.flankCarrying) {
+          record(whole, ruleKey(folded));
+        } else {
+          for (const run of detectInlineSeparatedListRuns(members2)) record(run.info, run.key);
+        }
+        for (const m of members2) visit(m);
+        return;
+      }
+    }
+    const content = rule.content;
+    if (content) visit(content);
+    const members = rule.members;
+    if (Array.isArray(members)) for (const m of members) visit(m);
+  };
+  for (const name of Object.keys(rules)) visit(rules[name]);
+  return new Map([...keysByName].map(([name, keys]) => [name, keys.size]));
+}
+var separatedListNameCounts = null;
 function absorbTrailingListSeparators(members) {
   let changed = false;
   const out = [];
@@ -2621,6 +2771,13 @@ function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag,
   return name;
 }
 function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, ambientPrec, enclosingFieldName) {
+  if (process.env.SITTIR_DEBUG_LISTNAME) {
+    const info = separatedListBodyInfo(content);
+    process.stderr.write(
+      `[listname] mint for parent='${parentKind}' list=${JSON.stringify(info)} counts=${info?.elementName ? separatedListNameCounts?.get(pluralizeFieldName(info.elementName)) : "-"}
+`
+    );
+  }
   const registeredBody = ambientPrec ? { ...ambientPrec, content } : content;
   const key = ruleKey(registeredBody);
   const existing = groupDedupeMap[key];
@@ -2636,6 +2793,18 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
     clauseGroupRules[hiddenName2] = registeredBody;
     return { visibleName: visibleName2, hiddenName: hiddenName2 };
   };
+  const listInfo = separatedListNameCounts !== null ? separatedListBodyInfo(content) : null;
+  if (listInfo?.flankCarrying) {
+    const nameFree = (n) => !(n in rulesBag) && !(`_${n}` in rulesBag) && !(n in clauseGroupRules) && !(`_${n}` in clauseGroupRules);
+    const bare = listInfo.elementName !== null ? pluralizeFieldName(listInfo.elementName) : null;
+    const candidates = [];
+    if (bare !== null && separatedListNameCounts.get(bare) === 1) candidates.push(bare);
+    if (bare !== null && base2 !== bare && !base2.endsWith(`_${bare}`)) candidates.push(`${base2}_${bare}`);
+    if (bare !== `${base2}_elements`) candidates.push(base2.endsWith("_elements") ? base2 : `${base2}_elements`);
+    for (const candidate of candidates) {
+      if (nameFree(candidate)) return register(candidate);
+    }
+  }
   if (enclosingFieldName !== void 0) {
     const visibleName2 = `${base2}_${enclosingFieldName}`;
     if (!(visibleName2 in rulesBag) && !(`_${visibleName2}` in rulesBag) && !(`_${visibleName2}` in clauseGroupRules)) {
@@ -4203,8 +4372,8 @@ var enrichedBase = enrich(base_default, {
   // override (`_: field('modifier')` below) — same nested-field collision
   // as `tuple_type`/`trait_bounds`, this time surfacing as a render-time
   // unknown-kind-id error rather than a hard generate failure or an
-  // accessor-throw. `_where_clause_group1` regressed factory-render-parse
-  // (-2) and `_closure_parameters_optional1`/`_use_list_group1` each
+  // accessor-throw. `_where_predicates` regressed factory-render-parse
+  // (-2) and `_closure_parameters_optional1`/`_use_clauses` each
   // regressed coverage (-1) when enabled — found via bisection against
   // `validate:native`, root cause not further isolated (each is a small,
   // contained loss, not a hard failure); left skipped until diagnosed.
@@ -4569,7 +4738,7 @@ var grammar_sittir_default = grammar(
         ),
         use_wildcard: ($) => seq(optional($._use_wildcard_clause), "*"),
         _use_wildcard_clause: ($) => seq(field2("path", $._path), "::"),
-        _where_clause_group1: ($, previous) => prec.right(0, previous),
+        _where_predicates: ($, previous) => prec.right(0, previous),
         _pattern: ($, original) => transform2(original, {
           "-1": alias2($._wildcard_pattern, $.wildcard_pattern)
         }),

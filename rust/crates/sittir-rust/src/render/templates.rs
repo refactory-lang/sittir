@@ -91,8 +91,8 @@ pub mod filters {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_arguments_group1.jinja", escape = "none")]
-pub struct ArgumentsGroup1Template<'a> {
+#[template(path = "_arguments_elements.jinja", escape = "none")]
+pub struct ArgumentsElementsTemplate<'a> {
     pub element: ListNonterminalView<'a>,
 }
 
@@ -106,7 +106,7 @@ pub struct ArrayExpressionGroup1Template<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_array_expression_list.jinja", escape = "none")]
 pub struct ArrayExpressionListTemplate<'a> {
-    pub arguments_group1: OptionalNonterminalView<'a>,
+    pub arguments_elements: OptionalNonterminalView<'a>,
     pub attributes: ListNonterminalView<'a>,
 }
 
@@ -207,8 +207,8 @@ pub struct DelimTokenTreeParenTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_enum_variant_list_group1.jinja", escape = "none")]
-pub struct EnumVariantListGroup1Template<'a> {
+#[template(path = "_enum_variant_list_elements.jinja", escape = "none")]
+pub struct EnumVariantListElementsTemplate<'a> {
     pub element: ListNonterminalView<'a>,
 }
 
@@ -219,14 +219,14 @@ pub struct ExpressionStatementWithSemiTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_field_declaration_list_group1.jinja", escape = "none")]
-pub struct FieldDeclarationListGroup1Template<'a> {
+#[template(path = "_field_declaration_list_elements.jinja", escape = "none")]
+pub struct FieldDeclarationListElementsTemplate<'a> {
     pub element: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_field_initializer_list_group1.jinja", escape = "none")]
-pub struct FieldInitializerListGroup1Template<'a> {
+#[template(path = "_field_initializer_list_elements.jinja", escape = "none")]
+pub struct FieldInitializerListElementsTemplate<'a> {
     pub element: ListNonterminalView<'a>,
 }
 
@@ -327,15 +327,21 @@ pub struct OrPatternPrefixTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_ordered_field_declaration_list_group1.jinja", escape = "none")]
-pub struct OrderedFieldDeclarationListGroup1Template<'a> {
+#[template(path = "_ordered_field_declaration_list_elements.jinja", escape = "none")]
+pub struct OrderedFieldDeclarationListElementsTemplate<'a> {
     pub element: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_parameters_group1.jinja", escape = "none")]
-pub struct ParametersGroup1Template<'a> {
+#[template(path = "_parameters_elements.jinja", escape = "none")]
+pub struct ParametersElementsTemplate<'a> {
     pub element: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_patterns.jinja", escape = "none")]
+pub struct PatternsTemplate<'a> {
+    pub pattern: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -388,12 +394,6 @@ pub struct ReferenceExpressionRawMutTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_slice_pattern_group1.jinja", escape = "none")]
-pub struct SlicePatternGroup1Template<'a> {
-    pub pattern: ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_struct_item_brace.jinja", escape = "none")]
 pub struct StructItemBraceTemplate<'a> {
     pub body: SingleNonterminalView<'a>,
@@ -408,8 +408,8 @@ pub struct StructItemTupleTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_struct_pattern_group1.jinja", escape = "none")]
-pub struct StructPatternGroup1Template<'a> {
+#[template(path = "_struct_pattern_elements.jinja", escape = "none")]
+pub struct StructPatternElementsTemplate<'a> {
     pub element: ListNonterminalView<'a>,
 }
 
@@ -450,8 +450,8 @@ pub struct TokenTreePatternParenTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_tuple_pattern_group1.jinja", escape = "none")]
-pub struct TuplePatternGroup1Template<'a> {
+#[template(path = "_tuple_pattern_elements.jinja", escape = "none")]
+pub struct TuplePatternElementsTemplate<'a> {
     pub element: ListNonterminalView<'a>,
 }
 
@@ -463,14 +463,14 @@ pub struct TypeArgumentTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_use_bounds_group1.jinja", escape = "none")]
-pub struct UseBoundsGroup1Template<'a> {
+#[template(path = "_use_bounds_elements.jinja", escape = "none")]
+pub struct UseBoundsElementsTemplate<'a> {
     pub element: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_use_list_group1.jinja", escape = "none")]
-pub struct UseListGroup1Template<'a> {
+#[template(path = "_use_clauses.jinja", escape = "none")]
+pub struct UseClausesTemplate<'a> {
     pub use_clause: ListNonterminalView<'a>,
 }
 
@@ -494,8 +494,8 @@ pub struct VisibilityModifierPubTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_where_clause_group1.jinja", escape = "none")]
-pub struct WhereClauseGroup1Template<'a> {
+#[template(path = "_where_predicates.jinja", escape = "none")]
+pub struct WherePredicatesTemplate<'a> {
     pub where_predicate: ListNonterminalView<'a>,
 }
 
@@ -509,7 +509,7 @@ pub struct AbstractTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "arguments.jinja", escape = "none")]
 pub struct ArgumentsTemplate<'a> {
-    pub arguments_group1: OptionalNonterminalView<'a>,
+    pub arguments_elements: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -725,7 +725,7 @@ pub struct EnumItemTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "enum_variant_list.jinja", escape = "none")]
 pub struct EnumVariantListTemplate<'a> {
-    pub enum_variant_list_group1: OptionalNonterminalView<'a>,
+    pub enum_variant_list_elements: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -761,7 +761,7 @@ pub struct ExternModifierTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "field_declaration_list.jinja", escape = "none")]
 pub struct FieldDeclarationListTemplate<'a> {
-    pub field_declaration_list_group1: OptionalNonterminalView<'a>,
+    pub field_declaration_list_elements: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1091,7 +1091,7 @@ pub struct ParameterTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "parameters.jinja", escape = "none")]
 pub struct ParametersTemplate<'a> {
-    pub parameters_group1: OptionalNonterminalView<'a>,
+    pub parameters_elements: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1219,7 +1219,7 @@ pub struct ShorthandFieldInitializerTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "slice_pattern.jinja", escape = "none")]
 pub struct SlicePatternTemplate<'a> {
-    pub slice_pattern_group1: OptionalNonterminalView<'a>,
+    pub patterns: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1351,7 +1351,7 @@ pub struct TuplePatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "tuple_struct_pattern.jinja", escape = "none")]
 pub struct TupleStructPatternTemplate<'a> {
-    pub slice_pattern_group1: OptionalNonterminalView<'a>,
+    pub patterns: OptionalNonterminalView<'a>,
     pub type_: SingleNonterminalView<'a>,
 }
 
@@ -1453,7 +1453,7 @@ pub struct UseDeclarationTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "use_list.jinja", escape = "none")]
 pub struct UseListTemplate<'a> {
-    pub use_list_group1: OptionalNonterminalView<'a>,
+    pub use_clauses: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1478,7 +1478,7 @@ pub struct VisibilityModifierTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "where_clause.jinja", escape = "none")]
 pub struct WhereClauseTemplate<'a> {
-    pub where_clause_group1: OptionalNonterminalView<'a>,
+    pub where_predicates: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

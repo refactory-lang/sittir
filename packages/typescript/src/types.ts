@@ -325,22 +325,22 @@ export const enum SyntaxKind {
 	UnionType = 'union_type',
 	IntersectionType = 'intersection_type',
 	FunctionType = 'function_type',
-	ExportClauseGroup1 = '_export_clause_group1',
+	ExportSpecifiers = '_export_specifiers',
 	ExportSpecifierOptional1 = '_export_specifier_optional1',
 	ImportStatementGroup1 = '_import_statement_group1',
 	ImportClauseGroup1 = '_import_clause_group1',
-	NamedImportsGroup1 = '_named_imports_group1',
+	ImportSpecifiers = '_import_specifiers',
 	VariableDeclaratorGroup1 = '_variable_declarator_group1',
 	VariableDeclaratorGroup2 = '_variable_declarator_group2',
 	CatchClauseGroup1 = '_catch_clause_group1',
 	BinaryExpressionGroup1 = '_binary_expression_group1',
-	FormalParametersGroup1 = '_formal_parameters_group1',
+	FormalParametersElements = '_formal_parameters_elements',
 	JsxStartOpeningElementGroup1 = '_jsx_start_opening_element_group1',
-	EnumBodyGroup1 = '_enum_body_group1',
+	EnumBodyElements = '_enum_body_elements',
 	InferTypeOptional1 = '_infer_type_optional1',
 	MappedTypeClauseOptional1 = '_mapped_type_clause_optional1',
 	IndexSignatureOptional1 = '_index_signature_optional1',
-	TupleTypeGroup1 = '_tuple_type_group1',
+	TupleTypeMembers = '_tuple_type_members',
 	AmbientDeclarationGlobal = '_ambient_declaration_global',
 	AmbientDeclarationModule = '_ambient_declaration_module',
 	ObjectTypeContent = 'object_type_content',
@@ -843,19 +843,19 @@ export const enum TSKindId {
 	KwAbstractMarker = 358,
 	_KwAccessorMarker = 359,
 	KwConstMarker = 360,
-	ExportClauseGroup1 = 361,
+	ExportSpecifiers = 361,
 	ImportStatementGroup1 = 362,
 	ImportClauseGroup1 = 363,
-	NamedImportsGroup1 = 364,
+	ImportSpecifiers = 364,
 	VariableDeclaratorGroup1 = 365,
 	VariableDeclaratorGroup2 = 366,
 	CatchClauseGroup1 = 367,
 	BinaryExpressionGroup1 = 368,
 	MetaPropertyGroup1 = 369,
 	MetaPropertyGroup2 = 370,
-	FormalParametersGroup1 = 371,
-	EnumBodyGroup1 = 372,
-	TupleTypeGroup1 = 373,
+	FormalParametersElements = 371,
+	EnumBodyElements = 372,
+	TupleTypeMembers = 373,
 	Kind = 374,
 	ForHeaderOperator = 375,
 	AmbientDeclarationGlobal = 376,
@@ -913,11 +913,11 @@ export const enum TSKindId {
 	ExtendsTypeClauseRepeat1 = 428,
 	TemplateLiteralTypeRepeat1 = 429,
 	TypeParametersRepeat1 = 430,
-	_ExportClauseGroup1Repeat1 = 431,
-	_NamedImportsGroup1Repeat1 = 432,
-	_FormalParametersGroup1Repeat1 = 433,
-	_EnumBodyGroup1Repeat1 = 434,
-	_TupleTypeGroup1Repeat1 = 435,
+	_ExportSpecifiersRepeat1 = 431,
+	_ImportSpecifiersRepeat1 = 432,
+	_FormalParametersElementsRepeat1 = 433,
+	_EnumBodyElementsRepeat1 = 434,
+	_TupleTypeMembersRepeat1 = 435,
 	ObjectTypeContentRepeat1 = 436,
 	_StringDoubleRepeat1 = 437,
 	_StringSingleRepeat1 = 438,
@@ -1294,19 +1294,19 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[358, '_kw_abstract_marker'],
 	[359, '_kw_accessor_marker'],
 	[360, '_kw_const_marker'],
-	[361, '_export_clause_group1'],
+	[361, '_export_specifiers'],
 	[362, '_import_statement_group1'],
 	[363, '_import_clause_group1'],
-	[364, '_named_imports_group1'],
+	[364, '_import_specifiers'],
 	[365, '_variable_declarator_group1'],
 	[366, '_variable_declarator_group2'],
 	[367, '_catch_clause_group1'],
 	[368, '_binary_expression_group1'],
 	[369, '_meta_property_group1'],
 	[370, '_meta_property_group2'],
-	[371, '_formal_parameters_group1'],
-	[372, '_enum_body_group1'],
-	[373, '_tuple_type_group1'],
+	[371, '_formal_parameters_elements'],
+	[372, '_enum_body_elements'],
+	[373, '_tuple_type_members'],
 	[374, '_kind'],
 	[375, '__for_header_operator'],
 	[376, '_ambient_declaration_global'],
@@ -1364,11 +1364,11 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[428, 'extends_type_clause_repeat1'],
 	[429, 'template_literal_type_repeat1'],
 	[430, 'type_parameters_repeat1'],
-	[431, '_export_clause_group1_repeat1'],
-	[432, '_named_imports_group1_repeat1'],
-	[433, '_formal_parameters_group1_repeat1'],
-	[434, '_enum_body_group1_repeat1'],
-	[435, '_tuple_type_group1_repeat1'],
+	[431, '_export_specifiers_repeat1'],
+	[432, '_import_specifiers_repeat1'],
+	[433, '_formal_parameters_elements_repeat1'],
+	[434, '_enum_body_elements_repeat1'],
+	[435, '_tuple_type_members_repeat1'],
 	[436, 'object_type_content_repeat1'],
 	[437, '_string_double_repeat1'],
 	[438, '_string_single_repeat1'],
@@ -1746,19 +1746,19 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[358, '_kw_abstract_marker'],
 	[359, '_kw_accessor_marker'],
 	[360, '_kw_const_marker'],
-	[361, 'export_clause_group1'],
+	[361, 'export_specifiers'],
 	[362, 'import_statement_group1'],
 	[363, 'import_clause_group1'],
-	[364, 'named_imports_group1'],
+	[364, 'import_specifiers'],
 	[365, 'variable_declarator_group1'],
 	[366, 'variable_declarator_group2'],
 	[367, 'catch_clause_group1'],
 	[368, 'binary_expression_group1'],
 	[369, 'meta_property_group1'],
 	[370, 'meta_property_group2'],
-	[371, 'formal_parameters_group1'],
-	[372, 'enum_body_group1'],
-	[373, 'tuple_type_group1'],
+	[371, 'formal_parameters_elements'],
+	[372, 'enum_body_elements'],
+	[373, 'tuple_type_members'],
 	[374, '_kind'],
 	[375, '__for_header_operator'],
 	[376, 'ambient_declaration_global'],
@@ -1816,11 +1816,11 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[428, 'extends_type_clause_repeat1'],
 	[429, 'template_literal_type_repeat1'],
 	[430, 'type_parameters_repeat1'],
-	[431, '_export_clause_group1_repeat1'],
-	[432, '_named_imports_group1_repeat1'],
-	[433, '_formal_parameters_group1_repeat1'],
-	[434, '_enum_body_group1_repeat1'],
-	[435, '_tuple_type_group1_repeat1'],
+	[431, '_export_specifiers_repeat1'],
+	[432, '_import_specifiers_repeat1'],
+	[433, '_formal_parameters_elements_repeat1'],
+	[434, '_enum_body_elements_repeat1'],
+	[435, '_tuple_type_members_repeat1'],
 	[436, 'object_type_content_repeat1'],
 	[437, '_string_double_repeat1'],
 	[438, '_string_single_repeat1'],
@@ -2564,14 +2564,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._KwAccessorMarker;
 		case '_kw_const_marker':
 			return TSKindId.KwConstMarker;
-		case '_export_clause_group1':
-			return TSKindId.ExportClauseGroup1;
+		case '_export_specifiers':
+			return TSKindId.ExportSpecifiers;
 		case '_import_statement_group1':
 			return TSKindId.ImportStatementGroup1;
 		case '_import_clause_group1':
 			return TSKindId.ImportClauseGroup1;
-		case '_named_imports_group1':
-			return TSKindId.NamedImportsGroup1;
+		case '_import_specifiers':
+			return TSKindId.ImportSpecifiers;
 		case '_variable_declarator_group1':
 			return TSKindId.VariableDeclaratorGroup1;
 		case '_variable_declarator_group2':
@@ -2584,12 +2584,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.MetaPropertyGroup1;
 		case '_meta_property_group2':
 			return TSKindId.MetaPropertyGroup2;
-		case '_formal_parameters_group1':
-			return TSKindId.FormalParametersGroup1;
-		case '_enum_body_group1':
-			return TSKindId.EnumBodyGroup1;
-		case '_tuple_type_group1':
-			return TSKindId.TupleTypeGroup1;
+		case '_formal_parameters_elements':
+			return TSKindId.FormalParametersElements;
+		case '_enum_body_elements':
+			return TSKindId.EnumBodyElements;
+		case '_tuple_type_members':
+			return TSKindId.TupleTypeMembers;
 		case '_kind':
 			return TSKindId.Kind;
 		case '__for_header_operator':
@@ -2704,16 +2704,16 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TemplateLiteralTypeRepeat1;
 		case 'type_parameters_repeat1':
 			return TSKindId.TypeParametersRepeat1;
-		case '_export_clause_group1_repeat1':
-			return TSKindId._ExportClauseGroup1Repeat1;
-		case '_named_imports_group1_repeat1':
-			return TSKindId._NamedImportsGroup1Repeat1;
-		case '_formal_parameters_group1_repeat1':
-			return TSKindId._FormalParametersGroup1Repeat1;
-		case '_enum_body_group1_repeat1':
-			return TSKindId._EnumBodyGroup1Repeat1;
-		case '_tuple_type_group1_repeat1':
-			return TSKindId._TupleTypeGroup1Repeat1;
+		case '_export_specifiers_repeat1':
+			return TSKindId._ExportSpecifiersRepeat1;
+		case '_import_specifiers_repeat1':
+			return TSKindId._ImportSpecifiersRepeat1;
+		case '_formal_parameters_elements_repeat1':
+			return TSKindId._FormalParametersElementsRepeat1;
+		case '_enum_body_elements_repeat1':
+			return TSKindId._EnumBodyElementsRepeat1;
+		case '_tuple_type_members_repeat1':
+			return TSKindId._TupleTypeMembersRepeat1;
 		case 'object_type_content_repeat1':
 			return TSKindId.ObjectTypeContentRepeat1;
 		case '_string_double_repeat1':
@@ -2884,14 +2884,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.FunctionSignatureAutomaticSemicolon;
 		case 'extends_clause_single':
 			return TSKindId.ExtendsClauseSingle;
-		case 'export_clause_group1':
-			return TSKindId.ExportClauseGroup1;
+		case 'export_specifiers':
+			return TSKindId.ExportSpecifiers;
 		case 'import_statement_group1':
 			return TSKindId.ImportStatementGroup1;
 		case 'import_clause_group1':
 			return TSKindId.ImportClauseGroup1;
-		case 'named_imports_group1':
-			return TSKindId.NamedImportsGroup1;
+		case 'import_specifiers':
+			return TSKindId.ImportSpecifiers;
 		case 'variable_declarator_group1':
 			return TSKindId.VariableDeclaratorGroup1;
 		case 'variable_declarator_group2':
@@ -2904,12 +2904,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.MetaPropertyGroup1;
 		case 'meta_property_group2':
 			return TSKindId.MetaPropertyGroup2;
-		case 'formal_parameters_group1':
-			return TSKindId.FormalParametersGroup1;
-		case 'enum_body_group1':
-			return TSKindId.EnumBodyGroup1;
-		case 'tuple_type_group1':
-			return TSKindId.TupleTypeGroup1;
+		case 'formal_parameters_elements':
+			return TSKindId.FormalParametersElements;
+		case 'enum_body_elements':
+			return TSKindId.EnumBodyElements;
+		case 'tuple_type_members':
+			return TSKindId.TupleTypeMembers;
 		case 'ambient_declaration_global':
 			return TSKindId.AmbientDeclarationGlobal;
 		case 'ambient_declaration_module':
@@ -3330,8 +3330,8 @@ export interface NamespaceExport {
 
 export interface ExportClause {
 	readonly $type: TSKindId.ExportClause;
-	readonly _export_clause_group1?: ExportClauseGroup1;
-	exportClauseGroup1(): ExportClauseGroup1 | undefined;
+	readonly _export_specifiers?: ExportSpecifiers;
+	exportSpecifiers(): ExportSpecifiers | undefined;
 }
 
 export interface ExportSpecifier {
@@ -3383,8 +3383,8 @@ export interface NamespaceImport {
 
 export interface NamedImports {
 	readonly $type: TSKindId.NamedImports;
-	readonly _named_imports_group1?: NamedImportsGroup1;
-	namedImportsGroup1(): NamedImportsGroup1 | undefined;
+	readonly _import_specifiers?: ImportSpecifiers;
+	importSpecifiers(): ImportSpecifiers | undefined;
 }
 
 export interface ImportSpecifier {
@@ -4239,8 +4239,8 @@ export interface FieldDefinition {
 
 export interface FormalParameters {
 	readonly $type: TSKindId.FormalParameters;
-	readonly _formal_parameters_group1?: FormalParametersGroup1;
-	formalParametersGroup1(): FormalParametersGroup1 | undefined;
+	readonly _formal_parameters_elements?: FormalParametersElements;
+	formalParametersElements(): FormalParametersElements | undefined;
 }
 
 export interface ClassStaticBlock {
@@ -4618,8 +4618,8 @@ export interface EnumDeclaration {
 
 export interface EnumBody {
 	readonly $type: TSKindId.EnumBody;
-	readonly _enum_body_group1?: EnumBodyGroup1;
-	enumBodyGroup1(): EnumBodyGroup1 | undefined;
+	readonly _enum_body_elements?: EnumBodyElements;
+	enumBodyElements(): EnumBodyElements | undefined;
 }
 
 export interface EnumAssignment {
@@ -5121,8 +5121,8 @@ export interface ArrayType {
 
 export interface TupleType {
 	readonly $type: TSKindId.TupleType;
-	readonly _tuple_type_group1?: TupleTypeGroup1;
-	tupleTypeGroup1(): TupleTypeGroup1 | undefined;
+	readonly _tuple_type_members?: TupleTypeMembers;
+	tupleTypeMembers(): TupleTypeMembers | undefined;
 }
 
 export interface ReadonlyType {
@@ -5157,8 +5157,8 @@ export interface FunctionType {
 	returnType(): Type | Asserts | TypePredicate;
 }
 
-export interface ExportClauseGroup1 {
-	readonly $type: TSKindId.ExportClauseGroup1;
+export interface ExportSpecifiers {
+	readonly $type: TSKindId.ExportSpecifiers;
 	readonly _export_specifier: NonEmptyArray<ExportSpecifier>;
 	exportSpecifiers(): NonEmptyArray<ExportSpecifier>;
 }
@@ -5183,8 +5183,8 @@ export interface ImportClauseGroup1 {
 	content(): NamespaceImport | NamedImports;
 }
 
-export interface NamedImportsGroup1 {
-	readonly $type: TSKindId.NamedImportsGroup1;
+export interface ImportSpecifiers {
+	readonly $type: TSKindId.ImportSpecifiers;
 	readonly _import_specifier: NonEmptyArray<ImportSpecifier>;
 	importSpecifiers(): NonEmptyArray<ImportSpecifier>;
 }
@@ -5228,8 +5228,8 @@ export interface BinaryExpressionGroup1 {
 	right(): Expression;
 }
 
-export interface FormalParametersGroup1 {
-	readonly $type: TSKindId.FormalParametersGroup1;
+export interface FormalParametersElements {
+	readonly $type: TSKindId.FormalParametersElements;
 	readonly _formal_parameter: NonEmptyArray<FormalParameter>;
 	formalParameters(): NonEmptyArray<FormalParameter>;
 }
@@ -5242,8 +5242,8 @@ export interface JsxStartOpeningElementGroup1 {
 	typeArguments(): TypeArguments | undefined;
 }
 
-export interface EnumBodyGroup1 {
-	readonly $type: TSKindId.EnumBodyGroup1;
+export interface EnumBodyElements {
+	readonly $type: TSKindId.EnumBodyElements;
 	readonly _content?: readonly (EnumAssignment | PropertyName)[];
 	contents(): readonly (EnumAssignment | PropertyName)[];
 }
@@ -5272,8 +5272,8 @@ export interface IndexSignatureOptional1 {
 	readonlyMarker(): AutoStamp<number>;
 }
 
-export interface TupleTypeGroup1 {
-	readonly $type: TSKindId.TupleTypeGroup1;
+export interface TupleTypeMembers {
+	readonly $type: TSKindId.TupleTypeMembers;
 	readonly _tuple_type_member: NonEmptyArray<TupleTypeMember>;
 	tupleTypeMembers(): NonEmptyArray<TupleTypeMember>;
 }
@@ -6043,8 +6043,8 @@ export interface ReadonlyTypeTree extends TreeNode<'readonly_type'> {}
 export interface UnionTypeTree extends TreeNode<'union_type'> {}
 export interface IntersectionTypeTree extends TreeNode<'intersection_type'> {}
 export interface FunctionTypeTree extends TreeNode<'function_type'> {}
-export interface ExportClauseGroup1Tree extends AnyTreeNode {
-	readonly type: '_export_clause_group1';
+export interface ExportSpecifiersTree extends AnyTreeNode {
+	readonly type: '_export_specifiers';
 }
 export interface ExportSpecifierOptional1Tree extends AnyTreeNode {
 	readonly type: '_export_specifier_optional1';
@@ -6055,8 +6055,8 @@ export interface ImportStatementGroup1Tree extends AnyTreeNode {
 export interface ImportClauseGroup1Tree extends AnyTreeNode {
 	readonly type: '_import_clause_group1';
 }
-export interface NamedImportsGroup1Tree extends AnyTreeNode {
-	readonly type: '_named_imports_group1';
+export interface ImportSpecifiersTree extends AnyTreeNode {
+	readonly type: '_import_specifiers';
 }
 export interface VariableDeclaratorGroup1Tree extends AnyTreeNode {
 	readonly type: '_variable_declarator_group1';
@@ -6070,14 +6070,14 @@ export interface CatchClauseGroup1Tree extends AnyTreeNode {
 export interface BinaryExpressionGroup1Tree extends AnyTreeNode {
 	readonly type: '_binary_expression_group1';
 }
-export interface FormalParametersGroup1Tree extends AnyTreeNode {
-	readonly type: '_formal_parameters_group1';
+export interface FormalParametersElementsTree extends AnyTreeNode {
+	readonly type: '_formal_parameters_elements';
 }
 export interface JsxStartOpeningElementGroup1Tree extends AnyTreeNode {
 	readonly type: '_jsx_start_opening_element_group1';
 }
-export interface EnumBodyGroup1Tree extends AnyTreeNode {
-	readonly type: '_enum_body_group1';
+export interface EnumBodyElementsTree extends AnyTreeNode {
+	readonly type: '_enum_body_elements';
 }
 export interface InferTypeOptional1Tree extends AnyTreeNode {
 	readonly type: '_infer_type_optional1';
@@ -6088,8 +6088,8 @@ export interface MappedTypeClauseOptional1Tree extends AnyTreeNode {
 export interface IndexSignatureOptional1Tree extends AnyTreeNode {
 	readonly type: '_index_signature_optional1';
 }
-export interface TupleTypeGroup1Tree extends AnyTreeNode {
-	readonly type: '_tuple_type_group1';
+export interface TupleTypeMembersTree extends AnyTreeNode {
+	readonly type: '_tuple_type_members';
 }
 export interface AmbientDeclarationGlobalTree extends AnyTreeNode {
 	readonly type: '_ambient_declaration_global';
@@ -7082,22 +7082,22 @@ export type TypescriptNode =
 	| UnionType
 	| IntersectionType
 	| FunctionType
-	| ExportClauseGroup1
+	| ExportSpecifiers
 	| ExportSpecifierOptional1
 	| ImportStatementGroup1
 	| ImportClauseGroup1
-	| NamedImportsGroup1
+	| ImportSpecifiers
 	| VariableDeclaratorGroup1
 	| VariableDeclaratorGroup2
 	| CatchClauseGroup1
 	| BinaryExpressionGroup1
-	| FormalParametersGroup1
+	| FormalParametersElements
 	| JsxStartOpeningElementGroup1
-	| EnumBodyGroup1
+	| EnumBodyElements
 	| InferTypeOptional1
 	| MappedTypeClauseOptional1
 	| IndexSignatureOptional1
-	| TupleTypeGroup1
+	| TupleTypeMembers
 	| AmbientDeclarationGlobal
 	| AmbientDeclarationModule
 	| ObjectTypeContent
@@ -7315,22 +7315,22 @@ export interface KindMap {
 	union_type: UnionType;
 	intersection_type: IntersectionType;
 	function_type: FunctionType;
-	_export_clause_group1: ExportClauseGroup1;
+	_export_specifiers: ExportSpecifiers;
 	_export_specifier_optional1: ExportSpecifierOptional1;
 	_import_statement_group1: ImportStatementGroup1;
 	_import_clause_group1: ImportClauseGroup1;
-	_named_imports_group1: NamedImportsGroup1;
+	_import_specifiers: ImportSpecifiers;
 	_variable_declarator_group1: VariableDeclaratorGroup1;
 	_variable_declarator_group2: VariableDeclaratorGroup2;
 	_catch_clause_group1: CatchClauseGroup1;
 	_binary_expression_group1: BinaryExpressionGroup1;
-	_formal_parameters_group1: FormalParametersGroup1;
+	_formal_parameters_elements: FormalParametersElements;
 	_jsx_start_opening_element_group1: JsxStartOpeningElementGroup1;
-	_enum_body_group1: EnumBodyGroup1;
+	_enum_body_elements: EnumBodyElements;
 	_infer_type_optional1: InferTypeOptional1;
 	_mapped_type_clause_optional1: MappedTypeClauseOptional1;
 	_index_signature_optional1: IndexSignatureOptional1;
-	_tuple_type_group1: TupleTypeGroup1;
+	_tuple_type_members: TupleTypeMembers;
 	_ambient_declaration_global: AmbientDeclarationGlobal;
 	_ambient_declaration_module: AmbientDeclarationModule;
 	object_type_content: ObjectTypeContent;
@@ -7780,7 +7780,7 @@ export interface ReadonlyTypeNs extends NodeNs<ReadonlyType, LeafScalarMap, Leaf
 export interface UnionTypeNs extends NodeNs<UnionType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface IntersectionTypeNs extends NodeNs<IntersectionType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FunctionTypeNs extends NodeNs<FunctionType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExportClauseGroup1Ns extends NodeNs<ExportClauseGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExportSpecifiersNs extends NodeNs<ExportSpecifiers, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExportSpecifierOptional1Ns extends NodeNs<
 	ExportSpecifierOptional1,
 	LeafScalarMap,
@@ -7794,7 +7794,7 @@ export interface ImportStatementGroup1Ns extends NodeNs<
 	NamespaceMap
 > {}
 export interface ImportClauseGroup1Ns extends NodeNs<ImportClauseGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface NamedImportsGroup1Ns extends NodeNs<NamedImportsGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ImportSpecifiersNs extends NodeNs<ImportSpecifiers, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface VariableDeclaratorGroup1Ns extends NodeNs<
 	VariableDeclaratorGroup1,
 	LeafScalarMap,
@@ -7814,8 +7814,8 @@ export interface BinaryExpressionGroup1Ns extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface FormalParametersGroup1Ns extends NodeNs<
-	FormalParametersGroup1,
+export interface FormalParametersElementsNs extends NodeNs<
+	FormalParametersElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
@@ -7826,7 +7826,7 @@ export interface JsxStartOpeningElementGroup1Ns extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface EnumBodyGroup1Ns extends NodeNs<EnumBodyGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface EnumBodyElementsNs extends NodeNs<EnumBodyElements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface InferTypeOptional1Ns extends NodeNs<InferTypeOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MappedTypeClauseOptional1Ns extends NodeNs<
 	MappedTypeClauseOptional1,
@@ -7840,7 +7840,7 @@ export interface IndexSignatureOptional1Ns extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface TupleTypeGroup1Ns extends NodeNs<TupleTypeGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TupleTypeMembersNs extends NodeNs<TupleTypeMembers, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AmbientDeclarationGlobalNs extends NodeNs<
 	AmbientDeclarationGlobal,
 	LeafScalarMap,
@@ -8208,22 +8208,22 @@ export interface NamespaceMap {
 	union_type: UnionTypeNs;
 	intersection_type: IntersectionTypeNs;
 	function_type: FunctionTypeNs;
-	_export_clause_group1: ExportClauseGroup1Ns;
+	_export_specifiers: ExportSpecifiersNs;
 	_export_specifier_optional1: ExportSpecifierOptional1Ns;
 	_import_statement_group1: ImportStatementGroup1Ns;
 	_import_clause_group1: ImportClauseGroup1Ns;
-	_named_imports_group1: NamedImportsGroup1Ns;
+	_import_specifiers: ImportSpecifiersNs;
 	_variable_declarator_group1: VariableDeclaratorGroup1Ns;
 	_variable_declarator_group2: VariableDeclaratorGroup2Ns;
 	_catch_clause_group1: CatchClauseGroup1Ns;
 	_binary_expression_group1: BinaryExpressionGroup1Ns;
-	_formal_parameters_group1: FormalParametersGroup1Ns;
+	_formal_parameters_elements: FormalParametersElementsNs;
 	_jsx_start_opening_element_group1: JsxStartOpeningElementGroup1Ns;
-	_enum_body_group1: EnumBodyGroup1Ns;
+	_enum_body_elements: EnumBodyElementsNs;
 	_infer_type_optional1: InferTypeOptional1Ns;
 	_mapped_type_clause_optional1: MappedTypeClauseOptional1Ns;
 	_index_signature_optional1: IndexSignatureOptional1Ns;
-	_tuple_type_group1: TupleTypeGroup1Ns;
+	_tuple_type_members: TupleTypeMembersNs;
 	_ambient_declaration_global: AmbientDeclarationGlobalNs;
 	_ambient_declaration_module: AmbientDeclarationModuleNs;
 	object_type_content: ObjectTypeContentNs;
@@ -9507,12 +9507,12 @@ export namespace FunctionType {
 	export type Tree = TreeFor<'function_type'>;
 	export type Kind = 'function_type';
 }
-export namespace ExportClauseGroup1 {
-	export type Config = ConfigFor<'_export_clause_group1'>;
-	export type Fluent = FluentFor<'_export_clause_group1'>;
-	export type Loose = LooseFor<'_export_clause_group1'>;
-	export type Tree = TreeFor<'_export_clause_group1'>;
-	export type Kind = '_export_clause_group1';
+export namespace ExportSpecifiers {
+	export type Config = ConfigFor<'_export_specifiers'>;
+	export type Fluent = FluentFor<'_export_specifiers'>;
+	export type Loose = LooseFor<'_export_specifiers'>;
+	export type Tree = TreeFor<'_export_specifiers'>;
+	export type Kind = '_export_specifiers';
 }
 export namespace ExportSpecifierOptional1 {
 	export type Config = ConfigFor<'_export_specifier_optional1'>;
@@ -9535,12 +9535,12 @@ export namespace ImportClauseGroup1 {
 	export type Tree = TreeFor<'_import_clause_group1'>;
 	export type Kind = '_import_clause_group1';
 }
-export namespace NamedImportsGroup1 {
-	export type Config = ConfigFor<'_named_imports_group1'>;
-	export type Fluent = FluentFor<'_named_imports_group1'>;
-	export type Loose = LooseFor<'_named_imports_group1'>;
-	export type Tree = TreeFor<'_named_imports_group1'>;
-	export type Kind = '_named_imports_group1';
+export namespace ImportSpecifiers {
+	export type Config = ConfigFor<'_import_specifiers'>;
+	export type Fluent = FluentFor<'_import_specifiers'>;
+	export type Loose = LooseFor<'_import_specifiers'>;
+	export type Tree = TreeFor<'_import_specifiers'>;
+	export type Kind = '_import_specifiers';
 }
 export namespace VariableDeclaratorGroup1 {
 	export type Config = ConfigFor<'_variable_declarator_group1'>;
@@ -9570,12 +9570,12 @@ export namespace BinaryExpressionGroup1 {
 	export type Tree = TreeFor<'_binary_expression_group1'>;
 	export type Kind = '_binary_expression_group1';
 }
-export namespace FormalParametersGroup1 {
-	export type Config = ConfigFor<'_formal_parameters_group1'>;
-	export type Fluent = FluentFor<'_formal_parameters_group1'>;
-	export type Loose = LooseFor<'_formal_parameters_group1'>;
-	export type Tree = TreeFor<'_formal_parameters_group1'>;
-	export type Kind = '_formal_parameters_group1';
+export namespace FormalParametersElements {
+	export type Config = ConfigFor<'_formal_parameters_elements'>;
+	export type Fluent = FluentFor<'_formal_parameters_elements'>;
+	export type Loose = LooseFor<'_formal_parameters_elements'>;
+	export type Tree = TreeFor<'_formal_parameters_elements'>;
+	export type Kind = '_formal_parameters_elements';
 }
 export namespace JsxStartOpeningElementGroup1 {
 	export type Config = ConfigFor<'_jsx_start_opening_element_group1'>;
@@ -9584,12 +9584,12 @@ export namespace JsxStartOpeningElementGroup1 {
 	export type Tree = TreeFor<'_jsx_start_opening_element_group1'>;
 	export type Kind = '_jsx_start_opening_element_group1';
 }
-export namespace EnumBodyGroup1 {
-	export type Config = ConfigFor<'_enum_body_group1'>;
-	export type Fluent = FluentFor<'_enum_body_group1'>;
-	export type Loose = LooseFor<'_enum_body_group1'>;
-	export type Tree = TreeFor<'_enum_body_group1'>;
-	export type Kind = '_enum_body_group1';
+export namespace EnumBodyElements {
+	export type Config = ConfigFor<'_enum_body_elements'>;
+	export type Fluent = FluentFor<'_enum_body_elements'>;
+	export type Loose = LooseFor<'_enum_body_elements'>;
+	export type Tree = TreeFor<'_enum_body_elements'>;
+	export type Kind = '_enum_body_elements';
 }
 export namespace InferTypeOptional1 {
 	export type Config = ConfigFor<'_infer_type_optional1'>;
@@ -9612,12 +9612,12 @@ export namespace IndexSignatureOptional1 {
 	export type Tree = TreeFor<'_index_signature_optional1'>;
 	export type Kind = '_index_signature_optional1';
 }
-export namespace TupleTypeGroup1 {
-	export type Config = ConfigFor<'_tuple_type_group1'>;
-	export type Fluent = FluentFor<'_tuple_type_group1'>;
-	export type Loose = LooseFor<'_tuple_type_group1'>;
-	export type Tree = TreeFor<'_tuple_type_group1'>;
-	export type Kind = '_tuple_type_group1';
+export namespace TupleTypeMembers {
+	export type Config = ConfigFor<'_tuple_type_members'>;
+	export type Fluent = FluentFor<'_tuple_type_members'>;
+	export type Loose = LooseFor<'_tuple_type_members'>;
+	export type Tree = TreeFor<'_tuple_type_members'>;
+	export type Kind = '_tuple_type_members';
 }
 export namespace AmbientDeclarationGlobal {
 	export type Config = ConfigFor<'_ambient_declaration_global'>;

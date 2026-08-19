@@ -247,23 +247,30 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 				: rule!;
 	}
 	// Loop 2: clause/group hoisting + base-grammar un-aliasing, per rule in the
-	// same order loop 1 ran.
-	for (const name of Object.keys(enrichedRules)) {
-		const rule = enrichedRules[name];
-		if (!rule || enrichSkip.has(name)) continue;
-		enrichedRules[name] = applyHoistAndUnalias(
-			name,
-			rule,
-			kwRules,
-			supertypeNames,
-			rulesBag,
-			clauseGroupRules,
-			clauseDedupeMap,
-			groupDedupeMap,
-			visibleGroupHiddenNames,
-			clauseGroupOwners,
-			unaliasSink
-		);
+	// same order loop 1 ran. The separated-list name counts computed from the
+	// fully field-wrapped grammar are what let a mint claim a bare element
+	// name only when it is globally unique.
+	separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
+	try {
+		for (const name of Object.keys(enrichedRules)) {
+			const rule = enrichedRules[name];
+			if (!rule || enrichSkip.has(name)) continue;
+			enrichedRules[name] = applyHoistAndUnalias(
+				name,
+				rule,
+				kwRules,
+				supertypeNames,
+				rulesBag,
+				clauseGroupRules,
+				clauseDedupeMap,
+				groupDedupeMap,
+				visibleGroupHiddenNames,
+				clauseGroupOwners,
+				unaliasSink
+			);
+		}
+	} finally {
+		separatedListNameCounts = null;
 	}
 	// Base-grammar un-aliasing also needs to reach clause-hoist-minted group
 	// rules, not just the original rulesBag entries above. `applyEnrichPasses`
@@ -2180,6 +2187,240 @@ function appendTrailingMemberToOptionalSeq(optSeqRule: Rule, trailingOptional: R
 	return rebuildOptional(optSeqRule, newSeqBody);
 }
 
+/**
+ * @internal — derive the element name a separated-list position exposes from
+ * mint-time-visible facts ONLY (`type`/`name`/`members`/`content`), never the
+ * per-pipeline decoration stamps (`id`/`_ref`/`metadata`) — the tree-sitter CLI
+ * bundle and sittir's evaluate() must derive the SAME name for the same body.
+ * A single symbol (or choice-of-one, or FIELD wrapper) names the element; a
+ * multi-arm choice or compound seq has no single name (`null` — the caller
+ * falls back to the `elements` basis).
+ */
+function separatedListElementName(rule: Rule): string | null {
+	const t = (rule as { type?: string }).type;
+	if (typeof t !== 'string') return null;
+	if (isFieldType(t)) {
+		const name = (rule as { name?: unknown }).name;
+		return typeof name === 'string' ? name : null;
+	}
+	if (isSymbolType(t)) {
+		const name = (rule as { name?: unknown }).name;
+		return typeof name === 'string' ? name.replace(/^_+/, '') : null;
+	}
+	if (isChoiceType(t)) {
+		const members = (rule as { members?: Rule[] }).members;
+		if (Array.isArray(members) && members.length === 1) return separatedListElementName(members[0]!);
+		return null;
+	}
+	if (isPrecWrapper(rule as { type: string }) || typeEq(t, 'ALIAS')) {
+		const content = (rule as { content?: Rule }).content;
+		return content ? separatedListElementName(content) : null;
+	}
+	return null;
+}
+
+/** @internal — `rule` matches `optional(X)` in either runtime spelling
+ *  (`OPTIONAL{content}` or the CLI-desugared `CHOICE[X, BLANK]`); returns the
+ *  inner X, else null. */
+function peelOptionalEitherSpelling(rule: Rule): Rule | null {
+	const peeled = peelOptional(rule);
+	return peeled.isOptional ? peeled.inner : null;
+}
+
+interface SeparatedListBodyInfo {
+	/** Element name per {@link separatedListElementName}; null for multi-arm/compound elements. */
+	elementName: string | null;
+	/** True when a flank is per-instance data: an optional trailing/leading
+	 *  separator, an optionally-unterminated tail form, or a separator-kind
+	 *  choice. Flankless lists carry no such data and never hoist. */
+	flankCarrying: boolean;
+}
+
+/**
+ * @internal — recognize a whole seq body as ONE separated list, in the two
+ * spellings the raw grammars use:
+ *   head-form: `[elem, repeat(seq(sep, elem)), optional(sep)?]`
+ *              (incl. the nested-head variant `[[elem, repeat(...)], optional(sep)]`)
+ *   tail-form: `[repeat(seq(elem, sep)), optional(elem)?]`
+ * Works on the pre-pushdown wrapper-intact rule tree (this phase has no
+ * `separator`/flank attributes yet) and on both runtime spellings of
+ * `optional`. Returns null when the body is not a single separated list.
+ */
+function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null {
+	if (!isSeqType((body as { type?: string }).type)) return null;
+	const members = (body as unknown as { members?: Rule[] }).members;
+	if (!Array.isArray(members) || members.length === 0) return null;
+
+	// A list's repeat member is the one whose content is a separator run —
+	// NOT just any repeat (an attributed element is itself `seq(repeat(attr),
+	// X)`, whose inner repeat carries no separator).
+	const separatorRepeatOf = (m: Rule) => {
+		if (!isRepeatType((m as { type?: string }).type)) return null;
+		const content = (m as { content?: RuntimeRule }).content;
+		return content ? detectRepeatSeparator(content) : null;
+	};
+
+	// Nested-head variant: [[elem, repeat(sep-run)], flank...] — splice the
+	// head seq's members into place and re-examine as the flat head-form.
+	const first = members[0]!;
+	if (members.length >= 2 && isSeqType((first as { type?: string }).type)) {
+		const headMembers = (first as unknown as { members?: Rule[] }).members;
+		if (Array.isArray(headMembers) && headMembers.some((m) => separatorRepeatOf(m) !== null)) {
+			return separatedListBodyInfo({ ...body, members: [...headMembers, ...members.slice(1)] } as Rule);
+		}
+	}
+
+	const repeatIdx = members.findIndex((m) => separatorRepeatOf(m) !== null);
+	if (repeatIdx === -1) return null;
+	const detected = separatorRepeatOf(members[repeatIdx]!)!;
+	const separatorIsChoice = typeEq(detected.separator.type, 'CHOICE');
+	const separatorLiteral = typeEq(detected.separator.type, 'STRING')
+		? ((detected.separator as { value?: unknown }).value as string)
+		: null;
+	const elementName = separatedListElementName(detected.content as Rule);
+
+	if (detected.trailing !== true) {
+		// Head-form: repeat is seq(SEP, elem); the member BEFORE the repeat is
+		// the head element, an optional(SEP) member after it is the trailing
+		// flank (a leading optional(SEP)/bare SEP before the head is the
+		// leading flank). A leading-run variant carries NO in-body head — the
+		// list continues a head element living in the parent
+		// (`[repeat1(seq(sep, elem)), optional(sep)]`, python's
+		// expression_list/pattern_list tail groups) — recognized only when a
+		// trailing flank follows, so a bare `repeat(seq(sep, elem))` member
+		// alone never reads as a whole-body list.
+		if (repeatIdx === 0) {
+			if (members.length !== 2) return null;
+			const flank = peelOptionalEitherSpelling(members[1]!);
+			const flankLit = flank && isStringType((flank as { type?: string }).type) ? (flank as { value?: unknown }).value : null;
+			if (flankLit === null || (separatorLiteral !== null && flankLit !== separatorLiteral)) return null;
+			return { elementName, flankCarrying: true };
+		}
+		const head = members[repeatIdx - 1]!;
+		if (separatedListElementName(head) !== elementName || elementName === null) {
+			// Compound/multi-arm elements: both positions must still AGREE
+			// structurally — compare their canonical keys instead of names.
+			if (ruleKey(head as RuntimeRule) !== ruleKey(detected.content as RuntimeRule)) return null;
+		}
+		let flankCarrying = separatorIsChoice;
+		for (const [i, m] of members.entries()) {
+			if (i === repeatIdx || i === repeatIdx - 1) continue;
+			// A bare separator literal is a MANDATORY flank — part of the list
+			// shape, but compile-time-known (not per-instance data).
+			if (isStringType((m as { type?: string }).type) && (m as { value?: unknown }).value === separatorLiteral) {
+				continue;
+			}
+			const inner = peelOptionalEitherSpelling(m);
+			const innerLit = inner && isStringType((inner as { type?: string }).type) ? (inner as { value?: unknown }).value : null;
+			if (innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral)) {
+				flankCarrying = true;
+				continue;
+			}
+			// Any member that is not the head, the repeat, or a flank breaks
+			// the "whole body is one list" reading.
+			return null;
+		}
+		return { elementName, flankCarrying };
+	}
+
+	// Tail-form: repeat is seq(elem, SEP); an optional(elem) member after the
+	// repeat means the last element may omit its separator — per-instance
+	// trailing-separator data.
+	if (repeatIdx !== 0 || members.length > 2) return null;
+	let flankCarrying = separatorIsChoice;
+	if (members.length === 2) {
+		const tail = peelOptionalEitherSpelling(members[1]!);
+		if (tail === null) return null;
+		if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
+		if (elementName === null && ruleKey(tail as RuntimeRule) !== ruleKey(detected.content as RuntimeRule)) return null;
+		flankCarrying = true;
+	}
+	return { elementName, flankCarrying };
+}
+
+/** @internal — flank-carrying separated-list runs INLINE among a seq's
+ *  members (a list that shares its seq with delimiters/other content, e.g.
+ *  `'(' repeat(seq(rule, ';')) optional(rule) ')'`). Each window of 3 then 2
+ *  adjacent members is offered to {@link separatedListBodyInfo} as a
+ *  synthetic seq. Counting-only consumer — the runs are not rewritten here. */
+function detectInlineSeparatedListRuns(members: Rule[]): { info: SeparatedListBodyInfo; key: string }[] {
+	const runs: { info: SeparatedListBodyInfo; key: string }[] = [];
+	let i = 0;
+	while (i < members.length) {
+		let consumed = 0;
+		for (const size of [3, 2]) {
+			if (i + size > members.length) continue;
+			const window = members.slice(i, i + size);
+			if (!window.some((m) => isRepeatType((m as { type?: string }).type))) continue;
+			const synthetic = { type: 'SEQ', members: window } as unknown as Rule;
+			const info = separatedListBodyInfo(synthetic);
+			if (info?.flankCarrying) {
+				runs.push({ info, key: ruleKey(synthetic as RuntimeRule) });
+				consumed = size;
+				break;
+			}
+		}
+		i += consumed || 1;
+	}
+	return runs;
+}
+
+/**
+ * @internal — grammar-global proposal counts for separated-list kind names:
+ * how many DISTINCT flank-carrying list bodies would claim each pluralized
+ * element name. A name with count 1 is globally unique and the list kind may
+ * take it bare (`use_clauses`); a contested name forces the composite
+ * fallback. Identical bodies (by {@link ruleKey}) count once — they dedupe to
+ * a single mint anyway. Computed AFTER the field-wrap loop (enrich() loop 1)
+ * and consumed by every mint in loop 2 via {@link separatedListNameCounts}.
+ */
+function collectSeparatedListNameProposals(rules: Record<string, Rule>): Map<string, number> {
+	const keysByName = new Map<string, Set<string>>();
+	const record = (info: SeparatedListBodyInfo, key: string) => {
+		if (info.elementName === null) return;
+		const plural = pluralizeFieldName(info.elementName);
+		let keys = keysByName.get(plural);
+		if (!keys) keysByName.set(plural, (keys = new Set()));
+		keys.add(key);
+	};
+	const visit = (rule: Rule | undefined): void => {
+		if (!rule || typeof rule !== 'object') return;
+		const t = (rule as { type?: string }).type;
+		if (typeof t !== 'string') return;
+		if (isSeqType(t)) {
+			const rawMembers = (rule as unknown as { members?: Rule[] }).members;
+			if (Array.isArray(rawMembers)) {
+				// Same pre-fold the hoist applies: pull a stranded trailing
+				// `optional(sep)` into its list so the shapes counted here match
+				// the shapes the mints will see.
+				const members = absorbTrailingListSeparators(rawMembers) ?? rawMembers;
+				const folded = members === rawMembers ? rule : ({ ...rule, members } as Rule);
+				const whole = separatedListBodyInfo(folded);
+				if (whole?.flankCarrying) {
+					record(whole, ruleKey(folded as RuntimeRule));
+				} else {
+					for (const run of detectInlineSeparatedListRuns(members)) record(run.info, run.key);
+				}
+				for (const m of members) visit(m);
+				return;
+			}
+		}
+		const content = (rule as { content?: Rule }).content;
+		if (content) visit(content);
+		const members = (rule as { members?: Rule[] }).members;
+		if (Array.isArray(members)) for (const m of members) visit(m);
+	};
+	for (const name of Object.keys(rules)) visit(rules[name]);
+	return new Map([...keysByName].map(([name, keys]) => [name, keys.size]));
+}
+
+/** Grammar-global separated-list name counts for the CURRENT enrich() call —
+ *  set between loop 1 (field-wrap) and loop 2 (hoist), cleared after. Module
+ *  state rather than a threaded parameter, matching the `setGroupLiftRuleMap`
+ *  precedent; null outside enrich() (standalone hoist tests keep ordinal
+ *  naming). */
+let separatedListNameCounts: Map<string, number> | null = null;
+
 function absorbTrailingListSeparators(members: Rule[]): Rule[] | null {
 	let changed = false;
 	const out: Rule[] = [];
@@ -2953,6 +3194,14 @@ function visibleGroupSynthName(
 	// author already chose, rather than minting a fresh one.
 	enclosingFieldName?: string
 ): { visibleName: string; hiddenName: string } | null {
+	if (process.env.SITTIR_DEBUG_LISTNAME) {
+		const info = separatedListBodyInfo(content);
+		process.stderr.write(
+			`[listname] mint for parent='${parentKind}' list=${JSON.stringify(info)} counts=${
+				info?.elementName ? separatedListNameCounts?.get(pluralizeFieldName(info.elementName)) : '-'
+			}\n`
+		);
+	}
 	const registeredBody = ambientPrec ? ({ ...ambientPrec, content } as Rule) : content;
 	// Key on the registered body, not the bare content: two occurrences of
 	// the identical content under different ambient precedence must NOT
@@ -2974,6 +3223,24 @@ function visibleGroupSynthName(
 		clauseGroupRules[hiddenName] = registeredBody;
 		return { visibleName, hiddenName };
 	};
+	// Separated-list naming: a flank-carrying list body names its kind after
+	// its element — the bare pluralized element name when globally unique
+	// (`use_clauses`), else the `<parent>_<field>` composite, else
+	// `<parent>_elements`. Falls through to the ordinal path only when every
+	// candidate is taken.
+	const listInfo = separatedListNameCounts !== null ? separatedListBodyInfo(content) : null;
+	if (listInfo?.flankCarrying) {
+		const nameFree = (n: string) =>
+			!(n in rulesBag) && !(`_${n}` in rulesBag) && !(n in clauseGroupRules) && !(`_${n}` in clauseGroupRules);
+		const bare = listInfo.elementName !== null ? pluralizeFieldName(listInfo.elementName) : null;
+		const candidates: string[] = [];
+		if (bare !== null && separatedListNameCounts!.get(bare) === 1) candidates.push(bare);
+		if (bare !== null && base !== bare && !base.endsWith(`_${bare}`)) candidates.push(`${base}_${bare}`);
+		if (bare !== `${base}_elements`) candidates.push(base.endsWith('_elements') ? base : `${base}_elements`);
+		for (const candidate of candidates) {
+			if (nameFree(candidate)) return register(candidate);
+		}
+	}
 	if (enclosingFieldName !== undefined) {
 		const visibleName = `${base}_${enclosingFieldName}`;
 		// Also decline when a DIFFERENT group body already claimed this same

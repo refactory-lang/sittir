@@ -146,14 +146,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_export_clause_group1",
+                "name": "_export_specifiers",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "export_clause_group1",
+              "value": "export_specifiers",
               "metadata": {
                 "author": "enrich"
               }
@@ -521,14 +521,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_named_imports_group1",
+                "name": "_import_specifiers",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "named_imports_group1",
+              "value": "import_specifiers",
               "metadata": {
                 "author": "enrich"
               }
@@ -6523,14 +6523,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_formal_parameters_group1",
+                "name": "_formal_parameters_elements",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "formal_parameters_group1",
+              "value": "formal_parameters_elements",
               "metadata": {
                 "author": "enrich"
               }
@@ -8474,14 +8474,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_enum_body_group1",
+                "name": "_enum_body_elements",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "enum_body_group1",
+              "value": "enum_body_elements",
               "metadata": {
                 "author": "enrich"
               }
@@ -10791,14 +10791,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_tuple_type_group1",
+                "name": "_tuple_type_members",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "tuple_type_group1",
+              "value": "tuple_type_members",
               "metadata": {
                 "author": "enrich"
               }
@@ -11338,7 +11338,7 @@
         }
       ]
     },
-    "_export_clause_group1": {
+    "_export_specifiers": {
       "type": "SEQ",
       "members": [
         {
@@ -11474,7 +11474,7 @@
         }
       ]
     },
-    "_named_imports_group1": {
+    "_import_specifiers": {
       "type": "SEQ",
       "members": [
         {
@@ -12197,7 +12197,7 @@
         }
       ]
     },
-    "_formal_parameters_group1": {
+    "_formal_parameters_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -12388,7 +12388,7 @@
         }
       ]
     },
-    "_enum_body_group1": {
+    "_enum_body_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -12718,7 +12718,7 @@
         }
       ]
     },
-    "_tuple_type_group1": {
+    "_tuple_type_members": {
       "type": "SEQ",
       "members": [
         {
@@ -15244,10 +15244,10 @@
     ],
     [
       "export_clause",
-      "_export_clause_group1"
+      "_export_specifiers"
     ],
     [
-      "_export_clause_group1"
+      "_export_specifiers"
     ],
     [
       "import_statement",
@@ -15272,10 +15272,10 @@
     ],
     [
       "named_imports",
-      "_named_imports_group1"
+      "_import_specifiers"
     ],
     [
-      "_named_imports_group1"
+      "_import_specifiers"
     ],
     [
       "import_specifier",
@@ -15419,10 +15419,10 @@
     ],
     [
       "formal_parameters",
-      "_formal_parameters_group1"
+      "_formal_parameters_elements"
     ],
     [
-      "_formal_parameters_group1"
+      "_formal_parameters_elements"
     ],
     [
       "public_field_definition",
@@ -15454,10 +15454,10 @@
     ],
     [
       "enum_body",
-      "_enum_body_group1"
+      "_enum_body_elements"
     ],
     [
-      "_enum_body_group1"
+      "_enum_body_elements"
     ],
     [
       "object_type",
@@ -15475,10 +15475,10 @@
     ],
     [
       "tuple_type",
-      "_tuple_type_group1"
+      "_tuple_type_members"
     ],
     [
-      "_tuple_type_group1"
+      "_tuple_type_members"
     ]
   ],
   "precedences": [

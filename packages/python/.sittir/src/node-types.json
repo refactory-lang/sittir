@@ -362,7 +362,7 @@
         "required": false,
         "types": [
           {
-            "type": "argument_list_group1",
+            "type": "argument_list_elements",
             "named": true
           }
         ]
@@ -370,7 +370,7 @@
     }
   },
   {
-    "type": "argument_list_group1",
+    "type": "argument_list_elements",
     "named": true,
     "fields": {
       "element": {
@@ -1080,6 +1080,22 @@
     }
   },
   {
+    "type": "case_patterns",
+    "named": true,
+    "fields": {
+      "case_pattern": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "case_pattern",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "case_tuple_pattern",
     "named": true,
     "fields": {},
@@ -1173,7 +1189,7 @@
         "required": false,
         "types": [
           {
-            "type": "list_pattern_group1",
+            "type": "case_patterns",
             "named": true
           }
         ]
@@ -1556,7 +1572,30 @@
       "required": false,
       "types": [
         {
-          "type": "dict_pattern_group2",
+          "type": "dict_pattern_elements",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "dict_pattern_elements",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "dict_pattern_group1",
+          "named": true
+        },
+        {
+          "type": "dict_pattern_kv",
+          "named": true
+        },
+        {
+          "type": "splat_pattern",
           "named": true
         }
       ]
@@ -1645,29 +1684,6 @@
     }
   },
   {
-    "type": "dict_pattern_group2",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "dict_pattern_group1",
-          "named": true
-        },
-        {
-          "type": "dict_pattern_kv",
-          "named": true
-        },
-        {
-          "type": "splat_pattern",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "dict_pattern_kv",
     "named": true,
     "fields": {},
@@ -1695,7 +1711,7 @@
         "required": false,
         "types": [
           {
-            "type": "dictionary_group1",
+            "type": "dictionary_elements",
             "named": true
           }
         ]
@@ -1729,7 +1745,7 @@
     }
   },
   {
-    "type": "dictionary_group1",
+    "type": "dictionary_elements",
     "named": true,
     "fields": {
       "element": {
@@ -2031,7 +2047,7 @@
             "named": false
           },
           {
-            "type": "expression_list_group1",
+            "type": "expression_list_expressions",
             "named": true
           }
         ]
@@ -2049,7 +2065,7 @@
     }
   },
   {
-    "type": "expression_list_group1",
+    "type": "expression_list_expressions",
     "named": true,
     "fields": {},
     "children": {
@@ -2966,22 +2982,6 @@
     }
   },
   {
-    "type": "list_pattern_group1",
-    "named": true,
-    "fields": {
-      "case_pattern": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "case_pattern",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "list_splat",
     "named": true,
     "fields": {
@@ -3309,7 +3309,7 @@
             "named": false
           },
           {
-            "type": "pattern_list_group1",
+            "type": "pattern_list_patterns",
             "named": true
           }
         ]
@@ -3327,7 +3327,7 @@
     }
   },
   {
-    "type": "pattern_list_group1",
+    "type": "pattern_list_patterns",
     "named": true,
     "fields": {},
     "children": {

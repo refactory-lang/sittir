@@ -101,11 +101,11 @@ import type {
 	EscapeSequence,
 	EscapeSequenceTree,
 	ExportClause,
-	ExportClauseGroup1,
-	ExportClauseGroup1Tree,
 	ExportClauseTree,
 	ExportSpecifier,
 	ExportSpecifierTree,
+	ExportSpecifiers,
+	ExportSpecifiersTree,
 	ExportStatement,
 	ExportStatementDefault,
 	ExportStatementDefaultClauseFrom,
@@ -183,6 +183,8 @@ import type {
 	ImportRequireClauseTree,
 	ImportSpecifier,
 	ImportSpecifierTree,
+	ImportSpecifiers,
+	ImportSpecifiersTree,
 	ImportStatement,
 	ImportStatementGroup1,
 	ImportStatementGroup1Tree,
@@ -251,8 +253,6 @@ import type {
 	Module,
 	ModuleTree,
 	NamedImports,
-	NamedImportsGroup1,
-	NamedImportsGroup1Tree,
 	NamedImportsTree,
 	NamespaceExport,
 	NamespaceExportTree,
@@ -385,8 +385,8 @@ import type {
 	TupleParameter,
 	TupleParameterTree,
 	TupleType,
-	TupleTypeGroup1,
-	TupleTypeGroup1Tree,
+	TupleTypeMembers,
+	TupleTypeMembersTree,
 	TupleTypeTree,
 	TypeAliasDeclaration,
 	TypeAliasDeclarationTree,
@@ -678,19 +678,15 @@ export type _Type_ReadonlyType = _TypeAssert<_TypeExtends<ReadonlyType['$type'],
 export type _Type_UnionType = _TypeAssert<_TypeExtends<UnionType['$type'], TSKindId.UnionType>>;
 export type _Type_IntersectionType = _TypeAssert<_TypeExtends<IntersectionType['$type'], TSKindId.IntersectionType>>;
 export type _Type_FunctionType = _TypeAssert<_TypeExtends<FunctionType['$type'], TSKindId.FunctionType>>;
-export type _Type_ExportClauseGroup1 = _TypeAssert<
-	_TypeExtends<ExportClauseGroup1['$type'], TSKindId.ExportClauseGroup1>
->;
+export type _Type_ExportSpecifiers = _TypeAssert<_TypeExtends<ExportSpecifiers['$type'], TSKindId.ExportSpecifiers>>;
 export type _Type_ImportStatementGroup1 = _TypeAssert<
 	_TypeExtends<ImportStatementGroup1['$type'], TSKindId.ImportStatementGroup1>
 >;
 export type _Type_ImportClauseGroup1 = _TypeAssert<
 	_TypeExtends<ImportClauseGroup1['$type'], TSKindId.ImportClauseGroup1>
 >;
-export type _Type_NamedImportsGroup1 = _TypeAssert<
-	_TypeExtends<NamedImportsGroup1['$type'], TSKindId.NamedImportsGroup1>
->;
-export type _Type_TupleTypeGroup1 = _TypeAssert<_TypeExtends<TupleTypeGroup1['$type'], TSKindId.TupleTypeGroup1>>;
+export type _Type_ImportSpecifiers = _TypeAssert<_TypeExtends<ImportSpecifiers['$type'], TSKindId.ImportSpecifiers>>;
+export type _Type_TupleTypeMembers = _TypeAssert<_TypeExtends<TupleTypeMembers['$type'], TSKindId.TupleTypeMembers>>;
 export type _Type_ObjectTypeContent = _TypeAssert<_TypeExtends<ObjectTypeContent['$type'], TSKindId.ObjectTypeContent>>;
 export type _Type_ExportStatementDefault = _TypeAssert<
 	_TypeExtends<ExportStatementDefault['$type'], TSKindId.ExportStatementDefault>
@@ -1067,19 +1063,15 @@ export type _Tree_ReadonlyType = _TypeAssert<_TypeExtends<ReadonlyTypeTree['type
 export type _Tree_UnionType = _TypeAssert<_TypeExtends<UnionTypeTree['type'], 'union_type'>>;
 export type _Tree_IntersectionType = _TypeAssert<_TypeExtends<IntersectionTypeTree['type'], 'intersection_type'>>;
 export type _Tree_FunctionType = _TypeAssert<_TypeExtends<FunctionTypeTree['type'], 'function_type'>>;
-export type _Tree_ExportClauseGroup1 = _TypeAssert<
-	_TypeExtends<ExportClauseGroup1Tree['type'], '_export_clause_group1'>
->;
+export type _Tree_ExportSpecifiers = _TypeAssert<_TypeExtends<ExportSpecifiersTree['type'], '_export_specifiers'>>;
 export type _Tree_ImportStatementGroup1 = _TypeAssert<
 	_TypeExtends<ImportStatementGroup1Tree['type'], '_import_statement_group1'>
 >;
 export type _Tree_ImportClauseGroup1 = _TypeAssert<
 	_TypeExtends<ImportClauseGroup1Tree['type'], '_import_clause_group1'>
 >;
-export type _Tree_NamedImportsGroup1 = _TypeAssert<
-	_TypeExtends<NamedImportsGroup1Tree['type'], '_named_imports_group1'>
->;
-export type _Tree_TupleTypeGroup1 = _TypeAssert<_TypeExtends<TupleTypeGroup1Tree['type'], '_tuple_type_group1'>>;
+export type _Tree_ImportSpecifiers = _TypeAssert<_TypeExtends<ImportSpecifiersTree['type'], '_import_specifiers'>>;
+export type _Tree_TupleTypeMembers = _TypeAssert<_TypeExtends<TupleTypeMembersTree['type'], '_tuple_type_members'>>;
 export type _Tree_ObjectTypeContent = _TypeAssert<_TypeExtends<ObjectTypeContentTree['type'], 'object_type_content'>>;
 export type _Tree_ExportStatementDefault = _TypeAssert<
 	_TypeExtends<ExportStatementDefaultTree['type'], '_export_statement_default'>

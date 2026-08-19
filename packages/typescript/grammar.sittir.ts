@@ -20,9 +20,9 @@ const enrichedBase = enrich(base, {
 	// innermost field name, so 'declarators' ends up matching nothing
 	// (`accessor-throw: repeated slot "declarators" requires at least one
 	// value`).
-	// `_enum_body_group1`'s element is a multi-field separated list (each
+	// `_enum_body_elements`'s element is a multi-field separated list (each
 	// occurrence is either a bare `name` or an `enum_assignment` pattern —
-	// see the '#170' comment on `enum_body_group1` further down in this
+	// see the '#170' comment on `enum_body_elements` further down in this
 	// file) — a single uniform 'element' field loses that distinction the
 	// same way `emitSeparatedListFactory`'s existing single-field-storage
 	// path already does (a documented, pre-existing gap, not something
@@ -37,7 +37,7 @@ const enrichedBase = enrich(base, {
 	skip: [
 		'lexical_declaration',
 		'variable_declaration',
-		'_enum_body_group1',
+		'_enum_body_elements',
 		'object',
 		'object_pattern',
 		'array',
@@ -594,7 +594,7 @@ export default grammar(
 				import_require_clause: '#170 — Missing field _content on ImportRequireClauseTransport._source',
 				object_type_content: '#170 (#172-adjacent) — Missing field _content through export-arm transport',
 				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)',
-				enum_body_group1:
+				enum_body_elements:
 					'#170 — multi-field separatedList (name/enum_assignment); emitSeparatedListFactory only fixes the single-field-storage case, needs a real per-field partition of the flat elements array'
 			},
 			rules: {

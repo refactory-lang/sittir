@@ -188,8 +188,8 @@
       "export_statement_equals_export": "_export_statement_equals_export",
       "export_statement_namespace_export": "_export_statement_namespace_export"
     },
-    "export_clause.export_clause_group1": {
-      "export_clause_group1": "_export_clause_group1"
+    "export_clause.export_specifiers": {
+      "export_specifiers": "_export_specifiers"
     },
     "import_statement.from_clause": {
       "import_statement_group1": "_import_statement_group1"
@@ -197,8 +197,8 @@
     "import_clause.content": {
       "import_clause_default_import": "_import_clause_default_import"
     },
-    "named_imports.named_imports_group1": {
-      "named_imports_group1": "_named_imports_group1"
+    "named_imports.import_specifiers": {
+      "import_specifiers": "_import_specifiers"
     },
     "import_specifier.content": {
       "import_specifier_as": "_import_specifier_as"
@@ -359,8 +359,8 @@
     "field_definition.property": {
       "property_identifier": "_property_identifier"
     },
-    "formal_parameters.formal_parameters_group1": {
-      "formal_parameters_group1": "_formal_parameters_group1"
+    "formal_parameters.formal_parameters_elements": {
+      "formal_parameters_elements": "_formal_parameters_elements"
     },
     "class_static_block.automatic_semicolon": {
       "automatic_semicolon": "_automatic_semicolon"
@@ -442,8 +442,8 @@
     "extends_type_clause.type": {
       "type_identifier": "identifier"
     },
-    "enum_body.enum_body_group1": {
-      "enum_body_group1": "_enum_body_group1"
+    "enum_body.enum_body_elements": {
+      "enum_body_elements": "_enum_body_elements"
     },
     "enum_assignment.name": {
       "property_identifier": "_property_identifier"
@@ -620,8 +620,8 @@
     "array_type.primary_type": {
       "this_type": "this"
     },
-    "tuple_type.tuple_type_group1": {
-      "tuple_type_group1": "_tuple_type_group1"
+    "tuple_type.tuple_type_members": {
+      "tuple_type_members": "_tuple_type_members"
     },
     "readonly_type.type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
@@ -650,7 +650,7 @@
     "_jsx_start_opening_element_group1.name": {
       "member_expression": "nested_identifier"
     },
-    "_enum_body_group1.content": {
+    "_enum_body_elements.content": {
       "property_identifier": "_property_identifier"
     },
     "_infer_type_optional1.type": {
@@ -661,7 +661,7 @@
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
-    "_tuple_type_group1.tuple_type_member": {
+    "_tuple_type_members.tuple_type_member": {
       "required_parameter": "tuple_parameter",
       "optional_parameter": "optional_tuple_parameter"
     },
@@ -756,7 +756,7 @@
       }
     },
     "export_clause": {
-      "export_clause_group1": {
+      "export_specifiers": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -836,7 +836,7 @@
       }
     },
     "named_imports": {
-      "named_imports_group1": {
+      "import_specifiers": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2171,7 +2171,7 @@
       }
     },
     "formal_parameters": {
-      "formal_parameters_group1": {
+      "formal_parameters_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2875,7 +2875,7 @@
       }
     },
     "enum_body": {
-      "enum_body_group1": {
+      "enum_body_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3713,7 +3713,7 @@
       }
     },
     "tuple_type": {
-      "tuple_type_group1": {
+      "tuple_type_members": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3785,7 +3785,7 @@
         "nonEmpty": false
       }
     },
-    "_export_clause_group1": {
+    "_export_specifiers": {
       "export_specifier": {
         "unnamed": false,
         "slotCount": 1,
@@ -3819,7 +3819,7 @@
         "nonEmpty": false
       }
     },
-    "_named_imports_group1": {
+    "_import_specifiers": {
       "import_specifier": {
         "unnamed": false,
         "slotCount": 1,
@@ -3906,7 +3906,7 @@
         "nonEmpty": false
       }
     },
-    "_formal_parameters_group1": {
+    "_formal_parameters_elements": {
       "formal_parameter": {
         "unnamed": false,
         "slotCount": 1,
@@ -3931,7 +3931,7 @@
         "nonEmpty": false
       }
     },
-    "_enum_body_group1": {
+    "_enum_body_elements": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -3940,7 +3940,7 @@
         "nonEmpty": false
       }
     },
-    "_tuple_type_group1": {
+    "_tuple_type_members": {
       "tuple_type_member": {
         "unnamed": false,
         "slotCount": 1,
@@ -5806,13 +5806,13 @@
       ]
     },
     {
-      "kind": "_enum_body_group1",
+      "kind": "_enum_body_elements",
       "modelType": "group",
-      "typeName": "EnumBodyGroup1",
-      "factoryName": "_enumBodyGroup1",
-      "irKey": "enumBodyGroup1",
+      "typeName": "EnumBodyElements",
+      "factoryName": "_enumBodyElements",
+      "irKey": "enumBodyElements",
       "hidden": false,
-      "name": "_enum_body_group1",
+      "name": "_enum_body_elements",
       "fields": [
         {
           "name": "content",
@@ -5853,25 +5853,6 @@
       ]
     },
     {
-      "kind": "_export_clause_group1",
-      "modelType": "separatedList",
-      "typeName": "ExportClauseGroup1",
-      "factoryName": "exportClauseGroup1",
-      "irKey": "exportClauseGroup1",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
-      "elementKinds": [
-        "export_specifier"
-      ],
-      "factoryShape": "elements",
-      "factoryFields": [
-        "export_specifier"
-      ]
-    },
-    {
       "kind": "_export_specifier_optional1",
       "modelType": "group",
       "typeName": "ExportSpecifierOptional1",
@@ -5905,6 +5886,25 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "_export_specifiers",
+      "modelType": "separatedList",
+      "typeName": "ExportSpecifiers",
+      "factoryName": "exportSpecifiers",
+      "irKey": "exportSpecifiers",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "export_specifier"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "export_specifier"
+      ]
     },
     {
       "kind": "_export_statement_default",
@@ -7008,13 +7008,13 @@
       ]
     },
     {
-      "kind": "_formal_parameters_group1",
+      "kind": "_formal_parameters_elements",
       "modelType": "group",
-      "typeName": "FormalParametersGroup1",
-      "factoryName": "_formalParametersGroup1",
-      "irKey": "formalParametersGroup1",
+      "typeName": "FormalParametersElements",
+      "factoryName": "_formalParametersElements",
+      "irKey": "formalParametersElements",
       "hidden": false,
-      "name": "_formal_parameters_group1",
+      "name": "_formal_parameters_elements",
       "fields": [
         {
           "name": "formal_parameter",
@@ -7287,6 +7287,25 @@
       "factoryFields": [
         "name",
         "alias"
+      ]
+    },
+    {
+      "kind": "_import_specifiers",
+      "modelType": "separatedList",
+      "typeName": "ImportSpecifiers",
+      "factoryName": "importSpecifiers",
+      "irKey": "importSpecifiers",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "import_specifier"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "import_specifier"
       ]
     },
     {
@@ -8160,25 +8179,6 @@
       ]
     },
     {
-      "kind": "_named_imports_group1",
-      "modelType": "separatedList",
-      "typeName": "NamedImportsGroup1",
-      "factoryName": "namedImportsGroup1",
-      "irKey": "namedImportsGroup1",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
-      "elementKinds": [
-        "import_specifier"
-      ],
-      "factoryShape": "elements",
-      "factoryFields": [
-        "import_specifier"
-      ]
-    },
-    {
       "kind": "_number",
       "modelType": "group",
       "typeName": "_Number",
@@ -8973,25 +8973,6 @@
       "hidden": false
     },
     {
-      "kind": "_tuple_type_group1",
-      "modelType": "separatedList",
-      "typeName": "TupleTypeGroup1",
-      "factoryName": "tupleTypeGroup1",
-      "irKey": "tupleTypeGroup1",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
-      "elementKinds": [
-        "_tuple_type_member"
-      ],
-      "factoryShape": "elements",
-      "factoryFields": [
-        "tuple_type_member"
-      ]
-    },
-    {
       "kind": "_tuple_type_member",
       "modelType": "supertype",
       "typeName": "TupleTypeMember",
@@ -9003,6 +8984,25 @@
         "rest_type",
         "tuple_parameter",
         "type"
+      ]
+    },
+    {
+      "kind": "_tuple_type_members",
+      "modelType": "separatedList",
+      "typeName": "TupleTypeMembers",
+      "factoryName": "tupleTypeMembers",
+      "irKey": "tupleTypeMembers",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "_tuple_type_member"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "tuple_type_member"
       ]
     },
     {
@@ -13538,9 +13538,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "enum_body_group1",
-          "propertyName": "enumBodyGroup1",
-          "paramName": "enumBodyGroup1",
+          "name": "enum_body_elements",
+          "propertyName": "enumBodyElements",
+          "paramName": "enumBodyElements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -13548,15 +13548,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_enum_body_group1",
-              "parseKind": "enum_body_group1",
+              "name": "_enum_body_elements",
+              "parseKind": "enum_body_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_enum_body_group1"
+              "_enum_body_elements"
             ]
           }
         }
@@ -13564,7 +13564,7 @@
       "children": [],
       "factoryShape": "direct",
       "factoryFields": [
-        "enum_body_group1"
+        "enum_body_elements"
       ]
     },
     {
@@ -13731,9 +13731,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "export_clause_group1",
-          "propertyName": "exportClauseGroup1",
-          "paramName": "exportClauseGroup1",
+          "name": "export_specifiers",
+          "propertyName": "exportSpecifiers",
+          "paramName": "exportSpecifiers",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -13741,15 +13741,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_export_clause_group1",
-              "parseKind": "export_clause_group1",
+              "name": "_export_specifiers",
+              "parseKind": "export_specifiers",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_export_clause_group1"
+              "_export_specifiers"
             ]
           }
         }
@@ -13757,7 +13757,7 @@
       "children": [],
       "factoryShape": "direct",
       "factoryFields": [
-        "export_clause_group1"
+        "export_specifiers"
       ]
     },
     {
@@ -14635,9 +14635,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "formal_parameters_group1",
-          "propertyName": "formalParametersGroup1",
-          "paramName": "formalParametersGroup1",
+          "name": "formal_parameters_elements",
+          "propertyName": "formalParametersElements",
+          "paramName": "formalParametersElements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -14645,15 +14645,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_formal_parameters_group1",
-              "parseKind": "formal_parameters_group1",
+              "name": "_formal_parameters_elements",
+              "parseKind": "formal_parameters_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_formal_parameters_group1"
+              "_formal_parameters_elements"
             ]
           }
         }
@@ -14661,7 +14661,7 @@
       "children": [],
       "factoryShape": "direct",
       "factoryFields": [
-        "formal_parameters_group1"
+        "formal_parameters_elements"
       ]
     },
     {
@@ -18831,9 +18831,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "named_imports_group1",
-          "propertyName": "namedImportsGroup1",
-          "paramName": "namedImportsGroup1",
+          "name": "import_specifiers",
+          "propertyName": "importSpecifiers",
+          "paramName": "importSpecifiers",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -18841,15 +18841,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_named_imports_group1",
-              "parseKind": "named_imports_group1",
+              "name": "_import_specifiers",
+              "parseKind": "import_specifiers",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_named_imports_group1"
+              "_import_specifiers"
             ]
           }
         }
@@ -18857,7 +18857,7 @@
       "children": [],
       "factoryShape": "direct",
       "factoryFields": [
-        "named_imports_group1"
+        "import_specifiers"
       ]
     },
     {
@@ -22580,9 +22580,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "tuple_type_group1",
-          "propertyName": "tupleTypeGroup1",
-          "paramName": "tupleTypeGroup1",
+          "name": "tuple_type_members",
+          "propertyName": "tupleTypeMembers",
+          "paramName": "tupleTypeMembers",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -22590,15 +22590,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_tuple_type_group1",
-              "parseKind": "tuple_type_group1",
+              "name": "_tuple_type_members",
+              "parseKind": "tuple_type_members",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_tuple_type_group1"
+              "_tuple_type_members"
             ]
           }
         }
@@ -22606,7 +22606,7 @@
       "children": [],
       "factoryShape": "direct",
       "factoryFields": [
-        "tuple_type_group1"
+        "tuple_type_members"
       ]
     },
     {

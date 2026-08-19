@@ -1258,14 +1258,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_enum_variant_list_group1",
+                "name": "_enum_variant_list_elements",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "enum_variant_list_group1",
+              "value": "enum_variant_list_elements",
               "metadata": {
                 "author": "enrich"
               }
@@ -1368,14 +1368,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_field_declaration_list_group1",
+                "name": "_field_declaration_list_elements",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "field_declaration_list_group1",
+              "value": "field_declaration_list_elements",
               "metadata": {
                 "author": "enrich"
               }
@@ -1452,14 +1452,14 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_ordered_field_declaration_list_group1",
+                  "name": "_ordered_field_declaration_list_elements",
                   "metadata": {
                     "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
                 "named": true,
-                "value": "ordered_field_declaration_list_group1",
+                "value": "ordered_field_declaration_list_elements",
                 "metadata": {
                   "author": "enrich"
                 }
@@ -2136,14 +2136,14 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_where_clause_group1",
+                  "name": "_where_predicates",
                   "metadata": {
                     "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
                 "named": true,
-                "value": "where_clause_group1",
+                "value": "where_predicates",
                 "metadata": {
                   "author": "enrich"
                 }
@@ -3133,14 +3133,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_use_list_group1",
+                "name": "_use_clauses",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "use_list_group1",
+              "value": "use_clauses",
               "metadata": {
                 "author": "enrich"
               }
@@ -3216,14 +3216,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_parameters_group1",
+                "name": "_parameters_elements",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "parameters_group1",
+              "value": "parameters_elements",
               "metadata": {
                 "author": "enrich"
               }
@@ -4169,14 +4169,14 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_use_bounds_group1",
+                  "name": "_use_bounds_elements",
                   "metadata": {
                     "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
                 "named": true,
-                "value": "use_bounds_group1",
+                "value": "use_bounds_elements",
                 "metadata": {
                   "author": "enrich"
                 }
@@ -5865,14 +5865,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_arguments_group1",
+                "name": "_arguments_elements",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "arguments_group1",
+              "value": "arguments_elements",
               "metadata": {
                 "author": "enrich"
               }
@@ -6093,14 +6093,14 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_field_initializer_list_group1",
+                  "name": "_field_initializer_list_elements",
                   "metadata": {
                     "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
                 "named": true,
-                "value": "field_initializer_list_group1",
+                "value": "field_initializer_list_elements",
                 "metadata": {
                   "author": "enrich"
                 }
@@ -7588,14 +7588,14 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_tuple_pattern_group1",
+                  "name": "_tuple_pattern_elements",
                   "metadata": {
                     "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
                 "named": true,
-                "value": "tuple_pattern_group1",
+                "value": "tuple_pattern_elements",
                 "metadata": {
                   "author": "enrich"
                 }
@@ -7629,14 +7629,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_slice_pattern_group1",
+                "name": "_patterns",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "slice_pattern_group1",
+              "value": "patterns",
               "metadata": {
                 "author": "enrich"
               }
@@ -7692,14 +7692,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_slice_pattern_group1",
+                "name": "_patterns",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "slice_pattern_group1",
+              "value": "patterns",
               "metadata": {
                 "author": "enrich"
               }
@@ -7749,14 +7749,14 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_struct_pattern_group1",
+                  "name": "_struct_pattern_elements",
                   "metadata": {
                     "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
                 "named": true,
-                "value": "struct_pattern_group1",
+                "value": "struct_pattern_elements",
                 "metadata": {
                   "author": "enrich"
                 }
@@ -8934,7 +8934,7 @@
         }
       ]
     },
-    "_enum_variant_list_group1": {
+    "_enum_variant_list_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -9012,7 +9012,7 @@
         }
       ]
     },
-    "_field_declaration_list_group1": {
+    "_field_declaration_list_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -9073,7 +9073,7 @@
         }
       ]
     },
-    "_ordered_field_declaration_list_group1": {
+    "_ordered_field_declaration_list_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -9168,7 +9168,7 @@
         }
       ]
     },
-    "_where_clause_group1": {
+    "_where_predicates": {
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
@@ -9359,7 +9359,7 @@
         }
       ]
     },
-    "_use_list_group1": {
+    "_use_clauses": {
       "type": "SEQ",
       "members": [
         {
@@ -9441,7 +9441,7 @@
         }
       ]
     },
-    "_parameters_group1": {
+    "_parameters_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -9640,7 +9640,7 @@
         ]
       }
     },
-    "_use_bounds_group1": {
+    "_use_bounds_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -9755,7 +9755,7 @@
         ]
       }
     },
-    "_arguments_group1": {
+    "_arguments_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -9837,7 +9837,7 @@
         }
       ]
     },
-    "_field_initializer_list_group1": {
+    "_field_initializer_list_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -10071,7 +10071,7 @@
         }
       ]
     },
-    "_tuple_pattern_group1": {
+    "_tuple_pattern_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -10140,7 +10140,7 @@
         }
       ]
     },
-    "_slice_pattern_group1": {
+    "_patterns": {
       "type": "SEQ",
       "members": [
         {
@@ -10191,7 +10191,7 @@
         }
       ]
     },
-    "_struct_pattern_group1": {
+    "_struct_pattern_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -11034,14 +11034,14 @@
                   "type": "ALIAS",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "_arguments_group1",
+                    "name": "_arguments_elements",
                     "metadata": {
                       "author": "enrich",
                       "symbolSource": "group-lift"
                     }
                   },
                   "named": true,
-                  "value": "arguments_group1",
+                  "value": "arguments_elements",
                   "metadata": {
                     "author": "enrich"
                   }
@@ -12418,31 +12418,31 @@
     ],
     [
       "enum_variant_list",
-      "_enum_variant_list_group1"
+      "_enum_variant_list_elements"
     ],
     [
-      "_enum_variant_list_group1"
+      "_enum_variant_list_elements"
     ],
     [
       "field_declaration_list",
-      "_field_declaration_list_group1"
+      "_field_declaration_list_elements"
     ],
     [
-      "_field_declaration_list_group1"
+      "_field_declaration_list_elements"
     ],
     [
       "ordered_field_declaration_list",
-      "_ordered_field_declaration_list_group1"
+      "_ordered_field_declaration_list_elements"
     ],
     [
-      "_ordered_field_declaration_list_group1"
+      "_ordered_field_declaration_list_elements"
     ],
     [
       "where_clause",
-      "_where_clause_group1"
+      "_where_predicates"
     ],
     [
-      "_where_clause_group1"
+      "_where_predicates"
     ],
     [
       "impl_item",
@@ -12453,10 +12453,10 @@
     ],
     [
       "use_list",
-      "_use_list_group1"
+      "_use_clauses"
     ],
     [
-      "_use_list_group1"
+      "_use_clauses"
     ],
     [
       "use_wildcard",
@@ -12467,10 +12467,10 @@
     ],
     [
       "parameters",
-      "_parameters_group1"
+      "_parameters_elements"
     ],
     [
-      "_parameters_group1"
+      "_parameters_elements"
     ],
     [
       "visibility_modifier",
@@ -12495,10 +12495,10 @@
     ],
     [
       "use_bounds",
-      "_use_bounds_group1"
+      "_use_bounds_elements"
     ],
     [
-      "_use_bounds_group1"
+      "_use_bounds_elements"
     ],
     [
       "reference_expression",
@@ -12509,10 +12509,10 @@
     ],
     [
       "arguments",
-      "_arguments_group1"
+      "_arguments_elements"
     ],
     [
-      "_arguments_group1"
+      "_arguments_elements"
     ],
     [
       "array_expression",
@@ -12523,10 +12523,10 @@
     ],
     [
       "field_initializer_list",
-      "_field_initializer_list_group1"
+      "_field_initializer_list_elements"
     ],
     [
-      "_field_initializer_list_group1"
+      "_field_initializer_list_elements"
     ],
     [
       "_let_chain",
@@ -12544,24 +12544,24 @@
     ],
     [
       "tuple_pattern",
-      "_tuple_pattern_group1"
+      "_tuple_pattern_elements"
     ],
     [
-      "_tuple_pattern_group1"
+      "_tuple_pattern_elements"
     ],
     [
       "slice_pattern",
-      "_slice_pattern_group1"
+      "_patterns"
     ],
     [
-      "_slice_pattern_group1"
+      "_patterns"
     ],
     [
       "struct_pattern",
-      "_struct_pattern_group1"
+      "_struct_pattern_elements"
     ],
     [
-      "_struct_pattern_group1"
+      "_struct_pattern_elements"
     ],
     [
       "field_pattern",

@@ -380,7 +380,7 @@ describe('ordered_field_declaration_list', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.orderedFieldDeclarationList({
-			$type: TSKindId.OrderedFieldDeclarationListGroup1,
+			$type: TSKindId.OrderedFieldDeclarationListElements,
 			$text: 'test',
 			$source: 2,
 			$named: true,
@@ -1235,7 +1235,7 @@ describe('use_bounds', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.useBounds({
-			$type: TSKindId.UseBoundsGroup1,
+			$type: TSKindId.UseBoundsElements,
 			$text: 'test',
 			$source: 2,
 			$named: true,
@@ -1739,7 +1739,7 @@ describe('field_initializer_list', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.fieldInitializerList({
-			$type: TSKindId.FieldInitializerListGroup1,
+			$type: TSKindId.FieldInitializerListElements,
 			$text: 'test',
 			$source: 2,
 			$named: true,
@@ -2279,7 +2279,7 @@ describe('tuple_pattern', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.tuplePattern({
-			$type: TSKindId.TuplePatternGroup1,
+			$type: TSKindId.TuplePatternElements,
 			$text: 'test',
 			$source: 2,
 			$named: true,

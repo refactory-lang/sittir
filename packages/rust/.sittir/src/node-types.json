@@ -530,14 +530,14 @@
       "required": false,
       "types": [
         {
-          "type": "arguments_group1",
+          "type": "arguments_elements",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "arguments_group1",
+    "type": "arguments_elements",
     "named": true,
     "fields": {
       "element": {
@@ -617,7 +617,7 @@
       "required": false,
       "types": [
         {
-          "type": "arguments_group1",
+          "type": "arguments_elements",
           "named": true
         }
       ]
@@ -2121,14 +2121,14 @@
       "required": false,
       "types": [
         {
-          "type": "enum_variant_list_group1",
+          "type": "enum_variant_list_elements",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "enum_variant_list_group1",
+    "type": "enum_variant_list_elements",
     "named": true,
     "fields": {
       "element": {
@@ -2325,14 +2325,14 @@
       "required": false,
       "types": [
         {
-          "type": "field_declaration_list_group1",
+          "type": "field_declaration_list_elements",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "field_declaration_list_group1",
+    "type": "field_declaration_list_elements",
     "named": true,
     "fields": {
       "element": {
@@ -2426,7 +2426,7 @@
         "required": false,
         "types": [
           {
-            "type": "field_initializer_list_group1",
+            "type": "field_initializer_list_elements",
             "named": true
           }
         ]
@@ -2434,7 +2434,7 @@
     }
   },
   {
-    "type": "field_initializer_list_group1",
+    "type": "field_initializer_list_elements",
     "named": true,
     "fields": {
       "element": {
@@ -4180,7 +4180,7 @@
         "required": false,
         "types": [
           {
-            "type": "ordered_field_declaration_list_group1",
+            "type": "ordered_field_declaration_list_elements",
             "named": true
           }
         ]
@@ -4188,7 +4188,7 @@
     }
   },
   {
-    "type": "ordered_field_declaration_list_group1",
+    "type": "ordered_field_declaration_list_elements",
     "named": true,
     "fields": {
       "element": {
@@ -4257,14 +4257,14 @@
       "required": false,
       "types": [
         {
-          "type": "parameters_group1",
+          "type": "parameters_elements",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "parameters_group1",
+    "type": "parameters_elements",
     "named": true,
     "fields": {
       "element": {
@@ -4289,6 +4289,22 @@
         "types": [
           {
             "type": "_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "patterns",
+    "named": true,
+    "fields": {
+      "pattern": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "_pattern",
             "named": true
           }
         ]
@@ -5070,26 +5086,10 @@
       "required": false,
       "types": [
         {
-          "type": "slice_pattern_group1",
+          "type": "patterns",
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "slice_pattern_group1",
-    "named": true,
-    "fields": {
-      "pattern": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "_pattern",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
@@ -5373,7 +5373,7 @@
         "required": false,
         "types": [
           {
-            "type": "struct_pattern_group1",
+            "type": "struct_pattern_elements",
             "named": true
           }
         ]
@@ -5395,7 +5395,7 @@
     }
   },
   {
-    "type": "struct_pattern_group1",
+    "type": "struct_pattern_elements",
     "named": true,
     "fields": {
       "element": {
@@ -5993,7 +5993,7 @@
         "required": false,
         "types": [
           {
-            "type": "tuple_pattern_group1",
+            "type": "tuple_pattern_elements",
             "named": true
           }
         ]
@@ -6001,7 +6001,7 @@
     }
   },
   {
-    "type": "tuple_pattern_group1",
+    "type": "tuple_pattern_elements",
     "named": true,
     "fields": {
       "element": {
@@ -6048,7 +6048,7 @@
       "required": false,
       "types": [
         {
-          "type": "slice_pattern_group1",
+          "type": "patterns",
           "named": true
         }
       ]
@@ -6472,7 +6472,7 @@
         "required": false,
         "types": [
           {
-            "type": "use_bounds_group1",
+            "type": "use_bounds_elements",
             "named": true
           }
         ]
@@ -6480,7 +6480,7 @@
     }
   },
   {
-    "type": "use_bounds_group1",
+    "type": "use_bounds_elements",
     "named": true,
     "fields": {
       "element": {
@@ -6493,6 +6493,58 @@
           },
           {
             "type": "type_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "use_clauses",
+    "named": true,
+    "fields": {
+      "use_clause": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "crate",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "metavariable",
+            "named": true
+          },
+          {
+            "type": "scoped_identifier",
+            "named": true
+          },
+          {
+            "type": "scoped_use_list",
+            "named": true
+          },
+          {
+            "type": "self",
+            "named": true
+          },
+          {
+            "type": "super",
+            "named": true
+          },
+          {
+            "type": "use_as_clause",
+            "named": true
+          },
+          {
+            "type": "use_list",
+            "named": true
+          },
+          {
+            "type": "use_wildcard",
             "named": true
           }
         ]
@@ -6570,62 +6622,10 @@
       "required": false,
       "types": [
         {
-          "type": "use_list_group1",
+          "type": "use_clauses",
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "use_list_group1",
-    "named": true,
-    "fields": {
-      "use_clause": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "crate",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "metavariable",
-            "named": true
-          },
-          {
-            "type": "scoped_identifier",
-            "named": true
-          },
-          {
-            "type": "scoped_use_list",
-            "named": true
-          },
-          {
-            "type": "self",
-            "named": true
-          },
-          {
-            "type": "super",
-            "named": true
-          },
-          {
-            "type": "use_as_clause",
-            "named": true
-          },
-          {
-            "type": "use_list",
-            "named": true
-          },
-          {
-            "type": "use_wildcard",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
@@ -6806,26 +6806,10 @@
       "required": false,
       "types": [
         {
-          "type": "where_clause_group1",
+          "type": "where_predicates",
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "where_clause_group1",
-    "named": true,
-    "fields": {
-      "where_predicate": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "where_predicate",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
@@ -6884,6 +6868,22 @@
           },
           {
             "type": "type_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "where_predicates",
+    "named": true,
+    "fields": {
+      "where_predicate": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "where_predicate",
             "named": true
           }
         ]

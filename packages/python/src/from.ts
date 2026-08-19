@@ -290,11 +290,11 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	string_content: TSKindId.StringContent,
 	format_specifier: TSKindId.FormatSpecifier,
 	_except_clause_group1: TSKindId.ExceptClauseGroup1,
-	_argument_list_group1: TSKindId.ArgumentListGroup1,
-	_expression_list_group1: TSKindId.ExpressionListGroup1,
-	_pattern_list_group1: TSKindId.PatternListGroup1,
+	_argument_list_elements: TSKindId.ArgumentListElements,
+	_expression_list_expressions: TSKindId.ExpressionListExpressions,
+	_pattern_list_patterns: TSKindId.PatternListPatterns,
 	_slice_group1: TSKindId.SliceGroup1,
-	_dictionary_group1: TSKindId.DictionaryGroup1,
+	_dictionary_elements: TSKindId.DictionaryElements,
 	case_tuple_pattern: TSKindId.CaseTuplePattern,
 	case_list_pattern: TSKindId.CaseListPattern,
 	_suite_block_with_indent: TSKindId.SuiteBlockWithIndent,
@@ -354,16 +354,16 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildFormatSpecifier(...(children as Parameters<typeof F.buildFormatSpecifier>));
 		case '_except_clause_group1':
 			return F.buildExceptClauseGroup1(children[0] as Parameters<typeof F.buildExceptClauseGroup1>[0]);
-		case '_argument_list_group1':
-			return F.buildArgumentListGroup1(children as Parameters<typeof F.buildArgumentListGroup1>[0]);
-		case '_expression_list_group1':
-			return F.buildExpressionListGroup1(children as Parameters<typeof F.buildExpressionListGroup1>[0]);
-		case '_pattern_list_group1':
-			return F.buildPatternListGroup1(children as Parameters<typeof F.buildPatternListGroup1>[0]);
+		case '_argument_list_elements':
+			return F.buildArgumentListElements(children as Parameters<typeof F.buildArgumentListElements>[0]);
+		case '_expression_list_expressions':
+			return F.buildExpressionListExpressions(children as Parameters<typeof F.buildExpressionListExpressions>[0]);
+		case '_pattern_list_patterns':
+			return F.buildPatternListPatterns(children as Parameters<typeof F.buildPatternListPatterns>[0]);
 		case '_slice_group1':
 			return F.buildSliceGroup1(children[0] as Parameters<typeof F.buildSliceGroup1>[0]);
-		case '_dictionary_group1':
-			return F.buildDictionaryGroup1(children as Parameters<typeof F.buildDictionaryGroup1>[0]);
+		case '_dictionary_elements':
+			return F.buildDictionaryElements(children as Parameters<typeof F.buildDictionaryElements>[0]);
 		case 'case_tuple_pattern':
 			return F.buildCaseTuplePattern(...(children as Parameters<typeof F.buildCaseTuplePattern>));
 		case 'case_list_pattern':
@@ -1223,11 +1223,11 @@ export function coerceToArgumentList(input?: T.ArgumentList.Loose): ReturnType<t
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.ArgumentList)
 		return input as unknown as ReturnType<typeof F.buildArgumentList>;
 	return F.buildArgumentList(
-		_resolveOneBranch<T.ArgumentListGroup1>(
+		_resolveOneBranch<T.ArgumentListElements>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'arguments' in input
 				? input.arguments
 				: input,
-			'_argument_list_group1'
+			'_argument_list_elements'
 		)
 	);
 }
@@ -1280,7 +1280,7 @@ export function coerceToExpressionList(input: T.ExpressionList.Loose): ReturnTyp
 		tail: _requireField(
 			'expression_list',
 			'tail',
-			_resolveOneBranch<',' | T.ExpressionListGroup1>(input.tail, '_expression_list_group1')
+			_resolveOneBranch<',' | T.ExpressionListExpressions>(input.tail, '_expression_list_expressions')
 		)
 	});
 }
@@ -1315,11 +1315,11 @@ export function coerceToUnionPattern(input: T.UnionPattern.Loose): ReturnType<ty
 }
 
 export function coerceToDictPattern(
-	input?: T.DictPatternGroup2 | T.DictPattern
+	input?: T.DictPatternElements | T.DictPattern
 ): ReturnType<typeof F.buildDictPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.DictPattern) {
 		const data = input;
-		const child = (data as unknown as { _dict_pattern_group2?: unknown })._dict_pattern_group2;
+		const child = (data as unknown as { _dict_pattern_elements?: unknown })._dict_pattern_elements;
 		return F.buildDictPattern(child as Parameters<typeof F.buildDictPattern>[0]);
 	}
 	return F.buildDictPattern(input as Parameters<typeof F.buildDictPattern>[0]);
@@ -1368,7 +1368,7 @@ export function coerceToClassPattern(input: T.ClassPattern.Loose): ReturnType<ty
 			'dottedName',
 			_resolveOneBranch<T.DottedName>(input.dottedName, 'dotted_name')
 		),
-		arguments: _resolveOneBranch<T.ListPatternGroup1>(input.arguments, '_list_pattern_group1')
+		arguments: _resolveOneBranch<T.CasePatterns>(input.arguments, '_case_patterns')
 	});
 }
 
@@ -1644,7 +1644,7 @@ export function coerceToPatternList(input: T.PatternList.Loose): ReturnType<type
 		tail: _requireField(
 			'pattern_list',
 			'tail',
-			_resolveOneBranch<',' | T.PatternListGroup1>(input.tail, '_pattern_list_group1')
+			_resolveOneBranch<',' | T.PatternListPatterns>(input.tail, '_pattern_list_patterns')
 		)
 	});
 }
@@ -1828,9 +1828,9 @@ export function coerceToDictionary(input?: T.Dictionary.Loose): ReturnType<typeo
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.Dictionary)
 		return input as unknown as ReturnType<typeof F.buildDictionary>;
 	return F.buildDictionary(
-		_resolveOneBranch<T.DictionaryGroup1>(
+		_resolveOneBranch<T.DictionaryElements>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'entries' in input ? input.entries : input,
-			'_dictionary_group1'
+			'_dictionary_elements'
 		)
 	);
 }

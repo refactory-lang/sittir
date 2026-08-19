@@ -3,7 +3,7 @@
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
 	'_arrow_function_parameter',
-	'_export_clause_group1',
+	'_export_specifiers',
 	'_export_statement_default',
 	'_export_statement_default_clause_from',
 	'_export_statement_default_from_arm',
@@ -12,12 +12,12 @@ export const NODE_KINDS = [
 	'_for_header_lhs',
 	'_import_clause_default_import',
 	'_import_clause_group1',
+	'_import_specifiers',
 	'_import_statement_group1',
 	'_jsx_start_opening_element',
 	'_jsx_string',
-	'_named_imports_group1',
 	'_public_field_definition_declare_first',
-	'_tuple_type_group1',
+	'_tuple_type_members',
 	'abstract_class_declaration',
 	'abstract_method_signature',
 	'adding_type_annotation',
@@ -785,19 +785,19 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	_kw_abstract_marker: 358,
 	_kw_accessor_marker: 359,
 	_kw_const_marker: 360,
-	_export_clause_group1: 361,
+	_export_specifiers: 361,
 	_import_statement_group1: 362,
 	_import_clause_group1: 363,
-	_named_imports_group1: 364,
+	_import_specifiers: 364,
 	_variable_declarator_group1: 365,
 	_variable_declarator_group2: 366,
 	_catch_clause_group1: 367,
 	_binary_expression_group1: 368,
 	_meta_property_group1: 369,
 	_meta_property_group2: 370,
-	_formal_parameters_group1: 371,
-	_enum_body_group1: 372,
-	_tuple_type_group1: 373,
+	_formal_parameters_elements: 371,
+	_enum_body_elements: 372,
+	_tuple_type_members: 373,
 	_kind: 374,
 	__for_header_operator: 375,
 	_ambient_declaration_global: 376,
@@ -855,11 +855,11 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	extends_type_clause_repeat1: 428,
 	template_literal_type_repeat1: 429,
 	type_parameters_repeat1: 430,
-	_export_clause_group1_repeat1: 431,
-	_named_imports_group1_repeat1: 432,
-	_formal_parameters_group1_repeat1: 433,
-	_enum_body_group1_repeat1: 434,
-	_tuple_type_group1_repeat1: 435,
+	_export_specifiers_repeat1: 431,
+	_import_specifiers_repeat1: 432,
+	_formal_parameters_elements_repeat1: 433,
+	_enum_body_elements_repeat1: 434,
+	_tuple_type_members_repeat1: 435,
 	object_type_content_repeat1: 436,
 	_string_double_repeat1: 437,
 	_string_single_repeat1: 438,
@@ -1236,19 +1236,19 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[358]: '_kw_abstract_marker',
 	[359]: '_kw_accessor_marker',
 	[360]: '_kw_const_marker',
-	[361]: '_export_clause_group1',
+	[361]: '_export_specifiers',
 	[362]: '_import_statement_group1',
 	[363]: '_import_clause_group1',
-	[364]: '_named_imports_group1',
+	[364]: '_import_specifiers',
 	[365]: '_variable_declarator_group1',
 	[366]: '_variable_declarator_group2',
 	[367]: '_catch_clause_group1',
 	[368]: '_binary_expression_group1',
 	[369]: '_meta_property_group1',
 	[370]: '_meta_property_group2',
-	[371]: '_formal_parameters_group1',
-	[372]: '_enum_body_group1',
-	[373]: '_tuple_type_group1',
+	[371]: '_formal_parameters_elements',
+	[372]: '_enum_body_elements',
+	[373]: '_tuple_type_members',
 	[374]: '_kind',
 	[375]: '__for_header_operator',
 	[376]: '_ambient_declaration_global',
@@ -1306,11 +1306,11 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[428]: 'extends_type_clause_repeat1',
 	[429]: 'template_literal_type_repeat1',
 	[430]: 'type_parameters_repeat1',
-	[431]: '_export_clause_group1_repeat1',
-	[432]: '_named_imports_group1_repeat1',
-	[433]: '_formal_parameters_group1_repeat1',
-	[434]: '_enum_body_group1_repeat1',
-	[435]: '_tuple_type_group1_repeat1',
+	[431]: '_export_specifiers_repeat1',
+	[432]: '_import_specifiers_repeat1',
+	[433]: '_formal_parameters_elements_repeat1',
+	[434]: '_enum_body_elements_repeat1',
+	[435]: '_tuple_type_members_repeat1',
 	[436]: 'object_type_content_repeat1',
 	[437]: '_string_double_repeat1',
 	[438]: '_string_single_repeat1',
@@ -1807,7 +1807,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: '_kw_abstract_marker', id: 358, enumName: 'KwAbstractMarker', cName: 'sym__kw_abstract_marker' },
 	{ name: '_kw_accessor_marker', id: 359, enumName: 'KwAccessorMarker', cName: 'sym__kw_accessor_marker' },
 	{ name: '_kw_const_marker', id: 360, enumName: 'KwConstMarker', cName: 'sym__kw_const_marker' },
-	{ name: '_export_clause_group1', id: 361, enumName: 'ExportClauseGroup1', cName: 'sym__export_clause_group1' },
+	{ name: '_export_specifiers', id: 361, enumName: 'ExportSpecifiers', cName: 'sym__export_specifiers' },
 	{
 		name: '_import_statement_group1',
 		id: 362,
@@ -1815,7 +1815,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'sym__import_statement_group1'
 	},
 	{ name: '_import_clause_group1', id: 363, enumName: 'ImportClauseGroup1', cName: 'sym__import_clause_group1' },
-	{ name: '_named_imports_group1', id: 364, enumName: 'NamedImportsGroup1', cName: 'sym__named_imports_group1' },
+	{ name: '_import_specifiers', id: 364, enumName: 'ImportSpecifiers', cName: 'sym__import_specifiers' },
 	{
 		name: '_variable_declarator_group1',
 		id: 365,
@@ -1838,13 +1838,13 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: '_meta_property_group1', id: 369, enumName: 'MetaPropertyGroup1', cName: 'sym__meta_property_group1' },
 	{ name: '_meta_property_group2', id: 370, enumName: 'MetaPropertyGroup2', cName: 'sym__meta_property_group2' },
 	{
-		name: '_formal_parameters_group1',
+		name: '_formal_parameters_elements',
 		id: 371,
-		enumName: 'FormalParametersGroup1',
-		cName: 'sym__formal_parameters_group1'
+		enumName: 'FormalParametersElements',
+		cName: 'sym__formal_parameters_elements'
 	},
-	{ name: '_enum_body_group1', id: 372, enumName: 'EnumBodyGroup1', cName: 'sym__enum_body_group1' },
-	{ name: '_tuple_type_group1', id: 373, enumName: 'TupleTypeGroup1', cName: 'sym__tuple_type_group1' },
+	{ name: '_enum_body_elements', id: 372, enumName: 'EnumBodyElements', cName: 'sym__enum_body_elements' },
+	{ name: '_tuple_type_members', id: 373, enumName: 'TupleTypeMembers', cName: 'sym__tuple_type_members' },
 	{ name: '_kind', id: 374, enumName: 'Kind', cName: 'sym__kind' },
 	{ name: '__for_header_operator', id: 375, enumName: 'ForHeaderOperator', cName: 'sym___for_header_operator' },
 	{
@@ -2088,34 +2088,34 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'aux_sym_type_parameters_repeat1'
 	},
 	{
-		name: '_export_clause_group1_repeat1',
+		name: '_export_specifiers_repeat1',
 		id: 431,
-		enumName: 'AuxExportClauseGroup1Repeat1',
-		cName: 'aux_sym__export_clause_group1_repeat1'
+		enumName: 'AuxExportSpecifiersRepeat1',
+		cName: 'aux_sym__export_specifiers_repeat1'
 	},
 	{
-		name: '_named_imports_group1_repeat1',
+		name: '_import_specifiers_repeat1',
 		id: 432,
-		enumName: 'AuxNamedImportsGroup1Repeat1',
-		cName: 'aux_sym__named_imports_group1_repeat1'
+		enumName: 'AuxImportSpecifiersRepeat1',
+		cName: 'aux_sym__import_specifiers_repeat1'
 	},
 	{
-		name: '_formal_parameters_group1_repeat1',
+		name: '_formal_parameters_elements_repeat1',
 		id: 433,
-		enumName: 'AuxFormalParametersGroup1Repeat1',
-		cName: 'aux_sym__formal_parameters_group1_repeat1'
+		enumName: 'AuxFormalParametersElementsRepeat1',
+		cName: 'aux_sym__formal_parameters_elements_repeat1'
 	},
 	{
-		name: '_enum_body_group1_repeat1',
+		name: '_enum_body_elements_repeat1',
 		id: 434,
-		enumName: 'AuxEnumBodyGroup1Repeat1',
-		cName: 'aux_sym__enum_body_group1_repeat1'
+		enumName: 'AuxEnumBodyElementsRepeat1',
+		cName: 'aux_sym__enum_body_elements_repeat1'
 	},
 	{
-		name: '_tuple_type_group1_repeat1',
+		name: '_tuple_type_members_repeat1',
 		id: 435,
-		enumName: 'AuxTupleTypeGroup1Repeat1',
-		cName: 'aux_sym__tuple_type_group1_repeat1'
+		enumName: 'AuxTupleTypeMembersRepeat1',
+		cName: 'aux_sym__tuple_type_members_repeat1'
 	},
 	{
 		name: 'object_type_content_repeat1',
@@ -2555,7 +2555,7 @@ export const FIELD_MAP: Record<
 	}>
 > = {
 	_arrow_function_parameter: [{ name: 'parameter', required: true, multiple: false }],
-	_export_clause_group1: [{ name: 'exportSpecifiers', required: true, multiple: true }],
+	_export_specifiers: [{ name: 'exportSpecifiers', required: true, multiple: true }],
 	_export_statement_default: [{ name: 'content', required: true, multiple: false }],
 	_export_statement_default_clause_from: [
 		{ name: 'exportClause', required: true, multiple: false },
@@ -2576,6 +2576,7 @@ export const FIELD_MAP: Record<
 		{ name: 'importClauseGroup1', required: false, multiple: false }
 	],
 	_import_clause_group1: [{ name: 'content', required: true, multiple: false }],
+	_import_specifiers: [{ name: 'importSpecifiers', required: true, multiple: true }],
 	_import_statement_group1: [
 		{ name: 'importClause', required: true, multiple: false },
 		{ name: 'source', required: true, multiple: false }
@@ -2585,9 +2586,8 @@ export const FIELD_MAP: Record<
 		{ name: 'elements', required: false, multiple: true },
 		{ name: 'elements_2s', required: false, multiple: true }
 	],
-	_named_imports_group1: [{ name: 'importSpecifiers', required: true, multiple: true }],
 	_public_field_definition_declare_first: [{ name: 'accessibilityModifier', required: false, multiple: false }],
-	_tuple_type_group1: [{ name: 'tupleTypeMembers', required: true, multiple: true }],
+	_tuple_type_members: [{ name: 'tupleTypeMembers', required: true, multiple: true }],
 	abstract_class_declaration: [
 		{ name: 'decorators', required: false, multiple: true },
 		{ name: 'name', required: true, multiple: false },
@@ -2728,13 +2728,13 @@ export const FIELD_MAP: Record<
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'value', required: true, multiple: false }
 	],
-	enum_body: [{ name: 'enumBodyGroup1', required: false, multiple: false }],
+	enum_body: [{ name: 'enumBodyElements', required: false, multiple: false }],
 	enum_declaration: [
 		{ name: 'constMarker', required: false, multiple: false },
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'body', required: true, multiple: false }
 	],
-	export_clause: [{ name: 'exportClauseGroup1', required: false, multiple: false }],
+	export_clause: [{ name: 'exportSpecifiers', required: false, multiple: false }],
 	export_specifier: [
 		{ name: 'exportKind', required: false, multiple: false },
 		{ name: 'name', required: true, multiple: false },
@@ -2768,7 +2768,7 @@ export const FIELD_MAP: Record<
 		{ name: 'increment', required: false, multiple: false },
 		{ name: 'body', required: true, multiple: false }
 	],
-	formal_parameters: [{ name: 'formalParametersGroup1', required: false, multiple: false }],
+	formal_parameters: [{ name: 'formalParametersElements', required: false, multiple: false }],
 	function_declaration: [
 		{ name: 'asyncMarker', required: false, multiple: false },
 		{ name: 'name', required: true, multiple: false },
@@ -2952,7 +2952,7 @@ export const FIELD_MAP: Record<
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'body', required: false, multiple: false }
 	],
-	named_imports: [{ name: 'namedImportsGroup1', required: false, multiple: false }],
+	named_imports: [{ name: 'importSpecifiers', required: false, multiple: false }],
 	namespace_export: [{ name: 'moduleExportName', required: true, multiple: false }],
 	namespace_import: [{ name: 'identifier', required: true, multiple: false }],
 	nested_identifier: [
@@ -3097,7 +3097,7 @@ export const FIELD_MAP: Record<
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'type', required: true, multiple: false }
 	],
-	tuple_type: [{ name: 'tupleTypeGroup1', required: false, multiple: false }],
+	tuple_type: [{ name: 'tupleTypeMembers', required: false, multiple: false }],
 	type_alias_declaration: [
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'typeParameters', required: false, multiple: false },

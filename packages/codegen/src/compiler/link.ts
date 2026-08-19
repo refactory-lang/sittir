@@ -2182,7 +2182,7 @@ export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
 	// prefix separator becomes a between-separator once the head merges into
 	// the same list. Clear the positional `leading: 'mandatory'` the inner
 	// sep-first repeat lift stamped; only a HEADLESS sep-first repeat (no
-	// absorbable head in its rule, e.g. python `_expression_list_group1`)
+	// absorbable head in its rule, e.g. python `_expression_list_expressions`)
 	// keeps it and renders the flank.
 	// Case 1: [x, repeat(sep, x)]
 	if (members.length === 2 && repeatIdx === 1 && matchesElem(members[0]!)) {
@@ -2287,7 +2287,7 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 				// captures no leading anon (no separator precedes its first
 				// element) and the filter degrades to a plain between-join,
 				// while a HEADLESS group (head lives outside the group, e.g.
-				// python `_expression_list_group1`) captures its leading ','
+				// python `_expression_list_expressions`) captures its leading ','
 				// and renders `,2,3` — previously these reversed to `2,3,`
 				// because only the trailing flank was ever stamped.
 				return {

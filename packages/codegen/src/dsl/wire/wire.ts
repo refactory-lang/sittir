@@ -493,7 +493,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 				}
 				// A minted group's own body can ALSO self-conflict — e.g. a
 				// shared comma/element shape recurring across sibling rules
-				// (python's `_expression_list_group1` vs `assert_statement`'s
+				// (python's `_expression_list_expressions` vs `assert_statement`'s
 				// own `commaSep1` repeat) confuses tree-sitter's LALR merge
 				// independent of the owner pairing above. A single-rule
 				// `conflicts` entry is tree-sitter's own documented way to

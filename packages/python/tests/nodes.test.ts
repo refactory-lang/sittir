@@ -775,7 +775,7 @@ describe('argument_list', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.argumentList({
-			$type: TSKindId.ArgumentListGroup1,
+			$type: TSKindId.ArgumentListElements,
 			$text: 'test',
 			$source: 2,
 			$named: true,
@@ -864,7 +864,7 @@ describe('expression_list', () => {
 		const node = ir.expressionList({
 			expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			tail: {
-				$type: TSKindId.ExpressionListGroup1,
+				$type: TSKindId.ExpressionListExpressions,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -878,7 +878,7 @@ describe('expression_list', () => {
 		const node = ir.expressionList({
 			expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			tail: {
-				$type: TSKindId.ExpressionListGroup1,
+				$type: TSKindId.ExpressionListExpressions,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -1315,7 +1315,7 @@ describe('pattern_list', () => {
 		const node = ir.patternList({
 			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			tail: {
-				$type: TSKindId.PatternListGroup1,
+				$type: TSKindId.PatternListPatterns,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -1329,7 +1329,7 @@ describe('pattern_list', () => {
 		const node = ir.patternList({
 			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			tail: {
-				$type: TSKindId.PatternListGroup1,
+				$type: TSKindId.PatternListPatterns,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -1692,7 +1692,7 @@ describe('dictionary', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.dictionary({
-			$type: TSKindId.DictionaryGroup1,
+			$type: TSKindId.DictionaryElements,
 			$text: 'test',
 			$source: 2,
 			$named: true,

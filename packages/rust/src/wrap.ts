@@ -2634,22 +2634,22 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.EnumVariantList as const,
-			_enum_variant_list_group1: normalizeSingularWrapSlot(
-				data._enum_variant_list_group1,
-				'enum_variant_list_group1',
+			_enum_variant_list_elements: normalizeSingularWrapSlot(
+				data._enum_variant_list_elements,
+				'enum_variant_list_elements',
 				false,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'enum_variant_list_group1', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'enum_variant_list_elements', span: (data as _NodeData).$span }
 			),
 
-			enumVariantListGroup1() {
-				return drillAs<T.EnumVariantListGroup1 | undefined>(this._enum_variant_list_group1, tree, [
-					{ from: 'enum_variant_list_group1', to: '_enum_variant_list_group1' }
+			enumVariantListElements() {
+				return drillAs<T.EnumVariantListElements | undefined>(this._enum_variant_list_elements, tree, [
+					{ from: 'enum_variant_list_elements', to: '_enum_variant_list_elements' }
 				]);
 			},
 			$with: {
-				enumVariantListGroup1: (v: NonNullable<T.EnumVariantList['_enum_variant_list_group1']>) =>
-					wrapEnumVariantList({ ...data, _enum_variant_list_group1: v }, tree)
+				enumVariantListElements: (v: NonNullable<T.EnumVariantList['_enum_variant_list_elements']>) =>
+					wrapEnumVariantList({ ...data, _enum_variant_list_elements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -2718,22 +2718,22 @@ export function wrapFieldDeclarationList(data: T.FieldDeclarationList, tree: Tre
 		{
 			...data,
 			$type: TSKindId.FieldDeclarationList as const,
-			_field_declaration_list_group1: normalizeSingularWrapSlot(
-				data._field_declaration_list_group1,
-				'field_declaration_list_group1',
+			_field_declaration_list_elements: normalizeSingularWrapSlot(
+				data._field_declaration_list_elements,
+				'field_declaration_list_elements',
 				false,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'field_declaration_list_group1', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'field_declaration_list_elements', span: (data as _NodeData).$span }
 			),
 
-			fieldDeclarationListGroup1() {
-				return drillAs<T.FieldDeclarationListGroup1 | undefined>(this._field_declaration_list_group1, tree, [
-					{ from: 'field_declaration_list_group1', to: '_field_declaration_list_group1' }
+			fieldDeclarationListElements() {
+				return drillAs<T.FieldDeclarationListElements | undefined>(this._field_declaration_list_elements, tree, [
+					{ from: 'field_declaration_list_elements', to: '_field_declaration_list_elements' }
 				]);
 			},
 			$with: {
-				fieldDeclarationListGroup1: (v: NonNullable<T.FieldDeclarationList['_field_declaration_list_group1']>) =>
-					wrapFieldDeclarationList({ ...data, _field_declaration_list_group1: v }, tree)
+				fieldDeclarationListElements: (v: NonNullable<T.FieldDeclarationList['_field_declaration_list_elements']>) =>
+					wrapFieldDeclarationList({ ...data, _field_declaration_list_elements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -2800,8 +2800,8 @@ export function wrapOrderedFieldDeclarationList(data: T.OrderedFieldDeclarationL
 			}),
 
 			attributes() {
-				return drillAs<T.OrderedFieldDeclarationListGroup1 | undefined>(this._attributes, tree, [
-					{ from: 'ordered_field_declaration_list_group1', to: '_ordered_field_declaration_list_group1' }
+				return drillAs<T.OrderedFieldDeclarationListElements | undefined>(this._attributes, tree, [
+					{ from: 'ordered_field_declaration_list_elements', to: '_ordered_field_declaration_list_elements' }
 				]);
 			},
 			$with: {
@@ -3325,22 +3325,21 @@ export function wrapWhereClause(data: T.WhereClause, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.WhereClause as const,
-			_where_clause_group1: normalizeSingularWrapSlot(
-				data._where_clause_group1,
-				'where_clause_group1',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'where_clause_group1', span: (data as _NodeData).$span }
-			),
+			_where_predicates: normalizeSingularWrapSlot(data._where_predicates, 'where_predicates', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'where_predicates',
+				span: (data as _NodeData).$span
+			}),
 
-			whereClauseGroup1() {
-				return drillAs<T.WhereClauseGroup1 | undefined>(this._where_clause_group1, tree, [
-					{ from: 'where_clause_group1', to: '_where_clause_group1' }
+			wherePredicates() {
+				return drillAs<T.WherePredicates | undefined>(this._where_predicates, tree, [
+					{ from: 'where_predicates', to: '_where_predicates' }
 				]);
 			},
 			$with: {
-				whereClauseGroup1: (v: NonNullable<T.WhereClause['_where_clause_group1']>) =>
-					wrapWhereClause({ ...data, _where_clause_group1: v }, tree)
+				wherePredicates: (v: NonNullable<T.WhereClause['_where_predicates']>) =>
+					wrapWhereClause({ ...data, _where_predicates: v }, tree)
 			}
 		},
 		methodsEngine
@@ -4099,21 +4098,20 @@ export function wrapUseList(data: T.UseList, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.UseList as const,
-			_use_list_group1: normalizeSingularWrapSlot(data._use_list_group1, 'use_list_group1', false, data.$type, {
+			_use_clauses: normalizeSingularWrapSlot(data._use_clauses, 'use_clauses', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'use_list_group1',
+				slotName: 'use_clauses',
 				span: (data as _NodeData).$span
 			}),
 
-			useListGroup1() {
-				return drillAs<T.UseListGroup1 | undefined>(this._use_list_group1, tree, [
-					{ from: 'use_list_group1', to: '_use_list_group1' }
+			useClauses() {
+				return drillAs<T.UseClauses | undefined>(this._use_clauses, tree, [
+					{ from: 'use_clauses', to: '_use_clauses' }
 				]);
 			},
 			$with: {
-				useListGroup1: (v: NonNullable<T.UseList['_use_list_group1']>) =>
-					wrapUseList({ ...data, _use_list_group1: v }, tree)
+				useClauses: (v: NonNullable<T.UseList['_use_clauses']>) => wrapUseList({ ...data, _use_clauses: v }, tree)
 			}
 		},
 		methodsEngine
@@ -4184,21 +4182,22 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.Parameters as const,
-			_parameters_group1: normalizeSingularWrapSlot(data._parameters_group1, 'parameters_group1', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'parameters_group1',
-				span: (data as _NodeData).$span
-			}),
+			_parameters_elements: normalizeSingularWrapSlot(
+				data._parameters_elements,
+				'parameters_elements',
+				false,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'parameters_elements', span: (data as _NodeData).$span }
+			),
 
-			parametersGroup1() {
-				return drillAs<T.ParametersGroup1 | undefined>(this._parameters_group1, tree, [
-					{ from: 'parameters_group1', to: '_parameters_group1' }
+			parametersElements() {
+				return drillAs<T.ParametersElements | undefined>(this._parameters_elements, tree, [
+					{ from: 'parameters_elements', to: '_parameters_elements' }
 				]);
 			},
 			$with: {
-				parametersGroup1: (v: NonNullable<T.Parameters['_parameters_group1']>) =>
-					wrapParameters({ ...data, _parameters_group1: v }, tree)
+				parametersElements: (v: NonNullable<T.Parameters['_parameters_elements']>) =>
+					wrapParameters({ ...data, _parameters_elements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -4996,8 +4995,8 @@ export function wrapUseBounds(data: T.UseBounds, tree: TreeHandle) {
 			}),
 
 			bounds() {
-				return drillAs<T.UseBoundsGroup1 | undefined>(this._bounds, tree, [
-					{ from: 'use_bounds_group1', to: '_use_bounds_group1' }
+				return drillAs<T.UseBoundsElements | undefined>(this._bounds, tree, [
+					{ from: 'use_bounds_elements', to: '_use_bounds_elements' }
 				]);
 			},
 			$with: {
@@ -6303,21 +6302,22 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.Arguments as const,
-			_arguments_group1: normalizeSingularWrapSlot(data._arguments_group1, 'arguments_group1', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'arguments_group1',
-				span: (data as _NodeData).$span
-			}),
+			_arguments_elements: normalizeSingularWrapSlot(
+				data._arguments_elements,
+				'arguments_elements',
+				false,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'arguments_elements', span: (data as _NodeData).$span }
+			),
 
-			argumentsGroup1() {
-				return drillAs<T.ArgumentsGroup1 | undefined>(this._arguments_group1, tree, [
-					{ from: 'arguments_group1', to: '_arguments_group1' }
+			argumentsElements() {
+				return drillAs<T.ArgumentsElements | undefined>(this._arguments_elements, tree, [
+					{ from: 'arguments_elements', to: '_arguments_elements' }
 				]);
 			},
 			$with: {
-				argumentsGroup1: (v: NonNullable<T.Arguments['_arguments_group1']>) =>
-					wrapArguments({ ...data, _arguments_group1: v }, tree)
+				argumentsElements: (v: NonNullable<T.Arguments['_arguments_elements']>) =>
+					wrapArguments({ ...data, _arguments_elements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -6535,8 +6535,8 @@ export function wrapFieldInitializerList(data: T.FieldInitializerList, tree: Tre
 			}),
 
 			initializers() {
-				return drillAs<T.FieldInitializerListGroup1 | undefined>(this._initializers, tree, [
-					{ from: 'field_initializer_list_group1', to: '_field_initializer_list_group1' }
+				return drillAs<T.FieldInitializerListElements | undefined>(this._initializers, tree, [
+					{ from: 'field_initializer_list_elements', to: '_field_initializer_list_elements' }
 				]);
 			},
 			$with: {
@@ -8169,8 +8169,8 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle) {
 			}),
 
 			elements() {
-				return drillAs<T.TuplePatternGroup1 | undefined>(this._elements, tree, [
-					{ from: 'tuple_pattern_group1', to: '_tuple_pattern_group1' }
+				return drillAs<T.TuplePatternElements | undefined>(this._elements, tree, [
+					{ from: 'tuple_pattern_elements', to: '_tuple_pattern_elements' }
 				]);
 			},
 			$with: {
@@ -8187,22 +8187,18 @@ export function wrapSlicePattern(data: T.SlicePattern, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.SlicePattern as const,
-			_slice_pattern_group1: normalizeSingularWrapSlot(
-				data._slice_pattern_group1,
-				'slice_pattern_group1',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'slice_pattern_group1', span: (data as _NodeData).$span }
-			),
+			_patterns: normalizeSingularWrapSlot(data._patterns, 'patterns', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'patterns',
+				span: (data as _NodeData).$span
+			}),
 
-			slicePatternGroup1() {
-				return drillAs<T.SlicePatternGroup1 | undefined>(this._slice_pattern_group1, tree, [
-					{ from: 'slice_pattern_group1', to: '_slice_pattern_group1' }
-				]);
+			patterns() {
+				return drillAs<T.Patterns | undefined>(this._patterns, tree, [{ from: 'patterns', to: '_patterns' }]);
 			},
 			$with: {
-				slicePatternGroup1: (v: NonNullable<T.SlicePattern['_slice_pattern_group1']>) =>
-					wrapSlicePattern({ ...data, _slice_pattern_group1: v }, tree)
+				patterns: (v: NonNullable<T.SlicePattern['_patterns']>) => wrapSlicePattern({ ...data, _patterns: v }, tree)
 			}
 		},
 		methodsEngine
@@ -8221,28 +8217,25 @@ export function wrapTupleStructPattern(data: T.TupleStructPattern, tree: TreeHan
 				slotName: 'type',
 				span: (data as _NodeData).$span
 			}),
-			_slice_pattern_group1: normalizeSingularWrapSlot(
-				data._slice_pattern_group1,
-				'slice_pattern_group1',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'slice_pattern_group1', span: (data as _NodeData).$span }
-			),
+			_patterns: normalizeSingularWrapSlot(data._patterns, 'patterns', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'patterns',
+				span: (data as _NodeData).$span
+			}),
 
 			type() {
 				return drillAs<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>(this._type, tree, [
 					{ from: 'generic_type', to: 'generic_type_with_turbofish' }
 				]);
 			},
-			slicePatternGroup1() {
-				return drillAs<T.SlicePatternGroup1 | undefined>(this._slice_pattern_group1, tree, [
-					{ from: 'slice_pattern_group1', to: '_slice_pattern_group1' }
-				]);
+			patterns() {
+				return drillAs<T.Patterns | undefined>(this._patterns, tree, [{ from: 'patterns', to: '_patterns' }]);
 			},
 			$with: {
 				type: (v: NonNullable<T.TupleStructPattern['_type']>) => wrapTupleStructPattern({ ...data, _type: v }, tree),
-				slicePatternGroup1: (v: NonNullable<T.TupleStructPattern['_slice_pattern_group1']>) =>
-					wrapTupleStructPattern({ ...data, _slice_pattern_group1: v }, tree)
+				patterns: (v: NonNullable<T.TupleStructPattern['_patterns']>) =>
+					wrapTupleStructPattern({ ...data, _patterns: v }, tree)
 			}
 		},
 		methodsEngine
@@ -8274,8 +8267,8 @@ export function wrapStructPattern(data: T.StructPattern, tree: TreeHandle) {
 				]);
 			},
 			fields() {
-				return drillAs<T.StructPatternGroup1 | undefined>(this._fields, tree, [
-					{ from: 'struct_pattern_group1', to: '_struct_pattern_group1' }
+				return drillAs<T.StructPatternElements | undefined>(this._fields, tree, [
+					{ from: 'struct_pattern_elements', to: '_struct_pattern_elements' }
 				]);
 			},
 			$with: {
@@ -8819,8 +8812,8 @@ export function wrapAttributeGroup1(data: T.AttributeGroup1, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapEnumVariantListGroup1(
-	data: T.EnumVariantListGroup1 & {
+export function wrapEnumVariantListElements(
+	data: T.EnumVariantListElements & {
 		readonly $other?: _NodeData['$other'];
 		readonly $span?: { start: number; end: number };
 	},
@@ -8835,7 +8828,7 @@ export function wrapEnumVariantListGroup1(
 	return withMethods(
 		{
 			...data,
-			$type: TSKindId.EnumVariantListGroup1 as const,
+			$type: TSKindId.EnumVariantListElements as const,
 			_element: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
@@ -8850,8 +8843,8 @@ export function wrapEnumVariantListGroup1(
 	);
 }
 
-export function wrapFieldDeclarationListGroup1(
-	data: T.FieldDeclarationListGroup1 & {
+export function wrapFieldDeclarationListElements(
+	data: T.FieldDeclarationListElements & {
 		readonly $other?: _NodeData['$other'];
 		readonly $span?: { start: number; end: number };
 	},
@@ -8866,7 +8859,7 @@ export function wrapFieldDeclarationListGroup1(
 	return withMethods(
 		{
 			...data,
-			$type: TSKindId.FieldDeclarationListGroup1 as const,
+			$type: TSKindId.FieldDeclarationListElements as const,
 			_element: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
@@ -8881,8 +8874,8 @@ export function wrapFieldDeclarationListGroup1(
 	);
 }
 
-export function wrapOrderedFieldDeclarationListGroup1(
-	data: T.OrderedFieldDeclarationListGroup1 & {
+export function wrapOrderedFieldDeclarationListElements(
+	data: T.OrderedFieldDeclarationListElements & {
 		readonly $other?: _NodeData['$other'];
 		readonly $span?: { start: number; end: number };
 	},
@@ -8897,7 +8890,7 @@ export function wrapOrderedFieldDeclarationListGroup1(
 	return withMethods(
 		{
 			...data,
-			$type: TSKindId.OrderedFieldDeclarationListGroup1 as const,
+			$type: TSKindId.OrderedFieldDeclarationListElements as const,
 			_element: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
@@ -8912,11 +8905,11 @@ export function wrapOrderedFieldDeclarationListGroup1(
 	);
 }
 
-export function wrapWhereClauseGroup1(data: T.WhereClauseGroup1, tree: TreeHandle) {
+export function wrapWherePredicates(data: T.WherePredicates, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId.WhereClauseGroup1 as const,
+			$type: TSKindId.WherePredicates as const,
 			_where_predicate: normalizeRepeatedWrapSlot(
 				_filterWrapChildrenByKind(data._where_predicate, ['where_predicate']),
 				true,
@@ -8938,8 +8931,8 @@ export function wrapWhereClauseGroup1(data: T.WhereClauseGroup1, tree: TreeHandl
 				return drillInAll<T.WherePredicate>(this._where_predicate as readonly T.WherePredicate[] | undefined, tree);
 			},
 			$with: {
-				wherePredicates: (...v: NonEmptyArray<NonNullable<T.WhereClauseGroup1['_where_predicate']>[number]>) =>
-					wrapWhereClauseGroup1({ ...data, _where_predicate: v }, tree)
+				wherePredicates: (...v: NonEmptyArray<NonNullable<T.WherePredicates['_where_predicate']>[number]>) =>
+					wrapWherePredicates({ ...data, _where_predicate: v }, tree)
 			}
 		},
 		methodsEngine
@@ -8947,8 +8940,8 @@ export function wrapWhereClauseGroup1(data: T.WhereClauseGroup1, tree: TreeHandl
 	return _node;
 }
 
-export function wrapUseListGroup1(
-	data: T.UseListGroup1 & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+export function wrapUseClauses(
+	data: T.UseClauses & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ) {
 	const _content = normalizeRepeatedWrapSlot(data._use_clause, true, 'use_clause', {
@@ -8960,7 +8953,7 @@ export function wrapUseListGroup1(
 	return withMethods(
 		{
 			...data,
-			$type: TSKindId.UseListGroup1 as const,
+			$type: TSKindId.UseClauses as const,
 			_use_clause: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
@@ -8973,8 +8966,11 @@ export function wrapUseListGroup1(
 	);
 }
 
-export function wrapParametersGroup1(
-	data: T.ParametersGroup1 & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+export function wrapParametersElements(
+	data: T.ParametersElements & {
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
 	tree: TreeHandle
 ) {
 	const _content = normalizeRepeatedWrapSlot(data._element, true, 'element', {
@@ -8986,7 +8982,7 @@ export function wrapParametersGroup1(
 	return withMethods(
 		{
 			...data,
-			$type: TSKindId.ParametersGroup1 as const,
+			$type: TSKindId.ParametersElements as const,
 			_element: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
@@ -9037,8 +9033,11 @@ export function wrapVisibilityModifierGroup1(
 	return _node;
 }
 
-export function wrapUseBoundsGroup1(
-	data: T.UseBoundsGroup1 & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+export function wrapUseBoundsElements(
+	data: T.UseBoundsElements & {
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
 	tree: TreeHandle
 ) {
 	const _content = normalizeRepeatedWrapSlot(data._element, true, 'element', {
@@ -9050,7 +9049,7 @@ export function wrapUseBoundsGroup1(
 	return withMethods(
 		{
 			...data,
-			$type: TSKindId.UseBoundsGroup1 as const,
+			$type: TSKindId.UseBoundsElements as const,
 			_element: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
@@ -9066,8 +9065,11 @@ export function wrapUseBoundsGroup1(
 	);
 }
 
-export function wrapArgumentsGroup1(
-	data: T.ArgumentsGroup1 & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+export function wrapArgumentsElements(
+	data: T.ArgumentsElements & {
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
 	tree: TreeHandle
 ) {
 	const _content = normalizeRepeatedWrapSlot(data._element, true, 'element', {
@@ -9079,7 +9081,7 @@ export function wrapArgumentsGroup1(
 	return withMethods(
 		{
 			...data,
-			$type: TSKindId.ArgumentsGroup1 as const,
+			$type: TSKindId.ArgumentsElements as const,
 			_element: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
@@ -9274,8 +9276,8 @@ export function wrapArrayExpressionGroup1(
 	return _node;
 }
 
-export function wrapFieldInitializerListGroup1(
-	data: T.FieldInitializerListGroup1 & {
+export function wrapFieldInitializerListElements(
+	data: T.FieldInitializerListElements & {
 		readonly $other?: _NodeData['$other'];
 		readonly $span?: { start: number; end: number };
 	},
@@ -9290,7 +9292,7 @@ export function wrapFieldInitializerListGroup1(
 	return withMethods(
 		{
 			...data,
-			$type: TSKindId.FieldInitializerListGroup1 as const,
+			$type: TSKindId.FieldInitializerListElements as const,
 			_element: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
@@ -9308,8 +9310,8 @@ export function wrapFieldInitializerListGroup1(
 	);
 }
 
-export function wrapTuplePatternGroup1(
-	data: T.TuplePatternGroup1 & {
+export function wrapTuplePatternElements(
+	data: T.TuplePatternElements & {
 		readonly $other?: _NodeData['$other'];
 		readonly $span?: { start: number; end: number };
 	},
@@ -9324,7 +9326,7 @@ export function wrapTuplePatternGroup1(
 	return withMethods(
 		{
 			...data,
-			$type: TSKindId.TuplePatternGroup1 as const,
+			$type: TSKindId.TuplePatternElements as const,
 			_element: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
@@ -9339,11 +9341,8 @@ export function wrapTuplePatternGroup1(
 	);
 }
 
-export function wrapSlicePatternGroup1(
-	data: T.SlicePatternGroup1 & {
-		readonly $other?: _NodeData['$other'];
-		readonly $span?: { start: number; end: number };
-	},
+export function wrapPatterns(
+	data: T.Patterns & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ) {
 	const _content = normalizeRepeatedWrapSlot(data._pattern, true, 'pattern', {
@@ -9355,7 +9354,7 @@ export function wrapSlicePatternGroup1(
 	return withMethods(
 		{
 			...data,
-			$type: TSKindId.SlicePatternGroup1 as const,
+			$type: TSKindId.Patterns as const,
 			_pattern: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
@@ -9368,8 +9367,8 @@ export function wrapSlicePatternGroup1(
 	);
 }
 
-export function wrapStructPatternGroup1(
-	data: T.StructPatternGroup1 & {
+export function wrapStructPatternElements(
+	data: T.StructPatternElements & {
 		readonly $other?: _NodeData['$other'];
 		readonly $span?: { start: number; end: number };
 	},
@@ -9384,7 +9383,7 @@ export function wrapStructPatternGroup1(
 	return withMethods(
 		{
 			...data,
-			$type: TSKindId.StructPatternGroup1 as const,
+			$type: TSKindId.StructPatternElements as const,
 			_element: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
@@ -9677,26 +9676,27 @@ export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeH
 				slotName: 'attributes',
 				span: (data as _NodeData).$span
 			}),
-			_arguments_group1: normalizeSingularWrapSlot(data._arguments_group1, 'arguments_group1', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'arguments_group1',
-				span: (data as _NodeData).$span
-			}),
+			_arguments_elements: normalizeSingularWrapSlot(
+				data._arguments_elements,
+				'arguments_elements',
+				false,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'arguments_elements', span: (data as _NodeData).$span }
+			),
 
 			attributes() {
 				return drillInAll<T.AttributeItem>(this._attributes as readonly T.AttributeItem[] | undefined, tree);
 			},
-			argumentsGroup1() {
-				return drillAs<T.ArgumentsGroup1 | undefined>(this._arguments_group1, tree, [
-					{ from: 'arguments_group1', to: '_arguments_group1' }
+			argumentsElements() {
+				return drillAs<T.ArgumentsElements | undefined>(this._arguments_elements, tree, [
+					{ from: 'arguments_elements', to: '_arguments_elements' }
 				]);
 			},
 			$with: {
 				attributes: (...v: NonNullable<T.ArrayExpressionList['_attributes']>[number][]) =>
 					wrapArrayExpressionList({ ...data, _attributes: v }, tree),
-				argumentsGroup1: (v: NonNullable<T.ArrayExpressionList['_arguments_group1']>) =>
-					wrapArrayExpressionList({ ...data, _arguments_group1: v }, tree)
+				argumentsElements: (v: NonNullable<T.ArrayExpressionList['_arguments_elements']>) =>
+					wrapArrayExpressionList({ ...data, _arguments_elements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -11581,23 +11581,23 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_kw_ref_marker: (d) => ({ ...d, $type: TSKindId.KwRefMarker as const }),
 	_kw_move_marker: (d) => ({ ...d, $type: TSKindId.KwMoveMarker as const }),
 	_attribute_group1: (d, t) => wrapAttributeGroup1(d as unknown as T.AttributeGroup1, t),
-	_enum_variant_list_group1: (d, t) => wrapEnumVariantListGroup1(d as unknown as T.EnumVariantListGroup1, t),
-	_field_declaration_list_group1: (d, t) =>
-		wrapFieldDeclarationListGroup1(d as unknown as T.FieldDeclarationListGroup1, t),
-	_ordered_field_declaration_list_group1: (d, t) =>
-		wrapOrderedFieldDeclarationListGroup1(d as unknown as T.OrderedFieldDeclarationListGroup1, t),
-	_where_clause_group1: (d, t) => wrapWhereClauseGroup1(d as unknown as T.WhereClauseGroup1, t),
-	_use_list_group1: (d, t) => wrapUseListGroup1(d as unknown as T.UseListGroup1, t),
-	_parameters_group1: (d, t) => wrapParametersGroup1(d as unknown as T.ParametersGroup1, t),
+	_enum_variant_list_elements: (d, t) => wrapEnumVariantListElements(d as unknown as T.EnumVariantListElements, t),
+	_field_declaration_list_elements: (d, t) =>
+		wrapFieldDeclarationListElements(d as unknown as T.FieldDeclarationListElements, t),
+	_ordered_field_declaration_list_elements: (d, t) =>
+		wrapOrderedFieldDeclarationListElements(d as unknown as T.OrderedFieldDeclarationListElements, t),
+	_where_predicates: (d, t) => wrapWherePredicates(d as unknown as T.WherePredicates, t),
+	_use_clauses: (d, t) => wrapUseClauses(d as unknown as T.UseClauses, t),
+	_parameters_elements: (d, t) => wrapParametersElements(d as unknown as T.ParametersElements, t),
 	_visibility_modifier_group1: (d, t) => wrapVisibilityModifierGroup1(d as unknown as T.VisibilityModifierGroup1, t),
-	_use_bounds_group1: (d, t) => wrapUseBoundsGroup1(d as unknown as T.UseBoundsGroup1, t),
-	_arguments_group1: (d, t) => wrapArgumentsGroup1(d as unknown as T.ArgumentsGroup1, t),
+	_use_bounds_elements: (d, t) => wrapUseBoundsElements(d as unknown as T.UseBoundsElements, t),
+	_arguments_elements: (d, t) => wrapArgumentsElements(d as unknown as T.ArgumentsElements, t),
 	_array_expression_group1: (d, t) => wrapArrayExpressionGroup1(d as unknown as T.ArrayExpressionGroup1, t),
-	_field_initializer_list_group1: (d, t) =>
-		wrapFieldInitializerListGroup1(d as unknown as T.FieldInitializerListGroup1, t),
-	_tuple_pattern_group1: (d, t) => wrapTuplePatternGroup1(d as unknown as T.TuplePatternGroup1, t),
-	_slice_pattern_group1: (d, t) => wrapSlicePatternGroup1(d as unknown as T.SlicePatternGroup1, t),
-	_struct_pattern_group1: (d, t) => wrapStructPatternGroup1(d as unknown as T.StructPatternGroup1, t),
+	_field_initializer_list_elements: (d, t) =>
+		wrapFieldInitializerListElements(d as unknown as T.FieldInitializerListElements, t),
+	_tuple_pattern_elements: (d, t) => wrapTuplePatternElements(d as unknown as T.TuplePatternElements, t),
+	_patterns: (d, t) => wrapPatterns(d as unknown as T.Patterns, t),
+	_struct_pattern_elements: (d, t) => wrapStructPatternElements(d as unknown as T.StructPatternElements, t),
 	_range_pattern_group2: (d, t) => wrapRangePatternGroup2(d as unknown as T.RangePatternGroup2, t),
 	_block_comment_group1: (d, t) => wrapBlockCommentGroup1(d as unknown as T.BlockCommentGroup1, t),
 	_token_tree_punctuation: (d) => ({ ...d, $type: TSKindId.TokenTreePunctuation as const }),
@@ -11669,7 +11669,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 const _aliasTargetToSource: Record<string, string> = {
 	_token_pattern_group1: '_non_special_token',
 	_token_tree: 'delim_token_tree',
-	arguments_group1: '_arguments_group1',
+	arguments_elements: '_arguments_elements',
 	array_expression_group1: '_array_expression_group1',
 	array_expression_list: '_array_expression_list',
 	array_expression_semi: '_array_expression_semi',
@@ -11690,13 +11690,13 @@ const _aliasTargetToSource: Record<string, string> = {
 	delim_token_tree_bracket: '_delim_token_tree_bracket',
 	delim_token_tree_paren: '_delim_token_tree_paren',
 	delim_tokens: '_delim_tokens',
-	enum_variant_list_group1: '_enum_variant_list_group1',
+	enum_variant_list_elements: '_enum_variant_list_elements',
 	expression: '_expression',
 	expression_ending_with_block: '_expression_ending_with_block',
 	expression_except_range: '_expression_except_range',
 	expression_statement_with_semi: '_expression_statement_with_semi',
-	field_declaration_list_group1: '_field_declaration_list_group1',
-	field_initializer_list_group1: '_field_initializer_list_group1',
+	field_declaration_list_elements: '_field_declaration_list_elements',
+	field_initializer_list_elements: '_field_initializer_list_elements',
 	field_pattern_named: '_field_pattern_named',
 	function_type_fn_form: '_function_type_fn_form',
 	function_type_trait_form: '_function_type_trait_form',
@@ -11720,10 +11720,11 @@ const _aliasTargetToSource: Record<string, string> = {
 	non_special_token: '_non_special_token',
 	or_pattern_binary: '_or_pattern_binary',
 	or_pattern_prefix: '_or_pattern_prefix',
-	ordered_field_declaration_list_group1: '_ordered_field_declaration_list_group1',
-	parameters_group1: '_parameters_group1',
+	ordered_field_declaration_list_elements: '_ordered_field_declaration_list_elements',
+	parameters_elements: '_parameters_elements',
 	path: '_path',
 	pattern: '_pattern',
+	patterns: '_patterns',
 	pointer_type_const: '_pointer_type_const',
 	primitive_type: '_primitive_type',
 	range_expression_binary: '_range_expression_binary',
@@ -11734,12 +11735,11 @@ const _aliasTargetToSource: Record<string, string> = {
 	range_pattern_prefix: '_range_pattern_prefix',
 	reference_expression_raw_const: '_reference_expression_raw_const',
 	reference_expression_raw_mut: '_reference_expression_raw_mut',
-	slice_pattern_group1: '_slice_pattern_group1',
 	statement: '_statement',
 	string_literal_open: '_string_literal_open',
 	struct_item_brace: '_struct_item_brace',
 	struct_item_tuple: '_struct_item_tuple',
-	struct_pattern_group1: '_struct_pattern_group1',
+	struct_pattern_elements: '_struct_pattern_elements',
 	token_pattern: '_token_pattern',
 	token_tree_brace: '_token_tree_brace',
 	token_tree_bracket: '_token_tree_bracket',
@@ -11749,15 +11749,15 @@ const _aliasTargetToSource: Record<string, string> = {
 	token_tree_pattern_paren: '_token_tree_pattern_paren',
 	token_tree_punctuation: '_token_tree_punctuation',
 	tokens: '_tokens',
-	tuple_pattern_group1: '_tuple_pattern_group1',
+	tuple_pattern_elements: '_tuple_pattern_elements',
 	type_argument: '_type_argument',
-	use_bounds_group1: '_use_bounds_group1',
+	use_bounds_elements: '_use_bounds_elements',
 	use_clause: '_use_clause',
-	use_list_group1: '_use_list_group1',
+	use_clauses: '_use_clauses',
 	visibility_modifier_group1: '_visibility_modifier_group1',
 	visibility_modifier_in_path: '_visibility_modifier_in_path',
 	visibility_modifier_pub: '_visibility_modifier_pub',
-	where_clause_group1: '_where_clause_group1',
+	where_predicates: '_where_predicates',
 	wildcard_pattern: '_wildcard_pattern'
 };
 

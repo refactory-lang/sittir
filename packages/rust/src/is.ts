@@ -227,34 +227,38 @@ export interface IsGuards {
 	lineComment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LineComment };
 	blockComment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BlockComment };
 	AttributeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributeGroup1 };
-	EnumVariantListGroup1<T extends { readonly $type: number }>(
+	EnumVariantListElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.EnumVariantListGroup1 };
-	FieldDeclarationListGroup1<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.EnumVariantListElements };
+	FieldDeclarationListElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.FieldDeclarationListGroup1 };
-	OrderedFieldDeclarationListGroup1<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.FieldDeclarationListElements };
+	OrderedFieldDeclarationListElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.OrderedFieldDeclarationListGroup1 };
-	UseListGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseListGroup1 };
-	ParametersGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ParametersGroup1 };
+	): v is T & { readonly $type: TSKindId.OrderedFieldDeclarationListElements };
+	UseClauses<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseClauses };
+	ParametersElements<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.ParametersElements };
 	VisibilityModifierGroup1<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.VisibilityModifierGroup1 };
-	UseBoundsGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseBoundsGroup1 };
-	ArgumentsGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArgumentsGroup1 };
-	FieldInitializerListGroup1<T extends { readonly $type: number }>(
+	UseBoundsElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.FieldInitializerListGroup1 };
-	TuplePatternGroup1<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.UseBoundsElements };
+	ArgumentsElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.TuplePatternGroup1 };
-	SlicePatternGroup1<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.ArgumentsElements };
+	FieldInitializerListElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.SlicePatternGroup1 };
-	StructPatternGroup1<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.FieldInitializerListElements };
+	TuplePatternElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.StructPatternGroup1 };
+	): v is T & { readonly $type: TSKindId.TuplePatternElements };
+	Patterns<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Patterns };
+	StructPatternElements<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.StructPatternElements };
 	ReferenceExpressionRawMut<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ReferenceExpressionRawMut };
@@ -478,26 +482,28 @@ export interface AssertGuards {
 	lineComment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LineComment };
 	blockComment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BlockComment };
 	AttributeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributeGroup1 };
-	EnumVariantListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumVariantListGroup1 };
-	FieldDeclarationListGroup1(v: {
+	EnumVariantListElements(v: {
 		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.FieldDeclarationListGroup1 };
-	OrderedFieldDeclarationListGroup1(v: {
+	}): asserts v is { readonly $type: TSKindId.EnumVariantListElements };
+	FieldDeclarationListElements(v: {
 		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.OrderedFieldDeclarationListGroup1 };
-	UseListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseListGroup1 };
-	ParametersGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParametersGroup1 };
+	}): asserts v is { readonly $type: TSKindId.FieldDeclarationListElements };
+	OrderedFieldDeclarationListElements(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.OrderedFieldDeclarationListElements };
+	UseClauses(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseClauses };
+	ParametersElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParametersElements };
 	VisibilityModifierGroup1(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.VisibilityModifierGroup1 };
-	UseBoundsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseBoundsGroup1 };
-	ArgumentsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArgumentsGroup1 };
-	FieldInitializerListGroup1(v: {
+	UseBoundsElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseBoundsElements };
+	ArgumentsElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArgumentsElements };
+	FieldInitializerListElements(v: {
 		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.FieldInitializerListGroup1 };
-	TuplePatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TuplePatternGroup1 };
-	SlicePatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SlicePatternGroup1 };
-	StructPatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StructPatternGroup1 };
+	}): asserts v is { readonly $type: TSKindId.FieldInitializerListElements };
+	TuplePatternElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TuplePatternElements };
+	Patterns(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Patterns };
+	StructPatternElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StructPatternElements };
 	ReferenceExpressionRawMut(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ReferenceExpressionRawMut };
@@ -798,20 +804,20 @@ const _kindIdByKind = new Map<string, number>([
 	['_kw_ref_marker', TSKindId.KwRefMarker],
 	['_kw_move_marker', TSKindId.KwMoveMarker],
 	['_attribute_group1', TSKindId.AttributeGroup1],
-	['_enum_variant_list_group1', TSKindId.EnumVariantListGroup1],
-	['_field_declaration_list_group1', TSKindId.FieldDeclarationListGroup1],
-	['_ordered_field_declaration_list_group1', TSKindId.OrderedFieldDeclarationListGroup1],
-	['_where_clause_group1', TSKindId.WhereClauseGroup1],
-	['_use_list_group1', TSKindId.UseListGroup1],
-	['_parameters_group1', TSKindId.ParametersGroup1],
+	['_enum_variant_list_elements', TSKindId.EnumVariantListElements],
+	['_field_declaration_list_elements', TSKindId.FieldDeclarationListElements],
+	['_ordered_field_declaration_list_elements', TSKindId.OrderedFieldDeclarationListElements],
+	['_where_predicates', TSKindId.WherePredicates],
+	['_use_clauses', TSKindId.UseClauses],
+	['_parameters_elements', TSKindId.ParametersElements],
 	['_visibility_modifier_group1', TSKindId.VisibilityModifierGroup1],
-	['_use_bounds_group1', TSKindId.UseBoundsGroup1],
-	['_arguments_group1', TSKindId.ArgumentsGroup1],
+	['_use_bounds_elements', TSKindId.UseBoundsElements],
+	['_arguments_elements', TSKindId.ArgumentsElements],
 	['_array_expression_group1', TSKindId.ArrayExpressionGroup1],
-	['_field_initializer_list_group1', TSKindId.FieldInitializerListGroup1],
-	['_tuple_pattern_group1', TSKindId.TuplePatternGroup1],
-	['_slice_pattern_group1', TSKindId.SlicePatternGroup1],
-	['_struct_pattern_group1', TSKindId.StructPatternGroup1],
+	['_field_initializer_list_elements', TSKindId.FieldInitializerListElements],
+	['_tuple_pattern_elements', TSKindId.TuplePatternElements],
+	['_patterns', TSKindId.Patterns],
+	['_struct_pattern_elements', TSKindId.StructPatternElements],
 	['_range_pattern_group2', TSKindId.RangePatternGroup2],
 	['_block_comment_group1', TSKindId.BlockCommentGroup1],
 	['_token_tree_punctuation', TSKindId.TokenTreePunctuation],
@@ -1012,18 +1018,18 @@ export const is = {
 	lineComment: _g(TSKindId.LineComment),
 	blockComment: _g(TSKindId.BlockComment),
 	AttributeGroup1: _g(TSKindId.AttributeGroup1),
-	EnumVariantListGroup1: _g(TSKindId.EnumVariantListGroup1),
-	FieldDeclarationListGroup1: _g(TSKindId.FieldDeclarationListGroup1),
-	OrderedFieldDeclarationListGroup1: _g(TSKindId.OrderedFieldDeclarationListGroup1),
-	UseListGroup1: _g(TSKindId.UseListGroup1),
-	ParametersGroup1: _g(TSKindId.ParametersGroup1),
+	EnumVariantListElements: _g(TSKindId.EnumVariantListElements),
+	FieldDeclarationListElements: _g(TSKindId.FieldDeclarationListElements),
+	OrderedFieldDeclarationListElements: _g(TSKindId.OrderedFieldDeclarationListElements),
+	UseClauses: _g(TSKindId.UseClauses),
+	ParametersElements: _g(TSKindId.ParametersElements),
 	VisibilityModifierGroup1: _g(TSKindId.VisibilityModifierGroup1),
-	UseBoundsGroup1: _g(TSKindId.UseBoundsGroup1),
-	ArgumentsGroup1: _g(TSKindId.ArgumentsGroup1),
-	FieldInitializerListGroup1: _g(TSKindId.FieldInitializerListGroup1),
-	TuplePatternGroup1: _g(TSKindId.TuplePatternGroup1),
-	SlicePatternGroup1: _g(TSKindId.SlicePatternGroup1),
-	StructPatternGroup1: _g(TSKindId.StructPatternGroup1),
+	UseBoundsElements: _g(TSKindId.UseBoundsElements),
+	ArgumentsElements: _g(TSKindId.ArgumentsElements),
+	FieldInitializerListElements: _g(TSKindId.FieldInitializerListElements),
+	TuplePatternElements: _g(TSKindId.TuplePatternElements),
+	Patterns: _g(TSKindId.Patterns),
+	StructPatternElements: _g(TSKindId.StructPatternElements),
 	ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
 	ImplItemBody: _g(TSKindId.ImplItemBody),
 	ClosureExpressionExpr: _g(TSKindId.ClosureExpressionExpr),
@@ -1230,21 +1236,27 @@ export const assert = {
 	lineComment: _makeAssert('lineComment', is.lineComment as _AnyGuard),
 	blockComment: _makeAssert('blockComment', is.blockComment as _AnyGuard),
 	AttributeGroup1: _makeAssert('AttributeGroup1', is.AttributeGroup1 as _AnyGuard),
-	EnumVariantListGroup1: _makeAssert('EnumVariantListGroup1', is.EnumVariantListGroup1 as _AnyGuard),
-	FieldDeclarationListGroup1: _makeAssert('FieldDeclarationListGroup1', is.FieldDeclarationListGroup1 as _AnyGuard),
-	OrderedFieldDeclarationListGroup1: _makeAssert(
-		'OrderedFieldDeclarationListGroup1',
-		is.OrderedFieldDeclarationListGroup1 as _AnyGuard
+	EnumVariantListElements: _makeAssert('EnumVariantListElements', is.EnumVariantListElements as _AnyGuard),
+	FieldDeclarationListElements: _makeAssert(
+		'FieldDeclarationListElements',
+		is.FieldDeclarationListElements as _AnyGuard
 	),
-	UseListGroup1: _makeAssert('UseListGroup1', is.UseListGroup1 as _AnyGuard),
-	ParametersGroup1: _makeAssert('ParametersGroup1', is.ParametersGroup1 as _AnyGuard),
+	OrderedFieldDeclarationListElements: _makeAssert(
+		'OrderedFieldDeclarationListElements',
+		is.OrderedFieldDeclarationListElements as _AnyGuard
+	),
+	UseClauses: _makeAssert('UseClauses', is.UseClauses as _AnyGuard),
+	ParametersElements: _makeAssert('ParametersElements', is.ParametersElements as _AnyGuard),
 	VisibilityModifierGroup1: _makeAssert('VisibilityModifierGroup1', is.VisibilityModifierGroup1 as _AnyGuard),
-	UseBoundsGroup1: _makeAssert('UseBoundsGroup1', is.UseBoundsGroup1 as _AnyGuard),
-	ArgumentsGroup1: _makeAssert('ArgumentsGroup1', is.ArgumentsGroup1 as _AnyGuard),
-	FieldInitializerListGroup1: _makeAssert('FieldInitializerListGroup1', is.FieldInitializerListGroup1 as _AnyGuard),
-	TuplePatternGroup1: _makeAssert('TuplePatternGroup1', is.TuplePatternGroup1 as _AnyGuard),
-	SlicePatternGroup1: _makeAssert('SlicePatternGroup1', is.SlicePatternGroup1 as _AnyGuard),
-	StructPatternGroup1: _makeAssert('StructPatternGroup1', is.StructPatternGroup1 as _AnyGuard),
+	UseBoundsElements: _makeAssert('UseBoundsElements', is.UseBoundsElements as _AnyGuard),
+	ArgumentsElements: _makeAssert('ArgumentsElements', is.ArgumentsElements as _AnyGuard),
+	FieldInitializerListElements: _makeAssert(
+		'FieldInitializerListElements',
+		is.FieldInitializerListElements as _AnyGuard
+	),
+	TuplePatternElements: _makeAssert('TuplePatternElements', is.TuplePatternElements as _AnyGuard),
+	Patterns: _makeAssert('Patterns', is.Patterns as _AnyGuard),
+	StructPatternElements: _makeAssert('StructPatternElements', is.StructPatternElements as _AnyGuard),
 	ReferenceExpressionRawMut: _makeAssert('ReferenceExpressionRawMut', is.ReferenceExpressionRawMut as _AnyGuard),
 	ImplItemBody: _makeAssert('ImplItemBody', is.ImplItemBody as _AnyGuard),
 	ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),

@@ -2,14 +2,14 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
-	'_argument_list_group1',
-	'_dict_pattern_group2',
-	'_dictionary_group1',
+	'_argument_list_elements',
+	'_dict_pattern_elements',
+	'_dictionary_elements',
 	'_except_clause_group1',
 	'_except_clause_list',
-	'_expression_list_group1',
+	'_expression_list_expressions',
 	'_match_block',
-	'_pattern_list_group1',
+	'_pattern_list_patterns',
 	'_simple_pattern_negative',
 	'_slice_group1',
 	'_suite',
@@ -537,13 +537,13 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	keyword_separator: 235,
 	_kw_async_marker: 236,
 	_except_clause_group1: 237,
-	_argument_list_group1: 238,
-	_expression_list_group1: 239,
-	_list_pattern_group1: 240,
-	_dict_pattern_group2: 241,
-	_pattern_list_group1: 242,
+	_argument_list_elements: 238,
+	_expression_list_expressions: 239,
+	_case_patterns: 240,
+	_dict_pattern_elements: 241,
+	_pattern_list_patterns: 242,
 	_slice_group1: 243,
-	_dictionary_group1: 244,
+	_dictionary_elements: 244,
 	_augmented_assignment_operator: 245,
 	_except_clause_as: 246,
 	case_tuple_pattern: 247,
@@ -591,11 +591,11 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	string_content_repeat1: 289,
 	format_specifier_repeat1: 290,
 	_exec_statement_optional1_repeat1: 291,
-	_argument_list_group1_repeat1: 292,
-	_expression_list_group1_repeat1: 293,
-	_dict_pattern_group2_repeat1: 294,
-	_pattern_list_group1_repeat1: 295,
-	_dictionary_group1_repeat1: 296,
+	_argument_list_elements_repeat1: 292,
+	_expression_list_expressions_repeat1: 293,
+	_dict_pattern_elements_repeat1: 294,
+	_pattern_list_patterns_repeat1: 295,
+	_dictionary_elements_repeat1: 296,
 	case_tuple_pattern_repeat1: 297,
 	comprehension_clauses_repeat1: 298,
 	print_statement_group1_repeat1: 299,
@@ -845,13 +845,13 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[235]: 'keyword_separator',
 	[236]: '_kw_async_marker',
 	[237]: '_except_clause_group1',
-	[238]: '_argument_list_group1',
-	[239]: '_expression_list_group1',
-	[240]: '_list_pattern_group1',
-	[241]: '_dict_pattern_group2',
-	[242]: '_pattern_list_group1',
+	[238]: '_argument_list_elements',
+	[239]: '_expression_list_expressions',
+	[240]: '_case_patterns',
+	[241]: '_dict_pattern_elements',
+	[242]: '_pattern_list_patterns',
 	[243]: '_slice_group1',
-	[244]: '_dictionary_group1',
+	[244]: '_dictionary_elements',
 	[245]: '_augmented_assignment_operator',
 	[246]: '_except_clause_as',
 	[247]: 'case_tuple_pattern',
@@ -899,11 +899,11 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[289]: 'string_content_repeat1',
 	[290]: 'format_specifier_repeat1',
 	[291]: '_exec_statement_optional1_repeat1',
-	[292]: '_argument_list_group1_repeat1',
-	[293]: '_expression_list_group1_repeat1',
-	[294]: '_dict_pattern_group2_repeat1',
-	[295]: '_pattern_list_group1_repeat1',
-	[296]: '_dictionary_group1_repeat1',
+	[292]: '_argument_list_elements_repeat1',
+	[293]: '_expression_list_expressions_repeat1',
+	[294]: '_dict_pattern_elements_repeat1',
+	[295]: '_pattern_list_patterns_repeat1',
+	[296]: '_dictionary_elements_repeat1',
 	[297]: 'case_tuple_pattern_repeat1',
 	[298]: 'comprehension_clauses_repeat1',
 	[299]: 'print_statement_group1_repeat1',
@@ -1188,13 +1188,18 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: 'keyword_separator', id: 235, enumName: 'KeywordSeparator', cName: 'sym_keyword_separator' },
 	{ name: '_kw_async_marker', id: 236, enumName: 'KwAsyncMarker', cName: 'sym__kw_async_marker' },
 	{ name: '_except_clause_group1', id: 237, enumName: 'ExceptClauseGroup1', cName: 'sym__except_clause_group1' },
-	{ name: '_argument_list_group1', id: 238, enumName: 'ArgumentListGroup1', cName: 'sym__argument_list_group1' },
-	{ name: '_expression_list_group1', id: 239, enumName: 'ExpressionListGroup1', cName: 'sym__expression_list_group1' },
-	{ name: '_list_pattern_group1', id: 240, enumName: 'ListPatternGroup1', cName: 'sym__list_pattern_group1' },
-	{ name: '_dict_pattern_group2', id: 241, enumName: 'DictPatternGroup2', cName: 'sym__dict_pattern_group2' },
-	{ name: '_pattern_list_group1', id: 242, enumName: 'PatternListGroup1', cName: 'sym__pattern_list_group1' },
+	{ name: '_argument_list_elements', id: 238, enumName: 'ArgumentListElements', cName: 'sym__argument_list_elements' },
+	{
+		name: '_expression_list_expressions',
+		id: 239,
+		enumName: 'ExpressionListExpressions',
+		cName: 'sym__expression_list_expressions'
+	},
+	{ name: '_case_patterns', id: 240, enumName: 'CasePatterns', cName: 'sym__case_patterns' },
+	{ name: '_dict_pattern_elements', id: 241, enumName: 'DictPatternElements', cName: 'sym__dict_pattern_elements' },
+	{ name: '_pattern_list_patterns', id: 242, enumName: 'PatternListPatterns', cName: 'sym__pattern_list_patterns' },
 	{ name: '_slice_group1', id: 243, enumName: 'SliceGroup1', cName: 'sym__slice_group1' },
-	{ name: '_dictionary_group1', id: 244, enumName: 'DictionaryGroup1', cName: 'sym__dictionary_group1' },
+	{ name: '_dictionary_elements', id: 244, enumName: 'DictionaryElements', cName: 'sym__dictionary_elements' },
 	{
 		name: '_augmented_assignment_operator',
 		id: 245,
@@ -1343,34 +1348,34 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'aux_sym__exec_statement_optional1_repeat1'
 	},
 	{
-		name: '_argument_list_group1_repeat1',
+		name: '_argument_list_elements_repeat1',
 		id: 292,
-		enumName: 'AuxArgumentListGroup1Repeat1',
-		cName: 'aux_sym__argument_list_group1_repeat1'
+		enumName: 'AuxArgumentListElementsRepeat1',
+		cName: 'aux_sym__argument_list_elements_repeat1'
 	},
 	{
-		name: '_expression_list_group1_repeat1',
+		name: '_expression_list_expressions_repeat1',
 		id: 293,
-		enumName: 'AuxExpressionListGroup1Repeat1',
-		cName: 'aux_sym__expression_list_group1_repeat1'
+		enumName: 'AuxExpressionListExpressionsRepeat1',
+		cName: 'aux_sym__expression_list_expressions_repeat1'
 	},
 	{
-		name: '_dict_pattern_group2_repeat1',
+		name: '_dict_pattern_elements_repeat1',
 		id: 294,
-		enumName: 'AuxDictPatternGroup2Repeat1',
-		cName: 'aux_sym__dict_pattern_group2_repeat1'
+		enumName: 'AuxDictPatternElementsRepeat1',
+		cName: 'aux_sym__dict_pattern_elements_repeat1'
 	},
 	{
-		name: '_pattern_list_group1_repeat1',
+		name: '_pattern_list_patterns_repeat1',
 		id: 295,
-		enumName: 'AuxPatternListGroup1Repeat1',
-		cName: 'aux_sym__pattern_list_group1_repeat1'
+		enumName: 'AuxPatternListPatternsRepeat1',
+		cName: 'aux_sym__pattern_list_patterns_repeat1'
 	},
 	{
-		name: '_dictionary_group1_repeat1',
+		name: '_dictionary_elements_repeat1',
 		id: 296,
-		enumName: 'AuxDictionaryGroup1Repeat1',
-		cName: 'aux_sym__dictionary_group1_repeat1'
+		enumName: 'AuxDictionaryElementsRepeat1',
+		cName: 'aux_sym__dictionary_elements_repeat1'
 	},
 	{
 		name: 'case_tuple_pattern_repeat1',
@@ -1715,17 +1720,17 @@ export const FIELD_MAP: Record<
 		multiple: boolean;
 	}>
 > = {
-	_argument_list_group1: [{ name: 'elements', required: true, multiple: true }],
-	_dict_pattern_group2: [
+	_argument_list_elements: [{ name: 'elements', required: true, multiple: true }],
+	_dict_pattern_elements: [
 		{ name: 'dictPatternKv', required: true, multiple: false },
 		{ name: 'contents', required: false, multiple: true }
 	],
-	_dictionary_group1: [{ name: 'elements', required: true, multiple: true }],
+	_dictionary_elements: [{ name: 'elements', required: true, multiple: true }],
 	_except_clause_group1: [{ name: 'content', required: true, multiple: false }],
 	_except_clause_list: [{ name: 'values', required: true, multiple: true }],
-	_expression_list_group1: [{ name: 'expressions', required: true, multiple: true }],
+	_expression_list_expressions: [{ name: 'expressions', required: true, multiple: true }],
 	_match_block: [{ name: 'content', required: true, multiple: false }],
-	_pattern_list_group1: [{ name: 'patterns', required: true, multiple: true }],
+	_pattern_list_patterns: [{ name: 'patterns', required: true, multiple: true }],
 	_simple_pattern_negative: [{ name: 'content', required: true, multiple: false }],
 	_slice_group1: [{ name: 'expression', required: false, multiple: false }],
 	_suite: [{ name: 'content', required: true, multiple: false }],
@@ -1827,7 +1832,7 @@ export const FIELD_MAP: Record<
 		{ name: 'value', required: true, multiple: false }
 	],
 	delete_statement: [{ name: 'expressions', required: true, multiple: false }],
-	dict_pattern: [{ name: 'dictPatternGroup2', required: false, multiple: false }],
+	dict_pattern: [{ name: 'dictPatternElements', required: false, multiple: false }],
 	dictionary: [{ name: 'entries', required: false, multiple: false }],
 	dictionary_comprehension: [
 		{ name: 'body', required: true, multiple: false },

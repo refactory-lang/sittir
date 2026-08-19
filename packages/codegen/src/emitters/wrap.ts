@@ -765,7 +765,7 @@ function emitSeparatedListWrap(
 		// here is ONLY the internal `_hasSeparatorFlank`/`_separatorKindOf`
 		// probe bucket, never a real storage key or accessor. Its candidate
 		// keys can span more than one field's element type (e.g. TypeScript's
-		// enum_body_group1 mixes PropertyName-kind and EnumAssignment-kind
+		// enum_body_elements mixes PropertyName-kind and EnumAssignment-kind
 		// keys), which don't share a common generic T.
 		forceUnknownElement: node.fields.length > 1
 	});

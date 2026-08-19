@@ -337,10 +337,10 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	type_query: TSKindId.TypeQuery,
 	literal_type: TSKindId.LiteralType,
 	tuple_type: TSKindId.TupleType,
-	_export_clause_group1: TSKindId.ExportClauseGroup1,
+	_export_specifiers: TSKindId.ExportSpecifiers,
 	_import_clause_group1: TSKindId.ImportClauseGroup1,
-	_named_imports_group1: TSKindId.NamedImportsGroup1,
-	_tuple_type_group1: TSKindId.TupleTypeGroup1,
+	_import_specifiers: TSKindId.ImportSpecifiers,
+	_tuple_type_members: TSKindId.TupleTypeMembers,
 	object_type_content: TSKindId.ObjectTypeContent,
 	_export_statement_default: TSKindId.ExportStatementDefault,
 	_public_field_definition_declare_first: TSKindId.PublicFieldDefinitionDeclareFirst
@@ -400,14 +400,14 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildLiteralType(children[0] as Parameters<typeof F.buildLiteralType>[0]);
 		case 'tuple_type':
 			return F.buildTupleType(children[0] as Parameters<typeof F.buildTupleType>[0]);
-		case '_export_clause_group1':
-			return F.buildExportClauseGroup1(children as Parameters<typeof F.buildExportClauseGroup1>[0]);
+		case '_export_specifiers':
+			return F.buildExportSpecifiers(children as Parameters<typeof F.buildExportSpecifiers>[0]);
 		case '_import_clause_group1':
 			return F.buildImportClauseGroup1(children[0] as Parameters<typeof F.buildImportClauseGroup1>[0]);
-		case '_named_imports_group1':
-			return F.buildNamedImportsGroup1(children as Parameters<typeof F.buildNamedImportsGroup1>[0]);
-		case '_tuple_type_group1':
-			return F.buildTupleTypeGroup1(children as Parameters<typeof F.buildTupleTypeGroup1>[0]);
+		case '_import_specifiers':
+			return F.buildImportSpecifiers(children as Parameters<typeof F.buildImportSpecifiers>[0]);
+		case '_tuple_type_members':
+			return F.buildTupleTypeMembers(children as Parameters<typeof F.buildTupleTypeMembers>[0]);
 		case 'object_type_content':
 			return F.buildObjectTypeContent(children as Parameters<typeof F.buildObjectTypeContent>[0]);
 		case '_export_statement_default':
@@ -933,11 +933,11 @@ export function coerceToNamespaceExport(
 }
 
 export function coerceToExportClause(
-	input?: T.ExportClauseGroup1 | T.ExportClause
+	input?: T.ExportSpecifiers | T.ExportClause
 ): ReturnType<typeof F.buildExportClause> {
 	if (isNodeData(input) && input.$type === TSKindId.ExportClause) {
 		const data = input;
-		const child = (data as unknown as { _export_clause_group1?: unknown })._export_clause_group1;
+		const child = (data as unknown as { _export_specifiers?: unknown })._export_specifiers;
 		return F.buildExportClause(child as Parameters<typeof F.buildExportClause>[0]);
 	}
 	return F.buildExportClause(input as Parameters<typeof F.buildExportClause>[0]);
@@ -1017,11 +1017,11 @@ export function coerceToNamespaceImport(input: T.NamespaceImport.Loose): ReturnT
 }
 
 export function coerceToNamedImports(
-	input?: T.NamedImportsGroup1 | T.NamedImports
+	input?: T.ImportSpecifiers | T.NamedImports
 ): ReturnType<typeof F.buildNamedImports> {
 	if (isNodeData(input) && input.$type === TSKindId.NamedImports) {
 		const data = input;
-		const child = (data as unknown as { _named_imports_group1?: unknown })._named_imports_group1;
+		const child = (data as unknown as { _import_specifiers?: unknown })._import_specifiers;
 		return F.buildNamedImports(child as Parameters<typeof F.buildNamedImports>[0]);
 	}
 	return F.buildNamedImports(input as Parameters<typeof F.buildNamedImports>[0]);
@@ -2138,11 +2138,11 @@ export function coerceToClassBody(input?: T.ClassBody.Loose): ReturnType<typeof 
 }
 
 export function coerceToFormalParameters(
-	input?: T.FormalParametersGroup1 | T.FormalParameters
+	input?: T.FormalParametersElements | T.FormalParameters
 ): ReturnType<typeof F.buildFormalParameters> {
 	if (isNodeData(input) && input.$type === TSKindId.FormalParameters) {
 		const data = input;
-		const child = (data as unknown as { _formal_parameters_group1?: unknown })._formal_parameters_group1;
+		const child = (data as unknown as { _formal_parameters_elements?: unknown })._formal_parameters_elements;
 		return F.buildFormalParameters(child as Parameters<typeof F.buildFormalParameters>[0]);
 	}
 	return F.buildFormalParameters(input as Parameters<typeof F.buildFormalParameters>[0]);
@@ -2602,10 +2602,10 @@ export function coerceToEnumDeclaration(input: T.EnumDeclaration.Loose): ReturnT
 	});
 }
 
-export function coerceToEnumBody(input?: T.EnumBodyGroup1 | T.EnumBody): ReturnType<typeof F.buildEnumBody> {
+export function coerceToEnumBody(input?: T.EnumBodyElements | T.EnumBody): ReturnType<typeof F.buildEnumBody> {
 	if (isNodeData(input) && input.$type === TSKindId.EnumBody) {
 		const data = input;
-		const child = (data as unknown as { _enum_body_group1?: unknown })._enum_body_group1;
+		const child = (data as unknown as { _enum_body_elements?: unknown })._enum_body_elements;
 		return F.buildEnumBody(child as Parameters<typeof F.buildEnumBody>[0]);
 	}
 	return F.buildEnumBody(input as Parameters<typeof F.buildEnumBody>[0]);
@@ -3232,10 +3232,10 @@ export function coerceToArrayType(input: T.ArrayType.Loose): ReturnType<typeof F
 	);
 }
 
-export function coerceToTupleType(input?: T.TupleTypeGroup1 | T.TupleType): ReturnType<typeof F.buildTupleType> {
+export function coerceToTupleType(input?: T.TupleTypeMembers | T.TupleType): ReturnType<typeof F.buildTupleType> {
 	if (isNodeData(input) && input.$type === TSKindId.TupleType) {
 		const data = input;
-		const child = (data as unknown as { _tuple_type_group1?: unknown })._tuple_type_group1;
+		const child = (data as unknown as { _tuple_type_members?: unknown })._tuple_type_members;
 		return F.buildTupleType(child as Parameters<typeof F.buildTupleType>[0]);
 	}
 	return F.buildTupleType(input as Parameters<typeof F.buildTupleType>[0]);

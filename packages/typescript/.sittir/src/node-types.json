@@ -2381,14 +2381,14 @@
       "required": false,
       "types": [
         {
-          "type": "enum_body_group1",
+          "type": "enum_body_elements",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "enum_body_group1",
+    "type": "enum_body_elements",
     "named": true,
     "fields": {
       "name": {
@@ -2479,26 +2479,10 @@
       "required": false,
       "types": [
         {
-          "type": "export_clause_group1",
+          "type": "export_specifiers",
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "export_clause_group1",
-    "named": true,
-    "fields": {
-      "export_specifier": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "export_specifier",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
@@ -2543,6 +2527,22 @@
           },
           {
             "type": "string",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "export_specifiers",
+    "named": true,
+    "fields": {
+      "export_specifier": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "export_specifier",
             "named": true
           }
         ]
@@ -3327,14 +3327,14 @@
       "required": false,
       "types": [
         {
-          "type": "formal_parameters_group1",
+          "type": "formal_parameters_elements",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "formal_parameters_group1",
+    "type": "formal_parameters_elements",
     "named": true,
     "fields": {
       "formal_parameter": {
@@ -4101,6 +4101,22 @@
           },
           {
             "type": "string",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "import_specifiers",
+    "named": true,
+    "fields": {
+      "import_specifier": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "import_specifier",
             "named": true
           }
         ]
@@ -5132,26 +5148,10 @@
       "required": false,
       "types": [
         {
-          "type": "named_imports_group1",
+          "type": "import_specifiers",
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "named_imports_group1",
-    "named": true,
-    "fields": {
-      "import_specifier": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "import_specifier",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
@@ -6859,14 +6859,14 @@
       "required": false,
       "types": [
         {
-          "type": "tuple_type_group1",
+          "type": "tuple_type_members",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "tuple_type_group1",
+    "type": "tuple_type_members",
     "named": true,
     "fields": {
       "tuple_type_member": {

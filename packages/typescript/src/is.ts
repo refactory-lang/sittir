@@ -286,19 +286,15 @@ export interface IsGuards {
 	unionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UnionType };
 	intersectionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IntersectionType };
 	functionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionType };
-	ExportClauseGroup1<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ExportClauseGroup1 };
+	ExportSpecifiers<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportSpecifiers };
 	ImportStatementGroup1<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ImportStatementGroup1 };
 	ImportClauseGroup1<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ImportClauseGroup1 };
-	NamedImportsGroup1<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.NamedImportsGroup1 };
-	TupleTypeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleTypeGroup1 };
+	ImportSpecifiers<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportSpecifiers };
+	TupleTypeMembers<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleTypeMembers };
 	objectTypeContent<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ObjectTypeContent };
@@ -538,11 +534,11 @@ export interface AssertGuards {
 	unionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UnionType };
 	intersectionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IntersectionType };
 	functionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionType };
-	ExportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportClauseGroup1 };
+	ExportSpecifiers(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportSpecifiers };
 	ImportStatementGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportStatementGroup1 };
 	ImportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseGroup1 };
-	NamedImportsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NamedImportsGroup1 };
-	TupleTypeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleTypeGroup1 };
+	ImportSpecifiers(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportSpecifiers };
+	TupleTypeMembers(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleTypeMembers };
 	objectTypeContent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectTypeContent };
 	ExportStatementDefault(v: {
 		readonly $type: number;
@@ -896,19 +892,19 @@ const _kindIdByKind = new Map<string, number>([
 	['_kw_static_marker', TSKindId.KwStaticMarker],
 	['_kw_abstract_marker', TSKindId.KwAbstractMarker],
 	['_kw_const_marker', TSKindId.KwConstMarker],
-	['_export_clause_group1', TSKindId.ExportClauseGroup1],
+	['_export_specifiers', TSKindId.ExportSpecifiers],
 	['_import_statement_group1', TSKindId.ImportStatementGroup1],
 	['_import_clause_group1', TSKindId.ImportClauseGroup1],
-	['_named_imports_group1', TSKindId.NamedImportsGroup1],
+	['_import_specifiers', TSKindId.ImportSpecifiers],
 	['_variable_declarator_group1', TSKindId.VariableDeclaratorGroup1],
 	['_variable_declarator_group2', TSKindId.VariableDeclaratorGroup2],
 	['_catch_clause_group1', TSKindId.CatchClauseGroup1],
 	['_binary_expression_group1', TSKindId.BinaryExpressionGroup1],
 	['_meta_property_group1', TSKindId.MetaPropertyGroup1],
 	['_meta_property_group2', TSKindId.MetaPropertyGroup2],
-	['_formal_parameters_group1', TSKindId.FormalParametersGroup1],
-	['_enum_body_group1', TSKindId.EnumBodyGroup1],
-	['_tuple_type_group1', TSKindId.TupleTypeGroup1],
+	['_formal_parameters_elements', TSKindId.FormalParametersElements],
+	['_enum_body_elements', TSKindId.EnumBodyElements],
+	['_tuple_type_members', TSKindId.TupleTypeMembers],
 	['_kind', TSKindId.Kind],
 	['__for_header_operator', TSKindId.ForHeaderOperator],
 	['_ambient_declaration_global', TSKindId.AmbientDeclarationGlobal],
@@ -1107,11 +1103,11 @@ export const is = {
 	unionType: _g(TSKindId.UnionType),
 	intersectionType: _g(TSKindId.IntersectionType),
 	functionType: _g(TSKindId.FunctionType),
-	ExportClauseGroup1: _g(TSKindId.ExportClauseGroup1),
+	ExportSpecifiers: _g(TSKindId.ExportSpecifiers),
 	ImportStatementGroup1: _g(TSKindId.ImportStatementGroup1),
 	ImportClauseGroup1: _g(TSKindId.ImportClauseGroup1),
-	NamedImportsGroup1: _g(TSKindId.NamedImportsGroup1),
-	TupleTypeGroup1: _g(TSKindId.TupleTypeGroup1),
+	ImportSpecifiers: _g(TSKindId.ImportSpecifiers),
+	TupleTypeMembers: _g(TSKindId.TupleTypeMembers),
 	objectTypeContent: _g(TSKindId.ObjectTypeContent),
 	ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
 	ArrowFunctionParameter: _g(TSKindId.ArrowFunctionParameter),
@@ -1340,11 +1336,11 @@ export const assert = {
 	unionType: _makeAssert('unionType', is.unionType as _AnyGuard),
 	intersectionType: _makeAssert('intersectionType', is.intersectionType as _AnyGuard),
 	functionType: _makeAssert('functionType', is.functionType as _AnyGuard),
-	ExportClauseGroup1: _makeAssert('ExportClauseGroup1', is.ExportClauseGroup1 as _AnyGuard),
+	ExportSpecifiers: _makeAssert('ExportSpecifiers', is.ExportSpecifiers as _AnyGuard),
 	ImportStatementGroup1: _makeAssert('ImportStatementGroup1', is.ImportStatementGroup1 as _AnyGuard),
 	ImportClauseGroup1: _makeAssert('ImportClauseGroup1', is.ImportClauseGroup1 as _AnyGuard),
-	NamedImportsGroup1: _makeAssert('NamedImportsGroup1', is.NamedImportsGroup1 as _AnyGuard),
-	TupleTypeGroup1: _makeAssert('TupleTypeGroup1', is.TupleTypeGroup1 as _AnyGuard),
+	ImportSpecifiers: _makeAssert('ImportSpecifiers', is.ImportSpecifiers as _AnyGuard),
+	TupleTypeMembers: _makeAssert('TupleTypeMembers', is.TupleTypeMembers as _AnyGuard),
 	objectTypeContent: _makeAssert('objectTypeContent', is.objectTypeContent as _AnyGuard),
 	ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),
 	ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),

@@ -64,7 +64,7 @@
     "expression_list": {
       "definedBy": "override",
       "childKind": {
-        "expression_list_group1": "group1"
+        "expression_list_expressions": "expressions"
       }
     },
     "assignment": {
@@ -78,7 +78,7 @@
     "pattern_list": {
       "definedBy": "override",
       "childKind": {
-        "pattern_list_group1": "group1"
+        "pattern_list_patterns": "patterns"
       }
     },
     "yield": {
@@ -188,7 +188,7 @@
       "parenthesized_expression": "parenthesized_list_splat"
     },
     "argument_list.arguments": {
-      "argument_list_group1": "_argument_list_group1"
+      "argument_list_elements": "_argument_list_elements"
     },
     "decorator.newline": {
       "newline": "_newline"
@@ -202,7 +202,7 @@
       "statement_group1": "_simple_statements"
     },
     "expression_list.tail": {
-      "expression_list_group1": "_expression_list_group1"
+      "expression_list_expressions": "_expression_list_expressions"
     },
     "case_pattern.content": {
       "simple_pattern_negative": "_simple_pattern_negative",
@@ -212,8 +212,8 @@
       "simple_pattern_negative": "_simple_pattern_negative",
       "wildcard_pattern": "_wildcard_pattern"
     },
-    "dict_pattern.dict_pattern_group2": {
-      "dict_pattern_group2": "_dict_pattern_group2"
+    "dict_pattern.dict_pattern_elements": {
+      "dict_pattern_elements": "_dict_pattern_elements"
     },
     "_key_value_pattern.key": {
       "simple_pattern_negative": "_simple_pattern_negative",
@@ -224,7 +224,7 @@
       "wildcard_pattern": "_wildcard_pattern"
     },
     "class_pattern.arguments": {
-      "list_pattern_group1": "_list_pattern_group1"
+      "case_patterns": "_case_patterns"
     },
     "tuple_pattern.patterns": {
       "pattern_group": "_patterns"
@@ -244,7 +244,7 @@
       "assignment_typed": "_assignment_typed"
     },
     "pattern_list.tail": {
-      "pattern_list_group1": "_pattern_list_group1"
+      "pattern_list_patterns": "_pattern_list_patterns"
     },
     "yield.content": {
       "yield_from_clause": "_yield_from_clause"
@@ -262,7 +262,7 @@
       "element_list": "_collection_elements"
     },
     "dictionary.entries": {
-      "dictionary_group1": "_dictionary_group1"
+      "dictionary_elements": "_dictionary_elements"
     },
     "format_specifier.content": {
       "format_expression": "interpolation"
@@ -271,10 +271,10 @@
       "except_clause_as": "_except_clause_as",
       "except_clause_list": "_except_clause_list"
     },
-    "_dict_pattern_group2.dict_pattern_kv": {
+    "_dict_pattern_elements.dict_pattern_kv": {
       "dict_pattern_kv": "_dict_pattern_kv"
     },
-    "_dict_pattern_group2.content": {
+    "_dict_pattern_elements.content": {
       "dict_pattern_group1": "_key_value_pattern"
     }
   },
@@ -1024,7 +1024,7 @@
       }
     },
     "dict_pattern": {
-      "dict_pattern_group2": {
+      "dict_pattern_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1890,7 +1890,7 @@
         "nonEmpty": false
       }
     },
-    "_argument_list_group1": {
+    "_argument_list_elements": {
       "element": {
         "unnamed": false,
         "slotCount": 1,
@@ -1899,7 +1899,7 @@
         "nonEmpty": true
       }
     },
-    "_expression_list_group1": {
+    "_expression_list_expressions": {
       "expression": {
         "unnamed": false,
         "slotCount": 1,
@@ -1908,7 +1908,7 @@
         "nonEmpty": true
       }
     },
-    "_list_pattern_group1": {
+    "_case_patterns": {
       "case_pattern": {
         "unnamed": false,
         "slotCount": 1,
@@ -1917,7 +1917,7 @@
         "nonEmpty": true
       }
     },
-    "_dict_pattern_group2": {
+    "_dict_pattern_elements": {
       "dict_pattern_kv": {
         "unnamed": false,
         "slotCount": 1,
@@ -1933,7 +1933,7 @@
         "nonEmpty": false
       }
     },
-    "_pattern_list_group1": {
+    "_pattern_list_patterns": {
       "pattern": {
         "unnamed": false,
         "slotCount": 1,
@@ -1951,7 +1951,7 @@
         "nonEmpty": false
       }
     },
-    "_dictionary_group1": {
+    "_dictionary_elements": {
       "element": {
         "unnamed": false,
         "slotCount": 1,
@@ -2241,11 +2241,11 @@
       "text": "__future__"
     },
     {
-      "kind": "_argument_list_group1",
+      "kind": "_argument_list_elements",
       "modelType": "separatedList",
-      "typeName": "ArgumentListGroup1",
-      "factoryName": "argumentListGroup1",
-      "irKey": "argumentListGroup1",
+      "typeName": "ArgumentListElements",
+      "factoryName": "argumentListElements",
+      "irKey": "argumentListElements",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -2427,6 +2427,45 @@
         "|="
       ],
       "factoryShape": "text"
+    },
+    {
+      "kind": "_case_patterns",
+      "modelType": "group",
+      "typeName": "CasePatterns",
+      "factoryName": "_casePatterns",
+      "irKey": "casePatterns",
+      "hidden": false,
+      "name": "_case_patterns",
+      "fields": [
+        {
+          "name": "case_pattern",
+          "propertyName": "casePatterns",
+          "paramName": "casePatterns",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "case_pattern",
+              "parseKind": "case_pattern",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "case_pattern"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "case_pattern"
+      ]
     },
     {
       "kind": "_collection_elements",
@@ -2638,11 +2677,11 @@
       "hidden": false
     },
     {
-      "kind": "_dict_pattern_group2",
+      "kind": "_dict_pattern_elements",
       "modelType": "branch",
-      "typeName": "DictPatternGroup2",
-      "factoryName": "dictPatternGroup2",
-      "irKey": "dictPatternGroup2",
+      "typeName": "DictPatternElements",
+      "factoryName": "dictPatternElements",
+      "irKey": "dictPatternElements",
       "hidden": false,
       "fields": [
         {
@@ -2719,11 +2758,11 @@
       ]
     },
     {
-      "kind": "_dictionary_group1",
+      "kind": "_dictionary_elements",
       "modelType": "separatedList",
-      "typeName": "DictionaryGroup1",
-      "factoryName": "dictionaryGroup1",
-      "irKey": "dictionaryGroup1",
+      "typeName": "DictionaryElements",
+      "factoryName": "dictionaryElements",
+      "irKey": "dictionaryElements",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -2956,11 +2995,11 @@
       "children": []
     },
     {
-      "kind": "_expression_list_group1",
+      "kind": "_expression_list_expressions",
       "modelType": "separatedList",
-      "typeName": "ExpressionListGroup1",
-      "factoryName": "expressionListGroup1",
-      "irKey": "expressionListGroup1",
+      "typeName": "ExpressionListExpressions",
+      "factoryName": "expressionListExpressions",
+      "irKey": "expressionListExpressions",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -3234,45 +3273,6 @@
       ]
     },
     {
-      "kind": "_list_pattern_group1",
-      "modelType": "group",
-      "typeName": "ListPatternGroup1",
-      "factoryName": "_listPatternGroup1",
-      "irKey": "listPatternGroup1",
-      "hidden": false,
-      "name": "_list_pattern_group1",
-      "fields": [
-        {
-          "name": "case_pattern",
-          "propertyName": "casePatterns",
-          "paramName": "casePatterns",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "case_pattern",
-              "parseKind": "case_pattern",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "case_pattern"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "case_pattern"
-      ]
-    },
-    {
       "kind": "_match_block",
       "modelType": "branch",
       "typeName": "MatchBlock",
@@ -3437,11 +3437,11 @@
       ]
     },
     {
-      "kind": "_pattern_list_group1",
+      "kind": "_pattern_list_patterns",
       "modelType": "separatedList",
-      "typeName": "PatternListGroup1",
-      "factoryName": "patternListGroup1",
-      "irKey": "patternListGroup1",
+      "typeName": "PatternListPatterns",
+      "factoryName": "patternListPatterns",
+      "irKey": "patternListPatterns",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -4139,15 +4139,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_argument_list_group1",
-              "parseKind": "argument_list_group1",
+              "name": "_argument_list_elements",
+              "parseKind": "argument_list_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_argument_list_group1"
+              "_argument_list_elements"
             ]
           }
         }
@@ -5482,15 +5482,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_list_pattern_group1",
-              "parseKind": "list_pattern_group1",
+              "name": "_case_patterns",
+              "parseKind": "case_patterns",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_list_pattern_group1"
+              "_case_patterns"
             ]
           }
         }
@@ -6273,9 +6273,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "dict_pattern_group2",
-          "propertyName": "dictPatternGroup2",
-          "paramName": "dictPatternGroup2",
+          "name": "dict_pattern_elements",
+          "propertyName": "dictPatternElements",
+          "paramName": "dictPatternElements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6283,15 +6283,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_dict_pattern_group2",
-              "parseKind": "dict_pattern_group2",
+              "name": "_dict_pattern_elements",
+              "parseKind": "dict_pattern_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_dict_pattern_group2"
+              "_dict_pattern_elements"
             ]
           }
         }
@@ -6299,7 +6299,7 @@
       "children": [],
       "factoryShape": "direct",
       "factoryFields": [
-        "dict_pattern_group2"
+        "dict_pattern_elements"
       ]
     },
     {
@@ -6321,15 +6321,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_dictionary_group1",
-              "parseKind": "dictionary_group1",
+              "name": "_dictionary_elements",
+              "parseKind": "dictionary_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_dictionary_group1"
+              "_dictionary_elements"
             ]
           }
         }
@@ -6995,15 +6995,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_expression_list_group1",
-              "parseKind": "expression_list_group1",
+              "name": "_expression_list_expressions",
+              "parseKind": "expression_list_expressions",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expression_list_group1"
+              "_expression_list_expressions"
             ]
           }
         }
@@ -9644,15 +9644,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_pattern_list_group1",
-              "parseKind": "pattern_list_group1",
+              "name": "_pattern_list_patterns",
+              "parseKind": "pattern_list_patterns",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_pattern_list_group1"
+              "_pattern_list_patterns"
             ]
           }
         }

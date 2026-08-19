@@ -1247,7 +1247,7 @@ export function buildExpressionList(config: T.ExpressionList.Config) {
 				_tail,
 				$with: {
 					expression: (value: T.Expression) => buildExpressionList({ ...config, expression: value }),
-					tail: (value: ',' | T.ExpressionListGroup1) => buildExpressionList({ ...config, tail: value })
+					tail: (value: ',' | T.ExpressionListExpressions) => buildExpressionList({ ...config, tail: value })
 				}
 			},
 			{
@@ -1321,19 +1321,19 @@ export function buildUnionPattern(config: T.UnionPattern.Config) {
 	);
 }
 
-export function buildDictPattern(child?: T.DictPatternGroup2) {
-	const _dict_pattern_group2 = child;
+export function buildDictPattern(child?: T.DictPatternElements) {
+	const _dict_pattern_elements = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.DictPattern as const,
 				$source: 2 as const,
 				$named: true as const,
-				_dict_pattern_group2,
-				$with: { $child: (v: T.DictPatternGroup2) => buildDictPattern(v) }
+				_dict_pattern_elements,
+				$with: { $child: (v: T.DictPatternElements) => buildDictPattern(v) }
 			},
 			{
-				dictPatternGroup2: () => _dict_pattern_group2
+				dictPatternElements: () => _dict_pattern_elements
 			}
 		),
 		methodsEngine
@@ -1432,7 +1432,7 @@ export function buildClassPattern(config: T.ClassPattern.Config) {
 				_arguments,
 				$with: {
 					dottedName: (value: T.DottedName) => buildClassPattern({ ...config, dottedName: value }),
-					arguments: (value?: T.ListPatternGroup1) => buildClassPattern({ ...config, arguments: value })
+					arguments: (value?: T.CasePatterns) => buildClassPattern({ ...config, arguments: value })
 				}
 			},
 			{
@@ -2003,7 +2003,7 @@ export function buildPatternList(config: T.PatternList.Config) {
 				_tail,
 				$with: {
 					pattern: (value: T.Pattern) => buildPatternList({ ...config, pattern: value }),
-					tail: (value: ',' | T.PatternListGroup1) => buildPatternList({ ...config, tail: value })
+					tail: (value: ',' | T.PatternListPatterns) => buildPatternList({ ...config, tail: value })
 				}
 			},
 			{
@@ -2972,19 +2972,19 @@ export function buildExceptClauseGroup1(child: T.ExceptClauseAs | T.ExceptClause
 	);
 }
 
-export function buildArgumentListGroup1(
+export function buildArgumentListElements(
 	elements: NonEmptyArray<
 		T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
 	>,
 	options: { trailing?: boolean } = {}
 ) {
-	_assertNonEmpty(elements, '_argument_list_group1.elements');
+	_assertNonEmpty(elements, '_argument_list_elements.elements');
 	const _element = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ArgumentListGroup1 as const,
+				$type: TSKindId.ArgumentListElements as const,
 				$source: 2 as const,
 				$named: true as const,
 				_element,
@@ -2994,8 +2994,8 @@ export function buildArgumentListGroup1(
 						...vs: NonEmptyArray<
 							T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
 						>
-					) => buildArgumentListGroup1(vs, options),
-					trailing: (v: boolean) => buildArgumentListGroup1(elements, { ...options, trailing: v })
+					) => buildArgumentListElements(vs, options),
+					trailing: (v: boolean) => buildArgumentListElements(elements, { ...options, trailing: v })
 				}
 			},
 			{
@@ -3006,21 +3006,24 @@ export function buildArgumentListGroup1(
 	);
 }
 
-export function buildExpressionListGroup1(elements: NonEmptyArray<T.Expression>, options: { trailing?: boolean } = {}) {
-	_assertNonEmpty(elements, '_expression_list_group1.elements');
+export function buildExpressionListExpressions(
+	elements: NonEmptyArray<T.Expression>,
+	options: { trailing?: boolean } = {}
+) {
+	_assertNonEmpty(elements, '_expression_list_expressions.elements');
 	const _expression = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ExpressionListGroup1 as const,
+				$type: TSKindId.ExpressionListExpressions as const,
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
 				_trailing_sep,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Expression>) => buildExpressionListGroup1(vs, options),
-					trailing: (v: boolean) => buildExpressionListGroup1(elements, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.Expression>) => buildExpressionListExpressions(vs, options),
+					trailing: (v: boolean) => buildExpressionListExpressions(elements, { ...options, trailing: v })
 				}
 			},
 			{
@@ -3031,20 +3034,20 @@ export function buildExpressionListGroup1(elements: NonEmptyArray<T.Expression>,
 	);
 }
 
-export function buildListPatternGroup1(config: T.ListPatternGroup1.Config, options: { trailing?: boolean } = {}) {
+export function buildCasePatterns(config: T.CasePatterns.Config, options: { trailing?: boolean } = {}) {
 	const _case_pattern = config.casePattern ?? [];
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ListPatternGroup1 as const,
+				$type: TSKindId.CasePatterns as const,
 				$source: 2 as const,
 				$named: true as const,
 				_case_pattern,
 				_case_pattern_trailing_sep: options.trailing ?? false,
 				$with: {
 					casePatterns: (...values: NonEmptyArray<T.CasePattern>) =>
-						buildListPatternGroup1({ ...config, casePattern: values }, options),
-					trailing: (v: boolean) => buildListPatternGroup1(config, { ...options, trailing: v })
+						buildCasePatterns({ ...config, casePattern: values }, options),
+					trailing: (v: boolean) => buildCasePatterns(config, { ...options, trailing: v })
 				}
 			},
 			{
@@ -3055,21 +3058,21 @@ export function buildListPatternGroup1(config: T.ListPatternGroup1.Config, optio
 	);
 }
 
-export function buildDictPatternGroup2(config: T.DictPatternGroup2.Config) {
+export function buildDictPatternElements(config: T.DictPatternElements.Config) {
 	const _dict_pattern_kv = config.dictPatternKv;
 	const _content = config.content ?? [];
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.DictPatternGroup2 as const,
+				$type: TSKindId.DictPatternElements as const,
 				$source: 2 as const,
 				$named: true as const,
 				_dict_pattern_kv,
 				_content,
 				$with: {
-					dictPatternKv: (value: T.DictPatternKv) => buildDictPatternGroup2({ ...config, dictPatternKv: value }),
+					dictPatternKv: (value: T.DictPatternKv) => buildDictPatternElements({ ...config, dictPatternKv: value }),
 					contents: (...values: (T.KeyValuePattern | T.SplatPattern)[]) =>
-						buildDictPatternGroup2({ ...config, content: values })
+						buildDictPatternElements({ ...config, content: values })
 				}
 			},
 			{
@@ -3081,21 +3084,21 @@ export function buildDictPatternGroup2(config: T.DictPatternGroup2.Config) {
 	);
 }
 
-export function buildPatternListGroup1(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean } = {}) {
-	_assertNonEmpty(elements, '_pattern_list_group1.elements');
+export function buildPatternListPatterns(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean } = {}) {
+	_assertNonEmpty(elements, '_pattern_list_patterns.elements');
 	const _pattern = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.PatternListGroup1 as const,
+				$type: TSKindId.PatternListPatterns as const,
 				$source: 2 as const,
 				$named: true as const,
 				_pattern,
 				_trailing_sep,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Pattern>) => buildPatternListGroup1(vs, options),
-					trailing: (v: boolean) => buildPatternListGroup1(elements, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.Pattern>) => buildPatternListPatterns(vs, options),
+					trailing: (v: boolean) => buildPatternListPatterns(elements, { ...options, trailing: v })
 				}
 			},
 			{
@@ -3125,24 +3128,24 @@ export function buildSliceGroup1(child?: T.Expression) {
 	);
 }
 
-export function buildDictionaryGroup1(
+export function buildDictionaryElements(
 	elements: NonEmptyArray<T.Pair | T.DictionarySplat>,
 	options: { trailing?: boolean } = {}
 ) {
-	_assertNonEmpty(elements, '_dictionary_group1.elements');
+	_assertNonEmpty(elements, '_dictionary_elements.elements');
 	const _element = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.DictionaryGroup1 as const,
+				$type: TSKindId.DictionaryElements as const,
 				$source: 2 as const,
 				$named: true as const,
 				_element,
 				_trailing_sep,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Pair | T.DictionarySplat>) => buildDictionaryGroup1(vs, options),
-					trailing: (v: boolean) => buildDictionaryGroup1(elements, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.Pair | T.DictionarySplat>) => buildDictionaryElements(vs, options),
+					trailing: (v: boolean) => buildDictionaryElements(elements, { ...options, trailing: v })
 				}
 			},
 			{
@@ -3878,13 +3881,13 @@ export type FluentKindMap = {
 	comment: T.Comment;
 	line_continuation: T.LineContinuation;
 	_except_clause_group1: FluentNode<'_except_clause_group1', T.ExceptClauseGroup1.Config>;
-	_argument_list_group1: FluentNode<'_argument_list_group1', T.ArgumentListGroup1.Config>;
-	_expression_list_group1: FluentNode<'_expression_list_group1', T.ExpressionListGroup1.Config>;
-	_list_pattern_group1: T.ListPatternGroup1;
-	_dict_pattern_group2: FluentNode<'_dict_pattern_group2', T.DictPatternGroup2.Config>;
-	_pattern_list_group1: FluentNode<'_pattern_list_group1', T.PatternListGroup1.Config>;
+	_argument_list_elements: FluentNode<'_argument_list_elements', T.ArgumentListElements.Config>;
+	_expression_list_expressions: FluentNode<'_expression_list_expressions', T.ExpressionListExpressions.Config>;
+	_case_patterns: T.CasePatterns;
+	_dict_pattern_elements: FluentNode<'_dict_pattern_elements', T.DictPatternElements.Config>;
+	_pattern_list_patterns: FluentNode<'_pattern_list_patterns', T.PatternListPatterns.Config>;
 	_slice_group1: FluentNode<'_slice_group1', T.SliceGroup1.Config>;
-	_dictionary_group1: FluentNode<'_dictionary_group1', T.DictionaryGroup1.Config>;
+	_dictionary_elements: FluentNode<'_dictionary_elements', T.DictionaryElements.Config>;
 	_augmented_assignment_operator: T.AugmentedAssignmentOperator;
 	_except_clause_as: T.ExceptClauseAs;
 	case_tuple_pattern: FluentNode<'case_tuple_pattern', T.CaseTuplePattern.Config>;
@@ -4043,13 +4046,13 @@ export const _factoryMap = {
 	comment: buildComment,
 	line_continuation: buildLineContinuation,
 	_except_clause_group1: buildExceptClauseGroup1,
-	_argument_list_group1: buildArgumentListGroup1,
-	_expression_list_group1: buildExpressionListGroup1,
-	_list_pattern_group1: buildListPatternGroup1,
-	_dict_pattern_group2: buildDictPatternGroup2,
-	_pattern_list_group1: buildPatternListGroup1,
+	_argument_list_elements: buildArgumentListElements,
+	_expression_list_expressions: buildExpressionListExpressions,
+	_case_patterns: buildCasePatterns,
+	_dict_pattern_elements: buildDictPatternElements,
+	_pattern_list_patterns: buildPatternListPatterns,
 	_slice_group1: buildSliceGroup1,
-	_dictionary_group1: buildDictionaryGroup1,
+	_dictionary_elements: buildDictionaryElements,
 	_augmented_assignment_operator: buildAugmentedAssignmentOperator,
 	_except_clause_as: buildExceptClauseAs,
 	case_tuple_pattern: buildCaseTuplePattern,

@@ -1961,14 +1961,14 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_argument_list_group1",
+                  "name": "_argument_list_elements",
                   "metadata": {
                     "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
                 "named": true,
-                "value": "argument_list_group1",
+                "value": "argument_list_elements",
                 "metadata": {
                   "author": "enrich"
                 }
@@ -2137,14 +2137,14 @@
                   "type": "ALIAS",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "_expression_list_group1",
+                    "name": "_expression_list_expressions",
                     "metadata": {
                       "author": "enrich",
                       "symbolSource": "group-lift"
                     }
                   },
                   "named": true,
-                  "value": "expression_list_group1",
+                  "value": "expression_list_expressions",
                   "metadata": {
                     "author": "enrich"
                   }
@@ -2379,14 +2379,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_list_pattern_group1",
+                "name": "_case_patterns",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "list_pattern_group1",
+              "value": "case_patterns",
               "metadata": {
                 "author": "enrich"
               }
@@ -2416,14 +2416,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_list_pattern_group1",
+                "name": "_case_patterns",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "list_pattern_group1",
+              "value": "case_patterns",
               "metadata": {
                 "author": "enrich"
               }
@@ -2453,14 +2453,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_dict_pattern_group2",
+                "name": "_dict_pattern_elements",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "dict_pattern_group2",
+              "value": "dict_pattern_elements",
               "metadata": {
                 "author": "enrich"
               }
@@ -2609,14 +2609,14 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_list_pattern_group1",
+                  "name": "_case_patterns",
                   "metadata": {
                     "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
                 "named": true,
-                "value": "list_pattern_group1",
+                "value": "case_patterns",
                 "metadata": {
                   "author": "enrich"
                 }
@@ -4120,14 +4120,14 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_pattern_list_group1",
+                  "name": "_pattern_list_patterns",
                   "metadata": {
                     "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
                 "named": true,
-                "value": "pattern_list_group1",
+                "value": "pattern_list_patterns",
                 "metadata": {
                   "author": "enrich"
                 }
@@ -4831,14 +4831,14 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_dictionary_group1",
+                  "name": "_dictionary_elements",
                   "metadata": {
                     "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
                 "named": true,
-                "value": "dictionary_group1",
+                "value": "dictionary_elements",
                 "metadata": {
                   "author": "enrich"
                 }
@@ -6230,7 +6230,7 @@
         }
       ]
     },
-    "_with_clause_group1": {
+    "_with_items": {
       "type": "SEQ",
       "members": [
         {
@@ -6286,7 +6286,7 @@
         }
       ]
     },
-    "_with_clause_group2": {
+    "_with_clause_group1": {
       "type": "SEQ",
       "members": [
         {
@@ -6415,7 +6415,7 @@
         }
       ]
     },
-    "_argument_list_group1": {
+    "_argument_list_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -6508,7 +6508,7 @@
         }
       ]
     },
-    "_expression_list_group1": {
+    "_expression_list_expressions": {
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
@@ -6579,7 +6579,7 @@
         ]
       }
     },
-    "_list_pattern_group1": {
+    "_case_patterns": {
       "type": "SEQ",
       "members": [
         {
@@ -6635,7 +6635,7 @@
         }
       ]
     },
-    "_dict_pattern_group2": {
+    "_dict_pattern_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -6728,7 +6728,7 @@
         }
       ]
     },
-    "_pattern_list_group1": {
+    "_pattern_list_patterns": {
       "type": "SEQ",
       "members": [
         {
@@ -6782,7 +6782,7 @@
         }
       ]
     },
-    "_dictionary_group1": {
+    "_dictionary_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -7795,17 +7795,17 @@
     ],
     [
       "with_clause",
-      "_with_clause_group1"
+      "_with_items"
     ],
     [
-      "_with_clause_group1"
+      "_with_items"
     ],
     [
       "with_clause",
-      "_with_clause_group2"
+      "_with_clause_group1"
     ],
     [
-      "_with_clause_group2"
+      "_with_clause_group1"
     ],
     [
       "parameters",
@@ -7816,17 +7816,17 @@
     ],
     [
       "argument_list",
-      "_argument_list_group1"
+      "_argument_list_elements"
     ],
     [
-      "_argument_list_group1"
+      "_argument_list_elements"
     ],
     [
       "expression_list",
-      "_expression_list_group1"
+      "_expression_list_expressions"
     ],
     [
-      "_expression_list_group1"
+      "_expression_list_expressions"
     ],
     [
       "case_pattern",
@@ -7844,10 +7844,10 @@
     ],
     [
       "_list_pattern",
-      "_list_pattern_group1"
+      "_case_patterns"
     ],
     [
-      "_list_pattern_group1"
+      "_case_patterns"
     ],
     [
       "dict_pattern",
@@ -7858,10 +7858,10 @@
     ],
     [
       "dict_pattern",
-      "_dict_pattern_group2"
+      "_dict_pattern_elements"
     ],
     [
-      "_dict_pattern_group2"
+      "_dict_pattern_elements"
     ],
     [
       "tuple_pattern",
@@ -7879,10 +7879,10 @@
     ],
     [
       "pattern_list",
-      "_pattern_list_group1"
+      "_pattern_list_patterns"
     ],
     [
-      "_pattern_list_group1"
+      "_pattern_list_patterns"
     ],
     [
       "slice",
@@ -7900,10 +7900,10 @@
     ],
     [
       "dictionary",
-      "_dictionary_group1"
+      "_dictionary_elements"
     ],
     [
-      "_dictionary_group1"
+      "_dictionary_elements"
     ]
   ],
   "precedences": [],

@@ -9,7 +9,7 @@
  * `safeParamName()`-sanitized spelling, e.g. `arguments` → `arguments_`) —
  * a bare `arguments` parameter is invalid in an ECMAScript module and broke
  * loading the emitted factories.ts entirely (surfaced by python's
- * `argument_list`'s newly-promoted single-field `_argument_list_group1`
+ * `argument_list`'s newly-promoted single-field `_argument_list_elements`
  * body, whose sole slot is named `arguments`).
  */
 

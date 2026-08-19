@@ -131,7 +131,7 @@
                 "factoryRoundtrip": {
                     "astMatchPass": 1133,
                     "failingKinds": [
-                        "_enum_body_group1",
+                        "_enum_body_elements",
                         "_public_field_definition_static_mods",
                         "object_type_content",
                         "type_arguments",

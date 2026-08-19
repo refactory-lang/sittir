@@ -21,7 +21,7 @@ const enrichedBase = enrich(base, {
 	// shape anyway, so exempting it from all of them is a no-op beyond the
 	// one pass that matters here.
 	//
-	// `_dict_pattern_group2`'s leading and repeated occurrences are the
+	// `_dict_pattern_elements`'s leading and repeated occurrences are the
 	// SAME `choice($._key_value_pattern, $.splat_pattern)` body (tree-sitter's
 	// `commaSep1` passes one shared choice object to both positions), so
 	// `fieldSeparatedListElements` fields both as `element` — but `dict_pattern`'s
@@ -32,7 +32,7 @@ const enrichedBase = enrich(base, {
 	// longer applies, and `dict_pattern_kv` stops existing as a distinct
 	// exported kind. Same override-collision class found in rust's
 	// `tuple_type`/`trait_bounds` and typescript's `lexical_declaration`.
-	skip: ['string_content', '_dict_pattern_group2']
+	skip: ['string_content', '_dict_pattern_elements']
 });
 export default grammar(
 	enrichedBase,

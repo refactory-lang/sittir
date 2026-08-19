@@ -141,7 +141,7 @@ describe('wrap emitter — separatedList', () => {
 		// calls must carry an explicit `<unknown>` type argument — regressing
 		// either one back to bare inference reproduces the real
 		// EnumAssignment/PropertyName CI type error this shape was built to
-		// catch (TypeScript's `enum_body_group1`).
+		// catch (TypeScript's `enum_body_elements`).
 		expect(emitted).toContain('const _content = normalizeRepeatedWrapSlot<unknown>(');
 		expect(emitted).toContain('_concatInSourceOrder<unknown>([');
 	});
