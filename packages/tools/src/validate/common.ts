@@ -791,7 +791,15 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		// tree-sitter-python supertypes are also unprefixed.
 		expression: (r) => `_ = ${r}`,
 		type: (r) => `_: ${r} = None`,
-		pattern: (r) => `match _:\n  case ${r}: pass`,
+		// The `pattern` supertype covers assignment/for/parameter targets
+		// (tuple_pattern, list_pattern, …) — NOT match-case patterns, which
+		// are the disjoint `case_*` family. A `match _:\n  case ${r}:`
+		// context reparses `(a,b)` as case_tuple_pattern, so the original
+		// kind is never found at the fragment offset. A for-loop target is
+		// a true pattern-supertype position and reproduces the same
+		// `tuple_pattern > ( pattern_group … )` subtree the corpus
+		// contexts (parameters, for_in_clause, lambda params) produce.
+		pattern: (r) => `for ${r} in _: pass`,
 		simple_statement: (r) => r,
 		compound_statement: (r) => r,
 		expression_statement: (r) => r,
