@@ -619,30 +619,30 @@ const _supertype_expression_ids = new Set<number>([
 	275, 276, 277, 285, 274, 237, 239, 233, 245, 244, 243, 246, 232, 212
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	235, 234, 209, 105, 1, 442, 100, 101, 98, 248, 249, 251, 102, 103, 104, 213, 217, 223, 227, 225, 220, 252, 231, 269
+	235, 234, 209, 105, 1, 444, 100, 101, 98, 248, 249, 251, 102, 103, 104, 213, 217, 223, 227, 225, 220, 252, 231, 269
 ]);
 const _supertype_jsxChild_ids = new Set<number>([163]);
 const _supertype_jsxIdentifier_ids = new Set<number>([1]);
 const _supertype_jsxElementName_ids = new Set<number>([1, 219]);
 const _supertype_jsxAttributeName_ids = new Set<number>([1]);
 const _supertype_formalParameter_ids = new Set<number>([297, 298]);
-const _supertype_lhsExpression_ids = new Set<number>([234, 235, 105, 1, 442, 214, 218, 269]);
-const _supertype_augmentedAssignmentLhs_ids = new Set<number>([234, 235, 442, 1, 209, 269]);
+const _supertype_lhsExpression_ids = new Set<number>([234, 235, 105, 1, 444, 214, 218, 269]);
+const _supertype_augmentedAssignmentLhs_ids = new Set<number>([234, 235, 444, 1, 209, 269]);
 const _supertype_destructuringPattern_ids = new Set<number>([214, 218]);
 const _supertype_identifier_ids = new Set<number>([105, 1]);
-const _supertype_pattern_ids = new Set<number>([234, 235, 105, 1, 442, 214, 218, 269, 261]);
-const _supertype_propertyName_ids = new Set<number>([1, 442, 99, 248, 98, 266]);
-const _supertype_statementIdentifier_ids = new Set<number>([1, 442]);
-const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 442]);
-const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 442]);
-const _supertype_propertyIdentifier_ids = new Set<number>([1, 442]);
+const _supertype_pattern_ids = new Set<number>([234, 235, 105, 1, 444, 214, 218, 269, 261]);
+const _supertype_propertyName_ids = new Set<number>([1, 444, 99, 248, 98, 266]);
+const _supertype_statementIdentifier_ids = new Set<number>([1, 444]);
+const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 444]);
+const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 444]);
+const _supertype_propertyIdentifier_ids = new Set<number>([1, 444]);
 const _supertype_importIdentifier_ids = new Set<number>([1]);
 const _supertype_type_ids = new Set<number>([352, 349, 314, 318, 304, 305]);
 const _supertype_tupleTypeMember_ids = new Set<number>([309, 310, 311, 312]);
 const _supertype_primaryType_ids = new Set<number>([
-	335, 336, 448, 288, 320, 338, 347, 348, 334, 327, 328, 100, 331, 329, 319, 317, 351, 350
+	335, 336, 450, 288, 320, 338, 347, 348, 334, 327, 328, 100, 331, 329, 319, 317, 351, 350
 ]);
-const _supertype_forHeaderGroup1_ids = new Set<number>([234, 235, 105, 1, 442, 214, 218, 269]);
+const _supertype_forHeaderGroup1_ids = new Set<number>([234, 235, 105, 1, 444, 214, 218, 269]);
 
 const _kindIdByKind = new Map<string, number>([
 	['identifier', TSKindId.Identifier],
@@ -904,6 +904,8 @@ const _kindIdByKind = new Map<string, number>([
 	['_meta_property_group2', TSKindId.MetaPropertyGroup2],
 	['_formal_parameters_elements', TSKindId.FormalParametersElements],
 	['_enum_body_elements', TSKindId.EnumBodyElements],
+	['_types', TSKindId.Types],
+	['_type_parameters_elements', TSKindId.TypeParametersElements],
 	['_tuple_type_members', TSKindId.TupleTypeMembers],
 	['_kind', TSKindId.Kind],
 	['__for_header_operator', TSKindId.ForHeaderOperator],

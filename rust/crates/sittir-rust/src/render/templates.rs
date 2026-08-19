@@ -275,6 +275,12 @@ pub struct LetChainTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_lifetimes.jinja", escape = "none")]
+pub struct LifetimesTemplate<'a> {
+    pub lifetime: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_line_comment_doc.jinja", escape = "none")]
 pub struct LineCommentDocTemplate<'a> {
     pub doc: SingleNonterminalView<'a>,
@@ -285,18 +291,24 @@ pub struct LineCommentDocTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_macro_definition_brace.jinja", escape = "none")]
 pub struct MacroDefinitionBraceTemplate<'a> {
-    pub macro_rule: ListNonterminalView<'a>,
+    pub macro_rules: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_macro_definition_bracket.jinja", escape = "none")]
 pub struct MacroDefinitionBracketTemplate<'a> {
-    pub macro_rule: ListNonterminalView<'a>,
+    pub macro_rules: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_macro_definition_paren.jinja", escape = "none")]
 pub struct MacroDefinitionParenTemplate<'a> {
+    pub macro_rules: OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_macro_rules.jinja", escape = "none")]
+pub struct MacroRulesTemplate<'a> {
     pub macro_rule: ListNonterminalView<'a>,
 }
 
@@ -460,6 +472,18 @@ pub struct TuplePatternElementsTemplate<'a> {
 pub struct TypeArgumentTemplate<'a> {
     pub content: SingleNonterminalView<'a>,
     pub trait_bounds: OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_type_arguments_elements.jinja", escape = "none")]
+pub struct TypeArgumentsElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_type_parameters_elements.jinja", escape = "none")]
+pub struct TypeParametersElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -813,7 +837,7 @@ pub struct ForExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "for_lifetimes.jinja", escape = "none")]
 pub struct ForLifetimesTemplate<'a> {
-    pub lifetime: ListNonterminalView<'a>,
+    pub lifetimes: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1364,7 +1388,7 @@ pub struct TupleTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "type_arguments.jinja", escape = "none")]
 pub struct TypeArgumentsTemplate<'a> {
-    pub element: ListNonterminalView<'a>,
+    pub type_arguments_elements: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1404,7 +1428,7 @@ pub struct TypeParameterTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "type_parameters.jinja", escape = "none")]
 pub struct TypeParametersTemplate<'a> {
-    pub element: ListNonterminalView<'a>,
+    pub type_parameters_elements: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

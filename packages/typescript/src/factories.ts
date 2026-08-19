@@ -4633,23 +4633,19 @@ export function buildPredefinedType(
 	);
 }
 
-export function buildTypeArguments(config: T.TypeArguments.Config, options: { trailing?: boolean } = {}) {
-	const _type = config.type ?? [];
+export function buildTypeArguments(child: T.Types) {
+	const _types = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.TypeArguments as const,
 				$source: 2 as const,
 				$named: true as const,
-				_type,
-				_type_trailing_sep: options.trailing ?? false,
-				$with: {
-					types: (...values: NonEmptyArray<T.Type>) => buildTypeArguments({ ...config, type: values }, options),
-					trailing: (v: boolean) => buildTypeArguments(config, { ...options, trailing: v })
-				}
+				_types,
+				$with: { $child: (v: T.Types) => buildTypeArguments(v) }
 			},
 			{
-				types: () => _type
+				types: () => _types
 			}
 		),
 		methodsEngine
@@ -4844,24 +4840,19 @@ export function buildPropertySignature(config: T.PropertySignature.Config) {
 	);
 }
 
-export function buildTypeParameters(config: T.TypeParameters.Config, options: { trailing?: boolean } = {}) {
-	const _type_parameter = config.typeParameter ?? [];
+export function buildTypeParameters(child: T.TypeParametersElements) {
+	const _type_parameters_elements = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.TypeParameters as const,
 				$source: 2 as const,
 				$named: true as const,
-				_type_parameter,
-				_type_parameter_trailing_sep: options.trailing ?? false,
-				$with: {
-					typeParameters: (...values: NonEmptyArray<T.TypeParameter>) =>
-						buildTypeParameters({ ...config, typeParameter: values }, options),
-					trailing: (v: boolean) => buildTypeParameters(config, { ...options, trailing: v })
-				}
+				_type_parameters_elements,
+				$with: { $child: (v: T.TypeParametersElements) => buildTypeParameters(v) }
 			},
 			{
-				typeParameters: () => _type_parameter
+				typeParametersElements: () => _type_parameters_elements
 			}
 		),
 		methodsEngine
@@ -5465,6 +5456,56 @@ export function buildEnumBodyElements(
 			},
 			{
 				contents: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildTypes(config: T.Types.Config, options: { trailing?: boolean } = {}) {
+	const _type = config.type ?? [];
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.Types as const,
+				$source: 2 as const,
+				$named: true as const,
+				_type,
+				_type_trailing_sep: options.trailing ?? false,
+				$with: {
+					types: (...values: NonEmptyArray<T.Type>) => buildTypes({ ...config, type: values }, options),
+					trailing: (v: boolean) => buildTypes(config, { ...options, trailing: v })
+				}
+			},
+			{
+				types: () => _type
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildTypeParametersElements(
+	config: T.TypeParametersElements.Config,
+	options: { trailing?: boolean } = {}
+) {
+	const _type_parameter = config.typeParameter ?? [];
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.TypeParametersElements as const,
+				$source: 2 as const,
+				$named: true as const,
+				_type_parameter,
+				_type_parameter_trailing_sep: options.trailing ?? false,
+				$with: {
+					typeParameters: (...values: NonEmptyArray<T.TypeParameter>) =>
+						buildTypeParametersElements({ ...config, typeParameter: values }, options),
+					trailing: (v: boolean) => buildTypeParametersElements(config, { ...options, trailing: v })
+				}
+			},
+			{
+				typeParameters: () => _type_parameter
 			}
 		),
 		methodsEngine
@@ -6908,6 +6949,8 @@ export type FluentKindMap = {
 	_meta_property_group2: T.MetaPropertyGroup2;
 	_formal_parameters_elements: T.FormalParametersElements;
 	_enum_body_elements: T.EnumBodyElements;
+	_types: T.Types;
+	_type_parameters_elements: T.TypeParametersElements;
 	_tuple_type_members: FluentNode<'_tuple_type_members', T.TupleTypeMembers.Config>;
 	_kind: T.Kind;
 	__for_header_operator: T.ForHeaderOperator;
@@ -7174,6 +7217,8 @@ export const _factoryMap = {
 	_meta_property_group2: buildMetaPropertyGroup2,
 	_formal_parameters_elements: buildFormalParametersElements,
 	_enum_body_elements: buildEnumBodyElements,
+	_types: buildTypes,
+	_type_parameters_elements: buildTypeParametersElements,
 	_tuple_type_members: buildTupleTypeMembers,
 	_kind: buildKind,
 	__for_header_operator: buildForHeaderOperator,

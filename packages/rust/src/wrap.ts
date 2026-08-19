@@ -3746,31 +3746,22 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.TypeParameters as const,
-			_element: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._element, ['_attributed_type_parameter', 'attributed_type_parameter']),
+			_type_parameters_elements: normalizeSingularWrapSlot(
+				data._type_parameters_elements,
+				'type_parameters_elements',
 				true,
-				'element',
-				{ tree, nodeType: data.$type, slotName: 'element', span: (data as _NodeData).$span }
-			),
-			_element_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._element) ? data._element : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'type_parameters_elements', span: (data as _NodeData).$span }
 			),
 
-			elements() {
-				return drillAsAll<T.AttributedTypeParameter>(this._element, tree, [
-					{ from: 'attributed_type_parameter', to: '_attributed_type_parameter' }
+			typeParametersElements() {
+				return drillAs<T.TypeParametersElements>(this._type_parameters_elements, tree, [
+					{ from: 'type_parameters_elements', to: '_type_parameters_elements' }
 				]);
 			},
 			$with: {
-				elements: (...v: NonEmptyArray<NonNullable<T.TypeParameters['_element']>[number]>) =>
-					wrapTypeParameters({ ...data, _element: v }, tree)
+				typeParametersElements: (v: NonNullable<T.TypeParameters['_type_parameters_elements']>) =>
+					wrapTypeParameters({ ...data, _type_parameters_elements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -4657,29 +4648,18 @@ export function wrapForLifetimes(data: T.ForLifetimes, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.ForLifetimes as const,
-			_lifetime: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._lifetime, ['lifetime']), true, 'lifetime', {
+			_lifetimes: normalizeSingularWrapSlot(data._lifetimes, 'lifetimes', true, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'lifetime',
+				slotName: 'lifetimes',
 				span: (data as _NodeData).$span
 			}),
-			_lifetime_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._lifetime) ? data._lifetime : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			),
 
 			lifetimes() {
-				return drillInAll<T.Lifetime>(this._lifetime as readonly T.Lifetime[] | undefined, tree);
+				return drillAs<T.Lifetimes>(this._lifetimes, tree, [{ from: 'lifetimes', to: '_lifetimes' }]);
 			},
 			$with: {
-				lifetimes: (...v: NonEmptyArray<NonNullable<T.ForLifetimes['_lifetime']>[number]>) =>
-					wrapForLifetimes({ ...data, _lifetime: v }, tree)
+				lifetimes: (v: NonNullable<T.ForLifetimes['_lifetimes']>) => wrapForLifetimes({ ...data, _lifetimes: v }, tree)
 			}
 		},
 		methodsEngine
@@ -4910,7 +4890,7 @@ export function wrapGenericTypeWithTurbofish(data: T.GenericTypeWithTurbofish, t
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'turbofish', span: (data as _NodeData).$span }
 				),
-				{ '::': 73 }
+				{ '::': 72 }
 			),
 			_type_arguments: normalizeSingularWrapSlot(data._type_arguments, 'type_arguments', true, data.$type, {
 				tree,
@@ -5013,29 +4993,22 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.TypeArguments as const,
-			_element: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._element, ['_type_argument', 'type_argument']),
+			_type_arguments_elements: normalizeSingularWrapSlot(
+				data._type_arguments_elements,
+				'type_arguments_elements',
 				true,
-				'element',
-				{ tree, nodeType: data.$type, slotName: 'element', span: (data as _NodeData).$span }
-			),
-			_element_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._element) ? data._element : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'type_arguments_elements', span: (data as _NodeData).$span }
 			),
 
-			elements() {
-				return drillAsAll<T.TypeArgument>(this._element, tree, [{ from: 'type_argument', to: '_type_argument' }]);
+			typeArgumentsElements() {
+				return drillAs<T.TypeArgumentsElements>(this._type_arguments_elements, tree, [
+					{ from: 'type_arguments_elements', to: '_type_arguments_elements' }
+				]);
 			},
 			$with: {
-				elements: (...v: NonEmptyArray<NonNullable<T.TypeArguments['_element']>[number]>) =>
-					wrapTypeArguments({ ...data, _element: v }, tree)
+				typeArgumentsElements: (v: NonNullable<T.TypeArguments['_type_arguments_elements']>) =>
+					wrapTypeArguments({ ...data, _type_arguments_elements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -5157,7 +5130,7 @@ export function wrapPointerType(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ const: 379, mut: 80 }
+				{ const: 383, mut: 80 }
 			),
 			_type: normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 				tree,
@@ -6039,7 +6012,7 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 					'!=': 87,
 					'<': 68,
 					'<=': 88,
-					'>': 70,
+					'>': 69,
 					'>=': 89,
 					'<<': 90,
 					'>>': 91,
@@ -8775,6 +8748,32 @@ export function wrapBlockComment(data: T.BlockComment, tree: TreeHandle) {
 	return _node;
 }
 
+export function wrapMacroRules(
+	data: T.MacroRules & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._macro_rule, true, 'macro_rule', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'macro_rule',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
+		{
+			...data,
+			$type: TSKindId.MacroRules as const,
+			_macro_rule: _content,
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+
+			macroRules() {
+				return drillInAll<T.MacroRule>(this._macro_rule as readonly T.MacroRule[] | undefined, tree);
+			},
+			$with: {}
+		},
+		methodsEngine
+	);
+}
+
 export function wrapAttributeGroup1(data: T.AttributeGroup1, tree: TreeHandle) {
 	const _node = withMethods(
 		{
@@ -8940,6 +8939,43 @@ export function wrapWherePredicates(data: T.WherePredicates, tree: TreeHandle) {
 	return _node;
 }
 
+export function wrapTypeParametersElements(data: T.TypeParametersElements, tree: TreeHandle) {
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.TypeParametersElements as const,
+			_element: normalizeRepeatedWrapSlot(
+				_filterWrapChildrenByKind(data._element, ['_attributed_type_parameter', 'attributed_type_parameter']),
+				true,
+				'element',
+				{ tree, nodeType: data.$type, slotName: 'element', span: (data as _NodeData).$span }
+			),
+			_element_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._element) ? data._element : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
+
+			elements() {
+				return drillAsAll<T.AttributedTypeParameter>(this._element, tree, [
+					{ from: 'attributed_type_parameter', to: '_attributed_type_parameter' }
+				]);
+			},
+			$with: {
+				elements: (...v: NonEmptyArray<NonNullable<T.TypeParametersElements['_element']>[number]>) =>
+					wrapTypeParametersElements({ ...data, _element: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
 export function wrapUseClauses(
 	data: T.UseClauses & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
@@ -9033,6 +9069,41 @@ export function wrapVisibilityModifierGroup1(
 	return _node;
 }
 
+export function wrapLifetimes(data: T.Lifetimes, tree: TreeHandle) {
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.Lifetimes as const,
+			_lifetime: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._lifetime, ['lifetime']), true, 'lifetime', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'lifetime',
+				span: (data as _NodeData).$span
+			}),
+			_lifetime_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._lifetime) ? data._lifetime : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
+
+			lifetimes() {
+				return drillInAll<T.Lifetime>(this._lifetime as readonly T.Lifetime[] | undefined, tree);
+			},
+			$with: {
+				lifetimes: (...v: NonEmptyArray<NonNullable<T.Lifetimes['_lifetime']>[number]>) =>
+					wrapLifetimes({ ...data, _lifetime: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
 export function wrapUseBoundsElements(
 	data: T.UseBoundsElements & {
 		readonly $other?: _NodeData['$other'];
@@ -9063,6 +9134,41 @@ export function wrapUseBoundsElements(
 		},
 		methodsEngine
 	);
+}
+
+export function wrapTypeArgumentsElements(data: T.TypeArgumentsElements, tree: TreeHandle) {
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.TypeArgumentsElements as const,
+			_element: normalizeRepeatedWrapSlot(
+				_filterWrapChildrenByKind(data._element, ['_type_argument', 'type_argument']),
+				true,
+				'element',
+				{ tree, nodeType: data.$type, slotName: 'element', span: (data as _NodeData).$span }
+			),
+			_element_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._element) ? data._element : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
+
+			elements() {
+				return drillAsAll<T.TypeArgument>(this._element, tree, [{ from: 'type_argument', to: '_type_argument' }]);
+			},
+			$with: {
+				elements: (...v: NonEmptyArray<NonNullable<T.TypeArgumentsElements['_element']>[number]>) =>
+					wrapTypeArgumentsElements({ ...data, _element: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
 }
 
 export function wrapArgumentsElements(
@@ -9860,29 +9966,21 @@ export function wrapMacroDefinitionParen(data: T.MacroDefinitionParen, tree: Tre
 		{
 			...data,
 			$type: TSKindId.MacroDefinitionParen as const,
-			_macro_rule: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._macro_rule, ['macro_rule']),
-				false,
-				'macro_rule',
-				{ tree, nodeType: data.$type, slotName: 'macro_rule', span: (data as _NodeData).$span }
-			),
-			_macro_rule_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._macro_rule) ? data._macro_rule : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Semi
-				),
-				'trailing',
-				false,
-				0
-			),
+			_macro_rules: normalizeSingularWrapSlot(data._macro_rules, 'macro_rules', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'macro_rules',
+				span: (data as _NodeData).$span
+			}),
 
 			macroRules() {
-				return drillInAll<T.MacroRule>(this._macro_rule as readonly T.MacroRule[] | undefined, tree);
+				return drillAs<T.MacroRules | undefined>(this._macro_rules, tree, [
+					{ from: 'macro_rules', to: '_macro_rules' }
+				]);
 			},
 			$with: {
-				macroRules: (...v: NonNullable<T.MacroDefinitionParen['_macro_rule']>[number][]) =>
-					wrapMacroDefinitionParen({ ...data, _macro_rule: v }, tree)
+				macroRules: (v: NonNullable<T.MacroDefinitionParen['_macro_rules']>) =>
+					wrapMacroDefinitionParen({ ...data, _macro_rules: v }, tree)
 			}
 		},
 		methodsEngine
@@ -9895,29 +9993,21 @@ export function wrapMacroDefinitionBracket(data: T.MacroDefinitionBracket, tree:
 		{
 			...data,
 			$type: TSKindId.MacroDefinitionBracket as const,
-			_macro_rule: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._macro_rule, ['macro_rule']),
-				false,
-				'macro_rule',
-				{ tree, nodeType: data.$type, slotName: 'macro_rule', span: (data as _NodeData).$span }
-			),
-			_macro_rule_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._macro_rule) ? data._macro_rule : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Semi
-				),
-				'trailing',
-				false,
-				0
-			),
+			_macro_rules: normalizeSingularWrapSlot(data._macro_rules, 'macro_rules', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'macro_rules',
+				span: (data as _NodeData).$span
+			}),
 
 			macroRules() {
-				return drillInAll<T.MacroRule>(this._macro_rule as readonly T.MacroRule[] | undefined, tree);
+				return drillAs<T.MacroRules | undefined>(this._macro_rules, tree, [
+					{ from: 'macro_rules', to: '_macro_rules' }
+				]);
 			},
 			$with: {
-				macroRules: (...v: NonNullable<T.MacroDefinitionBracket['_macro_rule']>[number][]) =>
-					wrapMacroDefinitionBracket({ ...data, _macro_rule: v }, tree)
+				macroRules: (v: NonNullable<T.MacroDefinitionBracket['_macro_rules']>) =>
+					wrapMacroDefinitionBracket({ ...data, _macro_rules: v }, tree)
 			}
 		},
 		methodsEngine
@@ -9930,29 +10020,21 @@ export function wrapMacroDefinitionBrace(data: T.MacroDefinitionBrace, tree: Tre
 		{
 			...data,
 			$type: TSKindId.MacroDefinitionBrace as const,
-			_macro_rule: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._macro_rule, ['macro_rule']),
-				false,
-				'macro_rule',
-				{ tree, nodeType: data.$type, slotName: 'macro_rule', span: (data as _NodeData).$span }
-			),
-			_macro_rule_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._macro_rule) ? data._macro_rule : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Semi
-				),
-				'trailing',
-				false,
-				0
-			),
+			_macro_rules: normalizeSingularWrapSlot(data._macro_rules, 'macro_rules', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'macro_rules',
+				span: (data as _NodeData).$span
+			}),
 
 			macroRules() {
-				return drillInAll<T.MacroRule>(this._macro_rule as readonly T.MacroRule[] | undefined, tree);
+				return drillAs<T.MacroRules | undefined>(this._macro_rules, tree, [
+					{ from: 'macro_rules', to: '_macro_rules' }
+				]);
 			},
 			$with: {
-				macroRules: (...v: NonNullable<T.MacroDefinitionBrace['_macro_rule']>[number][]) =>
-					wrapMacroDefinitionBrace({ ...data, _macro_rule: v }, tree)
+				macroRules: (v: NonNullable<T.MacroDefinitionBrace['_macro_rules']>) =>
+					wrapMacroDefinitionBrace({ ...data, _macro_rules: v }, tree)
 			}
 		},
 		methodsEngine
@@ -10037,7 +10119,7 @@ export function wrapRangeExpressionBinary(data: T.RangeExpressionBinary, tree: T
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '..': 106, '...': 75, '..=': 140 }
+				{ '..': 106, '...': 74, '..=': 140 }
 			),
 			_end: normalizeSingularWrapSlot(data._end, 'end', true, data.$type, {
 				tree,
@@ -10214,7 +10296,7 @@ export function wrapRangePatternLeftWithRight(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '...': 75, '..=': 140, '..': 106 }
+				{ '...': 74, '..=': 140, '..': 106 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -11580,6 +11662,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	metavariable: (d) => ({ ...d, $type: TSKindId.Metavariable as const }),
 	_kw_ref_marker: (d) => ({ ...d, $type: TSKindId.KwRefMarker as const }),
 	_kw_move_marker: (d) => ({ ...d, $type: TSKindId.KwMoveMarker as const }),
+	_macro_rules: (d, t) => wrapMacroRules(d as unknown as T.MacroRules, t),
 	_attribute_group1: (d, t) => wrapAttributeGroup1(d as unknown as T.AttributeGroup1, t),
 	_enum_variant_list_elements: (d, t) => wrapEnumVariantListElements(d as unknown as T.EnumVariantListElements, t),
 	_field_declaration_list_elements: (d, t) =>
@@ -11587,10 +11670,13 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_ordered_field_declaration_list_elements: (d, t) =>
 		wrapOrderedFieldDeclarationListElements(d as unknown as T.OrderedFieldDeclarationListElements, t),
 	_where_predicates: (d, t) => wrapWherePredicates(d as unknown as T.WherePredicates, t),
+	_type_parameters_elements: (d, t) => wrapTypeParametersElements(d as unknown as T.TypeParametersElements, t),
 	_use_clauses: (d, t) => wrapUseClauses(d as unknown as T.UseClauses, t),
 	_parameters_elements: (d, t) => wrapParametersElements(d as unknown as T.ParametersElements, t),
 	_visibility_modifier_group1: (d, t) => wrapVisibilityModifierGroup1(d as unknown as T.VisibilityModifierGroup1, t),
+	_lifetimes: (d, t) => wrapLifetimes(d as unknown as T.Lifetimes, t),
 	_use_bounds_elements: (d, t) => wrapUseBoundsElements(d as unknown as T.UseBoundsElements, t),
+	_type_arguments_elements: (d, t) => wrapTypeArgumentsElements(d as unknown as T.TypeArgumentsElements, t),
 	_arguments_elements: (d, t) => wrapArgumentsElements(d as unknown as T.ArgumentsElements, t),
 	_array_expression_group1: (d, t) => wrapArrayExpressionGroup1(d as unknown as T.ArrayExpressionGroup1, t),
 	_field_initializer_list_elements: (d, t) =>
@@ -11706,6 +11792,7 @@ const _aliasTargetToSource: Record<string, string> = {
 	kw_move_marker: '_kw_move_marker',
 	kw_ref_marker: '_kw_ref_marker',
 	let_chain: '_let_chain',
+	lifetimes: '_lifetimes',
 	line_comment_content: '_line_comment_content',
 	line_comment_doc: '_line_comment_doc',
 	line_comment_regular_dslash: '_line_comment_regular_dslash',
@@ -11715,6 +11802,7 @@ const _aliasTargetToSource: Record<string, string> = {
 	macro_definition_brace: '_macro_definition_brace',
 	macro_definition_bracket: '_macro_definition_bracket',
 	macro_definition_paren: '_macro_definition_paren',
+	macro_rules: '_macro_rules',
 	match_arm_with_comma: '_match_arm_with_comma',
 	match_block_arms: '_match_block_arms',
 	non_special_token: '_non_special_token',
@@ -11751,6 +11839,8 @@ const _aliasTargetToSource: Record<string, string> = {
 	tokens: '_tokens',
 	tuple_pattern_elements: '_tuple_pattern_elements',
 	type_argument: '_type_argument',
+	type_arguments_elements: '_type_arguments_elements',
+	type_parameters_elements: '_type_parameters_elements',
 	use_bounds_elements: '_use_bounds_elements',
 	use_clause: '_use_clause',
 	use_clauses: '_use_clauses',

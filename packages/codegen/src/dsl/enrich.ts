@@ -2234,6 +2234,15 @@ interface SeparatedListBodyInfo {
 	 *  separator, an optionally-unterminated tail form, or a separator-kind
 	 *  choice. Flankless lists carry no such data and never hoist. */
 	flankCarrying: boolean;
+	/** Which spelling matched: `head` = `[elem, repeat(sep elem), opt(sep)?]`,
+	 *  `leading` = `[repeat1(sep elem), opt(sep)]` (continues a parent-side
+	 *  head), `tail` = `[repeat(elem sep), opt(elem)]` (each element
+	 *  separator-terminated, last optionally bare). */
+	form: 'head' | 'leading' | 'tail';
+	/** The element rule at the repeat position (fields/wrappers intact). */
+	element: Rule;
+	/** The separator rule (STRING literal or CHOICE). */
+	separatorRule: Rule;
 }
 
 /**
@@ -2260,13 +2269,22 @@ function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null {
 		return content ? detectRepeatSeparator(content) : null;
 	};
 
-	// Nested-head variant: [[elem, repeat(sep-run)], flank...] — splice the
-	// head seq's members into place and re-examine as the flat head-form.
-	const first = members[0]!;
-	if (members.length >= 2 && isSeqType((first as { type?: string }).type)) {
-		const headMembers = (first as unknown as { members?: Rule[] }).members;
-		if (Array.isArray(headMembers) && headMembers.some((m) => separatorRepeatOf(m) !== null)) {
-			return separatedListBodyInfo({ ...body, members: [...headMembers, ...members.slice(1)] } as Rule);
+	// Nested-head variant: [flank?, [elem, repeat(sep-run)], flank?] — splice
+	// the nested seq's members into place and re-examine as the flat
+	// head-form (the nested seq may sit after a leading flank member, e.g.
+	// object_type_content's optional leading separator).
+	if (members.length >= 2 && !members.some((m) => separatorRepeatOf(m) !== null)) {
+		const nestedIdx = members.findIndex((m) => {
+			if (!isSeqType((m as { type?: string }).type)) return false;
+			const inner = (m as unknown as { members?: Rule[] }).members;
+			return Array.isArray(inner) && inner.some((im) => separatorRepeatOf(im) !== null);
+		});
+		if (nestedIdx !== -1) {
+			const headMembers = (members[nestedIdx] as unknown as { members: Rule[] }).members;
+			return separatedListBodyInfo({
+				...body,
+				members: [...members.slice(0, nestedIdx), ...headMembers, ...members.slice(nestedIdx + 1)]
+			} as Rule);
 		}
 	}
 
@@ -2290,11 +2308,15 @@ function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null {
 		// trailing flank follows, so a bare `repeat(seq(sep, elem))` member
 		// alone never reads as a whole-body list.
 		if (repeatIdx === 0) {
+			// REPEAT1 only: a zero-or-more repeat plus an optional flank would
+			// match the empty string — not a rule tree-sitter accepts, and not
+			// this shape (the leading run CONTINUES a mandatory head element).
+			if (!typeEq((members[0] as { type?: string }).type, 'REPEAT1')) return null;
 			if (members.length !== 2) return null;
 			const flank = peelOptionalEitherSpelling(members[1]!);
 			const flankLit = flank && isStringType((flank as { type?: string }).type) ? (flank as { value?: unknown }).value : null;
 			if (flankLit === null || (separatorLiteral !== null && flankLit !== separatorLiteral)) return null;
-			return { elementName, flankCarrying: true };
+			return { elementName, flankCarrying: true, form: 'leading' as const, element: detected.content as Rule, separatorRule: detected.separator as Rule };
 		}
 		const head = members[repeatIdx - 1]!;
 		if (separatedListElementName(head) !== elementName || elementName === null) {
@@ -2312,7 +2334,13 @@ function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null {
 			}
 			const inner = peelOptionalEitherSpelling(m);
 			const innerLit = inner && isStringType((inner as { type?: string }).type) ? (inner as { value?: unknown }).value : null;
-			if (innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral)) {
+			// A choice-of-separators flank next to a choice-separator list — the
+			// two spellings routinely diverge in decoration (one side may hold
+			// substituted symbol refs), so match on both being choices rather
+			// than exact keys.
+			const innerMatchesChoiceSep =
+				inner !== null && separatorIsChoice && isChoiceType((inner as { type?: string }).type ?? '');
+			if ((innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral)) || innerMatchesChoiceSep) {
 				flankCarrying = true;
 				continue;
 			}
@@ -2320,42 +2348,82 @@ function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null {
 			// the "whole body is one list" reading.
 			return null;
 		}
-		return { elementName, flankCarrying };
+		return { elementName, flankCarrying, form: 'head' as const, element: detected.content as Rule, separatorRule: detected.separator as Rule };
 	}
 
-	// Tail-form: repeat is seq(elem, SEP); an optional(elem) member after the
+	// Tail-form: repeat is seq(elem, SEP); the optional(elem) member after the
 	// repeat means the last element may omit its separator — per-instance
-	// trailing-separator data.
-	if (repeatIdx !== 0 || members.length > 2) return null;
-	let flankCarrying = separatorIsChoice;
-	if (members.length === 2) {
-		const tail = peelOptionalEitherSpelling(members[1]!);
-		if (tail === null) return null;
-		if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
-		if (elementName === null && ruleKey(tail as RuntimeRule) !== ruleKey(detected.content as RuntimeRule)) return null;
-		flankCarrying = true;
-	}
-	return { elementName, flankCarrying };
+	// trailing-separator data. A bare separator-terminated repeat with NO
+	// elem? tail is not this shape (every element is mandatorily terminated).
+	if (repeatIdx !== 0 || members.length !== 2) return null;
+	const tail = peelOptionalEitherSpelling(members[1]!);
+	if (tail === null) return null;
+	if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
+	if (elementName === null && ruleKey(tail as RuntimeRule) !== ruleKey(detected.content as RuntimeRule)) return null;
+	return { elementName, flankCarrying: true, form: 'tail' as const, element: detected.content as Rule, separatorRule: detected.separator as Rule };
+}
+
+interface InlineSeparatedListRun {
+	info: SeparatedListBodyInfo;
+	key: string;
+	/** The run's synthetic seq body — the exact members slice, reusable as a
+	 *  hoisted rule body. */
+	body: Rule;
+	start: number;
+	size: number;
 }
 
 /** @internal — flank-carrying separated-list runs INLINE among a seq's
  *  members (a list that shares its seq with delimiters/other content, e.g.
  *  `'(' repeat(seq(rule, ';')) optional(rule) ')'`). Each window of 3 then 2
  *  adjacent members is offered to {@link separatedListBodyInfo} as a
- *  synthetic seq. Counting-only consumer — the runs are not rewritten here. */
-function detectInlineSeparatedListRuns(members: Rule[]): { info: SeparatedListBodyInfo; key: string }[] {
-	const runs: { info: SeparatedListBodyInfo; key: string }[] = [];
+ *  synthetic seq. A run spanning the WHOLE member list is not reported —
+ *  that is the seq body itself, owned by the whole-body paths. Consumed by
+ *  the proposal count AND by the seq-descent run hoist. */
+function detectInlineSeparatedListRuns(members: Rule[]): InlineSeparatedListRun[] {
+	// A window member "carries" the list's repeat either directly or one seq
+	// level down (`commaSep1` nests `[elem, repeat(sep elem)]` as a sub-seq
+	// with the flank as a SIBLING member; macro_definition nests the whole
+	// tail run as one sub-seq member) — separatedListBodyInfo's nested-head
+	// splice unpacks these, this predicate only pre-filters.
+	const carriesRepeat = (m: Rule): boolean => {
+		if (isRepeatType((m as { type?: string }).type)) return true;
+		if (!isSeqType((m as { type?: string }).type)) return false;
+		const inner = (m as unknown as { members?: Rule[] }).members;
+		return Array.isArray(inner) && inner.some((im) => isRepeatType((im as { type?: string }).type));
+	};
+	const runs: InlineSeparatedListRun[] = [];
 	let i = 0;
 	while (i < members.length) {
 		let consumed = 0;
-		for (const size of [3, 2]) {
-			if (i + size > members.length) continue;
+		for (const size of [3, 2, 1]) {
+			if (i + size > members.length || size === members.length) continue;
 			const window = members.slice(i, i + size);
-			if (!window.some((m) => isRepeatType((m as { type?: string }).type))) continue;
-			const synthetic = { type: 'SEQ', members: window } as unknown as Rule;
+			if (!window.some(carriesRepeat)) continue;
+			// A size-1 window is a nested whole-list sub-seq member — offer it
+			// directly (the ≥2-member synthetic path is for flat/sibling runs).
+			const synthetic =
+				size === 1 && isSeqType((window[0] as { type?: string }).type)
+					? window[0]!
+					: ({ type: 'SEQ', members: window } as unknown as Rule);
 			const info = separatedListBodyInfo(synthetic);
 			if (info?.flankCarrying) {
-				runs.push({ info, key: ruleKey(synthetic as RuntimeRule) });
+				if (info.form === 'tail') {
+					// Only the empty-matchable `repeat(elem sep) elem?` family
+					// (macro_definition) is a hoistable tail run — it rewrites to
+					// an optional classic list of the SAME language. A REPEAT1
+					// tail, or a tail continuing a mandatory elem-sep pair member
+					// before it (tuple_expression's `pair pair* elem?` — the
+					// single-element-tuple constraint), is NOT a plain separated
+					// list; those stay inline.
+					const repeatMember = window[0]!;
+					const prev = i > 0 ? members[i - 1] : undefined;
+					const prevIsPair =
+						prev !== undefined &&
+						ruleKey(prev as RuntimeRule) === ruleKey((repeatMember as { content?: RuntimeRule }).content!);
+					if (typeEq((repeatMember as { type?: string }).type, 'REPEAT1') || prevIsPair) continue;
+				}
+				runs.push({ info, key: ruleKey(synthetic as RuntimeRule), body: synthetic, start: i, size });
 				consumed = size;
 				break;
 			}
@@ -2684,6 +2752,58 @@ function applyClauseHoist(
 			if (out !== m) changed = true;
 			return out;
 		});
+		// Run hoist: a flank-carrying separated list INLINE among this seq's
+		// members (sharing the seq with delimiters, e.g. macro_definition's
+		// `'(' repeat(seq(rule, ';')) optional(rule) ')'` or type_arguments'
+		// `'<' type sep-run optional(',') '>'`) carries per-instance separator
+		// facts with no node to hang them on. Hoist the run into its own
+		// VISIBLE separatedList kind — the same hidden-rule + alias mint the
+		// optional(seq) whole-body path uses; flankless runs stay inline.
+		// Post-order (after member recursion) so inner content is settled.
+		// A seq that IS one whole-body list is owned by the whole-body mint
+		// paths — carving a sub-run out of it would strand its head element.
+		if (separatedListNameCounts !== null && separatedListBodyInfo({ ...rule, members: newMembers } as Rule) === null) {
+			const runs = detectInlineSeparatedListRuns(newMembers);
+			for (let r = runs.length - 1; r >= 0; r--) {
+				const run = runs[r]!;
+				// The empty-matchable tail run `repeat(elem sep) elem?` hoists as
+				// `optional(<classic list>)`: the classic non-empty spelling
+				// `elem (sep elem)* sep?` describes the same language, gives the
+				// kind the canonical separated-list shape downstream phases
+				// recognize, and the optional wrapper keeps the empty case
+				// node-free in the parent.
+				const isTail = run.info.form === 'tail';
+				// Runtime-native constructors so each pipeline gets ITS optional
+				// spelling (sittir: OPTIONAL; tree-sitter CLI: CHOICE[X, BLANK]).
+				const seqFn = nativeRuleFn<(...m: unknown[]) => Rule>('seq');
+				const repeatFn = nativeRuleFn<(r: unknown) => Rule>('repeat');
+				const optionalFn = nativeRuleFn<(r: unknown) => Rule>('optional', 'opt');
+				const body = isTail
+					? seqFn(
+							run.info.element,
+							repeatFn(seqFn(run.info.separatorRule, run.info.element)),
+							optionalFn(run.info.separatorRule)
+						)
+					: run.body;
+				const names = visibleGroupSynthName(
+					body,
+					parentKind,
+					groupDedupeMap,
+					counter,
+					rulesBag,
+					clauseGroupRules,
+					ambientPrec
+				);
+				if (names === null) continue;
+				visibleGroupHiddenNames.add(names.hiddenName);
+				if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
+				const symbolRef = makeGroupLiftSymbol(body, names.hiddenName);
+				const aliasRule = makeVisibleGroupAlias(symbolRef, names.visibleName);
+				const replacement = isTail ? optionalFn(aliasRule) : aliasRule;
+				newMembers.splice(run.start, run.size, replacement);
+				changed = true;
+			}
+		}
 		return changed ? ({ ...rule, members: newMembers } as Rule) : rule;
 	}
 

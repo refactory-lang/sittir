@@ -658,25 +658,40 @@ function emitFieldCarryingFactory(
 	let fieldsToEmit: readonly AssembledNonterminal[] = fields;
 
 	if (containerFacts) {
-		fieldsToEmit = [containerFacts.slot];
+		// The container's ONE user slot takes the positional child value; any
+		// OTHER field with an auto-stamp expression (a fixed-value enum slot
+		// like python `_simple_statements`' newline) still gets its stamped
+		// storage — same treatment the single-field and config shapes below
+		// give such fields. Fields that are neither (markers the single-slot
+		// classification excluded) stay un-emitted, as before.
+		const stampedExtras = fields.filter(
+			(f) => f !== containerFacts.slot && autoStampExpression(f, nodeMap) !== undefined
+		);
+		fieldsToEmit = [containerFacts.slot, ...stampedExtras];
 		const elementType = resolveContainerElementType(
 			{
 				kind: node.kind,
 				typeName: node.typeName,
 				treeTypeName: node.treeTypeName,
 				rawFactoryName: node.rawFactoryName,
-				fields
+				fields: [containerFacts.slot]
 			},
 			nodeMap
 		);
 		if (containerFacts.multiple) {
 			signature = `export function ${fn}(...children: ${elementType}[]) {`;
-			valueSourceFor = () => 'children';
+			valueSourceFor = (f) =>
+				f === containerFacts.slot
+					? 'children'
+					: slotStorageFromValueExpr(f, autoStampExpression(f, nodeMap)!, nodeMap, kindEntries);
 			withLines = [`    $with: { $children: (...vs: ${elementType}[]) => ${fn}(...vs) },`];
 		} else {
 			const optMark = containerFacts.required ? '' : '?';
 			signature = `export function ${fn}(child${optMark}: ${elementType}) {`;
-			valueSourceFor = () => 'child';
+			valueSourceFor = (f) =>
+				f === containerFacts.slot
+					? 'child'
+					: slotStorageFromValueExpr(f, autoStampExpression(f, nodeMap)!, nodeMap, kindEntries);
 			withLines = [`    $with: { $child: (v: ${elementType}) => ${fn}(v) },`];
 		}
 	} else if (singleField) {

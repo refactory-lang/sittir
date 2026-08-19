@@ -2199,11 +2199,18 @@ function separatedListBodyInfo(body) {
     const content = m.content;
     return content ? detectRepeatSeparator(content) : null;
   };
-  const first = members[0];
-  if (members.length >= 2 && isSeqType(first.type)) {
-    const headMembers = first.members;
-    if (Array.isArray(headMembers) && headMembers.some((m) => separatorRepeatOf(m) !== null)) {
-      return separatedListBodyInfo({ ...body, members: [...headMembers, ...members.slice(1)] });
+  if (members.length >= 2 && !members.some((m) => separatorRepeatOf(m) !== null)) {
+    const nestedIdx = members.findIndex((m) => {
+      if (!isSeqType(m.type)) return false;
+      const inner = m.members;
+      return Array.isArray(inner) && inner.some((im) => separatorRepeatOf(im) !== null);
+    });
+    if (nestedIdx !== -1) {
+      const headMembers = members[nestedIdx].members;
+      return separatedListBodyInfo({
+        ...body,
+        members: [...members.slice(0, nestedIdx), ...headMembers, ...members.slice(nestedIdx + 1)]
+      });
     }
   }
   const repeatIdx = members.findIndex((m) => separatorRepeatOf(m) !== null);
@@ -2214,17 +2221,18 @@ function separatedListBodyInfo(body) {
   const elementName = separatedListElementName(detected.content);
   if (detected.trailing !== true) {
     if (repeatIdx === 0) {
+      if (!typeEq(members[0].type, "REPEAT1")) return null;
       if (members.length !== 2) return null;
       const flank = peelOptionalEitherSpelling(members[1]);
       const flankLit = flank && isStringType(flank.type) ? flank.value : null;
       if (flankLit === null || separatorLiteral !== null && flankLit !== separatorLiteral) return null;
-      return { elementName, flankCarrying: true };
+      return { elementName, flankCarrying: true, form: "leading", element: detected.content, separatorRule: detected.separator };
     }
     const head = members[repeatIdx - 1];
     if (separatedListElementName(head) !== elementName || elementName === null) {
       if (ruleKey(head) !== ruleKey(detected.content)) return null;
     }
-    let flankCarrying2 = separatorIsChoice;
+    let flankCarrying = separatorIsChoice;
     for (const [i, m] of members.entries()) {
       if (i === repeatIdx || i === repeatIdx - 1) continue;
       if (isStringType(m.type) && m.value === separatorLiteral) {
@@ -2232,38 +2240,47 @@ function separatedListBodyInfo(body) {
       }
       const inner = peelOptionalEitherSpelling(m);
       const innerLit = inner && isStringType(inner.type) ? inner.value : null;
-      if (innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral)) {
-        flankCarrying2 = true;
+      const innerMatchesChoiceSep = inner !== null && separatorIsChoice && isChoiceType(inner.type ?? "");
+      if (innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral) || innerMatchesChoiceSep) {
+        flankCarrying = true;
         continue;
       }
       return null;
     }
-    return { elementName, flankCarrying: flankCarrying2 };
+    return { elementName, flankCarrying, form: "head", element: detected.content, separatorRule: detected.separator };
   }
-  if (repeatIdx !== 0 || members.length > 2) return null;
-  let flankCarrying = separatorIsChoice;
-  if (members.length === 2) {
-    const tail = peelOptionalEitherSpelling(members[1]);
-    if (tail === null) return null;
-    if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
-    if (elementName === null && ruleKey(tail) !== ruleKey(detected.content)) return null;
-    flankCarrying = true;
-  }
-  return { elementName, flankCarrying };
+  if (repeatIdx !== 0 || members.length !== 2) return null;
+  const tail = peelOptionalEitherSpelling(members[1]);
+  if (tail === null) return null;
+  if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
+  if (elementName === null && ruleKey(tail) !== ruleKey(detected.content)) return null;
+  return { elementName, flankCarrying: true, form: "tail", element: detected.content, separatorRule: detected.separator };
 }
 function detectInlineSeparatedListRuns(members) {
+  const carriesRepeat = (m) => {
+    if (isRepeatType(m.type)) return true;
+    if (!isSeqType(m.type)) return false;
+    const inner = m.members;
+    return Array.isArray(inner) && inner.some((im) => isRepeatType(im.type));
+  };
   const runs = [];
   let i = 0;
   while (i < members.length) {
     let consumed = 0;
-    for (const size of [3, 2]) {
-      if (i + size > members.length) continue;
+    for (const size of [3, 2, 1]) {
+      if (i + size > members.length || size === members.length) continue;
       const window = members.slice(i, i + size);
-      if (!window.some((m) => isRepeatType(m.type))) continue;
-      const synthetic = { type: "SEQ", members: window };
+      if (!window.some(carriesRepeat)) continue;
+      const synthetic = size === 1 && isSeqType(window[0].type) ? window[0] : { type: "SEQ", members: window };
       const info = separatedListBodyInfo(synthetic);
       if (info?.flankCarrying) {
-        runs.push({ info, key: ruleKey(synthetic) });
+        if (info.form === "tail") {
+          const repeatMember = window[0];
+          const prev = i > 0 ? members[i - 1] : void 0;
+          const prevIsPair = prev !== void 0 && ruleKey(prev) === ruleKey(repeatMember.content);
+          if (typeEq(repeatMember.type, "REPEAT1") || prevIsPair) continue;
+        }
+        runs.push({ info, key: ruleKey(synthetic), body: synthetic, start: i, size });
         consumed = size;
         break;
       }
@@ -2472,6 +2489,38 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       if (out !== m) changed = true;
       return out;
     });
+    if (separatedListNameCounts !== null && separatedListBodyInfo({ ...rule, members: newMembers }) === null) {
+      const runs = detectInlineSeparatedListRuns(newMembers);
+      for (let r = runs.length - 1; r >= 0; r--) {
+        const run = runs[r];
+        const isTail = run.info.form === "tail";
+        const seqFn = nativeRuleFn("seq");
+        const repeatFn = nativeRuleFn("repeat");
+        const optionalFn = nativeRuleFn("optional", "opt");
+        const body = isTail ? seqFn(
+          run.info.element,
+          repeatFn(seqFn(run.info.separatorRule, run.info.element)),
+          optionalFn(run.info.separatorRule)
+        ) : run.body;
+        const names = visibleGroupSynthName(
+          body,
+          parentKind,
+          groupDedupeMap,
+          counter,
+          rulesBag,
+          clauseGroupRules,
+          ambientPrec
+        );
+        if (names === null) continue;
+        visibleGroupHiddenNames.add(names.hiddenName);
+        if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
+        const symbolRef = makeGroupLiftSymbol(body, names.hiddenName);
+        const aliasRule = makeVisibleGroupAlias(symbolRef, names.visibleName);
+        const replacement = isTail ? optionalFn(aliasRule) : aliasRule;
+        newMembers.splice(run.start, run.size, replacement);
+        changed = true;
+      }
+    }
     return changed ? { ...rule, members: newMembers } : rule;
   }
   if (isChoiceType(rule.type)) {

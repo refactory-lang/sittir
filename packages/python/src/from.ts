@@ -265,6 +265,7 @@ function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {
 }
 
 const _wrapKindIds: { readonly [kind: string]: number } = {
+	_simple_statements: TSKindId.SimpleStatements,
 	print_statement: TSKindId.PrintStatement,
 	expression_statement: TSKindId.ExpressionStatement,
 	return_statement: TSKindId.ReturnStatement,
@@ -273,6 +274,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	with_clause: TSKindId.WithClause,
 	parameters: TSKindId.Parameters,
 	lambda_parameters: TSKindId.LambdaParameters,
+	type_parameter: TSKindId.TypeParameter,
 	parenthesized_list_splat: TSKindId.ParenthesizedListSplat,
 	case_pattern: TSKindId.CasePattern,
 	dict_pattern: TSKindId.DictPattern,
@@ -297,6 +299,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_dictionary_elements: TSKindId.DictionaryElements,
 	case_tuple_pattern: TSKindId.CaseTuplePattern,
 	case_list_pattern: TSKindId.CaseListPattern,
+	_with_clause_paren: TSKindId.WithClauseParen,
 	_suite_block_with_indent: TSKindId.SuiteBlockWithIndent,
 	_simple_pattern_negative: TSKindId.SimplePatternNegative,
 	_yield_from_clause: TSKindId.YieldFromClause
@@ -304,6 +307,8 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
 	switch (kind) {
+		case '_simple_statements':
+			return F.buildSimpleStatements(children[0] as Parameters<typeof F.buildSimpleStatements>[0]);
 		case 'print_statement':
 			return F.buildPrintStatement(children[0] as Parameters<typeof F.buildPrintStatement>[0]);
 		case 'expression_statement':
@@ -320,6 +325,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildParameters(children[0] as Parameters<typeof F.buildParameters>[0]);
 		case 'lambda_parameters':
 			return F.buildLambdaParameters(children[0] as Parameters<typeof F.buildLambdaParameters>[0]);
+		case 'type_parameter':
+			return F.buildTypeParameter(children[0] as Parameters<typeof F.buildTypeParameter>[0]);
 		case 'parenthesized_list_splat':
 			return F.buildParenthesizedListSplat(children[0] as Parameters<typeof F.buildParenthesizedListSplat>[0]);
 		case 'case_pattern':
@@ -368,6 +375,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildCaseTuplePattern(...(children as Parameters<typeof F.buildCaseTuplePattern>));
 		case 'case_list_pattern':
 			return F.buildCaseListPattern(...(children as Parameters<typeof F.buildCaseListPattern>));
+		case '_with_clause_paren':
+			return F.buildWithClauseParen(children[0] as Parameters<typeof F.buildWithClauseParen>[0]);
 		case '_suite_block_with_indent':
 			return F.buildSuiteBlockWithIndent(children[0] as Parameters<typeof F.buildSuiteBlockWithIndent>[0]);
 		case '_simple_pattern_negative':
@@ -649,38 +658,10 @@ const _K19: readonly string[] = [
 	'yield'
 ];
 const _K20: readonly string[] = ['subscript', 'attribute', 'list_splat_pattern', 'tuple_pattern', 'list_pattern'];
-const _K21: readonly string[] = [
-	'comparison_operator',
-	'not_operator',
-	'boolean_operator',
-	'lambda',
-	'await',
-	'binary_operator',
-	'string',
-	'concatenated_string',
-	'unary_operator',
-	'attribute',
-	'subscript',
-	'call',
-	'list',
-	'list_comprehension',
-	'dictionary',
-	'dictionary_comprehension',
-	'set',
-	'set_comprehension',
-	'tuple',
-	'parenthesized_expression',
-	'generator_expression',
-	'list_splat_pattern',
-	'conditional_expression',
-	'named_expression',
-	'as_pattern',
-	'slice'
-];
-const _K22: readonly string[] = ['generator_expression', 'argument_list'];
-const _K23: readonly string[] = ['list_splat_pattern', 'dictionary_splat_pattern'];
-const _K24: readonly string[] = ['interpolation', 'string_content'];
-const _K25: readonly string[] = [
+const _K21: readonly string[] = ['generator_expression', 'argument_list'];
+const _K22: readonly string[] = ['list_splat_pattern', 'dictionary_splat_pattern'];
+const _K23: readonly string[] = ['interpolation', 'string_content'];
+const _K24: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
@@ -710,7 +691,7 @@ const _K25: readonly string[] = [
 	'pattern_list',
 	'yield'
 ];
-const _K26: readonly string[] = ['for_in_clause', 'if_clause'];
+const _K25: readonly string[] = ['for_in_clause', 'if_clause'];
 
 export function coerceToModule(input?: T.Module.Loose): ReturnType<typeof F.buildModule> {
 	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildModule>;
@@ -927,20 +908,20 @@ export function coerceToElseClause(input: T.ElseClause.Loose): ReturnType<typeof
 
 export function coerceToMatchStatement(input: T.MatchStatement.Loose): ReturnType<typeof F.buildMatchStatement> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildMatchStatement>;
-	const _ne_subjects = _resolveMany<T.Expression>(input.subject, _K4, _K5);
-	_assertNonEmpty(_ne_subjects, 'match_statement.subjects');
 	return F.buildMatchStatement({
-		subject: _ne_subjects,
+		subjects: _requireField('match_statement', 'subjects', _resolveOneBranch<T.Subjects>(input.subjects, '_subjects')),
 		body: _requireField('match_statement', 'body', _resolveOneBranch<T.MatchBlock>(input.body, '_match_block'))
 	});
 }
 
 export function coerceToCaseClause(input: T.CaseClause.Loose): ReturnType<typeof F.buildCaseClause> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildCaseClause>;
-	const _ne_casePatterns = _resolveManyBranch<T.CasePattern>(input.casePattern, 'case_pattern');
-	_assertNonEmpty(_ne_casePatterns, 'case_clause.casePatterns');
 	return F.buildCaseClause({
-		casePattern: _ne_casePatterns,
+		casePatterns: _requireField(
+			'case_clause',
+			'casePatterns',
+			_resolveOneBranch<T.CasePatterns>(input.casePatterns, '_case_patterns')
+		),
 		guard: _resolveOneBranch<T.IfClause>(input.guard, 'if_clause'),
 		consequence: _requireField(
 			'case_clause',
@@ -1199,13 +1180,13 @@ export function coerceToClassDefinition(input: T.ClassDefinition.Loose): ReturnT
 	});
 }
 
-export function coerceToTypeParameter(input: T.TypeParameter.Loose): ReturnType<typeof F.buildTypeParameter> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeParameter>;
-	const _ne_types = _resolveManyBranch<T.Type>(input.type, 'type');
-	_assertNonEmpty(_ne_types, 'type_parameter.types');
-	return F.buildTypeParameter({
-		type: _ne_types
-	});
+export function coerceToTypeParameter(input?: T.Types | T.TypeParameter): ReturnType<typeof F.buildTypeParameter> {
+	if (isNodeData(input) && input.$type === TSKindId.TypeParameter) {
+		const data = input;
+		const child = (data as unknown as { _types?: unknown })._types;
+		return F.buildTypeParameter(child as Parameters<typeof F.buildTypeParameter>[0]);
+	}
+	return F.buildTypeParameter(input as Parameters<typeof F.buildTypeParameter>[0]);
 }
 
 export function coerceToParenthesizedListSplat(
@@ -1668,11 +1649,13 @@ export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F
 
 export function coerceToSubscript(input: T.Subscript.Loose): ReturnType<typeof F.buildSubscript> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSubscript>;
-	const _ne_subscripts = _resolveMany<T.Expression | T.Slice>(input.subscript, _K4, _K21);
-	_assertNonEmpty(_ne_subscripts, 'subscript.subscripts');
 	return F.buildSubscript({
 		value: _requireField('subscript', 'value', _resolveOne<T.PrimaryExpression>(input.value, _K4, _K16)),
-		subscript: _ne_subscripts
+		subscripts: _requireField(
+			'subscript',
+			'subscripts',
+			_resolveOneBranch<T.Subscripts>(input.subscripts, '_subscripts')
+		)
 	});
 }
 
@@ -1692,7 +1675,7 @@ export function coerceToCall(input: T.Call.Loose): ReturnType<typeof F.buildCall
 		arguments: _requireField(
 			'call',
 			'arguments',
-			_resolveOne<T.GeneratorExpression | T.ArgumentList>(input.arguments, _K0, _K22)
+			_resolveOne<T.GeneratorExpression | T.ArgumentList>(input.arguments, _K0, _K21)
 		)
 	});
 }
@@ -1706,7 +1689,7 @@ export function coerceToTypedParameter(input: T.TypedParameter.Loose): ReturnTyp
 			_resolveOne<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>(
 				input.content,
 				_super_keyword_identifier,
-				_K23
+				_K22
 			)
 		),
 		type: _requireField('typed_parameter', 'type', _resolveOneBranch<T.Type>(input.type, 'type'))
@@ -1972,7 +1955,7 @@ export function coerceToString(input: T.String.Loose): ReturnType<typeof F.build
 			'stringStart',
 			_resolveOneLeaf<T.StringStart>(input.stringStart, 'string_start')
 		),
-		content: _resolveMany<T.Interpolation | T.StringContent>(input.content, _K0, _K24),
+		content: _resolveMany<T.Interpolation | T.StringContent>(input.content, _K0, _K23),
 		stringEnd: _requireField('string', 'stringEnd', _resolveOneLeaf<T.StringEnd>(input.stringEnd, 'string_end'))
 	});
 }
@@ -1992,7 +1975,7 @@ export function coerceToStringContent(
 export function coerceToInterpolation(input: T.Interpolation.Loose): ReturnType<typeof F.buildInterpolation> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildInterpolation>;
 	return F.buildInterpolation({
-		expression: _requireField('interpolation', 'expression', _resolveOne<T.FExpression>(input.expression, _K4, _K25)),
+		expression: _requireField('interpolation', 'expression', _resolveOne<T.FExpression>(input.expression, _K4, _K24)),
 		eqMarker: _resolveBooleanKeyword(input.eqMarker),
 		typeConversion: _resolveOneLeaf<T.TypeConversion>(input.typeConversion, 'type_conversion'),
 		formatSpecifier: _resolveOneBranch<T.FormatSpecifier>(input.formatSpecifier, 'format_specifier')
@@ -2127,7 +2110,7 @@ export function coerceToComprehensionClauses(
 	if (input !== undefined && isNodeData(input))
 		return input as unknown as ReturnType<typeof F.buildComprehensionClauses>;
 	return F.buildComprehensionClauses({
-		content: _resolveMany<T.ForInClause | T.IfClause>(input?.content, _K0, _K26)
+		content: _resolveMany<T.ForInClause | T.IfClause>(input?.content, _K0, _K25)
 	});
 }
 

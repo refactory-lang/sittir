@@ -2612,8 +2612,8 @@ export interface TypeArgumentsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type: Array<TypeTransport>
-  _type_trailing_sep?: boolean
+  _types: TypesTransport
+  _type?: Array<TypeTransport>
 }
 
 export interface TypeAssertionTransport {
@@ -2628,7 +2628,7 @@ export interface TypeAssertionTransport {
   _expression: Box<ExpressionTransport>
 }
 
-export interface TypeParametersTransport {
+export interface TypeParametersElementsTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -2638,6 +2638,18 @@ export interface TypeParametersTransport {
   '$triviaData'?: TransportTrivia
   _type_parameter: Array<TypeParameterTransport>
   _type_parameter_trailing_sep?: boolean
+}
+
+export interface TypeParametersTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _type_parameters_elements: TypeParametersElementsTransport
+  _type_parameter?: Array<TypeParameterTransport>
 }
 
 export interface TypeParameterTransport {
@@ -2759,6 +2771,18 @@ export interface TypeQueryTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content: TypeQueryContentTransportSlot
+}
+
+export interface TypesTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _type: Array<TypeTransport>
+  _type_trailing_sep?: boolean
 }
 
 export interface UnaryExpressionTransport {

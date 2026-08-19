@@ -934,8 +934,8 @@ export interface ForLifetimesTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _lifetime: Array<LifetimeTransport>
-  _lifetime_trailing_sep?: boolean
+  _lifetimes: LifetimesTransport
+  _lifetime?: Array<LifetimeTransport>
 }
 
 export interface FunctionItemOptional1Transport {
@@ -1289,6 +1289,18 @@ export interface LifetimeParameterTransport {
   _bounds?: TraitBoundsTransport
 }
 
+export interface LifetimesTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _lifetime: Array<LifetimeTransport>
+  _lifetime_trailing_sep?: boolean
+}
+
 export interface LifetimeTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1344,8 +1356,8 @@ export interface MacroDefinitionBraceTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _macro_rules?: MacroRulesTransport
   _macro_rule?: Array<MacroRuleTransport>
-  _macro_rule_trailing_sep?: boolean
 }
 
 export interface MacroDefinitionBracketTransport {
@@ -1356,8 +1368,8 @@ export interface MacroDefinitionBracketTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _macro_rules?: MacroRulesTransport
   _macro_rule?: Array<MacroRuleTransport>
-  _macro_rule_trailing_sep?: boolean
 }
 
 export interface MacroDefinitionParenTransport {
@@ -1368,8 +1380,8 @@ export interface MacroDefinitionParenTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _macro_rules?: MacroRulesTransport
   _macro_rule?: Array<MacroRuleTransport>
-  _macro_rule_trailing_sep?: boolean
 }
 
 export interface MacroDefinitionTransport {
@@ -1394,6 +1406,19 @@ export interface MacroInvocationTransport {
   '$triviaData'?: TransportTrivia
   _macro: Box<MacroInvocationMacroTransportSlot>
   _token_tree: DelimTokenTreeTransport
+}
+
+export interface MacroRulesTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _macro_rule: Array<MacroRuleTransport>
+  _macro_rule_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface MacroRuleTransport {
@@ -2297,7 +2322,7 @@ export interface TupleTypeTransport {
   _type_trailing_sep?: boolean
 }
 
-export interface TypeArgumentsTransport {
+export interface TypeArgumentsElementsTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -2307,6 +2332,18 @@ export interface TypeArgumentsTransport {
   '$triviaData'?: TransportTrivia
   _element: Array<TypeArgumentTransport>
   _element_trailing_sep?: boolean
+}
+
+export interface TypeArgumentsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _type_arguments_elements: TypeArgumentsElementsTransport
+  _element?: Array<TypeArgumentTransport>
 }
 
 export interface TypeArgumentTransport {
@@ -2373,7 +2410,7 @@ export interface TypeParameterOptional1Transport {
   _default_type: _TypeTransport
 }
 
-export interface TypeParametersTransport {
+export interface TypeParametersElementsTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -2383,6 +2420,18 @@ export interface TypeParametersTransport {
   '$triviaData'?: TransportTrivia
   _element: Array<AttributedTypeParameterTransport>
   _element_trailing_sep?: boolean
+}
+
+export interface TypeParametersTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _type_parameters_elements: TypeParametersElementsTransport
+  _element?: Array<AttributedTypeParameterTransport>
 }
 
 export interface TypeParameterTransport {

@@ -1,32 +1,29 @@
 {
     "backend": "native",
-    "commit": "75c6841",
+    "commit": "6533695",
     "grammars": {
         "python": {
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
-                "pass": 1148,
-                "total": 1148
+                "pass": 1149,
+                "total": 1149
             },
             "validators": {
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 129,
-                    "total": 129
+                    "pass": 134,
+                    "total": 134
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1164,
+                    "astMatchPass": 1332,
                     "failingKinds": [
-                        "_collection_elements",
-                        "_simple_pattern_negative",
-                        "_simple_statements",
-                        "case_clause"
+                        "_simple_pattern_negative"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 1164,
-                    "total": 1173
+                    "pass": 1332,
+                    "total": 1337
                 },
                 "from": {
                     "failingKinds": [
@@ -47,7 +44,7 @@
                     "total": 122
                 },
                 "roundtrip": {
-                    "astMatchPass": 100,
+                    "astMatchPass": 101,
                     "failingKinds": [
                         "module",
                         "tuple_pattern"
@@ -62,25 +59,22 @@
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
-                "pass": 1448,
-                "total": 1448
+                "pass": 1452,
+                "total": 1452
             },
             "validators": {
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 200,
-                    "total": 200
+                    "pass": 204,
+                    "total": 204
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1456,
-                    "failingKinds": [
-                        "_macro_definition_bracket",
-                        "tuple_expression"
-                    ],
+                    "astMatchPass": 1503,
+                    "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1456,
-                    "total": 1458
+                    "pass": 1503,
+                    "total": 1503
                 },
                 "from": {
                     "failingKinds": [
@@ -125,21 +119,18 @@
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 197,
-                    "total": 197
+                    "pass": 199,
+                    "total": 199
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1133,
+                    "astMatchPass": 1183,
                     "failingKinds": [
-                        "_enum_body_elements",
                         "_public_field_definition_static_mods",
-                        "object_type_content",
-                        "type_arguments",
-                        "type_parameters"
+                        "object_type_content"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 1133,
-                    "total": 1151
+                    "pass": 1183,
+                    "total": 1195
                 },
                 "from": {
                     "failingKinds": [
@@ -174,8 +165,8 @@
         }
     },
     "totals": {
-        "fail": 85,
-        "pass": 9053,
-        "total": 9138
+        "fail": 73,
+        "pass": 9334,
+        "total": 9407
     }
 }

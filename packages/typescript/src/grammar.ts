@@ -2485,7 +2485,8 @@ export type TypescriptGrammar = {
 	readonly type_arguments: {
 		type: 'type_arguments';
 		named: true;
-		fields: { type: { multiple: true; required: true; types: [{ type: 'type'; named: true }] } };
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'types'; named: true }] };
 	};
 	readonly type_assertion: {
 		type: 'type_assertion';
@@ -2507,6 +2508,12 @@ export type TypescriptGrammar = {
 	};
 	readonly type_parameters: {
 		type: 'type_parameters';
+		named: true;
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'type_parameters_elements'; named: true }] };
+	};
+	readonly type_parameters_elements: {
+		type: 'type_parameters_elements';
 		named: true;
 		fields: { type_parameter: { multiple: true; required: true; types: [{ type: 'type_parameter'; named: true }] } };
 	};
@@ -2548,6 +2555,11 @@ export type TypescriptGrammar = {
 				{ type: 'this'; named: true }
 			];
 		};
+	};
+	readonly types: {
+		type: 'types';
+		named: true;
+		fields: { type: { multiple: true; required: true; types: [{ type: 'type'; named: true }] } };
 	};
 	readonly unary_expression: {
 		type: 'unary_expression';

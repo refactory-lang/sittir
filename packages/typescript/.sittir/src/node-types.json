@@ -6966,17 +6966,16 @@
   {
     "type": "type_arguments",
     "named": true,
-    "fields": {
-      "type": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "type",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "types",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -7053,6 +7052,21 @@
   },
   {
     "type": "type_parameters",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "type_parameters_elements",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "type_parameters_elements",
     "named": true,
     "fields": {
       "type_parameter": {
@@ -7149,6 +7163,22 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "types",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

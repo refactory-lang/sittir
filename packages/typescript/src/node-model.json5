@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 415,
+  "nodeCount": 417,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -596,12 +596,14 @@
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
-    "type_arguments.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
+    "type_arguments.types": {
+      "types": "_types"
     },
     "property_signature.name": {
       "property_identifier": "_property_identifier"
+    },
+    "type_parameters.type_parameters_elements": {
+      "type_parameters_elements": "_type_parameters_elements"
     },
     "type_parameter.name": {
       "type_identifier": "identifier"
@@ -658,6 +660,10 @@
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "_mapped_type_clause_optional1.alias": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "_types.type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
@@ -3474,12 +3480,12 @@
       }
     },
     "type_arguments": {
-      "type": {
+      "types": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "object_type": {
@@ -3580,12 +3586,12 @@
       }
     },
     "type_parameters": {
-      "type_parameter": {
+      "type_parameters_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "type_parameter": {
@@ -3938,6 +3944,24 @@
         "required": false,
         "multiple": true,
         "nonEmpty": false
+      }
+    },
+    "_types": {
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_type_parameters_elements": {
+      "type_parameter": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
       }
     },
     "_tuple_type_members": {
@@ -9014,6 +9038,45 @@
       "hidden": false
     },
     {
+      "kind": "_type_parameters_elements",
+      "modelType": "group",
+      "typeName": "TypeParametersElements",
+      "factoryName": "_typeParametersElements",
+      "irKey": "typeParametersElements",
+      "hidden": false,
+      "name": "_type_parameters_elements",
+      "fields": [
+        {
+          "name": "type_parameter",
+          "propertyName": "typeParameters",
+          "paramName": "typeParameters",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "type_parameter",
+              "parseKind": "type_parameter",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "type_parameter"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "type_parameter"
+      ]
+    },
+    {
       "kind": "_type_query_call_expression",
       "modelType": "group",
       "typeName": "TypeQueryCallExpression",
@@ -9584,6 +9647,45 @@
       "factoryFields": [
         "object",
         "index"
+      ]
+    },
+    {
+      "kind": "_types",
+      "modelType": "group",
+      "typeName": "Types",
+      "factoryName": "_types",
+      "irKey": "types",
+      "hidden": false,
+      "name": "_types",
+      "fields": [
+        {
+          "name": "type",
+          "propertyName": "types",
+          "paramName": "types",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "type",
+              "parseKind": "type",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "type"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "type"
       ]
     },
     {
@@ -22782,33 +22884,33 @@
       "hidden": false,
       "fields": [
         {
-          "name": "type",
+          "name": "types",
           "propertyName": "types",
           "paramName": "types",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "type",
-              "parseKind": "type",
+              "multiplicity": "single",
+              "name": "_types",
+              "parseKind": "types",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "type"
+              "_types"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "type"
+        "types"
       ]
     },
     {
@@ -22991,33 +23093,33 @@
       "hidden": false,
       "fields": [
         {
-          "name": "type_parameter",
-          "propertyName": "typeParameters",
-          "paramName": "typeParameters",
+          "name": "type_parameters_elements",
+          "propertyName": "typeParametersElements",
+          "paramName": "typeParametersElements",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "type_parameter",
-              "parseKind": "type_parameter",
+              "multiplicity": "single",
+              "name": "_type_parameters_elements",
+              "parseKind": "type_parameters_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "type_parameter"
+              "_type_parameters_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "type_parameter"
+        "type_parameters_elements"
       ]
     },
     {

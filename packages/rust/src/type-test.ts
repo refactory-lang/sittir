@@ -208,6 +208,8 @@ import type {
 	MacroInvocationTree,
 	MacroRule,
 	MacroRuleTree,
+	MacroRules,
+	MacroRulesTree,
 	MatchArm,
 	MatchArmTree,
 	MatchBlock,
@@ -594,6 +596,7 @@ export type _Type_RawStringLiteral = _TypeAssert<_TypeExtends<RawStringLiteral['
 export type _Type_Comment = _TypeAssert<_TypeExtends<Comment['$type'], 'comment'>>;
 export type _Type_LineComment = _TypeAssert<_TypeExtends<LineComment['$type'], TSKindId.LineComment>>;
 export type _Type_BlockComment = _TypeAssert<_TypeExtends<BlockComment['$type'], TSKindId.BlockComment>>;
+export type _Type_MacroRules = _TypeAssert<_TypeExtends<MacroRules['$type'], TSKindId.MacroRules>>;
 export type _Type_AttributeGroup1 = _TypeAssert<_TypeExtends<AttributeGroup1['$type'], TSKindId.AttributeGroup1>>;
 export type _Type_EnumVariantListElements = _TypeAssert<
 	_TypeExtends<EnumVariantListElements['$type'], TSKindId.EnumVariantListElements>
@@ -1025,6 +1028,7 @@ export type _Tree_RawStringLiteral = _TypeAssert<_TypeExtends<RawStringLiteralTr
 export type _Tree_Comment = _TypeAssert<_TypeExtends<CommentTree['type'], 'comment'>>;
 export type _Tree_LineComment = _TypeAssert<_TypeExtends<LineCommentTree['type'], 'line_comment'>>;
 export type _Tree_BlockComment = _TypeAssert<_TypeExtends<BlockCommentTree['type'], 'block_comment'>>;
+export type _Tree_MacroRules = _TypeAssert<_TypeExtends<MacroRulesTree['type'], '_macro_rules'>>;
 export type _Tree_AttributeGroup1 = _TypeAssert<_TypeExtends<AttributeGroup1Tree['type'], '_attribute_group1'>>;
 export type _Tree_EnumVariantListElements = _TypeAssert<
 	_TypeExtends<EnumVariantListElementsTree['type'], '_enum_variant_list_elements'>

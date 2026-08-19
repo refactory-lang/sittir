@@ -428,6 +428,12 @@ pub struct TupleTypeMembersTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_type_parameters_elements.jinja", escape = "none")]
+pub struct TypeParametersElementsTemplate<'a> {
+    pub type_parameter: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_type_query_call_expression_in_type_annotation.jinja", escape = "none")]
 pub struct TypeQueryCallExpressionInTypeAnnotationTemplate<'a> {
     pub arguments: SingleNonterminalView<'a>,
@@ -468,6 +474,12 @@ pub struct TypeQueryMemberExpressionTemplate<'a> {
 pub struct TypeQuerySubscriptExpressionTemplate<'a> {
     pub index: SingleNonterminalView<'a>,
     pub object: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_types.jinja", escape = "none")]
+pub struct TypesTemplate<'a> {
+    pub type_: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1576,7 +1588,7 @@ pub struct TypeAnnotationTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "type_arguments.jinja", escape = "none")]
 pub struct TypeArgumentsTemplate<'a> {
-    pub type_: ListNonterminalView<'a>,
+    pub types: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1598,7 +1610,7 @@ pub struct TypeParameterTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "type_parameters.jinja", escape = "none")]
 pub struct TypeParametersTemplate<'a> {
-    pub type_parameter: ListNonterminalView<'a>,
+    pub type_parameters_elements: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

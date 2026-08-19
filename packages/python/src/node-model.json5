@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 259,
+  "nodeCount": 264,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -92,6 +92,9 @@
     "module.statements": {
       "statement_group1": "_simple_statements"
     },
+    "_simple_statements.simple_statements_elements": {
+      "simple_statements_elements": "_simple_statements_elements"
+    },
     "_simple_statements.newline": {
       "newline": "_newline"
     },
@@ -119,12 +122,18 @@
       "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
+    "match_statement.subjects": {
+      "subjects": "_subjects"
+    },
     "match_statement.body": {
       "block": "_match_block"
     },
     "_match_block.content": {
       "match_block_block": "_match_block_block",
       "newline": "_newline"
+    },
+    "case_clause.case_patterns": {
+      "case_patterns": "_case_patterns"
     },
     "case_clause.consequence": {
       "simple_statements": "_simple_statements",
@@ -183,6 +192,9 @@
       "simple_statements": "_simple_statements",
       "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
+    },
+    "type_parameter.types": {
+      "types": "_types"
     },
     "parenthesized_list_splat.content": {
       "parenthesized_expression": "parenthesized_list_splat"
@@ -249,6 +261,9 @@
     "yield.content": {
       "yield_from_clause": "_yield_from_clause"
     },
+    "subscript.subscripts": {
+      "subscripts": "_subscripts"
+    },
     "slice.step": {
       "slice_group1": "_slice_group1"
     },
@@ -276,6 +291,9 @@
     },
     "_dict_pattern_elements.content": {
       "dict_pattern_group1": "_key_value_pattern"
+    },
+    "_with_clause_paren.with_items": {
+      "with_items": "_with_items"
     }
   },
   "factorySlots": {
@@ -289,12 +307,12 @@
       }
     },
     "_simple_statements": {
-      "simple_statement": {
+      "simple_statements_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       },
       "newline": {
         "unnamed": false,
@@ -535,12 +553,12 @@
       }
     },
     "match_statement": {
-      "subject": {
+      "subjects": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       },
       "body": {
         "unnamed": false,
@@ -560,12 +578,12 @@
       }
     },
     "case_clause": {
-      "case_pattern": {
+      "case_patterns": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       },
       "guard": {
         "unnamed": false,
@@ -913,12 +931,12 @@
       }
     },
     "type_parameter": {
-      "type": {
+      "types": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "parenthesized_list_splat": {
@@ -1442,12 +1460,12 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "subscript": {
+      "subscripts": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "slice": {
@@ -1881,6 +1899,33 @@
         "nonEmpty": false
       }
     },
+    "_simple_statements_elements": {
+      "simple_statement": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_subjects": {
+      "subject": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_case_patterns": {
+      "case_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
     "_except_clause_group1": {
       "content": {
         "unnamed": false,
@@ -1888,6 +1933,24 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
+      }
+    },
+    "_with_items": {
+      "with_item": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_types": {
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
       }
     },
     "_argument_list_elements": {
@@ -1901,15 +1964,6 @@
     },
     "_expression_list_expressions": {
       "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "_case_patterns": {
-      "case_pattern": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1935,6 +1989,15 @@
     },
     "_pattern_list_patterns": {
       "pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_subscripts": {
+      "subscript": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2097,12 +2160,12 @@
       }
     },
     "_with_clause_paren": {
-      "with_item": {
+      "with_items": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "_match_block_block": {
@@ -3637,33 +3700,32 @@
     },
     {
       "kind": "_simple_statements",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "SimpleStatements",
-      "factoryName": "_simpleStatements",
+      "factoryName": "simpleStatements",
       "irKey": "simpleStatements",
       "hidden": false,
-      "name": "_simple_statements",
       "fields": [
         {
-          "name": "simple_statement",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
+          "name": "simple_statements_elements",
+          "propertyName": "simpleStatementsElements",
+          "paramName": "simpleStatementsElements",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_simple_statement",
-              "parseKind": "_simple_statement",
+              "multiplicity": "single",
+              "name": "_simple_statements_elements",
+              "parseKind": "simple_statements_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_simple_statement"
+              "_simple_statements_elements"
             ]
           }
         },
@@ -3687,6 +3749,45 @@
             "typeName": "",
             "kinds": [
               "_newline"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "simple_statements_elements"
+      ]
+    },
+    {
+      "kind": "_simple_statements_elements",
+      "modelType": "group",
+      "typeName": "SimpleStatementsElements",
+      "factoryName": "_simpleStatementsElements",
+      "irKey": "simpleStatementsElements",
+      "hidden": false,
+      "name": "_simple_statements_elements",
+      "fields": [
+        {
+          "name": "simple_statement",
+          "propertyName": "simpleStatements",
+          "paramName": "simpleStatements",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "_simple_statement",
+              "parseKind": "_simple_statement",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_simple_statement"
             ]
           }
         }
@@ -3763,6 +3864,92 @@
       "irKey": "_stringContent",
       "hidden": false,
       "factoryShape": "text"
+    },
+    {
+      "kind": "_subjects",
+      "modelType": "group",
+      "typeName": "Subjects",
+      "factoryName": "_subjects",
+      "irKey": "subjects",
+      "hidden": false,
+      "name": "_subjects",
+      "fields": [
+        {
+          "name": "subject",
+          "propertyName": "subjects",
+          "paramName": "subjects",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "subject"
+      ]
+    },
+    {
+      "kind": "_subscripts",
+      "modelType": "group",
+      "typeName": "Subscripts",
+      "factoryName": "_subscripts",
+      "irKey": "subscripts",
+      "hidden": false,
+      "name": "_subscripts",
+      "fields": [
+        {
+          "name": "subscript",
+          "propertyName": "subscripts",
+          "paramName": "subscripts",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "slice",
+              "parseKind": "slice",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression",
+              "slice"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "subscript"
+      ]
     },
     {
       "kind": "_suite",
@@ -3853,6 +4040,45 @@
       ]
     },
     {
+      "kind": "_types",
+      "modelType": "group",
+      "typeName": "Types",
+      "factoryName": "_types",
+      "irKey": "types",
+      "hidden": false,
+      "name": "_types",
+      "fields": [
+        {
+          "name": "type",
+          "propertyName": "types",
+          "paramName": "types",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "type",
+              "parseKind": "type",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "type"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "type"
+      ]
+    },
+    {
       "kind": "_unary_operator_operator",
       "modelType": "enum",
       "typeName": "UnaryOperatorOperator",
@@ -3918,12 +4144,50 @@
     },
     {
       "kind": "_with_clause_paren",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "WithClauseParen",
-      "factoryName": "_withClauseParen",
+      "factoryName": "withClauseParen",
       "irKey": "withClauseParen",
       "hidden": false,
-      "name": "_with_clause_paren",
+      "fields": [
+        {
+          "name": "with_items",
+          "propertyName": "withItems",
+          "paramName": "withItems",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_with_items",
+              "parseKind": "with_items",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_with_items"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "with_items"
+      ]
+    },
+    {
+      "kind": "_with_items",
+      "modelType": "group",
+      "typeName": "WithItems",
+      "factoryName": "_withItems",
+      "irKey": "withItems",
+      "hidden": false,
+      "name": "_with_items",
       "fields": [
         {
           "name": "with_item",
@@ -5042,25 +5306,25 @@
       "hidden": false,
       "fields": [
         {
-          "name": "case_pattern",
+          "name": "case_patterns",
           "propertyName": "casePatterns",
           "paramName": "casePatterns",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "case_pattern",
-              "parseKind": "case_pattern",
+              "multiplicity": "single",
+              "name": "_case_patterns",
+              "parseKind": "case_patterns",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "case_pattern"
+              "_case_patterns"
             ]
           }
         },
@@ -5130,7 +5394,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "case_pattern",
+        "case_patterns",
         "guard",
         "consequence"
       ]
@@ -9003,25 +9267,25 @@
       "hidden": false,
       "fields": [
         {
-          "name": "subject",
+          "name": "subjects",
           "propertyName": "subjects",
           "paramName": "subjects",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "expression",
-              "parseKind": "expression",
+              "multiplicity": "single",
+              "name": "_subjects",
+              "parseKind": "subjects",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "expression"
+              "_subjects"
             ]
           }
         },
@@ -9052,7 +9316,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "subject",
+        "subjects",
         "body"
       ]
     },
@@ -10663,33 +10927,25 @@
           }
         },
         {
-          "name": "subscript",
+          "name": "subscripts",
           "propertyName": "subscripts",
           "paramName": "subscripts",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "expression",
-              "parseKind": "expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "slice",
-              "parseKind": "slice",
+              "multiplicity": "single",
+              "name": "_subscripts",
+              "parseKind": "subscripts",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "expression",
-              "slice"
+              "_subscripts"
             ]
           }
         }
@@ -10698,7 +10954,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "value",
-        "subscript"
+        "subscripts"
       ]
     },
     {
@@ -11105,33 +11361,33 @@
       "hidden": false,
       "fields": [
         {
-          "name": "type",
+          "name": "types",
           "propertyName": "types",
           "paramName": "types",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "type",
-              "parseKind": "type",
+              "multiplicity": "single",
+              "name": "_types",
+              "parseKind": "types",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "type"
+              "_types"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "type"
+        "types"
       ]
     },
     {

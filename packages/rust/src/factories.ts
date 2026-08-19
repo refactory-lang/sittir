@@ -1230,24 +1230,19 @@ export function buildRemovedTraitBound(type: T.RemovedTraitBound.Config['type'])
 	);
 }
 
-export function buildTypeParameters(config: T.TypeParameters.Config, options: { trailing?: boolean } = {}) {
-	const _element = config.element ?? [];
+export function buildTypeParameters(child: T.TypeParametersElements) {
+	const _type_parameters_elements = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.TypeParameters as const,
 				$source: 2 as const,
 				$named: true as const,
-				_element,
-				_element_trailing_sep: options.trailing ?? false,
-				$with: {
-					elements: (...values: NonEmptyArray<T.AttributedTypeParameter>) =>
-						buildTypeParameters({ ...config, element: values }, options),
-					trailing: (v: boolean) => buildTypeParameters(config, { ...options, trailing: v })
-				}
+				_type_parameters_elements,
+				$with: { $child: (v: T.TypeParametersElements) => buildTypeParameters(v) }
 			},
 			{
-				elements: () => _element
+				typeParametersElements: () => _type_parameters_elements
 			}
 		),
 		methodsEngine
@@ -1731,24 +1726,19 @@ export function buildArrayType(config: T.ArrayType.Config) {
 	);
 }
 
-export function buildForLifetimes(config: T.ForLifetimes.Config, options: { trailing?: boolean } = {}) {
-	const _lifetime = config.lifetime ?? [];
+export function buildForLifetimes(child: T.Lifetimes) {
+	const _lifetimes = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ForLifetimes as const,
 				$source: 2 as const,
 				$named: true as const,
-				_lifetime,
-				_lifetime_trailing_sep: options.trailing ?? false,
-				$with: {
-					lifetimes: (...values: NonEmptyArray<T.Lifetime>) =>
-						buildForLifetimes({ ...config, lifetime: values }, options),
-					trailing: (v: boolean) => buildForLifetimes(config, { ...options, trailing: v })
-				}
+				_lifetimes,
+				$with: { $child: (v: T.Lifetimes) => buildForLifetimes(v) }
 			},
 			{
-				lifetimes: () => _lifetime
+				lifetimes: () => _lifetimes
 			}
 		),
 		methodsEngine
@@ -1956,24 +1946,19 @@ export function buildUseBounds(bounds?: T.UseBounds.Config['bounds']) {
 	);
 }
 
-export function buildTypeArguments(config: T.TypeArguments.Config, options: { trailing?: boolean } = {}) {
-	const _element = config.element ?? [];
+export function buildTypeArguments(child: T.TypeArgumentsElements) {
+	const _type_arguments_elements = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.TypeArguments as const,
 				$source: 2 as const,
 				$named: true as const,
-				_element,
-				_element_trailing_sep: options.trailing ?? false,
-				$with: {
-					elements: (...values: NonEmptyArray<T.TypeArgument>) =>
-						buildTypeArguments({ ...config, element: values }, options),
-					trailing: (v: boolean) => buildTypeArguments(config, { ...options, trailing: v })
-				}
+				_type_arguments_elements,
+				$with: { $child: (v: T.TypeArgumentsElements) => buildTypeArguments(v) }
 			},
 			{
-				elements: () => _element
+				typeArgumentsElements: () => _type_arguments_elements
 			}
 		),
 		methodsEngine
@@ -3575,7 +3560,7 @@ export function buildStructPattern(config: T.StructPattern.Config) {
 	);
 }
 
-export function buildFieldPattern(child: 'ref' | T.MutableSpecifier | T.Identifier | T.FieldPatternNamed) {
+export function buildFieldPattern(child: T.Identifier | T.FieldPatternNamed) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -3584,7 +3569,7 @@ export function buildFieldPattern(child: 'ref' | T.MutableSpecifier | T.Identifi
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: 'ref' | T.MutableSpecifier | T.Identifier | T.FieldPatternNamed) => buildFieldPattern(v) }
+				$with: { $child: (v: T.Identifier | T.FieldPatternNamed) => buildFieldPattern(v) }
 			},
 			{
 				content: () => _content
@@ -4006,6 +3991,31 @@ export function buildMetavariable(text: string) {
 	);
 }
 
+export function buildMacroRules(elements: NonEmptyArray<T.MacroRule>, options: { trailing?: boolean } = {}) {
+	_assertNonEmpty(elements, '_macro_rules.elements');
+	const _macro_rule = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.MacroRules as const,
+				$source: 2 as const,
+				$named: true as const,
+				_macro_rule,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.MacroRule>) => buildMacroRules(vs, options),
+					trailing: (v: boolean) => buildMacroRules(elements, { ...options, trailing: v })
+				}
+			},
+			{
+				macroRules: () => _macro_rule
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildAttributeGroup1(config: Partial<T.AttributeGroup1.Config> = {}) {
 	const _value = config.value;
 	const _arguments = config.arguments;
@@ -4141,6 +4151,33 @@ export function buildWherePredicates(config: T.WherePredicates.Config, options: 
 	);
 }
 
+export function buildTypeParametersElements(
+	config: T.TypeParametersElements.Config,
+	options: { trailing?: boolean } = {}
+) {
+	const _element = config.element ?? [];
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.TypeParametersElements as const,
+				$source: 2 as const,
+				$named: true as const,
+				_element,
+				_element_trailing_sep: options.trailing ?? false,
+				$with: {
+					elements: (...values: NonEmptyArray<T.AttributedTypeParameter>) =>
+						buildTypeParametersElements({ ...config, element: values }, options),
+					trailing: (v: boolean) => buildTypeParametersElements(config, { ...options, trailing: v })
+				}
+			},
+			{
+				elements: () => _element
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildUseClauses(elements: NonEmptyArray<T.UseClause>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, '_use_clauses.elements');
 	const _use_clause = elements;
@@ -4215,6 +4252,29 @@ export function buildVisibilityModifierGroup1(child: T.Self | T.Super | T.Crate 
 	);
 }
 
+export function buildLifetimes(config: T.Lifetimes.Config, options: { trailing?: boolean } = {}) {
+	const _lifetime = config.lifetime ?? [];
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.Lifetimes as const,
+				$source: 2 as const,
+				$named: true as const,
+				_lifetime,
+				_lifetime_trailing_sep: options.trailing ?? false,
+				$with: {
+					lifetimes: (...values: NonEmptyArray<T.Lifetime>) => buildLifetimes({ ...config, lifetime: values }, options),
+					trailing: (v: boolean) => buildLifetimes(config, { ...options, trailing: v })
+				}
+			},
+			{
+				lifetimes: () => _lifetime
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildUseBoundsElements(
 	elements: NonEmptyArray<T.Lifetime | T.TypeIdentifier>,
 	options: { trailing?: boolean } = {}
@@ -4233,6 +4293,33 @@ export function buildUseBoundsElements(
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Lifetime | T.TypeIdentifier>) => buildUseBoundsElements(vs, options),
 					trailing: (v: boolean) => buildUseBoundsElements(elements, { ...options, trailing: v })
+				}
+			},
+			{
+				elements: () => _element
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildTypeArgumentsElements(
+	config: T.TypeArgumentsElements.Config,
+	options: { trailing?: boolean } = {}
+) {
+	const _element = config.element ?? [];
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.TypeArgumentsElements as const,
+				$source: 2 as const,
+				$named: true as const,
+				_element,
+				_element_trailing_sep: options.trailing ?? false,
+				$with: {
+					elements: (...values: NonEmptyArray<T.TypeArgument>) =>
+						buildTypeArgumentsElements({ ...config, element: values }, options),
+					trailing: (v: boolean) => buildTypeArgumentsElements(config, { ...options, trailing: v })
 				}
 			},
 			{
@@ -4863,60 +4950,57 @@ export function buildFunctionTypeFnForm(child?: T.FunctionModifiers) {
 	);
 }
 
-export function buildMacroDefinitionParen(...children: T.MacroRule[]) {
-	const _macro_rule = children;
+export function buildMacroDefinitionParen(child?: T.MacroRules) {
+	const _macro_rules = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.MacroDefinitionParen as const,
 				$source: 2 as const,
 				$named: true as const,
-				_macro_rule,
-				_macro_rule_trailing_sep: false,
-				$with: { $children: (...vs: T.MacroRule[]) => buildMacroDefinitionParen(...vs) }
+				_macro_rules,
+				$with: { $child: (v: T.MacroRules) => buildMacroDefinitionParen(v) }
 			},
 			{
-				macroRules: () => _macro_rule
+				macroRules: () => _macro_rules
 			}
 		),
 		methodsEngine
 	);
 }
 
-export function buildMacroDefinitionBracket(...children: T.MacroRule[]) {
-	const _macro_rule = children;
+export function buildMacroDefinitionBracket(child?: T.MacroRules) {
+	const _macro_rules = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.MacroDefinitionBracket as const,
 				$source: 2 as const,
 				$named: true as const,
-				_macro_rule,
-				_macro_rule_trailing_sep: false,
-				$with: { $children: (...vs: T.MacroRule[]) => buildMacroDefinitionBracket(...vs) }
+				_macro_rules,
+				$with: { $child: (v: T.MacroRules) => buildMacroDefinitionBracket(v) }
 			},
 			{
-				macroRules: () => _macro_rule
+				macroRules: () => _macro_rules
 			}
 		),
 		methodsEngine
 	);
 }
 
-export function buildMacroDefinitionBrace(...children: T.MacroRule[]) {
-	const _macro_rule = children;
+export function buildMacroDefinitionBrace(child?: T.MacroRules) {
+	const _macro_rules = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.MacroDefinitionBrace as const,
 				$source: 2 as const,
 				$named: true as const,
-				_macro_rule,
-				_macro_rule_trailing_sep: false,
-				$with: { $children: (...vs: T.MacroRule[]) => buildMacroDefinitionBrace(...vs) }
+				_macro_rules,
+				$with: { $child: (v: T.MacroRules) => buildMacroDefinitionBrace(v) }
 			},
 			{
-				macroRules: () => _macro_rule
+				macroRules: () => _macro_rules
 			}
 		),
 		methodsEngine
@@ -5943,6 +6027,7 @@ export type FluentKindMap = {
 	super: T.Super;
 	crate: T.Crate;
 	metavariable: T.Metavariable;
+	_macro_rules: FluentNode<'_macro_rules', T.MacroRules.Config>;
 	_attribute_group1: FluentNode<'_attribute_group1', T.AttributeGroup1.Config>;
 	_enum_variant_list_elements: FluentNode<'_enum_variant_list_elements', T.EnumVariantListElements.Config>;
 	_field_declaration_list_elements: FluentNode<
@@ -5954,10 +6039,13 @@ export type FluentKindMap = {
 		T.OrderedFieldDeclarationListElements.Config
 	>;
 	_where_predicates: T.WherePredicates;
+	_type_parameters_elements: T.TypeParametersElements;
 	_use_clauses: FluentNode<'_use_clauses', T.UseClauses.Config>;
 	_parameters_elements: FluentNode<'_parameters_elements', T.ParametersElements.Config>;
 	_visibility_modifier_group1: FluentNode<'_visibility_modifier_group1', T.VisibilityModifierGroup1.Config>;
+	_lifetimes: T.Lifetimes;
 	_use_bounds_elements: FluentNode<'_use_bounds_elements', T.UseBoundsElements.Config>;
+	_type_arguments_elements: T.TypeArgumentsElements;
 	_arguments_elements: FluentNode<'_arguments_elements', T.ArgumentsElements.Config>;
 	_array_expression_group1: T.ArrayExpressionGroup1;
 	_field_initializer_list_elements: FluentNode<
@@ -6185,15 +6273,19 @@ export const _factoryMap = {
 	super: buildSuper,
 	crate: buildCrate,
 	metavariable: buildMetavariable,
+	_macro_rules: buildMacroRules,
 	_attribute_group1: buildAttributeGroup1,
 	_enum_variant_list_elements: buildEnumVariantListElements,
 	_field_declaration_list_elements: buildFieldDeclarationListElements,
 	_ordered_field_declaration_list_elements: buildOrderedFieldDeclarationListElements,
 	_where_predicates: buildWherePredicates,
+	_type_parameters_elements: buildTypeParametersElements,
 	_use_clauses: buildUseClauses,
 	_parameters_elements: buildParametersElements,
 	_visibility_modifier_group1: buildVisibilityModifierGroup1,
+	_lifetimes: buildLifetimes,
 	_use_bounds_elements: buildUseBoundsElements,
+	_type_arguments_elements: buildTypeArgumentsElements,
 	_arguments_elements: buildArgumentsElements,
 	_array_expression_group1: buildArrayExpressionGroup1,
 	_field_initializer_list_elements: buildFieldInitializerListElements,

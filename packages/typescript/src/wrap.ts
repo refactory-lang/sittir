@@ -9558,60 +9558,18 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.TypeArguments as const,
-			_type: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._type, [
-					'type',
-					'primary_type',
-					'parenthesized_type',
-					'predefined_type',
-					'_type_identifier',
-					'nested_type_identifier',
-					'generic_type',
-					'object_type',
-					'array_type',
-					'tuple_type',
-					'flow_maybe_type',
-					'type_query',
-					'index_type_query',
-					'this',
-					'existential_type',
-					'literal_type',
-					'lookup_type',
-					'conditional_type',
-					'template_literal_type',
-					'intersection_type',
-					'union_type',
-					'function_type',
-					'readonly_type',
-					'constructor_type',
-					'infer_type',
-					'_type_query_member_expression_in_type_annotation',
-					'_type_query_call_expression_in_type_annotation'
-				]),
-				true,
-				'type',
-				{ tree, nodeType: data.$type, slotName: 'type', span: (data as _NodeData).$span }
-			),
-			_type_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._type) ? data._type : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			),
+			_types: normalizeSingularWrapSlot(data._types, 'types', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'types',
+				span: (data as _NodeData).$span
+			}),
 
 			types() {
-				return drillAsAll<T.Type>(this._type, tree, [
-					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
-					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
-				]);
+				return drillAs<T.Types>(this._types, tree, [{ from: 'types', to: '_types' }]);
 			},
 			$with: {
-				types: (...v: NonEmptyArray<NonNullable<T.TypeArguments['_type']>[number]>) =>
-					wrapTypeArguments({ ...data, _type: v }, tree)
+				types: (v: NonNullable<T.TypeArguments['_types']>) => wrapTypeArguments({ ...data, _types: v }, tree)
 			}
 		},
 		methodsEngine
@@ -9828,29 +9786,22 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.TypeParameters as const,
-			_type_parameter: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._type_parameter, ['type_parameter']),
+			_type_parameters_elements: normalizeSingularWrapSlot(
+				data._type_parameters_elements,
+				'type_parameters_elements',
 				true,
-				'type_parameter',
-				{ tree, nodeType: data.$type, slotName: 'type_parameter', span: (data as _NodeData).$span }
-			),
-			_type_parameter_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._type_parameter) ? data._type_parameter : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'type_parameters_elements', span: (data as _NodeData).$span }
 			),
 
-			typeParameters() {
-				return drillInAll<T.TypeParameter>(this._type_parameter as readonly T.TypeParameter[] | undefined, tree);
+			typeParametersElements() {
+				return drillAs<T.TypeParametersElements>(this._type_parameters_elements, tree, [
+					{ from: 'type_parameters_elements', to: '_type_parameters_elements' }
+				]);
 			},
 			$with: {
-				typeParameters: (...v: NonEmptyArray<NonNullable<T.TypeParameters['_type_parameter']>[number]>) =>
-					wrapTypeParameters({ ...data, _type_parameter: v }, tree)
+				typeParametersElements: (v: NonNullable<T.TypeParameters['_type_parameters_elements']>) =>
+					wrapTypeParameters({ ...data, _type_parameters_elements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -10744,6 +10695,106 @@ export function wrapEnumBodyElements(
 			$with: {
 				contents: (...v: NonNullable<T.EnumBodyElements['_content']>[number][]) =>
 					wrapEnumBodyElements({ ...data, _content: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
+export function wrapTypes(data: T.Types, tree: TreeHandle) {
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.Types as const,
+			_type: normalizeRepeatedWrapSlot(
+				_filterWrapChildrenByKind(data._type, [
+					'type',
+					'primary_type',
+					'parenthesized_type',
+					'predefined_type',
+					'_type_identifier',
+					'nested_type_identifier',
+					'generic_type',
+					'object_type',
+					'array_type',
+					'tuple_type',
+					'flow_maybe_type',
+					'type_query',
+					'index_type_query',
+					'this',
+					'existential_type',
+					'literal_type',
+					'lookup_type',
+					'conditional_type',
+					'template_literal_type',
+					'intersection_type',
+					'union_type',
+					'function_type',
+					'readonly_type',
+					'constructor_type',
+					'infer_type',
+					'_type_query_member_expression_in_type_annotation',
+					'_type_query_call_expression_in_type_annotation'
+				]),
+				true,
+				'type',
+				{ tree, nodeType: data.$type, slotName: 'type', span: (data as _NodeData).$span }
+			),
+			_type_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._type) ? data._type : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
+
+			types() {
+				return drillAsAll<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
+			},
+			$with: {
+				types: (...v: NonEmptyArray<NonNullable<T.Types['_type']>[number]>) => wrapTypes({ ...data, _type: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
+export function wrapTypeParametersElements(data: T.TypeParametersElements, tree: TreeHandle) {
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.TypeParametersElements as const,
+			_type_parameter: normalizeRepeatedWrapSlot(
+				_filterWrapChildrenByKind(data._type_parameter, ['type_parameter']),
+				true,
+				'type_parameter',
+				{ tree, nodeType: data.$type, slotName: 'type_parameter', span: (data as _NodeData).$span }
+			),
+			_type_parameter_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._type_parameter) ? data._type_parameter : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
+
+			typeParameters() {
+				return drillInAll<T.TypeParameter>(this._type_parameter as readonly T.TypeParameter[] | undefined, tree);
+			},
+			$with: {
+				typeParameters: (...v: NonEmptyArray<NonNullable<T.TypeParametersElements['_type_parameter']>[number]>) =>
+					wrapTypeParametersElements({ ...data, _type_parameter: v }, tree)
 			}
 		},
 		methodsEngine
@@ -12899,6 +12950,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_meta_property_group2: (d) => ({ ...d, $type: TSKindId.MetaPropertyGroup2 as const }),
 	_formal_parameters_elements: (d, t) => wrapFormalParametersElements(d as unknown as T.FormalParametersElements, t),
 	_enum_body_elements: (d, t) => wrapEnumBodyElements(d as unknown as T.EnumBodyElements, t),
+	_types: (d, t) => wrapTypes(d as unknown as T.Types, t),
+	_type_parameters_elements: (d, t) => wrapTypeParametersElements(d as unknown as T.TypeParametersElements, t),
 	_tuple_type_members: (d, t) => wrapTupleTypeMembers(d as unknown as T.TupleTypeMembers, t),
 	_kind: (d) => ({ ...d, $type: TSKindId.Kind as const }),
 	__for_header_operator: (d) => ({ ...d, $type: TSKindId.ForHeaderOperator as const }),
@@ -13061,12 +13114,14 @@ const _aliasTargetToSource: Record<string, string> = {
 	this_type: 'this',
 	tuple_type_member: '_tuple_type_member',
 	tuple_type_members: '_tuple_type_members',
+	type_parameters_elements: '_type_parameters_elements',
 	type_query_call_expression: '_type_query_call_expression',
 	type_query_call_expression_in_type_annotation: '_type_query_call_expression_in_type_annotation',
 	type_query_instantiation_expression: '_type_query_instantiation_expression',
 	type_query_member_expression: '_type_query_member_expression',
 	type_query_member_expression_in_type_annotation: '_type_query_member_expression_in_type_annotation',
 	type_query_subscript_expression: '_type_query_subscript_expression',
+	types: '_types',
 	unary_expression_operator: '_unary_expression_operator',
 	update_expression_postfix: '_update_expression_postfix',
 	update_expression_prefix: '_update_expression_prefix',

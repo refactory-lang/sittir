@@ -27,6 +27,7 @@ import type {
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
 	module<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Module };
+	SimpleStatements<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimpleStatements };
 	importStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportStatement };
 	relativeImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RelativeImport };
 	futureImportStatement<T extends { readonly $type: number }>(
@@ -197,6 +198,7 @@ export interface IsGuards {
 	printStatementGroup2<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.PrintStatementGroup2 };
+	WithClauseParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WithClauseParen };
 	SuiteBlockWithIndent<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.SuiteBlockWithIndent };
@@ -227,6 +229,7 @@ export interface IsGuards {
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
 	module(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Module };
+	SimpleStatements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SimpleStatements };
 	importStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportStatement };
 	relativeImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RelativeImport };
 	futureImportStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FutureImportStatement };
@@ -353,6 +356,7 @@ export interface AssertGuards {
 	comprehensionClauses(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ComprehensionClauses };
 	printStatementGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PrintStatementGroup1 };
 	printStatementGroup2(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PrintStatementGroup2 };
+	WithClauseParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseParen };
 	SuiteBlockWithIndent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SuiteBlockWithIndent };
 	SimplePatternNegative(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SimplePatternNegative };
 	ExceptClauseList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseList };
@@ -392,14 +396,14 @@ const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
 const _supertype_expressions_ids = new Set<number>([161]);
 const _supertype_compoundStatement_ids = new Set<number>([131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_simplePattern_ids = new Set<number>([
-	170, 169, 165, 248, 247, 166, 227, 226, 75, 76, 77, 263, 171, 162, 253
+	170, 169, 165, 253, 252, 166, 227, 226, 74, 75, 76, 268, 171, 162, 258
 ]);
 const _supertype_parameter_ids = new Set<number>([1, 204, 178, 179, 180, 176, 181]);
 const _supertype_pattern_ids = new Set<number>([1, 201, 200, 180, 176, 177]);
 const _supertype_expressionWithinForInClause_ids = new Set<number>([194]);
 const _supertype_expression_ids = new Set<number>([192, 186, 187, 193, 225, 123, 182]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	233, 188, 1, 227, 226, 70, 71, 75, 76, 77, 189, 200, 201, 203, 212, 217, 215, 218, 213, 219, 214, 221, 220, 180
+	233, 188, 1, 227, 226, 69, 70, 74, 75, 76, 189, 200, 201, 203, 212, 217, 215, 218, 213, 219, 214, 221, 220, 180
 ]);
 const _supertype_leftHandSide_ids = new Set<number>([197]);
 const _supertype_rightHandSide_ids = new Set<number>([161, 195, 196, 197, 199]);
@@ -577,12 +581,17 @@ const _kindIdByKind = new Map<string, number>([
 	['format_specifier', TSKindId.FormatSpecifier],
 	['await', TSKindId.Await],
 	['_kw_async_marker', TSKindId.KwAsyncMarker],
+	['_simple_statements_elements', TSKindId.SimpleStatementsElements],
+	['_subjects', TSKindId.Subjects],
+	['_case_patterns', TSKindId.CasePatterns],
 	['_except_clause_group1', TSKindId.ExceptClauseGroup1],
+	['_with_items', TSKindId.WithItems],
+	['_types', TSKindId.Types],
 	['_argument_list_elements', TSKindId.ArgumentListElements],
 	['_expression_list_expressions', TSKindId.ExpressionListExpressions],
-	['_case_patterns', TSKindId.CasePatterns],
 	['_dict_pattern_elements', TSKindId.DictPatternElements],
 	['_pattern_list_patterns', TSKindId.PatternListPatterns],
+	['_subscripts', TSKindId.Subscripts],
 	['_slice_group1', TSKindId.SliceGroup1],
 	['_dictionary_elements', TSKindId.DictionaryElements],
 	['_augmented_assignment_operator', TSKindId.AugmentedAssignmentOperator],
@@ -610,6 +619,7 @@ const _kindIdByKind = new Map<string, number>([
 
 export const is = {
 	module: _g(TSKindId.Module),
+	SimpleStatements: _g(TSKindId.SimpleStatements),
 	importStatement: _g(TSKindId.ImportStatement),
 	relativeImport: _g(TSKindId.RelativeImport),
 	futureImportStatement: _g(TSKindId.FutureImportStatement),
@@ -724,6 +734,7 @@ export const is = {
 	comprehensionClauses: _g(TSKindId.ComprehensionClauses),
 	printStatementGroup1: _g(TSKindId.PrintStatementGroup1),
 	printStatementGroup2: _g(TSKindId.PrintStatementGroup2),
+	WithClauseParen: _g(TSKindId.WithClauseParen),
 	SuiteBlockWithIndent: _g(TSKindId.SuiteBlockWithIndent),
 	SimplePatternNegative: _g(TSKindId.SimplePatternNegative),
 	ExceptClauseList: _g(TSKindId.ExceptClauseList),
@@ -774,6 +785,7 @@ function _makeAssertKind(guard: _AnyGuard) {
 
 export const assert = {
 	module: _makeAssert('module', is.module as _AnyGuard),
+	SimpleStatements: _makeAssert('SimpleStatements', is.SimpleStatements as _AnyGuard),
 	importStatement: _makeAssert('importStatement', is.importStatement as _AnyGuard),
 	relativeImport: _makeAssert('relativeImport', is.relativeImport as _AnyGuard),
 	futureImportStatement: _makeAssert('futureImportStatement', is.futureImportStatement as _AnyGuard),
@@ -888,6 +900,7 @@ export const assert = {
 	comprehensionClauses: _makeAssert('comprehensionClauses', is.comprehensionClauses as _AnyGuard),
 	printStatementGroup1: _makeAssert('printStatementGroup1', is.printStatementGroup1 as _AnyGuard),
 	printStatementGroup2: _makeAssert('printStatementGroup2', is.printStatementGroup2 as _AnyGuard),
+	WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen as _AnyGuard),
 	SuiteBlockWithIndent: _makeAssert('SuiteBlockWithIndent', is.SuiteBlockWithIndent as _AnyGuard),
 	SimplePatternNegative: _makeAssert('SimplePatternNegative', is.SimplePatternNegative as _AnyGuard),
 	ExceptClauseList: _makeAssert('ExceptClauseList', is.ExceptClauseList as _AnyGuard),

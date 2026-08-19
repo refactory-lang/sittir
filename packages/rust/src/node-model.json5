@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 363,
+  "nodeCount": 367,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -310,8 +310,8 @@
     "removed_trait_bound.type": {
       "primitive_type": "_primitive_type"
     },
-    "type_parameters.element": {
-      "attributed_type_parameter": "_attributed_type_parameter"
+    "type_parameters.type_parameters_elements": {
+      "type_parameters_elements": "_type_parameters_elements"
     },
     "const_parameter.type": {
       "primitive_type": "_primitive_type"
@@ -358,6 +358,9 @@
     "array_type.element": {
       "primitive_type": "_primitive_type"
     },
+    "for_lifetimes.lifetimes": {
+      "lifetimes": "_lifetimes"
+    },
     "function_type.function_type_trait_form": {
       "function_type_trait_form": "_function_type_trait_form"
     },
@@ -385,8 +388,8 @@
     "use_bounds.bounds": {
       "use_bounds_elements": "_use_bounds_elements"
     },
-    "type_arguments.element": {
-      "type_argument": "_type_argument"
+    "type_arguments.type_arguments_elements": {
+      "type_arguments_elements": "_type_arguments_elements"
     },
     "type_binding.name": {
       "type_identifier": "identifier"
@@ -564,6 +567,9 @@
     "_function_item_optional1.return_type": {
       "primitive_type": "_primitive_type"
     },
+    "_type_parameters_elements.element": {
+      "attributed_type_parameter": "_attributed_type_parameter"
+    },
     "_type_parameter_optional1.default_type": {
       "primitive_type": "_primitive_type"
     },
@@ -581,6 +587,9 @@
     },
     "_use_bounds_elements.element": {
       "type_identifier": "identifier"
+    },
+    "_type_arguments_elements.element": {
+      "type_argument": "_type_argument"
     },
     "_arguments_elements.element": {
       "attributed_argument": "_attributed_argument"
@@ -630,6 +639,15 @@
     },
     "_function_type_trait_form.trait": {
       "type_identifier": "identifier"
+    },
+    "_macro_definition_paren.macro_rules": {
+      "macro_rules": "_macro_rules"
+    },
+    "_macro_definition_bracket.macro_rules": {
+      "macro_rules": "_macro_rules"
+    },
+    "_macro_definition_brace.macro_rules": {
+      "macro_rules": "_macro_rules"
     },
     "_or_pattern_binary.left": {
       "wildcard_pattern": "_wildcard_pattern"
@@ -1554,12 +1572,12 @@
       }
     },
     "type_parameters": {
-      "element": {
+      "type_parameters_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "const_parameter": {
@@ -1874,12 +1892,12 @@
       }
     },
     "for_lifetimes": {
-      "lifetime": {
+      "lifetimes": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "function_type": {
@@ -2009,12 +2027,12 @@
       }
     },
     "type_arguments": {
-      "element": {
+      "type_arguments_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "type_binding": {
@@ -3110,6 +3128,15 @@
         "nonEmpty": false
       }
     },
+    "_macro_rules": {
+      "macro_rule": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
     "_attribute_group1": {
       "value": {
         "unnamed": false,
@@ -3162,6 +3189,15 @@
         "nonEmpty": true
       }
     },
+    "_type_parameters_elements": {
+      "element": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
     "_use_clauses": {
       "use_clause": {
         "unnamed": false,
@@ -3189,7 +3225,25 @@
         "nonEmpty": false
       }
     },
+    "_lifetimes": {
+      "lifetime": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
     "_use_bounds_elements": {
+      "element": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_type_arguments_elements": {
       "element": {
         "unnamed": false,
         "slotCount": 1,
@@ -3426,29 +3480,29 @@
       }
     },
     "_macro_definition_paren": {
-      "macro_rule": {
+      "macro_rules": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
     "_macro_definition_bracket": {
-      "macro_rule": {
+      "macro_rules": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
     "_macro_definition_brace": {
-      "macro_rule": {
+      "macro_rules": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -6064,6 +6118,45 @@
       "children": []
     },
     {
+      "kind": "_lifetimes",
+      "modelType": "group",
+      "typeName": "Lifetimes",
+      "factoryName": "_lifetimes",
+      "irKey": "lifetimes",
+      "hidden": false,
+      "name": "_lifetimes",
+      "fields": [
+        {
+          "name": "lifetime",
+          "propertyName": "lifetimes",
+          "paramName": "lifetimes",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "lifetime",
+              "parseKind": "lifetime",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "lifetime"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "lifetime"
+      ]
+    },
+    {
       "kind": "_line_comment_content",
       "modelType": "pattern",
       "typeName": "LineCommentContent",
@@ -6216,33 +6309,33 @@
       "hidden": false,
       "fields": [
         {
-          "name": "macro_rule",
+          "name": "macro_rules",
           "propertyName": "macroRules",
           "paramName": "macroRules",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "macro_rule",
-              "parseKind": "macro_rule",
+              "multiplicity": "optional",
+              "name": "_macro_rules",
+              "parseKind": "macro_rules",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "macro_rule"
+              "_macro_rules"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
-        "macro_rule"
+        "macro_rules"
       ]
     },
     {
@@ -6254,33 +6347,33 @@
       "hidden": false,
       "fields": [
         {
-          "name": "macro_rule",
+          "name": "macro_rules",
           "propertyName": "macroRules",
           "paramName": "macroRules",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "macro_rule",
-              "parseKind": "macro_rule",
+              "multiplicity": "optional",
+              "name": "_macro_rules",
+              "parseKind": "macro_rules",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "macro_rule"
+              "_macro_rules"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
-        "macro_rule"
+        "macro_rules"
       ]
     },
     {
@@ -6292,31 +6385,50 @@
       "hidden": false,
       "fields": [
         {
-          "name": "macro_rule",
+          "name": "macro_rules",
           "propertyName": "macroRules",
           "paramName": "macroRules",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "macro_rule",
-              "parseKind": "macro_rule",
+              "multiplicity": "optional",
+              "name": "_macro_rules",
+              "parseKind": "macro_rules",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "macro_rule"
+              "_macro_rules"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
+      "factoryFields": [
+        "macro_rules"
+      ]
+    },
+    {
+      "kind": "_macro_rules",
+      "modelType": "separatedList",
+      "typeName": "MacroRules",
+      "factoryName": "macroRules",
+      "irKey": "macroRules",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "macro_rule"
+      ],
+      "factoryShape": "elements",
       "factoryFields": [
         "macro_rule"
       ]
@@ -8065,6 +8177,45 @@
       ]
     },
     {
+      "kind": "_type_arguments_elements",
+      "modelType": "group",
+      "typeName": "TypeArgumentsElements",
+      "factoryName": "_typeArgumentsElements",
+      "irKey": "typeArgumentsElements",
+      "hidden": false,
+      "name": "_type_arguments_elements",
+      "fields": [
+        {
+          "name": "element",
+          "propertyName": "elements",
+          "paramName": "elements",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "_type_argument",
+              "parseKind": "type_argument",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_type_argument"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "element"
+      ]
+    },
+    {
       "kind": "_type_identifier",
       "modelType": "pattern",
       "typeName": "TypeIdentifier",
@@ -8107,6 +8258,45 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "_type_parameters_elements",
+      "modelType": "group",
+      "typeName": "TypeParametersElements",
+      "factoryName": "_typeParametersElements",
+      "irKey": "typeParametersElements",
+      "hidden": false,
+      "name": "_type_parameters_elements",
+      "fields": [
+        {
+          "name": "element",
+          "propertyName": "elements",
+          "paramName": "elements",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "_attributed_type_parameter",
+              "parseKind": "attributed_type_parameter",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_attributed_type_parameter"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "element"
+      ]
     },
     {
       "kind": "_use_bounds_elements",
@@ -12026,33 +12216,33 @@
       "hidden": false,
       "fields": [
         {
-          "name": "lifetime",
+          "name": "lifetimes",
           "propertyName": "lifetimes",
           "paramName": "lifetimes",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "lifetime",
-              "parseKind": "lifetime",
+              "multiplicity": "single",
+              "name": "_lifetimes",
+              "parseKind": "lifetimes",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "lifetime"
+              "_lifetimes"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "lifetime"
+        "lifetimes"
       ]
     },
     {
@@ -18221,33 +18411,33 @@
       "hidden": false,
       "fields": [
         {
-          "name": "element",
-          "propertyName": "elements",
-          "paramName": "elements",
+          "name": "type_arguments_elements",
+          "propertyName": "typeArgumentsElements",
+          "paramName": "typeArgumentsElements",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_type_argument",
-              "parseKind": "type_argument",
+              "multiplicity": "single",
+              "name": "_type_arguments_elements",
+              "parseKind": "type_arguments_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_argument"
+              "_type_arguments_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "element"
+        "type_arguments_elements"
       ]
     },
     {
@@ -18651,33 +18841,33 @@
       "hidden": false,
       "fields": [
         {
-          "name": "element",
-          "propertyName": "elements",
-          "paramName": "elements",
+          "name": "type_parameters_elements",
+          "propertyName": "typeParametersElements",
+          "paramName": "typeParametersElements",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_attributed_type_parameter",
-              "parseKind": "attributed_type_parameter",
+              "multiplicity": "single",
+              "name": "_type_parameters_elements",
+              "parseKind": "type_parameters_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_attributed_type_parameter"
+              "_type_parameters_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "element"
+        "type_parameters_elements"
       ]
     },
     {

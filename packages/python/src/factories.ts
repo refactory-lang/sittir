@@ -42,8 +42,8 @@ export function buildModule(config: Partial<T.Module.Config> = {}) {
 	);
 }
 
-export function buildSimpleStatements(config: T.SimpleStatements.Config, options: { trailing?: boolean } = {}) {
-	const _simple_statement = config.simpleStatement ?? [];
+export function buildSimpleStatements(child: T.SimpleStatementsElements) {
+	const _simple_statements_elements = child;
 	const _newline = coerceKindEnumStorage('\n' as const, [['\n', TSKindId.Newline] as const]);
 	return withMethods(
 		withAccessors(
@@ -51,17 +51,12 @@ export function buildSimpleStatements(config: T.SimpleStatements.Config, options
 				$type: TSKindId.SimpleStatements as const,
 				$source: 2 as const,
 				$named: true as const,
-				_simple_statement,
-				_simple_statement_trailing_sep: options.trailing ?? false,
+				_simple_statements_elements,
 				_newline,
-				$with: {
-					simpleStatements: (...values: NonEmptyArray<T.SimpleStatement>) =>
-						buildSimpleStatements({ ...config, simpleStatement: values }, options),
-					trailing: (v: boolean) => buildSimpleStatements(config, { ...options, trailing: v })
-				}
+				$with: { $child: (v: T.SimpleStatementsElements) => buildSimpleStatements(v) }
 			},
 			{
-				simpleStatements: () => _simple_statement,
+				simpleStatementsElements: () => _simple_statements_elements,
 				newline: () => _newline
 			}
 		),
@@ -538,8 +533,8 @@ export function buildElseClause(body: T.ElseClause.Config['body']) {
 	);
 }
 
-export function buildMatchStatement(config: T.MatchStatement.Config, options: { trailing?: boolean } = {}) {
-	const _subject = config.subject ?? [];
+export function buildMatchStatement(config: T.MatchStatement.Config) {
+	const _subjects = config.subjects;
 	const _body = config.body;
 	return withMethods(
 		withAccessors(
@@ -547,18 +542,15 @@ export function buildMatchStatement(config: T.MatchStatement.Config, options: { 
 				$type: TSKindId.MatchStatement as const,
 				$source: 2 as const,
 				$named: true as const,
-				_subject,
-				_subject_trailing_sep: options.trailing ?? false,
+				_subjects,
 				_body,
 				$with: {
-					subjects: (...values: NonEmptyArray<T.Expression>) =>
-						buildMatchStatement({ ...config, subject: values }, options),
-					body: (value: T.MatchBlock) => buildMatchStatement({ ...config, body: value }, options),
-					trailing: (v: boolean) => buildMatchStatement(config, { ...options, trailing: v })
+					subjects: (value: T.Subjects) => buildMatchStatement({ ...config, subjects: value }),
+					body: (value: T.MatchBlock) => buildMatchStatement({ ...config, body: value })
 				}
 			},
 			{
-				subjects: () => _subject,
+				subjects: () => _subjects,
 				body: () => _body
 			}
 		),
@@ -585,8 +577,8 @@ export function buildMatchBlock(child: T.MatchBlockBlock | '\n') {
 	);
 }
 
-export function buildCaseClause(config: T.CaseClause.Config, options: { trailing?: boolean } = {}) {
-	const _case_pattern = config.casePattern ?? [];
+export function buildCaseClause(config: T.CaseClause.Config) {
+	const _case_patterns = config.casePatterns;
 	const _guard = config.guard;
 	const _consequence = config.consequence;
 	return withMethods(
@@ -595,21 +587,18 @@ export function buildCaseClause(config: T.CaseClause.Config, options: { trailing
 				$type: TSKindId.CaseClause as const,
 				$source: 2 as const,
 				$named: true as const,
-				_case_pattern,
-				_case_pattern_trailing_sep: options.trailing ?? false,
+				_case_patterns,
 				_guard,
 				_consequence,
 				$with: {
-					casePatterns: (...values: NonEmptyArray<T.CasePattern>) =>
-						buildCaseClause({ ...config, casePattern: values }, options),
-					guard: (value?: T.IfClause) => buildCaseClause({ ...config, guard: value }, options),
+					casePatterns: (value: T.CasePatterns) => buildCaseClause({ ...config, casePatterns: value }),
+					guard: (value?: T.IfClause) => buildCaseClause({ ...config, guard: value }),
 					consequence: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
-						buildCaseClause({ ...config, consequence: value }, options),
-					trailing: (v: boolean) => buildCaseClause(config, { ...options, trailing: v })
+						buildCaseClause({ ...config, consequence: value })
 				}
 			},
 			{
-				casePatterns: () => _case_pattern,
+				casePatterns: () => _case_patterns,
 				guard: () => _guard,
 				consequence: () => _consequence
 			}
@@ -1099,23 +1088,19 @@ export function buildClassDefinition(config: T.ClassDefinition.Config) {
 	);
 }
 
-export function buildTypeParameter(config: T.TypeParameter.Config, options: { trailing?: boolean } = {}) {
-	const _type = config.type ?? [];
+export function buildTypeParameter(child: T.Types) {
+	const _types = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.TypeParameter as const,
 				$source: 2 as const,
 				$named: true as const,
-				_type,
-				_type_trailing_sep: options.trailing ?? false,
-				$with: {
-					types: (...values: NonEmptyArray<T.Type>) => buildTypeParameter({ ...config, type: values }, options),
-					trailing: (v: boolean) => buildTypeParameter(config, { ...options, trailing: v })
-				}
+				_types,
+				$with: { $child: (v: T.Types) => buildTypeParameter(v) }
 			},
 			{
-				types: () => _type
+				types: () => _types
 			}
 		),
 		methodsEngine
@@ -2059,9 +2044,9 @@ export function buildAttribute(config: T.Attribute.Config) {
 	);
 }
 
-export function buildSubscript(config: T.Subscript.Config, options: { trailing?: boolean } = {}) {
+export function buildSubscript(config: T.Subscript.Config) {
 	const _value = config.value;
-	const _subscript = config.subscript ?? [];
+	const _subscripts = config.subscripts;
 	return withMethods(
 		withAccessors(
 			{
@@ -2069,18 +2054,15 @@ export function buildSubscript(config: T.Subscript.Config, options: { trailing?:
 				$source: 2 as const,
 				$named: true as const,
 				_value,
-				_subscript,
-				_subscript_trailing_sep: options.trailing ?? false,
+				_subscripts,
 				$with: {
-					value: (value: T.PrimaryExpression) => buildSubscript({ ...config, value: value }, options),
-					subscripts: (...values: NonEmptyArray<T.Expression | T.Slice>) =>
-						buildSubscript({ ...config, subscript: values }, options),
-					trailing: (v: boolean) => buildSubscript(config, { ...options, trailing: v })
+					value: (value: T.PrimaryExpression) => buildSubscript({ ...config, value: value }),
+					subscripts: (value: T.Subscripts) => buildSubscript({ ...config, subscripts: value })
 				}
 			},
 			{
 				value: () => _value,
-				subscripts: () => _subscript
+				subscripts: () => _subscripts
 			}
 		),
 		methodsEngine
@@ -2953,6 +2935,80 @@ export function buildLineContinuation(text: string) {
 	);
 }
 
+export function buildSimpleStatementsElements(
+	config: T.SimpleStatementsElements.Config,
+	options: { trailing?: boolean } = {}
+) {
+	const _simple_statement = config.simpleStatement ?? [];
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.SimpleStatementsElements as const,
+				$source: 2 as const,
+				$named: true as const,
+				_simple_statement,
+				_simple_statement_trailing_sep: options.trailing ?? false,
+				$with: {
+					simpleStatements: (...values: NonEmptyArray<T.SimpleStatement>) =>
+						buildSimpleStatementsElements({ ...config, simpleStatement: values }, options),
+					trailing: (v: boolean) => buildSimpleStatementsElements(config, { ...options, trailing: v })
+				}
+			},
+			{
+				simpleStatements: () => _simple_statement
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildSubjects(config: T.Subjects.Config, options: { trailing?: boolean } = {}) {
+	const _subject = config.subject ?? [];
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.Subjects as const,
+				$source: 2 as const,
+				$named: true as const,
+				_subject,
+				_subject_trailing_sep: options.trailing ?? false,
+				$with: {
+					subjects: (...values: NonEmptyArray<T.Expression>) => buildSubjects({ ...config, subject: values }, options),
+					trailing: (v: boolean) => buildSubjects(config, { ...options, trailing: v })
+				}
+			},
+			{
+				subjects: () => _subject
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildCasePatterns(config: T.CasePatterns.Config, options: { trailing?: boolean } = {}) {
+	const _case_pattern = config.casePattern ?? [];
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CasePatterns as const,
+				$source: 2 as const,
+				$named: true as const,
+				_case_pattern,
+				_case_pattern_trailing_sep: options.trailing ?? false,
+				$with: {
+					casePatterns: (...values: NonEmptyArray<T.CasePattern>) =>
+						buildCasePatterns({ ...config, casePattern: values }, options),
+					trailing: (v: boolean) => buildCasePatterns(config, { ...options, trailing: v })
+				}
+			},
+			{
+				casePatterns: () => _case_pattern
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildExceptClauseGroup1(child: T.ExceptClauseAs | T.ExceptClauseList) {
 	const _content = child;
 	return withMethods(
@@ -2966,6 +3022,52 @@ export function buildExceptClauseGroup1(child: T.ExceptClauseAs | T.ExceptClause
 			},
 			{
 				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildWithItems(config: T.WithItems.Config, options: { trailing?: boolean } = {}) {
+	const _with_item = config.withItem ?? [];
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.WithItems as const,
+				$source: 2 as const,
+				$named: true as const,
+				_with_item,
+				_with_item_trailing_sep: options.trailing ?? false,
+				$with: {
+					withItems: (...values: NonEmptyArray<T.WithItem>) => buildWithItems({ ...config, withItem: values }, options),
+					trailing: (v: boolean) => buildWithItems(config, { ...options, trailing: v })
+				}
+			},
+			{
+				withItems: () => _with_item
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildTypes(config: T.Types.Config, options: { trailing?: boolean } = {}) {
+	const _type = config.type ?? [];
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.Types as const,
+				$source: 2 as const,
+				$named: true as const,
+				_type,
+				_type_trailing_sep: options.trailing ?? false,
+				$with: {
+					types: (...values: NonEmptyArray<T.Type>) => buildTypes({ ...config, type: values }, options),
+					trailing: (v: boolean) => buildTypes(config, { ...options, trailing: v })
+				}
+			},
+			{
+				types: () => _type
 			}
 		),
 		methodsEngine
@@ -3034,30 +3136,6 @@ export function buildExpressionListExpressions(
 	);
 }
 
-export function buildCasePatterns(config: T.CasePatterns.Config, options: { trailing?: boolean } = {}) {
-	const _case_pattern = config.casePattern ?? [];
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CasePatterns as const,
-				$source: 2 as const,
-				$named: true as const,
-				_case_pattern,
-				_case_pattern_trailing_sep: options.trailing ?? false,
-				$with: {
-					casePatterns: (...values: NonEmptyArray<T.CasePattern>) =>
-						buildCasePatterns({ ...config, casePattern: values }, options),
-					trailing: (v: boolean) => buildCasePatterns(config, { ...options, trailing: v })
-				}
-			},
-			{
-				casePatterns: () => _case_pattern
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildDictPatternElements(config: T.DictPatternElements.Config) {
 	const _dict_pattern_kv = config.dictPatternKv;
 	const _content = config.content ?? [];
@@ -3103,6 +3181,30 @@ export function buildPatternListPatterns(elements: NonEmptyArray<T.Pattern>, opt
 			},
 			{
 				patterns: () => _pattern
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildSubscripts(config: T.Subscripts.Config, options: { trailing?: boolean } = {}) {
+	const _subscript = config.subscript ?? [];
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.Subscripts as const,
+				$source: 2 as const,
+				$named: true as const,
+				_subscript,
+				_subscript_trailing_sep: options.trailing ?? false,
+				$with: {
+					subscripts: (...values: NonEmptyArray<T.Expression | T.Slice>) =>
+						buildSubscripts({ ...config, subscript: values }, options),
+					trailing: (v: boolean) => buildSubscripts(config, { ...options, trailing: v })
+				}
+			},
+			{
+				subscripts: () => _subscript
 			}
 		),
 		methodsEngine
@@ -3453,24 +3555,19 @@ export function buildWithClauseBare(config: T.WithClauseBare.Config, options: { 
 	);
 }
 
-export function buildWithClauseParen(config: T.WithClauseParen.Config, options: { trailing?: boolean } = {}) {
-	const _with_item = config.withItem ?? [];
+export function buildWithClauseParen(child: T.WithItems) {
+	const _with_items = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.WithClauseParen as const,
 				$source: 2 as const,
 				$named: true as const,
-				_with_item,
-				_with_item_trailing_sep: options.trailing ?? false,
-				$with: {
-					withItems: (...values: NonEmptyArray<T.WithItem>) =>
-						buildWithClauseParen({ ...config, withItem: values }, options),
-					trailing: (v: boolean) => buildWithClauseParen(config, { ...options, trailing: v })
-				}
+				_with_items,
+				$with: { $child: (v: T.WithItems) => buildWithClauseParen(v) }
 			},
 			{
-				withItems: () => _with_item
+				withItems: () => _with_items
 			}
 		),
 		methodsEngine
@@ -3757,7 +3854,7 @@ export function buildExcept(text: string) {
 
 export type FluentKindMap = {
 	module: FluentNode<'module', T.Module.Config>;
-	_simple_statements: T.SimpleStatements;
+	_simple_statements: FluentNode<'_simple_statements', T.SimpleStatements.Config>;
 	import_statement: FluentNode<'import_statement', T.ImportStatement.Config>;
 	import_prefix: T.ImportPrefix;
 	relative_import: FluentNode<'relative_import', T.RelativeImport.Config>;
@@ -3880,12 +3977,17 @@ export type FluentKindMap = {
 	await: FluentNode<'await', T.Await.Config>;
 	comment: T.Comment;
 	line_continuation: T.LineContinuation;
+	_simple_statements_elements: T.SimpleStatementsElements;
+	_subjects: T.Subjects;
+	_case_patterns: T.CasePatterns;
 	_except_clause_group1: FluentNode<'_except_clause_group1', T.ExceptClauseGroup1.Config>;
+	_with_items: T.WithItems;
+	_types: T.Types;
 	_argument_list_elements: FluentNode<'_argument_list_elements', T.ArgumentListElements.Config>;
 	_expression_list_expressions: FluentNode<'_expression_list_expressions', T.ExpressionListExpressions.Config>;
-	_case_patterns: T.CasePatterns;
 	_dict_pattern_elements: FluentNode<'_dict_pattern_elements', T.DictPatternElements.Config>;
 	_pattern_list_patterns: FluentNode<'_pattern_list_patterns', T.PatternListPatterns.Config>;
+	_subscripts: T.Subscripts;
 	_slice_group1: FluentNode<'_slice_group1', T.SliceGroup1.Config>;
 	_dictionary_elements: FluentNode<'_dictionary_elements', T.DictionaryElements.Config>;
 	_augmented_assignment_operator: T.AugmentedAssignmentOperator;
@@ -3901,7 +4003,7 @@ export type FluentKindMap = {
 	_assignment_typed: T.AssignmentTyped;
 	_expression_statement_tuple: T.ExpressionStatementTuple;
 	_with_clause_bare: T.WithClauseBare;
-	_with_clause_paren: T.WithClauseParen;
+	_with_clause_paren: FluentNode<'_with_clause_paren', T.WithClauseParen.Config>;
 	_match_block_block: T.MatchBlockBlock;
 	_suite_block_with_indent: FluentNode<'_suite_block_with_indent', T.SuiteBlockWithIndent.Config>;
 	_simple_pattern_negative: FluentNode<'_simple_pattern_negative', T.SimplePatternNegative.Config>;
@@ -4045,12 +4147,17 @@ export const _factoryMap = {
 	await: buildAwait,
 	comment: buildComment,
 	line_continuation: buildLineContinuation,
+	_simple_statements_elements: buildSimpleStatementsElements,
+	_subjects: buildSubjects,
+	_case_patterns: buildCasePatterns,
 	_except_clause_group1: buildExceptClauseGroup1,
+	_with_items: buildWithItems,
+	_types: buildTypes,
 	_argument_list_elements: buildArgumentListElements,
 	_expression_list_expressions: buildExpressionListExpressions,
-	_case_patterns: buildCasePatterns,
 	_dict_pattern_elements: buildDictPatternElements,
 	_pattern_list_patterns: buildPatternListPatterns,
+	_subscripts: buildSubscripts,
 	_slice_group1: buildSliceGroup1,
 	_dictionary_elements: buildDictionaryElements,
 	_augmented_assignment_operator: buildAugmentedAssignmentOperator,

@@ -226,6 +226,7 @@ export interface IsGuards {
 	rawStringLiteral<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RawStringLiteral };
 	lineComment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LineComment };
 	blockComment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BlockComment };
+	MacroRules<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroRules };
 	AttributeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributeGroup1 };
 	EnumVariantListElements<T extends { readonly $type: number }>(
 		v: T
@@ -481,6 +482,7 @@ export interface AssertGuards {
 	rawStringLiteral(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RawStringLiteral };
 	lineComment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LineComment };
 	blockComment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BlockComment };
+	MacroRules(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroRules };
 	AttributeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributeGroup1 };
 	EnumVariantListElements(v: {
 		readonly $type: number;
@@ -565,15 +567,15 @@ const _supertype_declarationStatement_ids = new Set<number>([
 	186, 240, 161, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
 ]);
 const _supertype_tokenPattern_ids = new Set<number>([
-	164, 166, 165, 136, 312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 343, 344
+	164, 166, 165, 136, 312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 347, 348
 ]);
 const _supertype_tokens_ids = new Set<number>([
-	168, 169, 136, 312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 343, 344
+	168, 169, 136, 312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 347, 348
 ]);
-const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 343, 344]);
+const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 347, 348]);
 const _supertype_useClause_ids = new Set<number>([133, 1, 136, 134, 135, 244, 209, 208, 207, 210]);
 const _supertype_type_ids = new Set<number>([
-	236, 233, 136, 234, 227, 246, 224, 225, 221, 223, 435, 240, 237, 229, 199
+	236, 233, 136, 234, 227, 246, 224, 225, 221, 223, 439, 240, 237, 229, 199
 ]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
 	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 123, 314, 121, 151, 1, 133, 244, 226, 288, 289, 259, 261,
@@ -587,19 +589,19 @@ const _supertype_expressionEndingWithBlock_ids = new Set<number>([
 	290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
 ]);
 const _supertype_delimTokens_ids = new Set<number>([241]);
-const _supertype_nonDelimToken_ids = new Set<number>([312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 343, 344]);
+const _supertype_nonDelimToken_ids = new Set<number>([312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 347, 348]);
 const _supertype_condition_ids = new Set<number>([
 	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 123, 314, 121, 151, 1, 133, 244, 226, 288, 289, 259, 261,
 	240, 262, 285, 286, 287, 136, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247, 269, 270
 ]);
 const _supertype_pattern_ids = new Set<number>([
-	312, 313, 123, 314, 121, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 303, 304, 308, 281, 240, 346
+	312, 313, 123, 314, 121, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 303, 304, 308, 281, 240, 350
 ]);
 const _supertype_literal_ids = new Set<number>([312, 313, 123, 314, 121, 151]);
 const _supertype_literalPattern_ids = new Set<number>([312, 313, 123, 314, 121, 151, 311]);
 const _supertype_path_ids = new Set<number>([133, 1, 136, 134, 135, 244]);
 const _supertype_tokenPatternGroup1_ids = new Set<number>([
-	312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 343, 344
+	312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 347, 348
 ]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -803,15 +805,19 @@ const _kindIdByKind = new Map<string, number>([
 	['block_comment', TSKindId.BlockComment],
 	['_kw_ref_marker', TSKindId.KwRefMarker],
 	['_kw_move_marker', TSKindId.KwMoveMarker],
+	['_macro_rules', TSKindId.MacroRules],
 	['_attribute_group1', TSKindId.AttributeGroup1],
 	['_enum_variant_list_elements', TSKindId.EnumVariantListElements],
 	['_field_declaration_list_elements', TSKindId.FieldDeclarationListElements],
 	['_ordered_field_declaration_list_elements', TSKindId.OrderedFieldDeclarationListElements],
 	['_where_predicates', TSKindId.WherePredicates],
+	['_type_parameters_elements', TSKindId.TypeParametersElements],
 	['_use_clauses', TSKindId.UseClauses],
 	['_parameters_elements', TSKindId.ParametersElements],
 	['_visibility_modifier_group1', TSKindId.VisibilityModifierGroup1],
+	['_lifetimes', TSKindId.Lifetimes],
 	['_use_bounds_elements', TSKindId.UseBoundsElements],
+	['_type_arguments_elements', TSKindId.TypeArgumentsElements],
 	['_arguments_elements', TSKindId.ArgumentsElements],
 	['_array_expression_group1', TSKindId.ArrayExpressionGroup1],
 	['_field_initializer_list_elements', TSKindId.FieldInitializerListElements],
@@ -1017,6 +1023,7 @@ export const is = {
 	rawStringLiteral: _g(TSKindId.RawStringLiteral),
 	lineComment: _g(TSKindId.LineComment),
 	blockComment: _g(TSKindId.BlockComment),
+	MacroRules: _g(TSKindId.MacroRules),
 	AttributeGroup1: _g(TSKindId.AttributeGroup1),
 	EnumVariantListElements: _g(TSKindId.EnumVariantListElements),
 	FieldDeclarationListElements: _g(TSKindId.FieldDeclarationListElements),
@@ -1235,6 +1242,7 @@ export const assert = {
 	rawStringLiteral: _makeAssert('rawStringLiteral', is.rawStringLiteral as _AnyGuard),
 	lineComment: _makeAssert('lineComment', is.lineComment as _AnyGuard),
 	blockComment: _makeAssert('blockComment', is.blockComment as _AnyGuard),
+	MacroRules: _makeAssert('MacroRules', is.MacroRules as _AnyGuard),
 	AttributeGroup1: _makeAssert('AttributeGroup1', is.AttributeGroup1 as _AnyGuard),
 	EnumVariantListElements: _makeAssert('EnumVariantListElements', is.EnumVariantListElements as _AnyGuard),
 	FieldDeclarationListElements: _makeAssert(

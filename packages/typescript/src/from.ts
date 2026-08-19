@@ -336,6 +336,8 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	template_type: TSKindId.TemplateType,
 	type_query: TSKindId.TypeQuery,
 	literal_type: TSKindId.LiteralType,
+	type_arguments: TSKindId.TypeArguments,
+	type_parameters: TSKindId.TypeParameters,
 	tuple_type: TSKindId.TupleType,
 	_export_specifiers: TSKindId.ExportSpecifiers,
 	_import_clause_group1: TSKindId.ImportClauseGroup1,
@@ -398,6 +400,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildTypeQuery(children[0] as Parameters<typeof F.buildTypeQuery>[0]);
 		case 'literal_type':
 			return F.buildLiteralType(children[0] as Parameters<typeof F.buildLiteralType>[0]);
+		case 'type_arguments':
+			return F.buildTypeArguments(children[0] as Parameters<typeof F.buildTypeArguments>[0]);
+		case 'type_parameters':
+			return F.buildTypeParameters(children[0] as Parameters<typeof F.buildTypeParameters>[0]);
 		case 'tuple_type':
 			return F.buildTupleType(children[0] as Parameters<typeof F.buildTupleType>[0]);
 		case '_export_specifiers':
@@ -3058,13 +3064,13 @@ export function coerceToPredefinedType(input: string | T.PredefinedType): Return
 	return F.buildPredefinedType(input as Parameters<typeof F.buildPredefinedType>[0]);
 }
 
-export function coerceToTypeArguments(input: T.TypeArguments.Loose): ReturnType<typeof F.buildTypeArguments> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeArguments>;
-	const _ne_types = _resolveMany<T.Type>(input.type, _K34, _K35);
-	_assertNonEmpty(_ne_types, 'type_arguments.types');
-	return F.buildTypeArguments({
-		type: _ne_types
-	});
+export function coerceToTypeArguments(input?: T.Types | T.TypeArguments): ReturnType<typeof F.buildTypeArguments> {
+	if (isNodeData(input) && input.$type === TSKindId.TypeArguments) {
+		const data = input;
+		const child = (data as unknown as { _types?: unknown })._types;
+		return F.buildTypeArguments(child as Parameters<typeof F.buildTypeArguments>[0]);
+	}
+	return F.buildTypeArguments(input as Parameters<typeof F.buildTypeArguments>[0]);
 }
 
 export function coerceToObjectType(input: T.ObjectType.Loose): ReturnType<typeof F.buildObjectType> {
@@ -3126,13 +3132,15 @@ export function coerceToPropertySignature(
 	});
 }
 
-export function coerceToTypeParameters(input: T.TypeParameters.Loose): ReturnType<typeof F.buildTypeParameters> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeParameters>;
-	const _ne_typeParameters = _resolveManyBranch<T.TypeParameter>(input.typeParameter, 'type_parameter');
-	_assertNonEmpty(_ne_typeParameters, 'type_parameters.typeParameters');
-	return F.buildTypeParameters({
-		typeParameter: _ne_typeParameters
-	});
+export function coerceToTypeParameters(
+	input?: T.TypeParametersElements | T.TypeParameters
+): ReturnType<typeof F.buildTypeParameters> {
+	if (isNodeData(input) && input.$type === TSKindId.TypeParameters) {
+		const data = input;
+		const child = (data as unknown as { _type_parameters_elements?: unknown })._type_parameters_elements;
+		return F.buildTypeParameters(child as Parameters<typeof F.buildTypeParameters>[0]);
+	}
+	return F.buildTypeParameters(input as Parameters<typeof F.buildTypeParameters>[0]);
 }
 
 export function coerceToTypeParameter(input: T.TypeParameter.Loose): ReturnType<typeof F.buildTypeParameter> {

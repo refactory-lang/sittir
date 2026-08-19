@@ -234,6 +234,8 @@ import type {
 	SetTree,
 	SimplePatternNegative,
 	SimplePatternNegativeTree,
+	SimpleStatements,
+	SimpleStatementsTree,
 	Slice,
 	SliceGroup1,
 	SliceGroup1Tree,
@@ -287,6 +289,8 @@ import type {
 	WhileStatement,
 	WhileStatementTree,
 	WithClause,
+	WithClauseParen,
+	WithClauseParenTree,
 	WithClauseTree,
 	WithItem,
 	WithItemTree,
@@ -306,6 +310,7 @@ type _TypeAssert<T extends true> = T;
 
 // --- Concrete interface `$type` discriminant ---
 export type _Type_Module = _TypeAssert<_TypeExtends<Module['$type'], TSKindId.Module>>;
+export type _Type_SimpleStatements = _TypeAssert<_TypeExtends<SimpleStatements['$type'], TSKindId.SimpleStatements>>;
 export type _Type_ImportStatement = _TypeAssert<_TypeExtends<ImportStatement['$type'], TSKindId.ImportStatement>>;
 export type _Type_RelativeImport = _TypeAssert<_TypeExtends<RelativeImport['$type'], TSKindId.RelativeImport>>;
 export type _Type_FutureImportStatement = _TypeAssert<
@@ -473,6 +478,7 @@ export type _Type_PrintStatementGroup1 = _TypeAssert<
 export type _Type_PrintStatementGroup2 = _TypeAssert<
 	_TypeExtends<PrintStatementGroup2['$type'], TSKindId.PrintStatementGroup2>
 >;
+export type _Type_WithClauseParen = _TypeAssert<_TypeExtends<WithClauseParen['$type'], TSKindId.WithClauseParen>>;
 export type _Type_SuiteBlockWithIndent = _TypeAssert<
 	_TypeExtends<SuiteBlockWithIndent['$type'], TSKindId.SuiteBlockWithIndent>
 >;
@@ -533,6 +539,7 @@ export type _Type_Except = _TypeAssert<_TypeExtends<Except['$type'], TSKindId.Ex
 
 // --- TreeNode types have correct `type` ---
 export type _Tree_Module = _TypeAssert<_TypeExtends<ModuleTree['type'], 'module'>>;
+export type _Tree_SimpleStatements = _TypeAssert<_TypeExtends<SimpleStatementsTree['type'], '_simple_statements'>>;
 export type _Tree_ImportStatement = _TypeAssert<_TypeExtends<ImportStatementTree['type'], 'import_statement'>>;
 export type _Tree_RelativeImport = _TypeAssert<_TypeExtends<RelativeImportTree['type'], 'relative_import'>>;
 export type _Tree_FutureImportStatement = _TypeAssert<
@@ -694,6 +701,7 @@ export type _Tree_PrintStatementGroup1 = _TypeAssert<
 export type _Tree_PrintStatementGroup2 = _TypeAssert<
 	_TypeExtends<PrintStatementGroup2Tree['type'], 'print_statement_group2'>
 >;
+export type _Tree_WithClauseParen = _TypeAssert<_TypeExtends<WithClauseParenTree['type'], '_with_clause_paren'>>;
 export type _Tree_SuiteBlockWithIndent = _TypeAssert<
 	_TypeExtends<SuiteBlockWithIndentTree['type'], '_suite_block_with_indent'>
 >;

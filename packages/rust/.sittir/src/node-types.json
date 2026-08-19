@@ -2572,17 +2572,16 @@
   {
     "type": "for_lifetimes",
     "named": true,
-    "fields": {
-      "lifetime": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "lifetime",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "lifetimes",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3588,6 +3587,22 @@
     }
   },
   {
+    "type": "lifetimes",
+    "named": true,
+    "fields": {
+      "lifetime": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "lifetime",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "line_comment",
     "named": true,
     "extra": true,
@@ -3717,11 +3732,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
         {
-          "type": "macro_rule",
+          "type": "macro_rules",
           "named": true
         }
       ]
@@ -3732,11 +3747,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
         {
-          "type": "macro_rule",
+          "type": "macro_rules",
           "named": true
         }
       ]
@@ -3747,11 +3762,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
         {
-          "type": "macro_rule",
+          "type": "macro_rules",
           "named": true
         }
       ]
@@ -3807,6 +3822,22 @@
         "types": [
           {
             "type": "token_tree",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "macro_rules",
+    "named": true,
+    "fields": {
+      "macro_rule": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "macro_rule",
             "named": true
           }
         ]
@@ -6108,6 +6139,21 @@
   {
     "type": "type_arguments",
     "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "type_arguments_elements",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "type_arguments_elements",
+    "named": true,
     "fields": {
       "element": {
         "multiple": true,
@@ -6287,6 +6333,21 @@
   },
   {
     "type": "type_parameters",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "type_parameters_elements",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "type_parameters_elements",
     "named": true,
     "fields": {
       "element": {

@@ -321,10 +321,13 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	enum_variant_list: TSKindId.EnumVariantList,
 	field_declaration_list: TSKindId.FieldDeclarationList,
 	where_clause: TSKindId.WhereClause,
+	type_parameters: TSKindId.TypeParameters,
 	use_list: TSKindId.UseList,
 	parameters: TSKindId.Parameters,
 	visibility_modifier: TSKindId.VisibilityModifier,
 	bracketed_type: TSKindId.BracketedType,
+	for_lifetimes: TSKindId.ForLifetimes,
+	type_arguments: TSKindId.TypeArguments,
 	delim_token_tree: TSKindId.DelimTokenTree,
 	range_expression: TSKindId.RangeExpression,
 	arguments: TSKindId.Arguments,
@@ -337,6 +340,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	or_pattern: TSKindId.OrPattern,
 	line_comment: TSKindId.LineComment,
 	block_comment: TSKindId.BlockComment,
+	_macro_rules: TSKindId.MacroRules,
 	_enum_variant_list_elements: TSKindId.EnumVariantListElements,
 	_field_declaration_list_elements: TSKindId.FieldDeclarationListElements,
 	_ordered_field_declaration_list_elements: TSKindId.OrderedFieldDeclarationListElements,
@@ -371,6 +375,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildFieldDeclarationList(children[0] as Parameters<typeof F.buildFieldDeclarationList>[0]);
 		case 'where_clause':
 			return F.buildWhereClause(children[0] as Parameters<typeof F.buildWhereClause>[0]);
+		case 'type_parameters':
+			return F.buildTypeParameters(children[0] as Parameters<typeof F.buildTypeParameters>[0]);
 		case 'use_list':
 			return F.buildUseList(children[0] as Parameters<typeof F.buildUseList>[0]);
 		case 'parameters':
@@ -379,6 +385,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildVisibilityModifier(children[0] as Parameters<typeof F.buildVisibilityModifier>[0]);
 		case 'bracketed_type':
 			return F.buildBracketedType(children[0] as Parameters<typeof F.buildBracketedType>[0]);
+		case 'for_lifetimes':
+			return F.buildForLifetimes(children[0] as Parameters<typeof F.buildForLifetimes>[0]);
+		case 'type_arguments':
+			return F.buildTypeArguments(children[0] as Parameters<typeof F.buildTypeArguments>[0]);
 		case 'delim_token_tree':
 			return F.buildDelimTokenTree(children[0] as Parameters<typeof F.buildDelimTokenTree>[0]);
 		case 'range_expression':
@@ -403,6 +413,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildLineComment(children[0] as Parameters<typeof F.buildLineComment>[0]);
 		case 'block_comment':
 			return F.buildBlockComment(children[0] as Parameters<typeof F.buildBlockComment>[0]);
+		case '_macro_rules':
+			return F.buildMacroRules(children as Parameters<typeof F.buildMacroRules>[0]);
 		case '_enum_variant_list_elements':
 			return F.buildEnumVariantListElements(children as Parameters<typeof F.buildEnumVariantListElements>[0]);
 		case '_field_declaration_list_elements':
@@ -434,11 +446,11 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case '_function_type_fn_form':
 			return F.buildFunctionTypeFnForm(children[0] as Parameters<typeof F.buildFunctionTypeFnForm>[0]);
 		case '_macro_definition_paren':
-			return F.buildMacroDefinitionParen(...(children as Parameters<typeof F.buildMacroDefinitionParen>));
+			return F.buildMacroDefinitionParen(children[0] as Parameters<typeof F.buildMacroDefinitionParen>[0]);
 		case '_macro_definition_bracket':
-			return F.buildMacroDefinitionBracket(...(children as Parameters<typeof F.buildMacroDefinitionBracket>));
+			return F.buildMacroDefinitionBracket(children[0] as Parameters<typeof F.buildMacroDefinitionBracket>[0]);
 		case '_macro_definition_brace':
-			return F.buildMacroDefinitionBrace(...(children as Parameters<typeof F.buildMacroDefinitionBrace>));
+			return F.buildMacroDefinitionBrace(children[0] as Parameters<typeof F.buildMacroDefinitionBrace>[0]);
 		case '_visibility_modifier_in_path':
 			return F.buildVisibilityModifierInPath(children[0] as Parameters<typeof F.buildVisibilityModifierInPath>[0]);
 		default:
@@ -1431,13 +1443,15 @@ export function coerceToRemovedTraitBound(
 	);
 }
 
-export function coerceToTypeParameters(input: T.TypeParameters.Loose): ReturnType<typeof F.buildTypeParameters> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeParameters>;
-	const _ne_elements = _resolveManyBranch<T.AttributedTypeParameter>(input.element, '_attributed_type_parameter');
-	_assertNonEmpty(_ne_elements, 'type_parameters.elements');
-	return F.buildTypeParameters({
-		element: _ne_elements
-	});
+export function coerceToTypeParameters(
+	input?: T.TypeParametersElements | T.TypeParameters
+): ReturnType<typeof F.buildTypeParameters> {
+	if (isNodeData(input) && input.$type === TSKindId.TypeParameters) {
+		const data = input;
+		const child = (data as unknown as { _type_parameters_elements?: unknown })._type_parameters_elements;
+		return F.buildTypeParameters(child as Parameters<typeof F.buildTypeParameters>[0]);
+	}
+	return F.buildTypeParameters(input as Parameters<typeof F.buildTypeParameters>[0]);
 }
 
 export function coerceToConstParameter(input: T.ConstParameter.Loose): ReturnType<typeof F.buildConstParameter> {
@@ -1634,13 +1648,13 @@ export function coerceToArrayType(input: T.ArrayType.Loose): ReturnType<typeof F
 	});
 }
 
-export function coerceToForLifetimes(input: T.ForLifetimes.Loose): ReturnType<typeof F.buildForLifetimes> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildForLifetimes>;
-	const _ne_lifetimes = _resolveManyBranch<T.Lifetime>(input.lifetime, 'lifetime');
-	_assertNonEmpty(_ne_lifetimes, 'for_lifetimes.lifetimes');
-	return F.buildForLifetimes({
-		lifetime: _ne_lifetimes
-	});
+export function coerceToForLifetimes(input?: T.Lifetimes | T.ForLifetimes): ReturnType<typeof F.buildForLifetimes> {
+	if (isNodeData(input) && input.$type === TSKindId.ForLifetimes) {
+		const data = input;
+		const child = (data as unknown as { _lifetimes?: unknown })._lifetimes;
+		return F.buildForLifetimes(child as Parameters<typeof F.buildForLifetimes>[0]);
+	}
+	return F.buildForLifetimes(input as Parameters<typeof F.buildForLifetimes>[0]);
 }
 
 export function coerceToFunctionType(input: T.FunctionType.Loose): ReturnType<typeof F.buildFunctionType> {
@@ -1748,13 +1762,15 @@ export function coerceToUseBounds(input?: T.UseBounds.Loose): ReturnType<typeof 
 	);
 }
 
-export function coerceToTypeArguments(input: T.TypeArguments.Loose): ReturnType<typeof F.buildTypeArguments> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeArguments>;
-	const _ne_elements = _resolveManyBranch<T.TypeArgument>(input.element, '_type_argument');
-	_assertNonEmpty(_ne_elements, 'type_arguments.elements');
-	return F.buildTypeArguments({
-		element: _ne_elements
-	});
+export function coerceToTypeArguments(
+	input?: T.TypeArgumentsElements | T.TypeArguments
+): ReturnType<typeof F.buildTypeArguments> {
+	if (isNodeData(input) && input.$type === TSKindId.TypeArguments) {
+		const data = input;
+		const child = (data as unknown as { _type_arguments_elements?: unknown })._type_arguments_elements;
+		return F.buildTypeArguments(child as Parameters<typeof F.buildTypeArguments>[0]);
+	}
+	return F.buildTypeArguments(input as Parameters<typeof F.buildTypeArguments>[0]);
 }
 
 export function coerceToTypeBinding(input: T.TypeBinding.Loose): ReturnType<typeof F.buildTypeBinding> {

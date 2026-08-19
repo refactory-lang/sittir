@@ -889,7 +889,8 @@ export type RustGrammar = {
 	readonly for_lifetimes: {
 		type: 'for_lifetimes';
 		named: true;
-		fields: { lifetime: { multiple: true; required: true; types: [{ type: 'lifetime'; named: true }] } };
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'lifetimes'; named: true }] };
 	};
 	readonly foreign_mod_item: {
 		type: 'foreign_mod_item';
@@ -1221,6 +1222,11 @@ export type RustGrammar = {
 			name: { multiple: false; required: true; types: [{ type: 'lifetime'; named: true }] };
 		};
 	};
+	readonly lifetimes: {
+		type: 'lifetimes';
+		named: true;
+		fields: { lifetime: { multiple: true; required: true; types: [{ type: 'lifetime'; named: true }] } };
+	};
 	readonly line_comment: {
 		type: 'line_comment';
 		named: true;
@@ -1272,19 +1278,19 @@ export type RustGrammar = {
 		type: 'macro_definition_brace';
 		named: true;
 		fields: {};
-		children: { multiple: true; required: false; types: [{ type: 'macro_rule'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'macro_rules'; named: true }] };
 	};
 	readonly macro_definition_bracket: {
 		type: 'macro_definition_bracket';
 		named: true;
 		fields: {};
-		children: { multiple: true; required: false; types: [{ type: 'macro_rule'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'macro_rules'; named: true }] };
 	};
 	readonly macro_definition_paren: {
 		type: 'macro_definition_paren';
 		named: true;
 		fields: {};
-		children: { multiple: true; required: false; types: [{ type: 'macro_rule'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'macro_rules'; named: true }] };
 	};
 	readonly macro_invocation: {
 		type: 'macro_invocation';
@@ -1305,6 +1311,11 @@ export type RustGrammar = {
 			left: { multiple: false; required: true; types: [{ type: 'token_tree_pattern'; named: true }] };
 			right: { multiple: false; required: true; types: [{ type: 'token_tree'; named: true }] };
 		};
+	};
+	readonly macro_rules: {
+		type: 'macro_rules';
+		named: true;
+		fields: { macro_rule: { multiple: true; required: true; types: [{ type: 'macro_rule'; named: true }] } };
 	};
 	readonly match_arm: {
 		type: 'match_arm';
@@ -2187,6 +2198,12 @@ export type RustGrammar = {
 	readonly type_arguments: {
 		type: 'type_arguments';
 		named: true;
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'type_arguments_elements'; named: true }] };
+	};
+	readonly type_arguments_elements: {
+		type: 'type_arguments_elements';
+		named: true;
 		fields: { element: { multiple: true; required: true; types: [{ type: 'type_argument'; named: true }] } };
 	};
 	readonly type_binding: {
@@ -2229,6 +2246,12 @@ export type RustGrammar = {
 	};
 	readonly type_parameters: {
 		type: 'type_parameters';
+		named: true;
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'type_parameters_elements'; named: true }] };
+	};
+	readonly type_parameters_elements: {
+		type: 'type_parameters_elements';
 		named: true;
 		fields: {
 			element: { multiple: true; required: true; types: [{ type: 'attributed_type_parameter'; named: true }] };

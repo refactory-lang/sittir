@@ -339,6 +339,8 @@ export const enum SyntaxKind {
 	EnumBodyElements = '_enum_body_elements',
 	InferTypeOptional1 = '_infer_type_optional1',
 	MappedTypeClauseOptional1 = '_mapped_type_clause_optional1',
+	Types = '_types',
+	TypeParametersElements = '_type_parameters_elements',
 	IndexSignatureOptional1 = '_index_signature_optional1',
 	TupleTypeMembers = '_tuple_type_members',
 	AmbientDeclarationGlobal = '_ambient_declaration_global',
@@ -855,82 +857,84 @@ export const enum TSKindId {
 	MetaPropertyGroup2 = 370,
 	FormalParametersElements = 371,
 	EnumBodyElements = 372,
-	TupleTypeMembers = 373,
-	Kind = 374,
-	ForHeaderOperator = 375,
-	AmbientDeclarationGlobal = 376,
-	AmbientDeclarationModule = 377,
-	ObjectTypeContent = 378,
-	ExportStatementDefault = 379,
-	ArrowFunctionParameter = 380,
-	ArrowFunctionUCallSignature = 381,
-	ClassHeritageExtendsClause = 382,
-	ImportClauseDefaultImport = 383,
-	ImportSpecifierAs = 384,
-	IndexSignatureColon = 385,
-	ExportStatementDefaultFromArm = 386,
-	ExportStatementDefaultDeclArm = 387,
-	ExportStatementDefaultStarFrom = 388,
-	ExportStatementDefaultNsFrom = 389,
-	ExportStatementDefaultClauseFrom = 390,
-	ExportStatementDefaultDefaultKw = 391,
-	ExportStatementDefaultValue = 392,
-	ClassBodyMethod = 393,
-	ClassBodyMethodSig = 394,
-	ClassBodyMember = 395,
-	ForHeaderLhs = 396,
-	ForHeaderVarKind = 397,
-	ForHeaderLetConstKind = 398,
-	PublicFieldDefinitionDeclareFirst = 399,
-	PublicFieldDefinitionAccessFirst = 400,
-	PublicFieldDefinitionStaticMods = 401,
-	PublicFieldDefinitionAbstractFirst = 402,
-	PublicFieldDefinitionReadonlyFirst = 403,
-	ParenthesizedExpressionTyped = 404,
-	ExportStatementTypeExport = 405,
-	ExportStatementEqualsExport = 406,
-	ExportStatementNamespaceExport = 407,
-	CallExpressionCall = 408,
-	CallExpressionTemplateCall = 409,
-	CallExpressionMember = 410,
-	StringDouble = 411,
-	StringSingle = 412,
-	UpdateExpressionPostfix = 413,
-	UpdateExpressionPrefix = 414,
-	ProgramRepeat1 = 415,
-	VariableDeclarationRepeat1 = 416,
-	SwitchBodyRepeat1 = 417,
-	ObjectRepeat1 = 418,
-	ObjectPatternRepeat1 = 419,
-	ArrayRepeat1 = 420,
-	ArrayPatternRepeat1 = 421,
-	ClassRepeat1 = 422,
-	SequenceExpressionRepeat1 = 423,
-	TemplateStringRepeat1 = 424,
-	ClassBodyRepeat1 = 425,
-	ExtendsClauseRepeat1 = 426,
-	ImplementsClauseRepeat1 = 427,
-	ExtendsTypeClauseRepeat1 = 428,
-	TemplateLiteralTypeRepeat1 = 429,
-	TypeParametersRepeat1 = 430,
-	_ExportSpecifiersRepeat1 = 431,
-	_ImportSpecifiersRepeat1 = 432,
-	_FormalParametersElementsRepeat1 = 433,
-	_EnumBodyElementsRepeat1 = 434,
-	_TupleTypeMembersRepeat1 = 435,
-	ObjectTypeContentRepeat1 = 436,
-	_StringDoubleRepeat1 = 437,
-	_StringSingleRepeat1 = 438,
-	_ForHeaderGroup1 = 439,
-	_InterfaceBody = 440,
-	_PropertyIdentifier = 441,
-	ReservedIdentifier = 442,
-	Semicolon = 443,
-	ShorthandPropertyIdentifier = 444,
-	ShorthandPropertyIdentifierPattern = 445,
-	StatementIdentifier = 446,
-	_ThisType = 447,
-	TypeIdentifier = 448
+	Types = 373,
+	TypeParametersElements = 374,
+	TupleTypeMembers = 375,
+	Kind = 376,
+	ForHeaderOperator = 377,
+	AmbientDeclarationGlobal = 378,
+	AmbientDeclarationModule = 379,
+	ObjectTypeContent = 380,
+	ExportStatementDefault = 381,
+	ArrowFunctionParameter = 382,
+	ArrowFunctionUCallSignature = 383,
+	ClassHeritageExtendsClause = 384,
+	ImportClauseDefaultImport = 385,
+	ImportSpecifierAs = 386,
+	IndexSignatureColon = 387,
+	ExportStatementDefaultFromArm = 388,
+	ExportStatementDefaultDeclArm = 389,
+	ExportStatementDefaultStarFrom = 390,
+	ExportStatementDefaultNsFrom = 391,
+	ExportStatementDefaultClauseFrom = 392,
+	ExportStatementDefaultDefaultKw = 393,
+	ExportStatementDefaultValue = 394,
+	ClassBodyMethod = 395,
+	ClassBodyMethodSig = 396,
+	ClassBodyMember = 397,
+	ForHeaderLhs = 398,
+	ForHeaderVarKind = 399,
+	ForHeaderLetConstKind = 400,
+	PublicFieldDefinitionDeclareFirst = 401,
+	PublicFieldDefinitionAccessFirst = 402,
+	PublicFieldDefinitionStaticMods = 403,
+	PublicFieldDefinitionAbstractFirst = 404,
+	PublicFieldDefinitionReadonlyFirst = 405,
+	ParenthesizedExpressionTyped = 406,
+	ExportStatementTypeExport = 407,
+	ExportStatementEqualsExport = 408,
+	ExportStatementNamespaceExport = 409,
+	CallExpressionCall = 410,
+	CallExpressionTemplateCall = 411,
+	CallExpressionMember = 412,
+	StringDouble = 413,
+	StringSingle = 414,
+	UpdateExpressionPostfix = 415,
+	UpdateExpressionPrefix = 416,
+	ProgramRepeat1 = 417,
+	VariableDeclarationRepeat1 = 418,
+	SwitchBodyRepeat1 = 419,
+	ObjectRepeat1 = 420,
+	ObjectPatternRepeat1 = 421,
+	ArrayRepeat1 = 422,
+	ArrayPatternRepeat1 = 423,
+	ClassRepeat1 = 424,
+	SequenceExpressionRepeat1 = 425,
+	TemplateStringRepeat1 = 426,
+	ClassBodyRepeat1 = 427,
+	ExtendsClauseRepeat1 = 428,
+	ImplementsClauseRepeat1 = 429,
+	ExtendsTypeClauseRepeat1 = 430,
+	TemplateLiteralTypeRepeat1 = 431,
+	_ExportSpecifiersRepeat1 = 432,
+	_ImportSpecifiersRepeat1 = 433,
+	_FormalParametersElementsRepeat1 = 434,
+	_EnumBodyElementsRepeat1 = 435,
+	_TypeParametersElementsRepeat1 = 436,
+	_TupleTypeMembersRepeat1 = 437,
+	ObjectTypeContentRepeat1 = 438,
+	_StringDoubleRepeat1 = 439,
+	_StringSingleRepeat1 = 440,
+	_ForHeaderGroup1 = 441,
+	_InterfaceBody = 442,
+	_PropertyIdentifier = 443,
+	ReservedIdentifier = 444,
+	Semicolon = 445,
+	ShorthandPropertyIdentifier = 446,
+	ShorthandPropertyIdentifierPattern = 447,
+	StatementIdentifier = 448,
+	_ThisType = 449,
+	TypeIdentifier = 450
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -1306,82 +1310,84 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[370, '_meta_property_group2'],
 	[371, '_formal_parameters_elements'],
 	[372, '_enum_body_elements'],
-	[373, '_tuple_type_members'],
-	[374, '_kind'],
-	[375, '__for_header_operator'],
-	[376, '_ambient_declaration_global'],
-	[377, '_ambient_declaration_module'],
-	[378, 'object_type_content'],
-	[379, '_export_statement_default'],
-	[380, '_arrow_function_parameter'],
-	[381, '_arrow_function__call_signature'],
-	[382, '_class_heritage_extends_clause'],
-	[383, '_import_clause_default_import'],
-	[384, '_import_specifier_as'],
-	[385, '_index_signature_colon'],
-	[386, '_export_statement_default_from_arm'],
-	[387, '_export_statement_default_decl_arm'],
-	[388, '_export_statement_default_star_from'],
-	[389, '_export_statement_default_ns_from'],
-	[390, '_export_statement_default_clause_from'],
-	[391, '_export_statement_default_default_kw'],
-	[392, '_export_statement_default_value'],
-	[393, '_class_body_method'],
-	[394, '_class_body_method_sig'],
-	[395, '_class_body_member'],
-	[396, '_for_header_lhs'],
-	[397, '_for_header_var_kind'],
-	[398, '_for_header_let_const_kind'],
-	[399, '_public_field_definition_declare_first'],
-	[400, '_public_field_definition_access_first'],
-	[401, '_public_field_definition_static_mods'],
-	[402, '_public_field_definition_abstract_first'],
-	[403, '_public_field_definition_readonly_first'],
-	[404, '_parenthesized_expression_typed'],
-	[405, '_export_statement_type_export'],
-	[406, '_export_statement_equals_export'],
-	[407, '_export_statement_namespace_export'],
-	[408, '_call_expression_call'],
-	[409, '_call_expression_template_call'],
-	[410, '_call_expression_member'],
-	[411, '_string_double'],
-	[412, '_string_single'],
-	[413, '_update_expression_postfix'],
-	[414, '_update_expression_prefix'],
-	[415, 'program_repeat1'],
-	[416, 'variable_declaration_repeat1'],
-	[417, 'switch_body_repeat1'],
-	[418, 'object_repeat1'],
-	[419, 'object_pattern_repeat1'],
-	[420, 'array_repeat1'],
-	[421, 'array_pattern_repeat1'],
-	[422, 'class_repeat1'],
-	[423, 'sequence_expression_repeat1'],
-	[424, 'template_string_repeat1'],
-	[425, 'class_body_repeat1'],
-	[426, 'extends_clause_repeat1'],
-	[427, 'implements_clause_repeat1'],
-	[428, 'extends_type_clause_repeat1'],
-	[429, 'template_literal_type_repeat1'],
-	[430, 'type_parameters_repeat1'],
-	[431, '_export_specifiers_repeat1'],
-	[432, '_import_specifiers_repeat1'],
-	[433, '_formal_parameters_elements_repeat1'],
-	[434, '_enum_body_elements_repeat1'],
-	[435, '_tuple_type_members_repeat1'],
-	[436, 'object_type_content_repeat1'],
-	[437, '_string_double_repeat1'],
-	[438, '_string_single_repeat1'],
-	[439, '_for_header_group1'],
-	[440, '_interface_body'],
-	[441, '_property_identifier'],
-	[442, '_reserved_identifier'],
-	[443, '_semicolon'],
-	[444, '_shorthand_property_identifier'],
-	[445, '_shorthand_property_identifier_pattern'],
-	[446, '_statement_identifier'],
-	[447, '_this_type'],
-	[448, '_type_identifier']
+	[373, '_types'],
+	[374, '_type_parameters_elements'],
+	[375, '_tuple_type_members'],
+	[376, '_kind'],
+	[377, '__for_header_operator'],
+	[378, '_ambient_declaration_global'],
+	[379, '_ambient_declaration_module'],
+	[380, 'object_type_content'],
+	[381, '_export_statement_default'],
+	[382, '_arrow_function_parameter'],
+	[383, '_arrow_function__call_signature'],
+	[384, '_class_heritage_extends_clause'],
+	[385, '_import_clause_default_import'],
+	[386, '_import_specifier_as'],
+	[387, '_index_signature_colon'],
+	[388, '_export_statement_default_from_arm'],
+	[389, '_export_statement_default_decl_arm'],
+	[390, '_export_statement_default_star_from'],
+	[391, '_export_statement_default_ns_from'],
+	[392, '_export_statement_default_clause_from'],
+	[393, '_export_statement_default_default_kw'],
+	[394, '_export_statement_default_value'],
+	[395, '_class_body_method'],
+	[396, '_class_body_method_sig'],
+	[397, '_class_body_member'],
+	[398, '_for_header_lhs'],
+	[399, '_for_header_var_kind'],
+	[400, '_for_header_let_const_kind'],
+	[401, '_public_field_definition_declare_first'],
+	[402, '_public_field_definition_access_first'],
+	[403, '_public_field_definition_static_mods'],
+	[404, '_public_field_definition_abstract_first'],
+	[405, '_public_field_definition_readonly_first'],
+	[406, '_parenthesized_expression_typed'],
+	[407, '_export_statement_type_export'],
+	[408, '_export_statement_equals_export'],
+	[409, '_export_statement_namespace_export'],
+	[410, '_call_expression_call'],
+	[411, '_call_expression_template_call'],
+	[412, '_call_expression_member'],
+	[413, '_string_double'],
+	[414, '_string_single'],
+	[415, '_update_expression_postfix'],
+	[416, '_update_expression_prefix'],
+	[417, 'program_repeat1'],
+	[418, 'variable_declaration_repeat1'],
+	[419, 'switch_body_repeat1'],
+	[420, 'object_repeat1'],
+	[421, 'object_pattern_repeat1'],
+	[422, 'array_repeat1'],
+	[423, 'array_pattern_repeat1'],
+	[424, 'class_repeat1'],
+	[425, 'sequence_expression_repeat1'],
+	[426, 'template_string_repeat1'],
+	[427, 'class_body_repeat1'],
+	[428, 'extends_clause_repeat1'],
+	[429, 'implements_clause_repeat1'],
+	[430, 'extends_type_clause_repeat1'],
+	[431, 'template_literal_type_repeat1'],
+	[432, '_export_specifiers_repeat1'],
+	[433, '_import_specifiers_repeat1'],
+	[434, '_formal_parameters_elements_repeat1'],
+	[435, '_enum_body_elements_repeat1'],
+	[436, '_type_parameters_elements_repeat1'],
+	[437, '_tuple_type_members_repeat1'],
+	[438, 'object_type_content_repeat1'],
+	[439, '_string_double_repeat1'],
+	[440, '_string_single_repeat1'],
+	[441, '_for_header_group1'],
+	[442, '_interface_body'],
+	[443, '_property_identifier'],
+	[444, '_reserved_identifier'],
+	[445, '_semicolon'],
+	[446, '_shorthand_property_identifier'],
+	[447, '_shorthand_property_identifier_pattern'],
+	[448, '_statement_identifier'],
+	[449, '_this_type'],
+	[450, '_type_identifier']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1758,82 +1764,84 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[370, 'meta_property_group2'],
 	[371, 'formal_parameters_elements'],
 	[372, 'enum_body_elements'],
-	[373, 'tuple_type_members'],
-	[374, '_kind'],
-	[375, '__for_header_operator'],
-	[376, 'ambient_declaration_global'],
-	[377, 'ambient_declaration_module'],
-	[378, 'object_type_content'],
-	[379, 'export_statement_default'],
-	[380, 'arrow_function_parameter'],
-	[381, 'arrow_function__call_signature'],
-	[382, 'class_heritage_extends_clause'],
-	[383, 'import_clause_default_import'],
-	[384, 'import_specifier_as'],
-	[385, 'index_signature_colon'],
-	[386, 'export_statement_default_from_arm'],
-	[387, 'export_statement_default_decl_arm'],
-	[388, 'export_statement_default_star_from'],
-	[389, 'export_statement_default_ns_from'],
-	[390, 'export_statement_default_clause_from'],
-	[391, 'export_statement_default_default_kw'],
-	[392, 'export_statement_default_value'],
-	[393, 'class_body_method'],
-	[394, 'class_body_method_sig'],
-	[395, 'class_body_member'],
-	[396, 'for_header_lhs'],
-	[397, 'for_header_var_kind'],
-	[398, 'for_header_let_const_kind'],
-	[399, 'public_field_definition_declare_first'],
-	[400, 'public_field_definition_access_first'],
-	[401, 'public_field_definition_static_mods'],
-	[402, 'public_field_definition_abstract_first'],
-	[403, 'public_field_definition_readonly_first'],
-	[404, 'parenthesized_expression_typed'],
-	[405, 'export_statement_type_export'],
-	[406, 'export_statement_equals_export'],
-	[407, 'export_statement_namespace_export'],
-	[408, 'call_expression_call'],
-	[409, 'call_expression_template_call'],
-	[410, 'call_expression_member'],
-	[411, 'string_double'],
-	[412, 'string_single'],
-	[413, 'update_expression_postfix'],
-	[414, 'update_expression_prefix'],
-	[415, 'program_repeat1'],
-	[416, 'variable_declaration_repeat1'],
-	[417, 'switch_body_repeat1'],
-	[418, 'object_repeat1'],
-	[419, 'object_pattern_repeat1'],
-	[420, 'array_repeat1'],
-	[421, 'array_pattern_repeat1'],
-	[422, 'class_repeat1'],
-	[423, 'sequence_expression_repeat1'],
-	[424, 'template_string_repeat1'],
-	[425, 'class_body_repeat1'],
-	[426, 'extends_clause_repeat1'],
-	[427, 'implements_clause_repeat1'],
-	[428, 'extends_type_clause_repeat1'],
-	[429, 'template_literal_type_repeat1'],
-	[430, 'type_parameters_repeat1'],
-	[431, '_export_specifiers_repeat1'],
-	[432, '_import_specifiers_repeat1'],
-	[433, '_formal_parameters_elements_repeat1'],
-	[434, '_enum_body_elements_repeat1'],
-	[435, '_tuple_type_members_repeat1'],
-	[436, 'object_type_content_repeat1'],
-	[437, '_string_double_repeat1'],
-	[438, '_string_single_repeat1'],
-	[439, 'for_header_group1'],
-	[440, 'interface_body'],
-	[441, 'property_identifier'],
-	[442, 'reserved_identifier'],
-	[443, 'semicolon'],
-	[444, 'shorthand_property_identifier'],
-	[445, 'shorthand_property_identifier_pattern'],
-	[446, 'statement_identifier'],
-	[447, 'this_type'],
-	[448, 'type_identifier']
+	[373, 'types'],
+	[374, 'type_parameters_elements'],
+	[375, 'tuple_type_members'],
+	[376, '_kind'],
+	[377, '__for_header_operator'],
+	[378, 'ambient_declaration_global'],
+	[379, 'ambient_declaration_module'],
+	[380, 'object_type_content'],
+	[381, 'export_statement_default'],
+	[382, 'arrow_function_parameter'],
+	[383, 'arrow_function__call_signature'],
+	[384, 'class_heritage_extends_clause'],
+	[385, 'import_clause_default_import'],
+	[386, 'import_specifier_as'],
+	[387, 'index_signature_colon'],
+	[388, 'export_statement_default_from_arm'],
+	[389, 'export_statement_default_decl_arm'],
+	[390, 'export_statement_default_star_from'],
+	[391, 'export_statement_default_ns_from'],
+	[392, 'export_statement_default_clause_from'],
+	[393, 'export_statement_default_default_kw'],
+	[394, 'export_statement_default_value'],
+	[395, 'class_body_method'],
+	[396, 'class_body_method_sig'],
+	[397, 'class_body_member'],
+	[398, 'for_header_lhs'],
+	[399, 'for_header_var_kind'],
+	[400, 'for_header_let_const_kind'],
+	[401, 'public_field_definition_declare_first'],
+	[402, 'public_field_definition_access_first'],
+	[403, 'public_field_definition_static_mods'],
+	[404, 'public_field_definition_abstract_first'],
+	[405, 'public_field_definition_readonly_first'],
+	[406, 'parenthesized_expression_typed'],
+	[407, 'export_statement_type_export'],
+	[408, 'export_statement_equals_export'],
+	[409, 'export_statement_namespace_export'],
+	[410, 'call_expression_call'],
+	[411, 'call_expression_template_call'],
+	[412, 'call_expression_member'],
+	[413, 'string_double'],
+	[414, 'string_single'],
+	[415, 'update_expression_postfix'],
+	[416, 'update_expression_prefix'],
+	[417, 'program_repeat1'],
+	[418, 'variable_declaration_repeat1'],
+	[419, 'switch_body_repeat1'],
+	[420, 'object_repeat1'],
+	[421, 'object_pattern_repeat1'],
+	[422, 'array_repeat1'],
+	[423, 'array_pattern_repeat1'],
+	[424, 'class_repeat1'],
+	[425, 'sequence_expression_repeat1'],
+	[426, 'template_string_repeat1'],
+	[427, 'class_body_repeat1'],
+	[428, 'extends_clause_repeat1'],
+	[429, 'implements_clause_repeat1'],
+	[430, 'extends_type_clause_repeat1'],
+	[431, 'template_literal_type_repeat1'],
+	[432, '_export_specifiers_repeat1'],
+	[433, '_import_specifiers_repeat1'],
+	[434, '_formal_parameters_elements_repeat1'],
+	[435, '_enum_body_elements_repeat1'],
+	[436, '_type_parameters_elements_repeat1'],
+	[437, '_tuple_type_members_repeat1'],
+	[438, 'object_type_content_repeat1'],
+	[439, '_string_double_repeat1'],
+	[440, '_string_single_repeat1'],
+	[441, 'for_header_group1'],
+	[442, 'interface_body'],
+	[443, 'property_identifier'],
+	[444, 'reserved_identifier'],
+	[445, 'semicolon'],
+	[446, 'shorthand_property_identifier'],
+	[447, 'shorthand_property_identifier_pattern'],
+	[448, 'statement_identifier'],
+	[449, 'this_type'],
+	[450, 'type_identifier']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -2588,6 +2596,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.FormalParametersElements;
 		case '_enum_body_elements':
 			return TSKindId.EnumBodyElements;
+		case '_types':
+			return TSKindId.Types;
+		case '_type_parameters_elements':
+			return TSKindId.TypeParametersElements;
 		case '_tuple_type_members':
 			return TSKindId.TupleTypeMembers;
 		case '_kind':
@@ -2702,8 +2714,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExtendsTypeClauseRepeat1;
 		case 'template_literal_type_repeat1':
 			return TSKindId.TemplateLiteralTypeRepeat1;
-		case 'type_parameters_repeat1':
-			return TSKindId.TypeParametersRepeat1;
 		case '_export_specifiers_repeat1':
 			return TSKindId._ExportSpecifiersRepeat1;
 		case '_import_specifiers_repeat1':
@@ -2712,6 +2722,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._FormalParametersElementsRepeat1;
 		case '_enum_body_elements_repeat1':
 			return TSKindId._EnumBodyElementsRepeat1;
+		case '_type_parameters_elements_repeat1':
+			return TSKindId._TypeParametersElementsRepeat1;
 		case '_tuple_type_members_repeat1':
 			return TSKindId._TupleTypeMembersRepeat1;
 		case 'object_type_content_repeat1':
@@ -2908,6 +2920,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.FormalParametersElements;
 		case 'enum_body_elements':
 			return TSKindId.EnumBodyElements;
+		case 'types':
+			return TSKindId.Types;
+		case 'type_parameters_elements':
+			return TSKindId.TypeParametersElements;
 		case 'tuple_type_members':
 			return TSKindId.TupleTypeMembers;
 		case 'ambient_declaration_global':
@@ -4988,8 +5004,8 @@ export interface ParenthesizedType {
 
 export interface TypeArguments {
 	readonly $type: TSKindId.TypeArguments;
-	readonly _type: NonEmptyArray<Type>;
-	types(): NonEmptyArray<Type>;
+	readonly _types: Types;
+	types(): Types;
 }
 
 export interface ObjectType {
@@ -5046,8 +5062,8 @@ export interface PropertySignature {
 
 export interface TypeParameters {
 	readonly $type: TSKindId.TypeParameters;
-	readonly _type_parameter: NonEmptyArray<TypeParameter>;
-	typeParameters(): NonEmptyArray<TypeParameter>;
+	readonly _type_parameters_elements: TypeParametersElements;
+	typeParametersElements(): TypeParametersElements;
 }
 
 export interface TypeParameter {
@@ -5258,6 +5274,18 @@ export interface MappedTypeClauseOptional1 {
 	readonly $type: '_mapped_type_clause_optional1';
 	readonly _alias: Type;
 	alias(): Type;
+}
+
+export interface Types {
+	readonly $type: TSKindId.Types;
+	readonly _type: NonEmptyArray<Type>;
+	types(): NonEmptyArray<Type>;
+}
+
+export interface TypeParametersElements {
+	readonly $type: TSKindId.TypeParametersElements;
+	readonly _type_parameter: NonEmptyArray<TypeParameter>;
+	typeParameters(): NonEmptyArray<TypeParameter>;
 }
 
 export interface IndexSignatureOptional1 {
@@ -6084,6 +6112,12 @@ export interface InferTypeOptional1Tree extends AnyTreeNode {
 }
 export interface MappedTypeClauseOptional1Tree extends AnyTreeNode {
 	readonly type: '_mapped_type_clause_optional1';
+}
+export interface TypesTree extends AnyTreeNode {
+	readonly type: '_types';
+}
+export interface TypeParametersElementsTree extends AnyTreeNode {
+	readonly type: '_type_parameters_elements';
 }
 export interface IndexSignatureOptional1Tree extends AnyTreeNode {
 	readonly type: '_index_signature_optional1';
@@ -7096,6 +7130,8 @@ export type TypescriptNode =
 	| EnumBodyElements
 	| InferTypeOptional1
 	| MappedTypeClauseOptional1
+	| Types
+	| TypeParametersElements
 	| IndexSignatureOptional1
 	| TupleTypeMembers
 	| AmbientDeclarationGlobal
@@ -7329,6 +7365,8 @@ export interface KindMap {
 	_enum_body_elements: EnumBodyElements;
 	_infer_type_optional1: InferTypeOptional1;
 	_mapped_type_clause_optional1: MappedTypeClauseOptional1;
+	_types: Types;
+	_type_parameters_elements: TypeParametersElements;
 	_index_signature_optional1: IndexSignatureOptional1;
 	_tuple_type_members: TupleTypeMembers;
 	_ambient_declaration_global: AmbientDeclarationGlobal;
@@ -7834,6 +7872,13 @@ export interface MappedTypeClauseOptional1Ns extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
+export interface TypesNs extends NodeNs<Types, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TypeParametersElementsNs extends NodeNs<
+	TypeParametersElements,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
 export interface IndexSignatureOptional1Ns extends NodeNs<
 	IndexSignatureOptional1,
 	LeafScalarMap,
@@ -8222,6 +8267,8 @@ export interface NamespaceMap {
 	_enum_body_elements: EnumBodyElementsNs;
 	_infer_type_optional1: InferTypeOptional1Ns;
 	_mapped_type_clause_optional1: MappedTypeClauseOptional1Ns;
+	_types: TypesNs;
+	_type_parameters_elements: TypeParametersElementsNs;
 	_index_signature_optional1: IndexSignatureOptional1Ns;
 	_tuple_type_members: TupleTypeMembersNs;
 	_ambient_declaration_global: AmbientDeclarationGlobalNs;
@@ -9604,6 +9651,20 @@ export namespace MappedTypeClauseOptional1 {
 	export type Loose = LooseFor<'_mapped_type_clause_optional1'>;
 	export type Tree = TreeFor<'_mapped_type_clause_optional1'>;
 	export type Kind = '_mapped_type_clause_optional1';
+}
+export namespace Types {
+	export type Config = ConfigFor<'_types'>;
+	export type Fluent = FluentFor<'_types'>;
+	export type Loose = LooseFor<'_types'>;
+	export type Tree = TreeFor<'_types'>;
+	export type Kind = '_types';
+}
+export namespace TypeParametersElements {
+	export type Config = ConfigFor<'_type_parameters_elements'>;
+	export type Fluent = FluentFor<'_type_parameters_elements'>;
+	export type Loose = LooseFor<'_type_parameters_elements'>;
+	export type Tree = TreeFor<'_type_parameters_elements'>;
+	export type Kind = '_type_parameters_elements';
 }
 export namespace IndexSignatureOptional1 {
 	export type Config = ConfigFor<'_index_signature_optional1'>;
