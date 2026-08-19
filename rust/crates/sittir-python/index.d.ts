@@ -560,8 +560,9 @@ export interface DictPatternElementsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _dict_pattern_kv: Box<DictPatternKvTransport>
-  _content?: Array<DictPatternElementsContentTransportSlot>
+  _element: Array<DictPatternElementsElementTransportSlot>
+  _element_trailing_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface DictPatternTransport {
@@ -572,7 +573,8 @@ export interface DictPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _dict_pattern_elements?: Box<DictPatternElementsTransport>
+  _dict_pattern_elements?: DictPatternElementsTransport
+  _element?: Array<DictPatternElementsElementTransportSlot>
 }
 
 export interface DottedNameTransport {
@@ -960,8 +962,8 @@ export interface KeyValuePatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _key: Box<SimplePatternTransport>
-  _value: Box<CasePatternTransport>
+  _key: SimplePatternTransport
+  _value: CasePatternTransport
 }
 
 export interface KeywordArgumentTransport {
@@ -985,7 +987,7 @@ export interface KeywordPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _identifier: IdentifierTransport
-  _simple_pattern: Box<SimplePatternTransport>
+  _simple_pattern: SimplePatternTransport
 }
 
 export interface LambdaParametersTransport {

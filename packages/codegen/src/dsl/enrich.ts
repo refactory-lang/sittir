@@ -1158,7 +1158,7 @@ function applyNodeChoiceFieldWrap(
 	// fielding the inner `$.statement` too would nest a field inside a
 	// field, and tree-sitter fields don't stack — the outer field would
 	// silently end up with zero children, the SAME "ancestor collision"
-	// class as the `trait_bounds`/`_dict_pattern_kv` cases found earlier).
+	// class as the rust `trait_bounds` case found earlier).
 	const visit = (r: Rule, suppressed: boolean = false): Rule => {
 		if (isFieldType((r as { type: string }).type)) return r;
 

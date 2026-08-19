@@ -4,7 +4,6 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
 {
   "ALL_KINDS": "array",
   "CompoundStatementKind": "object",
-  "DictPatternKvKind": "object",
   "ExpressionKind": "object",
   "ExpressionWithinForInClauseKind": "object",
   "ExpressionsKind": "object",
@@ -176,7 +175,6 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "compoundStatement": "object",
   "createEngine": "function",
   "createRenderer": "function",
-  "dictPatternKv": "object",
   "expression": "object",
   "expressionWithinForInClause": "object",
   "expressions": "object",

@@ -6318,51 +6318,72 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_dict_pattern_kv"
+          "type": "FIELD",
+          "name": "element",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_key_value_pattern"
+                },
+                "named": true,
+                "value": "dict_pattern_group1",
+                "metadata": {
+                  "author": "enrich"
+                }
               },
-              "named": true,
-              "value": "dict_pattern_kv"
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": ","
-                  },
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "ALIAS",
-                        "content": {
-                          "type": "SYMBOL",
-                          "name": "_key_value_pattern"
-                        },
-                        "named": true,
-                        "value": "dict_pattern_group1",
-                        "metadata": {
-                          "author": "enrich"
-                        }
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "splat_pattern"
-                      }
-                    ]
-                  }
-                ]
+              {
+                "type": "SYMBOL",
+                "name": "splat_pattern"
               }
-            }
-          ]
+            ]
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "FIELD",
+                "name": "element",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_key_value_pattern"
+                      },
+                      "named": true,
+                      "value": "dict_pattern_group1",
+                      "metadata": {
+                        "author": "enrich"
+                      }
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "splat_pattern"
+                    }
+                  ]
+                },
+                "metadata": {
+                  "fieldSource": "enriched"
+                }
+              }
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -7120,27 +7141,6 @@
         {
           "type": "SYMBOL",
           "name": "block"
-        }
-      ]
-    },
-    "_dict_pattern_kv": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_key_value_pattern"
-          },
-          "named": true,
-          "value": "dict_pattern_group1",
-          "metadata": {
-            "author": "enrich"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "splat_pattern"
         }
       ]
     },

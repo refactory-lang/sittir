@@ -1581,24 +1581,21 @@
   {
     "type": "dict_pattern_elements",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "dict_pattern_group1",
-          "named": true
-        },
-        {
-          "type": "dict_pattern_kv",
-          "named": true
-        },
-        {
-          "type": "splat_pattern",
-          "named": true
-        }
-      ]
+    "fields": {
+      "element": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "dict_pattern_group1",
+            "named": true
+          },
+          {
+            "type": "splat_pattern",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -1681,25 +1678,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "dict_pattern_kv",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "dict_pattern_group1",
-          "named": true
-        },
-        {
-          "type": "splat_pattern",
-          "named": true
-        }
-      ]
     }
   },
   {

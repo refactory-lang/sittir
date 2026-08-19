@@ -137,8 +137,7 @@ pub struct ComparisonOperatorComparatorTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_dict_pattern_elements.jinja", escape = "none")]
 pub struct DictPatternElementsTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
-    pub dict_pattern_kv: SingleNonterminalView<'a>,
+    pub element: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

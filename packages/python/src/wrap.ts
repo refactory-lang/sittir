@@ -670,8 +670,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'pattern_list',
 		'yield'
 	]),
-	keyword_identifier: new Set(['identifier']),
-	_dict_pattern_kv: new Set(['_key_value_pattern', 'key_value_pattern', 'splat_pattern'])
+	keyword_identifier: new Set(['identifier'])
 };
 
 function _wrapKindNameOf(entry: unknown): string | undefined {
@@ -6755,56 +6754,33 @@ export function wrapListPatternCasePatterns(
 
 export function wrapDictPatternElements(
 	data: T.DictPatternElements & {
-		readonly _dict_pattern_group1?:
-			| T.KeyValuePattern
-			| T.SplatPattern
-			| readonly (T.KeyValuePattern | T.SplatPattern)[];
-		readonly _splat_pattern?: T.KeyValuePattern | T.SplatPattern | readonly (T.KeyValuePattern | T.SplatPattern)[];
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
 	},
 	tree: TreeHandle
 ) {
-	const _node = withMethods(
+	const _content = normalizeRepeatedWrapSlot(data._element, true, 'element', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'element',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
 		{
-			..._omitWrapKeys(data, ['_dict_pattern_group1', '_splat_pattern']),
+			...data,
 			$type: TSKindId.DictPatternElements as const,
-			_dict_pattern_kv: normalizeSingularWrapSlot(data._dict_pattern_kv, 'dict_pattern_kv', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'dict_pattern_kv',
-				span: (data as _NodeData).$span
-			}),
-			_content: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(
-					data._content !== undefined
-						? _toArr(data._content)
-						: _concatInSourceOrder([data._dict_pattern_group1, data._splat_pattern]),
-					['_key_value_pattern', 'splat_pattern', 'dict_pattern_group1']
-				),
-				false,
-				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_element: _content,
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
-			dictPatternKv() {
-				return drillAs<T.DictPatternKv>(this._dict_pattern_kv, tree, [
-					{ from: 'dict_pattern_kv', to: '_dict_pattern_kv' }
-				]);
-			},
-			contents() {
-				return drillAsAll<T.KeyValuePattern | T.SplatPattern>(this._content, tree, [
+			elements() {
+				return drillAsAll<T.KeyValuePattern | T.SplatPattern>(this._element, tree, [
 					{ from: 'dict_pattern_group1', to: '_key_value_pattern' }
 				]);
 			},
-			$with: {
-				dictPatternKv: (v: NonNullable<T.DictPatternElements['_dict_pattern_kv']>) =>
-					wrapDictPatternElements({ ...data, _dict_pattern_kv: v }, tree),
-				contents: (...v: NonNullable<T.DictPatternElements['_content']>[number][]) =>
-					wrapDictPatternElements({ ...data, _content: v }, tree)
-			}
+			$with: {}
 		},
 		methodsEngine
 	);
-	return _node;
 }
 
 export function wrapPatternListPatterns(
@@ -7609,30 +7585,6 @@ export function wrapSuiteBlockWithIndent(data: T.SuiteBlockWithIndent, tree: Tre
 	return _node;
 }
 
-export function wrapDictPatternKv(
-	data: T.DictPatternKv & { readonly $other?: T.DictPatternKv | readonly T.DictPatternKv[] },
-	tree: TreeHandle
-) {
-	const kindKeyed = _firstKindKeyedWrapChild(data, ['_key_value_pattern', 'key_value_pattern', 'splat_pattern']) as
-		| T.DictPatternKv
-		| readonly T.DictPatternKv[]
-		| undefined;
-	const filtered =
-		kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['_key_value_pattern', 'key_value_pattern', 'splat_pattern']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T.DictPatternKv>(data as T.DictPatternKv, tree);
-	}
-	return drillIn<T.DictPatternKv>(
-		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'children',
-			span: (data as _NodeData).$span
-		}),
-		tree
-	);
-}
-
 export function wrapSimplePatternNegative(
 	data: T.SimplePatternNegative & { readonly _integer?: T.Integer | T.Float; readonly _float?: T.Integer | T.Float },
 	tree: TreeHandle
@@ -8165,7 +8117,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_with_clause_paren: (d, t) => wrapWithClauseParen(d as unknown as T.WithClauseParen, t),
 	_match_block_block: (d, t) => wrapMatchBlockBlock(d as unknown as T.MatchBlockBlock, t),
 	_suite_block_with_indent: (d, t) => wrapSuiteBlockWithIndent(d as unknown as T.SuiteBlockWithIndent, t),
-	_dict_pattern_kv: (d, t) => wrapDictPatternKv(d as unknown as T.DictPatternKv, t),
 	_simple_pattern_negative: (d, t) => wrapSimplePatternNegative(d as unknown as T.SimplePatternNegative, t),
 	_except_clause_list: (d, t) => wrapExceptClauseList(d as unknown as T.ExceptClauseList, t),
 	_comparison_operator_comparator: (d, t) =>
@@ -8184,7 +8135,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 };
 
 const _aliasTargetToSource: Record<string, string> = {
-	_dict_pattern_group1: '_key_value_pattern',
 	_statement_group1: '_simple_statements',
 	argument_list_elements: '_argument_list_elements',
 	assignment_eq: '_assignment_eq',
@@ -8195,8 +8145,6 @@ const _aliasTargetToSource: Record<string, string> = {
 	collection_elements: '_collection_elements',
 	comparison_operator_comparator: '_comparison_operator_comparator',
 	dict_pattern_elements: '_dict_pattern_elements',
-	dict_pattern_group1: '_key_value_pattern',
-	dict_pattern_kv: '_dict_pattern_kv',
 	dictionary_elements: '_dictionary_elements',
 	except_clause_as: '_except_clause_as',
 	except_clause_group1: '_except_clause_group1',

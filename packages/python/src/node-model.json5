@@ -1,10 +1,9 @@
 {
   "name": "python",
-  "nodeCount": 266,
+  "nodeCount": 265,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
-    "_dict_pattern_kv",
     "_expression_within_for_in_clause",
     "_expressions",
     "_f_expression",
@@ -295,10 +294,7 @@
       "except_clause_as": "_except_clause_as",
       "except_clause_list": "_except_clause_list"
     },
-    "_dict_pattern_elements.dict_pattern_kv": {
-      "dict_pattern_kv": "_dict_pattern_kv"
-    },
-    "_dict_pattern_elements.content": {
+    "_dict_pattern_elements.element": {
       "dict_pattern_group1": "_key_value_pattern"
     },
     "case_tuple_pattern.list_pattern_case_patterns": {
@@ -1984,19 +1980,12 @@
       }
     },
     "_dict_pattern_elements": {
-      "dict_pattern_kv": {
+      "element": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "_pattern_list_patterns": {
@@ -2692,83 +2681,22 @@
     },
     {
       "kind": "_dict_pattern_elements",
-      "modelType": "branch",
+      "modelType": "separatedList",
       "typeName": "DictPatternElements",
       "factoryName": "dictPatternElements",
       "irKey": "dictPatternElements",
       "hidden": false,
-      "fields": [
-        {
-          "name": "dict_pattern_kv",
-          "propertyName": "dictPatternKv",
-          "paramName": "dictPatternKv",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_dict_pattern_kv",
-              "parseKind": "dict_pattern_kv",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_dict_pattern_kv"
-            ]
-          }
-        },
-        {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_key_value_pattern",
-              "parseKind": "dict_pattern_group1",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "splat_pattern",
-              "parseKind": "splat_pattern",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_key_value_pattern",
-              "splat_pattern"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "dict_pattern_kv",
-        "content"
-      ]
-    },
-    {
-      "kind": "_dict_pattern_kv",
-      "modelType": "supertype",
-      "typeName": "DictPatternKv",
-      "irKey": "dictPatternKv",
-      "hidden": true,
-      "subtypes": [
-        "_key_value_pattern",
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "dict_pattern_group1",
         "splat_pattern"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "element"
       ]
     },
     {

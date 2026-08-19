@@ -583,15 +583,12 @@ export type PythonGrammar = {
 	readonly dict_pattern_elements: {
 		type: 'dict_pattern_elements';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [
-				{ type: 'dict_pattern_group1'; named: true },
-				{ type: 'dict_pattern_kv'; named: true },
-				{ type: 'splat_pattern'; named: true }
-			];
+		fields: {
+			element: {
+				multiple: true;
+				required: true;
+				types: [{ type: 'dict_pattern_group1'; named: true }, { type: 'splat_pattern'; named: true }];
+			};
 		};
 	};
 	readonly dict_pattern_group1: {
@@ -620,16 +617,6 @@ export type PythonGrammar = {
 				];
 			};
 			value: { multiple: false; required: true; types: [{ type: 'case_pattern'; named: true }] };
-		};
-	};
-	readonly dict_pattern_kv: {
-		type: 'dict_pattern_kv';
-		named: true;
-		fields: {};
-		children: {
-			multiple: false;
-			required: true;
-			types: [{ type: 'dict_pattern_group1'; named: true }, { type: 'splat_pattern'; named: true }];
 		};
 	};
 	readonly dictionary: {

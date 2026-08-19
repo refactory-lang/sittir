@@ -7,7 +7,6 @@ import { TSKindId } from './types.js';
 import type {
 	NamespaceMap,
 	CompoundStatement,
-	DictPatternKv,
 	Expression,
 	ExpressionWithinForInClause,
 	Expressions,
@@ -246,7 +245,6 @@ export interface IsGuards {
 	rightHandSide(v: { readonly $type: string | number }): v is RightHandSide;
 	fExpression(v: { readonly $type: string | number }): v is FExpression;
 	keywordIdentifier(v: { readonly $type: string | number }): v is KeywordIdentifier;
-	dictPatternKv(v: { readonly $type: string | number }): v is DictPatternKv;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -419,7 +417,6 @@ export interface AssertGuards {
 	rightHandSide(v: { readonly $type: string | number }): asserts v is RightHandSide;
 	fExpression(v: { readonly $type: string | number }): asserts v is FExpression;
 	keywordIdentifier(v: { readonly $type: string | number }): asserts v is KeywordIdentifier;
-	dictPatternKv(v: { readonly $type: string | number }): asserts v is DictPatternKv;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -438,7 +435,7 @@ const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
 const _supertype_expressions_ids = new Set<number>([161]);
 const _supertype_compoundStatement_ids = new Set<number>([131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_simplePattern_ids = new Set<number>([
-	170, 169, 165, 255, 254, 166, 227, 226, 74, 75, 76, 270, 171, 162, 260
+	170, 169, 165, 255, 254, 166, 227, 226, 74, 75, 76, 269, 171, 162, 260
 ]);
 const _supertype_parameter_ids = new Set<number>([1, 204, 178, 179, 180, 176, 181]);
 const _supertype_pattern_ids = new Set<number>([1, 201, 200, 180, 176, 177]);
@@ -451,7 +448,6 @@ const _supertype_leftHandSide_ids = new Set<number>([197]);
 const _supertype_rightHandSide_ids = new Set<number>([161, 195, 196, 197, 199]);
 const _supertype_fExpression_ids = new Set<number>([161, 197, 199]);
 const _supertype_keywordIdentifier_ids = new Set<number>([1]);
-const _supertype_dictPatternKv_ids = new Set<number>([167, 169]);
 
 const _kindIdByKind = new Map<string, number>([
 	['identifier', TSKindId.Identifier],
@@ -814,8 +810,7 @@ export const is = {
 	leftHandSide: _sg(_supertype_leftHandSide_ids),
 	rightHandSide: _sg(_supertype_rightHandSide_ids),
 	fExpression: _sg(_supertype_fExpression_ids),
-	keywordIdentifier: _sg(_supertype_keywordIdentifier_ids),
-	dictPatternKv: _sg(_supertype_dictPatternKv_ids)
+	keywordIdentifier: _sg(_supertype_keywordIdentifier_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -990,8 +985,7 @@ export const assert = {
 	leftHandSide: _makeAssert('leftHandSide', is.leftHandSide as _AnyGuard),
 	rightHandSide: _makeAssert('rightHandSide', is.rightHandSide as _AnyGuard),
 	fExpression: _makeAssert('fExpression', is.fExpression as _AnyGuard),
-	keywordIdentifier: _makeAssert('keywordIdentifier', is.keywordIdentifier as _AnyGuard),
-	dictPatternKv: _makeAssert('dictPatternKv', is.dictPatternKv as _AnyGuard)
+	keywordIdentifier: _makeAssert('keywordIdentifier', is.keywordIdentifier as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

@@ -20,19 +20,7 @@ const enrichedBase = enrich(base, {
 	// dropping every gap. None of enrich's other passes touch this rule's
 	// shape anyway, so exempting it from all of them is a no-op beyond the
 	// one pass that matters here.
-	//
-	// `_dict_pattern_elements`'s leading and repeated occurrences are the
-	// SAME `choice($._key_value_pattern, $.splat_pattern)` body (tree-sitter's
-	// `commaSep1` passes one shared choice object to both positions), so
-	// `fieldSeparatedListElements` fields both as `element` — but `dict_pattern`'s
-	// own override (`'1/0/0/0': 'kv'`) already targets the leading occurrence
-	// to mint the visible `dict_pattern_kv` kind. Auto-fielding it first left
-	// the override's positional path pointing at an already-FIELD-wrapped
-	// node instead of the bare choice it expects — the override silently no
-	// longer applies, and `dict_pattern_kv` stops existing as a distinct
-	// exported kind. Same override-collision class found in rust's
-	// `tuple_type`/`trait_bounds` and typescript's `lexical_declaration`.
-	skip: ['string_content', '_dict_pattern_elements']
+	skip: ['string_content']
 });
 export default grammar(
 	enrichedBase,
@@ -81,8 +69,6 @@ export default grammar(
 				// union-slot routing, which has no notion of "gate an anonymous
 				// seq arm with no discriminating field of its own."
 				_suite: { 1: 'block_with_indent' },
-
-				dict_pattern: { '1/0/0/0': 'kv' },
 
 				_simple_pattern: { '11': 'negative' },
 

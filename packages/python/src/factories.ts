@@ -3556,26 +3556,42 @@ function _buildListPatternCasePatterns(elements: NonEmptyArray<T.CasePattern>, o
 	);
 }
 
-export function buildDictPatternElements(config: T.DictPatternElements.Config) {
-	const _dict_pattern_kv = config.dictPatternKv;
-	const _content = config.content ?? [];
+export function buildDictPatternElements(
+	...elements: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>
+): ReturnType<typeof _buildDictPatternElements>;
+export function buildDictPatternElements(
+	options: { trailing?: boolean },
+	...elements: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>
+): ReturnType<typeof _buildDictPatternElements>;
+export function buildDictPatternElements(...args: ({ trailing?: boolean } | (T.KeyValuePattern | T.SplatPattern))[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.KeyValuePattern | T.SplatPattern>;
+	return _buildDictPatternElements(elements, options);
+}
+function _buildDictPatternElements(
+	elements: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>,
+	options: { trailing?: boolean }
+) {
+	_assertNonEmpty(elements, '_dict_pattern_elements.elements');
+	const _element = elements;
+	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.DictPatternElements as const,
 				$source: 2 as const,
 				$named: true as const,
-				_dict_pattern_kv,
-				_content,
+				_element,
+				_trailing_sep,
 				$with: {
-					dictPatternKv: (value: T.DictPatternKv) => buildDictPatternElements({ ...config, dictPatternKv: value }),
-					contents: (...values: (T.KeyValuePattern | T.SplatPattern)[]) =>
-						buildDictPatternElements({ ...config, content: values })
+					$children: (...vs: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>) =>
+						buildDictPatternElements(options, ...vs),
+					trailing: (v: boolean) => buildDictPatternElements({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{
-				dictPatternKv: () => _dict_pattern_kv,
-				contents: () => _content
+				elements: () => _element
 			}
 		),
 		methodsEngine

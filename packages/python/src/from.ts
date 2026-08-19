@@ -307,6 +307,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_argument_list_elements: TSKindId.ArgumentListElements,
 	_expression_list_expressions: TSKindId.ExpressionListExpressions,
 	_list_pattern_case_patterns: TSKindId.ListPatternCasePatterns,
+	_dict_pattern_elements: TSKindId.DictPatternElements,
 	_pattern_list_patterns: TSKindId.PatternListPatterns,
 	_subscripts: TSKindId.Subscripts,
 	_slice_group1: TSKindId.SliceGroup1,
@@ -408,6 +409,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildExpressionListExpressions as (...args: unknown[]) => unknown)(...children);
 		case '_list_pattern_case_patterns':
 			return (F.buildListPatternCasePatterns as (...args: unknown[]) => unknown)(...children);
+		case '_dict_pattern_elements':
+			return (F.buildDictPatternElements as (...args: unknown[]) => unknown)(...children);
 		case '_pattern_list_patterns':
 			return (F.buildPatternListPatterns as (...args: unknown[]) => unknown)(...children);
 		case '_subscripts':

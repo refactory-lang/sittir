@@ -110,9 +110,8 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): S
 	// ordinary single-use fold case, e.g. `extends_clause` → `_extends_clause_single`.)
 	const twinned = new Set<string>();
 	// Hidden kinds named in a `supertype.subtypes` array (referenced by NAME,
-	// not a `symbol()` body ref — e.g. py `_key_value_pattern` ∈
-	// `_dict_pattern_kv.subtypes`). Folding such a kind dangles the supertype,
-	// which references it by name. Structural fact, not metadata (§D-2a).
+	// not a `symbol()` body ref). Folding such a kind dangles the supertype,
+	// which references it by name. Structural fact, not metadata.
 	const supertypeNamed = new Set<string>();
 
 	const isHidden = (name: string): boolean => name.startsWith('_');
