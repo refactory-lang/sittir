@@ -9,6 +9,8 @@ Suggested attack order (by payoff ÷ effort; remove a line when its entry is del
 1. `ki-sclass-residuals` — the corpus clusters, biggest first (S1 native-coords, python S8 tuple_pattern)
 2. `ki-from-string-composition` — blocked on a quote-style design decision
 3. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
+4. `ki-perfield-flank-residual` — design-blocked (tuple separator-possession; print/expression-tuple override rewrites)
+5. `ki-orphan-list-mints` — cosmetic parser-artifact noise; fold into the next wire orphan-handling change
 
 ## `ki-emitsymbol-fielded-seq` — `emitSymbol`'s generalized hidden-helper inlining doesn't yet handle a fielded sequence inside the inlined target
 
@@ -25,19 +27,35 @@ The generalization was verified safe for every CURRENT occurrence (`_suite`'s ow
 **Found during:** the floor-ratchet + S-class-gate work that closed out the round-trip-fidelity restoration program's final phase. The live SSOT for these counts is `packages/tools/sclass-ceilings.json` (per-grammar ceilings the `validate counts` run enforces) + `packages/tools/validation-report.json` (the classified entries themselves) + `packages/tools/baselines/native.json` (exact pass floors and per-validator `failingKinds`). This entry names the failure *clusters* so each can be chipped at as its own work item — chip one, lower its ceiling in the same commit.
 
 - **S1 — `from()` "native coords unresolved for alias target"** (~11 python / ~13 rust / ~12 typescript kinds: `identifier`, literal/string fragments, `true`/`null`/`self`/`crate`, …). The from() validator refuses to compare a kind whose native coords can't be resolved for its alias target. Largest single classified cluster; the alias-identity fix sites were previously audited (raw context id vs canonical catalog id — four sites).
-- **S1 — typescript rrp transport alias-unwrap** (2 corpus entries × shallow+deep): "Accessibility modifiers as pair keywords" — `render: alias-wrapper kind id 443 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap`; "Enum declarations" — `render: unknown kind id 441 in EnumBodyGroup1ContentTransportSlot`. Known visible-alias unwrap gap in the shared transport machinery.
-- **S8 — python `tuple_pattern` "kind not found at rendered offset 16"** (3 corpus entries × shallow+deep: "lambdas", "Default Tuple Arguments", "List comprehensions"). The typescript instance of this locator class was fixed via `WRAPPER_PRIORITY` in `packages/tools/src/validate/common.ts`; python's `tuple_pattern` wrapping context still mislocates.
+- **S1 — typescript rrp transport alias-unwrap** (2 corpus entries × shallow+deep): "Accessibility modifiers as pair keywords" — `render: alias-wrapper kind id 446 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap`; "Enum declarations" — `render: unknown kind id 443 in EnumBodyElementsContentTransportSlot`. Known visible-alias unwrap gap in the shared transport machinery (kind ids and the enum-body slot name track the current generation).
+- **S8 — python `tuple_pattern` "kind not found at rendered offset 16"** (4 corpus entries × shallow+deep: "lambdas", "Default Tuple Arguments", "List comprehensions", "Function definitions"). The typescript instance of this locator class was fixed via `WRAPPER_PRIORITY` in `packages/tools/src/validate/common.ts`; python's `tuple_pattern` wrapping context still mislocates.
 - **python `dict_pattern` reparse comma drop** (2 corpus entries × shallow+deep: "Dict mappings", "Builtin classes" — `re-parse error [ERROR in dict_pattern_group1 at "message"color":"]`). Inter-entry comma vanishes on render; pre-existing, not yet root-caused.
-- **python deep AST mismatches** (5): `string` drops `string_content` ("Strings", "Raw strings"), `for_in_clause` drops its trailing comma ("Generator expression"), `simple_pattern_negative` drops the `-` ("Literals"), `exec_statement` drops the `"in" expression` tail ("Exec statements" — same outer-field class as the fixed `infer_type` constraint override).
+- **python deep AST mismatches** (4): `string` drops `string_content` ("Strings", "Raw strings"), `for_in_clause` drops its trailing comma ("Generator expression"), `simple_pattern_negative` drops the `-` ("Literals" — the same defect the factory-side `_content: value "0"/"3"/"3j" ≠ {}` rows below express).
 - **typescript `rest_pattern` reparse** (2 corpus entries × shallow+deep: "Tuple types", "Extends" — `re-parse error [ERROR in subscript_expression at "..."]`). The reparse wrapper embeds the rendered `...` in a subscript context where it can't parse — likely a wrapper-selection artifact rather than a render defect.
 - **rust rrp residuals**: `use_declaration` "Derive macro helper attributes" — `render: Missing field \`_content\`` (S6, comment-content class); "Raw string literals" reparse error; "Macro definition" reparses `token_tree_paren` where `delim_token_tree_paren` was rendered — reparse-wrapper alias artifact, same class as the typescript `rest_pattern` bullet above. (The former `$`-drop and mixed-array order-loss rows are FIXED: the token-tree repeats are now fielded so the read keys every element into one ordered array, and alias-of-terminal arms are first-class — `a!($())` round-trips byte-perfect.)
-- **S4 — `union-slot-mixed-row` grammar diagnostics** (python `future_import_statement`/`import_from_statement`, typescript `binary_expression`/`_jsx_opening_element_content`): static modeling warnings, order-lossy or singular mixed rows.
-- **Factory trailing-separator capture gap** (~11 rows across all three grammars: `_*_trailing_sep: value true ≠ false` — python `case_pattern`/`element`/`simple_statement`, rust `elements`/`macro_rule`, typescript `content`/`type_parameter`/`type`): a read captures per-field trailing-separator presence; the factory path has no way to stamp it (the accepted factory-render-parse shortfall from the flank-capture work — needs FactoryShape support to close).
+- **S4 — `union-slot-mixed-row` grammar diagnostics** (typescript `binary_expression`/`_jsx_opening_element_content`): static modeling warnings, order-lossy or singular mixed rows.
 - **typescript `_separator_kind: unexpected extra field on factory output`** (×9): the factory stamps a `_separator_kind` the read reference doesn't carry (or normalizes differently) — inverse-direction sibling of the trailing-sep gap.
 - **typescript `_static_marker: value 107 ≠ 356`** (×3): marker stamped with the wrong kind id, on `_public_field_definition_static_mods` (the `class_static_block` factory mis-dispatch once suspected as a shared root turned out to be a generated-test call-shape bug, fixed separately — these rows are their own defect).
-- **python `_content: value "0"/"3"/"3j" ≠ {}`** (×5): scalar text content where the read reference materializes a node.
+- **python `_content: value "0"/"3"/"3j" ≠ {}`** (×5, all `_simple_pattern_negative`): scalar text content where the read reference materializes a node — factory-side face of the "Literals" AST-mismatch row above.
 
 **Status: documented exclusions — every count above is pinned by the committed ceilings; a fix must lower the matching ceiling in the same commit (the gate prints a reminder when a class drops below its ceiling).**
+
+## `ki-perfield-flank-residual` — five kinds keep per-field flank capture until their own designs land
+
+**Found during:** the separated-list redesign (visible list kinds + kind-level `_trailing_sep`/`_leading_sep`/`_separator_kind` keys). Every enrich-owned flank-carrying list now classifies `separatedList` and carries the kind-level keys; per-field `_<field>_trailing_sep` capture survives on exactly five kinds whose list shape can't be a plain separated list yet:
+
+- **rust `tuple_expression` / `tuple_type`** — the mandatory-first-separator family (`pair pair* elem?`): a single-element instance structurally REQUIRES the trailing separator (`(1,)` vs a parenthesized expression), so the shape is not language-equal to a classic separated list and the run hoist deliberately declines it. Needs the separator-possession design (the S3 family) to model "every element separator-terminated, last optionally bare".
+- **python `print_statement_group1` / `print_statement_group2` / `_expression_statement_tuple`** — override-authored bodies in the leading-mandatory family; enrich does not rewrite authored override bodies, and their lists are entangled with the chevron/polymorph machinery.
+
+The validator's suffix-discovery options helper (`separatedListFactoryOptions`, `packages/tools/src/validate/common.ts`) is retained for exactly these config-shaped factories — do not delete it while any generated wrap still emits a field-prefixed flank key (auditable via `rg '_\w+_(trailing|leading)_sep' packages/*/src/wrap.ts`).
+
+**Fix, if/when prioritized:** per family — the tuple design retires the rust pair; rewriting the print/expression-tuple overrides to reference visible list kinds (the `case_tuple_pattern` precedent) retires the python trio.
+
+## `ki-orphan-list-mints` — four orphaned enrich list mints ride along in grammar.json
+
+**Found during:** the separated-list run hoist. Enrich mints fire on the BASE grammar before overrides apply, so a mint whose owner rule an override fully redeclares is orphaned: `_macro_definition_group1/2/3` (rust — the override's `_macro_definition_paren/bracket/brace` arm rules carry the hoisted list instead) and `_object_type_elements` (typescript — `object_type_content` is override-declared with its own body). The orphans land in grammar.json as unreferenced rules; wire's existing `orphanedSyntheticGroups` marking suppresses their diagnostics and the phantom-kind ratchet is clean, but they are noise in the parser artifacts.
+
+**Fix, if/when prioritized:** drop orphaned mints from the merged rule bag once wire detects the owner redeclaration (today it only marks them), or teach the mint gate to consult `authoredRuleNames` so the mint never fires for redeclared owners.
 
 ## `ki-from-string-composition` — Rust `from.string` / `from.comment` canonical factories are not emitted — composition needs a design decision
 
