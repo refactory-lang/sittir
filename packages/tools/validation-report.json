@@ -954,49 +954,17 @@
     "grammar": "python",
     "backend": "native",
     "scope": "grammar",
-    "code": "union-slot-mixed-row",
-    "severity": "warning",
-    "ownerKind": "future_import_statement",
-    "message": "[collect-slots] kind 'future_import_statement': choice rule:future_import_statement:root is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [future_import_statement_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
-    "canProceed": true,
-    "location": "future_import_statement",
-    "sClass": "S4"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-nondegenerate-arm",
-    "severity": "warning",
-    "ownerKind": "future_import_statement",
-    "message": "[collect-slots] kind 'future_import_statement': choice rule:future_import_statement:root has unnamed-nonterminal arm(s) [future_import_statement_group1] but cannot union-route — offending arm(s): structured seq[3](\"(\" _import_list \")\"). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
-    "canProceed": true,
-    "location": "future_import_statement"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-mixed-row",
+    "code": "union-slot-routed",
     "severity": "warning",
     "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [future_import_statement_group1] and degenerate arm(s) [field(wildcard_import):wildcard_import]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [future_import_statement_group1, future_import_statement_group2] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
     "canProceed": true,
-    "location": "import_from_statement",
-    "sClass": "S4"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-nondegenerate-arm",
-    "severity": "warning",
-    "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root has unnamed-nonterminal arm(s) [future_import_statement_group1] but cannot union-route — offending arm(s): structured seq[3](\"(\" _import_list \")\"). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
-    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "wildcard_import"
+      ]
+    },
     "location": "import_from_statement"
   },
   {
