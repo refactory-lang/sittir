@@ -10,7 +10,6 @@ Suggested attack order (by payoff ÷ effort; remove a line when its entry is del
 2. `ki-from-string-composition` — blocked on a quote-style design decision
 3. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
 4. `ki-perfield-flank-residual` — design-blocked (tuple separator-possession; print/expression-tuple override rewrites)
-5. `ki-orphan-list-mints` — cosmetic parser-artifact noise; fold into the next wire orphan-handling change
 
 ## `ki-emitsymbol-fielded-seq` — `emitSymbol`'s generalized hidden-helper inlining doesn't yet handle a fielded sequence inside the inlined target
 
@@ -50,12 +49,6 @@ The generalization was verified safe for every CURRENT occurrence (`_suite`'s ow
 The validator's suffix-discovery options helper (`separatedListFactoryOptions`, `packages/tools/src/validate/common.ts`) is retained for exactly these config-shaped factories — do not delete it while any generated wrap still emits a field-prefixed flank key (auditable via `rg '_\w+_(trailing|leading)_sep' packages/*/src/wrap.ts`).
 
 **Fix, if/when prioritized:** per family — the tuple design retires the rust pair; rewriting the print/expression-tuple overrides to reference visible list kinds (the `case_tuple_pattern` precedent) retires the python trio.
-
-## `ki-orphan-list-mints` — four orphaned enrich list mints ride along in grammar.json
-
-**Found during:** the separated-list run hoist. Enrich mints fire on the BASE grammar before overrides apply, so a mint whose owner rule an override fully redeclares is orphaned: `_macro_definition_group1/2/3` (rust — the override's `_macro_definition_paren/bracket/brace` arm rules carry the hoisted list instead) and `_object_type_elements` (typescript — `object_type_content` is override-declared with its own body). The orphans land in grammar.json as unreferenced rules; wire's existing `orphanedSyntheticGroups` marking suppresses their diagnostics and the phantom-kind ratchet is clean, but they are noise in the parser artifacts.
-
-**Fix, if/when prioritized:** drop orphaned mints from the merged rule bag once wire detects the owner redeclaration (today it only marks them), or teach the mint gate to consult `authoredRuleNames` so the mint never fires for redeclared owners.
 
 ## `ki-from-string-composition` — Rust `from.string` / `from.comment` canonical factories are not emitted — composition needs a design decision
 

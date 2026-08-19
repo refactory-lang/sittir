@@ -1,21 +1,27 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { collectSymbolRefs, collectUnreachableHiddenRules } from '../util/reachable-rules.ts';
+
 /**
- * `injectTransformHiddenRulePlaceholders` (dsl/wire/wire.ts) conservatively
- * pre-registers a `_kw_<name>`/`_<name>` rule for every one-arg
- * field()/variant()/alias() placeholder before it's known whether the
- * override actually needs a synthesized rule at that name — tree-sitter's
- * grammar() requires every eventually-SYMBOL-referenced name to already
- * exist as a rule key before any rule body evaluates. evaluate.ts's own
- * `prunePlaceholderOrphans` cleans up sittir's internal rule map for the
- * compiler pipeline, but `tree-sitter generate` (a separate process
- * compiling the same bundled `grammar.js`) writes `grammar.json` directly
- * with no equivalent pass, leaving orphaned `{type: 'BLANK'}` entries for
- * every placeholder whose override never actually produced a keyword
- * literal. These never reach parser.c/node-types.json (tree-sitter's own
- * compiler silently drops unreferenced named rules from real output) —
- * this is dump hygiene only, not a parser behavior change.
+ * Prune hidden rules that nothing reaches from `grammar.json`.
+ *
+ * Two populations land here:
+ *  - `injectTransformHiddenRulePlaceholders` (dsl/wire/wire.ts) conservatively
+ *    pre-registers a `_kw_<name>`/`_<name>` rule for every one-arg
+ *    field()/variant()/alias() placeholder before it's known whether the
+ *    override actually needs a synthesized rule at that name, leaving
+ *    `{type: 'BLANK'}` entries when it doesn't.
+ *  - Enrich mints whose owner rule an override fully redeclares (and any
+ *    hidden helper such a redeclaration strands) — the override body carries
+ *    its own copy of the hoisted content, orphaning the raw mint.
+ *
+ * Neither population reaches parser.c/node-types.json (tree-sitter's own
+ * compiler silently drops unreferenced named rules from real output) — this
+ * keeps grammar.json, sittir's ground-truth view of the parser, in agreement.
+ * `compiler/evaluate.ts`'s `pruneUnreachableHiddenRules` is the sittir-
+ * pipeline twin over the same shared reachability traversal — the two MUST
+ * stay in lockstep or the model diverges from the parser.
  *
  * Called after every `tree-sitter generate` invocation (both call sites:
  * `run-codegen.ts::runTreeSitterGenerate` and
@@ -29,39 +35,32 @@ export function pruneOrphanedPlaceholderRules(sittirDir: string): void {
 		rules?: Record<string, unknown>;
 		extras?: unknown[];
 		externals?: unknown[];
+		precedences?: unknown[];
 		conflicts?: string[][];
 		inline?: string[];
 		supertypes?: string[];
 		word?: string;
 	};
 	const rules = doc.rules ?? {};
-	const referenced = new Set<string>();
-	const collectSymbolRefs = (node: unknown): void => {
-		if (Array.isArray(node)) {
-			for (const item of node) collectSymbolRefs(item);
-			return;
-		}
-		if (!node || typeof node !== 'object') return;
-		const obj = node as Record<string, unknown>;
-		if (obj.type === 'SYMBOL' && typeof obj.name === 'string') referenced.add(obj.name);
-		for (const value of Object.values(obj)) collectSymbolRefs(value);
-	};
-	collectSymbolRefs(rules);
-	collectSymbolRefs(doc.extras);
-	collectSymbolRefs(doc.externals);
-	for (const pair of doc.conflicts ?? []) for (const name of pair) referenced.add(name);
-	for (const name of doc.inline ?? []) referenced.add(name);
-	for (const name of doc.supertypes ?? []) referenced.add(name);
-	if (doc.word) referenced.add(doc.word);
+	// Names the grammar machinery references outside rule bodies — roots the
+	// reachability walk must honor even when no surviving rule mentions them.
+	// `conflicts:`/`inline:` deliberately do NOT root: wire registers every
+	// visible-group mint there, so an orphaned mint would keep itself alive
+	// through its own bookkeeping entries — those entries are dead alongside
+	// the rule and are filtered below instead.
+	const protectedNames = new Set<string>();
+	collectSymbolRefs(doc.extras, protectedNames);
+	collectSymbolRefs(doc.externals, protectedNames);
+	collectSymbolRefs(doc.precedences, protectedNames);
+	for (const name of doc.supertypes ?? []) protectedNames.add(name);
+	if (doc.word) protectedNames.add(doc.word);
 
-	let pruned = 0;
-	for (const [name, rule] of Object.entries(rules)) {
-		if (!name.startsWith('_') || referenced.has(name)) continue;
-		if (!rule || typeof rule !== 'object' || (rule as { type?: string }).type !== 'BLANK') continue;
-		delete rules[name];
-		pruned += 1;
-	}
-	if (pruned === 0) return;
+	const unreachable = collectUnreachableHiddenRules(rules, protectedNames);
+	if (unreachable.length === 0) return;
+	const dead = new Set(unreachable);
+	for (const name of dead) delete rules[name];
+	if (doc.conflicts) doc.conflicts = doc.conflicts.filter((pair) => !pair.some((name) => dead.has(name)));
+	if (doc.inline) doc.inline = doc.inline.filter((name) => !dead.has(name));
 	writeFileSync(grammarJsonPath, JSON.stringify(doc, null, 2), 'utf8');
-	console.log(`  → pruned ${pruned} orphaned placeholder rule(s) from grammar.json`);
+	console.log(`  → pruned ${unreachable.length} unreachable hidden rule(s) from grammar.json`);
 }

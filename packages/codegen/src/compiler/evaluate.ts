@@ -47,6 +47,7 @@ import type { AnyRule } from '../types/rule.ts';
 import type { RawGrammar, DesugarDivergenceEvent } from './types.ts';
 import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
 import { classifyByType } from './rule-catalog.ts';
+import { collectUnreachableHiddenRules } from '../util/reachable-rules.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
@@ -954,17 +955,18 @@ function adoptFinalBaseRules(
 }
 
 function prunePlaceholderOrphans(rules: Record<string, Rule<'evaluate'>>, wireCtx: WireContext): void {
-	for (const name of Object.keys(rules)) {
-		if (!name.startsWith('_')) continue;
-		if (wireCtx.deposits.has(name)) continue;
-		const rule = rules[name];
-		if (!rule) continue;
-		if (isBlankRule(rule)) delete rules[name];
+	// Twin of `transpile/prune-grammar-json.ts` over the SAME shared
+	// reachability traversal — hidden rules nothing reaches (unfired wire
+	// placeholders, enrich mints stranded by an override redeclaring their
+	// owner) must vanish from the sittir-evaluated map exactly as they vanish
+	// from grammar.json, or the model carries kinds the parser never emits
+	// (the phantom-kind class). Only deposit-backed names root beyond visible
+	// rules — inline/conflict bookkeeping deliberately does not (an orphaned
+	// mint would keep itself alive through its own entries).
+	const protectedNames = new Set<string>(wireCtx.deposits.keys());
+	for (const name of collectUnreachableHiddenRules(rules, protectedNames)) {
+		delete rules[name];
 	}
-}
-
-function isBlankRule(rule: Rule<'evaluate'>): boolean {
-	return rule.type === CHOICE && rule.members.length === 0;
 }
 
 // ---------------------------------------------------------------------------

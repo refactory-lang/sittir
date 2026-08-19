@@ -1,13 +1,13 @@
 {
   "grammar": "typescript",
-  "source_hash": "f6a0cc2ab65055a56706491fa05ca5db7c7bf2683fe8b0e0e00d2499950f8ccf",
+  "source_hash": "52d2585a7a6010896177e28f87cc80c7f39d135cab4a63626d97106926d6984f",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "6596416e3449d62c99176e020b67ba49d49a1911d45f3cbb0292c7092c728b1d",
     "packages/typescript/.sittir/grammar.js": "0fe2c19e657f26959625a8339ba6fc326aef83e1bf71d7bf0f32073f75192831",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
     "packages/typescript/.sittir/parser.dylib": "ba2a18d17e8b298756438461cd47288057ebc3220d75d115e9afa46a5f48ed89",
     "packages/typescript/.sittir/parser.wasm": "7cd0bcdace0d6ae18304043d5b32640f36daac2ccf85ac876df815728a60d784",
-    "packages/typescript/.sittir/src/grammar.json": "60a6d700af71aeeba69f5f50443f3962dad5d6af318ae157739a10d568e399bf",
+    "packages/typescript/.sittir/src/grammar.json": "07717165462d9df3e67eaba9732fe194bcf48aba391d1c75b35c2d9199ba028b",
     "packages/typescript/.sittir/src/node-types.json": "f74cc48494340a746327f51b13fa97b98beabca00173056ba579200ef1ad1ee4",
     "packages/typescript/.sittir/src/parser.c": "6aeede683001c694e0c47d5902522904b45178b9992d77bad11abfca352a9fa2",
     "packages/typescript/.sittir/src/scanner.c": "9125013b42cb888379d9be909f1d73dfb75a37626c2cdbf4122718a2b431a6d3",

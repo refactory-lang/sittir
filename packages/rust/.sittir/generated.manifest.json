@@ -1,12 +1,12 @@
 {
   "grammar": "rust",
-  "source_hash": "4091d248e94087dc39c1ce2c5e751b040f261f64b199d45dd1f2a45bd355e93d",
+  "source_hash": "289fc8c6b1b0e5e0887137787ee3aab8a6562a7a700e67cda2b9a3747055fab7",
   "files": {
     "packages/rust/.sittir/grammar-diagnostics.json": "e66912a55e43c715e6fef26cb26048e22b8f89d3ac5f9b2672059a7176dc071c",
     "packages/rust/.sittir/grammar.js": "027e97d32d21a3a06bcb45b394e707c4cc673aaa33b0a9bf758e482dba723efe",
     "packages/rust/.sittir/package.json": "bdab057c3301bd235e9a388063623685881661f0809682fc361a510fd47f531a",
     "packages/rust/.sittir/parser.wasm": "6b803a510837810ca32377a3c9eaaf823256adf09da9d78ec420a141c2248f88",
-    "packages/rust/.sittir/src/grammar.json": "0b392d66329a3d51a83070e1b1cc0c30638d1daca9bcf08508142087f0de871d",
+    "packages/rust/.sittir/src/grammar.json": "0716a9ae8550f0bb53f89b53fc094bc481253fbefed57e35e8f61fbca3a282dd",
     "packages/rust/.sittir/src/node-types.json": "b3aa4813baf0401a8825514d1b9458cbccd401cdaa8728e7e64396462995bf95",
     "packages/rust/.sittir/src/parser.c": "03b288b8cfbb8f25f265f91a13effdf31440928a13af8f5e3992273b402ee324",
     "packages/rust/.sittir/src/scanner.c": "77faa4943da96dcb17d9c2a735bdbf7702287b52a1d2971117b167e47e318620",
