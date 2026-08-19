@@ -27,6 +27,7 @@ import { probeValidate } from './probe-validate.ts';
 import { profile } from './profile.ts';
 import { profileFactory } from './profile-factory.ts';
 import { propose14 } from './propose-14.ts';
+import { separatedLists } from './separated-lists.ts';
 import { testHistory } from './test-history.ts';
 import { variantDerivationProbe } from './variant-derivation-probe.ts';
 import { walk } from './walk.ts';
@@ -58,6 +59,7 @@ export const toolModules: readonly CommandModule[] = [
 	profile,
 	profileFactory,
 	propose14,
+	separatedLists,
 	testHistory,
 	variantDerivationProbe,
 	walk

@@ -410,6 +410,7 @@ Structured diagnostics for parse → readNode → render cycle
 - `--no-render` — Skip the render pass
 - `--no-wrap` — Use core readNode directly (skip grammar readTreeNode)
 - `--reparse` — Render → re-parse → include reparsed CST
+- `--validator-reparse` — Render → reparse using the validator's own wrapForReparse + offset lookup → include the selected wrapper, offset, located node, and structural diff
 - `--pretty` — Pretty-print JSON output (2-space indent)
 - `--baseline <dir>` — Compare against a staged baseline package dir
 - `--baseline-parser` — Use baseline parser.wasm instead of current
@@ -528,6 +529,22 @@ Principle #14 signature-conformance ratchet (classify pipeline fns; fail on base
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool propose-14 [options]
+```
+
+### `tool separated-lists`
+
+Census separated-list shapes: flank-carrying (visible-kind hoist) vs flankless (inline)
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `--all-grammars` — Run all three grammars
+- `--format <fmt>` — Output format: table | json (default: `table`)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool separated-lists [options]
 ```
 
 ### `tool test-history`
