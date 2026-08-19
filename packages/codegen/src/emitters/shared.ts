@@ -7,6 +7,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNonterminal,
 	NodeOrTerminal,
+	NodeRef,
 	AssembledNode,
 	AssembledBranch,
 	AssembledGroup,
@@ -527,8 +528,7 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 				// at link time — its correct wire id lives on `value.parseKind`/
 				// `value.parseKindId`, stamped per-occurrence, not on the
 				// canonical AssembledKeyword instance shared across all sites).
-				const kindName = value.parseKind?.name ?? node.resolvedKind;
-				const kindId = value.parseKindId ?? value.storageKindId ?? node.resolvedKindId;
+				const { kindName, kindId } = keywordRefWireIdentity(value, node);
 				if (kindName === undefined || text === undefined) return verbatim();
 				if (!seenKinds.has(kindName)) {
 					seenKinds.add(kindName);
@@ -572,6 +572,38 @@ export function computeFieldStorageInfo(nodeMap: NodeMap): void {
 	}
 }
 
+/**
+ * The wire identity a keyword/token REFERENCE surfaces under in a real
+ * parse. An ALIASED occurrence surfaces as its alias target — the
+ * per-occurrence `parseKind`/`parseKindId` stamps (e.g. rust's
+ * `_pointer_type_const` aliased to visible `pointer_type_const`). An
+ * UNALIASED reference to a HIDDEN keyword/token rule surfaces as the rule's
+ * CONTENT — hidden rules are inlined, so the parse yields the anon token,
+ * whose identity is the node's literal-chain stamp (`resolvedKind`/
+ * `resolvedKindId`, anon-wins): stamping the rule's own id there compares a
+ * kind no parse can produce (typescript `_kw_static_marker` id vs the anon
+ * `'static'` token the tree actually holds). A visible unaliased rule
+ * surfaces as itself. Single preference derivation — every enum/keyword
+ * storage emitter consumes this instead of ordering the stamps locally.
+ */
+export function keywordRefWireIdentity(
+	value: NodeRef,
+	node: { resolvedKind?: string; resolvedKindId?: number }
+): { kindName: string | undefined; kindId: number | undefined } {
+	const ownKind = storageKindOfRef(value.node);
+	const aliased = value.parseKind !== undefined && value.parseKind.name !== ownKind;
+	if (!aliased && ownKind.startsWith('_')) {
+		return {
+			kindName: node.resolvedKind ?? value.parseKind?.name,
+			kindId: node.resolvedKindId ?? value.parseKindId ?? value.storageKindId
+		};
+	}
+	return {
+		kindName: value.parseKind?.name ?? node.resolvedKind,
+		kindId: value.parseKindId ?? value.storageKindId ?? node.resolvedKindId
+	};
+}
+
 export function kindEnumTextIdPairs(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap,
@@ -592,14 +624,11 @@ export function kindEnumTextIdPairs(
 				continue;
 			}
 			if ((node instanceof AssembledKeyword || node instanceof AssembledToken) && node.text !== undefined) {
-				// Same per-occurrence-stamp preference as classifyFieldStorageInfo
-				// — value.parseKind/parseKindId know about this specific
-				// reference site's alias target; the shared node's own
-				// resolvedKind/resolvedKindId don't.
-				const kindName = value.parseKind?.name ?? node.resolvedKind;
-				const stampedId = value.parseKindId ?? value.storageKindId;
+				// Same wire-identity derivation as classifyFieldStorageInfo /
+				// kindEnumTextMapExpr — see keywordRefWireIdentity.
+				const { kindName, kindId } = keywordRefWireIdentity(value, node);
 				const entry = kindEntries?.find((e) => e.kind === kindName);
-				push(node.text, stampedId ?? entry?.id);
+				push(node.text, kindId ?? entry?.id);
 			}
 			continue;
 		}

@@ -5566,7 +5566,7 @@ export interface PublicFieldDefinitionStaticMods {
 	readonly _override_modifier?: boolean;
 	readonly _readonly_marker?: boolean;
 	readonly __inputHints__?: {
-		readonly static_marker: AutoStamp<KindEnum<'static', TSKindId.KwStaticMarker | TSKindId.Static>>;
+		readonly static_marker: AutoStamp<KindEnum<'static', TSKindId.Static>>;
 		readonly override_modifier?: BooleanKeyword<'override'>;
 		readonly readonly_marker?: BooleanKeyword<'readonly'>;
 	};
@@ -5580,7 +5580,7 @@ export interface PublicFieldDefinitionAbstractFirst {
 	readonly _abstract_marker: AutoStamp<number>;
 	readonly _readonly_marker?: boolean;
 	readonly __inputHints__?: {
-		readonly abstract_marker: AutoStamp<KindEnum<'abstract', TSKindId.KwAbstractMarker | TSKindId.Abstract>>;
+		readonly abstract_marker: AutoStamp<KindEnum<'abstract', TSKindId.Abstract>>;
 		readonly readonly_marker?: BooleanKeyword<'readonly'>;
 	};
 	abstractMarker(): AutoStamp<number>;

@@ -42,6 +42,7 @@ import {
 	resolveHiddenKeywordLiteral,
 	classifyFactoryShape,
 	classifyChildFactorySurface,
+	keywordRefWireIdentity,
 	classifyFactoryEmission,
 	forwardedTargetKind,
 	resolveDirectFactorySlot,
@@ -445,16 +446,12 @@ export function kindEnumTextMapExpr(
 			const kind = storageKindOfRef(value.node);
 			const resolved = nodeMap.nodes.get(kind);
 			if (resolved instanceof AssembledKeyword || resolved instanceof AssembledToken) {
-				// Same per-occurrence stamp preference as kindEnumTextIdPairs/
-				// classifyFieldStorageInfo (shared.ts): value.parseKind/
-				// parseKindId/storageKindId know about THIS reference site's
-				// alias target (e.g. rust's `_pointer_type_const`, aliased to
-				// visible `pointer_type_const`); the shared AssembledKeyword/
-				// Token instance's own resolvedKind/resolvedKindId don't.
+				// Same wire-identity derivation as kindEnumTextIdPairs/
+				// classifyFieldStorageInfo — see keywordRefWireIdentity
+				// (shared.ts) for the alias vs hidden-inlined split.
 				const text = resolved.text;
 				if (text === undefined) continue;
-				const kindName = value.parseKind?.name ?? resolved.resolvedKind;
-				const kindId = value.parseKindId ?? value.storageKindId ?? resolved.resolvedKindId;
+				const { kindName, kindId } = keywordRefWireIdentity(value, resolved);
 				const discriminant =
 					(kindId !== undefined ? kindDiscriminantExprForId(kindId, kindEntries) : undefined) ??
 					(kindName !== undefined && hasCatalogEntry(kindEntries, kindName)

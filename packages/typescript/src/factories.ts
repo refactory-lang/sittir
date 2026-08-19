@@ -6621,7 +6621,7 @@ export function buildPublicFieldDefinitionAccessFirst(config: T.PublicFieldDefin
 }
 
 export function buildPublicFieldDefinitionStaticMods(config: Partial<T.PublicFieldDefinitionStaticMods.Config> = {}) {
-	const _static_marker = coerceKindEnumStorage('static' as const, [['static', TSKindId.KwStaticMarker] as const]);
+	const _static_marker = coerceKindEnumStorage('static' as const, [['static', TSKindId.Static] as const]);
 	const _override_modifier = coerceBooleanKeywordStorage(config.overrideModifier);
 	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
 	return withMethods(
@@ -6655,9 +6655,7 @@ export function buildPublicFieldDefinitionStaticMods(config: Partial<T.PublicFie
 export function buildPublicFieldDefinitionAbstractFirst(
 	config: Partial<T.PublicFieldDefinitionAbstractFirst.Config> = {}
 ) {
-	const _abstract_marker = coerceKindEnumStorage('abstract' as const, [
-		['abstract', TSKindId.KwAbstractMarker] as const
-	]);
+	const _abstract_marker = coerceKindEnumStorage('abstract' as const, [['abstract', TSKindId.Abstract] as const]);
 	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
 	return withMethods(
 		withAccessors(

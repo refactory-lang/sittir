@@ -10138,7 +10138,8 @@ export function wrapRangeExpressionPostfix(data: T.RangeExpressionPostfix, tree:
 					true,
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				)
+				),
+				{ '..': 106 }
 			),
 
 			start() {
@@ -10171,7 +10172,8 @@ export function wrapRangeExpressionPrefix(data: T.RangeExpressionPrefix, tree: T
 					true,
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				)
+				),
+				{ '..': 106 }
 			),
 			_end: normalizeSingularWrapSlot(data._end, 'end', true, data.$type, {
 				tree,

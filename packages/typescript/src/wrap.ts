@@ -11905,13 +11905,13 @@ export function wrapPublicFieldDefinitionStaticMods(data: T.PublicFieldDefinitio
 			$type: TSKindId.PublicFieldDefinitionStaticMods as const,
 			_static_marker: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._static_marker ?? readTerminalFromOther(data, [TSKindId.KwStaticMarker]),
+					data._static_marker ?? readTerminalFromOther(data, [TSKindId.Static]),
 					'static_marker',
 					true,
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'static_marker', span: (data as _NodeData).$span }
 				),
-				{ static: 356 }
+				{ static: 107 }
 			),
 			_override_modifier: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
@@ -11960,13 +11960,13 @@ export function wrapPublicFieldDefinitionAbstractFirst(data: T.PublicFieldDefini
 			$type: TSKindId.PublicFieldDefinitionAbstractFirst as const,
 			_abstract_marker: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._abstract_marker ?? readTerminalFromOther(data, [TSKindId.KwAbstractMarker]),
+					data._abstract_marker ?? readTerminalFromOther(data, [TSKindId.Abstract]),
 					'abstract_marker',
 					true,
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'abstract_marker', span: (data as _NodeData).$span }
 				),
-				{ abstract: 358 }
+				{ abstract: 128 }
 			),
 			_readonly_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
@@ -12007,7 +12007,8 @@ export function wrapPublicFieldDefinitionReadonlyFirst(data: T.PublicFieldDefini
 					true,
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'readonly_marker', span: (data as _NodeData).$span }
-				)
+				),
+				{ readonly: 116 }
 			),
 			_abstract_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._abstract_marker, 'abstract_marker', false, data.$type, {
