@@ -1062,6 +1062,7 @@ function enrich(baseInput, config) {
   }
   separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
   separatedListEnrichSkip = enrichSkip;
+  hiddenListPromotionNames = /* @__PURE__ */ new Map();
   try {
     for (const name of Object.keys(enrichedRules)) {
       const rule = enrichedRules[name];
@@ -1083,6 +1084,7 @@ function enrich(baseInput, config) {
   } finally {
     separatedListNameCounts = null;
     separatedListEnrichSkip = null;
+    hiddenListPromotionNames = null;
   }
   for (const groupName of Object.keys(clauseGroupRules)) {
     const groupBody = clauseGroupRules[groupName];
@@ -2345,6 +2347,31 @@ function collectSeparatedListNameProposals(rules) {
 }
 var separatedListNameCounts = null;
 var separatedListEnrichSkip = null;
+var hiddenListPromotionNames = null;
+function promoteHiddenListRef(member, rulesBag) {
+  if (separatedListNameCounts === null || hiddenListPromotionNames === null) return member;
+  if (!isSymbolType(member.type)) return member;
+  const name = member.name;
+  if (typeof name !== "string" || !name.startsWith("_")) return member;
+  if (separatedListEnrichSkip?.has(name)) return member;
+  let visibleName = hiddenListPromotionNames.get(name);
+  if (visibleName === void 0) {
+    const body = rulesBag[name];
+    if (!body || !isSeqType(body.type)) return member;
+    const info = separatedListBodyInfo(body);
+    if (!info?.flankCarrying || info.form !== "head") return member;
+    const base2 = name.replace(/^_+/, "");
+    const bare = info.elementName !== null ? pluralizeFieldName(info.elementName) : null;
+    const candidates = [];
+    if (bare !== null && separatedListNameCounts.get(bare) === 1) candidates.push(bare);
+    if (bare !== null && base2 !== bare && !base2.endsWith(`_${bare}`)) candidates.push(`${base2}_${bare}`);
+    candidates.push(base2.endsWith("_elements") ? base2 : `${base2}_elements`);
+    visibleName = candidates.find((c) => !(c in rulesBag) && !(`_${c}` in rulesBag));
+    if (visibleName === void 0) return member;
+    hiddenListPromotionNames.set(name, visibleName);
+  }
+  return makeVisibleGroupAlias(member, visibleName);
+}
 function absorbTrailingListSeparators(members) {
   let changed = false;
   const out = [];
@@ -2493,7 +2520,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     const members = absorbed ?? rawMembers;
     let changed = absorbed !== null;
     const newMembers = members.map((m) => {
-      const out = applyClauseHoist(
+      let out = applyClauseHoist(
         parentKind,
         m,
         rulesBag,
@@ -2505,6 +2532,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         clauseGroupOwners,
         ambientPrec
       );
+      out = promoteHiddenListRef(out, rulesBag);
       if (out !== m) changed = true;
       return out;
     });
@@ -2580,7 +2608,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         collidingLeadingNames,
         ambientPrec
       );
-      const final = promoted ?? out;
+      const final = promoteHiddenListRef(promoted ?? out, rulesBag);
       if (final !== m) changed = true;
       return final;
     });
@@ -4657,8 +4685,13 @@ var grammar_sittir_default = grammar(
         list: ($) => seq("[", optional(alias($._collection_elements, $.element_list)), "]"),
         set: ($) => seq("{", alias($._collection_elements, $.element_list), "}"),
         tuple: ($) => seq("(", optional(alias($._collection_elements, $.element_list)), ")"),
-        case_tuple_pattern: ($) => seq("(", optional(seq($.case_pattern, repeat(seq(",", $.case_pattern)), optional(","))), ")"),
-        case_list_pattern: ($) => seq("[", optional(seq($.case_pattern, repeat(seq(",", $.case_pattern)), optional(","))), "]"),
+        // Reference the shared case-pattern list kind (the enrich mint
+        // serving _list_pattern/_tuple_pattern/class_pattern) instead of
+        // respelling the list inline — the visible list node carries the
+        // per-instance trailing-separator fact; an inline spelling would
+        // keep per-field flank capture alive on these two kinds alone.
+        case_tuple_pattern: ($) => seq("(", optional(alias($._list_pattern_case_patterns, $.list_pattern_case_patterns)), ")"),
+        case_list_pattern: ($) => seq("[", optional(alias($._list_pattern_case_patterns, $.list_pattern_case_patterns)), "]"),
         // Case-context as-pattern split — same two-rules-one-parse-kind class
         // as `case_tuple_pattern`/`case_list_pattern` just above. Base
         // `case_pattern` arm 0 is `alias($._as_pattern, $.as_pattern)`:

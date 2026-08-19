@@ -263,10 +263,15 @@ export default grammar(
 				set: ($) => seq('{', alias($._collection_elements, $.element_list), '}'),
 				tuple: ($) => seq('(', optional(alias($._collection_elements, $.element_list)), ')'),
 
+				// Reference the shared case-pattern list kind (the enrich mint
+				// serving _list_pattern/_tuple_pattern/class_pattern) instead of
+				// respelling the list inline — the visible list node carries the
+				// per-instance trailing-separator fact; an inline spelling would
+				// keep per-field flank capture alive on these two kinds alone.
 				case_tuple_pattern: ($) =>
-					seq('(', optional(seq($.case_pattern, repeat(seq(',', $.case_pattern)), optional(','))), ')'),
+					seq('(', optional(alias($._list_pattern_case_patterns, $.list_pattern_case_patterns)), ')'),
 				case_list_pattern: ($) =>
-					seq('[', optional(seq($.case_pattern, repeat(seq(',', $.case_pattern)), optional(','))), ']'),
+					seq('[', optional(alias($._list_pattern_case_patterns, $.list_pattern_case_patterns)), ']'),
 
 				// Case-context as-pattern split — same two-rules-one-parse-kind class
 				// as `case_tuple_pattern`/`case_list_pattern` just above. Base

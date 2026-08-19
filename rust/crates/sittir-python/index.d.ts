@@ -272,8 +272,8 @@ export interface CaseListPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _list_pattern_case_patterns?: ListPatternCasePatternsTransport
   _case_pattern?: Array<CasePatternTransport>
-  _case_pattern_trailing_sep?: boolean
 }
 
 export interface CasePatternsTransport {
@@ -308,8 +308,8 @@ export interface CaseTuplePatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _list_pattern_case_patterns?: ListPatternCasePatternsTransport
   _case_pattern?: Array<CasePatternTransport>
-  _case_pattern_trailing_sep?: boolean
 }
 
 export interface ChevronTransport {
@@ -819,6 +819,18 @@ export interface FunctionDefinitionTransport {
   _body: FunctionDefinitionBodyTransportSlot
 }
 
+export interface FutureImportStatementGroup2Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _import_list: ImportListTransport
+  _name?: Array<ImportListNameTransportSlot>
+}
+
 export interface FutureImportStatementTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -827,9 +839,7 @@ export interface FutureImportStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name?: Array<FutureImportStatementNameTransportSlot>
-  _name_trailing_sep?: boolean
-  _import_list?: ImportListTransport
+  _content: FutureImportStatementContentTransportSlot
 }
 
 export interface GeneratorExpressionTransport {
@@ -900,10 +910,7 @@ export interface ImportFromStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _module_name: ImportFromStatementModuleNameTransportSlot
-  _wildcard_import?: WildcardImportTransport
-  _name?: Array<ImportFromStatementNameTransportSlot>
-  _name_trailing_sep?: boolean
-  _import_list?: ImportListTransport
+  _content: ImportFromStatementContentTransportSlot
 }
 
 export interface ImportListTransport {
@@ -927,8 +934,8 @@ export interface ImportStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: Array<ImportStatementNameTransportSlot>
-  _name_trailing_sep?: boolean
+  _import_list: ImportListTransport
+  _name?: Array<ImportListNameTransportSlot>
 }
 
 export interface InterpolationTransport {

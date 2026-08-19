@@ -375,7 +375,7 @@ export type PythonGrammar = {
 		type: 'case_list_pattern';
 		named: true;
 		fields: {};
-		children: { multiple: true; required: false; types: [{ type: 'case_pattern'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'list_pattern_case_patterns'; named: true }] };
 	};
 	readonly case_pattern: {
 		type: 'case_pattern';
@@ -414,7 +414,7 @@ export type PythonGrammar = {
 		type: 'case_tuple_pattern';
 		named: true;
 		fields: {};
-		children: { multiple: true; required: false; types: [{ type: 'case_pattern'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'list_pattern_case_patterns'; named: true }] };
 	};
 	readonly chevron: {
 		type: 'chevron';
@@ -925,14 +925,15 @@ export type PythonGrammar = {
 	readonly future_import_statement: {
 		type: 'future_import_statement';
 		named: true;
-		fields: {
-			name: {
-				multiple: true;
-				required: false;
-				types: [{ type: 'aliased_import'; named: true }, { type: 'dotted_name'; named: true }];
-			};
+		fields: {};
+		children: {
+			multiple: false;
+			required: true;
+			types: [
+				{ type: 'future_import_statement_group1'; named: true },
+				{ type: 'future_import_statement_group2'; named: true }
+			];
 		};
-		children: { multiple: false; required: false; types: [{ type: 'future_import_statement_group1'; named: true }] };
 	};
 	readonly future_import_statement_group1: {
 		type: 'future_import_statement_group1';
@@ -944,6 +945,12 @@ export type PythonGrammar = {
 				types: [{ type: 'aliased_import'; named: true }, { type: 'dotted_name'; named: true }];
 			};
 		};
+	};
+	readonly future_import_statement_group2: {
+		type: 'future_import_statement_group2';
+		named: true;
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'names'; named: true }] };
 	};
 	readonly generator_expression: {
 		type: 'generator_expression';
@@ -999,26 +1006,23 @@ export type PythonGrammar = {
 				required: true;
 				types: [{ type: 'dotted_name'; named: true }, { type: 'relative_import'; named: true }];
 			};
-			name: {
-				multiple: true;
-				required: false;
-				types: [{ type: 'aliased_import'; named: true }, { type: 'dotted_name'; named: true }];
-			};
 			wildcard_import: { multiple: false; required: false; types: [{ type: 'wildcard_import'; named: true }] };
 		};
-		children: { multiple: false; required: false; types: [{ type: 'future_import_statement_group1'; named: true }] };
+		children: {
+			multiple: false;
+			required: false;
+			types: [
+				{ type: 'future_import_statement_group1'; named: true },
+				{ type: 'future_import_statement_group2'; named: true }
+			];
+		};
 	};
 	readonly import_prefix: { type: 'import_prefix'; named: true; fields: {} };
 	readonly import_statement: {
 		type: 'import_statement';
 		named: true;
-		fields: {
-			name: {
-				multiple: true;
-				required: true;
-				types: [{ type: 'aliased_import'; named: true }, { type: 'dotted_name'; named: true }];
-			};
-		};
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'names'; named: true }] };
 	};
 	readonly interpolation: {
 		type: 'interpolation';
@@ -1182,6 +1186,17 @@ export type PythonGrammar = {
 		fields: {
 			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
 			value: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
+		};
+	};
+	readonly names: {
+		type: 'names';
+		named: true;
+		fields: {
+			name: {
+				multiple: true;
+				required: true;
+				types: [{ type: 'aliased_import'; named: true }, { type: 'dotted_name'; named: true }];
+			};
 		};
 	};
 	readonly nonlocal_statement: {

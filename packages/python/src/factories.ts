@@ -83,24 +83,36 @@ function _buildSimpleStatements(child: T.SimpleStatementsElements) {
 	);
 }
 
-export function buildImportStatement(config: T.ImportStatement.Config, options: { trailing?: boolean } = {}) {
-	const _name = config.name ?? [];
+export function buildImportStatement(child: T.ImportList): ReturnType<typeof _buildImportStatement>;
+export function buildImportStatement(
+	...args: Parameters<typeof buildImportList>
+): ReturnType<typeof _buildImportStatement>;
+export function buildImportStatement(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildImportStatement(args[0] as T.ImportList);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportList as const);
+	return prebuilt
+		? _buildImportStatement(args[0] as T.ImportList)
+		: _buildImportStatement((buildImportList as (...a: unknown[]) => unknown)(...args) as T.ImportList);
+}
+function _buildImportStatement(child: T.ImportList) {
+	const _import_list = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ImportStatement as const,
 				$source: 2 as const,
 				$named: true as const,
-				_name,
-				_name_trailing_sep: options.trailing ?? false,
-				$with: {
-					names: (...values: NonEmptyArray<T.DottedName | T.AliasedImport>) =>
-						buildImportStatement({ ...config, name: values }, options),
-					trailing: (v: boolean) => buildImportStatement(config, { ...options, trailing: v })
-				}
+				_import_list,
+				$with: { $child: (v: T.ImportList) => buildImportStatement(v) }
 			},
 			{
-				names: () => _name
+				importList: () => _import_list
 			}
 		),
 		methodsEngine
@@ -146,42 +158,28 @@ export function buildRelativeImport(config: T.RelativeImport.Config) {
 	);
 }
 
-export function buildFutureImportStatement(
-	config: Partial<T.FutureImportStatement.Config> = {},
-	options: { trailing?: boolean } = {}
-) {
-	const _name = config.name ?? [];
-	const _import_list = config.importList;
+export function buildFutureImportStatement(child: T.ImportList | T.FutureImportStatementGroup2) {
+	const _content = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.FutureImportStatement as const,
 				$source: 2 as const,
 				$named: true as const,
-				_name,
-				_name_trailing_sep: options.trailing ?? false,
-				_import_list,
-				$with: {
-					names: (...values: (T.DottedName | T.AliasedImport)[]) =>
-						buildFutureImportStatement({ ...config, name: values }, options),
-					importList: (value?: T.ImportList) => buildFutureImportStatement({ ...config, importList: value }, options),
-					trailing: (v: boolean) => buildFutureImportStatement(config, { ...options, trailing: v })
-				}
+				_content,
+				$with: { $child: (v: T.ImportList | T.FutureImportStatementGroup2) => buildFutureImportStatement(v) }
 			},
 			{
-				names: () => _name,
-				importList: () => _import_list
+				content: () => _content
 			}
 		),
 		methodsEngine
 	);
 }
 
-export function buildImportFromStatement(config: T.ImportFromStatement.Config, options: { trailing?: boolean } = {}) {
+export function buildImportFromStatement(config: T.ImportFromStatement.Config) {
 	const _module_name = config.moduleName;
-	const _wildcard_import = coerceBooleanKeywordStorage(config.wildcardImport);
-	const _name = config.name ?? [];
-	const _import_list = config.importList;
+	const _content = config.content;
 	return withMethods(
 		withAccessors(
 			{
@@ -189,26 +187,17 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config, o
 				$source: 2 as const,
 				$named: true as const,
 				_module_name,
-				_wildcard_import,
-				_name,
-				_name_trailing_sep: options.trailing ?? false,
-				_import_list,
+				_content,
 				$with: {
 					moduleName: (value: T.RelativeImport | T.DottedName) =>
-						buildImportFromStatement({ ...config, moduleName: value }, options),
-					wildcardImport: (value?: NonNullable<Parameters<typeof buildImportFromStatement>[0]>['wildcardImport']) =>
-						buildImportFromStatement({ ...config, wildcardImport: value }, options),
-					names: (...values: (T.DottedName | T.AliasedImport)[]) =>
-						buildImportFromStatement({ ...config, name: values }, options),
-					importList: (value?: T.ImportList) => buildImportFromStatement({ ...config, importList: value }, options),
-					trailing: (v: boolean) => buildImportFromStatement(config, { ...options, trailing: v })
+						buildImportFromStatement({ ...config, moduleName: value }),
+					content: (value: T.ImportList | T.FutureImportStatementGroup2 | T.WildcardImport) =>
+						buildImportFromStatement({ ...config, content: value })
 				}
 			},
 			{
 				moduleName: () => _module_name,
-				wildcardImport: () => _wildcard_import,
-				names: () => _name,
-				importList: () => _import_list
+				content: () => _content
 			}
 		),
 		methodsEngine
@@ -3230,6 +3219,44 @@ function _buildSimpleStatementsElements(elements: NonEmptyArray<T.SimpleStatemen
 	);
 }
 
+export function buildFutureImportStatementGroup2(
+	child: T.ImportList
+): ReturnType<typeof _buildFutureImportStatementGroup2>;
+export function buildFutureImportStatementGroup2(
+	...args: Parameters<typeof buildImportList>
+): ReturnType<typeof _buildFutureImportStatementGroup2>;
+export function buildFutureImportStatementGroup2(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildFutureImportStatementGroup2(args[0] as T.ImportList);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportList as const);
+	return prebuilt
+		? _buildFutureImportStatementGroup2(args[0] as T.ImportList)
+		: _buildFutureImportStatementGroup2((buildImportList as (...a: unknown[]) => unknown)(...args) as T.ImportList);
+}
+function _buildFutureImportStatementGroup2(child: T.ImportList) {
+	const _import_list = child;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.FutureImportStatementGroup2 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_import_list,
+				$with: { $child: (v: T.ImportList) => buildFutureImportStatementGroup2(v) }
+			},
+			{
+				importList: () => _import_list
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildSubjects(...elements: NonEmptyArray<T.Expression>): ReturnType<typeof _buildSubjects>;
 export function buildSubjects(
 	options: { trailing?: boolean },
@@ -3730,40 +3757,76 @@ export function buildExceptClauseAs(config: T.ExceptClauseAs.Config) {
 	);
 }
 
-export function buildCaseTuplePattern(...children: T.CasePattern[]) {
-	const _case_pattern = children;
+export function buildCaseTuplePattern(child?: T.ListPatternCasePatterns): ReturnType<typeof _buildCaseTuplePattern>;
+export function buildCaseTuplePattern(
+	...args: Parameters<typeof buildListPatternCasePatterns>
+): ReturnType<typeof _buildCaseTuplePattern>;
+export function buildCaseTuplePattern(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildCaseTuplePattern(args[0] as T.ListPatternCasePatterns);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ListPatternCasePatterns as const);
+	return prebuilt
+		? _buildCaseTuplePattern(args[0] as T.ListPatternCasePatterns)
+		: _buildCaseTuplePattern(
+				(buildListPatternCasePatterns as (...a: unknown[]) => unknown)(...args) as T.ListPatternCasePatterns
+			);
+}
+function _buildCaseTuplePattern(child?: T.ListPatternCasePatterns) {
+	const _list_pattern_case_patterns = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.CaseTuplePattern as const,
 				$source: 2 as const,
 				$named: true as const,
-				_case_pattern,
-				_case_pattern_trailing_sep: false,
-				$with: { $children: (...vs: T.CasePattern[]) => buildCaseTuplePattern(...vs) }
+				_list_pattern_case_patterns,
+				$with: { $child: (v: T.ListPatternCasePatterns) => buildCaseTuplePattern(v) }
 			},
 			{
-				casePatterns: () => _case_pattern
+				listPatternCasePatterns: () => _list_pattern_case_patterns
 			}
 		),
 		methodsEngine
 	);
 }
 
-export function buildCaseListPattern(...children: T.CasePattern[]) {
-	const _case_pattern = children;
+export function buildCaseListPattern(child?: T.ListPatternCasePatterns): ReturnType<typeof _buildCaseListPattern>;
+export function buildCaseListPattern(
+	...args: Parameters<typeof buildListPatternCasePatterns>
+): ReturnType<typeof _buildCaseListPattern>;
+export function buildCaseListPattern(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildCaseListPattern(args[0] as T.ListPatternCasePatterns);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ListPatternCasePatterns as const);
+	return prebuilt
+		? _buildCaseListPattern(args[0] as T.ListPatternCasePatterns)
+		: _buildCaseListPattern(
+				(buildListPatternCasePatterns as (...a: unknown[]) => unknown)(...args) as T.ListPatternCasePatterns
+			);
+}
+function _buildCaseListPattern(child?: T.ListPatternCasePatterns) {
+	const _list_pattern_case_patterns = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.CaseListPattern as const,
 				$source: 2 as const,
 				$named: true as const,
-				_case_pattern,
-				_case_pattern_trailing_sep: false,
-				$with: { $children: (...vs: T.CasePattern[]) => buildCaseListPattern(...vs) }
+				_list_pattern_case_patterns,
+				$with: { $child: (v: T.ListPatternCasePatterns) => buildCaseListPattern(v) }
 			},
 			{
-				casePatterns: () => _case_pattern
+				listPatternCasePatterns: () => _list_pattern_case_patterns
 			}
 		),
 		methodsEngine
@@ -4459,6 +4522,7 @@ export type FluentKindMap = {
 	comment: T.Comment;
 	line_continuation: T.LineContinuation;
 	_simple_statements_elements: FluentNode<'_simple_statements_elements', T.SimpleStatementsElements.Config>;
+	_future_import_statement_group2: FluentNode<'_future_import_statement_group2', T.FutureImportStatementGroup2.Config>;
 	_subjects: FluentNode<'_subjects', T.Subjects.Config>;
 	_case_patterns: FluentNode<'_case_patterns', T.CasePatterns.Config>;
 	_except_clause_group1: FluentNode<'_except_clause_group1', T.ExceptClauseGroup1.Config>;
@@ -4630,6 +4694,7 @@ export const _factoryMap = {
 	comment: buildComment,
 	line_continuation: buildLineContinuation,
 	_simple_statements_elements: buildSimpleStatementsElements,
+	_future_import_statement_group2: buildFutureImportStatementGroup2,
 	_subjects: buildSubjects,
 	_case_patterns: buildCasePatterns,
 	_except_clause_group1: buildExceptClauseGroup1,

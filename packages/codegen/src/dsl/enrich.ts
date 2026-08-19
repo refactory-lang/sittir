@@ -269,6 +269,7 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 	// name only with global uniqueness.
 	separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
 	separatedListEnrichSkip = enrichSkip;
+	hiddenListPromotionNames = new Map();
 	try {
 		for (const name of Object.keys(enrichedRules)) {
 			const rule = enrichedRules[name];
@@ -290,6 +291,7 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 	} finally {
 		separatedListNameCounts = null;
 		separatedListEnrichSkip = null;
+		hiddenListPromotionNames = null;
 	}
 	// Base-grammar un-aliasing also needs to reach clause-hoist-minted group
 	// rules, not just the original rulesBag entries above. `applyEnrichPasses`
@@ -2519,6 +2521,46 @@ let separatedListNameCounts: Map<string, number> | null = null;
  *  {@link separatedListNameCounts}. */
 let separatedListEnrichSkip: ReadonlySet<string> | null = null;
 
+/** Per-enrich() cache of hidden-list-rule promotions: hidden rule name →
+ *  the visible kind name every bare reference aliases to. Same lifecycle as
+ *  {@link separatedListNameCounts}. */
+let hiddenListPromotionNames: Map<string, string> | null = null;
+
+/**
+ * @internal — a bare SYMBOL reference to a hidden rule whose ENTIRE body is
+ * a flank-carrying separated list (python's `_import_list`) gets wrapped in
+ * a visible alias: the rule IS the per-instance-fact carrier, so its splice
+ * must surface as a node. The visible name follows the settled separated-
+ * list chain (bare pluralized element name when globally unique, then
+ * `<base>_<field>`, then `<base>_elements`) and is cached so every
+ * reference agrees. Returns the member unchanged when it is not such a
+ * reference.
+ */
+function promoteHiddenListRef(member: Rule, rulesBag: Record<string, Rule>): Rule {
+	if (separatedListNameCounts === null || hiddenListPromotionNames === null) return member;
+	if (!isSymbolType((member as { type?: string }).type)) return member;
+	const name = (member as { name?: unknown }).name;
+	if (typeof name !== 'string' || !name.startsWith('_')) return member;
+	if (separatedListEnrichSkip?.has(name)) return member;
+	let visibleName = hiddenListPromotionNames.get(name);
+	if (visibleName === undefined) {
+		const body = rulesBag[name];
+		if (!body || !isSeqType((body as { type?: string }).type)) return member;
+		const info = separatedListBodyInfo(body);
+		if (!info?.flankCarrying || info.form !== 'head') return member;
+		const base = name.replace(/^_+/, '');
+		const bare = info.elementName !== null ? pluralizeFieldName(info.elementName) : null;
+		const candidates: string[] = [];
+		if (bare !== null && separatedListNameCounts.get(bare) === 1) candidates.push(bare);
+		if (bare !== null && base !== bare && !base.endsWith(`_${bare}`)) candidates.push(`${base}_${bare}`);
+		candidates.push(base.endsWith('_elements') ? base : `${base}_elements`);
+		visibleName = candidates.find((c) => !(c in rulesBag) && !(`_${c}` in rulesBag));
+		if (visibleName === undefined) return member;
+		hiddenListPromotionNames.set(name, visibleName);
+	}
+	return makeVisibleGroupAlias(member, visibleName);
+}
+
 function absorbTrailingListSeparators(members: Rule[]): Rule[] | null {
 	let changed = false;
 	const out: Rule[] = [];
@@ -2767,7 +2809,7 @@ function applyClauseHoist(
 		const members = absorbed ?? rawMembers;
 		let changed = absorbed !== null;
 		const newMembers = members.map((m) => {
-			const out = applyClauseHoist(
+			let out = applyClauseHoist(
 				parentKind,
 				m,
 				rulesBag,
@@ -2779,6 +2821,7 @@ function applyClauseHoist(
 				clauseGroupOwners,
 				ambientPrec
 			);
+			out = promoteHiddenListRef(out, rulesBag);
 			if (out !== m) changed = true;
 			return out;
 		});
@@ -2895,7 +2938,7 @@ function applyClauseHoist(
 				collidingLeadingNames,
 				ambientPrec
 			);
-			const final = promoted ?? out;
+			const final = promoteHiddenListRef(promoted ?? out, rulesBag);
 			if (final !== m) changed = true;
 			return final;
 		});

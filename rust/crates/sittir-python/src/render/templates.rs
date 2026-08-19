@@ -179,6 +179,12 @@ pub struct ExpressionStatementTupleTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_future_import_statement_group2.jinja", escape = "none")]
+pub struct FutureImportStatementGroup2Template<'a> {
+    pub import_list: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_import_list.jinja", escape = "none")]
 pub struct ImportListTemplate<'a> {
     pub name: ListNonterminalView<'a>,
@@ -401,7 +407,7 @@ pub struct CaseClauseTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "case_list_pattern.jinja", escape = "none")]
 pub struct CaseListPatternTemplate<'a> {
-    pub case_pattern: ListNonterminalView<'a>,
+    pub list_pattern_case_patterns: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -413,7 +419,7 @@ pub struct CasePatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "case_tuple_pattern.jinja", escape = "none")]
 pub struct CaseTuplePatternTemplate<'a> {
-    pub case_pattern: ListNonterminalView<'a>,
+    pub list_pattern_case_patterns: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -630,8 +636,7 @@ pub struct FunctionDefinitionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "future_import_statement.jinja", escape = "none")]
 pub struct FutureImportStatementTemplate<'a> {
-    pub import_list: OptionalNonterminalView<'a>,
-    pub name: ListNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -671,16 +676,14 @@ pub struct IfStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "import_from_statement.jinja", escape = "none")]
 pub struct ImportFromStatementTemplate<'a> {
-    pub import_list: OptionalNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
     pub module_name: SingleNonterminalView<'a>,
-    pub name: ListNonterminalView<'a>,
-    pub wildcard_import: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "import_statement.jinja", escape = "none")]
 pub struct ImportStatementTemplate<'a> {
-    pub name: ListNonterminalView<'a>,
+    pub import_list: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

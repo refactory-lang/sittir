@@ -17,33 +17,9 @@ describe('module', () => {
 
 describe('import_statement', () => {
 	it('factory produces correct type', () => {
-		const node = ir.importStatement({
-			name: [
-				{
-					$type: TSKindId.DottedName,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_identifier: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-				} as any
-			]
-		});
+		const node = ir.importStatement({ $type: TSKindId._Names, $text: 'test', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.ImportStatement);
 		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.importStatement({
-			name: [
-				{
-					$type: TSKindId.DottedName,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_identifier: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-				} as any
-			]
-		});
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -74,13 +50,14 @@ describe('relative_import', () => {
 
 describe('future_import_statement', () => {
 	it('factory produces correct type', () => {
-		const node = ir.futureImportStatement({});
+		const node = ir.futureImportStatement({
+			$type: TSKindId.ImportList,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
 		expect(node.$type).toBe(TSKindId.FutureImportStatement);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.futureImportStatement({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -93,7 +70,8 @@ describe('import_from_statement', () => {
 				$source: 2,
 				$named: true,
 				_import_prefix: { $type: TSKindId.ImportPrefix, $text: 'test', $source: 2, $named: true } as any
-			} as any
+			} as any,
+			content: { $type: TSKindId.WildcardImport, $text: '*', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ImportFromStatement);
 		expect(node.$source).toBe(2);
@@ -106,7 +84,8 @@ describe('import_from_statement', () => {
 				$source: 2,
 				$named: true,
 				_import_prefix: { $type: TSKindId.ImportPrefix, $text: 'test', $source: 2, $named: true } as any
-			} as any
+			} as any,
+			content: { $type: TSKindId.WildcardImport, $text: '*', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});

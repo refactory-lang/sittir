@@ -1056,6 +1056,7 @@ function enrich(baseInput, config) {
   }
   separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
   separatedListEnrichSkip = enrichSkip;
+  hiddenListPromotionNames = /* @__PURE__ */ new Map();
   try {
     for (const name of Object.keys(enrichedRules)) {
       const rule = enrichedRules[name];
@@ -1077,6 +1078,7 @@ function enrich(baseInput, config) {
   } finally {
     separatedListNameCounts = null;
     separatedListEnrichSkip = null;
+    hiddenListPromotionNames = null;
   }
   for (const groupName of Object.keys(clauseGroupRules)) {
     const groupBody = clauseGroupRules[groupName];
@@ -2339,6 +2341,31 @@ function collectSeparatedListNameProposals(rules) {
 }
 var separatedListNameCounts = null;
 var separatedListEnrichSkip = null;
+var hiddenListPromotionNames = null;
+function promoteHiddenListRef(member, rulesBag) {
+  if (separatedListNameCounts === null || hiddenListPromotionNames === null) return member;
+  if (!isSymbolType(member.type)) return member;
+  const name = member.name;
+  if (typeof name !== "string" || !name.startsWith("_")) return member;
+  if (separatedListEnrichSkip?.has(name)) return member;
+  let visibleName = hiddenListPromotionNames.get(name);
+  if (visibleName === void 0) {
+    const body = rulesBag[name];
+    if (!body || !isSeqType(body.type)) return member;
+    const info = separatedListBodyInfo(body);
+    if (!info?.flankCarrying || info.form !== "head") return member;
+    const base2 = name.replace(/^_+/, "");
+    const bare = info.elementName !== null ? pluralizeFieldName(info.elementName) : null;
+    const candidates = [];
+    if (bare !== null && separatedListNameCounts.get(bare) === 1) candidates.push(bare);
+    if (bare !== null && base2 !== bare && !base2.endsWith(`_${bare}`)) candidates.push(`${base2}_${bare}`);
+    candidates.push(base2.endsWith("_elements") ? base2 : `${base2}_elements`);
+    visibleName = candidates.find((c) => !(c in rulesBag) && !(`_${c}` in rulesBag));
+    if (visibleName === void 0) return member;
+    hiddenListPromotionNames.set(name, visibleName);
+  }
+  return makeVisibleGroupAlias(member, visibleName);
+}
 function absorbTrailingListSeparators(members) {
   let changed = false;
   const out = [];
@@ -2487,7 +2514,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     const members = absorbed ?? rawMembers;
     let changed = absorbed !== null;
     const newMembers = members.map((m) => {
-      const out = applyClauseHoist(
+      let out = applyClauseHoist(
         parentKind,
         m,
         rulesBag,
@@ -2499,6 +2526,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         clauseGroupOwners,
         ambientPrec
       );
+      out = promoteHiddenListRef(out, rulesBag);
       if (out !== m) changed = true;
       return out;
     });
@@ -2574,7 +2602,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         collidingLeadingNames,
         ambientPrec
       );
-      const final = promoted ?? out;
+      const final = promoteHiddenListRef(promoted ?? out, rulesBag);
       if (final !== m) changed = true;
       return final;
     });

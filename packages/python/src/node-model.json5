@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 265,
+  "nodeCount": 266,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -39,7 +39,8 @@
     "future_import_statement": {
       "definedBy": "override",
       "childKind": {
-        "future_import_statement_group1": "group1"
+        "future_import_statement_group1": "group1",
+        "future_import_statement_group2": "group2"
       }
     },
     "expression_statement": {
@@ -98,11 +99,16 @@
     "_simple_statements.newline": {
       "newline": "_newline"
     },
-    "future_import_statement.import_list": {
-      "future_import_statement_group1": "_import_list"
+    "import_statement.import_list": {
+      "names": "_import_list"
     },
-    "import_from_statement.import_list": {
-      "future_import_statement_group1": "_import_list"
+    "future_import_statement.content": {
+      "future_import_statement_group1": "_import_list",
+      "future_import_statement_group2": "_future_import_statement_group2"
+    },
+    "import_from_statement.content": {
+      "future_import_statement_group1": "_import_list",
+      "future_import_statement_group2": "_future_import_statement_group2"
     },
     "expression_statement.content": {
       "expression_statement_tuple": "_expression_statement_tuple"
@@ -282,6 +288,9 @@
     "format_specifier.content": {
       "format_expression": "interpolation"
     },
+    "_future_import_statement_group2.import_list": {
+      "names": "_import_list"
+    },
     "_except_clause_group1.content": {
       "except_clause_as": "_except_clause_as",
       "except_clause_list": "_except_clause_list"
@@ -291,6 +300,12 @@
     },
     "_dict_pattern_elements.content": {
       "dict_pattern_group1": "_key_value_pattern"
+    },
+    "case_tuple_pattern.list_pattern_case_patterns": {
+      "list_pattern_case_patterns": "_list_pattern_case_patterns"
+    },
+    "case_list_pattern.list_pattern_case_patterns": {
+      "list_pattern_case_patterns": "_list_pattern_case_patterns"
     },
     "_with_clause_paren.with_clause_with_items": {
       "with_clause_with_items": "_with_clause_with_items"
@@ -323,12 +338,12 @@
       }
     },
     "import_statement": {
-      "name": {
+      "import_list": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "relative_import": {
@@ -348,17 +363,10 @@
       }
     },
     "future_import_statement": {
-      "name": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "import_list": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -371,24 +379,10 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "wildcard_import": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "import_list": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1908,6 +1902,15 @@
         "nonEmpty": true
       }
     },
+    "_future_import_statement_group2": {
+      "import_list": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "_subjects": {
       "subject": {
         "unnamed": false,
@@ -2049,20 +2052,20 @@
       }
     },
     "case_tuple_pattern": {
-      "case_pattern": {
+      "list_pattern_case_patterns": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
     "case_list_pattern": {
-      "case_pattern": {
+      "list_pattern_case_patterns": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -3132,6 +3135,45 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "_future_import_statement_group2",
+      "modelType": "branch",
+      "typeName": "FutureImportStatementGroup2",
+      "factoryName": "futureImportStatementGroup2",
+      "irKey": "futureImportStatementGroup2",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "import_list",
+          "propertyName": "importList",
+          "paramName": "importList",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_import_list",
+              "parseKind": "names",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_import_list"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "forwarded",
+      "forwardsTo": "_import_list",
+      "factoryFields": [
+        "import_list"
+      ]
     },
     {
       "kind": "_import_list",
@@ -5185,33 +5227,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "case_pattern",
-          "propertyName": "casePatterns",
-          "paramName": "casePatterns",
+          "name": "list_pattern_case_patterns",
+          "propertyName": "listPatternCasePatterns",
+          "paramName": "listPatternCasePatterns",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "case_pattern",
-              "parseKind": "case_pattern",
+              "multiplicity": "optional",
+              "name": "_list_pattern_case_patterns",
+              "parseKind": "list_pattern_case_patterns",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "case_pattern"
+              "_list_pattern_case_patterns"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_list_pattern_case_patterns",
       "factoryFields": [
-        "case_pattern"
+        "list_pattern_case_patterns"
       ]
     },
     {
@@ -5277,33 +5320,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "case_pattern",
-          "propertyName": "casePatterns",
-          "paramName": "casePatterns",
+          "name": "list_pattern_case_patterns",
+          "propertyName": "listPatternCasePatterns",
+          "paramName": "listPatternCasePatterns",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "case_pattern",
-              "parseKind": "case_pattern",
+              "multiplicity": "optional",
+              "name": "_list_pattern_case_patterns",
+              "parseKind": "list_pattern_case_patterns",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "case_pattern"
+              "_list_pattern_case_patterns"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_list_pattern_case_patterns",
       "factoryFields": [
-        "case_pattern"
+        "list_pattern_case_patterns"
       ]
     },
     {
@@ -7695,65 +7739,41 @@
       "hidden": false,
       "fields": [
         {
-          "name": "name",
-          "propertyName": "names",
-          "paramName": "names",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "dotted_name",
-              "parseKind": "dotted_name",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "aliased_import",
-              "parseKind": "aliased_import",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "dotted_name",
-              "aliased_import"
-            ]
-          }
-        },
-        {
-          "name": "import_list",
-          "propertyName": "importList",
-          "paramName": "importList",
-          "required": false,
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_import_list",
               "parseKind": "future_import_statement_group1",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_future_import_statement_group2",
+              "parseKind": "future_import_statement_group2",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_import_list"
+              "_import_list",
+              "_future_import_statement_group2"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "name",
-        "import_list"
+        "content"
       ]
     },
     {
@@ -8159,16 +8179,30 @@
           }
         },
         {
-          "name": "wildcard_import",
-          "propertyName": "wildcardImport",
-          "paramName": "wildcardImport",
-          "required": false,
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
+              "name": "_import_list",
+              "parseKind": "future_import_statement_group1",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_future_import_statement_group2",
+              "parseKind": "future_import_statement_group2",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "wildcard_import",
               "parseKind": "wildcard_import",
               "unresolved": true
@@ -8177,61 +8211,9 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "_import_list",
+              "_future_import_statement_group2",
               "wildcard_import"
-            ]
-          }
-        },
-        {
-          "name": "name",
-          "propertyName": "names",
-          "paramName": "names",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "dotted_name",
-              "parseKind": "dotted_name",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "aliased_import",
-              "parseKind": "aliased_import",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "dotted_name",
-              "aliased_import"
-            ]
-          }
-        },
-        {
-          "name": "import_list",
-          "propertyName": "importList",
-          "paramName": "importList",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_import_list",
-              "parseKind": "future_import_statement_group1",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_import_list"
             ]
           }
         }
@@ -8240,8 +8222,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "module_name",
-        "name",
-        "import_list"
+        "content"
       ]
     },
     {
@@ -8262,41 +8243,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "name",
-          "propertyName": "names",
-          "paramName": "names",
+          "name": "import_list",
+          "propertyName": "importList",
+          "paramName": "importList",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "dotted_name",
-              "parseKind": "dotted_name",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "aliased_import",
-              "parseKind": "aliased_import",
+              "multiplicity": "single",
+              "name": "_import_list",
+              "parseKind": "names",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "dotted_name",
-              "aliased_import"
+              "_import_list"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_import_list",
       "factoryFields": [
-        "name"
+        "import_list"
       ]
     },
     {

@@ -266,6 +266,8 @@ function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {
 
 const _wrapKindIds: { readonly [kind: string]: number } = {
 	_simple_statements: TSKindId.SimpleStatements,
+	import_statement: TSKindId.ImportStatement,
+	future_import_statement: TSKindId.FutureImportStatement,
 	_import_list: TSKindId.ImportList,
 	print_statement: TSKindId.PrintStatement,
 	expression_statement: TSKindId.ExpressionStatement,
@@ -296,6 +298,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	string_content: TSKindId.StringContent,
 	format_specifier: TSKindId.FormatSpecifier,
 	_simple_statements_elements: TSKindId.SimpleStatementsElements,
+	_future_import_statement_group2: TSKindId.FutureImportStatementGroup2,
 	_subjects: TSKindId.Subjects,
 	_case_patterns: TSKindId.CasePatterns,
 	_except_clause_group1: TSKindId.ExceptClauseGroup1,
@@ -321,6 +324,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 	switch (kind) {
 		case '_simple_statements':
 			return F.buildSimpleStatements(children[0] as Parameters<typeof F.buildSimpleStatements>[0]);
+		case 'import_statement':
+			return F.buildImportStatement(children[0] as Parameters<typeof F.buildImportStatement>[0]);
+		case 'future_import_statement':
+			return F.buildFutureImportStatement(children[0] as Parameters<typeof F.buildFutureImportStatement>[0]);
 		case '_import_list':
 			return (F.buildImportList as (...args: unknown[]) => unknown)(...children);
 		case 'print_statement':
@@ -381,6 +388,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildFormatSpecifier(...(children as Parameters<typeof F.buildFormatSpecifier>));
 		case '_simple_statements_elements':
 			return (F.buildSimpleStatementsElements as (...args: unknown[]) => unknown)(...children);
+		case '_future_import_statement_group2':
+			return F.buildFutureImportStatementGroup2(
+				children[0] as Parameters<typeof F.buildFutureImportStatementGroup2>[0]
+			);
 		case '_subjects':
 			return (F.buildSubjects as (...args: unknown[]) => unknown)(...children);
 		case '_case_patterns':
@@ -406,9 +417,9 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case '_dictionary_elements':
 			return (F.buildDictionaryElements as (...args: unknown[]) => unknown)(...children);
 		case 'case_tuple_pattern':
-			return F.buildCaseTuplePattern(...(children as Parameters<typeof F.buildCaseTuplePattern>));
+			return F.buildCaseTuplePattern(children[0] as Parameters<typeof F.buildCaseTuplePattern>[0]);
 		case 'case_list_pattern':
-			return F.buildCaseListPattern(...(children as Parameters<typeof F.buildCaseListPattern>));
+			return F.buildCaseListPattern(children[0] as Parameters<typeof F.buildCaseListPattern>[0]);
 		case '_with_clause_bare':
 			return (F.buildWithClauseBare as (...args: unknown[]) => unknown)(...children);
 		case '_with_clause_paren':
@@ -526,8 +537,8 @@ const _K1: readonly string[] = [
 	'decorated_definition',
 	'match_statement'
 ];
-const _K2: readonly string[] = ['dotted_name', 'aliased_import'];
-const _K3: readonly string[] = ['relative_import', 'dotted_name'];
+const _K2: readonly string[] = ['relative_import', 'dotted_name'];
+const _K3: readonly string[] = ['_import_list', '_future_import_statement_group2'];
 const _K4: readonly string[] = ['identifier', 'integer', 'float', 'true', 'false', 'none'];
 const _K5: readonly string[] = [
 	'comparison_operator',
@@ -736,13 +747,15 @@ export function coerceToModule(input?: T.Module.Loose): ReturnType<typeof F.buil
 	});
 }
 
-export function coerceToImportStatement(input: T.ImportStatement.Loose): ReturnType<typeof F.buildImportStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildImportStatement>;
-	const _ne_names = _resolveMany<T.DottedName | T.AliasedImport>(input.name, _K0, _K2);
-	_assertNonEmpty(_ne_names, 'import_statement.names');
-	return F.buildImportStatement({
-		name: _ne_names
-	});
+export function coerceToImportStatement(
+	input?: T.ImportList | T.ImportStatement
+): ReturnType<typeof F.buildImportStatement> {
+	if (isNodeData(input) && input.$type === TSKindId.ImportStatement) {
+		const data = input;
+		const child = (data as unknown as { _import_list?: unknown })._import_list;
+		return F.buildImportStatement(child as Parameters<typeof F.buildImportStatement>[0]);
+	}
+	return F.buildImportStatement(input as Parameters<typeof F.buildImportStatement>[0]);
 }
 
 export function coerceToImportPrefix(input: string | T.ImportPrefix): ReturnType<typeof F.buildImportPrefix> {
@@ -763,14 +776,14 @@ export function coerceToRelativeImport(input: T.RelativeImport.Loose): ReturnTyp
 }
 
 export function coerceToFutureImportStatement(
-	input?: T.FutureImportStatement.Loose
+	input?: (T.ImportList | T.FutureImportStatementGroup2) | T.FutureImportStatement
 ): ReturnType<typeof F.buildFutureImportStatement> {
-	if (input !== undefined && isNodeData(input))
-		return input as unknown as ReturnType<typeof F.buildFutureImportStatement>;
-	return F.buildFutureImportStatement({
-		name: _resolveMany<T.DottedName | T.AliasedImport>(input?.name, _K0, _K2),
-		importList: _resolveOneBranch<T.ImportList>(input?.importList, '_import_list')
-	});
+	if (isNodeData(input) && input.$type === TSKindId.FutureImportStatement) {
+		const data = input;
+		const child = (data as unknown as { _content?: unknown })._content;
+		return F.buildFutureImportStatement(child as Parameters<typeof F.buildFutureImportStatement>[0]);
+	}
+	return F.buildFutureImportStatement(input as Parameters<typeof F.buildFutureImportStatement>[0]);
 }
 
 export function coerceToImportFromStatement(
@@ -781,11 +794,13 @@ export function coerceToImportFromStatement(
 		moduleName: _requireField(
 			'import_from_statement',
 			'moduleName',
-			_resolveOne<T.RelativeImport | T.DottedName>(input.moduleName, _K0, _K3)
+			_resolveOne<T.RelativeImport | T.DottedName>(input.moduleName, _K0, _K2)
 		),
-		wildcardImport: _resolveBooleanKeyword(input.wildcardImport),
-		name: _resolveMany<T.DottedName | T.AliasedImport>(input.name, _K0, _K2),
-		importList: _resolveOneBranch<T.ImportList>(input.importList, '_import_list')
+		content: _requireField(
+			'import_from_statement',
+			'content',
+			_resolveOne<T.ImportList | T.FutureImportStatementGroup2 | T.WildcardImport>(input.content, _K0, _K3)
+		)
 	});
 }
 
@@ -2101,27 +2116,25 @@ export function coerceToLineContinuation(
 }
 
 export function coerceToCaseTuplePattern(
-	...input: readonly (T.CasePattern | T.CaseTuplePattern)[]
+	input?: T.ListPatternCasePatterns | T.CaseTuplePattern
 ): ReturnType<typeof F.buildCaseTuplePattern> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.CaseTuplePattern) {
-		const data = input[0];
-		const stored = (data as unknown as { _case_pattern?: unknown })._case_pattern;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildCaseTuplePattern(...(children as unknown as Parameters<typeof F.buildCaseTuplePattern>));
+	if (isNodeData(input) && input.$type === TSKindId.CaseTuplePattern) {
+		const data = input;
+		const child = (data as unknown as { _list_pattern_case_patterns?: unknown })._list_pattern_case_patterns;
+		return F.buildCaseTuplePattern(child as Parameters<typeof F.buildCaseTuplePattern>[0]);
 	}
-	return F.buildCaseTuplePattern(...(input as unknown as Parameters<typeof F.buildCaseTuplePattern>));
+	return F.buildCaseTuplePattern(input as Parameters<typeof F.buildCaseTuplePattern>[0]);
 }
 
 export function coerceToCaseListPattern(
-	...input: readonly (T.CasePattern | T.CaseListPattern)[]
+	input?: T.ListPatternCasePatterns | T.CaseListPattern
 ): ReturnType<typeof F.buildCaseListPattern> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.CaseListPattern) {
-		const data = input[0];
-		const stored = (data as unknown as { _case_pattern?: unknown })._case_pattern;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildCaseListPattern(...(children as unknown as Parameters<typeof F.buildCaseListPattern>));
+	if (isNodeData(input) && input.$type === TSKindId.CaseListPattern) {
+		const data = input;
+		const child = (data as unknown as { _list_pattern_case_patterns?: unknown })._list_pattern_case_patterns;
+		return F.buildCaseListPattern(child as Parameters<typeof F.buildCaseListPattern>[0]);
 	}
-	return F.buildCaseListPattern(...(input as unknown as Parameters<typeof F.buildCaseListPattern>));
+	return F.buildCaseListPattern(input as Parameters<typeof F.buildCaseListPattern>[0]);
 }
 
 export function coerceToCaseAsPattern(input: T.CaseAsPattern.Loose): ReturnType<typeof F.buildCaseAsPattern> {

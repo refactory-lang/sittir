@@ -139,6 +139,8 @@ import type {
 	FunctionDefinition,
 	FunctionDefinitionTree,
 	FutureImportStatement,
+	FutureImportStatementGroup2,
+	FutureImportStatementGroup2Tree,
 	FutureImportStatementTree,
 	GeneratorExpression,
 	GeneratorExpressionTree,
@@ -480,6 +482,9 @@ export type _Type_Await = _TypeAssert<_TypeExtends<Await['$type'], TSKindId.Awai
 export type _Type_SimpleStatementsElements = _TypeAssert<
 	_TypeExtends<SimpleStatementsElements['$type'], TSKindId.SimpleStatementsElements>
 >;
+export type _Type_FutureImportStatementGroup2 = _TypeAssert<
+	_TypeExtends<FutureImportStatementGroup2['$type'], TSKindId.FutureImportStatementGroup2>
+>;
 export type _Type_Subjects = _TypeAssert<_TypeExtends<Subjects['$type'], TSKindId.Subjects>>;
 export type _Type_CasePatterns = _TypeAssert<_TypeExtends<CasePatterns['$type'], TSKindId.CasePatterns>>;
 export type _Type_ExceptClauseGroup1 = _TypeAssert<
@@ -722,6 +727,9 @@ export type _Tree_FormatSpecifier = _TypeAssert<_TypeExtends<FormatSpecifierTree
 export type _Tree_Await = _TypeAssert<_TypeExtends<AwaitTree['type'], 'await'>>;
 export type _Tree_SimpleStatementsElements = _TypeAssert<
 	_TypeExtends<SimpleStatementsElementsTree['type'], '_simple_statements_elements'>
+>;
+export type _Tree_FutureImportStatementGroup2 = _TypeAssert<
+	_TypeExtends<FutureImportStatementGroup2Tree['type'], '_future_import_statement_group2'>
 >;
 export type _Tree_Subjects = _TypeAssert<_TypeExtends<SubjectsTree['type'], '_subjects'>>;
 export type _Tree_CasePatterns = _TypeAssert<_TypeExtends<CasePatternsTree['type'], '_case_patterns'>>;
