@@ -279,8 +279,8 @@
     "scope": "grammar",
     "code": "union-slot-routed",
     "severity": "warning",
-    "ownerKind": "_enum_body_group1",
-    "message": "[collect-slots] kind '_enum_body_group1': choice rule:_enum_body_group1:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
+    "ownerKind": "_enum_body_elements",
+    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -288,7 +288,7 @@
         "name"
       ]
     },
-    "location": "_enum_body_group1"
+    "location": "_enum_body_elements"
   },
   {
     "source": "grammar",
@@ -1348,9 +1348,9 @@
     "scope": "grammar",
     "code": "parsekind-noninjective",
     "severity": "info",
-    "ownerKind": "_argument_list_group1",
+    "ownerKind": "_argument_list_elements",
     "slotName": "parenthesized_expression",
-    "message": "Slot 'parenthesized_expression' of kind '_argument_list_group1' collapses [parenthesized_expression, parenthesized_list_splat] onto parse kind 'parenthesized_expression'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
+    "message": "Slot 'parenthesized_expression' of kind '_argument_list_elements' collapses [parenthesized_expression, parenthesized_list_splat] onto parse kind 'parenthesized_expression'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
     "proposal": "Already resolved by enrich() — no action needed.",
     "canProceed": true,
     "details": {
@@ -1360,7 +1360,7 @@
         "parenthesized_list_splat"
       ]
     },
-    "location": "_argument_list_group1.parenthesized_expression",
+    "location": "_argument_list_elements.parenthesized_expression",
     "sClass": "S1"
   },
   {
@@ -1767,7 +1767,7 @@
     "grammar": "typescript",
     "backend": "native",
     "name": "Enum declarations [program]",
-    "message": "render: unknown kind id 441 in EnumBodyGroup1ContentTransportSlot on EnumBodyGroup1Transport._content on EnumBodyTransport._enum_body_group1 on EnumDeclarationTransport._body on ProgramTransport._statements",
+    "message": "render: unknown kind id 441 in EnumBodyElementsContentTransportSlot on EnumBodyElementsTransport._content on EnumBodyTransport._enum_body_elements on EnumDeclarationTransport._body on ProgramTransport._statements",
     "input": "enum Test {\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}\n\nenum Style {\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}",
     "stage": "read-render-parse",
     "code": "read-render-parse-error",
@@ -1819,7 +1819,7 @@
     "grammar": "typescript",
     "backend": "native",
     "name": "Enum declarations [program]",
-    "message": "render: unknown kind id 441 in EnumBodyGroup1ContentTransportSlot on EnumBodyGroup1Transport._content on EnumBodyTransport._enum_body_group1 on EnumDeclarationTransport._body on ProgramTransport._statements",
+    "message": "render: unknown kind id 441 in EnumBodyElementsContentTransportSlot on EnumBodyElementsTransport._content on EnumBodyTransport._enum_body_elements on EnumDeclarationTransport._body on ProgramTransport._statements",
     "input": "enum Test {\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}\n\nenum Style {\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}",
     "stage": "read-render-parse-shallow",
     "code": "read-render-parse-shallow-error",
