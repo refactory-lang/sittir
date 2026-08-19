@@ -4513,6 +4513,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for _JsxIdentifierTransport {
                                 }
                             }
                         }
+                        if let Ok(v) = JsxIdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::JsxIdentifier(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
                         Err(::napi::Error::from_reason("self-alias kind id 443 in _JsxIdentifierTransport: no kind-keyed child slot to unwrap"))
                     },
                     1 => Ok(Self::Identifier(
@@ -4546,6 +4548,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for _JsxIdentifierTransport {
                                 }
                             }
                         }
+                        if let Ok(v) = JsxIdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::JsxIdentifier(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
                         Err(::napi::Error::from_reason("self-alias kind id 443 in _JsxIdentifierTransport: no kind-keyed child slot to unwrap"))
                     },
                     1 => Ok(Self::Identifier(
@@ -5137,6 +5141,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionTransport {
                                 }
                             }
                         }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
                         Err(::napi::Error::from_reason("self-alias kind id 441 in LhsExpressionTransport: no kind-keyed child slot to unwrap"))
                     },
                     234 => Ok(Self::MemberExpression(
@@ -5293,6 +5300,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionTransport {
                                 }
                             }
                         }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
                         Err(::napi::Error::from_reason("self-alias kind id 441 in LhsExpressionTransport: no kind-keyed child slot to unwrap"))
                     },
                     234 => Ok(Self::MemberExpression(
@@ -11072,6 +11082,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPropertiesTransportSlot {
                                 }
                             }
                         }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
                         Err(::napi::Error::from_reason("alias-wrapper kind id 446 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
@@ -11183,6 +11195,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPropertiesTransportSlot {
                                 }
                             }
                         }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
                         Err(::napi::Error::from_reason("alias-wrapper kind id 446 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
@@ -11365,6 +11379,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPatternPropertiesTransport
                                 }
                             }
                         }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
                         Err(::napi::Error::from_reason("alias-wrapper kind id 447 in ObjectPatternPropertiesTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
@@ -11476,6 +11492,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPatternPropertiesTransport
                                 }
                             }
                         }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
                         Err(::napi::Error::from_reason("alias-wrapper kind id 447 in ObjectPatternPropertiesTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
@@ -11654,6 +11672,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectAssignmentPatternLeftTrans
                                 }
                             }
                         }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
                         Err(::napi::Error::from_reason("alias-wrapper kind id 447 in ObjectAssignmentPatternLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
@@ -11762,6 +11782,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectAssignmentPatternLeftTrans
                                 }
                             }
                         }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
                         Err(::napi::Error::from_reason("alias-wrapper kind id 447 in ObjectAssignmentPatternLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
@@ -12518,6 +12540,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                     215 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
+                    441 => {
+                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
+                                for key in keys {
+                                    if !key.starts_with('_') {
+                                        continue;
+                                    }
+                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
+                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
+                                    }
+                                }
+                            }
+                        }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ArrayPatternElementsTransportSlot: no kind-keyed child slot to unwrap"))
+                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ArrayPatternElementsTransportSlot",
                     ))),
@@ -12629,6 +12669,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                     215 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
+                    441 => {
+                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
+                                for key in keys {
+                                    if !key.starts_with('_') {
+                                        continue;
+                                    }
+                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
+                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
+                                    }
+                                }
+                            }
+                        }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ArrayPatternElementsTransportSlot: no kind-keyed child slot to unwrap"))
+                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ArrayPatternElementsTransportSlot",
                     ))),
@@ -17194,6 +17252,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                                 }
                             }
                         }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
                         Err(::napi::Error::from_reason("alias-wrapper kind id 441 in AssignmentExpressionLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
@@ -17317,6 +17378,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                                 }
                             }
                         }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
                         Err(::napi::Error::from_reason("alias-wrapper kind id 441 in AssignmentExpressionLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
@@ -19877,6 +19941,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                     215 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
+                    441 => {
+                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
+                                for key in keys {
+                                    if !key.starts_with('_') {
+                                        continue;
+                                    }
+                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
+                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
+                                    }
+                                }
+                            }
+                        }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in PairPatternValueTransportSlot: no kind-keyed child slot to unwrap"))
+                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PairPatternValueTransportSlot",
                     ))),
@@ -19988,6 +20070,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                     215 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
+                    441 => {
+                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
+                                for key in keys {
+                                    if !key.starts_with('_') {
+                                        continue;
+                                    }
+                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
+                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
+                                    }
+                                }
+                            }
+                        }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in PairPatternValueTransportSlot: no kind-keyed child slot to unwrap"))
+                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PairPatternValueTransportSlot",
                     ))),
@@ -23155,6 +23255,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
+                    441 => {
+                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
+                                for key in keys {
+                                    if !key.starts_with('_') {
+                                        continue;
+                                    }
+                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
+                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
+                                    }
+                                }
+                            }
+                        }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in RequiredParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
+                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RequiredParameterPatternTransportSlot",
                     ))),
@@ -23266,6 +23384,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
+                    441 => {
+                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
+                                for key in keys {
+                                    if !key.starts_with('_') {
+                                        continue;
+                                    }
+                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
+                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
+                                    }
+                                }
+                            }
+                        }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in RequiredParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
+                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RequiredParameterPatternTransportSlot",
                     ))),
@@ -23547,6 +23683,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
+                    441 => {
+                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
+                                for key in keys {
+                                    if !key.starts_with('_') {
+                                        continue;
+                                    }
+                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
+                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
+                                    }
+                                }
+                            }
+                        }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in OptionalParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
+                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in OptionalParameterPatternTransportSlot",
                     ))),
@@ -23658,6 +23812,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
+                    441 => {
+                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
+                                for key in keys {
+                                    if !key.starts_with('_') {
+                                        continue;
+                                    }
+                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
+                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
+                                    }
+                                }
+                            }
+                        }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in OptionalParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
+                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in OptionalParameterPatternTransportSlot",
                     ))),
@@ -23939,6 +24111,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterNamePatternTransportSlo
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
+                    441 => {
+                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
+                                for key in keys {
+                                    if !key.starts_with('_') {
+                                        continue;
+                                    }
+                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
+                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
+                                    }
+                                }
+                            }
+                        }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ParameterNamePatternTransportSlot: no kind-keyed child slot to unwrap"))
+                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ParameterNamePatternTransportSlot",
                     ))),
@@ -24050,6 +24240,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterNamePatternTransportSlo
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
+                    441 => {
+                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
+                                for key in keys {
+                                    if !key.starts_with('_') {
+                                        continue;
+                                    }
+                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
+                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
+                                    }
+                                }
+                            }
+                        }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ParameterNamePatternTransportSlot: no kind-keyed child slot to unwrap"))
+                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ParameterNamePatternTransportSlot",
                     ))),
@@ -29504,6 +29712,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyElementsContentTransport
                     266 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
+                    443 => {
+                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
+                                for key in keys {
+                                    if !key.starts_with('_') {
+                                        continue;
+                                    }
+                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
+                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
+                                    }
+                                }
+                            }
+                        }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 443 in EnumBodyElementsContentTransportSlot: no kind-keyed child slot to unwrap"))
+                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in EnumBodyElementsContentTransportSlot",
                     ))),
@@ -29606,6 +29831,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyElementsContentTransport
                     266 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
+                    443 => {
+                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
+                                for key in keys {
+                                    if !key.starts_with('_') {
+                                        continue;
+                                    }
+                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
+                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
+                                    }
+                                }
+                            }
+                        }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 443 in EnumBodyElementsContentTransportSlot: no kind-keyed child slot to unwrap"))
+                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in EnumBodyElementsContentTransportSlot",
                     ))),
@@ -31746,6 +31988,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                                 }
                             }
                         }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
                         Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ForHeaderLhsLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
@@ -31869,6 +32114,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                                 }
                             }
                         }
+                        if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
+                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
+                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
                         Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ForHeaderLhsLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
