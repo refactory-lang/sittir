@@ -1042,7 +1042,12 @@ function enrich(baseInput, config) {
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
-    enrichedRules[name] = rule && !enrichSkip.has(name) ? applyEnrichPasses(
+    enrichedRules[name] = rule && !enrichSkip.has(name) ? applyFieldWrapPasses(name, rule, kwRules, supertypeNames, rulesBag, wordMatcher) : rule;
+  }
+  for (const name of Object.keys(enrichedRules)) {
+    const rule = enrichedRules[name];
+    if (!rule || enrichSkip.has(name)) continue;
+    enrichedRules[name] = applyHoistAndUnalias(
       name,
       rule,
       kwRules,
@@ -1053,9 +1058,8 @@ function enrich(baseInput, config) {
       groupDedupeMap,
       visibleGroupHiddenNames,
       clauseGroupOwners,
-      wordMatcher,
       unaliasSink
-    ) : rule;
+    );
   }
   for (const groupName of Object.keys(clauseGroupRules)) {
     const groupBody = clauseGroupRules[groupName];
@@ -1143,7 +1147,7 @@ function getEnrichVisibleGroupSources(grammar2) {
   if (names instanceof Set) return names;
   return /* @__PURE__ */ new Set();
 }
-function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, wordMatcher, unaliasSink) {
+function applyFieldWrapPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, wordMatcher) {
   const MAX_ITERATIONS = 8;
   let r = rule;
   let converged = false;
@@ -1162,6 +1166,10 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations
 `);
   }
+  return r;
+}
+function applyHoistAndUnalias(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, unaliasSink) {
+  let r = rule;
   const clauseHoistCounter = { opt: 0, grp: 0, supertypeNames };
   r = applyClauseHoist(
     ruleName,

@@ -236,25 +236,34 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 	// local to THIS enrich() invocation, attached to its result below.
 	const unaliasSink: UnaliasDiagnosticSink = { diagnostics: [], seen: new Set() };
 	const enrichedRules: Record<string, Rule> = {};
+	// Loop 1: field-wrap every rule to its fixed point BEFORE any hoisting, so
+	// the hoist stage below sees the whole grammar's enriched fields (the
+	// separated-list naming needs grammar-global field-name knowledge).
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
 		enrichedRules[name] =
 			rule && !enrichSkip.has(name)
-				? applyEnrichPasses(
-						name,
-						rule,
-						kwRules,
-						supertypeNames,
-						rulesBag,
-						clauseGroupRules,
-						clauseDedupeMap,
-						groupDedupeMap,
-						visibleGroupHiddenNames,
-						clauseGroupOwners,
-						wordMatcher,
-						unaliasSink
-					)
+				? applyFieldWrapPasses(name, rule, kwRules, supertypeNames, rulesBag, wordMatcher)
 				: rule!;
+	}
+	// Loop 2: clause/group hoisting + base-grammar un-aliasing, per rule in the
+	// same order loop 1 ran.
+	for (const name of Object.keys(enrichedRules)) {
+		const rule = enrichedRules[name];
+		if (!rule || enrichSkip.has(name)) continue;
+		enrichedRules[name] = applyHoistAndUnalias(
+			name,
+			rule,
+			kwRules,
+			supertypeNames,
+			rulesBag,
+			clauseGroupRules,
+			clauseDedupeMap,
+			groupDedupeMap,
+			visibleGroupHiddenNames,
+			clauseGroupOwners,
+			unaliasSink
+		);
 	}
 	// Base-grammar un-aliasing also needs to reach clause-hoist-minted group
 	// rules, not just the original rulesBag entries above. `applyEnrichPasses`
@@ -413,19 +422,13 @@ export function getEnrichVisibleGroupSources(grammar: unknown): ReadonlySet<stri
 	return new Set();
 }
 
-function applyEnrichPasses(
+function applyFieldWrapPasses(
 	ruleName: string,
 	rule: Rule,
 	kwRules: Record<string, Rule>,
 	supertypeNames: ReadonlySet<string>,
 	rulesBag: Record<string, Rule>,
-	clauseGroupRules: Record<string, Rule>,
-	clauseDedupeMap: Record<string, string>,
-	groupDedupeMap: Record<string, string>,
-	visibleGroupHiddenNames: Set<string>,
-	clauseGroupOwners: Map<string, string>,
-	wordMatcher: RegExp | undefined,
-	unaliasSink: UnaliasDiagnosticSink
+	wordMatcher: RegExp | undefined
 ): Rule {
 	// Fixed-point loop. The current pass set has well-defined
 	// non-overlapping outputs (symbol-to-field wraps SYMBOLs as FIELD;
@@ -467,13 +470,34 @@ function applyEnrichPasses(
 	if (!converged && !process.env.SITTIR_QUIET) {
 		process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations\n`);
 	}
-	// Clause-hoist runs AFTER the field-wrapping loop has converged — it must
-	// see the enrich-inferred (`source:'enriched'`) FIELDs, because its trigger
-	// is `optional(seq(…))` with `some(isString) && some(isField)`. Running it
-	// first (the original placement) missed every clause whose field is added
-	// by applySymbolToField (e.g. rust `abstract_type`'s
-	// `for <type_parameters>`), leaving those for detectClause. One pass: once a
-	// seq is hoisted its replacement is `optional(SYMBOL)`, which won't re-trigger.
+	return r;
+}
+
+// Clause-hoist runs AFTER the field-wrapping loop has converged — it must
+// see the enrich-inferred (`source:'enriched'`) FIELDs, because its trigger
+// is `optional(seq(…))` with `some(isString) && some(isField)`. Running it
+// first (the original placement) missed every clause whose field is added
+// by applySymbolToField (e.g. rust `abstract_type`'s
+// `for <type_parameters>`), leaving those for detectClause. One pass: once a
+// seq is hoisted its replacement is `optional(SYMBOL)`, which won't re-trigger.
+// It is a separate per-rule stage (not the tail of `applyFieldWrapPasses`)
+// so enrich() can field-wrap EVERY rule before hoisting ANY of them — the
+// separated-list naming below needs grammar-global field-name uniqueness,
+// which only exists once all rules carry their enriched fields.
+function applyHoistAndUnalias(
+	ruleName: string,
+	rule: Rule,
+	kwRules: Record<string, Rule>,
+	supertypeNames: ReadonlySet<string>,
+	rulesBag: Record<string, Rule>,
+	clauseGroupRules: Record<string, Rule>,
+	clauseDedupeMap: Record<string, string>,
+	groupDedupeMap: Record<string, string>,
+	visibleGroupHiddenNames: Set<string>,
+	clauseGroupOwners: Map<string, string>,
+	unaliasSink: UnaliasDiagnosticSink
+): Rule {
+	let r = rule;
 	// Per-parent counter is local; dedupeMap + clauseGroupRules are shared across rules.
 	const clauseHoistCounter: ClauseHoistCounter = { opt: 0, grp: 0, supertypeNames };
 	r = applyClauseHoist(
