@@ -3754,7 +3754,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_simple_statements_elements",
       "factoryFields": [
         "simple_statements_elements"
       ]
@@ -4034,7 +4035,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "block",
       "factoryFields": [
         "block"
       ]
@@ -4175,7 +4177,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_with_items",
       "factoryFields": [
         "with_items"
       ]
@@ -4417,7 +4420,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_argument_list_elements",
       "factoryFields": [
         "arguments"
       ]
@@ -6561,7 +6565,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_dict_pattern_elements",
       "factoryFields": [
         "dict_pattern_elements"
       ]
@@ -6599,7 +6604,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_dictionary_elements",
       "factoryFields": [
         "entries"
       ]
@@ -8893,7 +8899,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_parameters",
       "factoryFields": [
         "parameters"
       ]
@@ -9022,7 +9029,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_collection_elements",
       "factoryFields": [
         "collection_elements"
       ]
@@ -9122,7 +9130,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_patterns",
       "factoryFields": [
         "patterns"
       ]
@@ -9716,7 +9725,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_parameters",
       "factoryFields": [
         "parameters"
       ]
@@ -10407,7 +10417,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_collection_elements",
       "factoryFields": [
         "collection_elements"
       ]
@@ -11139,7 +11150,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_collection_elements",
       "factoryFields": [
         "collection_elements"
       ]
@@ -11177,7 +11189,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_patterns",
       "factoryFields": [
         "patterns"
       ]
@@ -11385,7 +11398,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_types",
       "factoryFields": [
         "types"
       ]

@@ -622,7 +622,7 @@ export function resolveFieldStorageInfo(
 // ---------------------------------------------------------------------------
 
 export type { BranchSlotClass } from '../compiler/model/node-map.ts';
-export type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements';
+export type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements' | 'forwarded';
 export type ChildFactorySurface = 'direct' | 'spread';
 
 export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): BranchSlotClass {
@@ -688,6 +688,38 @@ export function resolveDirectFactorySlot(node: AssembledNode, nodeMap: NodeMap):
 	return nonStampFields.length === 1 ? slot : undefined;
 }
 
+/**
+ * The stamped forwarding fact: a factory whose calling convention would be
+ * 'direct' (one singular user slot) FORWARDS the slot's constructor when the
+ * slot holds exactly ONE concrete node kind — the factory accepts that
+ * kind's constructor arguments (building the child internally) or a
+ * pre-built node, discriminated by `$type`. A union slot has no unique
+ * constructor to forward and stays 'direct'; a literal-bearing slot
+ * likewise. Classified ONCE here — every consumer (factory/from emitters,
+ * node-model serialization, validators) reads the stamp, never re-derives
+ * the single-slot-single-kind predicate.
+ */
+export function forwardedTargetKind(node: AssembledNode, nodeMap: NodeMap): string | null {
+	if (!isSlotBearingCompound(node)) return null;
+	// refine() kinds emit per-form config factories (emitRefineFormFactory)
+	// — the forwarding wrapper's positional dispatch has no place there.
+	if (nodeMap.refineForms?.has(node.kind)) return null;
+	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
+	if (slotClass.tag !== 'singleSlot' || slotClass.arity !== 'singular') return null;
+	const slot = slotClass.slot;
+	if (slotLiteralValues(slot).length > 0) return null;
+	const kinds = slotKindNames(slot);
+	if (kinds.length !== 1) return null;
+	// A field carrying per-instance flank options keeps the direct/config
+	// surface (its factory signature carries an options parameter the
+	// forwarding dispatch has no slot for).
+	if (node.fields.some((f) => f.trailingMode === 'optional' || f.leadingMode === 'optional')) return null;
+	const target = nodeMap.nodes.get(kinds[0]!);
+	// The target must itself emit a factory to forward to.
+	if (!target?.rawFactoryName) return null;
+	return kinds[0]!;
+}
+
 export function configurableFactoryFields(
 	fields: readonly AssembledNonterminal[],
 	nodeMap: NodeMap
@@ -727,7 +759,10 @@ export function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMa
 	if (node.modelType !== 'branch') return null;
 	const shape = classifyFactoryShape(node, nodeMap);
 	if (shape === 'spread') return 'spread';
-	if (shape !== 'direct') return null;
+	// 'forwarded' refines 'direct' (same positional child surface, plus the
+	// factory also accepts the child's constructor args) — the child SURFACE
+	// is 'direct' either way.
+	if (shape !== 'direct' && shape !== 'forwarded') return null;
 	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 	return slotClass.tag === 'singleSlot' && slotClass.slot.isUnnamed ? 'direct' : null;
 }
@@ -780,19 +815,27 @@ export function classifyFactoryShape(
 					// either way, same as a visible kind's. (Per the
 					// rust-slot-surface-contract architecture: named and unnamed
 					// slots share one derivation path, driven by real arity —
-					// not by kind-name prefix.)
-					return slotClass.arity === 'singular' ? 'direct' : 'spread';
+					// not by kind-name prefix.) A singular slot holding exactly
+					// one concrete kind forwards that kind's constructor
+					// ('forwarded' — see forwardedTargetKind); a union slot has
+					// no unique constructor and stays 'direct'.
+					if (slotClass.arity !== 'singular') return 'spread';
+					return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
 				}
 				// Named single field: direct only when the emitter would emit
 				// the direct-value signature (sole non-stamped field, visible
 				// kind — see resolveDirectFactorySlot). Hidden kinds and
-				// marker-carrying kinds keep the config-object surface.
-				return resolveDirectFactorySlot(node, nodeMap) ? 'direct' : 'config';
+				// marker-carrying kinds keep the config-object surface. Same
+				// forwarding refinement as the unnamed case.
+				if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
+				return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
 			}
 			return 'config';
 		}
-		case 'group':
-			return resolveDirectFactorySlot(node, nodeMap) ? 'direct' : 'config';
+		case 'group': {
+			if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
+			return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
+		}
 		default:
 			return null;
 	}

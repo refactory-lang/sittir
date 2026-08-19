@@ -120,7 +120,24 @@ export function buildNamespaceExport(child: T.ModuleExportName) {
 	);
 }
 
-export function buildExportClause(child?: T.ExportSpecifiers) {
+export function buildExportClause(child?: T.ExportSpecifiers): ReturnType<typeof _buildExportClause>;
+export function buildExportClause(
+	...args: Parameters<typeof buildExportSpecifiers>
+): ReturnType<typeof _buildExportClause>;
+export function buildExportClause(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildExportClause(args[0] as T.ExportSpecifiers);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ExportSpecifiers as const);
+	return prebuilt
+		? _buildExportClause(args[0] as T.ExportSpecifiers)
+		: _buildExportClause((buildExportSpecifiers as (...a: unknown[]) => unknown)(...args) as T.ExportSpecifiers);
+}
+function _buildExportClause(child?: T.ExportSpecifiers) {
 	const _export_specifiers = child;
 	return withMethods(
 		withAccessors(
@@ -266,7 +283,28 @@ export function buildFromClause(config: T.FromClause.Config) {
 	);
 }
 
-export function buildNamespaceImport(identifier: T.NamespaceImport.Config['identifier']) {
+export function buildNamespaceImport(
+	child: T.NamespaceImport.Config['identifier']
+): ReturnType<typeof _buildNamespaceImport>;
+export function buildNamespaceImport(
+	...args: Parameters<typeof buildIdentifier>
+): ReturnType<typeof _buildNamespaceImport>;
+export function buildNamespaceImport(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildNamespaceImport(args[0] as T.NamespaceImport.Config['identifier']);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Identifier as const);
+	return prebuilt
+		? _buildNamespaceImport(args[0] as T.NamespaceImport.Config['identifier'])
+		: _buildNamespaceImport(
+				(buildIdentifier as (...a: unknown[]) => unknown)(...args) as T.NamespaceImport.Config['identifier']
+			);
+}
+function _buildNamespaceImport(identifier: T.NamespaceImport.Config['identifier']) {
 	const _identifier = identifier;
 	return withMethods(
 		withAccessors(
@@ -287,7 +325,24 @@ export function buildNamespaceImport(identifier: T.NamespaceImport.Config['ident
 	);
 }
 
-export function buildNamedImports(child?: T.ImportSpecifiers) {
+export function buildNamedImports(child?: T.ImportSpecifiers): ReturnType<typeof _buildNamedImports>;
+export function buildNamedImports(
+	...args: Parameters<typeof buildImportSpecifiers>
+): ReturnType<typeof _buildNamedImports>;
+export function buildNamedImports(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildNamedImports(args[0] as T.ImportSpecifiers);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportSpecifiers as const);
+	return prebuilt
+		? _buildNamedImports(args[0] as T.ImportSpecifiers)
+		: _buildNamedImports((buildImportSpecifiers as (...a: unknown[]) => unknown)(...args) as T.ImportSpecifiers);
+}
+function _buildNamedImports(child?: T.ImportSpecifiers) {
 	const _import_specifiers = child;
 	return withMethods(
 		withAccessors(
@@ -863,7 +918,28 @@ export function buildContinueStatement(config: T.ContinueStatement.Config) {
 	);
 }
 
-export function buildDebuggerStatement(semicolon: T.DebuggerStatement.Config['semicolon']) {
+export function buildDebuggerStatement(
+	child: T.DebuggerStatement.Config['semicolon']
+): ReturnType<typeof _buildDebuggerStatement>;
+export function buildDebuggerStatement(
+	...args: Parameters<typeof buildSemicolon>
+): ReturnType<typeof _buildDebuggerStatement>;
+export function buildDebuggerStatement(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildDebuggerStatement(args[0] as T.DebuggerStatement.Config['semicolon']);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Semicolon as const);
+	return prebuilt
+		? _buildDebuggerStatement(args[0] as T.DebuggerStatement.Config['semicolon'])
+		: _buildDebuggerStatement(
+				(buildSemicolon as (...a: unknown[]) => unknown)(...args) as T.DebuggerStatement.Config['semicolon']
+			);
+}
+function _buildDebuggerStatement(semicolon: T.DebuggerStatement.Config['semicolon']) {
 	const _semicolon = coerceKindEnumStorage(semicolon, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
@@ -1062,7 +1138,26 @@ export function buildCatchClause(config: T.CatchClause.Config) {
 	);
 }
 
-export function buildFinallyClause(body: T.FinallyClause.Config['body']) {
+export function buildFinallyClause(child: T.FinallyClause.Config['body']): ReturnType<typeof _buildFinallyClause>;
+export function buildFinallyClause(
+	...args: Parameters<typeof buildStatementBlock>
+): ReturnType<typeof _buildFinallyClause>;
+export function buildFinallyClause(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildFinallyClause(args[0] as T.FinallyClause.Config['body']);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.StatementBlock as const);
+	return prebuilt
+		? _buildFinallyClause(args[0] as T.FinallyClause.Config['body'])
+		: _buildFinallyClause(
+				(buildStatementBlock as (...a: unknown[]) => unknown)(...args) as T.FinallyClause.Config['body']
+			);
+}
+function _buildFinallyClause(body: T.FinallyClause.Config['body']) {
 	const _body = body;
 	return withMethods(
 		withAccessors(
@@ -2521,7 +2616,26 @@ export function buildClassBody(config: Partial<T.ClassBody.Config> = {}) {
 	);
 }
 
-export function buildFormalParameters(child?: T.FormalParametersElements) {
+export function buildFormalParameters(child?: T.FormalParametersElements): ReturnType<typeof _buildFormalParameters>;
+export function buildFormalParameters(
+	...args: Parameters<typeof buildFormalParametersElements>
+): ReturnType<typeof _buildFormalParameters>;
+export function buildFormalParameters(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildFormalParameters(args[0] as T.FormalParametersElements);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.FormalParametersElements as const);
+	return prebuilt
+		? _buildFormalParameters(args[0] as T.FormalParametersElements)
+		: _buildFormalParameters(
+				(buildFormalParametersElements as (...a: unknown[]) => unknown)(...args) as T.FormalParametersElements
+			);
+}
+function _buildFormalParameters(child?: T.FormalParametersElements) {
 	const _formal_parameters_elements = child;
 	return withMethods(
 		withAccessors(
@@ -3554,7 +3668,22 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config) {
 	);
 }
 
-export function buildEnumBody(child?: T.EnumBodyElements) {
+export function buildEnumBody(child?: T.EnumBodyElements): ReturnType<typeof _buildEnumBody>;
+export function buildEnumBody(...args: Parameters<typeof buildEnumBodyElements>): ReturnType<typeof _buildEnumBody>;
+export function buildEnumBody(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildEnumBody(args[0] as T.EnumBodyElements);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.EnumBodyElements as const);
+	return prebuilt
+		? _buildEnumBody(args[0] as T.EnumBodyElements)
+		: _buildEnumBody((buildEnumBodyElements as (...a: unknown[]) => unknown)(...args) as T.EnumBodyElements);
+}
+function _buildEnumBody(child?: T.EnumBodyElements) {
 	const _enum_body_elements = child;
 	return withMethods(
 		withAccessors(
@@ -3970,7 +4099,28 @@ export function buildAsserts(child: T.TypePredicate | T.Identifier | T.This) {
 	);
 }
 
-export function buildAssertsAnnotation(asserts: T.AssertsAnnotation.Config['asserts']) {
+export function buildAssertsAnnotation(
+	child: T.AssertsAnnotation.Config['asserts']
+): ReturnType<typeof _buildAssertsAnnotation>;
+export function buildAssertsAnnotation(
+	...args: Parameters<typeof buildAsserts>
+): ReturnType<typeof _buildAssertsAnnotation>;
+export function buildAssertsAnnotation(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildAssertsAnnotation(args[0] as T.AssertsAnnotation.Config['asserts']);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Asserts as const);
+	return prebuilt
+		? _buildAssertsAnnotation(args[0] as T.AssertsAnnotation.Config['asserts'])
+		: _buildAssertsAnnotation(
+				(buildAsserts as (...a: unknown[]) => unknown)(...args) as T.AssertsAnnotation.Config['asserts']
+			);
+}
+function _buildAssertsAnnotation(asserts: T.AssertsAnnotation.Config['asserts']) {
 	const _asserts = asserts;
 	return withMethods(
 		withAccessors(
@@ -4266,7 +4416,30 @@ export function buildTypePredicate(config: T.TypePredicate.Config) {
 	);
 }
 
-export function buildTypePredicateAnnotation(typePredicate: T.TypePredicateAnnotation.Config['typePredicate']) {
+export function buildTypePredicateAnnotation(
+	child: T.TypePredicateAnnotation.Config['typePredicate']
+): ReturnType<typeof _buildTypePredicateAnnotation>;
+export function buildTypePredicateAnnotation(
+	...args: Parameters<typeof buildTypePredicate>
+): ReturnType<typeof _buildTypePredicateAnnotation>;
+export function buildTypePredicateAnnotation(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildTypePredicateAnnotation(args[0] as T.TypePredicateAnnotation.Config['typePredicate']);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TypePredicate as const);
+	return prebuilt
+		? _buildTypePredicateAnnotation(args[0] as T.TypePredicateAnnotation.Config['typePredicate'])
+		: _buildTypePredicateAnnotation(
+				(buildTypePredicate as (...a: unknown[]) => unknown)(
+					...args
+				) as T.TypePredicateAnnotation.Config['typePredicate']
+			);
+}
+function _buildTypePredicateAnnotation(typePredicate: T.TypePredicateAnnotation.Config['typePredicate']) {
 	const _type_predicate = typePredicate;
 	return withMethods(
 		withAccessors(
@@ -4633,7 +4806,22 @@ export function buildPredefinedType(
 	);
 }
 
-export function buildTypeArguments(child: T.Types) {
+export function buildTypeArguments(child: T.Types): ReturnType<typeof _buildTypeArguments>;
+export function buildTypeArguments(...args: Parameters<typeof buildTypes>): ReturnType<typeof _buildTypeArguments>;
+export function buildTypeArguments(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildTypeArguments(args[0] as T.Types);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Types as const);
+	return prebuilt
+		? _buildTypeArguments(args[0] as T.Types)
+		: _buildTypeArguments((buildTypes as (...a: unknown[]) => unknown)(...args) as T.Types);
+}
+function _buildTypeArguments(child: T.Types) {
 	const _types = child;
 	return withMethods(
 		withAccessors(
@@ -4840,7 +5028,26 @@ export function buildPropertySignature(config: T.PropertySignature.Config) {
 	);
 }
 
-export function buildTypeParameters(child: T.TypeParametersElements) {
+export function buildTypeParameters(child: T.TypeParametersElements): ReturnType<typeof _buildTypeParameters>;
+export function buildTypeParameters(
+	...args: Parameters<typeof buildTypeParametersElements>
+): ReturnType<typeof _buildTypeParameters>;
+export function buildTypeParameters(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildTypeParameters(args[0] as T.TypeParametersElements);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TypeParametersElements as const);
+	return prebuilt
+		? _buildTypeParameters(args[0] as T.TypeParametersElements)
+		: _buildTypeParameters(
+				(buildTypeParametersElements as (...a: unknown[]) => unknown)(...args) as T.TypeParametersElements
+			);
+}
+function _buildTypeParameters(child: T.TypeParametersElements) {
 	const _type_parameters_elements = child;
 	return withMethods(
 		withAccessors(
@@ -5036,7 +5243,22 @@ export function buildArrayType(primaryType: T.ArrayType.Config['primaryType']) {
 	);
 }
 
-export function buildTupleType(child?: T.TupleTypeMembers) {
+export function buildTupleType(child?: T.TupleTypeMembers): ReturnType<typeof _buildTupleType>;
+export function buildTupleType(...args: Parameters<typeof buildTupleTypeMembers>): ReturnType<typeof _buildTupleType>;
+export function buildTupleType(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildTupleType(args[0] as T.TupleTypeMembers);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TupleTypeMembers as const);
+	return prebuilt
+		? _buildTupleType(args[0] as T.TupleTypeMembers)
+		: _buildTupleType((buildTupleTypeMembers as (...a: unknown[]) => unknown)(...args) as T.TupleTypeMembers);
+}
+function _buildTupleType(child?: T.TupleTypeMembers) {
 	const _tuple_type_members = child;
 	return withMethods(
 		withAccessors(
@@ -6290,7 +6512,28 @@ export function buildForHeaderLetConstKind(config: T.ForHeaderLetConstKind.Confi
 	);
 }
 
-export function buildPublicFieldDefinitionDeclareFirst(child?: T.AccessibilityModifier) {
+export function buildPublicFieldDefinitionDeclareFirst(
+	child?: T.AccessibilityModifier
+): ReturnType<typeof _buildPublicFieldDefinitionDeclareFirst>;
+export function buildPublicFieldDefinitionDeclareFirst(
+	...args: Parameters<typeof buildAccessibilityModifier>
+): ReturnType<typeof _buildPublicFieldDefinitionDeclareFirst>;
+export function buildPublicFieldDefinitionDeclareFirst(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildPublicFieldDefinitionDeclareFirst(args[0] as T.AccessibilityModifier);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.AccessibilityModifier as const);
+	return prebuilt
+		? _buildPublicFieldDefinitionDeclareFirst(args[0] as T.AccessibilityModifier)
+		: _buildPublicFieldDefinitionDeclareFirst(
+				(buildAccessibilityModifier as (...a: unknown[]) => unknown)(...args) as T.AccessibilityModifier
+			);
+}
+function _buildPublicFieldDefinitionDeclareFirst(child?: T.AccessibilityModifier) {
 	const _accessibility_modifier = child;
 	return withMethods(
 		withAccessors(

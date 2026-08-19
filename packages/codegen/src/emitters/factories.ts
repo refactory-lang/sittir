@@ -43,6 +43,7 @@ import {
 	classifyFactoryShape,
 	classifyChildFactorySurface,
 	classifyFactoryEmission,
+	forwardedTargetKind,
 	resolveDirectFactorySlot,
 	collectAliasSourceKinds,
 	warnSkippedParserSymbol,
@@ -649,6 +650,11 @@ function emitFieldCarryingFactory(
 	let signature: string;
 	let valueSourceFor: (f: AssembledNonterminal) => string;
 	let withLines: string[];
+	// Set by the two direct-convention branches below (singular container /
+	// single-field) — the inputs the forwarding wrapper needs when this kind
+	// classifies 'forwarded'.
+	let directParamType: string | undefined;
+	let directParamOptional = false;
 	// Which fields actually get storage + a getter. Container shape only
 	// stamps its ONE real slot — `node.fields` can hold other entries
 	// (e.g. keyword-presence markers) that `classifyBranchSlots`' userSlot
@@ -693,6 +699,8 @@ function emitFieldCarryingFactory(
 					? 'child'
 					: slotStorageFromValueExpr(f, autoStampExpression(f, nodeMap)!, nodeMap, kindEntries);
 			withLines = [`    $with: { $child: (v: ${elementType}) => ${fn}(v) },`];
+			directParamType = elementType;
+			directParamOptional = !containerFacts.required;
 		}
 	} else if (singleField) {
 		const elemType = `T.${node.typeName}.Config['${singleField.configKey}']`;
@@ -701,6 +709,10 @@ function emitFieldCarryingFactory(
 		signature = hasFlankOptions
 			? `export function ${fn}(${paramName}${optMark}: ${elemType}, options: ${flankOptionsType} = {}) {`
 			: `export function ${fn}(${paramName}${optMark}: ${elemType}) {`;
+		if (!hasFlankOptions) {
+			directParamType = elemType;
+			directParamOptional = !isRequired(singleField);
+		}
 		valueSourceFor = (f) =>
 			f === singleField
 				? slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries)
@@ -823,6 +835,45 @@ function emitFieldCarryingFactory(
 	}
 	lines.push('  }), methodsEngine);');
 	lines.push('}');
+
+	// 'forwarded' shape (see forwardedTargetKind, shared.ts): the direct
+	// convention's single child slot holds exactly ONE concrete kind, so the
+	// factory forwards that kind's constructor — callers pass either the
+	// forwarded constructor arguments (the child is built internally) or a
+	// pre-built node, discriminated by `$type`. The direct implementation
+	// above becomes the private tail; chains compose transitively because a
+	// forwarded TARGET factory performs the same dispatch itself.
+	const forwardTarget = directParamType !== undefined ? forwardedTargetKind(node, nodeMap) : null;
+	if (forwardTarget !== null) {
+		const targetFn = nodeMap.nodes.get(forwardTarget)!.rawFactoryName!;
+		lines[0] = lines[0]!.replace(`export function ${fn}(`, `function _${fn}(`);
+		const optMark = directParamOptional ? '?' : '';
+		const wrapper: string[] = [
+			`export function ${fn}(child${optMark}: ${directParamType}): ReturnType<typeof _${fn}>;`,
+			`export function ${fn}(...args: Parameters<typeof ${targetFn}>): ReturnType<typeof _${fn}>;`,
+			`export function ${fn}(...args: unknown[]) {`
+		];
+		wrapper.push(
+			// A single non-object argument (undefined = optional-empty; string
+			// = text-collapsed scalar storage; number = scalarized kind-enum
+			// storage; boolean = keyword-presence storage) keeps the direct
+			// pass-through semantics — read-side storage scalar-collapses such
+			// children, so constructing a node here would diverge from what a
+			// real parse stores. Only structured forwarded args (config
+			// objects, node spreads) construct the child.
+			`  if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {`,
+			`    return _${fn}(args[0] as ${directParamType});`,
+			`  }`,
+			`  const prebuilt =`,
+			`    args.length === 1 && typeof args[0] === 'object' && args[0] !== null &&`,
+			`    (args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(forwardTarget, nodeMap, kindEntries)});`,
+			`  return prebuilt`,
+			`    ? _${fn}(args[0] as ${directParamType})`,
+			`    : _${fn}((${targetFn} as (...a: unknown[]) => unknown)(...args) as ${directParamType});`,
+			'}'
+		);
+		lines.unshift(...wrapper);
+	}
 	return renameUnusedConfigParam(lines);
 }
 

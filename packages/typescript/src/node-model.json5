@@ -8656,7 +8656,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "accessibility_modifier",
       "factoryFields": [
         "accessibility_modifier"
       ]
@@ -10999,7 +11000,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "asserts",
       "factoryFields": [
         "asserts"
       ]
@@ -12994,7 +12996,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_semicolon",
       "factoryFields": [
         "semicolon"
       ]
@@ -13664,7 +13667,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_enum_body_elements",
       "factoryFields": [
         "enum_body_elements"
       ]
@@ -13857,7 +13861,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_export_specifiers",
       "factoryFields": [
         "export_specifiers"
       ]
@@ -14367,7 +14372,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "statement_block",
       "factoryFields": [
         "body"
       ]
@@ -14761,7 +14767,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_formal_parameters_elements",
       "factoryFields": [
         "formal_parameters_elements"
       ]
@@ -17559,7 +17566,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_jsx_opening_element_content",
       "factoryFields": [
         "jsx_opening_element_content"
       ]
@@ -17597,7 +17605,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_jsx_opening_element_content",
       "factoryFields": [
         "jsx_opening_element_content"
       ]
@@ -18957,7 +18966,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_import_specifiers",
       "factoryFields": [
         "import_specifiers"
       ]
@@ -19044,7 +19054,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "identifier",
       "factoryFields": [
         "identifier"
       ]
@@ -22706,7 +22717,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_tuple_type_members",
       "factoryFields": [
         "tuple_type_members"
       ]
@@ -22908,7 +22920,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_types",
       "factoryFields": [
         "types"
       ]
@@ -23117,7 +23130,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_type_parameters_elements",
       "factoryFields": [
         "type_parameters_elements"
       ]
@@ -23233,7 +23247,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "type_predicate",
       "factoryFields": [
         "type_predicate"
       ]

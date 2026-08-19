@@ -42,7 +42,26 @@ export function buildModule(config: Partial<T.Module.Config> = {}) {
 	);
 }
 
-export function buildSimpleStatements(child: T.SimpleStatementsElements) {
+export function buildSimpleStatements(child: T.SimpleStatementsElements): ReturnType<typeof _buildSimpleStatements>;
+export function buildSimpleStatements(
+	...args: Parameters<typeof buildSimpleStatementsElements>
+): ReturnType<typeof _buildSimpleStatements>;
+export function buildSimpleStatements(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildSimpleStatements(args[0] as T.SimpleStatementsElements);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.SimpleStatementsElements as const);
+	return prebuilt
+		? _buildSimpleStatements(args[0] as T.SimpleStatementsElements)
+		: _buildSimpleStatements(
+				(buildSimpleStatementsElements as (...a: unknown[]) => unknown)(...args) as T.SimpleStatementsElements
+			);
+}
+function _buildSimpleStatements(child: T.SimpleStatementsElements) {
 	const _simple_statements_elements = child;
 	const _newline = coerceKindEnumStorage('\n' as const, [['\n', TSKindId.Newline] as const]);
 	return withMethods(
@@ -877,7 +896,22 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config) {
 	);
 }
 
-export function buildParameters(child?: T._Parameters) {
+export function buildParameters(child?: T._Parameters): ReturnType<typeof _buildParameters>;
+export function buildParameters(...args: Parameters<typeof build_Parameters>): ReturnType<typeof _buildParameters>;
+export function buildParameters(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildParameters(args[0] as T._Parameters);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId._Parameters as const);
+	return prebuilt
+		? _buildParameters(args[0] as T._Parameters)
+		: _buildParameters((build_Parameters as (...a: unknown[]) => unknown)(...args) as T._Parameters);
+}
+function _buildParameters(child?: T._Parameters) {
 	const _parameters = child;
 	return withMethods(
 		withAccessors(
@@ -896,7 +930,24 @@ export function buildParameters(child?: T._Parameters) {
 	);
 }
 
-export function buildLambdaParameters(child: T._Parameters) {
+export function buildLambdaParameters(child: T._Parameters): ReturnType<typeof _buildLambdaParameters>;
+export function buildLambdaParameters(
+	...args: Parameters<typeof build_Parameters>
+): ReturnType<typeof _buildLambdaParameters>;
+export function buildLambdaParameters(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildLambdaParameters(args[0] as T._Parameters);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId._Parameters as const);
+	return prebuilt
+		? _buildLambdaParameters(args[0] as T._Parameters)
+		: _buildLambdaParameters((build_Parameters as (...a: unknown[]) => unknown)(...args) as T._Parameters);
+}
+function _buildLambdaParameters(child: T._Parameters) {
 	const _parameters = child;
 	return withMethods(
 		withAccessors(
@@ -1088,7 +1139,22 @@ export function buildClassDefinition(config: T.ClassDefinition.Config) {
 	);
 }
 
-export function buildTypeParameter(child: T.Types) {
+export function buildTypeParameter(child: T.Types): ReturnType<typeof _buildTypeParameter>;
+export function buildTypeParameter(...args: Parameters<typeof buildTypes>): ReturnType<typeof _buildTypeParameter>;
+export function buildTypeParameter(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildTypeParameter(args[0] as T.Types);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Types as const);
+	return prebuilt
+		? _buildTypeParameter(args[0] as T.Types)
+		: _buildTypeParameter((buildTypes as (...a: unknown[]) => unknown)(...args) as T.Types);
+}
+function _buildTypeParameter(child: T.Types) {
 	const _types = child;
 	return withMethods(
 		withAccessors(
@@ -1126,7 +1192,26 @@ export function buildParenthesizedListSplat(child: T.ParenthesizedListSplat | T.
 	);
 }
 
-export function buildArgumentList(arguments_?: T.ArgumentList.Config['arguments']) {
+export function buildArgumentList(child?: T.ArgumentList.Config['arguments']): ReturnType<typeof _buildArgumentList>;
+export function buildArgumentList(
+	...args: Parameters<typeof buildArgumentListElements>
+): ReturnType<typeof _buildArgumentList>;
+export function buildArgumentList(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildArgumentList(args[0] as T.ArgumentList.Config['arguments']);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ArgumentListElements as const);
+	return prebuilt
+		? _buildArgumentList(args[0] as T.ArgumentList.Config['arguments'])
+		: _buildArgumentList(
+				(buildArgumentListElements as (...a: unknown[]) => unknown)(...args) as T.ArgumentList.Config['arguments']
+			);
+}
+function _buildArgumentList(arguments_?: T.ArgumentList.Config['arguments']) {
 	const _arguments = arguments_;
 	return withMethods(
 		withAccessors(
@@ -1306,7 +1391,24 @@ export function buildUnionPattern(config: T.UnionPattern.Config) {
 	);
 }
 
-export function buildDictPattern(child?: T.DictPatternElements) {
+export function buildDictPattern(child?: T.DictPatternElements): ReturnType<typeof _buildDictPattern>;
+export function buildDictPattern(
+	...args: Parameters<typeof buildDictPatternElements>
+): ReturnType<typeof _buildDictPattern>;
+export function buildDictPattern(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildDictPattern(args[0] as T.DictPatternElements);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.DictPatternElements as const);
+	return prebuilt
+		? _buildDictPattern(args[0] as T.DictPatternElements)
+		: _buildDictPattern((buildDictPatternElements as (...a: unknown[]) => unknown)(...args) as T.DictPatternElements);
+}
+function _buildDictPattern(child?: T.DictPatternElements) {
 	const _dict_pattern_elements = child;
 	return withMethods(
 		withAccessors(
@@ -1514,7 +1616,22 @@ export function buildPatterns(config: T.Patterns.Config, options: { trailing?: b
 	);
 }
 
-export function buildTuplePattern(child?: T.Patterns) {
+export function buildTuplePattern(child?: T.Patterns): ReturnType<typeof _buildTuplePattern>;
+export function buildTuplePattern(...args: Parameters<typeof buildPatterns>): ReturnType<typeof _buildTuplePattern>;
+export function buildTuplePattern(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildTuplePattern(args[0] as T.Patterns);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Patterns as const);
+	return prebuilt
+		? _buildTuplePattern(args[0] as T.Patterns)
+		: _buildTuplePattern((buildPatterns as (...a: unknown[]) => unknown)(...args) as T.Patterns);
+}
+function _buildTuplePattern(child?: T.Patterns) {
 	const _patterns = child;
 	return withMethods(
 		withAccessors(
@@ -1533,7 +1650,22 @@ export function buildTuplePattern(child?: T.Patterns) {
 	);
 }
 
-export function buildListPattern(child?: T.Patterns) {
+export function buildListPattern(child?: T.Patterns): ReturnType<typeof _buildListPattern>;
+export function buildListPattern(...args: Parameters<typeof buildPatterns>): ReturnType<typeof _buildListPattern>;
+export function buildListPattern(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildListPattern(args[0] as T.Patterns);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Patterns as const);
+	return prebuilt
+		? _buildListPattern(args[0] as T.Patterns)
+		: _buildListPattern((buildPatterns as (...a: unknown[]) => unknown)(...args) as T.Patterns);
+}
+function _buildListPattern(child?: T.Patterns) {
 	const _patterns = child;
 	return withMethods(
 		withAccessors(
@@ -2319,7 +2451,22 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config) {
 	);
 }
 
-export function buildList(child?: T.CollectionElements) {
+export function buildList(child?: T.CollectionElements): ReturnType<typeof _buildList>;
+export function buildList(...args: Parameters<typeof buildCollectionElements>): ReturnType<typeof _buildList>;
+export function buildList(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildList(args[0] as T.CollectionElements);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.CollectionElements as const);
+	return prebuilt
+		? _buildList(args[0] as T.CollectionElements)
+		: _buildList((buildCollectionElements as (...a: unknown[]) => unknown)(...args) as T.CollectionElements);
+}
+function _buildList(child?: T.CollectionElements) {
 	const _collection_elements = child;
 	return withMethods(
 		withAccessors(
@@ -2338,7 +2485,22 @@ export function buildList(child?: T.CollectionElements) {
 	);
 }
 
-export function buildSet(child: T.CollectionElements) {
+export function buildSet(child: T.CollectionElements): ReturnType<typeof _buildSet>;
+export function buildSet(...args: Parameters<typeof buildCollectionElements>): ReturnType<typeof _buildSet>;
+export function buildSet(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildSet(args[0] as T.CollectionElements);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.CollectionElements as const);
+	return prebuilt
+		? _buildSet(args[0] as T.CollectionElements)
+		: _buildSet((buildCollectionElements as (...a: unknown[]) => unknown)(...args) as T.CollectionElements);
+}
+function _buildSet(child: T.CollectionElements) {
 	const _collection_elements = child;
 	return withMethods(
 		withAccessors(
@@ -2357,7 +2519,22 @@ export function buildSet(child: T.CollectionElements) {
 	);
 }
 
-export function buildTuple(child?: T.CollectionElements) {
+export function buildTuple(child?: T.CollectionElements): ReturnType<typeof _buildTuple>;
+export function buildTuple(...args: Parameters<typeof buildCollectionElements>): ReturnType<typeof _buildTuple>;
+export function buildTuple(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildTuple(args[0] as T.CollectionElements);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.CollectionElements as const);
+	return prebuilt
+		? _buildTuple(args[0] as T.CollectionElements)
+		: _buildTuple((buildCollectionElements as (...a: unknown[]) => unknown)(...args) as T.CollectionElements);
+}
+function _buildTuple(child?: T.CollectionElements) {
 	const _collection_elements = child;
 	return withMethods(
 		withAccessors(
@@ -2376,7 +2553,26 @@ export function buildTuple(child?: T.CollectionElements) {
 	);
 }
 
-export function buildDictionary(entries?: T.Dictionary.Config['entries']) {
+export function buildDictionary(child?: T.Dictionary.Config['entries']): ReturnType<typeof _buildDictionary>;
+export function buildDictionary(
+	...args: Parameters<typeof buildDictionaryElements>
+): ReturnType<typeof _buildDictionary>;
+export function buildDictionary(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildDictionary(args[0] as T.Dictionary.Config['entries']);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.DictionaryElements as const);
+	return prebuilt
+		? _buildDictionary(args[0] as T.Dictionary.Config['entries'])
+		: _buildDictionary(
+				(buildDictionaryElements as (...a: unknown[]) => unknown)(...args) as T.Dictionary.Config['entries']
+			);
+}
+function _buildDictionary(entries?: T.Dictionary.Config['entries']) {
 	const _entries = entries;
 	return withMethods(
 		withAccessors(
@@ -3615,7 +3811,24 @@ export function buildWithClauseBare(config: T.WithClauseBare.Config, options: { 
 	);
 }
 
-export function buildWithClauseParen(child: T.WithItems) {
+export function buildWithClauseParen(child: T.WithItems): ReturnType<typeof _buildWithClauseParen>;
+export function buildWithClauseParen(
+	...args: Parameters<typeof buildWithItems>
+): ReturnType<typeof _buildWithClauseParen>;
+export function buildWithClauseParen(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildWithClauseParen(args[0] as T.WithItems);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.WithItems as const);
+	return prebuilt
+		? _buildWithClauseParen(args[0] as T.WithItems)
+		: _buildWithClauseParen((buildWithItems as (...a: unknown[]) => unknown)(...args) as T.WithItems);
+}
+function _buildWithClauseParen(child: T.WithItems) {
 	const _with_items = child;
 	return withMethods(
 		withAccessors(
@@ -3655,7 +3868,24 @@ export function buildMatchBlockBlock(config: Partial<T.MatchBlockBlock.Config> =
 	);
 }
 
-export function buildSuiteBlockWithIndent(child: T.Block) {
+export function buildSuiteBlockWithIndent(child: T.Block): ReturnType<typeof _buildSuiteBlockWithIndent>;
+export function buildSuiteBlockWithIndent(
+	...args: Parameters<typeof buildBlock>
+): ReturnType<typeof _buildSuiteBlockWithIndent>;
+export function buildSuiteBlockWithIndent(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildSuiteBlockWithIndent(args[0] as T.Block);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Block as const);
+	return prebuilt
+		? _buildSuiteBlockWithIndent(args[0] as T.Block)
+		: _buildSuiteBlockWithIndent((buildBlock as (...a: unknown[]) => unknown)(...args) as T.Block);
+}
+function _buildSuiteBlockWithIndent(child: T.Block) {
 	const _block = child;
 	return withMethods(
 		withAccessors(

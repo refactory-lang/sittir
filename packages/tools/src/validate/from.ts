@@ -364,7 +364,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					// factory that must dispatch as `factory()` with no args).
 					const shape = factoryShapes[kind] ?? 'config';
 					const factory = factoryMap[kind]!;
-					if (shape === 'config' || shape === 'direct') {
+					if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
 						// ADR-0018: readNode emits `_<name>` top-level keys, not
 						// `$fields`. Use `nodeToConfig` which handles both shapes
 						// and recursively resolves children through factories.
@@ -378,7 +378,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							kindNameFromId,
 							kindLiteralText
 						});
-						if (shape === 'direct') {
+						if (shape === 'direct' || shape === 'forwarded') {
 							// Direct-call shape: use the sole field when metadata
 							// names one, otherwise treat it as a single child call.
 							const fieldNames = factoryFields[kind];

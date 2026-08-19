@@ -46,7 +46,10 @@ describe('factories emitter — single-field factory reserved-word parameter nam
 		const nodeMap = makeReservedWordSingleFieldNodeMap();
 		const emitted = emitFactories({ grammar: 'test', nodeMap });
 
-		expect(emitted).toContain('export function buildCall(arguments_');
-		expect(emitted).not.toMatch(/export function buildCall\(arguments[?:]/);
+		// `call` forwards its sole slot's single kind, so the sanitized param
+		// lives on the private direct implementation behind the forwarding
+		// wrapper.
+		expect(emitted).toContain('function _buildCall(arguments_');
+		expect(emitted).not.toMatch(/function _?buildCall\(arguments[?:]/);
 	});
 });

@@ -338,7 +338,11 @@ function emitBranchFrom(
 	// `classifyFactoryShape` returning 'direct' already guarantees the sole
 	// user slot is the only non-stamped field (resolveDirectFactorySlot) —
 	// no separate keyword-presence exclusion needed here.
-	const canDirectFactoryCall = soleField && classifyFactoryShape(node, nodeMap) === 'direct';
+	const shapeForDirect = classifyFactoryShape(node, nodeMap);
+	// 'forwarded' refines 'direct' — the factory still accepts the single
+	// direct value (a pre-built node dispatches via $type), so the same
+	// direct-call emission applies.
+	const canDirectFactoryCall = soleField && (shapeForDirect === 'direct' || shapeForDirect === 'forwarded');
 	lines.push(`export function ${fn}(input${opt}: ${inputType}): ${returnType} {`);
 	if (fields.length > 0) {
 		if (canDirectFactoryCall) {

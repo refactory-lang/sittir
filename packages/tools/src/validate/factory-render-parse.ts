@@ -505,7 +505,7 @@ function buildFactoryNodeData(
 	if (!factory) return null;
 	try {
 		const shape = factoryShapes[renderedKind] ?? 'config';
-		if (shape === 'config' || shape === 'direct') {
+		if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
 			const config = nodeToConfig(referenceData, {
 				factoryMap,
 				factoryShapes,
@@ -519,7 +519,7 @@ function buildFactoryNodeData(
 				kindNameFromId,
 				kindLiteralText
 			});
-			if (shape === 'direct') {
+			if (shape === 'direct' || shape === 'forwarded') {
 				// Direct-call shape: extract the sole field value when metadata
 				// names one, otherwise treat it as a single child call.
 				const fieldNames = factoryFields[renderedKind];

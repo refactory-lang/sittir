@@ -1678,7 +1678,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	// 'direct' shape: factory takes one direct value rather than a config
 	// object. Field-backed direct calls use factoryFields metadata; child-
 	// backed direct calls take the first `children` element.
-	if (shape === 'direct') {
+	if (shape === 'direct' || shape === 'forwarded') {
 		const { factoryFields } = opts;
 		const fieldNames = factoryFields?.[kind];
 		const rawName = fieldNames?.[0];
