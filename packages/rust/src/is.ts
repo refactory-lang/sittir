@@ -236,9 +236,6 @@ export interface IsGuards {
 	OrderedFieldDeclarationListGroup1<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.OrderedFieldDeclarationListGroup1 };
-	WhereClauseGroup1<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.WhereClauseGroup1 };
 	UseListGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseListGroup1 };
 	ParametersGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ParametersGroup1 };
 	VisibilityModifierGroup1<T extends { readonly $type: number }>(
@@ -488,7 +485,6 @@ export interface AssertGuards {
 	OrderedFieldDeclarationListGroup1(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.OrderedFieldDeclarationListGroup1 };
-	WhereClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WhereClauseGroup1 };
 	UseListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseListGroup1 };
 	ParametersGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParametersGroup1 };
 	VisibilityModifierGroup1(v: {
@@ -1019,7 +1015,6 @@ export const is = {
 	EnumVariantListGroup1: _g(TSKindId.EnumVariantListGroup1),
 	FieldDeclarationListGroup1: _g(TSKindId.FieldDeclarationListGroup1),
 	OrderedFieldDeclarationListGroup1: _g(TSKindId.OrderedFieldDeclarationListGroup1),
-	WhereClauseGroup1: _g(TSKindId.WhereClauseGroup1),
 	UseListGroup1: _g(TSKindId.UseListGroup1),
 	ParametersGroup1: _g(TSKindId.ParametersGroup1),
 	VisibilityModifierGroup1: _g(TSKindId.VisibilityModifierGroup1),
@@ -1241,7 +1236,6 @@ export const assert = {
 		'OrderedFieldDeclarationListGroup1',
 		is.OrderedFieldDeclarationListGroup1 as _AnyGuard
 	),
-	WhereClauseGroup1: _makeAssert('WhereClauseGroup1', is.WhereClauseGroup1 as _AnyGuard),
 	UseListGroup1: _makeAssert('UseListGroup1', is.UseListGroup1 as _AnyGuard),
 	ParametersGroup1: _makeAssert('ParametersGroup1', is.ParametersGroup1 as _AnyGuard),
 	VisibilityModifierGroup1: _makeAssert('VisibilityModifierGroup1', is.VisibilityModifierGroup1 as _AnyGuard),

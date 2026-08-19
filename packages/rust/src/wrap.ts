@@ -178,34 +178,6 @@ function normalizeRepeatedWrapSlot<T>(
 		return handleWrapViolation(`repeated slot ${JSON.stringify(slotName)} requires at least one value`, items, context);
 	return items;
 }
-// _toArr — normalize a single wire field (may be a scalar value or an
-// array of node stubs) to a readonly array. Used by repeated supertype-
-// list slot concatenation so that spreading a text-collapsed leaf (e.g.
-// primitive_type "i32" arriving as the string "i32") does not split it
-// character-by-character.
-function _toArr<T>(value: T | readonly T[] | undefined): readonly T[] {
-	if (value == null) return [];
-	return Array.isArray(value) ? (value as readonly T[]) : [value as T];
-}
-// _concatInSourceOrder — concatenate the per-kind wire arrays of a
-// repeated heterogeneous-union slot, then STABLE-sort by CST position.
-// The native reader buckets repeated unfielded children by kind, so a
-// plain declaration-order concat loses cross-kind source order. Each
-// node stub carries `$span.start` (byte offset) / `$childIndex` (position
-// in parent); sort on those to restore order. Text-collapsed scalar
-// leaves lack both → sorted to the end, stable among themselves (so a
-// homogeneous single-bucket slot is a no-op).
-function _concatInSourceOrder<T>(parts: readonly (T | readonly T[] | undefined)[]): readonly T[] {
-	const flat = parts.flatMap((p) => _toArr(p));
-	const pos = (e: T): number => {
-		const n = e as unknown as { $span?: { start?: number }; $childIndex?: number };
-		return n?.$span?.start ?? n?.$childIndex ?? Number.MAX_SAFE_INTEGER;
-	};
-	return flat
-		.map((e, i) => [e, i] as const)
-		.sort(([a, ai], [b, bi]) => pos(a) - pos(b) || ai - bi)
-		.map(([e]) => e);
-}
 // Drill-in helpers — call back through `readTreeNode` so the same
 // per-handle dispatch + wrap pipeline runs at every level. Layering:
 //   readTreeNode (public entry)
@@ -8940,88 +8912,54 @@ export function wrapOrderedFieldDeclarationListGroup1(
 	);
 }
 
-export function wrapWhereClauseGroup1(
-	data: T.WhereClauseGroup1 & {
-		readonly $other?: _NodeData['$other'];
-		readonly $span?: { start: number; end: number };
-	},
-	tree: TreeHandle
-) {
-	const _content = normalizeRepeatedWrapSlot(
-		data._where_predicate !== undefined ? _toArr(data._where_predicate) : [],
-		true,
-		'where_predicate',
-		{ tree, nodeType: data.$type, slotName: 'where_predicate', span: (data as _NodeData).$span }
-	);
-	return withMethods(
+export function wrapWhereClauseGroup1(data: T.WhereClauseGroup1, tree: TreeHandle) {
+	const _node = withMethods(
 		{
 			...data,
 			$type: TSKindId.WhereClauseGroup1 as const,
-			_where_predicate: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_where_predicate: normalizeRepeatedWrapSlot(
+				_filterWrapChildrenByKind(data._where_predicate, ['where_predicate']),
+				true,
+				'where_predicate',
+				{ tree, nodeType: data.$type, slotName: 'where_predicate', span: (data as _NodeData).$span }
+			),
+			_where_predicate_trailing_sep: _hasSeparatorFlank(
+				{},
+				Array.isArray(data._where_predicate) ? data._where_predicate : [],
+				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
+					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
+				),
+				'trailing',
+				false,
+				0
+			),
 
 			wherePredicates() {
 				return drillInAll<T.WherePredicate>(this._where_predicate as readonly T.WherePredicate[] | undefined, tree);
 			},
-			$with: {}
+			$with: {
+				wherePredicates: (...v: NonEmptyArray<NonNullable<T.WhereClauseGroup1['_where_predicate']>[number]>) =>
+					wrapWhereClauseGroup1({ ...data, _where_predicate: v }, tree)
+			}
 		},
 		methodsEngine
 	);
+	return _node;
 }
 
 export function wrapUseListGroup1(
-	data: T.UseListGroup1 & {
-		readonly _self?: T.UseClause;
-		readonly _identifier?: T.UseClause;
-		readonly _metavariable?: T.UseClause;
-		readonly _super?: T.UseClause;
-		readonly _crate?: T.UseClause;
-		readonly _scoped_identifier?: T.UseClause;
-		readonly _reserved_identifier?: T.UseClause;
-		readonly _use_as_clause?: T.UseClause;
-		readonly _use_list?: T.UseClause;
-		readonly _scoped_use_list?: T.UseClause;
-		readonly _use_wildcard?: T.UseClause;
-		readonly $other?: _NodeData['$other'];
-		readonly $span?: { start: number; end: number };
-	},
+	data: T.UseListGroup1 & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ) {
-	const _content = normalizeRepeatedWrapSlot(
-		data._use_clause !== undefined
-			? _toArr(data._use_clause)
-			: _concatInSourceOrder([
-					data._self,
-					data._identifier,
-					data._metavariable,
-					data._super,
-					data._crate,
-					data._scoped_identifier,
-					data._reserved_identifier,
-					data._use_as_clause,
-					data._use_list,
-					data._scoped_use_list,
-					data._use_wildcard
-				]),
-		true,
-		'use_clause',
-		{ tree, nodeType: data.$type, slotName: 'use_clause', span: (data as _NodeData).$span }
-	);
+	const _content = normalizeRepeatedWrapSlot(data._use_clause, true, 'use_clause', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'use_clause',
+		span: (data as _NodeData).$span
+	});
 	return withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_crate',
-				'_identifier',
-				'_metavariable',
-				'_reserved_identifier',
-				'_scoped_identifier',
-				'_scoped_use_list',
-				'_self',
-				'_super',
-				'_use_as_clause',
-				'_use_list',
-				'_use_wildcard'
-			]),
+			...data,
 			$type: TSKindId.UseListGroup1 as const,
 			_use_clause: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),

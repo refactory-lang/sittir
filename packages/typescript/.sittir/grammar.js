@@ -196,6 +196,9 @@ function setGroupLiftRuleMap(map) {
 function getGroupLiftRuleBody(name) {
   return groupLiftRuleMap?.get(name);
 }
+function setGroupLiftRuleBody(name, body) {
+  groupLiftRuleMap?.set(name, body);
+}
 function descendThroughGroupLiftSymbol(rule, segments, patch, precStack) {
   const name = rule.name;
   if (!name) {
@@ -1366,11 +1369,18 @@ function isEligibleFieldReferent(name, mergedRules, supertypeNames) {
 function sameElementShape(a, b) {
   return ruleKey(a) === ruleKey(b);
 }
-function deriveElementFieldName(elementRule) {
-  let cursor = elementRule;
-  while (isPrecWrapper(cursor)) {
-    cursor = cursor.content;
+function peelTransparentElementWrappers(rule) {
+  if (isPrecWrapper(rule)) {
+    return peelTransparentElementWrappers(rule.content);
   }
+  const members = rule.members;
+  if (isChoiceType(rule.type) && members?.length === 1) {
+    return peelTransparentElementWrappers(members[0]);
+  }
+  return rule;
+}
+function deriveElementFieldName(elementRule) {
+  const cursor = peelTransparentElementWrappers(elementRule);
   const t = cursor.type;
   if (t === "SYMBOL") {
     return cursor.name.replace(/^_/, "");
@@ -3982,6 +3992,58 @@ function unifyChoiceArmFieldNames(content, unifiedName) {
   if (!anyChanged) return content;
   return { ...r, members: newMembers };
 }
+function relabelUniformFieldSet(content, newName) {
+  const names = /* @__PURE__ */ new Set();
+  let anyRepeatedOccurrence = false;
+  let sawUnfieldedSymbol = false;
+  const liftBodies = /* @__PURE__ */ new Map();
+  const collect = (n, inRepeat) => {
+    if (!n || typeof n !== "object") return;
+    if (isFieldLike(n)) {
+      names.add(n.name);
+      if (inRepeat) anyRepeatedOccurrence = true;
+      return;
+    }
+    if (isEnrichGroupLiftSymbol(n)) {
+      const liftName = n.name;
+      const body = liftName === void 0 ? void 0 : getGroupLiftRuleBody(liftName);
+      if (liftName !== void 0 && body !== void 0 && !liftBodies.has(liftName)) {
+        liftBodies.set(liftName, body);
+        collect(body, inRepeat);
+      }
+      return;
+    }
+    const t = n.type;
+    if (t === "SYMBOL" || t === "ALIAS") {
+      sawUnfieldedSymbol = true;
+      return;
+    }
+    const entersRepeat = inRepeat || t === "REPEAT" || t === "REPEAT1";
+    const r = n;
+    if (Array.isArray(r.members)) {
+      for (const m of r.members) collect(m, entersRepeat);
+    } else if (r.content && typeof r.content === "object") {
+      collect(r.content, entersRepeat);
+    }
+  };
+  collect(content, false);
+  if (names.size !== 1 || names.has(newName) || !anyRepeatedOccurrence || sawUnfieldedSymbol) return null;
+  const rewrite = (n) => {
+    if (!n || typeof n !== "object") return n;
+    if (isFieldLike(n)) {
+      return { ...n, name: newName, metadata: makeRuleMetadata({ fieldSource: "override" }) };
+    }
+    if (isEnrichGroupLiftSymbol(n)) return n;
+    const r = n;
+    if (Array.isArray(r.members)) return { ...n, members: r.members.map(rewrite) };
+    if (r.content && typeof r.content === "object") return { ...n, content: rewrite(r.content) };
+    return n;
+  };
+  for (const [liftName, body] of liftBodies) {
+    setGroupLiftRuleBody(liftName, rewrite(body));
+  }
+  return rewrite(content);
+}
 function resolveFieldPlaceholder(patch, originalMember, precStack) {
   let content = originalMember;
   if (isFieldLike(content)) {
@@ -4009,6 +4071,10 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
       };
       const reconstructed = nested.reconstruct(renamedField);
       return reconstructed;
+    }
+    const relabeled = relabelUniformFieldSet(content, patch.name);
+    if (relabeled !== null) {
+      return relabeled;
     }
     const unified = unifyChoiceArmFieldNames(content, patch.name);
     if (unified !== content) {

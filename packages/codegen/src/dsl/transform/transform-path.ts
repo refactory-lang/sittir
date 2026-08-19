@@ -248,7 +248,7 @@ function descendThroughPrecWrapper(
 	return reconstructPrec(rule, newContent);
 }
 
-function isEnrichGroupLiftSymbol(rule: RuntimeRule): boolean {
+export function isEnrichGroupLiftSymbol(rule: RuntimeRule): boolean {
 	// MUST be a SYMBOL — an enrich content-alias (`alias(<content>, $.<name>)`)
 	// also carries `metadata.author === 'enrich'` but is handled separately by
 	// `isEnrichContentAlias` / `descendThroughEnrichContentAlias`. Without the
@@ -273,6 +273,10 @@ export function setGroupLiftRuleMap(map: GroupLiftRuleMap | undefined): void {
 
 export function getGroupLiftRuleBody(name: string): RuntimeRule | undefined {
 	return groupLiftRuleMap?.get(name);
+}
+
+export function setGroupLiftRuleBody(name: string, body: RuntimeRule): void {
+	groupLiftRuleMap?.set(name, body);
 }
 
 function descendThroughGroupLiftSymbol(

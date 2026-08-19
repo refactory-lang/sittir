@@ -590,20 +590,21 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	string_repeat1: 288,
 	string_content_repeat1: 289,
 	format_specifier_repeat1: 290,
-	_argument_list_group1_repeat1: 291,
-	_expression_list_group1_repeat1: 292,
-	_dict_pattern_group2_repeat1: 293,
-	_pattern_list_group1_repeat1: 294,
-	_dictionary_group1_repeat1: 295,
-	case_tuple_pattern_repeat1: 296,
-	comprehension_clauses_repeat1: 297,
-	print_statement_group1_repeat1: 298,
-	_with_clause_bare_repeat1: 299,
-	_match_block_block_repeat1: 300,
-	_except_clause_list_repeat1: 301,
-	_as_pattern_target: 302,
-	_format_expression: 303,
-	_future_import_statement_group1: 304
+	_exec_statement_optional1_repeat1: 291,
+	_argument_list_group1_repeat1: 292,
+	_expression_list_group1_repeat1: 293,
+	_dict_pattern_group2_repeat1: 294,
+	_pattern_list_group1_repeat1: 295,
+	_dictionary_group1_repeat1: 296,
+	case_tuple_pattern_repeat1: 297,
+	comprehension_clauses_repeat1: 298,
+	print_statement_group1_repeat1: 299,
+	_with_clause_bare_repeat1: 300,
+	_match_block_block_repeat1: 301,
+	_except_clause_list_repeat1: 302,
+	_as_pattern_target: 303,
+	_format_expression: 304,
+	_future_import_statement_group1: 305
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -897,20 +898,21 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[288]: 'string_repeat1',
 	[289]: 'string_content_repeat1',
 	[290]: 'format_specifier_repeat1',
-	[291]: '_argument_list_group1_repeat1',
-	[292]: '_expression_list_group1_repeat1',
-	[293]: '_dict_pattern_group2_repeat1',
-	[294]: '_pattern_list_group1_repeat1',
-	[295]: '_dictionary_group1_repeat1',
-	[296]: 'case_tuple_pattern_repeat1',
-	[297]: 'comprehension_clauses_repeat1',
-	[298]: 'print_statement_group1_repeat1',
-	[299]: '_with_clause_bare_repeat1',
-	[300]: '_match_block_block_repeat1',
-	[301]: '_except_clause_list_repeat1',
-	[302]: '_as_pattern_target',
-	[303]: '_format_expression',
-	[304]: '_future_import_statement_group1'
+	[291]: '_exec_statement_optional1_repeat1',
+	[292]: '_argument_list_group1_repeat1',
+	[293]: '_expression_list_group1_repeat1',
+	[294]: '_dict_pattern_group2_repeat1',
+	[295]: '_pattern_list_group1_repeat1',
+	[296]: '_dictionary_group1_repeat1',
+	[297]: 'case_tuple_pattern_repeat1',
+	[298]: 'comprehension_clauses_repeat1',
+	[299]: 'print_statement_group1_repeat1',
+	[300]: '_with_clause_bare_repeat1',
+	[301]: '_match_block_block_repeat1',
+	[302]: '_except_clause_list_repeat1',
+	[303]: '_as_pattern_target',
+	[304]: '_format_expression',
+	[305]: '_future_import_statement_group1'
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -1335,76 +1337,82 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'aux_sym_format_specifier_repeat1'
 	},
 	{
-		name: '_argument_list_group1_repeat1',
+		name: '_exec_statement_optional1_repeat1',
 		id: 291,
+		enumName: 'AuxExecStatementOptional1Repeat1',
+		cName: 'aux_sym__exec_statement_optional1_repeat1'
+	},
+	{
+		name: '_argument_list_group1_repeat1',
+		id: 292,
 		enumName: 'AuxArgumentListGroup1Repeat1',
 		cName: 'aux_sym__argument_list_group1_repeat1'
 	},
 	{
 		name: '_expression_list_group1_repeat1',
-		id: 292,
+		id: 293,
 		enumName: 'AuxExpressionListGroup1Repeat1',
 		cName: 'aux_sym__expression_list_group1_repeat1'
 	},
 	{
 		name: '_dict_pattern_group2_repeat1',
-		id: 293,
+		id: 294,
 		enumName: 'AuxDictPatternGroup2Repeat1',
 		cName: 'aux_sym__dict_pattern_group2_repeat1'
 	},
 	{
 		name: '_pattern_list_group1_repeat1',
-		id: 294,
+		id: 295,
 		enumName: 'AuxPatternListGroup1Repeat1',
 		cName: 'aux_sym__pattern_list_group1_repeat1'
 	},
 	{
 		name: '_dictionary_group1_repeat1',
-		id: 295,
+		id: 296,
 		enumName: 'AuxDictionaryGroup1Repeat1',
 		cName: 'aux_sym__dictionary_group1_repeat1'
 	},
 	{
 		name: 'case_tuple_pattern_repeat1',
-		id: 296,
+		id: 297,
 		enumName: 'AuxCaseTuplePatternRepeat1',
 		cName: 'aux_sym_case_tuple_pattern_repeat1'
 	},
 	{
 		name: 'comprehension_clauses_repeat1',
-		id: 297,
+		id: 298,
 		enumName: 'AuxComprehensionClausesRepeat1',
 		cName: 'aux_sym_comprehension_clauses_repeat1'
 	},
 	{
 		name: 'print_statement_group1_repeat1',
-		id: 298,
+		id: 299,
 		enumName: 'AuxPrintStatementGroup1Repeat1',
 		cName: 'aux_sym_print_statement_group1_repeat1'
 	},
 	{
 		name: '_with_clause_bare_repeat1',
-		id: 299,
+		id: 300,
 		enumName: 'AuxWithClauseBareRepeat1',
 		cName: 'aux_sym__with_clause_bare_repeat1'
 	},
 	{
 		name: '_match_block_block_repeat1',
-		id: 300,
+		id: 301,
 		enumName: 'AuxMatchBlockBlockRepeat1',
 		cName: 'aux_sym__match_block_block_repeat1'
 	},
 	{
 		name: '_except_clause_list_repeat1',
-		id: 301,
+		id: 302,
 		enumName: 'AuxExceptClauseListRepeat1',
 		cName: 'aux_sym__except_clause_list_repeat1'
 	},
-	{ name: '_as_pattern_target', id: 302, enumName: 'AliasAsPatternTarget', cName: 'alias_sym_as_pattern_target' },
-	{ name: '_format_expression', id: 303, enumName: 'AliasFormatExpression', cName: 'alias_sym_format_expression' },
+	{ name: '_as_pattern_target', id: 303, enumName: 'AliasAsPatternTarget', cName: 'alias_sym_as_pattern_target' },
+	{ name: '_format_expression', id: 304, enumName: 'AliasFormatExpression', cName: 'alias_sym_format_expression' },
 	{
 		name: '_future_import_statement_group1',
-		id: 304,
+		id: 305,
 		enumName: 'AliasFutureImportStatementGroup1',
 		cName: 'alias_sym_future_import_statement_group1'
 	}
@@ -1443,6 +1451,7 @@ export const enum TSFieldId {
 	FieldIdentifier = 30,
 	FieldImaginary = 31,
 	FieldImportPrefix = 32,
+	FieldInClause = 33,
 	FieldKey = 34,
 	FieldLeft = 35,
 	FieldModuleName = 36,
@@ -1514,6 +1523,7 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	identifier: TSFieldId.FieldIdentifier,
 	imaginary: TSFieldId.FieldImaginary,
 	import_prefix: TSFieldId.FieldImportPrefix,
+	in_clause: TSFieldId.FieldInClause,
 	key: TSFieldId.FieldKey,
 	left: TSFieldId.FieldLeft,
 	module_name: TSFieldId.FieldModuleName,
@@ -1585,6 +1595,7 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldIdentifier]: 'identifier',
 	[TSFieldId.FieldImaginary]: 'imaginary',
 	[TSFieldId.FieldImportPrefix]: 'import_prefix',
+	[TSFieldId.FieldInClause]: 'in_clause',
 	[TSFieldId.FieldKey]: 'key',
 	[TSFieldId.FieldLeft]: 'left',
 	[TSFieldId.FieldModuleName]: 'module_name',
@@ -1656,6 +1667,7 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'identifier', id: 30, enumName: 'FieldIdentifier', cName: 'field_identifier' },
 	{ name: 'imaginary', id: 31, enumName: 'FieldImaginary', cName: 'field_imaginary' },
 	{ name: 'import_prefix', id: 32, enumName: 'FieldImportPrefix', cName: 'field_import_prefix' },
+	{ name: 'in_clause', id: 33, enumName: 'FieldInClause', cName: 'field_in_clause' },
 	{ name: 'key', id: 34, enumName: 'FieldKey', cName: 'field_key' },
 	{ name: 'left', id: 35, enumName: 'FieldLeft', cName: 'field_left' },
 	{ name: 'module_name', id: 36, enumName: 'FieldModuleName', cName: 'field_module_name' },
@@ -1836,7 +1848,7 @@ export const FIELD_MAP: Record<
 	],
 	exec_statement: [
 		{ name: 'code', required: true, multiple: false },
-		{ name: 'expressions', required: false, multiple: true }
+		{ name: 'inClauses', required: false, multiple: true }
 	],
 	expression_list: [
 		{ name: 'expression', required: true, multiple: false },

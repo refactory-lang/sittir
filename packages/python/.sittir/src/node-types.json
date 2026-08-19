@@ -2006,31 +2006,13 @@
           }
         ]
       },
-      "expression": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "expression",
-            "named": true
-          }
-        ]
-      },
       "in_clause": {
         "multiple": true,
         "required": false,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
             "type": "expression",
             "named": true
-          },
-          {
-            "type": "in",
-            "named": false
           }
         ]
       }

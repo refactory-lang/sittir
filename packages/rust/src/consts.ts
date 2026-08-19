@@ -31,7 +31,6 @@ export const NODE_KINDS = [
 	'_use_list_group1',
 	'_visibility_modifier_group1',
 	'_visibility_modifier_in_path',
-	'_where_clause_group1',
 	'abstract_type',
 	'arguments',
 	'array_expression',
@@ -2160,9 +2159,11 @@ export const enum TSFieldId {
 	FieldTypeArguments = 76,
 	FieldTypeParameters = 77,
 	FieldUnsafeMarker = 78,
-	FieldValue = 79,
-	FieldVisibilityModifier = 80,
-	FieldWhereClause = 81
+	FieldUseClause = 79,
+	FieldValue = 80,
+	FieldVisibilityModifier = 81,
+	FieldWhereClause = 82,
+	FieldWherePredicate = 83
 }
 
 export const TREE_SITTER_FIELD_ID_BY_NAME = {
@@ -2242,9 +2243,11 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	type_arguments: TSFieldId.FieldTypeArguments,
 	type_parameters: TSFieldId.FieldTypeParameters,
 	unsafe_marker: TSFieldId.FieldUnsafeMarker,
+	use_clause: TSFieldId.FieldUseClause,
 	value: TSFieldId.FieldValue,
 	visibility_modifier: TSFieldId.FieldVisibilityModifier,
-	where_clause: TSFieldId.FieldWhereClause
+	where_clause: TSFieldId.FieldWhereClause,
+	where_predicate: TSFieldId.FieldWherePredicate
 } as const satisfies Record<string, TSFieldId>;
 
 export const TREE_SITTER_FIELD_NAME_BY_ID = {
@@ -2324,9 +2327,11 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldTypeArguments]: 'type_arguments',
 	[TSFieldId.FieldTypeParameters]: 'type_parameters',
 	[TSFieldId.FieldUnsafeMarker]: 'unsafe_marker',
+	[TSFieldId.FieldUseClause]: 'use_clause',
 	[TSFieldId.FieldValue]: 'value',
 	[TSFieldId.FieldVisibilityModifier]: 'visibility_modifier',
-	[TSFieldId.FieldWhereClause]: 'where_clause'
+	[TSFieldId.FieldWhereClause]: 'where_clause',
+	[TSFieldId.FieldWherePredicate]: 'where_predicate'
 } as const;
 
 export const TREE_SITTER_FIELD_ID_JSON = [
@@ -2411,9 +2416,11 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'type_arguments', id: 76, enumName: 'FieldTypeArguments', cName: 'field_type_arguments' },
 	{ name: 'type_parameters', id: 77, enumName: 'FieldTypeParameters', cName: 'field_type_parameters' },
 	{ name: 'unsafe_marker', id: 78, enumName: 'FieldUnsafeMarker', cName: 'field_unsafe_marker' },
-	{ name: 'value', id: 79, enumName: 'FieldValue', cName: 'field_value' },
-	{ name: 'visibility_modifier', id: 80, enumName: 'FieldVisibilityModifier', cName: 'field_visibility_modifier' },
-	{ name: 'where_clause', id: 81, enumName: 'FieldWhereClause', cName: 'field_where_clause' }
+	{ name: 'use_clause', id: 79, enumName: 'FieldUseClause', cName: 'field_use_clause' },
+	{ name: 'value', id: 80, enumName: 'FieldValue', cName: 'field_value' },
+	{ name: 'visibility_modifier', id: 81, enumName: 'FieldVisibilityModifier', cName: 'field_visibility_modifier' },
+	{ name: 'where_clause', id: 82, enumName: 'FieldWhereClause', cName: 'field_where_clause' },
+	{ name: 'where_predicate', id: 83, enumName: 'FieldWherePredicate', cName: 'field_where_predicate' }
 ] as const;
 
 /** Per-node-kind field metadata. */
@@ -2478,7 +2485,6 @@ export const FIELD_MAP: Record<
 	_use_list_group1: [{ name: 'useClauses', required: true, multiple: true }],
 	_visibility_modifier_group1: [{ name: 'content', required: true, multiple: false }],
 	_visibility_modifier_in_path: [{ name: 'path', required: true, multiple: false }],
-	_where_clause_group1: [{ name: 'wherePredicates', required: true, multiple: true }],
 	abstract_type: [
 		{ name: 'typeParameters', required: false, multiple: false },
 		{ name: 'trait', required: true, multiple: false }

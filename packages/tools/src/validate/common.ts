@@ -1670,20 +1670,13 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	// {separatorKind?, leading?, trailing?})`, distinct from 'spread's
 	// rest-param convention (see classifyFactoryShape).
 	if (shape === 'elements') {
-		const separatorSourceKind = (drilled as { _separator_kind?: number })._separator_kind;
-		const separatorKind = separatorSourceKind === undefined ? undefined : opts.kindLiteralText?.get(separatorSourceKind);
-		const leading = (drilled as { _leading_sep?: boolean })._leading_sep === true;
-		const trailing = (drilled as { _trailing_sep?: boolean })._trailing_sep === true;
-		const elementsOptions: { separatorKind?: string; leading?: boolean; trailing?: boolean } = {};
-		if (separatorKind !== undefined) elementsOptions.separatorKind = separatorKind;
-		if (leading) elementsOptions.leading = true;
-		if (trailing) elementsOptions.trailing = true;
+		const elementsOptions = separatedListFactoryOptions(drilled, opts.kindLiteralText);
 		return (
 			factory as unknown as (
 				elements: readonly unknown[],
 				options?: { separatorKind?: string; leading?: boolean; trailing?: boolean }
 			) => unknown
-		)(childArgs, Object.keys(elementsOptions).length > 0 ? elementsOptions : undefined);
+		)(childArgs, elementsOptions);
 	}
 	// 'direct' shape: factory takes one direct value rather than a config
 	// object. Field-backed direct calls use factoryFields metadata; child-
@@ -2755,4 +2748,33 @@ export function dedupeMismatchesByContainment<T extends { entry?: string; start:
 				(n, j) => j !== i && n.entry === m.entry && n.start >= m.start && n.end <= m.end && (n.start > m.start || n.end < m.end)
 			)
 	);
+}
+
+/**
+ * Build a separatedList factory's options bag from a read/wrap node's
+ * separator facts. The flank keys have two generated spellings — the
+ * kind-level `_trailing_sep`/`_leading_sep` (separatedList modelType) and
+ * the field-prefixed `_<field>_trailing_sep` (per-field flank capture on
+ * field-backed lists) — so the key is discovered on the node itself by
+ * suffix rather than hardcoded: the exact kind-level key wins, else a
+ * unique suffix-matching key (multiple matches are ambiguous → absent).
+ */
+export function separatedListFactoryOptions(
+	data: unknown,
+	kindLiteralText: ReadonlyMap<number, string> | undefined
+): { separatorKind?: string; leading?: boolean; trailing?: boolean } | undefined {
+	const rec = (data ?? {}) as Record<string, unknown>;
+	const flank = (which: 'leading' | 'trailing'): boolean => {
+		const exact = `_${which}_sep`;
+		if (typeof rec[exact] === 'boolean') return rec[exact] === true;
+		const matches = Object.keys(rec).filter((k) => k.endsWith(exact));
+		return matches.length === 1 && rec[matches[0]!] === true;
+	};
+	const separatorSourceKind = rec['_separator_kind'] as number | undefined;
+	const separatorKind = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
+	const options: { separatorKind?: string; leading?: boolean; trailing?: boolean } = {};
+	if (separatorKind !== undefined) options.separatorKind = separatorKind;
+	if (flank('leading')) options.leading = true;
+	if (flank('trailing')) options.trailing = true;
+	return Object.keys(options).length > 0 ? options : undefined;
 }

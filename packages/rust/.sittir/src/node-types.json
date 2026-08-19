@@ -1649,10 +1649,6 @@
         "required": false,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
             "type": "_pattern",
             "named": true
           },
@@ -6583,52 +6579,53 @@
   {
     "type": "use_list_group1",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "metavariable",
-          "named": true
-        },
-        {
-          "type": "scoped_identifier",
-          "named": true
-        },
-        {
-          "type": "scoped_use_list",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
-          "named": true
-        },
-        {
-          "type": "use_as_clause",
-          "named": true
-        },
-        {
-          "type": "use_list",
-          "named": true
-        },
-        {
-          "type": "use_wildcard",
-          "named": true
-        }
-      ]
+    "fields": {
+      "use_clause": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "crate",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "metavariable",
+            "named": true
+          },
+          {
+            "type": "scoped_identifier",
+            "named": true
+          },
+          {
+            "type": "scoped_use_list",
+            "named": true
+          },
+          {
+            "type": "self",
+            "named": true
+          },
+          {
+            "type": "super",
+            "named": true
+          },
+          {
+            "type": "use_as_clause",
+            "named": true
+          },
+          {
+            "type": "use_list",
+            "named": true
+          },
+          {
+            "type": "use_wildcard",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -6818,16 +6815,17 @@
   {
     "type": "where_clause_group1",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "where_predicate",
-          "named": true
-        }
-      ]
+    "fields": {
+      "where_predicate": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "where_predicate",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

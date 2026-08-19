@@ -665,7 +665,7 @@ export interface ExecStatementOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _expression: Array<ExpressionTransport>
+  _in_clause: Array<ExpressionTransport>
 }
 
 export interface ExecStatementTransport {
@@ -677,7 +677,7 @@ export interface ExecStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _code: ExecStatementCodeTransportSlot
-  _expression?: Array<ExpressionTransport>
+  _in_clause?: Array<ExpressionTransport>
 }
 
 export interface ExpressionListGroup1Transport {

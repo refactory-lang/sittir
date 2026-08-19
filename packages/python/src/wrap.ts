@@ -2890,8 +2890,8 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle) {
 				slotName: 'code',
 				span: (data as _NodeData).$span
 			}),
-			_expression: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._expression, [
+			_in_clause: normalizeRepeatedWrapSlot(
+				_filterWrapChildrenByKind(data._in_clause, [
 					'expression',
 					'comparison_operator',
 					'not_operator',
@@ -2929,20 +2929,20 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle) {
 					'as_pattern'
 				]),
 				false,
-				'expression',
-				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
+				'in_clause',
+				{ tree, nodeType: data.$type, slotName: 'in_clause', span: (data as _NodeData).$span }
 			),
 
 			code() {
 				return drillIn<T.String | T.Identifier>(this._code, tree);
 			},
-			expressions() {
-				return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree);
+			inClauses() {
+				return drillInAll<T.Expression>(this._in_clause as readonly T.Expression[] | undefined, tree);
 			},
 			$with: {
 				code: (v: NonNullable<T.ExecStatement['_code']>) => wrapExecStatement({ ...data, _code: v }, tree),
-				expressions: (...v: NonNullable<T.ExecStatement['_expression']>[number][]) =>
-					wrapExecStatement({ ...data, _expression: v }, tree)
+				inClauses: (...v: NonNullable<T.ExecStatement['_in_clause']>[number][]) =>
+					wrapExecStatement({ ...data, _in_clause: v }, tree)
 			}
 		},
 		methodsEngine

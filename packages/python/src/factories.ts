@@ -1014,7 +1014,7 @@ export function buildNonlocalStatement(config: T.NonlocalStatement.Config) {
 
 export function buildExecStatement(config: T.ExecStatement.Config) {
 	const _code = config.code;
-	const _expression = config.expression ?? [];
+	const _in_clause = config.inClause ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -1022,15 +1022,15 @@ export function buildExecStatement(config: T.ExecStatement.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_code,
-				_expression,
+				_in_clause,
 				$with: {
 					code: (value: T.String | T.Identifier) => buildExecStatement({ ...config, code: value }),
-					expressions: (...values: T.Expression[]) => buildExecStatement({ ...config, expression: values })
+					inClauses: (...values: T.Expression[]) => buildExecStatement({ ...config, inClause: values })
 				}
 			},
 			{
 				code: () => _code,
-				expressions: () => _expression
+				inClauses: () => _in_clause
 			}
 		),
 		methodsEngine

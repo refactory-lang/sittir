@@ -340,7 +340,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_enum_variant_list_group1: TSKindId.EnumVariantListGroup1,
 	_field_declaration_list_group1: TSKindId.FieldDeclarationListGroup1,
 	_ordered_field_declaration_list_group1: TSKindId.OrderedFieldDeclarationListGroup1,
-	_where_clause_group1: TSKindId.WhereClauseGroup1,
 	_use_list_group1: TSKindId.UseListGroup1,
 	_parameters_group1: TSKindId.ParametersGroup1,
 	_visibility_modifier_group1: TSKindId.VisibilityModifierGroup1,
@@ -412,8 +411,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildOrderedFieldDeclarationListGroup1(
 				children as Parameters<typeof F.buildOrderedFieldDeclarationListGroup1>[0]
 			);
-		case '_where_clause_group1':
-			return F.buildWhereClauseGroup1(children as Parameters<typeof F.buildWhereClauseGroup1>[0]);
 		case '_use_list_group1':
 			return F.buildUseListGroup1(children as Parameters<typeof F.buildUseListGroup1>[0]);
 		case '_parameters_group1':

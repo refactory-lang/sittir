@@ -6975,27 +6975,20 @@
           "value": "|"
         },
         {
-          "type": "FIELD",
-          "name": "parameters",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_closure_parameters_optional1",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                }
-              },
-              {
-                "type": "BLANK"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_closure_parameters_optional1",
+              "metadata": {
+                "author": "enrich",
+                "symbolSource": "group-lift"
               }
-            ]
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "STRING",
@@ -9188,8 +9181,15 @@
               "type": "SEQ",
               "members": [
                 {
-                  "type": "SYMBOL",
-                  "name": "where_predicate"
+                  "type": "FIELD",
+                  "name": "where_predicate",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "where_predicate"
+                  },
+                  "metadata": {
+                    "fieldSource": "enriched"
+                  }
                 },
                 {
                   "type": "REPEAT",
@@ -9201,8 +9201,15 @@
                         "value": ","
                       },
                       {
-                        "type": "SYMBOL",
-                        "name": "where_predicate"
+                        "type": "FIELD",
+                        "name": "where_predicate",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "where_predicate"
+                        },
+                        "metadata": {
+                          "fieldSource": "enriched"
+                        }
                       }
                     ]
                   }
@@ -9356,13 +9363,20 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_use_clause"
-            }
-          ]
+          "type": "FIELD",
+          "name": "use_clause",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_use_clause"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
           "type": "REPEAT",
@@ -9374,13 +9388,20 @@
                 "value": ","
               },
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "_use_clause"
-                  }
-                ]
+                "type": "FIELD",
+                "name": "use_clause",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_use_clause"
+                    }
+                  ]
+                },
+                "metadata": {
+                  "fieldSource": "enriched"
+                }
               }
             ]
           }
@@ -9997,17 +10018,24 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_pattern"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "parameter"
-            }
-          ]
+          "type": "FIELD",
+          "name": "parameters",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_pattern"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "parameter"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "REPEAT",
@@ -10019,17 +10047,24 @@
                 "value": ","
               },
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "_pattern"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "parameter"
-                  }
-                ]
+                "type": "FIELD",
+                "name": "parameters",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_pattern"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "parameter"
+                    }
+                  ]
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               }
             ]
           }

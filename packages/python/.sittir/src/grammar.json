@@ -1727,27 +1727,20 @@
           }
         },
         {
-          "type": "FIELD",
-          "name": "in_clause",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_exec_statement_optional1",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                }
-              },
-              {
-                "type": "BLANK"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_exec_statement_optional1",
+              "metadata": {
+                "author": "enrich",
+                "symbolSource": "group-lift"
               }
-            ]
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         }
       ]
     },
@@ -6386,13 +6379,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "expression",
+              "name": "in_clause",
               "content": {
                 "type": "SYMBOL",
                 "name": "expression"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {
@@ -6406,13 +6399,13 @@
                   },
                   {
                     "type": "FIELD",
-                    "name": "expression",
+                    "name": "in_clause",
                     "content": {
                       "type": "SYMBOL",
                       "name": "expression"
                     },
                     "metadata": {
-                      "fieldSource": "enriched"
+                      "fieldSource": "override"
                     }
                   }
                 ]

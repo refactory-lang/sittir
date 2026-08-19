@@ -851,7 +851,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "expression": {
+      "in_clause": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2930,9 +2930,9 @@
       "name": "_exec_statement_optional1",
       "fields": [
         {
-          "name": "expression",
-          "propertyName": "expressions",
-          "paramName": "expressions",
+          "name": "in_clause",
+          "propertyName": "inClauses",
+          "paramName": "inClauses",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -6900,9 +6900,9 @@
           }
         },
         {
-          "name": "expression",
-          "propertyName": "expressions",
-          "paramName": "expressions",
+          "name": "in_clause",
+          "propertyName": "inClauses",
+          "paramName": "inClauses",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -6927,7 +6927,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "code",
-        "expression"
+        "in_clause"
       ]
     },
     {

@@ -765,12 +765,7 @@ export type PythonGrammar = {
 				required: true;
 				types: [{ type: 'identifier'; named: true }, { type: 'string'; named: true }];
 			};
-			expression: { multiple: true; required: false; types: [{ type: 'expression'; named: true }] };
-			in_clause: {
-				multiple: true;
-				required: false;
-				types: [{ type: ','; named: false }, { type: 'expression'; named: true }, { type: 'in'; named: false }];
-			};
+			in_clause: { multiple: true; required: false; types: [{ type: 'expression'; named: true }] };
 		};
 	};
 	readonly expression_list: {

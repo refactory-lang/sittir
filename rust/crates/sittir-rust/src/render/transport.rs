@@ -29322,6 +29322,8 @@ pub struct WhereClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_clause_group1"))]
     pub where_clause_group1: Option<WhereClauseGroup1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate"))]
+    pub where_predicate: Option<Vec<WherePredicateTransport>>,
 }
 
 impl RenderableTransport for WhereClauseTransport {
@@ -30128,6 +30130,8 @@ pub struct UseListTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_list_group1"))]
     pub use_list_group1: Option<UseListGroup1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause"))]
+    pub use_clause: Option<Vec<UseClauseTransport>>,
 }
 
 impl RenderableTransport for UseListTransport {
@@ -38120,8 +38124,6 @@ pub struct WhereClauseGroup1Transport {
     pub where_predicate: Vec<WherePredicateTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate_trailing_sep"))]
     pub where_predicate_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for WhereClauseGroup1Transport {
@@ -55175,7 +55177,7 @@ fn render_where_clause_group1(node: &WhereClauseGroup1Transport, dest: &mut dyn 
             items: where_predicate_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.where_predicate_trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)

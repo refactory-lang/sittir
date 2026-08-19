@@ -593,20 +593,21 @@ export const enum TSKindId {
 	StringRepeat1 = 288,
 	StringContentRepeat1 = 289,
 	FormatSpecifierRepeat1 = 290,
-	_ArgumentListGroup1Repeat1 = 291,
-	_ExpressionListGroup1Repeat1 = 292,
-	_DictPatternGroup2Repeat1 = 293,
-	_PatternListGroup1Repeat1 = 294,
-	_DictionaryGroup1Repeat1 = 295,
-	CaseTuplePatternRepeat1 = 296,
-	ComprehensionClausesRepeat1 = 297,
-	PrintStatementGroup1Repeat1 = 298,
-	_WithClauseBareRepeat1 = 299,
-	_MatchBlockBlockRepeat1 = 300,
-	_ExceptClauseListRepeat1 = 301,
-	_AsPatternTarget = 302,
-	_FormatExpression = 303,
-	_FutureImportStatementGroup1 = 304
+	_ExecStatementOptional1Repeat1 = 291,
+	_ArgumentListGroup1Repeat1 = 292,
+	_ExpressionListGroup1Repeat1 = 293,
+	_DictPatternGroup2Repeat1 = 294,
+	_PatternListGroup1Repeat1 = 295,
+	_DictionaryGroup1Repeat1 = 296,
+	CaseTuplePatternRepeat1 = 297,
+	ComprehensionClausesRepeat1 = 298,
+	PrintStatementGroup1Repeat1 = 299,
+	_WithClauseBareRepeat1 = 300,
+	_MatchBlockBlockRepeat1 = 301,
+	_ExceptClauseListRepeat1 = 302,
+	_AsPatternTarget = 303,
+	_FormatExpression = 304,
+	_FutureImportStatementGroup1 = 305
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -720,7 +721,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[108, 'module'],
 	[109, '_statement'],
 	[110, '_simple_statements'],
-	[305, '_simple_statements'],
+	[306, '_simple_statements'],
 	[111, 'import_statement'],
 	[112, 'import_prefix'],
 	[113, 'relative_import'],
@@ -901,20 +902,21 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[288, 'string_repeat1'],
 	[289, 'string_content_repeat1'],
 	[290, 'format_specifier_repeat1'],
-	[291, '_argument_list_group1_repeat1'],
-	[292, '_expression_list_group1_repeat1'],
-	[293, '_dict_pattern_group2_repeat1'],
-	[294, '_pattern_list_group1_repeat1'],
-	[295, '_dictionary_group1_repeat1'],
-	[296, 'case_tuple_pattern_repeat1'],
-	[297, 'comprehension_clauses_repeat1'],
-	[298, 'print_statement_group1_repeat1'],
-	[299, '_with_clause_bare_repeat1'],
-	[300, '_match_block_block_repeat1'],
-	[301, '_except_clause_list_repeat1'],
-	[302, '_as_pattern_target'],
-	[303, '_format_expression'],
-	[304, '_future_import_statement_group1']
+	[291, '_exec_statement_optional1_repeat1'],
+	[292, '_argument_list_group1_repeat1'],
+	[293, '_expression_list_group1_repeat1'],
+	[294, '_dict_pattern_group2_repeat1'],
+	[295, '_pattern_list_group1_repeat1'],
+	[296, '_dictionary_group1_repeat1'],
+	[297, 'case_tuple_pattern_repeat1'],
+	[298, 'comprehension_clauses_repeat1'],
+	[299, 'print_statement_group1_repeat1'],
+	[300, '_with_clause_bare_repeat1'],
+	[301, '_match_block_block_repeat1'],
+	[302, '_except_clause_list_repeat1'],
+	[303, '_as_pattern_target'],
+	[304, '_format_expression'],
+	[305, '_future_import_statement_group1']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1029,7 +1031,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[108, 'module'],
 	[109, '_statement'],
 	[110, 'simple_statements'],
-	[305, 'simple_statements'],
+	[306, 'simple_statements'],
 	[111, 'import_statement'],
 	[112, 'import_prefix'],
 	[113, 'relative_import'],
@@ -1210,20 +1212,21 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[288, 'string_repeat1'],
 	[289, 'string_content_repeat1'],
 	[290, 'format_specifier_repeat1'],
-	[291, '_argument_list_group1_repeat1'],
-	[292, '_expression_list_group1_repeat1'],
-	[293, '_dict_pattern_group2_repeat1'],
-	[294, '_pattern_list_group1_repeat1'],
-	[295, '_dictionary_group1_repeat1'],
-	[296, 'case_tuple_pattern_repeat1'],
-	[297, 'comprehension_clauses_repeat1'],
-	[298, 'print_statement_group1_repeat1'],
-	[299, '_with_clause_bare_repeat1'],
-	[300, '_match_block_block_repeat1'],
-	[301, '_except_clause_list_repeat1'],
-	[302, 'as_pattern_target'],
-	[303, 'format_expression'],
-	[304, 'future_import_statement_group1']
+	[291, '_exec_statement_optional1_repeat1'],
+	[292, '_argument_list_group1_repeat1'],
+	[293, '_expression_list_group1_repeat1'],
+	[294, '_dict_pattern_group2_repeat1'],
+	[295, '_pattern_list_group1_repeat1'],
+	[296, '_dictionary_group1_repeat1'],
+	[297, 'case_tuple_pattern_repeat1'],
+	[298, 'comprehension_clauses_repeat1'],
+	[299, 'print_statement_group1_repeat1'],
+	[300, '_with_clause_bare_repeat1'],
+	[301, '_match_block_block_repeat1'],
+	[302, '_except_clause_list_repeat1'],
+	[303, 'as_pattern_target'],
+	[304, 'format_expression'],
+	[305, 'future_import_statement_group1']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -1811,6 +1814,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.StringContentRepeat1;
 		case 'format_specifier_repeat1':
 			return TSKindId.FormatSpecifierRepeat1;
+		case '_exec_statement_optional1_repeat1':
+			return TSKindId._ExecStatementOptional1Repeat1;
 		case '_argument_list_group1_repeat1':
 			return TSKindId._ArgumentListGroup1Repeat1;
 		case '_expression_list_group1_repeat1':
@@ -2489,9 +2494,9 @@ export interface NonlocalStatement {
 export interface ExecStatement {
 	readonly $type: TSKindId.ExecStatement;
 	readonly _code: String | Identifier;
-	readonly _expression?: readonly Expression[];
+	readonly _in_clause?: readonly Expression[];
 	code(): String | Identifier;
-	expressions(): readonly Expression[];
+	inClauses(): readonly Expression[];
 }
 
 export interface TypeAliasStatement {
@@ -3113,8 +3118,8 @@ export interface FunctionDefinitionOptional1 {
 
 export interface ExecStatementOptional1 {
 	readonly $type: '_exec_statement_optional1';
-	readonly _expression: NonEmptyArray<Expression>;
-	expressions(): NonEmptyArray<Expression>;
+	readonly _in_clause: NonEmptyArray<Expression>;
+	inClauses(): NonEmptyArray<Expression>;
 }
 
 export interface ArgumentListGroup1 {

@@ -1171,7 +1171,7 @@ export function coerceToExecStatement(input: T.ExecStatement.Loose): ReturnType<
 			'code',
 			_resolveOne<T.String | T.Identifier>(input.code, _super_keyword_identifier, _K10)
 		),
-		expression: _resolveMany<T.Expression>(input.expression, _K4, _K5)
+		inClause: _resolveMany<T.Expression>(input.inClause, _K4, _K5)
 	});
 }
 

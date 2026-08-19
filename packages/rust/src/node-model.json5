@@ -8436,19 +8436,39 @@
     },
     {
       "kind": "_where_clause_group1",
-      "modelType": "separatedList",
+      "modelType": "group",
       "typeName": "WhereClauseGroup1",
-      "factoryName": "whereClauseGroup1",
+      "factoryName": "_whereClauseGroup1",
       "irKey": "whereClauseGroup1",
       "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
-      "elementKinds": [
-        "where_predicate"
+      "name": "_where_clause_group1",
+      "fields": [
+        {
+          "name": "where_predicate",
+          "propertyName": "wherePredicates",
+          "paramName": "wherePredicates",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "where_predicate",
+              "parseKind": "where_predicate",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "where_predicate"
+            ]
+          }
+        }
       ],
-      "factoryShape": "elements",
+      "children": [],
+      "factoryShape": "config",
       "factoryFields": [
         "where_predicate"
       ]

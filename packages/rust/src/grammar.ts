@@ -549,7 +549,7 @@ export type RustGrammar = {
 			parameters: {
 				multiple: true;
 				required: false;
-				types: [{ type: ','; named: false }, { type: '_pattern'; named: true }, { type: 'parameter'; named: true }];
+				types: [{ type: '_pattern'; named: true }, { type: 'parameter'; named: true }];
 			};
 		};
 	};
@@ -2329,22 +2329,23 @@ export type RustGrammar = {
 	readonly use_list_group1: {
 		type: 'use_list_group1';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [
-				{ type: 'crate'; named: true },
-				{ type: 'identifier'; named: true },
-				{ type: 'metavariable'; named: true },
-				{ type: 'scoped_identifier'; named: true },
-				{ type: 'scoped_use_list'; named: true },
-				{ type: 'self'; named: true },
-				{ type: 'super'; named: true },
-				{ type: 'use_as_clause'; named: true },
-				{ type: 'use_list'; named: true },
-				{ type: 'use_wildcard'; named: true }
-			];
+		fields: {
+			use_clause: {
+				multiple: true;
+				required: true;
+				types: [
+					{ type: 'crate'; named: true },
+					{ type: 'identifier'; named: true },
+					{ type: 'metavariable'; named: true },
+					{ type: 'scoped_identifier'; named: true },
+					{ type: 'scoped_use_list'; named: true },
+					{ type: 'self'; named: true },
+					{ type: 'super'; named: true },
+					{ type: 'use_as_clause'; named: true },
+					{ type: 'use_list'; named: true },
+					{ type: 'use_wildcard'; named: true }
+				];
+			};
 		};
 	};
 	readonly use_wildcard: {
@@ -2430,8 +2431,7 @@ export type RustGrammar = {
 	readonly where_clause_group1: {
 		type: 'where_clause_group1';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: true; types: [{ type: 'where_predicate'; named: true }] };
+		fields: { where_predicate: { multiple: true; required: true; types: [{ type: 'where_predicate'; named: true }] } };
 	};
 	readonly where_predicate: {
 		type: 'where_predicate';

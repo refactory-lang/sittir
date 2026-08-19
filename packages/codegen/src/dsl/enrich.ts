@@ -938,11 +938,24 @@ function sameElementShape(a: Rule, b: Rule): boolean {
  * occurrence covers one element, not the whole list); falls back to the
  * generic `element` for a choice-shaped element (no single referent to
  * name it after). */
-function deriveElementFieldName(elementRule: Rule): string {
-	let cursor: Rule = elementRule;
-	while (isPrecWrapper(cursor as { type: string })) {
-		cursor = (cursor as unknown as { content: Rule }).content;
+/** Peel PREC wrappers and single-member CHOICEs (they can nest in either
+ * order) — a choice-of-one is a transparent wrapper around its referent,
+ * not a union, and the slot derivation downstream names the slot after
+ * that referent; the field must land on the same name or coverage sees a
+ * declared-but-unreferenced field (one fact, two derivations). */
+function peelTransparentElementWrappers(rule: Rule): Rule {
+	if (isPrecWrapper(rule as { type: string })) {
+		return peelTransparentElementWrappers((rule as unknown as { content: Rule }).content);
 	}
+	const members = (rule as unknown as { members?: Rule[] }).members;
+	if (isChoiceType((rule as { type: string }).type) && members?.length === 1) {
+		return peelTransparentElementWrappers(members[0]!);
+	}
+	return rule;
+}
+
+function deriveElementFieldName(elementRule: Rule): string {
+	const cursor = peelTransparentElementWrappers(elementRule);
 	const t = (cursor as { type: string }).type;
 	if (t === 'SYMBOL') {
 		return (cursor as unknown as { name: string }).name.replace(/^_/, '');

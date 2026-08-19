@@ -2506,6 +2506,7 @@ export interface UseListTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _use_list_group1?: UseListGroup1Transport
+  _use_clause?: Array<UseClauseTransport>
 }
 
 export interface UseWildcardClauseTransport {
@@ -2619,7 +2620,6 @@ export interface WhereClauseGroup1Transport {
   '$triviaData'?: TransportTrivia
   _where_predicate: Array<WherePredicateTransport>
   _where_predicate_trailing_sep?: boolean
-  _trailing_sep?: boolean
 }
 
 export interface WhereClauseTransport {
@@ -2631,6 +2631,7 @@ export interface WhereClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _where_clause_group1?: WhereClauseGroup1Transport
+  _where_predicate?: Array<WherePredicateTransport>
 }
 
 export interface WherePredicateTransport {

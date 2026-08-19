@@ -393,8 +393,6 @@ import type {
 	VisibilityModifierInPathTree,
 	VisibilityModifierTree,
 	WhereClause,
-	WhereClauseGroup1,
-	WhereClauseGroup1Tree,
 	WhereClauseTree,
 	WherePredicate,
 	WherePredicateTree,
@@ -606,7 +604,6 @@ export type _Type_FieldDeclarationListGroup1 = _TypeAssert<
 export type _Type_OrderedFieldDeclarationListGroup1 = _TypeAssert<
 	_TypeExtends<OrderedFieldDeclarationListGroup1['$type'], TSKindId.OrderedFieldDeclarationListGroup1>
 >;
-export type _Type_WhereClauseGroup1 = _TypeAssert<_TypeExtends<WhereClauseGroup1['$type'], TSKindId.WhereClauseGroup1>>;
 export type _Type_UseListGroup1 = _TypeAssert<_TypeExtends<UseListGroup1['$type'], TSKindId.UseListGroup1>>;
 export type _Type_ParametersGroup1 = _TypeAssert<_TypeExtends<ParametersGroup1['$type'], TSKindId.ParametersGroup1>>;
 export type _Type_VisibilityModifierGroup1 = _TypeAssert<
@@ -1038,7 +1035,6 @@ export type _Tree_FieldDeclarationListGroup1 = _TypeAssert<
 export type _Tree_OrderedFieldDeclarationListGroup1 = _TypeAssert<
 	_TypeExtends<OrderedFieldDeclarationListGroup1Tree['type'], '_ordered_field_declaration_list_group1'>
 >;
-export type _Tree_WhereClauseGroup1 = _TypeAssert<_TypeExtends<WhereClauseGroup1Tree['type'], '_where_clause_group1'>>;
 export type _Tree_UseListGroup1 = _TypeAssert<_TypeExtends<UseListGroup1Tree['type'], '_use_list_group1'>>;
 export type _Tree_ParametersGroup1 = _TypeAssert<_TypeExtends<ParametersGroup1Tree['type'], '_parameters_group1'>>;
 export type _Tree_VisibilityModifierGroup1 = _TypeAssert<

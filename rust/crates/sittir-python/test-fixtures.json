@@ -93831,6 +93831,276 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 108,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_simple_statement": [
+            {
+              "$type": 152,
+              "$source": 0,
+              "$named": true,
+              "_code": {
+                "$type": 227,
+                "$source": 0,
+                "$named": true,
+                "_string_start": "'",
+                "_content": [
+                  "1+1"
+                ],
+                "_string_end": "'",
+                "$span": {
+                  "start": 5,
+                  "end": 10
+                },
+                "$nodeHandle": 24
+              },
+              "$other": [
+                39
+              ],
+              "$span": {
+                "start": 0,
+                "end": 10
+              },
+              "$nodeHandle": 23,
+              "_in_clause": []
+            }
+          ],
+          "_newline": 101,
+          "$span": {
+            "start": 0,
+            "end": 10
+          },
+          "$nodeHandle": 18,
+          "_simple_statement_trailing_sep": false
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_simple_statement": [
+            {
+              "$type": 152,
+              "$source": 0,
+              "$named": true,
+              "_code": {
+                "$type": 227,
+                "$source": 0,
+                "$named": true,
+                "_string_start": "'",
+                "_content": [
+                  "x+=1"
+                ],
+                "_string_end": "'",
+                "$span": {
+                  "start": 16,
+                  "end": 22
+                },
+                "$nodeHandle": 26
+              },
+              "_in_clause": [
+                "None"
+              ],
+              "$other": [
+                39,
+                28
+              ],
+              "$span": {
+                "start": 11,
+                "end": 30
+              },
+              "$nodeHandle": 25
+            }
+          ],
+          "_newline": 101,
+          "$span": {
+            "start": 11,
+            "end": 30
+          },
+          "$nodeHandle": 19,
+          "_simple_statement_trailing_sep": false
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_simple_statement": [
+            {
+              "$type": 152,
+              "$source": 0,
+              "$named": true,
+              "_code": {
+                "$type": 227,
+                "$source": 0,
+                "$named": true,
+                "_string_start": "'",
+                "_content": [
+                  "x+=1"
+                ],
+                "_string_end": "'",
+                "$span": {
+                  "start": 36,
+                  "end": 42
+                },
+                "$nodeHandle": 28
+              },
+              "_in_clause": [
+                "a",
+                "b"
+              ],
+              "$other": [
+                39,
+                28,
+                9
+              ],
+              "$span": {
+                "start": 31,
+                "end": 50
+              },
+              "$nodeHandle": 27
+            }
+          ],
+          "_newline": 101,
+          "$span": {
+            "start": 31,
+            "end": 50
+          },
+          "$nodeHandle": 20,
+          "_simple_statement_trailing_sep": false
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 51,
+                "end": 65
+              },
+              "$nodeHandle": 29,
+              "_content": {
+                "$type": 195,
+                "$source": 0,
+                "$named": true,
+                "_left": "func",
+                "$span": {
+                  "start": 51,
+                  "end": 65
+                },
+                "$nodeHandle": 30,
+                "_content": {
+                  "$type": 254,
+                  "$source": 0,
+                  "$named": true,
+                  "_right": {
+                    "$type": 227,
+                    "$source": 0,
+                    "$named": true,
+                    "_string_start": "\"",
+                    "_content": [
+                      "print"
+                    ],
+                    "_string_end": "\"",
+                    "$span": {
+                      "start": 58,
+                      "end": 65
+                    },
+                    "$nodeHandle": 32
+                  },
+                  "$other": [
+                    40
+                  ],
+                  "$span": {
+                    "start": 56,
+                    "end": 65
+                  },
+                  "$nodeHandle": 31
+                }
+              }
+            }
+          ],
+          "_newline": 101,
+          "$span": {
+            "start": 51,
+            "end": 65
+          },
+          "$nodeHandle": 21,
+          "_simple_statement_trailing_sep": false
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_simple_statement": [
+            {
+              "$type": 152,
+              "$source": 0,
+              "$named": true,
+              "_code": "func",
+              "_in_clause": [
+                {
+                  "$type": 215,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "{}",
+                  "$span": {
+                    "start": 79,
+                    "end": 81
+                  },
+                  "$nodeHandle": 34
+                }
+              ],
+              "$other": [
+                39,
+                28
+              ],
+              "$span": {
+                "start": 66,
+                "end": 81
+              },
+              "$nodeHandle": 33
+            }
+          ],
+          "_newline": 101,
+          "$span": {
+            "start": 66,
+            "end": 81
+          },
+          "$nodeHandle": 22,
+          "_simple_statement_trailing_sep": false
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 81
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "exec'1+1'\nexec'x+=1'in None\nexec'x+=1'in a,b\nfunc=\"print\"\nexec func in{}\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "exec '1+1'\nexec 'x+=1' in None\nexec 'x+=1' in a, b\nfunc = \"print\"\nexec func in {}",
+    "pattern": "module",
+    "edits": [],
+    "expectedSourceOut": "exec'1+1'\nexec'x+=1'in None\nexec'x+=1'in a,b\nfunc=\"print\"\nexec func in{}\n",
+    "expectedReparseTree": "(module statements: (statement_group1 simple_statement: (exec_statement code: (string string_start: (string_start) content: (string_content) string_end: (string_end))) (newline)) statements: (statement_group1 simple_statement: (exec_statement code: (string string_start: (string_start) content: (string_content) string_end: (string_end)) in_clause: (none)) (newline)) statements: (statement_group1 simple_statement: (exec_statement code: (string string_start: (string_start) content: (string_content) string_end: (string_end)) in_clause: (identifier) in_clause: (identifier)) (newline)) statements: (statement_group1 simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (string string_start: (string_start) content: (string_content) string_end: (string_end))))) (newline)) statements: (statement_group1 simple_statement: (exec_statement code: (identifier) in_clause: (dictionary)) (newline)))",
+    "wrappedText": "exec'1+1'\nexec'x+=1'in None\nexec'x+=1'in a,b\nfunc=\"print\"\nexec func in{}\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 227,
       "$source": 0,
       "$named": true,
@@ -93972,7 +94242,7 @@
           "start": 51,
           "end": 65
         },
-        "$nodeHandle": 36,
+        "$nodeHandle": 39,
         "_content": {
           "$type": 254,
           "$source": 0,
@@ -93990,7 +94260,7 @@
               "start": 58,
               "end": 65
             },
-            "$nodeHandle": 38
+            "$nodeHandle": 41
           },
           "$other": [
             40
@@ -93999,7 +94269,7 @@
             "start": 56,
             "end": 65
           },
-          "$nodeHandle": 37
+          "$nodeHandle": 40
         }
       }
     },
@@ -94046,7 +94316,7 @@
             "start": 58,
             "end": 65
           },
-          "$nodeHandle": 40
+          "$nodeHandle": 43
         },
         "$other": [
           40
@@ -94055,7 +94325,7 @@
           "start": 56,
           "end": 65
         },
-        "$nodeHandle": 39
+        "$nodeHandle": 42
       }
     },
     "expectedOutput": "func=\"print\""
@@ -94083,8 +94353,7 @@
         "start": 79,
         "end": 81
       },
-      "$nodeHandle": 16,
-      "$childIndex": 3
+      "$nodeHandle": 17
     },
     "expectedOutput": "{}"
   },

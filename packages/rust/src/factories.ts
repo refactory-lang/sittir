@@ -4118,13 +4118,8 @@ export function buildOrderedFieldDeclarationListGroup1(
 	);
 }
 
-export function buildWhereClauseGroup1(
-	elements: NonEmptyArray<T.WherePredicate>,
-	options: { trailing?: boolean } = {}
-) {
-	_assertNonEmpty(elements, '_where_clause_group1.elements');
-	const _where_predicate = elements;
-	const _trailing_sep = options.trailing ?? false;
+export function buildWhereClauseGroup1(config: T.WhereClauseGroup1.Config, options: { trailing?: boolean } = {}) {
+	const _where_predicate = config.wherePredicate ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -4132,10 +4127,11 @@ export function buildWhereClauseGroup1(
 				$source: 2 as const,
 				$named: true as const,
 				_where_predicate,
-				_trailing_sep,
+				_where_predicate_trailing_sep: options.trailing ?? false,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.WherePredicate>) => buildWhereClauseGroup1(vs, options),
-					trailing: (v: boolean) => buildWhereClauseGroup1(elements, { ...options, trailing: v })
+					wherePredicates: (...values: NonEmptyArray<T.WherePredicate>) =>
+						buildWhereClauseGroup1({ ...config, wherePredicate: values }, options),
+					trailing: (v: boolean) => buildWhereClauseGroup1(config, { ...options, trailing: v })
 				}
 			},
 			{
@@ -5955,7 +5951,7 @@ export type FluentKindMap = {
 		'_ordered_field_declaration_list_group1',
 		T.OrderedFieldDeclarationListGroup1.Config
 	>;
-	_where_clause_group1: FluentNode<'_where_clause_group1', T.WhereClauseGroup1.Config>;
+	_where_clause_group1: T.WhereClauseGroup1;
 	_use_list_group1: FluentNode<'_use_list_group1', T.UseListGroup1.Config>;
 	_parameters_group1: FluentNode<'_parameters_group1', T.ParametersGroup1.Config>;
 	_visibility_modifier_group1: FluentNode<'_visibility_modifier_group1', T.VisibilityModifierGroup1.Config>;

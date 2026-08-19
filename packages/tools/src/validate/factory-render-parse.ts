@@ -31,6 +31,7 @@ import { deriveRuleKinds } from './templates-path.ts';
 const { loadRawEntries } = await load('nodeTypesLoader');
 const { snakeToCamel } = await load('modelNodeMap');
 import {
+	separatedListFactoryOptions,
 	loadCorpusEntries,
 	loadLanguageForGrammar,
 	buildReadHandle,
@@ -528,7 +529,12 @@ function buildFactoryNodeData(
 				const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
 				return (factory as (v: unknown) => AnyNodeData)(value);
 			}
-			return factory(config) as AnyNodeData;
+			// Config-shaped factories with flank capture take `(config, options)` —
+		// factories without options ignore the extra argument.
+		return (factory as (c: unknown, o?: unknown) => AnyNodeData)(
+			config,
+			separatedListFactoryOptions(referenceData, kindLiteralText)
+		);
 		} else if (shape === 'text') {
 			// $TEXT-templated branch/container (e.g. rust
 			// raw_string_literal) — factory accepts the raw
@@ -555,20 +561,13 @@ function buildFactoryNodeData(
 				kindLiteralText
 			});
 			const elements = getChildFactoryArgs(renderedKind, config, factorySlots, factoryFields);
-			const separatorSourceKind = (referenceData as { _separator_kind?: number })._separator_kind;
-			const separatorKind = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
-			const leading = (referenceData as { _leading_sep?: boolean })._leading_sep === true;
-			const trailing = (referenceData as { _trailing_sep?: boolean })._trailing_sep === true;
-			const options: { separatorKind?: string; leading?: boolean; trailing?: boolean } = {};
-			if (separatorKind !== undefined) options.separatorKind = separatorKind;
-			if (leading) options.leading = true;
-			if (trailing) options.trailing = true;
+			const options = separatedListFactoryOptions(referenceData, kindLiteralText);
 			return (
 				factory as (
 					elements: readonly unknown[],
 					options?: { separatorKind?: string; leading?: boolean; trailing?: boolean }
 				) => AnyNodeData
-			)(elements, Object.keys(options).length > 0 ? options : undefined);
+			)(elements, options);
 		} else {
 			// shape === 'spread' — child-spread factory.
 			const config = nodeToConfig(referenceData, {

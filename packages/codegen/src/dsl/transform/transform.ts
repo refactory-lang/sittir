@@ -29,6 +29,8 @@ import {
 	reconstructContainer,
 	wrapInPrecStack,
 	getGroupLiftRuleBody,
+	setGroupLiftRuleBody,
+	isEnrichGroupLiftSymbol,
 	ApplyPathSkip
 } from './transform-path.ts';
 import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
@@ -650,6 +652,83 @@ function unifyChoiceArmFieldNames(content: unknown, unifiedName: string): unknow
 	return { ...r, members: newMembers };
 }
 
+/**
+ * When the subtree under an override's `field(name)` position carries
+ * FIELDs of exactly ONE distinct name — one logical slot occurring at
+ * several structural positions (a separated list's head + per-iteration
+ * element, a repeat's per-arm fields) — rename every occurrence to the
+ * override's name and return the rewritten subtree. Returns null when the
+ * subtree has no fields, more than one distinct field name (ambiguous —
+ * the override can't know which slot it means), or the single name already
+ * matches (nothing to do; the duplicate-name diagnostic path owns that).
+ * Field content is not descended into: a field's interior belongs to the
+ * referenced node's own shape, not to this slot.
+ */
+function relabelUniformFieldSet(content: unknown, newName: string): unknown | null {
+	// Enrich group-lift symbols are transparent here the same way they are
+	// to path addressing: the slot's fields live in the hoisted rule's body,
+	// reached through the registered rule map and written back in place.
+	const names = new Set<string>();
+	let anyRepeatedOccurrence = false;
+	let sawUnfieldedSymbol = false;
+	const liftBodies = new Map<string, RuntimeRule>();
+	const collect = (n: unknown, inRepeat: boolean): void => {
+		if (!n || typeof n !== 'object') return;
+		if (isFieldLike(n)) {
+			names.add(n.name);
+			if (inRepeat) anyRepeatedOccurrence = true;
+			return;
+		}
+		if (isEnrichGroupLiftSymbol(n as RuntimeRule)) {
+			const liftName = (n as { name?: string }).name;
+			const body = liftName === undefined ? undefined : getGroupLiftRuleBody(liftName);
+			if (liftName !== undefined && body !== undefined && !liftBodies.has(liftName)) {
+				liftBodies.set(liftName, body);
+				collect(body, inRepeat);
+			}
+			return;
+		}
+		const t = (n as { type?: string }).type;
+		if (t === 'SYMBOL' || t === 'ALIAS') {
+			sawUnfieldedSymbol = true;
+			return;
+		}
+		const entersRepeat = inRepeat || t === 'REPEAT' || t === 'REPEAT1';
+		const r = n as { members?: unknown[]; content?: unknown };
+		if (Array.isArray(r.members)) {
+			for (const m of r.members) collect(m, entersRepeat);
+		} else if (r.content && typeof r.content === 'object') {
+			collect(r.content, entersRepeat);
+		}
+	};
+	collect(content, false);
+	// Relabel only when the field set IS the slot the override names: an
+	// ARRAY-valued set (at least one occurrence inside a repeat — a
+	// separated list's per-iteration element) with no unfielded
+	// symbol/alias positions alongside (an unfielded symbol means the
+	// override is naming THOSE, or an aggregate of both — e.g.
+	// comparison_operator's fielded operators interleaved with unfielded
+	// comparand expressions). A singular field inside a composite (a
+	// marker sub-slot within a group) likewise means the override names
+	// the outer aggregate: wrap, don't rename.
+	if (names.size !== 1 || names.has(newName) || !anyRepeatedOccurrence || sawUnfieldedSymbol) return null;
+	const rewrite = (n: unknown): unknown => {
+		if (!n || typeof n !== 'object') return n;
+		if (isFieldLike(n)) {
+			return { ...n, name: newName, metadata: makeRuleMetadata({ fieldSource: 'override' }) };
+		}
+		if (isEnrichGroupLiftSymbol(n as RuntimeRule)) return n;
+		const r = n as { members?: unknown[]; content?: unknown };
+		if (Array.isArray(r.members)) return { ...(n as object), members: r.members.map(rewrite) };
+		if (r.content && typeof r.content === 'object') return { ...(n as object), content: rewrite(r.content) };
+		return n;
+	};
+	for (const [liftName, body] of liftBodies) {
+		setGroupLiftRuleBody(liftName, rewrite(body) as RuntimeRule);
+	}
+	return rewrite(content);
+}
+
 function resolveFieldPlaceholder(
 	patch: FieldPlaceholder,
 	originalMember: RuntimeRule,
@@ -717,6 +796,17 @@ function resolveFieldPlaceholder(
 			};
 			const reconstructed = nested.reconstruct(renamedField) as RuntimeRule;
 			return reconstructed;
+		}
+		// A uniform sibling field set — every FIELD in the subtree carries
+		// the SAME name (one logical slot spread across positions, e.g. the
+		// separated-list element fields enrich mints on the head and the
+		// repeat's per-iteration element). The override names that slot:
+		// relabel every occurrence in place instead of nesting an outer
+		// field around the structure (tree-sitter keeps only the innermost
+		// field name, so the wrap would never reach the parser).
+		const relabeled = relabelUniformFieldSet(content, patch.name);
+		if (relabeled !== null) {
+			return relabeled as RuntimeRule;
 		}
 		// Not optional-shaped either — unifyChoiceArmFieldNames covers the
 		// remaining case: an override-wrapped choice whose arms are already

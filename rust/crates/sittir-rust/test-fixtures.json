@@ -32577,7 +32577,7 @@
                 "end": 25
               },
               "$nodeHandle": 22,
-              "_trailing_sep": false
+              "_where_predicate_trailing_sep": false
             },
             "$other": [
               64
@@ -32703,7 +32703,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "type Foo<T>where T:Copy=Box<T>;type Assoc3 where=()where;",
-    "expectedReparseTree": "(source_file statements: (type_item name: (type_identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier))))) statements: (type_item name: (type_identifier) where_clause: (where_clause) type: (unit_type) trailing_where_clause: (where_clause)))",
+    "expectedReparseTree": "(source_file statements: (type_item name: (type_identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier))))) statements: (type_item name: (type_identifier) where_clause: (where_clause) type: (unit_type) trailing_where_clause: (where_clause)))",
     "wrappedText": "type Foo<T>where T:Copy=Box<T>;type Assoc3 where=()where;",
     "wrappedOffset": 0
   },
@@ -32796,7 +32796,7 @@
             "end": 25
           },
           "$nodeHandle": 35,
-          "_trailing_sep": false
+          "_where_predicate_trailing_sep": false
         },
         "$other": [
           64
@@ -32866,7 +32866,7 @@
     "pattern": "type_item",
     "edits": [],
     "expectedSourceOut": "type Foo<T>where T:Copy=Box<T>;",
-    "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))))",
+    "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))))",
     "wrappedText": "type Foo<T>where T:Copy=Box<T>;",
     "wrappedOffset": 0
   },
@@ -54001,7 +54001,7 @@
                         "end": 65
                       },
                       "$nodeHandle": 18,
-                      "_trailing_sep": false
+                      "_where_predicate_trailing_sep": false
                     },
                     "$other": [
                       64
@@ -54057,7 +54057,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "impl Trait for T{ type Associated=T where'static:'static; }",
-    "expectedReparseTree": "(source_file statements: (impl_item trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (type_identifier) (impl_item_body (declaration_list declaration_statements: (type_item name: (type_identifier) type: (type_identifier) trailing_where_clause: (where_clause (where_clause_group1 (where_predicate left: (lifetime identifier: (identifier)) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))))))))",
+    "expectedReparseTree": "(source_file statements: (impl_item trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (type_identifier) (impl_item_body (declaration_list declaration_statements: (type_item name: (type_identifier) type: (type_identifier) trailing_where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (lifetime identifier: (identifier)) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))))))))",
     "wrappedText": "impl Trait for T{ type Associated=T where'static:'static; }",
     "wrappedOffset": 0
   },
@@ -54174,7 +54174,7 @@
                     "end": 65
                   },
                   "$nodeHandle": 28,
-                  "_trailing_sep": false
+                  "_where_predicate_trailing_sep": false
                 },
                 "$other": [
                   64
@@ -54223,7 +54223,7 @@
     "pattern": "impl_item",
     "edits": [],
     "expectedSourceOut": "impl Trait for T{ type Associated=T where'static:'static; }",
-    "expectedReparseTree": "(impl_item trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (type_identifier) (impl_item_body (declaration_list declaration_statements: (type_item name: (type_identifier) type: (type_identifier) trailing_where_clause: (where_clause (where_clause_group1 (where_predicate left: (lifetime identifier: (identifier)) bounds: (trait_bounds bounds: (lifetime identifier: (identifier))))))))))",
+    "expectedReparseTree": "(impl_item trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (type_identifier) (impl_item_body (declaration_list declaration_statements: (type_item name: (type_identifier) type: (type_identifier) trailing_where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (lifetime identifier: (identifier)) bounds: (trait_bounds bounds: (lifetime identifier: (identifier))))))))))",
     "wrappedText": "impl Trait for T{ type Associated=T where'static:'static; }",
     "wrappedOffset": 0
   },
@@ -54304,7 +54304,7 @@
             "end": 65
           },
           "$nodeHandle": 41,
-          "_trailing_sep": false
+          "_where_predicate_trailing_sep": false
         },
         "$other": [
           64
@@ -54335,7 +54335,7 @@
     "pattern": "type_item",
     "edits": [],
     "expectedSourceOut": "type Associated=T where'static:'static;",
-    "expectedReparseTree": "(type_item name: (type_identifier) type: (type_identifier) trailing_where_clause: (where_clause (where_clause_group1 (where_predicate left: (lifetime identifier: (identifier)) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))))",
+    "expectedReparseTree": "(type_item name: (type_identifier) type: (type_identifier) trailing_where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (lifetime identifier: (identifier)) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))))",
     "wrappedText": "type Associated=T where'static:'static;",
     "wrappedOffset": 0
   },
@@ -55180,7 +55180,7 @@
                 "end": 248
               },
               "$nodeHandle": 121,
-              "_trailing_sep": true
+              "_where_predicate_trailing_sep": true
             },
             "$other": [
               64
@@ -55227,7 +55227,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "pub trait Database{ type F<'a,D>:Future<Output=D>+'a; }impl Database for Foo{ type F<'a,D> =DatabaseFuture<'a,D>; }fn use_database1<D:Database<F<'a,TD> =F>>(){  }fn use_database2<D>()where D:Database<F<'a,TD> =F>,{  }",
-    "expectedReparseTree": "(source_file statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (declaration_list declaration_statements: (associated_type name: (type_identifier) type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier)))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_binding name: (type_identifier) type: (type_identifier))))) bounds: (lifetime identifier: (identifier)))))) statements: (impl_item trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (type_identifier) (impl_item_body (declaration_list declaration_statements: (type_item name: (type_identifier) type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier)))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))) element: (type_argument (type_identifier)))))))) statements: (function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))) element: (type_argument (type_identifier))) type: (type_identifier))))))))) parameters: (parameters) body: (block)) statements: (function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))) element: (type_argument (type_identifier))) type: (type_identifier))))))))) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (declaration_list declaration_statements: (associated_type name: (type_identifier) type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier)))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_binding name: (type_identifier) type: (type_identifier))))) bounds: (lifetime identifier: (identifier)))))) statements: (impl_item trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (type_identifier) (impl_item_body (declaration_list declaration_statements: (type_item name: (type_identifier) type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier)))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))) element: (type_argument (type_identifier)))))))) statements: (function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))) element: (type_argument (type_identifier))) type: (type_identifier))))))))) parameters: (parameters) body: (block)) statements: (function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))) element: (type_argument (type_identifier))) type: (type_identifier))))))))) body: (block)))",
     "wrappedText": "pub trait Database{ type F<'a,D>:Future<Output=D>+'a; }impl Database for Foo{ type F<'a,D> =DatabaseFuture<'a,D>; }fn use_database1<D:Database<F<'a,TD> =F>>(){  }fn use_database2<D>()where D:Database<F<'a,TD> =F>,{  }",
     "wrappedOffset": 0
   },
@@ -57546,7 +57546,7 @@
             "end": 248
           },
           "$nodeHandle": 339,
-          "_trailing_sep": true
+          "_where_predicate_trailing_sep": true
         },
         "$other": [
           64
@@ -57586,7 +57586,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn use_database2<D>()where D:Database<F<'a,TD> =F>,{  }",
-    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))) element: (type_argument (type_identifier))) type: (type_identifier))))))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))) element: (type_argument (type_identifier))) type: (type_identifier))))))))) body: (block))",
     "wrappedText": "fn use_database2<D>()where D:Database<F<'a,TD> =F>,{  }",
     "wrappedOffset": 0
   },
@@ -62013,7 +62013,7 @@
                 "end": 70
               },
               "$nodeHandle": 191,
-              "_trailing_sep": false
+              "_where_predicate_trailing_sep": false
             },
             "$other": [
               64
@@ -62324,7 +62324,7 @@
                 "end": 153
               },
               "$nodeHandle": 218,
-              "_trailing_sep": false
+              "_where_predicate_trailing_sep": false
             },
             "$other": [
               64
@@ -62639,7 +62639,7 @@
                 "end": 231
               },
               "$nodeHandle": 232,
-              "_trailing_sep": true
+              "_where_predicate_trailing_sep": true
             },
             "$other": [
               64
@@ -62832,7 +62832,7 @@
                 "end": 272
               },
               "$nodeHandle": 254,
-              "_trailing_sep": true
+              "_where_predicate_trailing_sep": true
             },
             "$other": [
               64
@@ -63035,7 +63035,7 @@
                 "end": 316
               },
               "$nodeHandle": 269,
-              "_trailing_sep": true
+              "_where_predicate_trailing_sep": true
             },
             "$other": [
               64
@@ -63371,7 +63371,7 @@
                 "end": 370
               },
               "$nodeHandle": 283,
-              "_trailing_sep": true
+              "_where_predicate_trailing_sep": true
             },
             "$other": [
               64
@@ -63522,7 +63522,7 @@
                 "end": 402
               },
               "$nodeHandle": 306,
-              "_trailing_sep": true
+              "_where_predicate_trailing_sep": true
             },
             "$other": [
               64
@@ -63766,7 +63766,7 @@
                 "end": 452
               },
               "$nodeHandle": 315,
-              "_trailing_sep": false
+              "_where_predicate_trailing_sep": false
             },
             "$other": [
               64
@@ -63950,7 +63950,7 @@
                 "end": 501
               },
               "$nodeHandle": 335,
-              "_trailing_sep": false
+              "_where_predicate_trailing_sep": false
             },
             "$other": [
               64
@@ -64007,7 +64007,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn walk<F>(&self,it:&mut F)->bool where F:FnMut(&Pat)->bool{ return false }impl<'a,T:'a+Item>Iterator for Iter<'a,T>where Self:'a{  }impl<T>A for B<T>where C<T>:D,T:'c,'c:'b,{  }impl<'a,E>Read where&'a E:Read,{  }impl<T>A for B<T>where(T,T,T):C,{  }impl<T>A for B<T>where for<'a>D<T>:E<'a>,{  }pub trait A<B>where B:C,{  }fn foo<A>()where A:B+As<f64>,f64:As<A>{  }impl<A>Default for B<A>where*mut A:C+D{  }",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 element: (attributed_parameter (self_parameter self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier)))))) return_type: (primitive_type) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 element: (attributed_parameter (reference_type type: (type_identifier))))) return_type: (primitive_type)))))) body: (block trailing_expression: (return_expression expression: (boolean_literal)))) statements: (impl_item type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)) bounds: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))) element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) bounds: (trait_bounds bounds: (type_identifier))) (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))) (where_predicate left: (lifetime identifier: (identifier)) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier)))) type: (type_identifier) where_clause: (where_clause (where_clause_group1 (where_predicate left: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (tuple_type type: (type_identifier) type: (type_identifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (higher_ranked_trait_bound type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier))))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))))))))) (impl_item_body (declaration_list))) statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier))))) body: (declaration_list)) statements: (function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (primitive_type)))))) (where_predicate left: (primitive_type) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))))))) body: (block)) statements: (impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (pointer_type (mutable_specifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier))))) (impl_item_body (declaration_list))))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 element: (attributed_parameter (self_parameter self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier)))))) return_type: (primitive_type) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 element: (attributed_parameter (reference_type type: (type_identifier))))) return_type: (primitive_type)))))) body: (block trailing_expression: (return_expression expression: (boolean_literal)))) statements: (impl_item type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)) bounds: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))) element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) bounds: (trait_bounds bounds: (type_identifier))) where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))) where_predicate: (where_predicate left: (lifetime identifier: (identifier)) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier)))) type: (type_identifier) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (tuple_type type: (type_identifier) type: (type_identifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (higher_ranked_trait_bound type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier))))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))))))))) (impl_item_body (declaration_list))) statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier))))) body: (declaration_list)) statements: (function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (primitive_type)))))) where_predicate: (where_predicate left: (primitive_type) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))))))) body: (block)) statements: (impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (pointer_type (mutable_specifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier))))) (impl_item_body (declaration_list))))",
     "wrappedText": "fn walk<F>(&self,it:&mut F)->bool where F:FnMut(&Pat)->bool{ return false }impl<'a,T:'a+Item>Iterator for Iter<'a,T>where Self:'a{  }impl<T>A for B<T>where C<T>:D,T:'c,'c:'b,{  }impl<'a,E>Read where&'a E:Read,{  }impl<T>A for B<T>where(T,T,T):C,{  }impl<T>A for B<T>where for<'a>D<T>:E<'a>,{  }pub trait A<B>where B:C,{  }fn foo<A>()where A:B+As<f64>,f64:As<A>{  }impl<A>Default for B<A>where*mut A:C+D{  }",
     "wrappedOffset": 0
   },
@@ -64267,7 +64267,7 @@
             "end": 70
           },
           "$nodeHandle": 352,
-          "_trailing_sep": false
+          "_where_predicate_trailing_sep": false
         },
         "$other": [
           64
@@ -64336,7 +64336,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn walk<F>(&self,it:&mut F)->bool where F:FnMut(&Pat)->bool{ return false }",
-    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 element: (attributed_parameter (self_parameter self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier)))))) return_type: (primitive_type) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 element: (attributed_parameter (reference_type type: (type_identifier))))) return_type: (primitive_type)))))) body: (block trailing_expression: (return_expression expression: (boolean_literal))))",
+    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 element: (attributed_parameter (self_parameter self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier)))))) return_type: (primitive_type) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 element: (attributed_parameter (reference_type type: (type_identifier))))) return_type: (primitive_type)))))) body: (block trailing_expression: (return_expression expression: (boolean_literal))))",
     "wrappedText": "fn walk<F>(&self,it:&mut F)->bool where F:FnMut(&Pat)->bool{ return false }",
     "wrappedOffset": 0
   },
@@ -64556,7 +64556,7 @@
             "end": 452
           },
           "$nodeHandle": 369,
-          "_trailing_sep": false
+          "_where_predicate_trailing_sep": false
         },
         "$other": [
           64
@@ -64596,7 +64596,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo<A>()where A:B+As<f64>,f64:As<A>{  }",
-    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (primitive_type)))))) (where_predicate left: (primitive_type) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (primitive_type)))))) where_predicate: (where_predicate left: (primitive_type) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))))))) body: (block))",
     "wrappedText": "fn foo<A>()where A:B+As<f64>,f64:As<A>{  }",
     "wrappedOffset": 0
   },
@@ -66375,7 +66375,7 @@
             "end": 153
           },
           "$nodeHandle": 581,
-          "_trailing_sep": false
+          "_where_predicate_trailing_sep": false
         },
         "$other": [
           64
@@ -66425,7 +66425,7 @@
     "pattern": "impl_item",
     "edits": [],
     "expectedSourceOut": "impl<'a,T:'a+Item>Iterator for Iter<'a,T>where Self:'a{  }",
-    "expectedReparseTree": "(impl_item type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)) bounds: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))) element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))) (impl_item_body (declaration_list)))",
+    "expectedReparseTree": "(impl_item type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)) bounds: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))) element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))) (impl_item_body (declaration_list)))",
     "wrappedText": "impl<'a,T:'a+Item>Iterator for Iter<'a,T>where Self:'a{  }",
     "wrappedOffset": 0
   },
@@ -66706,7 +66706,7 @@
             "end": 231
           },
           "$nodeHandle": 595,
-          "_trailing_sep": true
+          "_where_predicate_trailing_sep": true
         },
         "$other": [
           64
@@ -66756,7 +66756,7 @@
     "pattern": "impl_item",
     "edits": [],
     "expectedSourceOut": "impl<T>A for B<T>where C<T>:D,T:'c,'c:'b,{  }",
-    "expectedReparseTree": "(impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) bounds: (trait_bounds bounds: (type_identifier))) (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))) (where_predicate left: (lifetime identifier: (identifier)) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))) (impl_item_body (declaration_list)))",
+    "expectedReparseTree": "(impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) bounds: (trait_bounds bounds: (type_identifier))) where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))) where_predicate: (where_predicate left: (lifetime identifier: (identifier)) bounds: (trait_bounds bounds: (lifetime identifier: (identifier)))))) (impl_item_body (declaration_list)))",
     "wrappedText": "impl<T>A for B<T>where C<T>:D,T:'c,'c:'b,{  }",
     "wrappedOffset": 0
   },
@@ -66915,7 +66915,7 @@
             "end": 272
           },
           "$nodeHandle": 617,
-          "_trailing_sep": true
+          "_where_predicate_trailing_sep": true
         },
         "$other": [
           64
@@ -66965,7 +66965,7 @@
     "pattern": "impl_item",
     "edits": [],
     "expectedSourceOut": "impl<'a,E>Read where&'a E:Read,{  }",
-    "expectedReparseTree": "(impl_item type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier)))) type: (type_identifier) where_clause: (where_clause (where_clause_group1 (where_predicate left: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (impl_item_body (declaration_list)))",
+    "expectedReparseTree": "(impl_item type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier)))) type: (type_identifier) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (impl_item_body (declaration_list)))",
     "wrappedText": "impl<'a,E>Read where&'a E:Read,{  }",
     "wrappedOffset": 0
   },
@@ -67134,7 +67134,7 @@
             "end": 316
           },
           "$nodeHandle": 632,
-          "_trailing_sep": true
+          "_where_predicate_trailing_sep": true
         },
         "$other": [
           64
@@ -67184,7 +67184,7 @@
     "pattern": "impl_item",
     "edits": [],
     "expectedSourceOut": "impl<T>A for B<T>where(T,T,T):C,{  }",
-    "expectedReparseTree": "(impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (tuple_type type: (type_identifier) type: (type_identifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (impl_item_body (declaration_list)))",
+    "expectedReparseTree": "(impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (tuple_type type: (type_identifier) type: (type_identifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (impl_item_body (declaration_list)))",
     "wrappedText": "impl<T>A for B<T>where(T,T,T):C,{  }",
     "wrappedOffset": 0
   },
@@ -67486,7 +67486,7 @@
             "end": 370
           },
           "$nodeHandle": 646,
-          "_trailing_sep": true
+          "_where_predicate_trailing_sep": true
         },
         "$other": [
           64
@@ -67536,7 +67536,7 @@
     "pattern": "impl_item",
     "edits": [],
     "expectedSourceOut": "impl<T>A for B<T>where for<'a>D<T>:E<'a>,{  }",
-    "expectedReparseTree": "(impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (higher_ranked_trait_bound type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier))))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))))))))) (impl_item_body (declaration_list)))",
+    "expectedReparseTree": "(impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (higher_ranked_trait_bound type_parameters: (type_parameters element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier))))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (lifetime identifier: (identifier))))))))) (impl_item_body (declaration_list)))",
     "wrappedText": "impl<T>A for B<T>where for<'a>D<T>:E<'a>,{  }",
     "wrappedOffset": 0
   },
@@ -67696,7 +67696,7 @@
             "end": 501
           },
           "$nodeHandle": 671,
-          "_trailing_sep": false
+          "_where_predicate_trailing_sep": false
         },
         "$other": [
           64
@@ -67746,7 +67746,7 @@
     "pattern": "impl_item",
     "edits": [],
     "expectedSourceOut": "impl<A>Default for B<A>where*mut A:C+D{  }",
-    "expectedReparseTree": "(impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (pointer_type (mutable_specifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier))))) (impl_item_body (declaration_list)))",
+    "expectedReparseTree": "(impl_item type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (pointer_type (mutable_specifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier))))) (impl_item_body (declaration_list)))",
     "wrappedText": "impl<A>Default for B<A>where*mut A:C+D{  }",
     "wrappedOffset": 0
   },
@@ -68489,7 +68489,7 @@
             "end": 402
           },
           "$nodeHandle": 729,
-          "_trailing_sep": true
+          "_where_predicate_trailing_sep": true
         },
         "$other": [
           64
@@ -68529,7 +68529,7 @@
     "pattern": "trait_item",
     "edits": [],
     "expectedSourceOut": "pub trait A<B>where B:C,{  }",
-    "expectedReparseTree": "(trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier))))) body: (declaration_list))",
+    "expectedReparseTree": "(trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier))))) body: (declaration_list))",
     "wrappedText": "pub trait A<B>where B:C,{  }",
     "wrappedOffset": 0
   },
@@ -69922,7 +69922,7 @@
                 "end": 46
               },
               "$nodeHandle": 27,
-              "_trailing_sep": true
+              "_where_predicate_trailing_sep": true
             },
             "$other": [
               64
@@ -69969,7 +69969,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn foo<D>(val:D)where[u8;32]:From<D>,{  }",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 element: (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (array_type element: (primitive_type) length: (integer_literal)) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))))))) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 element: (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (array_type element: (primitive_type) length: (integer_literal)) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))))))) body: (block)))",
     "wrappedText": "fn foo<D>(val:D)where[u8;32]:From<D>,{  }",
     "wrappedOffset": 0
   },
@@ -70171,7 +70171,7 @@
             "end": 46
           },
           "$nodeHandle": 43,
-          "_trailing_sep": true
+          "_where_predicate_trailing_sep": true
         },
         "$other": [
           64
@@ -70211,7 +70211,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo<D>(val:D)where[u8;32]:From<D>,{  }",
-    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 element: (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) where_clause: (where_clause (where_clause_group1 (where_predicate left: (array_type element: (primitive_type) length: (integer_literal)) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters element: (attributed_type_parameter (type_parameter name: (type_identifier)))) parameters: (parameters (parameters_group1 element: (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) where_clause: (where_clause (where_clause_group1 where_predicate: (where_predicate left: (array_type element: (primitive_type) length: (integer_literal)) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments element: (type_argument (type_identifier)))))))) body: (block))",
     "wrappedText": "fn foo<D>(val:D)where[u8;32]:From<D>,{  }",
     "wrappedOffset": 0
   },

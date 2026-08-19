@@ -12,6 +12,7 @@
 import type { AnyNodeData } from '@sittir/types';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import {
+	separatedListFactoryOptions,
 	loadCorpusEntries,
 	loadLanguageForGrammar,
 	loadKindIdFromName,
@@ -387,7 +388,12 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
 							factoryResult = (factory as (v: unknown) => AnyNodeData)(value);
 						} else {
-							factoryResult = factory(config) as AnyNodeData;
+							// Config-shaped factories with flank capture take `(config,
+						// options)` — factories without options ignore the extra argument.
+						factoryResult = (factory as (c: unknown, o?: unknown) => AnyNodeData)(
+							config,
+							separatedListFactoryOptions(readData, kindLiteralText)
+						);
 						}
 					} else if (shape === 'text') {
 						// readData.$text is absent on branch nodes (gated by
@@ -412,21 +418,13 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							kindLiteralText
 						});
 						const elements = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
-						const separatorSourceKind = (readData as { _separator_kind?: number })._separator_kind;
-						const separatorKind =
-							separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
-						const leading = (readData as { _leading_sep?: boolean })._leading_sep === true;
-						const trailing = (readData as { _trailing_sep?: boolean })._trailing_sep === true;
-						const options: { separatorKind?: string; leading?: boolean; trailing?: boolean } = {};
-						if (separatorKind !== undefined) options.separatorKind = separatorKind;
-						if (leading) options.leading = true;
-						if (trailing) options.trailing = true;
+						const options = separatedListFactoryOptions(readData, kindLiteralText);
 						factoryResult = (
 							factory as (
 								elements: readonly unknown[],
 								options?: { separatorKind?: string; leading?: boolean; trailing?: boolean }
 							) => AnyNodeData
-						)(elements, Object.keys(options).length > 0 ? options : undefined);
+						)(elements, options);
 					} else {
 						const config = nodeToConfig(readData, {
 							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,

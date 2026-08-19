@@ -534,7 +534,7 @@ pub struct ExceptClauseTemplate<'a> {
 #[template(path = "exec_statement.jinja", escape = "none")]
 pub struct ExecStatementTemplate<'a> {
     pub code: SingleNonterminalView<'a>,
-    pub expression: ListNonterminalView<'a>,
+    pub in_clause: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

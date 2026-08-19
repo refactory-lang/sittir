@@ -47,9 +47,6 @@ const enrichedBase = enrich(base, {
 		'tuple_type',
 		'trait_bounds',
 		'function_modifiers',
-		'_where_clause_group1',
-		'_closure_parameters_optional1',
-		'_use_list_group1'
 	]
 });
 
