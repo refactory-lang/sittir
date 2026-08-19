@@ -1035,11 +1035,26 @@ function emitSeparatedListFactory(
 	const optionsType = `{ ${optionsTypeParts.join('; ')} }`;
 
 	const lines: string[] = [];
-	lines.push(
-		hasOptions
-			? `export function ${fn}(elements: ${elementsType}, options: ${optionsType} = {}) {`
-			: `export function ${fn}(elements: ${elementsType}) {`
-	);
+	// Spread signature with a LEADING optional options bag —
+	// `fn(...elements)` / `fn(options, ...elements)` — dispatched on the
+	// first argument: every element value is either a string literal or a
+	// node carrying `$type`, so a plain object WITHOUT `$type` can only be
+	// the options bag.
+	if (hasOptions) {
+		lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
+		lines.push(`export function ${fn}(options: ${optionsType}, ...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
+		lines.push(`export function ${fn}(...args: (${optionsType} | ${elemTypeForArray})[]) {`);
+		lines.push(
+			`  const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));`
+		);
+		lines.push(`  const options = (_optsFirst ? args[0] : {}) as ${optionsType};`);
+		lines.push(`  const elements = (_optsFirst ? args.slice(1) : args) as unknown as ${elementsType};`);
+		lines.push(`  return _${fn}(elements, options);`);
+		lines.push('}');
+		lines.push(`function _${fn}(elements: ${elementsType}, options: ${optionsType}) {`);
+	} else {
+		lines.push(`export function ${fn}(...elements: ${elementsType}) {`);
+	}
 	if (node.nonEmpty) {
 		lines.push(`  _assertNonEmpty(elements, '${node.kind}.elements');`);
 	}
@@ -1068,7 +1083,7 @@ function emitSeparatedListFactory(
 	if (hasLeadingOption) lines.push('    _leading_sep,');
 	if (hasTrailingOption) lines.push('    _trailing_sep,');
 	lines.push('    $with: {');
-	const optionsArg = hasOptions ? ', options' : '';
+	const optionsArg = hasOptions ? 'options, ' : '';
 	// Rest param type must match `elementsType` exactly (`NonEmptyArray<T>`
 	// when nonEmpty) — a plain `T[]` rest capture isn't assignable to the
 	// tuple-shaped `NonEmptyArray<T>` the factory's own `elements` parameter
@@ -1085,12 +1100,14 @@ function emitSeparatedListFactory(
 	// values, silently diverging from the true (still-repeated) rule shape
 	// — `node.nonEmpty` has no such degenerate case since it reads directly
 	// off `rule.type`, never off the derived value count.
-	lines.push(`      $children: (...vs: ${elementsType}) => ${fn}(vs${optionsArg}),`);
+	lines.push(`      $children: (...vs: ${elementsType}) => ${fn}(${optionsArg}...vs),`);
 	if (hasSeparatorKindOption) {
-		lines.push(`      separatorKind: (v: ${separatorKindUnion}) => ${fn}(elements, { ...options, separatorKind: v }),`);
+		lines.push(
+			`      separatorKind: (v: ${separatorKindUnion}) => ${fn}({ ...options, separatorKind: v }, ...elements),`
+		);
 	}
-	if (hasLeadingOption) lines.push(`      leading: (v: boolean) => ${fn}(elements, { ...options, leading: v }),`);
-	if (hasTrailingOption) lines.push(`      trailing: (v: boolean) => ${fn}(elements, { ...options, trailing: v }),`);
+	if (hasLeadingOption) lines.push(`      leading: (v: boolean) => ${fn}({ ...options, leading: v }, ...elements),`);
+	if (hasTrailingOption) lines.push(`      trailing: (v: boolean) => ${fn}({ ...options, trailing: v }, ...elements),`);
 	lines.push('    },');
 	lines.push('  }, {');
 	lines.push(`    ${contentAccessorName}: () => ${contentStorageKey},`);

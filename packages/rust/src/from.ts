@@ -414,33 +414,31 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case 'block_comment':
 			return F.buildBlockComment(children[0] as Parameters<typeof F.buildBlockComment>[0]);
 		case '_macro_rules':
-			return F.buildMacroRules(children as Parameters<typeof F.buildMacroRules>[0]);
+			return (F.buildMacroRules as (...args: unknown[]) => unknown)(...children);
 		case '_enum_variant_list_elements':
-			return F.buildEnumVariantListElements(children as Parameters<typeof F.buildEnumVariantListElements>[0]);
+			return (F.buildEnumVariantListElements as (...args: unknown[]) => unknown)(...children);
 		case '_field_declaration_list_elements':
-			return F.buildFieldDeclarationListElements(children as Parameters<typeof F.buildFieldDeclarationListElements>[0]);
+			return (F.buildFieldDeclarationListElements as (...args: unknown[]) => unknown)(...children);
 		case '_ordered_field_declaration_list_elements':
-			return F.buildOrderedFieldDeclarationListElements(
-				children as Parameters<typeof F.buildOrderedFieldDeclarationListElements>[0]
-			);
+			return (F.buildOrderedFieldDeclarationListElements as (...args: unknown[]) => unknown)(...children);
 		case '_use_clauses':
-			return F.buildUseClauses(children as Parameters<typeof F.buildUseClauses>[0]);
+			return (F.buildUseClauses as (...args: unknown[]) => unknown)(...children);
 		case '_parameters_elements':
-			return F.buildParametersElements(children as Parameters<typeof F.buildParametersElements>[0]);
+			return (F.buildParametersElements as (...args: unknown[]) => unknown)(...children);
 		case '_visibility_modifier_group1':
 			return F.buildVisibilityModifierGroup1(children[0] as Parameters<typeof F.buildVisibilityModifierGroup1>[0]);
 		case '_use_bounds_elements':
-			return F.buildUseBoundsElements(children as Parameters<typeof F.buildUseBoundsElements>[0]);
+			return (F.buildUseBoundsElements as (...args: unknown[]) => unknown)(...children);
 		case '_arguments_elements':
-			return F.buildArgumentsElements(children as Parameters<typeof F.buildArgumentsElements>[0]);
+			return (F.buildArgumentsElements as (...args: unknown[]) => unknown)(...children);
 		case '_field_initializer_list_elements':
-			return F.buildFieldInitializerListElements(children as Parameters<typeof F.buildFieldInitializerListElements>[0]);
+			return (F.buildFieldInitializerListElements as (...args: unknown[]) => unknown)(...children);
 		case '_tuple_pattern_elements':
-			return F.buildTuplePatternElements(children as Parameters<typeof F.buildTuplePatternElements>[0]);
+			return (F.buildTuplePatternElements as (...args: unknown[]) => unknown)(...children);
 		case '_patterns':
-			return F.buildPatterns(children as Parameters<typeof F.buildPatterns>[0]);
+			return (F.buildPatterns as (...args: unknown[]) => unknown)(...children);
 		case '_struct_pattern_elements':
-			return F.buildStructPatternElements(children as Parameters<typeof F.buildStructPatternElements>[0]);
+			return (F.buildStructPatternElements as (...args: unknown[]) => unknown)(...children);
 		case '_impl_item_body':
 			return F.buildImplItemBody(children[0] as Parameters<typeof F.buildImplItemBody>[0]);
 		case '_function_type_fn_form':

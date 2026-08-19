@@ -5171,9 +5171,19 @@ export function buildTypeIdentifier(text: string) {
 }
 
 export function buildExportSpecifiers(
-	elements: NonEmptyArray<T.ExportSpecifier>,
-	options: { trailing?: boolean } = {}
-) {
+	...elements: NonEmptyArray<T.ExportSpecifier>
+): ReturnType<typeof _buildExportSpecifiers>;
+export function buildExportSpecifiers(
+	options: { trailing?: boolean },
+	...elements: NonEmptyArray<T.ExportSpecifier>
+): ReturnType<typeof _buildExportSpecifiers>;
+export function buildExportSpecifiers(...args: ({ trailing?: boolean } | T.ExportSpecifier)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.ExportSpecifier>;
+	return _buildExportSpecifiers(elements, options);
+}
+function _buildExportSpecifiers(elements: NonEmptyArray<T.ExportSpecifier>, options: { trailing?: boolean }) {
 	_assertNonEmpty(elements, '_export_specifiers.elements');
 	const _export_specifier = elements;
 	const _trailing_sep = options.trailing ?? false;
@@ -5186,8 +5196,8 @@ export function buildExportSpecifiers(
 				_export_specifier,
 				_trailing_sep,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.ExportSpecifier>) => buildExportSpecifiers(vs, options),
-					trailing: (v: boolean) => buildExportSpecifiers(elements, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.ExportSpecifier>) => buildExportSpecifiers(options, ...vs),
+					trailing: (v: boolean) => buildExportSpecifiers({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{
@@ -5243,9 +5253,19 @@ export function buildImportClauseGroup1(child: T.NamespaceImport | T.NamedImport
 }
 
 export function buildImportSpecifiers(
-	elements: NonEmptyArray<T.ImportSpecifier>,
-	options: { trailing?: boolean } = {}
-) {
+	...elements: NonEmptyArray<T.ImportSpecifier>
+): ReturnType<typeof _buildImportSpecifiers>;
+export function buildImportSpecifiers(
+	options: { trailing?: boolean },
+	...elements: NonEmptyArray<T.ImportSpecifier>
+): ReturnType<typeof _buildImportSpecifiers>;
+export function buildImportSpecifiers(...args: ({ trailing?: boolean } | T.ImportSpecifier)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.ImportSpecifier>;
+	return _buildImportSpecifiers(elements, options);
+}
+function _buildImportSpecifiers(elements: NonEmptyArray<T.ImportSpecifier>, options: { trailing?: boolean }) {
 	_assertNonEmpty(elements, '_import_specifiers.elements');
 	const _import_specifier = elements;
 	const _trailing_sep = options.trailing ?? false;
@@ -5258,8 +5278,8 @@ export function buildImportSpecifiers(
 				_import_specifier,
 				_trailing_sep,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.ImportSpecifier>) => buildImportSpecifiers(vs, options),
-					trailing: (v: boolean) => buildImportSpecifiers(elements, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.ImportSpecifier>) => buildImportSpecifiers(options, ...vs),
+					trailing: (v: boolean) => buildImportSpecifiers({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{
@@ -5513,9 +5533,19 @@ export function buildTypeParametersElements(
 }
 
 export function buildTupleTypeMembers(
-	elements: NonEmptyArray<T.TupleTypeMember>,
-	options: { trailing?: boolean } = {}
-) {
+	...elements: NonEmptyArray<T.TupleTypeMember>
+): ReturnType<typeof _buildTupleTypeMembers>;
+export function buildTupleTypeMembers(
+	options: { trailing?: boolean },
+	...elements: NonEmptyArray<T.TupleTypeMember>
+): ReturnType<typeof _buildTupleTypeMembers>;
+export function buildTupleTypeMembers(...args: ({ trailing?: boolean } | T.TupleTypeMember)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.TupleTypeMember>;
+	return _buildTupleTypeMembers(elements, options);
+}
+function _buildTupleTypeMembers(elements: NonEmptyArray<T.TupleTypeMember>, options: { trailing?: boolean }) {
 	_assertNonEmpty(elements, '_tuple_type_members.elements');
 	const _tuple_type_member = elements;
 	const _trailing_sep = options.trailing ?? false;
@@ -5528,8 +5558,8 @@ export function buildTupleTypeMembers(
 				_tuple_type_member,
 				_trailing_sep,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.TupleTypeMember>) => buildTupleTypeMembers(vs, options),
-					trailing: (v: boolean) => buildTupleTypeMembers(elements, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.TupleTypeMember>) => buildTupleTypeMembers(options, ...vs),
+					trailing: (v: boolean) => buildTupleTypeMembers({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{
@@ -5619,6 +5649,52 @@ export function buildAmbientDeclarationModule(config: T.AmbientDeclarationModule
 }
 
 export function buildObjectTypeContent(
+	...elements: NonEmptyArray<
+		| T.ExportStatement
+		| T.PropertySignature
+		| T.CallSignature
+		| T.ConstructSignature
+		| T.IndexSignature
+		| T.MethodSignature
+	>
+): ReturnType<typeof _buildObjectTypeContent>;
+export function buildObjectTypeContent(
+	options: { separatorKind?: ',' | ';'; leading?: boolean; trailing?: boolean },
+	...elements: NonEmptyArray<
+		| T.ExportStatement
+		| T.PropertySignature
+		| T.CallSignature
+		| T.ConstructSignature
+		| T.IndexSignature
+		| T.MethodSignature
+	>
+): ReturnType<typeof _buildObjectTypeContent>;
+export function buildObjectTypeContent(
+	...args: (
+		| { separatorKind?: ',' | ';'; leading?: boolean; trailing?: boolean }
+		| (
+				| T.ExportStatement
+				| T.PropertySignature
+				| T.CallSignature
+				| T.ConstructSignature
+				| T.IndexSignature
+				| T.MethodSignature
+		  )
+	)[]
+) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { separatorKind?: ',' | ';'; leading?: boolean; trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		| T.ExportStatement
+		| T.PropertySignature
+		| T.CallSignature
+		| T.ConstructSignature
+		| T.IndexSignature
+		| T.MethodSignature
+	>;
+	return _buildObjectTypeContent(elements, options);
+}
+function _buildObjectTypeContent(
 	elements: NonEmptyArray<
 		| T.ExportStatement
 		| T.PropertySignature
@@ -5627,7 +5703,7 @@ export function buildObjectTypeContent(
 		| T.IndexSignature
 		| T.MethodSignature
 	>,
-	options: { separatorKind?: ',' | ';'; leading?: boolean; trailing?: boolean } = {}
+	options: { separatorKind?: ',' | ';'; leading?: boolean; trailing?: boolean }
 ) {
 	_assertNonEmpty(elements, 'object_type_content.elements');
 	const _content = elements;
@@ -5656,10 +5732,10 @@ export function buildObjectTypeContent(
 							| T.IndexSignature
 							| T.MethodSignature
 						>
-					) => buildObjectTypeContent(vs, options),
-					separatorKind: (v: ',' | ';') => buildObjectTypeContent(elements, { ...options, separatorKind: v }),
-					leading: (v: boolean) => buildObjectTypeContent(elements, { ...options, leading: v }),
-					trailing: (v: boolean) => buildObjectTypeContent(elements, { ...options, trailing: v })
+					) => buildObjectTypeContent(options, ...vs),
+					separatorKind: (v: ',' | ';') => buildObjectTypeContent({ ...options, separatorKind: v }, ...elements),
+					leading: (v: boolean) => buildObjectTypeContent({ ...options, leading: v }, ...elements),
+					trailing: (v: boolean) => buildObjectTypeContent({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{

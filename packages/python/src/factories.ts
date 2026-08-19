@@ -3075,10 +3075,34 @@ export function buildTypes(config: T.Types.Config, options: { trailing?: boolean
 }
 
 export function buildArgumentListElements(
+	...elements: NonEmptyArray<
+		T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
+	>
+): ReturnType<typeof _buildArgumentListElements>;
+export function buildArgumentListElements(
+	options: { trailing?: boolean },
+	...elements: NonEmptyArray<
+		T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
+	>
+): ReturnType<typeof _buildArgumentListElements>;
+export function buildArgumentListElements(
+	...args: (
+		| { trailing?: boolean }
+		| (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)
+	)[]
+) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
+	>;
+	return _buildArgumentListElements(elements, options);
+}
+function _buildArgumentListElements(
 	elements: NonEmptyArray<
 		T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
 	>,
-	options: { trailing?: boolean } = {}
+	options: { trailing?: boolean }
 ) {
 	_assertNonEmpty(elements, '_argument_list_elements.elements');
 	const _element = elements;
@@ -3096,8 +3120,8 @@ export function buildArgumentListElements(
 						...vs: NonEmptyArray<
 							T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
 						>
-					) => buildArgumentListElements(vs, options),
-					trailing: (v: boolean) => buildArgumentListElements(elements, { ...options, trailing: v })
+					) => buildArgumentListElements(options, ...vs),
+					trailing: (v: boolean) => buildArgumentListElements({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{
@@ -3109,9 +3133,19 @@ export function buildArgumentListElements(
 }
 
 export function buildExpressionListExpressions(
-	elements: NonEmptyArray<T.Expression>,
-	options: { trailing?: boolean } = {}
-) {
+	...elements: NonEmptyArray<T.Expression>
+): ReturnType<typeof _buildExpressionListExpressions>;
+export function buildExpressionListExpressions(
+	options: { trailing?: boolean },
+	...elements: NonEmptyArray<T.Expression>
+): ReturnType<typeof _buildExpressionListExpressions>;
+export function buildExpressionListExpressions(...args: ({ trailing?: boolean } | T.Expression)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Expression>;
+	return _buildExpressionListExpressions(elements, options);
+}
+function _buildExpressionListExpressions(elements: NonEmptyArray<T.Expression>, options: { trailing?: boolean }) {
 	_assertNonEmpty(elements, '_expression_list_expressions.elements');
 	const _expression = elements;
 	const _trailing_sep = options.trailing ?? false;
@@ -3124,8 +3158,8 @@ export function buildExpressionListExpressions(
 				_expression,
 				_trailing_sep,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Expression>) => buildExpressionListExpressions(vs, options),
-					trailing: (v: boolean) => buildExpressionListExpressions(elements, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.Expression>) => buildExpressionListExpressions(options, ...vs),
+					trailing: (v: boolean) => buildExpressionListExpressions({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{
@@ -3162,7 +3196,20 @@ export function buildDictPatternElements(config: T.DictPatternElements.Config) {
 	);
 }
 
-export function buildPatternListPatterns(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean } = {}) {
+export function buildPatternListPatterns(
+	...elements: NonEmptyArray<T.Pattern>
+): ReturnType<typeof _buildPatternListPatterns>;
+export function buildPatternListPatterns(
+	options: { trailing?: boolean },
+	...elements: NonEmptyArray<T.Pattern>
+): ReturnType<typeof _buildPatternListPatterns>;
+export function buildPatternListPatterns(...args: ({ trailing?: boolean } | T.Pattern)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Pattern>;
+	return _buildPatternListPatterns(elements, options);
+}
+function _buildPatternListPatterns(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean }) {
 	_assertNonEmpty(elements, '_pattern_list_patterns.elements');
 	const _pattern = elements;
 	const _trailing_sep = options.trailing ?? false;
@@ -3175,8 +3222,8 @@ export function buildPatternListPatterns(elements: NonEmptyArray<T.Pattern>, opt
 				_pattern,
 				_trailing_sep,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Pattern>) => buildPatternListPatterns(vs, options),
-					trailing: (v: boolean) => buildPatternListPatterns(elements, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.Pattern>) => buildPatternListPatterns(options, ...vs),
+					trailing: (v: boolean) => buildPatternListPatterns({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{
@@ -3231,8 +3278,21 @@ export function buildSliceGroup1(child?: T.Expression) {
 }
 
 export function buildDictionaryElements(
+	...elements: NonEmptyArray<T.Pair | T.DictionarySplat>
+): ReturnType<typeof _buildDictionaryElements>;
+export function buildDictionaryElements(
+	options: { trailing?: boolean },
+	...elements: NonEmptyArray<T.Pair | T.DictionarySplat>
+): ReturnType<typeof _buildDictionaryElements>;
+export function buildDictionaryElements(...args: ({ trailing?: boolean } | (T.Pair | T.DictionarySplat))[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Pair | T.DictionarySplat>;
+	return _buildDictionaryElements(elements, options);
+}
+function _buildDictionaryElements(
 	elements: NonEmptyArray<T.Pair | T.DictionarySplat>,
-	options: { trailing?: boolean } = {}
+	options: { trailing?: boolean }
 ) {
 	_assertNonEmpty(elements, '_dictionary_elements.elements');
 	const _element = elements;
@@ -3246,8 +3306,8 @@ export function buildDictionaryElements(
 				_element,
 				_trailing_sep,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Pair | T.DictionarySplat>) => buildDictionaryElements(vs, options),
-					trailing: (v: boolean) => buildDictionaryElements(elements, { ...options, trailing: v })
+					$children: (...vs: NonEmptyArray<T.Pair | T.DictionarySplat>) => buildDictionaryElements(options, ...vs),
+					trailing: (v: boolean) => buildDictionaryElements({ ...options, trailing: v }, ...elements)
 				}
 			},
 			{

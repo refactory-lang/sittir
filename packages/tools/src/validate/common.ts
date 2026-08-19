@@ -1666,17 +1666,14 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	if (shape === 'spread') {
 		return factory(...childArgs);
 	}
-	// 'elements' shape: separatedList factory — `(elements, options?:
-	// {separatorKind?, leading?, trailing?})`, distinct from 'spread's
-	// rest-param convention (see classifyFactoryShape).
+	// 'elements' shape: separatedList factory — spread with a LEADING
+	// optional options bag, `(...elements)` / `({separatorKind?, leading?,
+	// trailing?}, ...elements)` — distinct from 'spread's plain rest-param
+	// convention (see classifyFactoryShape).
 	if (shape === 'elements') {
 		const elementsOptions = separatedListFactoryOptions(drilled, opts.kindLiteralText);
-		return (
-			factory as unknown as (
-				elements: readonly unknown[],
-				options?: { separatorKind?: string; leading?: boolean; trailing?: boolean }
-			) => unknown
-		)(childArgs, elementsOptions);
+		const listFactory = factory as unknown as (...args: unknown[]) => unknown;
+		return elementsOptions !== undefined ? listFactory(elementsOptions, ...childArgs) : listFactory(...childArgs);
 	}
 	// 'direct' shape: factory takes one direct value rather than a config
 	// object. Field-backed direct calls use factoryFields metadata; child-

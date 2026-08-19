@@ -407,15 +407,15 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case 'tuple_type':
 			return F.buildTupleType(children[0] as Parameters<typeof F.buildTupleType>[0]);
 		case '_export_specifiers':
-			return F.buildExportSpecifiers(children as Parameters<typeof F.buildExportSpecifiers>[0]);
+			return (F.buildExportSpecifiers as (...args: unknown[]) => unknown)(...children);
 		case '_import_clause_group1':
 			return F.buildImportClauseGroup1(children[0] as Parameters<typeof F.buildImportClauseGroup1>[0]);
 		case '_import_specifiers':
-			return F.buildImportSpecifiers(children as Parameters<typeof F.buildImportSpecifiers>[0]);
+			return (F.buildImportSpecifiers as (...args: unknown[]) => unknown)(...children);
 		case '_tuple_type_members':
-			return F.buildTupleTypeMembers(children as Parameters<typeof F.buildTupleTypeMembers>[0]);
+			return (F.buildTupleTypeMembers as (...args: unknown[]) => unknown)(...children);
 		case 'object_type_content':
-			return F.buildObjectTypeContent(children as Parameters<typeof F.buildObjectTypeContent>[0]);
+			return (F.buildObjectTypeContent as (...args: unknown[]) => unknown)(...children);
 		case '_export_statement_default':
 			return F.buildExportStatementDefault(children[0] as Parameters<typeof F.buildExportStatementDefault>[0]);
 		case '_public_field_definition_declare_first':
@@ -3311,7 +3311,6 @@ export function coerceToObjectTypeContent(
 		const stored = (data as unknown as { _content?: unknown })._content;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildObjectTypeContent(
-			children as Parameters<typeof F.buildObjectTypeContent>[0],
 			{
 				separatorKind: (() => {
 					const sk = (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
@@ -3322,10 +3321,27 @@ export function coerceToObjectTypeContent(
 					._leading_sep,
 				trailing: (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
 					._trailing_sep
-			} as Parameters<typeof F.buildObjectTypeContent>[1]
+			},
+			...(children as unknown as NonEmptyArray<
+				| T.ExportStatement
+				| T.PropertySignature
+				| T.CallSignature
+				| T.ConstructSignature
+				| T.IndexSignature
+				| T.MethodSignature
+			>)
 		);
 	}
-	return F.buildObjectTypeContent(input as Parameters<typeof F.buildObjectTypeContent>[0]);
+	return F.buildObjectTypeContent(
+		...(input as unknown as NonEmptyArray<
+			| T.ExportStatement
+			| T.PropertySignature
+			| T.CallSignature
+			| T.ConstructSignature
+			| T.IndexSignature
+			| T.MethodSignature
+		>)
+	);
 }
 
 export function coerceToHtmlComment(input: string | T.HtmlComment): ReturnType<typeof F.buildHtmlComment> {

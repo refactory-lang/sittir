@@ -362,15 +362,15 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case '_except_clause_group1':
 			return F.buildExceptClauseGroup1(children[0] as Parameters<typeof F.buildExceptClauseGroup1>[0]);
 		case '_argument_list_elements':
-			return F.buildArgumentListElements(children as Parameters<typeof F.buildArgumentListElements>[0]);
+			return (F.buildArgumentListElements as (...args: unknown[]) => unknown)(...children);
 		case '_expression_list_expressions':
-			return F.buildExpressionListExpressions(children as Parameters<typeof F.buildExpressionListExpressions>[0]);
+			return (F.buildExpressionListExpressions as (...args: unknown[]) => unknown)(...children);
 		case '_pattern_list_patterns':
-			return F.buildPatternListPatterns(children as Parameters<typeof F.buildPatternListPatterns>[0]);
+			return (F.buildPatternListPatterns as (...args: unknown[]) => unknown)(...children);
 		case '_slice_group1':
 			return F.buildSliceGroup1(children[0] as Parameters<typeof F.buildSliceGroup1>[0]);
 		case '_dictionary_elements':
-			return F.buildDictionaryElements(children as Parameters<typeof F.buildDictionaryElements>[0]);
+			return (F.buildDictionaryElements as (...args: unknown[]) => unknown)(...children);
 		case 'case_tuple_pattern':
 			return F.buildCaseTuplePattern(...(children as Parameters<typeof F.buildCaseTuplePattern>));
 		case 'case_list_pattern':

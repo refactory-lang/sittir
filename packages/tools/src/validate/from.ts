@@ -403,10 +403,11 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							readData.$text ?? (readData.$span ? entry.source.slice(readData.$span.start, readData.$span.end) : '');
 						factoryResult = (factory as (text: string) => AnyNodeData)(textForFactory);
 					} else if (shape === 'elements') {
-						// separatedList factory: `(elements, options?: {separatorKind?,
-						// leading?, trailing?})` — distinct calling convention from
-						// 'spread's rest-param factories (see classifyFactoryShape's
-						// separatedList case).
+						// separatedList factory: spread with a LEADING optional
+						// options bag — `(...elements)` / `({separatorKind?,
+						// leading?, trailing?}, ...elements)` — distinct calling
+						// convention from 'spread's plain rest-param factories (see
+						// classifyFactoryShape's separatedList case).
 						const config = nodeToConfig(readData, {
 							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,
 							factoryShapes,
@@ -419,12 +420,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						});
 						const elements = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
 						const options = separatedListFactoryOptions(readData, kindLiteralText);
-						factoryResult = (
-							factory as (
-								elements: readonly unknown[],
-								options?: { separatorKind?: string; leading?: boolean; trailing?: boolean }
-							) => AnyNodeData
-						)(elements, options);
+						const listFactory = factory as (...args: unknown[]) => AnyNodeData;
+						factoryResult = options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
 					} else {
 						const config = nodeToConfig(readData, {
 							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,
