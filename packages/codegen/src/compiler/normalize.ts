@@ -414,6 +414,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		derivations: linked.derivations,
 		aliasedHiddenKinds: linked.aliasedHiddenKinds,
 		topLevelAliasBodies: linked.topLevelAliasBodies,
+		terminalAliasWireIds: linked.terminalAliasWireIds,
 		parentAliasedKinds: linked.parentAliasedKinds,
 		visibleAliasTargets: linked.visibleAliasTargets,
 		refineForms: linked.refineForms
@@ -476,6 +477,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		derivations: linked.derivations,
 		aliasedHiddenKinds: linked.aliasedHiddenKinds,
 		topLevelAliasBodies: linked.topLevelAliasBodies,
+		terminalAliasWireIds: linked.terminalAliasWireIds,
 		refineForms: linked.refineForms,
 		parentAliasedKinds: linked.parentAliasedKinds,
 		visibleAliasTargets: linked.visibleAliasTargets

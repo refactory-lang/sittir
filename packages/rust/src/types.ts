@@ -3127,7 +3127,7 @@ export const enum _TypeKind {
 	UnitType = 'unit_type',
 	ArrayType = 'array_type',
 	FunctionType = 'function_type',
-	TypeIdentifier = '_type_identifier',
+	Identifier = 'identifier',
 	MacroInvocation = 'macro_invocation',
 	NeverType = 'never_type',
 	DynamicType = 'dynamic_type',
@@ -6418,7 +6418,7 @@ export type _Type =
 	| UnitType
 	| ArrayType
 	| FunctionType
-	| TypeIdentifier
+	| Identifier
 	| MacroInvocation
 	| DynamicType
 	| BoundedType
@@ -6436,7 +6436,7 @@ export type _TypeTree =
 	| UnitTypeTree
 	| ArrayTypeTree
 	| FunctionTypeTree
-	| TypeIdentifierTree
+	| IdentifierTree
 	| MacroInvocationTree
 	| DynamicTypeTree
 	| BoundedTypeTree

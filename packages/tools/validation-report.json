@@ -1337,12 +1337,12 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "call_expression",
+    "kind": "member_expression",
     "severity": "error",
-    "message": "read/wrap throws: singular slot \"content\" on \"call_expression\" requires one value; got undefined — at 2:4 — near \"bar<T>()\"",
+    "message": "from() diverges: $type: 255 vs 234",
     "stage": "from",
     "code": "from-error",
-    "label": "call_expression"
+    "label": "member_expression"
   },
   {
     "source": "validator",

@@ -326,6 +326,7 @@ export const primaryType = {
 		strict: F.buildParenthesizedType
 	}),
 	predefined: F.buildPredefinedType,
+	identifier: F.buildIdentifier,
 	nestedType: _attach(FR.coerceToNestedTypeIdentifier, {
 		from: FR.coerceToNestedTypeIdentifier,
 		strict: F.buildNestedTypeIdentifier

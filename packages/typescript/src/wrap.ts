@@ -906,8 +906,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'unknown',
 		'never',
 		'anon_object',
-		'_type_identifier',
-		'type_identifier',
+		'identifier',
 		'nested_type_identifier',
 		'generic_type',
 		'object_type',
@@ -952,8 +951,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'unknown',
 		'never',
 		'anon_object',
-		'_type_identifier',
-		'type_identifier',
+		'identifier',
 		'nested_type_identifier',
 		'generic_type',
 		'object_type',
@@ -992,8 +990,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'unknown',
 		'never',
 		'anon_object',
-		'_type_identifier',
-		'type_identifier',
+		'identifier',
 		'nested_type_identifier',
 		'generic_type',
 		'object_type',
@@ -7161,7 +7158,7 @@ export function wrapImplementsClause(data: T.ImplementsClause, tree: TreeHandle)
 					'primary_type',
 					'parenthesized_type',
 					'predefined_type',
-					'_type_identifier',
+					'identifier',
 					'nested_type_identifier',
 					'generic_type',
 					'object_type',
@@ -8598,8 +8595,7 @@ export function wrapPrimaryType(
 	const kindKeyed = _firstKindKeyedWrapChild(data, [
 		'parenthesized_type',
 		'predefined_type',
-		'_type_identifier',
-		'type_identifier',
+		'identifier',
 		'nested_type_identifier',
 		'generic_type',
 		'object_type',
@@ -8622,8 +8618,7 @@ export function wrapPrimaryType(
 		_filterWrapChildrenByKind(data.$other, [
 			'parenthesized_type',
 			'predefined_type',
-			'_type_identifier',
-			'type_identifier',
+			'identifier',
 			'nested_type_identifier',
 			'generic_type',
 			'object_type',
@@ -8657,10 +8652,11 @@ export function wrapPrimaryType(
 
 export function wrapTemplateType(
 	data: T.TemplateType & {
+		readonly _type_identifier?: T.PrimaryType | T.InferType;
 		readonly _this_type?: T.PrimaryType | T.InferType;
 		readonly _parenthesized_type?: T.PrimaryType | T.InferType;
 		readonly _predefined_type?: T.PrimaryType | T.InferType;
-		readonly _type_identifier?: T.PrimaryType | T.InferType;
+		readonly _identifier?: T.PrimaryType | T.InferType;
 		readonly _nested_type_identifier?: T.PrimaryType | T.InferType;
 		readonly _generic_type?: T.PrimaryType | T.InferType;
 		readonly _object_type?: T.PrimaryType | T.InferType;
@@ -8689,6 +8685,7 @@ export function wrapTemplateType(
 				'_existential_type',
 				'_flow_maybe_type',
 				'_generic_type',
+				'_identifier',
 				'_index_type_query',
 				'_infer_type',
 				'_intersection_type',
@@ -8709,10 +8706,11 @@ export function wrapTemplateType(
 			$type: TSKindId.TemplateType as const,
 			_content: normalizeSingularWrapSlot(
 				data._content ??
+					data._type_identifier ??
 					data._this_type ??
 					data._parenthesized_type ??
 					data._predefined_type ??
-					data._type_identifier ??
+					data._identifier ??
 					data._nested_type_identifier ??
 					data._generic_type ??
 					data._object_type ??
@@ -8737,7 +8735,10 @@ export function wrapTemplateType(
 			),
 
 			content() {
-				return drillAs<T.PrimaryType | T.InferType>(this._content, tree, [{ from: 'this_type', to: 'this' }]);
+				return drillAs<T.PrimaryType | T.InferType>(this._content, tree, [
+					{ from: '_type_identifier', to: 'identifier' },
+					{ from: 'this_type', to: 'this' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.TemplateType['_content']>) => wrapTemplateType({ ...data, _content: v }, tree)
@@ -9293,7 +9294,10 @@ export function wrapIndexTypeQuery(data: T.IndexTypeQuery, tree: TreeHandle) {
 			}),
 
 			primaryType() {
-				return drillAs<T.PrimaryType>(this._primary_type, tree, [{ from: 'this_type', to: 'this' }]);
+				return drillAs<T.PrimaryType>(this._primary_type, tree, [
+					{ from: '_type_identifier', to: 'identifier' },
+					{ from: 'this_type', to: 'this' }
+				]);
 			},
 			$with: {
 				primaryType: (v: NonNullable<T.IndexTypeQuery['_primary_type']>) =>
@@ -9324,7 +9328,10 @@ export function wrapLookupType(data: T.LookupType, tree: TreeHandle) {
 			}),
 
 			primaryType() {
-				return drillAs<T.PrimaryType>(this._primary_type, tree, [{ from: 'this_type', to: 'this' }]);
+				return drillAs<T.PrimaryType>(this._primary_type, tree, [
+					{ from: '_type_identifier', to: 'identifier' },
+					{ from: 'this_type', to: 'this' }
+				]);
 			},
 			indexType() {
 				return drillAs<T.Type>(this._index_type, tree, [
@@ -9489,7 +9496,10 @@ export function wrapFlowMaybeType(data: T.FlowMaybeType, tree: TreeHandle) {
 			}),
 
 			primaryType() {
-				return drillAs<T.PrimaryType>(this._primary_type, tree, [{ from: 'this_type', to: 'this' }]);
+				return drillAs<T.PrimaryType>(this._primary_type, tree, [
+					{ from: '_type_identifier', to: 'identifier' },
+					{ from: 'this_type', to: 'this' }
+				]);
 			},
 			$with: {
 				primaryType: (v: NonNullable<T.FlowMaybeType['_primary_type']>) =>
@@ -10064,7 +10074,10 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle) {
 			}),
 
 			primaryType() {
-				return drillAs<T.PrimaryType>(this._primary_type, tree, [{ from: 'this_type', to: 'this' }]);
+				return drillAs<T.PrimaryType>(this._primary_type, tree, [
+					{ from: '_type_identifier', to: 'identifier' },
+					{ from: 'this_type', to: 'this' }
+				]);
 			},
 			$with: {
 				primaryType: (v: NonNullable<T.ArrayType['_primary_type']>) =>
@@ -12946,6 +12959,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 };
 
 const _aliasTargetToSource: Record<string, string> = {
+	__type_identifier: 'identifier',
 	_call_expression: '_type_query_call_expression_in_type_annotation',
 	_member_expression: 'nested_identifier',
 	_optional_parameter: 'optional_tuple_parameter',

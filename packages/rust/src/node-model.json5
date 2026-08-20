@@ -207,30 +207,37 @@
       "field_identifier": "identifier"
     },
     "field_declaration.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "const_item.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "static_item.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "type_item.name": {
       "type_identifier": "identifier"
     },
     "type_item.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "function_item.return_type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "function_signature_item.return_type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "where_predicate.left": {
       "type_identifier": "identifier"
     },
     "impl_item.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "trait_item.name": {
@@ -240,45 +247,58 @@
       "type_identifier": "identifier"
     },
     "trait_bounds.bounds": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "higher_ranked_trait_bound.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "removed_trait_bound.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "const_parameter.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "type_parameter.name": {
       "type_identifier": "identifier"
     },
     "type_parameter.default_type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "let_declaration.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "parameter.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "bracketed_type.content": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "qualified_type.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "qualified_type.alias": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "array_type.element": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "function_type.return_type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "tuple_type.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "generic_type.type": {
@@ -288,21 +308,26 @@
       "type_identifier": "identifier"
     },
     "bounded_type.left": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "bounded_type.right": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "type_binding.name": {
       "type_identifier": "identifier"
     },
     "type_binding.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "reference_type.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "pointer_type.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "abstract_type.trait": {
@@ -327,6 +352,7 @@
       "type_identifier": "identifier"
     },
     "type_cast_expression.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "struct_expression.name": {
@@ -364,12 +390,15 @@
       "token_tree": "delim_token_tree"
     },
     "_function_item_optional1.return_type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_type_parameter_optional1.default_type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_let_declaration_optional1.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_use_bounds_elements.element": {
@@ -388,6 +417,7 @@
       "type_identifier": "identifier"
     },
     "_closure_expression_block.return_type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_field_pattern_named.name": {
@@ -412,12 +442,15 @@
       "token_tree": "delim_token_tree"
     },
     "_attributed_parameter.content": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_attributed_ordered_field.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_type_argument.content": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     }
   },
@@ -7762,13 +7795,13 @@
       "hidden": true,
       "subtypes": [
         "_primitive_type",
-        "_type_identifier",
         "abstract_type",
         "array_type",
         "bounded_type",
         "dynamic_type",
         "function_type",
         "generic_type",
+        "identifier",
         "macro_invocation",
         "metavariable",
         "never_type",

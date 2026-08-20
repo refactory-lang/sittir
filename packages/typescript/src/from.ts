@@ -823,7 +823,7 @@ const _K33: readonly string[] = [
 	'_public_field_definition_abstract_first',
 	'_public_field_definition_readonly_first'
 ];
-const _K34: readonly string[] = ['predefined_type', '_type_identifier', 'this'];
+const _K34: readonly string[] = ['predefined_type', 'identifier', 'this'];
 const _K35: readonly string[] = [
 	'parenthesized_type',
 	'nested_type_identifier',

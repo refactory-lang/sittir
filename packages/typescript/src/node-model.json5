@@ -337,6 +337,7 @@
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "template_type.content": {
+      "_type_identifier": "identifier",
       "this_type": "this"
     },
     "infer_type.type_identifier": {
@@ -397,9 +398,11 @@
       "instantiation_expression": "_type_query_instantiation_expression"
     },
     "index_type_query.primary_type": {
+      "_type_identifier": "identifier",
       "this_type": "this"
     },
     "lookup_type.primary_type": {
+      "_type_identifier": "identifier",
       "this_type": "this"
     },
     "lookup_type.index_type": {
@@ -421,6 +424,7 @@
       "unary_expression": "_number"
     },
     "flow_maybe_type.primary_type": {
+      "_type_identifier": "identifier",
       "this_type": "this"
     },
     "parenthesized_type.type": {
@@ -439,6 +443,7 @@
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "array_type.primary_type": {
+      "_type_identifier": "identifier",
       "this_type": "this"
     },
     "readonly_type.type": {
@@ -20152,12 +20157,12 @@
       "irKey": "primaryType",
       "hidden": true,
       "subtypes": [
-        "_type_identifier",
         "array_type",
         "conditional_type",
         "existential_type",
         "flow_maybe_type",
         "generic_type",
+        "identifier",
         "index_type_query",
         "intersection_type",
         "literal_type",

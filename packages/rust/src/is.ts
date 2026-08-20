@@ -585,9 +585,7 @@ const _supertype_tokens_ids = new Set<number>([
 ]);
 const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 347, 348]);
 const _supertype_useClause_ids = new Set<number>([133, 1, 136, 134, 135, 244, 209, 208, 207, 210]);
-const _supertype_type_ids = new Set<number>([
-	236, 233, 136, 234, 227, 246, 224, 225, 221, 223, 439, 240, 237, 229, 199
-]);
+const _supertype_type_ids = new Set<number>([236, 233, 136, 234, 227, 246, 224, 225, 221, 223, 1, 240, 237, 229, 199]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
 	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 123, 314, 121, 151, 1, 133, 244, 226, 288, 289, 259, 261,
 	240, 262, 285, 286, 287, 136, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281

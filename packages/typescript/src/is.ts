@@ -651,7 +651,7 @@ const _supertype_importIdentifier_ids = new Set<number>([1]);
 const _supertype_type_ids = new Set<number>([352, 349, 314, 318, 304, 305]);
 const _supertype_tupleTypeMember_ids = new Set<number>([309, 310, 311, 312]);
 const _supertype_primaryType_ids = new Set<number>([
-	335, 336, 450, 288, 320, 338, 347, 348, 334, 327, 328, 100, 331, 329, 319, 317, 351, 350
+	335, 336, 1, 288, 320, 338, 347, 348, 334, 327, 328, 100, 331, 329, 319, 317, 351, 350
 ]);
 
 const _kindIdByKind = new Map<string, number>([

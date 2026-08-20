@@ -4842,22 +4842,19 @@ function _buildLifetimes(elements: NonEmptyArray<T.Lifetime>, options: { trailin
 }
 
 export function buildUseBoundsElements(
-	...elements: NonEmptyArray<T.Lifetime | T.TypeIdentifier>
+	...elements: NonEmptyArray<T.Lifetime | T.Identifier>
 ): ReturnType<typeof _buildUseBoundsElements>;
 export function buildUseBoundsElements(
 	options: { trailing?: boolean },
-	...elements: NonEmptyArray<T.Lifetime | T.TypeIdentifier>
+	...elements: NonEmptyArray<T.Lifetime | T.Identifier>
 ): ReturnType<typeof _buildUseBoundsElements>;
-export function buildUseBoundsElements(...args: ({ trailing?: boolean } | (T.Lifetime | T.TypeIdentifier))[]) {
+export function buildUseBoundsElements(...args: ({ trailing?: boolean } | (T.Lifetime | T.Identifier))[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
 	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Lifetime | T.TypeIdentifier>;
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Lifetime | T.Identifier>;
 	return _buildUseBoundsElements(elements, options);
 }
-function _buildUseBoundsElements(
-	elements: NonEmptyArray<T.Lifetime | T.TypeIdentifier>,
-	options: { trailing?: boolean }
-) {
+function _buildUseBoundsElements(elements: NonEmptyArray<T.Lifetime | T.Identifier>, options: { trailing?: boolean }) {
 	_assertNonEmpty(elements, '_use_bounds_elements.elements');
 	const _element = elements;
 	const _trailing_sep = options.trailing ?? false;
@@ -4870,7 +4867,7 @@ function _buildUseBoundsElements(
 				_element,
 				_trailing_sep,
 				$with: {
-					$children: (...vs: NonEmptyArray<T.Lifetime | T.TypeIdentifier>) => buildUseBoundsElements(options, ...vs),
+					$children: (...vs: NonEmptyArray<T.Lifetime | T.Identifier>) => buildUseBoundsElements(options, ...vs),
 					trailing: (v: boolean) => buildUseBoundsElements({ ...options, trailing: v }, ...elements)
 				}
 			},

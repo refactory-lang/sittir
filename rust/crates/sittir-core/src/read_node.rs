@@ -54,12 +54,25 @@ pub fn read_node(
     read_ts_node(node, source, node_handle)
 }
 
+/// The `$type` every read stamps: tree-sitter's pre-alias GRAMMAR symbol —
+/// the production rule that actually parsed the node. For `alias($.X, $.Y)`
+/// occurrences this recovers `X`, so aliased nodes arrive on the wire
+/// already under their source identity and no per-field restamp is needed.
+/// The alias/display symbol is presentation: a role the node plays at its
+/// position, which the position (the consuming slot) already encodes —
+/// acceptance sets and slot keying carry the source ids so no consumer
+/// needs the display symbol as identity.
+fn stamped_kind(node: &tree_sitter::Node<'_>) -> KindId {
+    KindId(node.grammar_id())
+}
+
 /// One-level read core — converts a tree-sitter `Node` into `NodeData`.
 fn read_ts_node(node: tree_sitter::Node<'_>, source: &str, node_handle: Option<u32>) -> NodeData {
-    // Phase B-inverse: use tree-sitter's numeric kind_id() directly instead
-    // of the string kind() so NodeData.type_: KindId flows end-to-end without
-    // a heap-allocated String per node.
-    let kind = KindId(node.kind_id());
+    // Phase B-inverse: numeric ids directly instead of the string kind()
+    // so NodeData.type_: KindId flows end-to-end without a heap-allocated
+    // String per node; identity comes from the grammar symbol (see
+    // `stamped_kind`).
+    let kind = stamped_kind(&node);
 
     let named = node.is_named();
     let byte_range = node.byte_range();
@@ -269,7 +282,7 @@ fn read_child_stub(
 ) -> NodeData {
     let byte_range = child.byte_range();
     NodeData {
-        type_: KindId(child.kind_id()),
+        type_: stamped_kind(&child),
         source: Source::Ts,
         named: child.is_named(),
         fields: None,
@@ -288,7 +301,7 @@ fn read_child_stub(
 fn read_materialized_leaf(child: tree_sitter::Node<'_>, source: &str) -> NodeData {
     let byte_range = child.byte_range();
     NodeData {
-        type_: KindId(child.kind_id()),
+        type_: stamped_kind(&child),
         source: Source::Ts,
         named: child.is_named(),
         fields: None,

@@ -680,7 +680,7 @@ const _K12: readonly string[] = [
 	'const_block',
 	'range_expression'
 ];
-const _K13: readonly string[] = ['metavariable', 'unit_type', '_type_identifier', '_primitive_type'];
+const _K13: readonly string[] = ['metavariable', 'unit_type', 'identifier', '_primitive_type'];
 const _K14: readonly string[] = [
 	'abstract_type',
 	'reference_type',

@@ -2631,6 +2631,15 @@ function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[]
 		const literalId = findKindEntryForLiteral(kindEntries, node.fixedLiteralText)?.id;
 		if (literalId !== undefined) acceptedIds.push(literalId);
 	}
+	// Anon-token occurrences aliased to this kind (`alias('match',
+	// $.identifier)` — soft keywords as names): the wire delivers the
+	// TOKEN's own grammar-symbol id there, and supertype expansion swallows
+	// the occurrence (only the kind survives as a subtype), so the token
+	// ids reach decode arms only through this kind-level stamp.
+	const terminalIds = nodeMap?.terminalAliasWireIds?.get(kind);
+	if (terminalIds !== undefined) {
+		for (const id of terminalIds) if (!acceptedIds.includes(id)) acceptedIds.push(id);
+	}
 	return acceptedIds;
 }
 

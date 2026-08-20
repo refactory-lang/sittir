@@ -3275,7 +3275,7 @@ export const enum TupleTypeMemberKind {
 export const enum PrimaryTypeKind {
 	ParenthesizedType = 'parenthesized_type',
 	PredefinedType = 'predefined_type',
-	TypeIdentifier = '_type_identifier',
+	Identifier = 'identifier',
 	NestedTypeIdentifier = 'nested_type_identifier',
 	GenericType = 'generic_type',
 	ObjectType = 'object_type',
@@ -6858,7 +6858,7 @@ export type TupleTypeMemberTree =
 export type PrimaryType =
 	| ParenthesizedType
 	| PredefinedType
-	| TypeIdentifier
+	| Identifier
 	| NestedTypeIdentifier
 	| GenericType
 	| ObjectType
@@ -6878,7 +6878,7 @@ export type PrimaryType =
 export type PrimaryTypeTree =
 	| ParenthesizedTypeTree
 	| PredefinedTypeTree
-	| TypeIdentifierTree
+	| IdentifierTree
 	| NestedTypeIdentifierTree
 	| GenericTypeTree
 	| ObjectTypeTree

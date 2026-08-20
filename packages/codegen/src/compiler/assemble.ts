@@ -524,6 +524,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			nodeByRuleId,
 			slotByRuleId,
 			aliasedHiddenKinds: normalized.aliasedHiddenKinds,
+			terminalAliasWireIds: normalized.terminalAliasWireIds,
 			signatures: computeSignatures(nodes),
 			derivations: normalized.derivations,
 			linkRules: normalized.linkRules,

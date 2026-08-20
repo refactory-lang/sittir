@@ -181,6 +181,7 @@ export const type = {
 	unit: F.buildUnitType,
 	array: _attach(FR.coerceToArrayType, { from: FR.coerceToArrayType, strict: F.buildArrayType }),
 	function: _attach(FR.coerceToFunctionType, { from: FR.coerceToFunctionType, strict: F.buildFunctionType }),
+	identifier: F.buildIdentifier,
 	macro: _attach(FR.coerceToMacroInvocation, { from: FR.coerceToMacroInvocation, strict: F.buildMacroInvocation }),
 	dynamic: _attach(FR.coerceToDynamicType, { from: FR.coerceToDynamicType, strict: F.buildDynamicType }),
 	bounded: _attach(FR.coerceToBoundedType, { from: FR.coerceToBoundedType, strict: F.buildBoundedType }),
