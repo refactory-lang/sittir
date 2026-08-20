@@ -25,7 +25,10 @@ function branch(type: string, text: string, children: TSNode[]): TSNode {
 }
 
 describe('astStructuralDiff leaf-kind tolerance', () => {
-	const tsPairs = LEAF_ALIAS_TOLERANCE_BY_GRAMMAR['typescript'];
+	// Synthetic allowlist exercising the mechanism — the SHIPPED table is
+	// empty (see the empty-table ratchet below); context-faithful reparse
+	// wrappers cover the known positional cases instead.
+	const tsPairs = new Set([leafAliasKey('identifier', 'super')]);
 
 	it('tolerates an allowlisted same-text leaf pair (identifier/super, both orders)', () => {
 		expect(astStructuralDiff(leaf('identifier', 'super'), leaf('super', 'super'), NO_EXTRAS, '', undefined, undefined, tsPairs)).toBeNull();
@@ -66,5 +69,16 @@ describe('astStructuralDiff leaf-kind tolerance', () => {
 describe('leafAliasKey', () => {
 	it('is order-insensitive', () => {
 		expect(leafAliasKey('identifier', 'super')).toBe(leafAliasKey('super', 'identifier'));
+	});
+});
+
+describe('LEAF_ALIAS_TOLERANCE_BY_GRAMMAR', () => {
+	it('ships empty — context-faithful reparse wrappers make leaf-kind tolerance unnecessary', () => {
+		// Ratchet: adding a tolerated pair requires the audit documented on
+		// the table (instrument, run validate:native on all grammars, list
+		// only pairs no wrapper can express) — and updating this test.
+		for (const [grammar, pairs] of Object.entries(LEAF_ALIAS_TOLERANCE_BY_GRAMMAR)) {
+			expect({ grammar, pairs: [...pairs] }).toEqual({ grammar, pairs: [] });
+		}
 	});
 });

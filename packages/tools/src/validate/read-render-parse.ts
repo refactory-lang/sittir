@@ -222,20 +222,22 @@ function collectVisibleChildren(n: TSNode, namedExtras: ReadonlySet<string>): TS
 }
 
 /**
- * Same-text leaf kind pairs the AST compare tolerates, per grammar — the
- * audited allowlist for positional leaf re-classification between an
- * upstream variant-aliased context and the canonical rule the reparse
- * wrapper routes through: `super` inside `@(super.decorate)` lexes as a
- * plain `identifier` in decorator context but as a `super` node in
- * expression context. Both parses cover identical bytes; leaf
- * classification is positional, not content. A pair NOT listed here
- * fails the compare even when the bytes match — an unlisted same-text
- * kind swap is a real regression signal, not alias noise. Keys are
- * order-insensitive via {@link leafAliasKey}.
+ * Same-text leaf kind pairs the AST compare tolerates, per grammar — an
+ * audited allowlist for positional leaf re-classification the reparse
+ * wrapper genuinely cannot reproduce. A pair NOT listed here fails the
+ * compare even when the bytes match — an unlisted same-text kind swap is
+ * a real regression signal, not alias noise. Keys are order-insensitive
+ * via {@link leafAliasKey}.
+ *
+ * Currently EMPTY: every known positional case is handled by a
+ * context-faithful reparse wrapper instead (the decorator variant family
+ * wraps in a real `@…` position — see `REPARSE_WRAPPERS.typescript`), so
+ * leaf classification matches exactly. Adding an entry here requires the
+ * same audit that emptied it: instrument the tolerance, run
+ * validate:native across all grammars, and list only pairs whose context
+ * a wrapper cannot express.
  */
-export const LEAF_ALIAS_TOLERANCE_BY_GRAMMAR: Record<string, ReadonlySet<string>> = {
-	typescript: new Set(['identifier|super'])
-};
+export const LEAF_ALIAS_TOLERANCE_BY_GRAMMAR: Record<string, ReadonlySet<string>> = {};
 
 export function leafAliasKey(a: string, b: string): string {
 	return a < b ? `${a}|${b}` : `${b}|${a}`;

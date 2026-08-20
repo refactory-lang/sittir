@@ -40688,9 +40688,9 @@
     "pattern": "decorator_call_expression",
     "edits": [],
     "expectedSourceOut": "bar<T>()",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments)))",
-    "wrappedText": "let _ = bar<T>();",
-    "wrappedOffset": 8
+    "expectedReparseTree": "(call_expression function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments))",
+    "wrappedText": "@bar<T>()\nclass _W {}",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -43039,9 +43039,9 @@
     "pattern": "decorator_call_expression",
     "edits": [],
     "expectedSourceOut": "bar.buzz(grue)",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier))))",
-    "wrappedText": "let _ = bar.buzz(grue);",
-    "wrappedOffset": 8
+    "expectedReparseTree": "(call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))",
+    "wrappedText": "@bar.buzz(grue)\nclass _W {}",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -43075,8 +43075,8 @@
     "edits": [],
     "expectedSourceOut": "bar.buzz",
     "expectedReparseTree": "(member_expression object: (identifier) property: (property_identifier))",
-    "wrappedText": "let _ = bar.buzz;",
-    "wrappedOffset": 8
+    "wrappedText": "@bar.buzz\nclass _W {}",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -50383,9 +50383,9 @@
     "pattern": "decorator_parenthesized_expression",
     "edits": [],
     "expectedSourceOut": "(super.decorate)",
-    "expectedReparseTree": "(parenthesized_expression (parenthesized_expression_typed (member_expression object: (super) property: (property_identifier))))",
-    "wrappedText": "let _ = (super.decorate);",
-    "wrappedOffset": 8
+    "expectedReparseTree": "(parenthesized_expression (member_expression object: (identifier) property: (property_identifier)))",
+    "wrappedText": "@(super.decorate)\nclass _W {}",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -50418,9 +50418,9 @@
     "pattern": "decorator_member_expression",
     "edits": [],
     "expectedSourceOut": "super.decorate",
-    "expectedReparseTree": "(member_expression object: (super) property: (property_identifier))",
-    "wrappedText": "let _ = super.decorate;",
-    "wrappedOffset": 8
+    "expectedReparseTree": "(member_expression object: (identifier) property: (property_identifier))",
+    "wrappedText": "@super.decorate\nclass _W {}",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",

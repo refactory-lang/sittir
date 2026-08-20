@@ -781,6 +781,19 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		// declaration so the alias re-fires and reparse produces
 		// interface_body for AST-match parity.
 		interface_body: (r) => `interface _I ${r}`,
+		// Alias-position wrappers for the decorator variant family:
+		// `_decorator_member_expression` / `_decorator_call_expression` /
+		// `_decorator_parenthesized_expression` are restricted rules that
+		// exist only after `@`, and their member-object position admits
+		// `identifier` but not `super` — so in `@(super.decorate)` the word
+		// `super` lexes as a plain identifier. The generic `let _ = ${r};`
+		// expression wrapper reparses the same bytes where `super` is a
+		// `super` node, producing a leaf kind mismatch that is pure
+		// wrapper-context infidelity, not a render defect. Reparse in a real
+		// decorator position so leaf classification matches the original.
+		decorator_member_expression: (r) => `@${r}\nclass _W {}`,
+		decorator_call_expression: (r) => `@${r}\nclass _W {}`,
+		decorator_parenthesized_expression: (r) => `@${r}\nclass _W {}`,
 		// Kind-specific: `rest_pattern` (`...x`) appears in array
 		// destructuring, tuple types (TS), and parameter lists. The
 		// generic `pattern` wrapper `let ${r} = null;` produces a
