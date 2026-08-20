@@ -21,6 +21,7 @@ import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
 	loadKindNameFromId,
+	loadCanonicalKindNameFromId,
 	loadKindNames,
 	loadKindIdFromName,
 	buildReadHandle,
@@ -554,6 +555,7 @@ export async function validateReadRenderParse(
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
+	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
 	const variantChildKinds = await loadVariantChildKindsByOwner(grammar);
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
@@ -733,10 +735,14 @@ export async function validateReadRenderParse(
 							writeSync(2, `[dump-render] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} rendered=${JSON.stringify(rendered)}\n`);
 						}
 
-						// Wrap for reparse using supertype context
+						// Wrap for reparse using supertype context. `sourceKind` is the
+						// candidate's canonical catalog name — display names are
+						// non-injective at alias-source kinds, and only the source
+						// identity can pick the right context there.
 						const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
 							adoptedVariantKinds: adoptedVariantKindNames,
-							targetKind
+							targetKind,
+							sourceKind: canonicalKindNameFromId?.(cand.node.$type)
 						});
 						if (wrapped === null) continue; // no supertype - skip this candidate
 						// Skip candidates whose render produces only whitespace: an

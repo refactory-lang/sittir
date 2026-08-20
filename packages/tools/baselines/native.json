@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "d75908c",
+    "commit": "80d4660",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -46,8 +46,8 @@
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
-                "pass": 1472,
-                "total": 1472
+                "pass": 1482,
+                "total": 1482
             },
             "validators": {
                 "coverage": {
@@ -72,10 +72,8 @@
                     "total": 146
                 },
                 "roundtrip": {
-                    "astMatchPass": 132,
-                    "failingKinds": [
-                        "token_tree"
-                    ],
+                    "astMatchPass": 133,
+                    "failingKinds": [],
                     "formatDeferredKinds": [],
                     "pass": 133,
                     "total": 136
@@ -127,7 +125,7 @@
     },
     "totals": {
         "fail": 27,
-        "pass": 9543,
-        "total": 9570
+        "pass": 9553,
+        "total": 9580
     }
 }

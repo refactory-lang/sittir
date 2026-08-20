@@ -85192,8 +85192,8 @@
     "edits": [],
     "expectedSourceOut": "game::User",
     "expectedReparseTree": "(scoped_type_identifier path: (identifier) name: (type_identifier))",
-    "wrappedText": "type _X = game::User;",
-    "wrappedOffset": 10
+    "wrappedText": "fn _f() { let _ = game::User { val: 1 }; }",
+    "wrappedOffset": 18
   },
   {
     "kind": "render",
@@ -119925,6 +119925,831 @@
     "expectedReparseTree": "(macro_definition name: (identifier) (macro_definition_bracket (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren)) right: (token_tree (token_tree_brace))))))",
     "wrappedText": "macro_rules!empty[()=>{  };];",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 168,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 35,
+        "end": 70
+      },
+      "$nodeHandle": 12,
+      "_content": {
+        "$type": 392,
+        "$source": 0,
+        "$named": true,
+        "_tokens": [
+          "println",
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": "!",
+            "$span": {
+              "start": 52,
+              "end": 53
+            },
+            "$nodeHandle": 429
+          },
+          {
+            "$type": 168,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 53,
+              "end": 63
+            },
+            "$nodeHandle": 430,
+            "_content": {
+              "$type": 392,
+              "$source": 0,
+              "$named": true,
+              "_tokens": [
+                {
+                  "$type": 312,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_open": "\"",
+                  "_elements": [
+                    "Hello!"
+                  ],
+                  "$other": [
+                    122
+                  ],
+                  "$span": {
+                    "start": 54,
+                    "end": 62
+                  },
+                  "$nodeHandle": 435
+                }
+              ],
+              "$other": [
+                7,
+                8
+              ],
+              "$span": {
+                "start": 53,
+                "end": 63
+              },
+              "$nodeHandle": 433
+            }
+          },
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": ";",
+            "$span": {
+              "start": 63,
+              "end": 64
+            },
+            "$nodeHandle": 432
+          }
+        ],
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 35,
+          "end": 70
+        },
+        "$nodeHandle": 426
+      }
+    },
+    "expectedOutput": "(println!(\"Hello!\");)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(\n        println!(\"Hello!\");\n    )",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(println!(\"Hello!\");)",
+    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))) tokens: (token_pattern_group1 (token_tree_punctuation))))",
+    "wrappedText": "macro_rules! _m { () => (println!(\"Hello!\");) }",
+    "wrappedOffset": 24
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 168,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 53,
+        "end": 63
+      },
+      "$nodeHandle": 17,
+      "_content": {
+        "$type": 392,
+        "$source": 0,
+        "$named": true,
+        "_tokens": [
+          {
+            "$type": 312,
+            "$source": 0,
+            "$named": true,
+            "_string_open": "\"",
+            "_elements": [
+              "Hello!"
+            ],
+            "$other": [
+              122
+            ],
+            "$span": {
+              "start": 54,
+              "end": 62
+            },
+            "$nodeHandle": 438
+          }
+        ],
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 53,
+          "end": 63
+        },
+        "$nodeHandle": 436
+      }
+    },
+    "expectedOutput": "(\"Hello!\")"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(\"Hello!\")",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(\"Hello!\")",
+    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))",
+    "wrappedText": "macro_rules! _m { () => (\"Hello!\") }",
+    "wrappedOffset": 24
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 168,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 104,
+        "end": 111
+      },
+      "$nodeHandle": 28,
+      "_content": {
+        "$type": 394,
+        "$source": 0,
+        "$named": true,
+        "_tokens": [
+          "1",
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": "+",
+            "$span": {
+              "start": 107,
+              "end": 108
+            },
+            "$nodeHandle": 442
+          },
+          "3"
+        ],
+        "$other": [
+          50,
+          51
+        ],
+        "$span": {
+          "start": 104,
+          "end": 111
+        },
+        "$nodeHandle": 439
+      }
+    },
+    "expectedOutput": "{ 1+3 }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{1 + 3}",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "{ 1+3 }",
+    "expectedReparseTree": "(token_tree (token_tree_brace tokens: (token_pattern_group1 (integer_literal)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_pattern_group1 (integer_literal))))",
+    "wrappedText": "macro_rules! _m { () => { 1+3 } }",
+    "wrappedOffset": 24
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 168,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 157,
+        "end": 185
+      },
+      "$nodeHandle": 44,
+      "_content": {
+        "$type": 392,
+        "$source": 0,
+        "$named": true,
+        "_tokens": [
+          "println",
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": "!",
+            "$span": {
+              "start": 165,
+              "end": 166
+            },
+            "$nodeHandle": 447
+          },
+          {
+            "$type": 168,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 166,
+              "end": 184
+            },
+            "$nodeHandle": 448,
+            "_content": {
+              "$type": 392,
+              "$source": 0,
+              "$named": true,
+              "_tokens": [
+                {
+                  "$type": 312,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_open": "\"",
+                  "_elements": [
+                    "mode X: {}"
+                  ],
+                  "$other": [
+                    122
+                  ],
+                  "$span": {
+                    "start": 167,
+                    "end": 179
+                  },
+                  "$nodeHandle": 451
+                },
+                {
+                  "$type": 347,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ",",
+                  "$span": {
+                    "start": 179,
+                    "end": 180
+                  },
+                  "$nodeHandle": 453
+                },
+                {
+                  "$type": 136,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "$e",
+                  "$span": {
+                    "start": 181,
+                    "end": 183
+                  }
+                }
+              ],
+              "$other": [
+                7,
+                8
+              ],
+              "$span": {
+                "start": 166,
+                "end": 184
+              },
+              "$nodeHandle": 449
+            }
+          }
+        ],
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 157,
+          "end": 185
+        },
+        "$nodeHandle": 444
+      }
+    },
+    "expectedOutput": "(println!(\"mode X: {}\",$e))"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(println!(\"mode X: {}\", $e))",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(println!(\"mode X: {}\",$e))",
+    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))))",
+    "wrappedText": "macro_rules! _m { () => (println!(\"mode X: {}\",$e)) }",
+    "wrappedOffset": 24
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 168,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 166,
+        "end": 184
+      },
+      "$nodeHandle": 49,
+      "_content": {
+        "$type": 392,
+        "$source": 0,
+        "$named": true,
+        "_tokens": [
+          {
+            "$type": 312,
+            "$source": 0,
+            "$named": true,
+            "_string_open": "\"",
+            "_elements": [
+              "mode X: {}"
+            ],
+            "$other": [
+              122
+            ],
+            "$span": {
+              "start": 167,
+              "end": 179
+            },
+            "$nodeHandle": 456
+          },
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": ",",
+            "$span": {
+              "start": 179,
+              "end": 180
+            },
+            "$nodeHandle": 458
+          },
+          {
+            "$type": 136,
+            "$source": 0,
+            "$named": true,
+            "$text": "$e",
+            "$span": {
+              "start": 181,
+              "end": 183
+            }
+          }
+        ],
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 166,
+          "end": 184
+        },
+        "$nodeHandle": 454
+      }
+    },
+    "expectedOutput": "(\"mode X: {}\",$e)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(\"mode X: {}\", $e)",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(\"mode X: {}\",$e)",
+    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))",
+    "wrappedText": "macro_rules! _m { () => (\"mode X: {}\",$e) }",
+    "wrappedOffset": 24
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 168,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 209,
+        "end": 237
+      },
+      "$nodeHandle": 61,
+      "_content": {
+        "$type": 392,
+        "$source": 0,
+        "$named": true,
+        "_tokens": [
+          "println",
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": "!",
+            "$span": {
+              "start": 217,
+              "end": 218
+            },
+            "$nodeHandle": 462
+          },
+          {
+            "$type": 168,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 218,
+              "end": 236
+            },
+            "$nodeHandle": 463,
+            "_content": {
+              "$type": 392,
+              "$source": 0,
+              "$named": true,
+              "_tokens": [
+                {
+                  "$type": 312,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_open": "\"",
+                  "_elements": [
+                    "mode Y: {}"
+                  ],
+                  "$other": [
+                    122
+                  ],
+                  "$span": {
+                    "start": 219,
+                    "end": 231
+                  },
+                  "$nodeHandle": 466
+                },
+                {
+                  "$type": 347,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ",",
+                  "$span": {
+                    "start": 231,
+                    "end": 232
+                  },
+                  "$nodeHandle": 468
+                },
+                {
+                  "$type": 136,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "$e",
+                  "$span": {
+                    "start": 233,
+                    "end": 235
+                  }
+                }
+              ],
+              "$other": [
+                7,
+                8
+              ],
+              "$span": {
+                "start": 218,
+                "end": 236
+              },
+              "$nodeHandle": 464
+            }
+          }
+        ],
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 209,
+          "end": 237
+        },
+        "$nodeHandle": 459
+      }
+    },
+    "expectedOutput": "(println!(\"mode Y: {}\",$e))"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(println!(\"mode Y: {}\", $e))",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(println!(\"mode Y: {}\",$e))",
+    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))))",
+    "wrappedText": "macro_rules! _m { () => (println!(\"mode Y: {}\",$e)) }",
+    "wrappedOffset": 24
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 168,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 218,
+        "end": 236
+      },
+      "$nodeHandle": 66,
+      "_content": {
+        "$type": 392,
+        "$source": 0,
+        "$named": true,
+        "_tokens": [
+          {
+            "$type": 312,
+            "$source": 0,
+            "$named": true,
+            "_string_open": "\"",
+            "_elements": [
+              "mode Y: {}"
+            ],
+            "$other": [
+              122
+            ],
+            "$span": {
+              "start": 219,
+              "end": 231
+            },
+            "$nodeHandle": 471
+          },
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": ",",
+            "$span": {
+              "start": 231,
+              "end": 232
+            },
+            "$nodeHandle": 473
+          },
+          {
+            "$type": 136,
+            "$source": 0,
+            "$named": true,
+            "$text": "$e",
+            "$span": {
+              "start": 233,
+              "end": 235
+            }
+          }
+        ],
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 218,
+          "end": 236
+        },
+        "$nodeHandle": 469
+      }
+    },
+    "expectedOutput": "(\"mode Y: {}\",$e)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(\"mode Y: {}\", $e)",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(\"mode Y: {}\",$e)",
+    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))",
+    "wrappedText": "macro_rules! _m { () => (\"mode Y: {}\",$e) }",
+    "wrappedOffset": 24
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 168,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 314,
+        "end": 345
+      },
+      "$nodeHandle": 85,
+      "_content": {
+        "$type": 394,
+        "$source": 0,
+        "$named": true,
+        "_tokens": [
+          {
+            "$type": 169,
+            "$source": 0,
+            "$named": true,
+            "_tokens": [
+              {
+                "$type": 169,
+                "$source": 0,
+                "$named": true,
+                "_tokens": [
+                  {
+                    "$type": 136,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "$x",
+                    "$span": {
+                      "start": 326,
+                      "end": 328
+                    }
+                  },
+                  {
+                    "$type": 347,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "+",
+                    "$span": {
+                      "start": 329,
+                      "end": 330
+                    },
+                    "$nodeHandle": 478
+                  },
+                  {
+                    "$type": 136,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "$e",
+                    "$span": {
+                      "start": 331,
+                      "end": 333
+                    }
+                  }
+                ],
+                "_operator": 11,
+                "$other": [
+                  6,
+                  7,
+                  8
+                ],
+                "$span": {
+                  "start": 324,
+                  "end": 336
+                },
+                "$nodeHandle": 476
+              }
+            ],
+            "_operator": 11,
+            "$other": [
+              6,
+              7,
+              8
+            ],
+            "$span": {
+              "start": 322,
+              "end": 339
+            },
+            "$nodeHandle": 475
+          }
+        ],
+        "$other": [
+          50,
+          51
+        ],
+        "$span": {
+          "start": 314,
+          "end": 345
+        },
+        "$nodeHandle": 474
+      }
+    },
+    "expectedOutput": "{ $($($x+$e)*)* }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{\n      $($($x + $e),*),*\n    }",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "{ $($($x+$e)*)* }",
+    "expectedReparseTree": "(token_tree (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))))",
+    "wrappedText": "macro_rules! _m { () => { $($($x+$e)*)* } }",
+    "wrappedOffset": 24
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 168,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 398,
+        "end": 421
+      },
+      "$nodeHandle": 98,
+      "_content": {
+        "$type": 394,
+        "$source": 0,
+        "$named": true,
+        "_tokens": [
+          {
+            "$type": 169,
+            "$source": 0,
+            "$named": true,
+            "_tokens": [
+              "$e"
+            ],
+            "_operator": 12,
+            "$other": [
+              6,
+              7,
+              8
+            ],
+            "$span": {
+              "start": 408,
+              "end": 415
+            },
+            "$nodeHandle": 480
+          }
+        ],
+        "$other": [
+          50,
+          51
+        ],
+        "$span": {
+          "start": 398,
+          "end": 421
+        },
+        "$nodeHandle": 479
+      }
+    },
+    "expectedOutput": "{ $($e)? }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{\n        $($e),?\n    }",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "{ $($e)? }",
+    "expectedReparseTree": "(token_tree (token_tree_brace tokens: (token_repetition tokens: (metavariable))))",
+    "wrappedText": "macro_rules! _m { () => { $($e)? } }",
+    "wrappedOffset": 24
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 168,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 457,
+        "end": 459
+      },
+      "$nodeHandle": 106,
+      "_content": {
+        "$type": 394,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 457,
+          "end": 459
+        },
+        "$nodeHandle": 481,
+        "_tokens": []
+      }
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{}",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(token_tree (token_tree_brace))",
+    "wrappedText": "macro_rules! _m { () => {  } }",
+    "wrappedOffset": 24
   },
   {
     "kind": "render",

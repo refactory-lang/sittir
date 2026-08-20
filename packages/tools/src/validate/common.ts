@@ -736,11 +736,13 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		// use structural rendering (macro token content is
 		// author-declared-verbatim, mixes named and anon tokens).
 		delim_token_tree: (r) => `fn _f() { mac! ${r} }`,
-		// Post-alias-catalog-split (PR #165), the same content reads as
-		// `token_tree` — the `delim_token_tree` key above stopped matching
-		// and this kind's probing/fixtures silently vanished (19→0, see
-		// docs/KNOWN_ISSUES.md). Same wrapper body restores coverage.
-		token_tree: (r) => `fn _f() { mac! ${r} }`,
+		// `token_tree` (the REAL rule, macro_rules arm bodies) is disjoint
+		// from the aliased invocation/attribute form above: an invocation
+		// wrapper reparses the fragment as `delim_token_tree` whose variant
+		// children (`delim_token_tree_paren` …) mismatch the original's
+		// `token_tree_paren` on deep AST compare. A macro-rule right-hand
+		// side is the one context that parses a true `token_tree`.
+		token_tree: (r) => `macro_rules! _m { () => ${r} }`,
 		// visibility_modifier is a declaration-position prefix — has no
 		// supertype it fits under. Only fires when variant() adoption
 		// has been applied (see `wrapForReparse` — wrappers whose kind
@@ -959,10 +961,23 @@ export function wrapForReparse(
 	kind: string,
 	grammar: string,
 	kindToSupertypes: Map<string, string[]>,
-	opts?: { adoptedVariantKinds?: ReadonlySet<string>; targetKind?: string }
+	opts?: { adoptedVariantKinds?: ReadonlySet<string>; targetKind?: string; sourceKind?: string }
 ): WrapForReparseResult | null {
 	const wrappers = REPARSE_WRAPPERS[grammar];
 	if (!wrappers) return null;
+	// Source-identity wrapper preference: `kind` arrives keyed by the parser
+	// DISPLAY name, which is non-injective at alias-source kinds — rust's
+	// true `token_tree` (macro_rules arm body) and `delim_token_tree`
+	// (invocation/attribute arguments) BOTH display as `token_tree`, yet
+	// need disjoint reparse contexts to reproduce their own variant
+	// children. When the caller resolves the candidate's canonical source
+	// kind and a wrapper is keyed on it, that wrapper is the most specific
+	// context known — it wins over both the alias-target preference and
+	// the display-keyed direct lookup below.
+	if (opts?.sourceKind && opts.sourceKind !== kind) {
+		const sourceWrapper = wrappers[opts.sourceKind];
+		if (sourceWrapper) return applyWrapperTemplate(rendered, sourceWrapper);
+	}
 	// Canonical-hidden architecture (Option Y): the validator may pass
 	// a canonical hidden kind (`_x`) where REPARSE_WRAPPERS and
 	// `kindToSupertypes` are keyed on the visible alias-target name
@@ -1386,6 +1401,29 @@ export async function loadKindNameFromId(grammar: string): Promise<((id: number)
 				return undefined;
 			}
 		};
+	} catch {
+		return undefined;
+	}
+}
+
+/**
+ * Load the CANONICAL (catalog-key) kind-name resolver — `KIND_NAMES`, the
+ * wrap-dispatch name table, NOT the parser display labels. Alias-source
+ * kinds diverge between the two (rust `delim_token_tree` displays as
+ * `token_tree`); use this wherever the SOURCE identity of a node matters —
+ * e.g. selecting a reparse wrapper context — and `loadKindNameFromId`
+ * wherever tree-sitter's own `.type` string must match.
+ */
+export async function loadCanonicalKindNameFromId(
+	grammar: string
+): Promise<((id: number) => string | undefined) | undefined> {
+	const typesModulePath = TYPES_MODULE_PATHS[grammar];
+	if (!typesModulePath) return undefined;
+	try {
+		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const kindNames = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
+		if (!kindNames) return undefined;
+		return (id: number) => kindNames.get(id);
 	} catch {
 		return undefined;
 	}
