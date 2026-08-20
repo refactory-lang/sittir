@@ -221,13 +221,34 @@ function collectVisibleChildren(n: TSNode, namedExtras: ReadonlySet<string>): TS
 	return out;
 }
 
+/**
+ * Same-text leaf kind pairs the AST compare tolerates, per grammar — the
+ * audited allowlist for positional leaf re-classification between an
+ * upstream variant-aliased context and the canonical rule the reparse
+ * wrapper routes through: `super` inside `@(super.decorate)` lexes as a
+ * plain `identifier` in decorator context but as a `super` node in
+ * expression context. Both parses cover identical bytes; leaf
+ * classification is positional, not content. A pair NOT listed here
+ * fails the compare even when the bytes match — an unlisted same-text
+ * kind swap is a real regression signal, not alias noise. Keys are
+ * order-insensitive via {@link leafAliasKey}.
+ */
+export const LEAF_ALIAS_TOLERANCE_BY_GRAMMAR: Record<string, ReadonlySet<string>> = {
+	typescript: new Set(['identifier|super'])
+};
+
+export function leafAliasKey(a: string, b: string): string {
+	return a < b ? `${a}|${b}` : `${b}|${a}`;
+}
+
 export function astStructuralDiff(
 	a: TSNode,
 	b: TSNode,
 	namedExtras: ReadonlySet<string>,
 	path: string = '',
 	rootAliasPair?: readonly [string, string],
-	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>
+	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>,
+	leafAliasPairs?: ReadonlySet<string>
 ): string | null {
 	// Root-level alias tolerance: `a`/`b` are the same underlying content —
 	// `wrapForReparse`'s synthetic wrapper context doesn't always reproduce
@@ -243,17 +264,16 @@ export function astStructuralDiff(
 		((a.type === rootAliasPair[0] && b.type === rootAliasPair[1]) ||
 			(a.type === rootAliasPair[1] && b.type === rootAliasPair[0]));
 	if (a.type !== b.type && !rootAliasTolerated) {
-		// Byte-identical leaf tolerance: upstream grammars define restricted
-		// variant rules aliased to canonical display names (decorators'
-		// `_decorator_parenthesized_expression`, type_query's call variants),
-		// and those variants can classify a leaf differently than the
-		// canonical rule the reparse wrapper routes through — e.g. `super`
-		// inside `@(super.decorate)` lexes as a plain identifier in decorator
-		// context but as a `super` node in expression context. Both parses
-		// cover the exact same bytes; leaf classification is positional, not
-		// content. Tolerate only childless nodes with identical text — any
-		// structural or byte difference still fails.
-		if (a.childCount === 0 && b.childCount === 0 && a.text === b.text) {
+		// Byte-identical leaf tolerance, gated on the grammar's audited pair
+		// allowlist ({@link LEAF_ALIAS_TOLERANCE_BY_GRAMMAR}): only childless
+		// nodes with identical text AND an allowlisted kind pair pass — any
+		// structural or byte difference, or an unlisted kind pair, still fails.
+		if (
+			a.childCount === 0 &&
+			b.childCount === 0 &&
+			a.text === b.text &&
+			leafAliasPairs?.has(leafAliasKey(a.type, b.type)) === true
+		) {
 			return null;
 		}
 		return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
@@ -322,7 +342,15 @@ export function astStructuralDiff(
 			continue;
 		}
 		// Named child — recurse.
-		const sub = astStructuralDiff(ac, bc, namedExtras, `${path || a.type}[${i}].${ac.type}`, undefined, variantChildKinds);
+		const sub = astStructuralDiff(
+			ac,
+			bc,
+			namedExtras,
+			`${path || a.type}[${i}].${ac.type}`,
+			undefined,
+			variantChildKinds,
+			leafAliasPairs
+		);
 		if (sub) return sub;
 	}
 	return null;
@@ -848,7 +876,15 @@ export async function validateReadRenderParse(
 						const rootAliasPair: readonly [string, string] | undefined =
 							renderedKind !== targetKind ? [renderedKind, targetKind] : undefined;
 						const diff = node1ForAst
-							? astStructuralDiff(node1ForAst, node2, namedExtras, '', rootAliasPair, variantChildKinds)
+							? astStructuralDiff(
+									node1ForAst,
+									node2,
+									namedExtras,
+									'',
+									rootAliasPair,
+									variantChildKinds,
+									LEAF_ALIAS_TOLERANCE_BY_GRAMMAR[grammar]
+								)
 							: null;
 						if (diff) {
 							kindAstMismatches.push({

@@ -102,7 +102,8 @@ import {
 	firstParseDefect,
 	astStructuralDiff,
 	findReparsedNodeAtOffset,
-	NAMED_EXTRAS_BY_GRAMMAR
+	NAMED_EXTRAS_BY_GRAMMAR,
+	LEAF_ALIAS_TOLERANCE_BY_GRAMMAR
 } from '../validate/read-render-parse.ts';
 import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
@@ -401,7 +402,15 @@ async function computeValidatorWrapDiag(
 	const rootAliasPair: readonly [string, string] | undefined =
 		renderedKind !== targetKind ? [renderedKind, targetKind] : undefined;
 	const variantChildKinds = await loadVariantChildKindsByOwner(grammar);
-	const astDiff = astStructuralDiff(targetNode, node2, namedExtras, '', rootAliasPair, variantChildKinds);
+	const astDiff = astStructuralDiff(
+		targetNode,
+		node2,
+		namedExtras,
+		'',
+		rootAliasPair,
+		variantChildKinds,
+		LEAF_ALIAS_TOLERANCE_BY_GRAMMAR[grammar]
+	);
 
 	return {
 		renderedKind,
