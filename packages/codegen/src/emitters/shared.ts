@@ -95,33 +95,6 @@ export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	return out;
 }
 
-/**
- * The runtime `_aliasTargetToSource` map's content: parse/display spellings
- * whose node content must dispatch under a DIFFERENT storage kind's wrap
- * function. Only aliases the parser kept two symbols for qualify
- * (`aliasRestampRequired`, via `subtypeRestampPairs`): a hidden rule merged
- * into its sole alias name already arrives on the wire under the storage
- * kind's id, so the native read's `KIND_NAMES` lookup yields the canonical
- * spelling with no remap needed. `collectAliasTargetToSourceMap` below stays
- * the FULL alias universe — its consumer (the wrap emitter's force-emit
- * rescue) must keep wrap functions alive for merged alias destinations too.
- */
-export function collectAliasRestampMap(nodeMap: NodeMap): Map<string, string> {
-	const out = new Map<string, string>();
-	for (const [, node] of nodeMap.nodes) {
-		if (node.modelType !== 'supertype') continue;
-		for (const [parse, storage] of node.subtypeRestampPairs ?? []) {
-			if (!nodeMap.nodes.has(storage)) continue;
-			// A parse name that IS a real independent kind is not a remap —
-			// leave its own wrap dispatch in charge.
-			if (!nodeMap.nodes.has(parse) && !out.has(parse)) out.set(parse, storage);
-			const catalogKey = `_${parse}`;
-			if (!nodeMap.nodes.has(catalogKey) && !out.has(catalogKey)) out.set(catalogKey, storage);
-		}
-	}
-	return out;
-}
-
 export function collectAliasTargetToSourceMap(nodeMap: NodeMap): Map<string, string> {
 	const out = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {

@@ -230,7 +230,7 @@ function _concatInSourceOrder<T>(parts: readonly (T | readonly T[] | undefined)[
 //   readTreeNode (public entry)
 //     → readNode (handle-driven — tree.read for native, JS walker otherwise)
 //       → wrapNode (dispatches on $type)
-//         → drillIn / drillAs → readTreeNode (recurse)
+//         → drillIn → readTreeNode (recurse)
 function drillIn<T>(entry: T, tree: TreeHandle): T {
 	if (!entry) return undefined as unknown as T;
 	const e = entry as unknown as _NodeData;
@@ -242,45 +242,6 @@ function drillInAll<T>(entries: readonly T[] | undefined, tree: TreeHandle): T[]
 	if (!entries) return [];
 	const arr = Array.isArray(entries) ? entries : [entries];
 	return arr.map((e) => drillIn(e, tree));
-}
-// drillAs — field-site unalias for grammar `alias($.source, $.target)`
-// declarations. `pairs` rewrites $type from one of possibly several
-// tree-sitter alias targets back to the codegen-canonical source
-// name between the read and the wrap (a polymorphic slot can have
-// several simultaneously-aliased candidate kinds — e.g. every arm
-// of a `choice()` aliasing onto its own shared canonical name).
-// Conditional rewrite: only fires when the child's actual $type
-// matches one pair's `from` (at most one can, since a given node
-// has exactly one real kind); mixed-union fields pass through
-// unchanged when the child arrived as a non-alias kind.
-function drillAs<T>(entry: unknown, tree: TreeHandle, pairs: readonly { from: string; to: string }[]): T {
-	if (!entry) return undefined as unknown as T;
-	const e = entry as _NodeData;
-	if (e.$nodeHandle == null || e.$childIndex == null) {
-		if (typeof e === 'object' && e !== null && e.$type != null) {
-			const currentType =
-				typeof e.$type === 'number'
-					? (KIND_NAMES.get(e.$type as never) ?? String(e.$type))
-					: (e.$type as unknown as string);
-			const hiddenCurrentType = currentType.startsWith('_') ? currentType.slice(1) : undefined;
-			const match = pairs.find((p) => currentType === p.from || hiddenCurrentType === p.from);
-			if (!match) return e as unknown as T;
-			let resolvedToId: number | undefined;
-			try {
-				resolvedToId = kindIdFromName(match.to) as unknown as number;
-			} catch {
-				resolvedToId = undefined;
-			}
-			return { ...e, $type: (resolvedToId ?? match.to) as unknown as number } as _NodeData as unknown as T;
-		}
-		return entry as unknown as T;
-	}
-	return readTreeNode(tree, e.$nodeHandle, e.$childIndex, pairs) as unknown as T;
-}
-function drillAsAll<T>(entries: unknown, tree: TreeHandle, pairs: readonly { from: string; to: string }[]): T[] {
-	if (!entries) return [];
-	const arr = Array.isArray(entries) ? entries : [entries];
-	return arr.map((e) => drillAs<T>(e, tree, pairs));
 }
 function projectKindEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>): T {
 	if (!value) return value;
@@ -702,23 +663,15 @@ function _wrapKindNameOf(entry: unknown): string | undefined {
 
 function _matchesAllowedWrapKind(kind: string, allowedKinds: readonly string[]): boolean {
 	if (allowedKinds.includes(kind)) return true;
-	const canonical = _aliasTargetToSource[kind];
-	if (canonical && allowedKinds.includes(canonical)) return true;
 	const stripped = kind.startsWith('_') ? kind.slice(1) : undefined;
 	if (stripped && allowedKinds.includes(stripped)) return true;
 	for (const allowed of allowedKinds) {
 		const members =
 			SUPERTYPE_MEMBERS[allowed] ?? SUPERTYPE_MEMBERS[allowed.startsWith('_') ? allowed.slice(1) : allowed];
 		if (members?.has(kind)) return true;
-		if (canonical !== undefined && members?.has(canonical)) return true;
 		if (stripped !== undefined && members?.has(stripped)) return true;
 		const allowedStripped = allowed.startsWith('_') ? allowed.slice(1) : allowed;
-		if (
-			allowedStripped === kind ||
-			(canonical !== undefined && allowedStripped === canonical) ||
-			(stripped !== undefined && allowedStripped === stripped)
-		)
-			return true;
+		if (allowedStripped === kind || (stripped !== undefined && allowedStripped === stripped)) return true;
 	}
 	return false;
 }
@@ -894,7 +847,7 @@ export function wrapImportStatement(data: T.ImportStatement & { readonly _names?
 			}),
 
 			importList() {
-				return drillAs<T.ImportList>(this._import_list, tree, [{ from: 'names', to: '_import_list' }]);
+				return drillIn<T.ImportList>(this._import_list, tree);
 			},
 			$with: {
 				importList: (v: NonNullable<T.ImportStatement['_import_list']>) =>
@@ -2004,7 +1957,7 @@ export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle) {
 				return drillIn<T.Subjects>(this._subjects, tree);
 			},
 			body() {
-				return drillAs<T.MatchBlock>(this._body, tree, [{ from: 'block', to: '_match_block' }]);
+				return drillIn<T.MatchBlock>(this._body, tree);
 			},
 			$with: {
 				subjects: (v: NonNullable<T.MatchStatement['_subjects']>) =>
@@ -2913,9 +2866,7 @@ export function wrapParenthesizedListSplat(
 			),
 
 			content() {
-				return drillAs<T.ParenthesizedListSplat | T.ListSplat>(this._content, tree, [
-					{ from: 'parenthesized_expression', to: 'parenthesized_list_splat' }
-				]);
+				return drillIn<T.ParenthesizedListSplat | T.ListSplat>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.ParenthesizedListSplat['_content']>) =>
@@ -3981,7 +3932,7 @@ export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			alias() {
-				return drillAs<T.Expression>(this._alias, tree, [{ from: 'as_pattern_target', to: 'expression' }]);
+				return drillIn<T.Expression>(this._alias, tree);
 			},
 			$with: {
 				expression: (v: NonNullable<T.AsPattern['_expression']>) => wrapAsPattern({ ...data, _expression: v }, tree),
@@ -6267,9 +6218,10 @@ export function wrapFormatSpecifier(
 			),
 
 			contents() {
-				return drillAsAll<'[^{}\\n]+' | T.Interpolation>(this._content, tree, [
-					{ from: 'format_expression', to: 'interpolation' }
-				]);
+				return drillInAll<'[^{}\\n]+' | T.Interpolation>(
+					this._content as readonly ('[^{}\\n]+' | T.Interpolation)[] | undefined,
+					tree
+				);
 			},
 			$with: {
 				contents: (...v: NonNullable<T.FormatSpecifier['_content']>[number][]) =>
@@ -6351,7 +6303,7 @@ export function wrapFutureImportStatementGroup1(
 			}),
 
 			importList() {
-				return drillAs<T.ImportList>(this._import_list, tree, [{ from: 'names', to: '_import_list' }]);
+				return drillIn<T.ImportList>(this._import_list, tree);
 			},
 			$with: {
 				importList: (v: NonNullable<T.FutureImportStatementGroup1['_import_list']>) =>
@@ -8090,8 +8042,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	except: (d) => ({ ...d, $type: TSKindId.Except as const })
 };
 
-const _aliasTargetToSource: Record<string, string> = {};
-
 function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {
 	const out: Record<string, unknown> = { ...(data as unknown as Record<string, unknown>) };
 	for (const key of Object.keys(out)) {
@@ -8116,15 +8066,7 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 		typeof data.$type === 'number'
 			? (KIND_NAMES.get(data.$type as never) ?? String(data.$type))
 			: (data.$type as unknown as string);
-	// Alias restamp: a parse `$type` whose node content belongs to a
-	// DIFFERENT storage kind (the parser kept two symbols for the alias)
-	// remaps to that kind so dispatch reaches its wrap function. Merged
-	// aliases need no entry — their single id already names the storage kind.
-	const canonical = _aliasTargetToSource[rawType];
-	if (canonical !== undefined) {
-		data = { ...data, $type: canonical as unknown as number };
-	}
-	const fn = _wrapTable[canonical ?? rawType];
+	const fn = _wrapTable[rawType];
 	if (!fn) return _drillUnknownKindChildren(data, tree); // unknown kind — still drill in its kind-named-slot children
 	return fn(data, tree);
 }
@@ -8132,7 +8074,7 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 /**
  * Per-handle dispatching `readNode` — the architectural seam where
  * the engine choice (JS vs native) lives. `readTreeNode`,
- * `drillIn` and `drillAs` all read through THIS function so the
+ * and `drillIn` read through THIS function so the
  * wrap layer is engine-agnostic. tree-sitter `Node::id()` is
  * documented as "unique within a given syntax tree" and is a
  * raw pointer cast — different parses yield different ids — so
@@ -8155,42 +8097,10 @@ function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNo
 /**
  * Read a parsed tree node into a lazily-wrapped NodeData.
  * One level deep — getters drill into subtrees on demand by
- * recursing back through this same function.
- *
- * Optional `asType: { from, to }` rewrites `$type` between the read
- * and the wrap when the node's actual `$type === from`. Used by
- * `drillAs` for alias-target → alias-source rewrites at
- * declared field sites.
+ * recursing back through this same function. The wire `$type` is
+ * the grammar symbol (stamped by the read), so no per-site alias
+ * rewriting exists between the read and the wrap.
  */
-export function readTreeNode(
-	tree: TreeHandle,
-	handle?: number,
-	childIndex?: number,
-	asType?: readonly { from: string; to: string }[]
-): unknown {
-	let data = readNode(tree, handle, childIndex);
-	// asType comparison must handle both string and numeric $type. A
-	// slot can have MULTIPLE simultaneously-aliased candidate kinds
-	// (e.g. a polymorphic choice where every arm aliases onto a
-	// shared canonical name) — try each pair in turn; at most one
-	// can match the node's actual (single) real kind.
-	// When numeric (native path), convert to kind-name first for comparison.
-	if (asType) {
-		const currentType =
-			typeof data.$type === 'number'
-				? (KIND_NAMES.get(data.$type as never) ?? String(data.$type))
-				: (data.$type as unknown as string);
-		const hiddenCurrentType = currentType.startsWith('_') ? currentType.slice(1) : undefined;
-		const match = asType.find((p) => currentType === p.from || hiddenCurrentType === p.from);
-		if (match) {
-			let resolvedAsTypeId: number | undefined;
-			try {
-				resolvedAsTypeId = kindIdFromName(match.to) as unknown as number;
-			} catch {
-				resolvedAsTypeId = undefined;
-			}
-			data = { ...data, $type: (resolvedAsTypeId ?? match.to) as unknown as number };
-		}
-	}
-	return wrapNode(data, tree);
+export function readTreeNode(tree: TreeHandle, handle?: number, childIndex?: number): unknown {
+	return wrapNode(readNode(tree, handle, childIndex), tree);
 }

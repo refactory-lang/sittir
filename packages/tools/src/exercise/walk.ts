@@ -3,12 +3,7 @@ import type { AnyNodeData } from '@sittir/types';
 
 type GrammarName = 'rust' | 'typescript' | 'python';
 
-type ReadTreeNode = (
-	handle: unknown,
-	nodeHandle?: number,
-	childIndex?: number,
-	asType?: readonly { from: string; to: string }[]
-) => unknown;
+type ReadTreeNode = (handle: unknown, nodeHandle?: number, childIndex?: number) => unknown;
 
 interface CommonModule {
 	loadLanguageForGrammar(grammar: string): Promise<{

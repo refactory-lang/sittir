@@ -1038,16 +1038,13 @@ export const WRAP_MODULE_PATHS: Record<string, string> = {
 
 /**
  * Dynamic import of a grammar's `readTreeNode` entry point. Used by
- * validators to build source-typed wrapped views (ADR-0006) — the
- * wrap layer's drillAs() rewrites `$type` at alias-declared field
- * sites so validator render dispatches through the source template.
+ * validators to build source-typed wrapped views — the wire `$type` is
+ * the grammar symbol, so nodes arrive under their source kind and the
+ * validator render dispatches through the source template directly.
  */
 export async function loadReadTreeNode(
 	grammar: string
-): Promise<
-	| ((handle: TreeHandle, nodeHandle?: number, childIndex?: number, asType?: readonly { from: string; to: string }[]) => unknown)
-	| null
-> {
+): Promise<((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null> {
 	const p = WRAP_MODULE_PATHS[grammar];
 	if (!p) return null;
 	try {

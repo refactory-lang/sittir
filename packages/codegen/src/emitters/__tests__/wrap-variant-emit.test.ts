@@ -128,9 +128,12 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		expect(emitFieldAccessorLinesBody.match(/resolveSlotDrillExprs\(/g)?.length).toBe(1);
 	});
 
-	it('keeps wrap-kind filtering aware of alias-target kinds', () => {
-		expect(wrapEmitterSource).toContain('const canonical = _aliasTargetToSource[kind];');
-		expect(wrapEmitterSource).toContain('allowedStripped === canonical');
+	it('wrap-kind filtering matches storage kinds without an alias remap', () => {
+		// The wire `$type` is the grammar symbol, so filter candidates arrive
+		// already under their storage kind — spelling tolerance (`_`-stripped
+		// twins) is the only normalization the filter performs.
+		expect(wrapEmitterSource).not.toContain('_aliasTargetToSource');
+		expect(wrapEmitterSource).toContain('allowedStripped === kind');
 	});
 
 	it('passes scalar singular values through wrap-kind filtering', () => {
