@@ -11,6 +11,25 @@ import type * as T from './types.js';
 import { withMethods, methodsEngine, coerceBooleanKeywordStorage } from './utils.js';
 import * as _factories from './factories.js';
 
+// A hydrated read-layer TEXT LEAF: the reader modeled no addressable
+// structure (no `_<slot>` storage keys, no `$other`) and captured the
+// node's verbatim `$text` — e.g. a `string_content` whose only CST
+// children are anonymous escape tokens. Such data passes through the
+// wrap untouched: fabricating this kind's (empty) slot storage on top
+// of it would read as "structure" to every downstream structure probe
+// — the validator's `$text` strip and the native render's
+// all-slots-empty `$text` fast-path — replacing the leaf's verbatim
+// text with an empty template render.
+function _isReadTextLeaf(data: object): boolean {
+	const d = data as { $text?: unknown; $other?: unknown };
+	if (typeof d.$text !== 'string') return false;
+	if (d.$other != null) return false;
+	for (const key in data) {
+		if (key.startsWith('_')) return false;
+	}
+	return true;
+}
+
 // Drop CONSUMED raw candidate storage keys from the spread base. A
 // field whose `??`-chain reads concrete kind-keyed wire keys
 // (`_binary_expression`, …) copies the winner into its canonical
@@ -1932,6 +1951,8 @@ export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeH
 }
 
 export function wrapTokenRepetitionPattern(data: T.TokenRepetitionPattern, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.TokenRepetitionPattern as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -2085,6 +2106,7 @@ export function wrapTokenTree(
 }
 
 export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.TokenRepetition as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -2293,6 +2315,7 @@ export function wrapModItem(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ModItem as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_declaration_list', '_mod_item_external']),
@@ -2348,6 +2371,7 @@ export function wrapForeignModItem(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ForeignModItem as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_declaration_list', '_foreign_mod_item_semi']),
@@ -2433,6 +2457,7 @@ export function wrapStructItem(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.StructItem as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_struct_item_brace', '_struct_item_tuple', '_struct_item_unit']),
@@ -2934,6 +2959,7 @@ export function wrapConstItem(data: T.ConstItem, tree: TreeHandle) {
 }
 
 export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.StaticItem as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -3293,6 +3319,7 @@ export function wrapFunctionSignatureItem(data: T.FunctionSignatureItem, tree: T
 }
 
 export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.FunctionModifiers as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -3402,6 +3429,7 @@ export function wrapImplItem(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ImplItem as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_impl_item_body', '_impl_item_semi']),
@@ -3487,6 +3515,7 @@ export function wrapImplItem(
 }
 
 export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.TraitItem as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -4197,6 +4226,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle) {
 }
 
 export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.SelfParameter as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -4872,6 +4902,8 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
 }
 
 export function wrapGenericTypeWithTurbofish(data: T.GenericTypeWithTurbofish, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.GenericTypeWithTurbofish as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -5115,6 +5147,7 @@ export function wrapPointerType(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.PointerType as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_mutable_specifier', '_pointer_type_const']),
@@ -5794,6 +5827,7 @@ export function wrapRangeExpression(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.RangeExpression as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -5837,6 +5871,7 @@ export function wrapRangeExpression(
 }
 
 export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.UnaryExpression as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -5964,6 +5999,7 @@ export function wrapReferenceExpression(
 }
 
 export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.BinaryExpression as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -7124,6 +7160,7 @@ export function wrapMatchArm(
 }
 
 export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.LastMatchArm as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -7381,6 +7418,7 @@ export function wrapClosureExpression(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ClosureExpression as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_closure_expression_block', '_closure_expression_expr']),
@@ -7862,6 +7900,7 @@ export function wrapUnsafeBlock(data: T.UnsafeBlock, tree: TreeHandle) {
 }
 
 export function wrapAsyncBlock(data: T.AsyncBlock, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.AsyncBlock as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -7899,6 +7938,7 @@ export function wrapAsyncBlock(data: T.AsyncBlock, tree: TreeHandle) {
 }
 
 export function wrapGenBlock(data: T.GenBlock, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.GenBlock as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -8261,6 +8301,7 @@ export function wrapFieldPattern(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.FieldPattern as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_field_pattern_named', '_shorthand_field_identifier']),
@@ -9482,6 +9523,8 @@ export function wrapRangePatternGroup2(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.RangePatternGroup2 as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_range_pattern_left_bare', '_range_pattern_left_with_right']),
@@ -9521,6 +9564,8 @@ export function wrapRangePatternGroup2(
 }
 
 export function wrapBlockCommentGroup1(data: T.BlockCommentGroup1, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.BlockCommentGroup1 as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -9819,6 +9864,8 @@ export function wrapClosureExpressionBlock(data: T.ClosureExpressionBlock, tree:
 }
 
 export function wrapClosureExpressionExpr(data: T.ClosureExpressionExpr, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.ClosureExpressionExpr as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -10071,6 +10118,8 @@ export function wrapOrPatternPrefix(data: T.OrPatternPrefix, tree: TreeHandle) {
 }
 
 export function wrapRangeExpressionBinary(data: T.RangeExpressionBinary, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.RangeExpressionBinary as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -10121,6 +10170,8 @@ export function wrapRangeExpressionBinary(data: T.RangeExpressionBinary, tree: T
 }
 
 export function wrapRangeExpressionPostfix(data: T.RangeExpressionPostfix, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.RangeExpressionPostfix as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -10161,6 +10212,8 @@ export function wrapRangeExpressionPostfix(data: T.RangeExpressionPostfix, tree:
 }
 
 export function wrapRangeExpressionPrefix(data: T.RangeExpressionPrefix, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.RangeExpressionPrefix as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -10203,6 +10256,8 @@ export function wrapRangePatternPrefix(
 	data: T.RangePatternPrefix & { readonly _dot_dot_eq?: '..=' | '..'; readonly _dot_dot?: '..=' | '..' },
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.RangePatternPrefix as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_dot_dot', '_dot_dot_eq']),
@@ -10252,6 +10307,8 @@ export function wrapRangePatternLeftWithRight(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.RangePatternLeftWithRight as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_dot_dot', '_dot_dot_dot', '_dot_dot_eq']),
@@ -10366,6 +10423,8 @@ export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle) {
 }
 
 export function wrapVisibilityModifierPub(data: T.VisibilityModifierPub, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.VisibilityModifierPub as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -10508,6 +10567,7 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 }
 
 export function wrapLineCommentDoc(data: T.LineCommentDoc, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.LineCommentDoc as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -10884,6 +10944,8 @@ export function wrapAttributedParameter(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.AttributedParameter as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [

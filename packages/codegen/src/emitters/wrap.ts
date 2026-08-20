@@ -34,7 +34,8 @@ import {
 	classifyWrapEmission,
 	warnSkippedParserSymbol,
 	canonicalSeparatedListField,
-	kindEnumTextIdPairs
+	kindEnumTextIdPairs,
+	fieldTypeComponents
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
@@ -748,6 +749,9 @@ function emitSeparatedListWrap(
 	);
 	const paramType = buildSeparatedListWrapParamType(node.typeName, wireKeyTypes);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
+	if (wrapsAnonLiteralContent(node.fields, nodeMap)) {
+		lines.push(`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries, nodeMap)} }, methodsEngine);`);
+	}
 
 	const storageInfo = resolveFieldStorageInfo(contentSlot, nodeMap, kindEntries);
 	const candidateStorageKeys = collectSeparatedListContentStorageKeys(contentSlot, nodeMap, fieldBacked);
@@ -1041,6 +1045,31 @@ function emitFieldAccessorLines(
 	}
 }
 
+// The `_isReadTextLeaf` pass-through applies only to kinds that declare
+// ANONYMOUS LITERAL TOKENS as legitimate slot content (e.g. python
+// `string_content`, whose content union includes bare `'\\'` escape
+// tokens, with implicit text gaps between them that only the leaf's
+// verbatim `$text` carries). For every other kind an all-anon-children
+// occurrence is genuinely EMPTY structure (an empty `{}` block, `()`
+// arguments) whose declared slot keys are a load-bearing wrap contract —
+// pass-through there breaks required-slot drills and from() field
+// comparison.
+function wrapsAnonLiteralContent(fields: readonly AssembledNonterminal[], nodeMap: NodeMap): boolean {
+	return fields.some((f) => fieldTypeComponents(f, nodeMap).some((c) => c.kind === 'literal'));
+}
+
+// `$type` restamp for the `_isReadTextLeaf` pass-through — same numeric
+// TSKindId discriminant the structural body stamps, so leaf pass-through
+// and structural output dispatch identically downstream.
+function wrapTextLeafTypeStamp(
+	node: { readonly kind: string },
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): string {
+	const entry = kindEntries?.find((e) => e.kind === node.kind);
+	return entry ? `, $type: TSKindId.${kindIdMemberName(nodeMap, node.kind)} as const` : '';
+}
+
 function emitFieldCarryingWrap(
 	node: WrapNode,
 	fields: readonly AssembledNonterminal[],
@@ -1060,6 +1089,9 @@ function emitFieldCarryingWrap(
 	const needsOther = children.length > 0;
 	const paramType = buildWrapParamType(node.typeName, wireKeyTypes, needsOther ? "_NodeData['$other']" : undefined);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
+	if (wrapsAnonLiteralContent(fields, nodeMap)) {
+		lines.push(`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries, nodeMap)} }, methodsEngine);`);
+	}
 
 	// Shape A: inline object literal wrapped by withMethods<T>. No
 	// Object.defineProperty, no freezeNodeData, no Record<string,unknown> cast.
@@ -1329,6 +1361,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		// `_concatInSourceOrder` calls `_toArr`, so emit `_toArr` whenever either is used.
 		const usesToArr = /\b_toArr\b/.test(bodySource) || usesConcatInSourceOrder;
 		const usesOmitWrapKeys = /\b_omitWrapKeys\b/.test(bodySource);
+		const usesIsReadTextLeaf = /\b_isReadTextLeaf\b/.test(bodySource);
 		const supertypeMembers = buildSupertypeMembersMap(this.#nodeMap);
 		const utilsImports = [
 			'withMethods',
@@ -1352,6 +1385,29 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			`import { ${utilsImports.join(', ')} } from './utils.js';`,
 			"import * as _factories from './factories.js';",
 			'',
+			...(usesIsReadTextLeaf
+				? [
+						'// A hydrated read-layer TEXT LEAF: the reader modeled no addressable',
+						'// structure (no `_<slot>` storage keys, no `$other`) and captured the',
+						"// node's verbatim `$text` — e.g. a `string_content` whose only CST",
+						'// children are anonymous escape tokens. Such data passes through the',
+						'// wrap untouched: fabricating this kind\'s (empty) slot storage on top',
+						'// of it would read as "structure" to every downstream structure probe',
+						"// — the validator's `$text` strip and the native render's",
+						'// all-slots-empty `$text` fast-path — replacing the leaf\'s verbatim',
+						'// text with an empty template render.',
+						'function _isReadTextLeaf(data: object): boolean {',
+						'  const d = data as { $text?: unknown; $other?: unknown };',
+						"  if (typeof d.$text !== 'string') return false;",
+						'  if (d.$other != null) return false;',
+						'  for (const key in data) {',
+						"    if (key.startsWith('_')) return false;",
+						'  }',
+						'  return true;',
+						'}',
+						''
+					]
+				: []),
 			...(usesOmitWrapKeys
 				? [
 						'// Drop CONSUMED raw candidate storage keys from the spread base. A',

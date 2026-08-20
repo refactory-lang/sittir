@@ -11,6 +11,25 @@ import type * as T from './types.js';
 import { withMethods, methodsEngine, coerceBooleanKeywordStorage } from './utils.js';
 import * as _factories from './factories.js';
 
+// A hydrated read-layer TEXT LEAF: the reader modeled no addressable
+// structure (no `_<slot>` storage keys, no `$other`) and captured the
+// node's verbatim `$text` — e.g. a `string_content` whose only CST
+// children are anonymous escape tokens. Such data passes through the
+// wrap untouched: fabricating this kind's (empty) slot storage on top
+// of it would read as "structure" to every downstream structure probe
+// — the validator's `$text` strip and the native render's
+// all-slots-empty `$text` fast-path — replacing the leaf's verbatim
+// text with an empty template render.
+function _isReadTextLeaf(data: object): boolean {
+	const d = data as { $text?: unknown; $other?: unknown };
+	if (typeof d.$text !== 'string') return false;
+	if (d.$other != null) return false;
+	for (const key in data) {
+		if (key.startsWith('_')) return false;
+	}
+	return true;
+}
+
 // Drop CONSUMED raw candidate storage keys from the spread base. A
 // field whose `??`-chain reads concrete kind-keyed wire keys
 // (`_binary_expression`, …) copies the winner into its canonical
@@ -823,6 +842,7 @@ export function wrapStatement(
 }
 
 export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.SimpleStatements as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -1870,6 +1890,7 @@ export function wrapRaiseStatement(
 }
 
 export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.IfStatement as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -1923,6 +1944,7 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
 }
 
 export function wrapElifClause(data: T.ElifClause, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ElifClause as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -1962,6 +1984,7 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle) {
 }
 
 export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ElseClause as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -2031,6 +2054,7 @@ export function wrapMatchBlock(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.MatchBlock as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_match_block_block', '_newline']),
@@ -2059,6 +2083,7 @@ export function wrapMatchBlock(
 }
 
 export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.CaseClause as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -2109,6 +2134,7 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {
 }
 
 export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ForStatement as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -2181,6 +2207,7 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 }
 
 export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.WhileStatement as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -2231,6 +2258,7 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
 }
 
 export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.TryStatement as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -2299,6 +2327,7 @@ export function wrapExceptClause(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ExceptClause as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_newline', '_simple_statements', '_suite_block_with_indent']),
@@ -2355,6 +2384,7 @@ export function wrapExceptClause(
 }
 
 export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.FinallyClause as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -2383,6 +2413,7 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle) {
 }
 
 export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.WithStatement as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -2493,6 +2524,8 @@ export function wrapWithItem(data: T.WithItem, tree: TreeHandle) {
 }
 
 export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.FunctionDefinition as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -2802,6 +2835,8 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle) {
 }
 
 export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.TypeAliasStatement as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -2850,6 +2885,7 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 }
 
 export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ClassDefinition as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -3030,6 +3066,7 @@ export function wrapDecoratedDefinition(data: T.DecoratedDefinition, tree: TreeH
 }
 
 export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Decorator as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -3131,6 +3168,7 @@ export function wrapExpressionList(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ExpressionList as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -3550,6 +3588,7 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle) {
 }
 
 export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.SplatPattern as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -3629,6 +3668,7 @@ export function wrapComplexPattern(
 	data: T.ComplexPattern & { readonly _integer?: T.Integer | T.Float; readonly _float?: T.Integer | T.Float },
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ComplexPattern as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_float', '_integer']),
@@ -4217,6 +4257,7 @@ export function wrapNotOperator(data: T.NotOperator, tree: TreeHandle) {
 }
 
 export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.BooleanOperator as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -4266,6 +4307,7 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle) {
 }
 
 export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.BinaryOperator as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -4624,6 +4666,7 @@ export function wrapPatternList(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.PatternList as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -5272,6 +5315,7 @@ export function wrapType(
 }
 
 export function wrapSplatType(data: T.SplatType, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.SplatType as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -5924,6 +5968,7 @@ export function wrapCollectionElements(
 }
 
 export function wrapForInClause(data: T.ForInClause, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ForInClause as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -6184,6 +6229,7 @@ export function wrapStringContent(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.StringContent as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_escape_interpolation', '_escape_sequence', '_not_escape_sequence', '_string_content']),
@@ -6219,6 +6265,7 @@ export function wrapStringContent(
 }
 
 export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Interpolation as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -6308,6 +6355,7 @@ export function wrapFormatSpecifier(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.FormatSpecifier as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_format_expression']),
@@ -7704,6 +7752,8 @@ export function wrapComparisonOperatorComparator(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.ComparisonOperatorComparator as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [

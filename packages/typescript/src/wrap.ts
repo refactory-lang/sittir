@@ -11,6 +11,25 @@ import type * as T from './types.js';
 import { withMethods, methodsEngine, coerceBooleanKeywordStorage } from './utils.js';
 import * as _factories from './factories.js';
 
+// A hydrated read-layer TEXT LEAF: the reader modeled no addressable
+// structure (no `_<slot>` storage keys, no `$other`) and captured the
+// node's verbatim `$text` — e.g. a `string_content` whose only CST
+// children are anonymous escape tokens. Such data passes through the
+// wrap untouched: fabricating this kind's (empty) slot storage on top
+// of it would read as "structure" to every downstream structure probe
+// — the validator's `$text` strip and the native render's
+// all-slots-empty `$text` fast-path — replacing the leaf's verbatim
+// text with an empty template render.
+function _isReadTextLeaf(data: object): boolean {
+	const d = data as { $text?: unknown; $other?: unknown };
+	if (typeof d.$text !== 'string') return false;
+	if (d.$other != null) return false;
+	for (const key in data) {
+		if (key.startsWith('_')) return false;
+	}
+	return true;
+}
+
 // Drop CONSUMED raw candidate storage keys from the spread base. A
 // field whose `??`-chain reads concrete kind-keyed wire keys
 // (`_binary_expression`, …) copies the winner into its canonical
@@ -1311,6 +1330,7 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle) {
 }
 
 export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ExportSpecifier as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -1435,6 +1455,7 @@ export function wrapDeclaration(
 }
 
 export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ImportStatement as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -1619,6 +1640,7 @@ export function wrapImportSpecifier(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ImportSpecifier as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_identifier', '_import_specifier_as']),
@@ -1661,6 +1683,7 @@ export function wrapImportSpecifier(
 }
 
 export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ImportAttribute as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -2056,6 +2079,7 @@ export function wrapVariableDeclarator(
 }
 
 export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.StatementBlock as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -2263,6 +2287,7 @@ export function wrapForInStatement(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ForInStatement as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_for_header_let_const_kind', '_for_header_lhs', '_for_header_var_kind']),
@@ -3785,6 +3810,7 @@ export function wrapClass(data: T.Class, tree: TreeHandle) {
 }
 
 export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ClassDeclaration as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -3898,6 +3924,8 @@ export function wrapClassHeritage(
 }
 
 export function wrapFunctionExpression(data: T.FunctionExpression, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.FunctionExpression as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -3981,6 +4009,8 @@ export function wrapFunctionExpression(data: T.FunctionExpression, tree: TreeHan
 }
 
 export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.FunctionDeclaration as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -4077,6 +4107,7 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 }
 
 export function wrapGeneratorFunction(data: T.GeneratorFunction, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.GeneratorFunction as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -4160,6 +4191,8 @@ export function wrapGeneratorFunction(data: T.GeneratorFunction, tree: TreeHandl
 }
 
 export function wrapGeneratorFunctionDeclaration(data: T.GeneratorFunctionDeclaration, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.GeneratorFunctionDeclaration as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -4264,6 +4297,7 @@ export function wrapArrowFunction(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ArrowFunction as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_arrow_function__call_signature', '_arrow_function_parameter']),
@@ -4508,6 +4542,7 @@ export function wrapAwaitExpression(data: T.AwaitExpression, tree: TreeHandle) {
 }
 
 export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.MemberExpression as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -4661,6 +4696,8 @@ export function wrapLhsExpression(
 }
 
 export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.AssignmentExpression as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -4956,6 +4993,7 @@ export function wrapTernaryExpression(data: T.TernaryExpression, tree: TreeHandl
 }
 
 export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.BinaryExpression as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -5714,6 +5752,7 @@ export function wrapDecoratorCallExpression(data: T.DecoratorCallExpression, tre
 }
 
 export function wrapClassBody(data: T.ClassBody, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ClassBody as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -5775,6 +5814,7 @@ export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle)
 }
 
 export function wrapClassStaticBlock(data: T.ClassStaticBlock, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ClassStaticBlock as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -5923,6 +5963,7 @@ export function wrapRestPattern(
 }
 
 export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.MethodDefinition as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -6355,6 +6396,8 @@ export function wrapPublicFieldDefinition(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.PublicFieldDefinition as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -6527,6 +6570,7 @@ export function wrapNonNullExpression(data: T.NonNullExpression, tree: TreeHandl
 }
 
 export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.MethodSignature as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -6683,6 +6727,8 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle) {
 }
 
 export function wrapAbstractMethodSignature(data: T.AbstractMethodSignature, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.AbstractMethodSignature as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -6801,6 +6847,7 @@ export function wrapAbstractMethodSignature(data: T.AbstractMethodSignature, tre
 }
 
 export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.FunctionSignature as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -6966,6 +7013,7 @@ export function wrapTypeAssertion(data: T.TypeAssertion, tree: TreeHandle) {
 }
 
 export function wrapAsExpression(data: T.AsExpression, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.AsExpression as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -7661,6 +7709,7 @@ export function wrapExtendsTypeClause(data: T.ExtendsTypeClause, tree: TreeHandl
 }
 
 export function wrapEnumDeclaration(data: T.EnumDeclaration, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.EnumDeclaration as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -7835,6 +7884,7 @@ export function wrapTypeAliasDeclaration(data: T.TypeAliasDeclaration, tree: Tre
 }
 
 export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.RequiredParameter as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -7933,6 +7983,7 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 }
 
 export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.OptionalParameter as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -8031,6 +8082,7 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 }
 
 export function wrapParameterName(data: T.ParameterName, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ParameterName as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -8558,6 +8610,7 @@ export function wrapTupleTypeMember(
 }
 
 export function wrapConstructorType(data: T.ConstructorType, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ConstructorType as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -9012,6 +9065,8 @@ export function wrapTypeQueryMemberExpression(
 	data: T.TypeQueryMemberExpression & { readonly _dot?: '.' | '?.'; readonly _qmark_dot?: '.' | '?.' },
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.TypeQueryMemberExpression as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_dot', '_qmark_dot']),
@@ -9578,6 +9633,7 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle) {
 }
 
 export function wrapObjectType(data: T.ObjectType, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ObjectType as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -9680,6 +9736,7 @@ export function wrapCallSignature(data: T.CallSignature, tree: TreeHandle) {
 }
 
 export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.PropertySignature as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -9810,6 +9867,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
 }
 
 export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.TypeParameter as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -9898,6 +9956,7 @@ export function wrapConstraint(
 	data: T.Constraint & { readonly _extends?: 'extends' | ':'; readonly _colon?: 'extends' | ':' },
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Constraint as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_colon', '_extends']),
@@ -9942,6 +10001,8 @@ export function wrapConstraint(
 }
 
 export function wrapConstructSignature(data: T.ConstructSignature, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.ConstructSignature as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -10007,6 +10068,7 @@ export function wrapIndexSignature(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.IndexSignature as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_index_signature_colon', '_mapped_type_clause']),
@@ -10522,6 +10584,8 @@ export function wrapCatchClauseGroup1(data: T.CatchClauseGroup1, tree: TreeHandl
 }
 
 export function wrapBinaryExpressionGroup1(data: T.BinaryExpressionGroup1, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.BinaryExpressionGroup1 as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -11158,6 +11222,7 @@ export function wrapImportClauseDefaultImport(
 }
 
 export function wrapImportSpecifierAs(data: T.ImportSpecifierAs, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ImportSpecifierAs as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -11582,6 +11647,8 @@ export function wrapClassBodyMethod(data: T.ClassBodyMethod, tree: TreeHandle) {
 }
 
 export function wrapClassBodyMethodSig(data: T.ClassBodyMethodSig, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.ClassBodyMethodSig as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -11647,6 +11714,7 @@ export function wrapClassBodyMember(
 	},
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ClassBodyMember as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -11726,6 +11794,7 @@ export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle) {
 }
 
 export function wrapForHeaderVarKind(data: T.ForHeaderVarKind, tree: TreeHandle) {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ForHeaderVarKind as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -11773,6 +11842,8 @@ export function wrapForHeaderVarKind(data: T.ForHeaderVarKind, tree: TreeHandle)
 }
 
 export function wrapForHeaderLetConstKind(data: T.ForHeaderLetConstKind, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.ForHeaderLetConstKind as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -11856,6 +11927,8 @@ export function wrapPublicFieldDefinitionDeclareFirst(data: T.PublicFieldDefinit
 }
 
 export function wrapPublicFieldDefinitionAccessFirst(data: T.PublicFieldDefinitionAccessFirst, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.PublicFieldDefinitionAccessFirst as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -11899,6 +11972,8 @@ export function wrapPublicFieldDefinitionAccessFirst(data: T.PublicFieldDefiniti
 }
 
 export function wrapPublicFieldDefinitionStaticMods(data: T.PublicFieldDefinitionStaticMods, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.PublicFieldDefinitionStaticMods as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -11954,6 +12029,8 @@ export function wrapPublicFieldDefinitionStaticMods(data: T.PublicFieldDefinitio
 }
 
 export function wrapPublicFieldDefinitionAbstractFirst(data: T.PublicFieldDefinitionAbstractFirst, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.PublicFieldDefinitionAbstractFirst as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -11996,6 +12073,8 @@ export function wrapPublicFieldDefinitionAbstractFirst(data: T.PublicFieldDefini
 }
 
 export function wrapPublicFieldDefinitionReadonlyFirst(data: T.PublicFieldDefinitionReadonlyFirst, tree: TreeHandle) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.PublicFieldDefinitionReadonlyFirst as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
