@@ -1351,19 +1351,6 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "name": "Derive macro helper attributes [use_declaration]",
-    "message": "render: Missing field `_content`",
-    "input": "use thiserror::Error;",
-    "stage": "read-render-parse",
-    "code": "read-render-parse-error",
-    "severity": "error",
-    "label": "Derive macro helper attributes [use_declaration]",
-    "sClass": "S6"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
     "name": "Raw string literals [source_file]",
     "message": "re-parse error [ERROR in expression_statement_with_semi at \"bar\"#\"]",
     "input": "r#\"abc\"#; r##\"ok\"##;\nr##\"foo #\"# bar\"##;\nr###\"foo ##\"## bar\"###;\nr######\"foo ##### bar\"######;",
@@ -1388,19 +1375,6 @@
     "code": "read-render-parse-ast-mismatch",
     "severity": "error",
     "label": "Macro definition (token_tree)"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "name": "Derive macro helper attributes [use_declaration]",
-    "message": "render: Missing field `_content`",
-    "input": "use thiserror::Error;",
-    "stage": "read-render-parse-shallow",
-    "code": "read-render-parse-shallow-error",
-    "severity": "error",
-    "label": "Derive macro helper attributes [use_declaration]",
-    "sClass": "S6"
   },
   {
     "source": "validator",

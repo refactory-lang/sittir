@@ -17200,6 +17200,156 @@
       "$type": 257,
       "$source": 0,
       "$named": true,
+      "_function": "vprintf",
+      "_arguments": {
+        "$type": 258,
+        "$source": 0,
+        "$named": true,
+        "_arguments_elements": {
+          "$type": 339,
+          "$source": 0,
+          "$named": true,
+          "_element": [
+            {
+              "$type": 402,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 211,
+                "end": 214
+              },
+              "$nodeHandle": 147,
+              "_attribute_item": [],
+              "_expression": "fmt"
+            },
+            {
+              "$type": 402,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 216,
+                "end": 231
+              },
+              "$nodeHandle": 148,
+              "_attribute_item": [],
+              "_expression": {
+                "$type": 257,
+                "$source": 0,
+                "$named": true,
+                "_function": {
+                  "$type": 289,
+                  "$source": 0,
+                  "$named": true,
+                  "_value": "ap",
+                  "_field": "as_va_list",
+                  "$other": [
+                    115
+                  ],
+                  "$span": {
+                    "start": 216,
+                    "end": 229
+                  },
+                  "$nodeHandle": 150
+                },
+                "_arguments": {
+                  "$type": 258,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "()",
+                  "$span": {
+                    "start": 229,
+                    "end": 231
+                  },
+                  "$nodeHandle": 151
+                },
+                "$span": {
+                  "start": 216,
+                  "end": 231
+                },
+                "$nodeHandle": 149
+              }
+            }
+          ],
+          "$other": [
+            76
+          ],
+          "$span": {
+            "start": 211,
+            "end": 231
+          },
+          "$nodeHandle": 146,
+          "_trailing_sep": false
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 210,
+          "end": 232
+        },
+        "$nodeHandle": 145
+      },
+      "$span": {
+        "start": 203,
+        "end": 232
+      },
+      "$nodeHandle": 32,
+      "$triviaData": {
+        "leading": [
+          {
+            "$type": 315,
+            "$source": 0,
+            "$named": true,
+            "_line_comment_content": " CHECK: call void @llvm.va_start",
+            "$other": [
+              127
+            ],
+            "$text": "// CHECK: call void @llvm.va_start",
+            "$span": {
+              "start": 164,
+              "end": 198
+            }
+          }
+        ],
+        "trailing": [
+          {
+            "$type": 315,
+            "$source": 0,
+            "$named": true,
+            "_line_comment_content": " CHECK: call void @llvm.va_end",
+            "$other": [
+              127
+            ],
+            "$text": "// CHECK: call void @llvm.va_end",
+            "$span": {
+              "start": 237,
+              "end": 269
+            }
+          }
+        ]
+      }
+    },
+    "expectedOutput": "// CHECK: call void @llvm.va_start\nvprintf(fmt,ap.as_va_list())\n// CHECK: call void @llvm.va_end\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "vprintf(fmt, ap.as_va_list())",
+    "pattern": "call_expression",
+    "edits": [],
+    "expectedSourceOut": "// CHECK: call void @llvm.va_start\nvprintf(fmt,ap.as_va_list())\n// CHECK: call void @llvm.va_end\n",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))",
+    "wrappedText": "fn _f() { let _ = // CHECK: call void @llvm.va_start\nvprintf(fmt,ap.as_va_list())\n// CHECK: call void @llvm.va_end\n; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 257,
+      "$source": 0,
+      "$named": true,
       "_function": {
         "$type": 289,
         "$source": 0,
@@ -41556,6 +41706,1478 @@
     "expectedReparseTree": "(source_file (line_comment (line_comment_content)) statements: (use_declaration argument: (scoped_identifier path: (identifier) name: (identifier))) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (integer_literal))))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
     "wrappedText": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;#[derive(Error,Debug)]pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 205,
+      "$source": 0,
+      "$named": true,
+      "_argument": {
+        "$type": 244,
+        "$source": 0,
+        "$named": true,
+        "_path": "thiserror",
+        "_name": "Error",
+        "$other": [
+          72
+        ],
+        "$span": {
+          "start": 114,
+          "end": 130
+        },
+        "$nodeHandle": 135
+      },
+      "$other": [
+        71,
+        2
+      ],
+      "$span": {
+        "start": 110,
+        "end": 131
+      },
+      "$nodeHandle": 1,
+      "$triviaData": {
+        "leading": [
+          {
+            "$type": 315,
+            "$source": 0,
+            "$named": true,
+            "_line_comment_content": " Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md",
+            "$other": [
+              127
+            ],
+            "$text": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md",
+            "$span": {
+              "start": 0,
+              "end": 108
+            }
+          }
+        ]
+      }
+    },
+    "expectedOutput": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "use thiserror::Error;",
+    "pattern": "use_declaration",
+    "edits": [],
+    "expectedSourceOut": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;",
+    "expectedReparseTree": "(use_declaration argument: (scoped_identifier path: (identifier) name: (identifier)))",
+    "wrappedText": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 244,
+      "$source": 0,
+      "$named": true,
+      "_path": "thiserror",
+      "_name": "Error",
+      "$other": [
+        72
+      ],
+      "$span": {
+        "start": 114,
+        "end": 130
+      },
+      "$nodeHandle": 4
+    },
+    "expectedOutput": "thiserror::Error"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "thiserror::Error",
+    "pattern": "scoped_identifier",
+    "edits": [],
+    "expectedSourceOut": "thiserror::Error",
+    "expectedReparseTree": "(scoped_identifier path: (identifier) name: (identifier))",
+    "wrappedText": "fn _f() { let _ = thiserror::Error; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 171,
+      "$source": 0,
+      "$named": true,
+      "_attribute": {
+        "$type": 173,
+        "$source": 0,
+        "$named": true,
+        "_path": "derive",
+        "_attribute_group1": {
+          "$type": 327,
+          "$source": 0,
+          "$named": true,
+          "_arguments": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 141,
+              "end": 155
+            },
+            "$nodeHandle": 138,
+            "_content": {
+              "$type": 395,
+              "$source": 0,
+              "$named": true,
+              "_delim_tokens": [
+                "Error",
+                {
+                  "$type": 347,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ",",
+                  "$span": {
+                    "start": 147,
+                    "end": 148
+                  },
+                  "$nodeHandle": 142
+                },
+                "Debug"
+              ],
+              "$other": [
+                7,
+                8
+              ],
+              "$span": {
+                "start": 141,
+                "end": 155
+              },
+              "$nodeHandle": 139
+            }
+          },
+          "$span": {
+            "start": 141,
+            "end": 155
+          },
+          "$nodeHandle": 137
+        },
+        "$span": {
+          "start": 135,
+          "end": 155
+        },
+        "$nodeHandle": 136
+      },
+      "$other": [
+        45,
+        46,
+        47
+      ],
+      "$span": {
+        "start": 133,
+        "end": 156
+      },
+      "$nodeHandle": 2
+    },
+    "expectedOutput": "#[derive(Error,Debug)]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "#[derive(Error, Debug)]",
+    "pattern": "attribute_item",
+    "edits": [],
+    "expectedSourceOut": "#[derive(Error,Debug)]",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)))))))",
+    "wrappedText": "#[derive(Error,Debug)]",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 171,
+      "$source": 0,
+      "$named": true,
+      "_attribute": {
+        "$type": 173,
+        "$source": 0,
+        "$named": true,
+        "_path": "error",
+        "_attribute_group1": {
+          "$type": 327,
+          "$source": 0,
+          "$named": true,
+          "_arguments": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 185,
+              "end": 248
+            },
+            "$nodeHandle": 146,
+            "_content": {
+              "$type": 395,
+              "$source": 0,
+              "$named": true,
+              "_delim_tokens": [
+                {
+                  "$type": 312,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_open": "\"",
+                  "_elements": [
+                    "first letter must be lowercase but was {:?}"
+                  ],
+                  "$other": [
+                    122
+                  ],
+                  "$span": {
+                    "start": 186,
+                    "end": 231
+                  },
+                  "$nodeHandle": 149
+                },
+                {
+                  "$type": 347,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ",",
+                  "$span": {
+                    "start": 231,
+                    "end": 232
+                  },
+                  "$nodeHandle": 151
+                },
+                "first_char",
+                {
+                  "$type": 241,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 243,
+                    "end": 247
+                  },
+                  "$nodeHandle": 153,
+                  "_content": {
+                    "$type": 395,
+                    "$source": 0,
+                    "$named": true,
+                    "_delim_tokens": [
+                      {
+                        "$type": 347,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": ".",
+                        "$span": {
+                          "start": 244,
+                          "end": 245
+                        },
+                        "$nodeHandle": 156
+                      },
+                      "0"
+                    ],
+                    "$other": [
+                      7,
+                      8
+                    ],
+                    "$span": {
+                      "start": 243,
+                      "end": 247
+                    },
+                    "$nodeHandle": 154
+                  }
+                }
+              ],
+              "$other": [
+                7,
+                8
+              ],
+              "$span": {
+                "start": 185,
+                "end": 248
+              },
+              "$nodeHandle": 147
+            }
+          },
+          "$span": {
+            "start": 185,
+            "end": 248
+          },
+          "$nodeHandle": 145
+        },
+        "$span": {
+          "start": 180,
+          "end": 248
+        },
+        "$nodeHandle": 144
+      },
+      "$other": [
+        45,
+        46,
+        47
+      ],
+      "$span": {
+        "start": 178,
+        "end": 249
+      },
+      "$nodeHandle": 19
+    },
+    "expectedOutput": "#[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "#[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]",
+    "pattern": "attribute_item",
+    "edits": [],
+    "expectedSourceOut": "#[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (integer_literal)))))))))",
+    "wrappedText": "#[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 171,
+      "$source": 0,
+      "$named": true,
+      "_attribute": {
+        "$type": 173,
+        "$source": 0,
+        "$named": true,
+        "_path": "error",
+        "_attribute_group1": {
+          "$type": 327,
+          "$source": 0,
+          "$named": true,
+          "_arguments": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 284,
+              "end": 368
+            },
+            "$nodeHandle": 160,
+            "_content": {
+              "$type": 395,
+              "$source": 0,
+              "$named": true,
+              "_delim_tokens": [
+                {
+                  "$type": 312,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_open": "\"",
+                  "_elements": [
+                    "invalid index {idx}, expected at least {} and at most {}"
+                  ],
+                  "$other": [
+                    122
+                  ],
+                  "$span": {
+                    "start": 285,
+                    "end": 343
+                  },
+                  "$nodeHandle": 163
+                },
+                {
+                  "$type": 347,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ",",
+                  "$span": {
+                    "start": 343,
+                    "end": 344
+                  },
+                  "$nodeHandle": 165
+                },
+                {
+                  "$type": 347,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ".",
+                  "$span": {
+                    "start": 345,
+                    "end": 346
+                  },
+                  "$nodeHandle": 167
+                },
+                "limits",
+                {
+                  "$type": 347,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ".",
+                  "$span": {
+                    "start": 352,
+                    "end": 353
+                  },
+                  "$nodeHandle": 170
+                },
+                "lo",
+                {
+                  "$type": 347,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ",",
+                  "$span": {
+                    "start": 355,
+                    "end": 356
+                  },
+                  "$nodeHandle": 173
+                },
+                {
+                  "$type": 347,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ".",
+                  "$span": {
+                    "start": 357,
+                    "end": 358
+                  },
+                  "$nodeHandle": 175
+                },
+                "limits",
+                {
+                  "$type": 347,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ".",
+                  "$span": {
+                    "start": 364,
+                    "end": 365
+                  },
+                  "$nodeHandle": 178
+                },
+                "hi"
+              ],
+              "$other": [
+                7,
+                8
+              ],
+              "$span": {
+                "start": 284,
+                "end": 368
+              },
+              "$nodeHandle": 161
+            }
+          },
+          "$span": {
+            "start": 284,
+            "end": 368
+          },
+          "$nodeHandle": 159
+        },
+        "$span": {
+          "start": 279,
+          "end": 368
+        },
+        "$nodeHandle": 158
+      },
+      "$other": [
+        45,
+        46,
+        47
+      ],
+      "$span": {
+        "start": 277,
+        "end": 369
+      },
+      "$nodeHandle": 38
+    },
+    "expectedOutput": "#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "#[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]",
+    "pattern": "attribute_item",
+    "edits": [],
+    "expectedSourceOut": "#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)))))))",
+    "wrappedText": "#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 241,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 141,
+        "end": 155
+      },
+      "$nodeHandle": 7,
+      "_content": {
+        "$type": 395,
+        "$source": 0,
+        "$named": true,
+        "_delim_tokens": [
+          "Error",
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": ",",
+            "$span": {
+              "start": 147,
+              "end": 148
+            },
+            "$nodeHandle": 224
+          },
+          "Debug"
+        ],
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 141,
+          "end": 155
+        },
+        "$nodeHandle": 221
+      }
+    },
+    "expectedOutput": "(Error,Debug)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(Error, Debug)",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(Error,Debug)",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))",
+    "wrappedText": "fn _f() { mac! (Error,Debug) }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 241,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 185,
+        "end": 248
+      },
+      "$nodeHandle": 22,
+      "_content": {
+        "$type": 395,
+        "$source": 0,
+        "$named": true,
+        "_delim_tokens": [
+          {
+            "$type": 312,
+            "$source": 0,
+            "$named": true,
+            "_string_open": "\"",
+            "_elements": [
+              "first letter must be lowercase but was {:?}"
+            ],
+            "$other": [
+              122
+            ],
+            "$span": {
+              "start": 186,
+              "end": 231
+            },
+            "$nodeHandle": 228
+          },
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": ",",
+            "$span": {
+              "start": 231,
+              "end": 232
+            },
+            "$nodeHandle": 230
+          },
+          "first_char",
+          {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 243,
+              "end": 247
+            },
+            "$nodeHandle": 232,
+            "_content": {
+              "$type": 395,
+              "$source": 0,
+              "$named": true,
+              "_delim_tokens": [
+                {
+                  "$type": 347,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ".",
+                  "$span": {
+                    "start": 244,
+                    "end": 245
+                  },
+                  "$nodeHandle": 235
+                },
+                "0"
+              ],
+              "$other": [
+                7,
+                8
+              ],
+              "$span": {
+                "start": 243,
+                "end": 247
+              },
+              "$nodeHandle": 233
+            }
+          }
+        ],
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 185,
+          "end": 248
+        },
+        "$nodeHandle": 226
+      }
+    },
+    "expectedOutput": "(\"first letter must be lowercase but was {:?}\",first_char(.0))"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(\"first letter must be lowercase but was {:?}\", first_char(.0))",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(\"first letter must be lowercase but was {:?}\",first_char(.0))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (integer_literal))))))",
+    "wrappedText": "fn _f() { mac! (\"first letter must be lowercase but was {:?}\",first_char(.0)) }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 241,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 243,
+        "end": 247
+      },
+      "$nodeHandle": 29,
+      "_content": {
+        "$type": 395,
+        "$source": 0,
+        "$named": true,
+        "_delim_tokens": [
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": ".",
+            "$span": {
+              "start": 244,
+              "end": 245
+            },
+            "$nodeHandle": 239
+          },
+          "0"
+        ],
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 243,
+          "end": 247
+        },
+        "$nodeHandle": 237
+      }
+    },
+    "expectedOutput": "(.0)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(.0)",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(.0)",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (integer_literal))))",
+    "wrappedText": "fn _f() { mac! (.0) }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 241,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 284,
+        "end": 368
+      },
+      "$nodeHandle": 41,
+      "_content": {
+        "$type": 395,
+        "$source": 0,
+        "$named": true,
+        "_delim_tokens": [
+          {
+            "$type": 312,
+            "$source": 0,
+            "$named": true,
+            "_string_open": "\"",
+            "_elements": [
+              "invalid index {idx}, expected at least {} and at most {}"
+            ],
+            "$other": [
+              122
+            ],
+            "$span": {
+              "start": 285,
+              "end": 343
+            },
+            "$nodeHandle": 243
+          },
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": ",",
+            "$span": {
+              "start": 343,
+              "end": 344
+            },
+            "$nodeHandle": 245
+          },
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": ".",
+            "$span": {
+              "start": 345,
+              "end": 346
+            },
+            "$nodeHandle": 247
+          },
+          "limits",
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": ".",
+            "$span": {
+              "start": 352,
+              "end": 353
+            },
+            "$nodeHandle": 250
+          },
+          "lo",
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": ",",
+            "$span": {
+              "start": 355,
+              "end": 356
+            },
+            "$nodeHandle": 253
+          },
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": ".",
+            "$span": {
+              "start": 357,
+              "end": 358
+            },
+            "$nodeHandle": 255
+          },
+          "limits",
+          {
+            "$type": 347,
+            "$source": 0,
+            "$named": true,
+            "$text": ".",
+            "$span": {
+              "start": 364,
+              "end": 365
+            },
+            "$nodeHandle": 258
+          },
+          "hi"
+        ],
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 284,
+          "end": 368
+        },
+        "$nodeHandle": 241
+      }
+    },
+    "expectedOutput": "(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))",
+    "wrappedText": "fn _f() { mac! (\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi) }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 179,
+      "$source": 0,
+      "$named": true,
+      "_visibility_modifier": {
+        "$type": 216,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 157,
+          "end": 160
+        },
+        "$nodeHandle": 260,
+        "_content": {
+          "$type": 381,
+          "$source": 0,
+          "$named": true,
+          "_pub": 141,
+          "$span": {
+            "start": 157,
+            "end": 160
+          },
+          "$nodeHandle": 261
+        }
+      },
+      "_name": "Error",
+      "_body": {
+        "$type": 180,
+        "$source": 0,
+        "$named": true,
+        "_enum_variant_list_elements": {
+          "$type": 328,
+          "$source": 0,
+          "$named": true,
+          "_element": [
+            {
+              "$type": 399,
+              "$source": 0,
+              "$named": true,
+              "_attribute_item": [
+                {
+                  "$type": 171,
+                  "$source": 0,
+                  "$named": true,
+                  "_attribute": {
+                    "$type": 173,
+                    "$source": 0,
+                    "$named": true,
+                    "_path": "error",
+                    "_attribute_group1": {
+                      "$type": 327,
+                      "$source": 0,
+                      "$named": true,
+                      "_arguments": {
+                        "$type": 241,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 185,
+                          "end": 248
+                        },
+                        "$nodeHandle": 269,
+                        "_content": {
+                          "$type": 395,
+                          "$source": 0,
+                          "$named": true,
+                          "_delim_tokens": [
+                            {
+                              "$type": 312,
+                              "$source": 0,
+                              "$named": true,
+                              "_string_open": "\"",
+                              "_elements": [
+                                "first letter must be lowercase but was {:?}"
+                              ],
+                              "$other": [
+                                122
+                              ],
+                              "$span": {
+                                "start": 186,
+                                "end": 231
+                              },
+                              "$nodeHandle": 272
+                            },
+                            {
+                              "$type": 347,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": ",",
+                              "$span": {
+                                "start": 231,
+                                "end": 232
+                              },
+                              "$nodeHandle": 274
+                            },
+                            "first_char",
+                            {
+                              "$type": 241,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 243,
+                                "end": 247
+                              },
+                              "$nodeHandle": 276,
+                              "_content": {
+                                "$type": 395,
+                                "$source": 0,
+                                "$named": true,
+                                "_delim_tokens": [
+                                  {
+                                    "$type": 347,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "$text": ".",
+                                    "$span": {
+                                      "start": 244,
+                                      "end": 245
+                                    },
+                                    "$nodeHandle": 279
+                                  },
+                                  "0"
+                                ],
+                                "$other": [
+                                  7,
+                                  8
+                                ],
+                                "$span": {
+                                  "start": 243,
+                                  "end": 247
+                                },
+                                "$nodeHandle": 277
+                              }
+                            }
+                          ],
+                          "$other": [
+                            7,
+                            8
+                          ],
+                          "$span": {
+                            "start": 185,
+                            "end": 248
+                          },
+                          "$nodeHandle": 270
+                        }
+                      },
+                      "$span": {
+                        "start": 185,
+                        "end": 248
+                      },
+                      "$nodeHandle": 268
+                    },
+                    "$span": {
+                      "start": 180,
+                      "end": 248
+                    },
+                    "$nodeHandle": 267
+                  },
+                  "$other": [
+                    45,
+                    46,
+                    47
+                  ],
+                  "$span": {
+                    "start": 178,
+                    "end": 249
+                  },
+                  "$nodeHandle": 266
+                }
+              ],
+              "_enum_variant": {
+                "$type": 181,
+                "$source": 0,
+                "$named": true,
+                "_name": "WrongCase",
+                "_body": {
+                  "$type": 184,
+                  "$source": 0,
+                  "$named": true,
+                  "_attributes": {
+                    "$type": 330,
+                    "$source": 0,
+                    "$named": true,
+                    "_element": [
+                      {
+                        "$type": 403,
+                        "$source": 0,
+                        "$named": true,
+                        "_type": "String",
+                        "$span": {
+                          "start": 264,
+                          "end": 270
+                        },
+                        "$nodeHandle": 284,
+                        "_attribute_item": []
+                      }
+                    ],
+                    "$span": {
+                      "start": 264,
+                      "end": 270
+                    },
+                    "$nodeHandle": 283,
+                    "_trailing_sep": false
+                  },
+                  "$other": [
+                    7,
+                    8
+                  ],
+                  "$span": {
+                    "start": 263,
+                    "end": 271
+                  },
+                  "$nodeHandle": 282
+                },
+                "$span": {
+                  "start": 254,
+                  "end": 271
+                },
+                "$nodeHandle": 281
+              },
+              "$span": {
+                "start": 178,
+                "end": 271
+              },
+              "$nodeHandle": 264
+            },
+            {
+              "$type": 399,
+              "$source": 0,
+              "$named": true,
+              "_attribute_item": [
+                {
+                  "$type": 171,
+                  "$source": 0,
+                  "$named": true,
+                  "_attribute": {
+                    "$type": 173,
+                    "$source": 0,
+                    "$named": true,
+                    "_path": "error",
+                    "_attribute_group1": {
+                      "$type": 327,
+                      "$source": 0,
+                      "$named": true,
+                      "_arguments": {
+                        "$type": 241,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 284,
+                          "end": 368
+                        },
+                        "$nodeHandle": 288,
+                        "_content": {
+                          "$type": 395,
+                          "$source": 0,
+                          "$named": true,
+                          "_delim_tokens": [
+                            {
+                              "$type": 312,
+                              "$source": 0,
+                              "$named": true,
+                              "_string_open": "\"",
+                              "_elements": [
+                                "invalid index {idx}, expected at least {} and at most {}"
+                              ],
+                              "$other": [
+                                122
+                              ],
+                              "$span": {
+                                "start": 285,
+                                "end": 343
+                              },
+                              "$nodeHandle": 291
+                            },
+                            {
+                              "$type": 347,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": ",",
+                              "$span": {
+                                "start": 343,
+                                "end": 344
+                              },
+                              "$nodeHandle": 293
+                            },
+                            {
+                              "$type": 347,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": ".",
+                              "$span": {
+                                "start": 345,
+                                "end": 346
+                              },
+                              "$nodeHandle": 295
+                            },
+                            "limits",
+                            {
+                              "$type": 347,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": ".",
+                              "$span": {
+                                "start": 352,
+                                "end": 353
+                              },
+                              "$nodeHandle": 298
+                            },
+                            "lo",
+                            {
+                              "$type": 347,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": ",",
+                              "$span": {
+                                "start": 355,
+                                "end": 356
+                              },
+                              "$nodeHandle": 301
+                            },
+                            {
+                              "$type": 347,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": ".",
+                              "$span": {
+                                "start": 357,
+                                "end": 358
+                              },
+                              "$nodeHandle": 303
+                            },
+                            "limits",
+                            {
+                              "$type": 347,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": ".",
+                              "$span": {
+                                "start": 364,
+                                "end": 365
+                              },
+                              "$nodeHandle": 306
+                            },
+                            "hi"
+                          ],
+                          "$other": [
+                            7,
+                            8
+                          ],
+                          "$span": {
+                            "start": 284,
+                            "end": 368
+                          },
+                          "$nodeHandle": 289
+                        }
+                      },
+                      "$span": {
+                        "start": 284,
+                        "end": 368
+                      },
+                      "$nodeHandle": 287
+                    },
+                    "$span": {
+                      "start": 279,
+                      "end": 368
+                    },
+                    "$nodeHandle": 286
+                  },
+                  "$other": [
+                    45,
+                    46,
+                    47
+                  ],
+                  "$span": {
+                    "start": 277,
+                    "end": 369
+                  },
+                  "$nodeHandle": 285
+                }
+              ],
+              "_enum_variant": {
+                "$type": 181,
+                "$source": 0,
+                "$named": true,
+                "_name": "OutOfBounds",
+                "_body": {
+                  "$type": 182,
+                  "$source": 0,
+                  "$named": true,
+                  "_field_declaration_list_elements": {
+                    "$type": 329,
+                    "$source": 0,
+                    "$named": true,
+                    "_element": [
+                      {
+                        "$type": 398,
+                        "$source": 0,
+                        "$named": true,
+                        "_field_declaration": {
+                          "$type": 183,
+                          "$source": 0,
+                          "$named": true,
+                          "_name": "idx",
+                          "_type": "usize",
+                          "$other": [
+                            5
+                          ],
+                          "$span": {
+                            "start": 388,
+                            "end": 398
+                          },
+                          "$nodeHandle": 313
+                        },
+                        "$span": {
+                          "start": 388,
+                          "end": 398
+                        },
+                        "$nodeHandle": 311,
+                        "_attribute_item": []
+                      },
+                      {
+                        "$type": 398,
+                        "$source": 0,
+                        "$named": true,
+                        "_field_declaration": {
+                          "$type": 183,
+                          "$source": 0,
+                          "$named": true,
+                          "_name": "limits",
+                          "_type": "Limits",
+                          "$other": [
+                            5
+                          ],
+                          "$span": {
+                            "start": 400,
+                            "end": 414
+                          },
+                          "$nodeHandle": 314
+                        },
+                        "$span": {
+                          "start": 400,
+                          "end": 414
+                        },
+                        "$nodeHandle": 312,
+                        "_attribute_item": []
+                      }
+                    ],
+                    "$other": [
+                      76
+                    ],
+                    "$span": {
+                      "start": 388,
+                      "end": 414
+                    },
+                    "$nodeHandle": 310,
+                    "_trailing_sep": false
+                  },
+                  "$other": [
+                    50,
+                    51
+                  ],
+                  "$span": {
+                    "start": 386,
+                    "end": 416
+                  },
+                  "$nodeHandle": 309
+                },
+                "$span": {
+                  "start": 374,
+                  "end": 416
+                },
+                "$nodeHandle": 308
+              },
+              "$span": {
+                "start": 277,
+                "end": 416
+              },
+              "$nodeHandle": 265
+            }
+          ],
+          "$other": [
+            76,
+            76
+          ],
+          "$span": {
+            "start": 178,
+            "end": 417
+          },
+          "$nodeHandle": 263,
+          "_trailing_sep": true
+        },
+        "$other": [
+          50,
+          51
+        ],
+        "$span": {
+          "start": 172,
+          "end": 419
+        },
+        "$nodeHandle": 262
+      },
+      "$other": [
+        54
+      ],
+      "$span": {
+        "start": 157,
+        "end": 419
+      },
+      "$nodeHandle": 3
+    },
+    "expectedOutput": "pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
+    "pattern": "enum_item",
+    "edits": [],
+    "expectedSourceOut": "pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }",
+    "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (integer_literal))))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier))))))))))",
+    "wrappedText": "pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 216,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 157,
+        "end": 160
+      },
+      "$nodeHandle": 13,
+      "_content": {
+        "$type": 381,
+        "$source": 0,
+        "$named": true,
+        "_pub": 141,
+        "$span": {
+          "start": 157,
+          "end": 160
+        },
+        "$nodeHandle": 315
+      }
+    },
+    "expectedOutput": "pub"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub",
+    "pattern": "visibility_modifier",
+    "edits": [],
+    "expectedSourceOut": "pub",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub))",
+    "wrappedText": "pub fn _f() {}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 312,
+      "$source": 0,
+      "$named": true,
+      "_string_open": "\"",
+      "_elements": [
+        "first letter must be lowercase but was {:?}"
+      ],
+      "$other": [
+        122
+      ],
+      "$span": {
+        "start": 186,
+        "end": 231
+      },
+      "$nodeHandle": 25
+    },
+    "expectedOutput": "\"first letter must be lowercase but was {:?}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"first letter must be lowercase but was {:?}\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"first letter must be lowercase but was {:?}\"",
+    "expectedReparseTree": "(string_literal string_open: (string_open) elements: (string_content))",
+    "wrappedText": "fn _f() { let _ = \"first letter must be lowercase but was {:?}\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 312,
+      "$source": 0,
+      "$named": true,
+      "_string_open": "\"",
+      "_elements": [
+        "invalid index {idx}, expected at least {} and at most {}"
+      ],
+      "$other": [
+        122
+      ],
+      "$span": {
+        "start": 285,
+        "end": 343
+      },
+      "$nodeHandle": 44
+    },
+    "expectedOutput": "\"invalid index {idx}, expected at least {} and at most {}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"invalid index {idx}, expected at least {} and at most {}\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"invalid index {idx}, expected at least {} and at most {}\"",
+    "expectedReparseTree": "(string_literal string_open: (string_open) elements: (string_content))",
+    "wrappedText": "fn _f() { let _ = \"invalid index {idx}, expected at least {} and at most {}\"; }",
+    "wrappedOffset": 18
   },
   {
     "kind": "render",

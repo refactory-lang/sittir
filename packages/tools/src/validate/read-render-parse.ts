@@ -375,20 +375,23 @@ export interface ReadRenderParseResult {
 /**
  * Width, in rendered bytes, of a candidate's own leading trivia — the text
  * `render_with_trivia!` (Rust) / its JS-engine counterpart writes BEFORE the
- * candidate's own content, each entry followed by a `"\n"` separator. The
- * candidate's real node starts this many bytes after where its `rendered`
- * string (trivia included) was spliced into the reparse wrapper, so the
- * offset-based lookup below must skip past it. Returns 0 when there's no
- * leading trivia (the common case).
+ * candidate's own content. The candidate's real node starts this many bytes
+ * after where its `rendered` string (trivia included) was spliced into the
+ * reparse wrapper, so the offset-based lookup below must skip past it.
+ * Returns 0 when there's no leading trivia (the common case).
+ *
+ * Derived by differencing two engine renders (with vs. without the leading
+ * trivia) rather than rendering each trivia entry standalone: trivia entries
+ * are embedded raw at read time (never wrapped into model shape), and only
+ * the in-context `TriviaTransport` decode carries the verbatim `$text`
+ * fallback for that raw shape — a standalone root render of the same entry
+ * hard-fails decoding (`Missing field _content`).
  */
 export function leadingTriviaRenderedWidth(data: AnyNodeData, render: (node: AnyNodeData) => string): number {
 	const leading = data.$triviaData?.leading;
 	if (!leading || leading.length === 0) return 0;
-	let width = 0;
-	for (const entry of leading) {
-		width += render(entry).length + 1; // +1 for the "\n" render_with_trivia! writes after each entry
-	}
-	return width;
+	const stripped = { ...data, $triviaData: { ...data.$triviaData, leading: undefined } } as AnyNodeData;
+	return render(data).length - render(stripped).length;
 }
 
 /**
