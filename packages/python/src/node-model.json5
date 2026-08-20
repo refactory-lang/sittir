@@ -92,219 +92,65 @@
     "module.statements": {
       "statement_group1": "_simple_statements"
     },
-    "_simple_statements.simple_statements_elements": {
-      "simple_statements_elements": "_simple_statements_elements"
-    },
-    "_simple_statements.newline": {
-      "newline": "_newline"
-    },
     "import_statement.import_list": {
       "names": "_import_list"
     },
-    "future_import_statement.content": {
-      "future_import_statement_group1": "_import_list",
-      "future_import_statement_group2": "_future_import_statement_group2"
-    },
-    "import_from_statement.content": {
-      "future_import_statement_group1": "_import_list",
-      "future_import_statement_group2": "_future_import_statement_group2"
-    },
-    "expression_statement.content": {
-      "expression_statement_tuple": "_expression_statement_tuple"
-    },
     "if_statement.consequence": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
+      "simple_statements": "_simple_statements"
     },
     "elif_clause.consequence": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
+      "simple_statements": "_simple_statements"
     },
     "else_clause.body": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "match_statement.subjects": {
-      "subjects": "_subjects"
+      "simple_statements": "_simple_statements"
     },
     "match_statement.body": {
       "block": "_match_block"
     },
-    "_match_block.content": {
-      "match_block_block": "_match_block_block",
-      "newline": "_newline"
-    },
-    "case_clause.case_patterns": {
-      "case_patterns": "_case_patterns"
-    },
     "case_clause.consequence": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
+      "simple_statements": "_simple_statements"
     },
     "for_statement.body": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
+      "simple_statements": "_simple_statements"
     },
     "while_statement.body": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
+      "simple_statements": "_simple_statements"
     },
     "try_statement.body": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "except_clause.except_clause_group1": {
-      "except_clause_group1": "_except_clause_group1"
+      "simple_statements": "_simple_statements"
     },
     "except_clause.content": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
+      "simple_statements": "_simple_statements"
     },
     "finally_clause.block": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
+      "simple_statements": "_simple_statements"
     },
     "with_statement.body": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "with_clause.content": {
-      "with_clause_bare": "_with_clause_bare",
-      "with_clause_paren": "_with_clause_paren"
+      "simple_statements": "_simple_statements"
     },
     "function_definition.body": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "parameters.parameters": {
-      "parameter_list": "_parameters"
-    },
-    "lambda_parameters.parameters": {
-      "parameter_list": "_parameters"
+      "simple_statements": "_simple_statements"
     },
     "class_definition.body": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "type_parameter.types": {
-      "types": "_types"
+      "simple_statements": "_simple_statements"
     },
     "parenthesized_list_splat.content": {
       "parenthesized_expression": "parenthesized_list_splat"
     },
-    "argument_list.arguments": {
-      "argument_list_elements": "_argument_list_elements"
-    },
-    "decorator.newline": {
-      "newline": "_newline"
-    },
     "_suite.content": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
+      "simple_statements": "_simple_statements"
     },
     "block.statements": {
       "statement_group1": "_simple_statements"
     },
-    "expression_list.tail": {
-      "expression_list_expressions": "_expression_list_expressions"
-    },
-    "case_pattern.content": {
-      "simple_pattern_negative": "_simple_pattern_negative",
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "union_pattern.simple_pattern": {
-      "simple_pattern_negative": "_simple_pattern_negative",
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "dict_pattern.dict_pattern_elements": {
-      "dict_pattern_elements": "_dict_pattern_elements"
-    },
-    "_key_value_pattern.key": {
-      "simple_pattern_negative": "_simple_pattern_negative",
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "keyword_pattern.simple_pattern": {
-      "simple_pattern_negative": "_simple_pattern_negative",
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "class_pattern.arguments": {
-      "list_pattern_case_patterns": "_list_pattern_case_patterns"
-    },
-    "tuple_pattern.patterns": {
-      "pattern_group": "_patterns"
-    },
-    "list_pattern.patterns": {
-      "pattern_group": "_patterns"
-    },
     "as_pattern.alias": {
       "as_pattern_target": "expression"
-    },
-    "comparison_operator.comparators": {
-      "comparison_operator_comparator": "_comparison_operator_comparator"
-    },
-    "assignment.content": {
-      "assignment_eq": "_assignment_eq",
-      "assignment_type": "_assignment_type",
-      "assignment_typed": "_assignment_typed"
-    },
-    "pattern_list.tail": {
-      "pattern_list_patterns": "_pattern_list_patterns"
-    },
-    "yield.content": {
-      "yield_from_clause": "_yield_from_clause"
-    },
-    "subscript.subscripts": {
-      "subscripts": "_subscripts"
-    },
-    "slice.step": {
-      "slice_group1": "_slice_group1"
-    },
-    "list.collection_elements": {
-      "element_list": "_collection_elements"
-    },
-    "set.collection_elements": {
-      "element_list": "_collection_elements"
-    },
-    "tuple.collection_elements": {
-      "element_list": "_collection_elements"
-    },
-    "dictionary.entries": {
-      "dictionary_elements": "_dictionary_elements"
     },
     "format_specifier.content": {
       "format_expression": "interpolation"
     },
     "_future_import_statement_group2.import_list": {
       "names": "_import_list"
-    },
-    "_except_clause_group1.content": {
-      "except_clause_as": "_except_clause_as",
-      "except_clause_list": "_except_clause_list"
-    },
-    "_dict_pattern_elements.element": {
-      "dict_pattern_group1": "_key_value_pattern"
-    },
-    "case_tuple_pattern.list_pattern_case_patterns": {
-      "list_pattern_case_patterns": "_list_pattern_case_patterns"
-    },
-    "case_list_pattern.list_pattern_case_patterns": {
-      "list_pattern_case_patterns": "_list_pattern_case_patterns"
-    },
-    "_with_clause_paren.with_clause_with_items": {
-      "with_clause_with_items": "_with_clause_with_items"
     }
   },
   "factorySlots": {

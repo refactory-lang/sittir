@@ -79,6 +79,8 @@ import {
 	isEnumChoiceRule,
 	isLinkSymbol,
 	subtypeParseNamesOf,
+	subtypeRestampPairsOf,
+	aliasRestampRequired,
 	transitiveParseKinds
 } from '../../types/rule.ts';
 import { isStringType } from '../../types/runtime-shapes.ts';
@@ -1840,17 +1842,21 @@ export function aliasTargetToSourceMapOf(slot: {
  * value can require — the same fact `wrap.ts`'s drillAs/drillAsAll
  * accessors key their alias restamp on. Two sources, unioned:
  *
- * 1. {@link aliasTargetToSourceMapOf} — the slot's own values, where a
- *    NodeRef's stamped parse-kind differs from its storage kind (a
- *    directly-aliased arm, e.g. a polymorphic choice where several arms
- *    each alias onto their own shared canonical name).
+ * 1. The slot's own values, where a NodeRef's stamped parse-kind differs
+ *    from its storage kind (a directly-aliased arm, e.g. a polymorphic
+ *    choice where several arms each alias onto their own shared canonical
+ *    name).
  * 2. A slot whose value is a single opaque reference to a hidden
  *    supertype-modeled node (e.g. `_tuple_type_member`) rather than
  *    expanding directly into concrete arm NodeRefs — the per-arm alias
  *    info there lives one level down, in that node's own
- *    `subtypeParseNames` map (storageKind -> parseKind), which already
- *    records exactly which arms diverge (e.g. `tuple_parameter` ->
- *    `required_parameter`).
+ *    `subtypeRestampPairs` projection, which already records exactly
+ *    which arms diverge (e.g. `tuple_parameter` -> `required_parameter`).
+ *
+ * Both sources admit only aliases the parser kept two symbols for
+ * ({@link aliasRestampRequired}): a hidden rule merged into its sole alias
+ * name arrives on the wire ALREADY under the storage kind's id, so a
+ * restamp pair for it would remap every occurrence to itself.
  *
  * `ctx.nodes` is duck-typed against `NodeMap['nodes']` rather than
  * importing the `NodeMap` type directly — `NodeMap` (in
@@ -1858,21 +1864,31 @@ export function aliasTargetToSourceMapOf(slot: {
  * THIS module, so a direct import here would be circular.
  */
 export interface SlotAliasPairsCtx {
-	readonly nodes: ReadonlyMap<string, { modelType: string; subtypeParseNames?: Readonly<Record<string, string>> }>;
+	readonly nodes: ReadonlyMap<
+		string,
+		{ modelType: string; subtypeRestampPairs?: ReadonlyArray<readonly [string, string]> }
+	>;
 }
 
 export function resolveSlotAliasPairs(
 	slot: { values: readonly NodeOrTerminal[] },
 	ctx: SlotAliasPairsCtx
 ): readonly (readonly [string, string])[] | undefined {
-	const pairs: (readonly [string, string])[] = Object.entries(aliasTargetToSourceMapOf(slot));
+	const byParseName = new Map<string, string>();
+	for (const value of slot.values) {
+		if (!isNodeRef(value)) continue;
+		const parseKind = value.parseKind?.name;
+		const sourceKind = storageKindOfRef(value.node);
+		if (parseKind === undefined || parseKind === sourceKind) continue;
+		if (!aliasRestampRequired(value.parseKindId, value.storageKindId)) continue;
+		byParseName.set(parseKind, sourceKind);
+	}
+	const pairs: (readonly [string, string])[] = [...byParseName.entries()];
 	for (const parseKind of valueParseKindsOf(slot)) {
 		const normalized = parseKind.startsWith('_') ? parseKind.slice(1) : parseKind;
 		const node = ctx.nodes.get(parseKind) ?? ctx.nodes.get(normalized);
 		if (node?.modelType !== 'supertype') continue;
-		for (const [storageKind, parseName] of Object.entries(node.subtypeParseNames ?? {})) {
-			if (storageKind !== parseName) pairs.push([parseName, storageKind]);
-		}
+		for (const pair of node.subtypeRestampPairs ?? []) pairs.push(pair);
 	}
 	return pairs.length > 0 ? pairs : undefined;
 }
@@ -2767,6 +2783,12 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 		if (this.rule.type !== SUPERTYPE) return undefined;
 		const pairs = subtypeParseNamesOf(this.rule);
 		return Object.keys(pairs).length > 0 ? pairs : undefined;
+	}
+
+	get subtypeRestampPairs(): ReadonlyArray<readonly [string, string]> | undefined {
+		if (this.rule.type !== SUPERTYPE) return undefined;
+		const pairs = subtypeRestampPairsOf(this.rule);
+		return pairs.length > 0 ? pairs : undefined;
 	}
 }
 

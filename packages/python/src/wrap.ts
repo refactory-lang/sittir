@@ -866,9 +866,7 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 			),
 
 			simpleStatementsElements() {
-				return drillAs<T.SimpleStatementsElements>(this._simple_statements_elements, tree, [
-					{ from: 'simple_statements_elements', to: '_simple_statements_elements' }
-				]);
+				return drillIn<T.SimpleStatementsElements>(this._simple_statements_elements, tree);
 			},
 			newline() {
 				return this._newline;
@@ -966,10 +964,7 @@ export function wrapFutureImportStatement(
 			),
 
 			content() {
-				return drillAs<T.ImportList | T.FutureImportStatementGroup2>(this._content, tree, [
-					{ from: 'future_import_statement_group1', to: '_import_list' },
-					{ from: 'future_import_statement_group2', to: '_future_import_statement_group2' }
-				]);
+				return drillIn<T.ImportList | T.FutureImportStatementGroup2>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.FutureImportStatement['_content']>) =>
@@ -1018,10 +1013,7 @@ export function wrapImportFromStatement(
 				return drillIn<T.RelativeImport | T.DottedName>(this._module_name, tree);
 			},
 			content() {
-				return drillAs<T.ImportList | T.FutureImportStatementGroup2 | T.WildcardImport>(this._content, tree, [
-					{ from: 'future_import_statement_group1', to: '_import_list' },
-					{ from: 'future_import_statement_group2', to: '_future_import_statement_group2' }
-				]);
+				return drillIn<T.ImportList | T.FutureImportStatementGroup2 | T.WildcardImport>(this._content, tree);
 			},
 			$with: {
 				moduleName: (v: NonNullable<T.ImportFromStatement['_module_name']>) =>
@@ -1416,10 +1408,9 @@ export function wrapExpressionStatement(
 			),
 
 			content() {
-				return drillAs<T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield>(
+				return drillIn<T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield>(
 					this._content,
-					tree,
-					[{ from: 'expression_statement_tuple', to: '_expression_statement_tuple' }]
+					tree
 				);
 			},
 			$with: {
@@ -1919,9 +1910,7 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
 			},
 			consequence() {
 				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._consequence, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' },
-					{ from: 'suite_block_with_indent', to: '_suite_block_with_indent' },
-					{ from: 'newline', to: '_newline' }
+					{ from: 'simple_statements', to: '_simple_statements' }
 				]);
 			},
 			alternatives() {
@@ -1967,9 +1956,7 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle) {
 			},
 			consequence() {
 				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._consequence, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' },
-					{ from: 'suite_block_with_indent', to: '_suite_block_with_indent' },
-					{ from: 'newline', to: '_newline' }
+					{ from: 'simple_statements', to: '_simple_statements' }
 				]);
 			},
 			$with: {
@@ -1998,9 +1985,7 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
 
 			body() {
 				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' },
-					{ from: 'suite_block_with_indent', to: '_suite_block_with_indent' },
-					{ from: 'newline', to: '_newline' }
+					{ from: 'simple_statements', to: '_simple_statements' }
 				]);
 			},
 			$with: {
@@ -2031,7 +2016,7 @@ export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle) {
 			}),
 
 			subjects() {
-				return drillAs<T.Subjects>(this._subjects, tree, [{ from: 'subjects', to: '_subjects' }]);
+				return drillIn<T.Subjects>(this._subjects, tree);
 			},
 			body() {
 				return drillAs<T.MatchBlock>(this._body, tree, [{ from: 'block', to: '_match_block' }]);
@@ -2068,10 +2053,7 @@ export function wrapMatchBlock(
 			),
 
 			content() {
-				return drillAs<T.MatchBlockBlock | '\n'>(this._content, tree, [
-					{ from: 'match_block_block', to: '_match_block_block' },
-					{ from: 'newline', to: '_newline' }
-				]);
+				return drillIn<T.MatchBlockBlock | '\n'>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.MatchBlock['_content']>) => wrapMatchBlock({ ...data, _content: v }, tree)
@@ -2108,16 +2090,14 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {
 			}),
 
 			casePatterns() {
-				return drillAs<T.CasePatterns>(this._case_patterns, tree, [{ from: 'case_patterns', to: '_case_patterns' }]);
+				return drillIn<T.CasePatterns>(this._case_patterns, tree);
 			},
 			guard() {
 				return drillIn<T.IfClause | undefined>(this._guard, tree);
 			},
 			consequence() {
 				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._consequence, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' },
-					{ from: 'suite_block_with_indent', to: '_suite_block_with_indent' },
-					{ from: 'newline', to: '_newline' }
+					{ from: 'simple_statements', to: '_simple_statements' }
 				]);
 			},
 			$with: {
@@ -2183,9 +2163,7 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 			},
 			body() {
 				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' },
-					{ from: 'suite_block_with_indent', to: '_suite_block_with_indent' },
-					{ from: 'newline', to: '_newline' }
+					{ from: 'simple_statements', to: '_simple_statements' }
 				]);
 			},
 			alternative() {
@@ -2236,9 +2214,7 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
 			},
 			body() {
 				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' },
-					{ from: 'suite_block_with_indent', to: '_suite_block_with_indent' },
-					{ from: 'newline', to: '_newline' }
+					{ from: 'simple_statements', to: '_simple_statements' }
 				]);
 			},
 			alternative() {
@@ -2290,9 +2266,7 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
 
 			body() {
 				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' },
-					{ from: 'suite_block_with_indent', to: '_suite_block_with_indent' },
-					{ from: 'newline', to: '_newline' }
+					{ from: 'simple_statements', to: '_simple_statements' }
 				]);
 			},
 			exceptClauses() {
@@ -2359,15 +2333,11 @@ export function wrapExceptClause(
 				return this._star_marker;
 			},
 			exceptClauseGroup1() {
-				return drillAs<T.ExceptClauseGroup1 | undefined>(this._except_clause_group1, tree, [
-					{ from: 'except_clause_group1', to: '_except_clause_group1' }
-				]);
+				return drillIn<T.ExceptClauseGroup1 | undefined>(this._except_clause_group1, tree);
 			},
 			content() {
 				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._content, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' },
-					{ from: 'suite_block_with_indent', to: '_suite_block_with_indent' },
-					{ from: 'newline', to: '_newline' }
+					{ from: 'simple_statements', to: '_simple_statements' }
 				]);
 			},
 			$with: {
@@ -2398,9 +2368,7 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle) {
 
 			block() {
 				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._block, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' },
-					{ from: 'suite_block_with_indent', to: '_suite_block_with_indent' },
-					{ from: 'newline', to: '_newline' }
+					{ from: 'simple_statements', to: '_simple_statements' }
 				]);
 			},
 			$with: {
@@ -2447,9 +2415,7 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle) {
 			},
 			body() {
 				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' },
-					{ from: 'suite_block_with_indent', to: '_suite_block_with_indent' },
-					{ from: 'newline', to: '_newline' }
+					{ from: 'simple_statements', to: '_simple_statements' }
 				]);
 			},
 			$with: {
@@ -2485,10 +2451,7 @@ export function wrapWithClause(
 			),
 
 			content() {
-				return drillAs<T.WithClauseBare | T.WithClauseParen>(this._content, tree, [
-					{ from: 'with_clause_bare', to: '_with_clause_bare' },
-					{ from: 'with_clause_paren', to: '_with_clause_paren' }
-				]);
+				return drillIn<T.WithClauseBare | T.WithClauseParen>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.WithClause['_content']>) => wrapWithClause({ ...data, _content: v }, tree)
@@ -2586,9 +2549,7 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 			},
 			body() {
 				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' },
-					{ from: 'suite_block_with_indent', to: '_suite_block_with_indent' },
-					{ from: 'newline', to: '_newline' }
+					{ from: 'simple_statements', to: '_simple_statements' }
 				]);
 			},
 			$with: {
@@ -2623,9 +2584,7 @@ export function wrapParameters(data: T.Parameters & { readonly _parameter_list?:
 			),
 
 			parameters() {
-				return drillAs<T._Parameters | undefined>(this._parameters, tree, [
-					{ from: 'parameter_list', to: '_parameters' }
-				]);
+				return drillIn<T._Parameters | undefined>(this._parameters, tree);
 			},
 			$with: {
 				parameters: (v: NonNullable<T.Parameters['_parameters']>) => wrapParameters({ ...data, _parameters: v }, tree)
@@ -2652,7 +2611,7 @@ export function wrapLambdaParameters(
 			}),
 
 			parameters() {
-				return drillAs<T._Parameters>(this._parameters, tree, [{ from: 'parameter_list', to: '_parameters' }]);
+				return drillIn<T._Parameters>(this._parameters, tree);
 			},
 			$with: {
 				parameters: (v: NonNullable<T.LambdaParameters['_parameters']>) =>
@@ -2926,9 +2885,7 @@ export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle) {
 			},
 			body() {
 				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' },
-					{ from: 'suite_block_with_indent', to: '_suite_block_with_indent' },
-					{ from: 'newline', to: '_newline' }
+					{ from: 'simple_statements', to: '_simple_statements' }
 				]);
 			},
 			$with: {
@@ -2958,7 +2915,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
 			}),
 
 			types() {
-				return drillAs<T.Types>(this._types, tree, [{ from: 'types', to: '_types' }]);
+				return drillIn<T.Types>(this._types, tree);
 			},
 			$with: {
 				types: (v: NonNullable<T.TypeParameter['_types']>) => wrapTypeParameter({ ...data, _types: v }, tree)
@@ -3016,9 +2973,7 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle) {
 			}),
 
 			arguments() {
-				return drillAs<T.ArgumentListElements | undefined>(this._arguments, tree, [
-					{ from: 'argument_list_elements', to: '_argument_list_elements' }
-				]);
+				return drillIn<T.ArgumentListElements | undefined>(this._arguments, tree);
 			},
 			$with: {
 				arguments: (v: NonNullable<T.ArgumentList['_arguments']>) => wrapArgumentList({ ...data, _arguments: v }, tree)
@@ -3256,9 +3211,7 @@ export function wrapExpressionList(
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			tail() {
-				return drillAs<',' | T.ExpressionListExpressions>(this._tail, tree, [
-					{ from: 'expression_list_expressions', to: '_expression_list_expressions' }
-				]);
+				return drillIn<',' | T.ExpressionListExpressions>(this._tail, tree);
 			},
 			$with: {
 				expression: (v: NonNullable<T.ExpressionList['_expression']>) =>
@@ -3366,10 +3319,7 @@ export function wrapCasePattern(
 			),
 
 			content() {
-				return drillAs<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this._content, tree, [
-					{ from: 'simple_pattern_negative', to: '_simple_pattern_negative' },
-					{ from: 'wildcard_pattern', to: '_wildcard_pattern' }
-				]);
+				return drillIn<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.CasePattern['_content']>) => wrapCasePattern({ ...data, _content: v }, tree)
@@ -3468,10 +3418,7 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle) {
 			),
 
 			simplePatterns() {
-				return drillAsAll<T.SimplePattern>(this._simple_pattern, tree, [
-					{ from: 'simple_pattern_negative', to: '_simple_pattern_negative' },
-					{ from: 'wildcard_pattern', to: '_wildcard_pattern' }
-				]);
+				return drillInAll<T.SimplePattern>(this._simple_pattern as readonly T.SimplePattern[] | undefined, tree);
 			},
 			$with: {
 				simplePatterns: (...v: NonEmptyArray<NonNullable<T.UnionPattern['_simple_pattern']>[number]>) =>
@@ -3497,9 +3444,7 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle) {
 			),
 
 			dictPatternElements() {
-				return drillAs<T.DictPatternElements | undefined>(this._dict_pattern_elements, tree, [
-					{ from: 'dict_pattern_elements', to: '_dict_pattern_elements' }
-				]);
+				return drillIn<T.DictPatternElements | undefined>(this._dict_pattern_elements, tree);
 			},
 			$with: {
 				dictPatternElements: (v: NonNullable<T.DictPattern['_dict_pattern_elements']>) =>
@@ -3530,10 +3475,7 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle) {
 			}),
 
 			key() {
-				return drillAs<T.SimplePattern>(this._key, tree, [
-					{ from: 'simple_pattern_negative', to: '_simple_pattern_negative' },
-					{ from: 'wildcard_pattern', to: '_wildcard_pattern' }
-				]);
+				return drillIn<T.SimplePattern>(this._key, tree);
 			},
 			value() {
 				return drillIn<T.CasePattern>(this._value, tree);
@@ -3570,10 +3512,7 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle) {
 				return drillIn<T.Identifier>(this._identifier, tree);
 			},
 			simplePattern() {
-				return drillAs<T.SimplePattern>(this._simple_pattern, tree, [
-					{ from: 'simple_pattern_negative', to: '_simple_pattern_negative' },
-					{ from: 'wildcard_pattern', to: '_wildcard_pattern' }
-				]);
+				return drillIn<T.SimplePattern>(this._simple_pattern, tree);
 			},
 			$with: {
 				identifier: (v: NonNullable<T.KeywordPattern['_identifier']>) =>
@@ -3649,9 +3588,7 @@ export function wrapClassPattern(data: T.ClassPattern, tree: TreeHandle) {
 				return drillIn<T.DottedName>(this._dotted_name, tree);
 			},
 			arguments() {
-				return drillAs<T.ListPatternCasePatterns | undefined>(this._arguments, tree, [
-					{ from: 'list_pattern_case_patterns', to: '_list_pattern_case_patterns' }
-				]);
+				return drillIn<T.ListPatternCasePatterns | undefined>(this._arguments, tree);
 			},
 			$with: {
 				dottedName: (v: NonNullable<T.ClassPattern['_dotted_name']>) =>
@@ -3875,7 +3812,7 @@ export function wrapTuplePattern(data: T.TuplePattern & { readonly _pattern_grou
 			}),
 
 			patterns() {
-				return drillAs<T.Patterns | undefined>(this._patterns, tree, [{ from: 'pattern_group', to: '_patterns' }]);
+				return drillIn<T.Patterns | undefined>(this._patterns, tree);
 			},
 			$with: {
 				patterns: (v: NonNullable<T.TuplePattern['_patterns']>) => wrapTuplePattern({ ...data, _patterns: v }, tree)
@@ -3899,7 +3836,7 @@ export function wrapListPattern(data: T.ListPattern & { readonly _pattern_group?
 			}),
 
 			patterns() {
-				return drillAs<T.Patterns | undefined>(this._patterns, tree, [{ from: 'pattern_group', to: '_patterns' }]);
+				return drillIn<T.Patterns | undefined>(this._patterns, tree);
 			},
 			$with: {
 				patterns: (v: NonNullable<T.ListPattern['_patterns']>) => wrapListPattern({ ...data, _patterns: v }, tree)
@@ -4445,9 +4382,10 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
 				return drillIn<T.PrimaryExpression>(this._left, tree);
 			},
 			comparators() {
-				return drillAsAll<T.ComparisonOperatorComparator>(this._comparators, tree, [
-					{ from: 'comparison_operator_comparator', to: '_comparison_operator_comparator' }
-				]);
+				return drillInAll<T.ComparisonOperatorComparator>(
+					this._comparators as readonly T.ComparisonOperatorComparator[] | undefined,
+					tree
+				);
 			},
 			$with: {
 				left: (v: NonNullable<T.ComparisonOperator['_left']>) => wrapComparisonOperator({ ...data, _left: v }, tree),
@@ -4560,11 +4498,7 @@ export function wrapAssignment(
 				return drillIn<T.LeftHandSide>(this._left, tree);
 			},
 			content() {
-				return drillAs<T.AssignmentEq | T.AssignmentType | T.AssignmentTyped>(this._content, tree, [
-					{ from: 'assignment_eq', to: '_assignment_eq' },
-					{ from: 'assignment_type', to: '_assignment_type' },
-					{ from: 'assignment_typed', to: '_assignment_typed' }
-				]);
+				return drillIn<T.AssignmentEq | T.AssignmentType | T.AssignmentTyped>(this._content, tree);
 			},
 			$with: {
 				left: (v: NonNullable<T.Assignment['_left']>) => wrapAssignment({ ...data, _left: v }, tree),
@@ -4702,9 +4636,7 @@ export function wrapPatternList(
 				return drillIn<T.Pattern>(this._pattern, tree);
 			},
 			tail() {
-				return drillAs<',' | T.PatternListPatterns>(this._tail, tree, [
-					{ from: 'pattern_list_patterns', to: '_pattern_list_patterns' }
-				]);
+				return drillIn<',' | T.PatternListPatterns>(this._tail, tree);
 			},
 			$with: {
 				pattern: (v: NonNullable<T.PatternList['_pattern']>) => wrapPatternList({ ...data, _pattern: v }, tree),
@@ -4873,9 +4805,7 @@ export function wrapYield(
 			),
 
 			content() {
-				return drillAs<T.YieldFromClause | T.Expressions | undefined>(this._content, tree, [
-					{ from: 'yield_from_clause', to: '_yield_from_clause' }
-				]);
+				return drillIn<T.YieldFromClause | T.Expressions | undefined>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.Yield['_content']>) => wrapYield({ ...data, _content: v }, tree)
@@ -4942,7 +4872,7 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle) {
 				return drillIn<T.PrimaryExpression>(this._value, tree);
 			},
 			subscripts() {
-				return drillAs<T.Subscripts>(this._subscripts, tree, [{ from: 'subscripts', to: '_subscripts' }]);
+				return drillIn<T.Subscripts>(this._subscripts, tree);
 			},
 			$with: {
 				value: (v: NonNullable<T.Subscript['_value']>) => wrapSubscript({ ...data, _value: v }, tree),
@@ -4985,7 +4915,7 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle) {
 				return drillIn<T.Expression | undefined>(this._stop, tree);
 			},
 			step() {
-				return drillAs<T.SliceGroup1 | undefined>(this._step, tree, [{ from: 'slice_group1', to: '_slice_group1' }]);
+				return drillIn<T.SliceGroup1 | undefined>(this._step, tree);
 			},
 			$with: {
 				start: (v: NonNullable<T.Slice['_start']>) => wrapSlice({ ...data, _start: v }, tree),
@@ -5527,9 +5457,7 @@ export function wrapList(data: T.List & { readonly _element_list?: T.CollectionE
 			),
 
 			collectionElements() {
-				return drillAs<T.CollectionElements | undefined>(this._collection_elements, tree, [
-					{ from: 'element_list', to: '_collection_elements' }
-				]);
+				return drillIn<T.CollectionElements | undefined>(this._collection_elements, tree);
 			},
 			$with: {
 				collectionElements: (v: NonNullable<T.List['_collection_elements']>) =>
@@ -5555,9 +5483,7 @@ export function wrapSet(data: T.Set & { readonly _element_list?: T.CollectionEle
 			),
 
 			collectionElements() {
-				return drillAs<T.CollectionElements>(this._collection_elements, tree, [
-					{ from: 'element_list', to: '_collection_elements' }
-				]);
+				return drillIn<T.CollectionElements>(this._collection_elements, tree);
 			},
 			$with: {
 				collectionElements: (v: NonNullable<T.Set['_collection_elements']>) =>
@@ -5583,9 +5509,7 @@ export function wrapTuple(data: T.Tuple & { readonly _element_list?: T.Collectio
 			),
 
 			collectionElements() {
-				return drillAs<T.CollectionElements | undefined>(this._collection_elements, tree, [
-					{ from: 'element_list', to: '_collection_elements' }
-				]);
+				return drillIn<T.CollectionElements | undefined>(this._collection_elements, tree);
 			},
 			$with: {
 				collectionElements: (v: NonNullable<T.Tuple['_collection_elements']>) =>
@@ -5610,9 +5534,7 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle) {
 			}),
 
 			entries() {
-				return drillAs<T.DictionaryElements | undefined>(this._entries, tree, [
-					{ from: 'dictionary_elements', to: '_dictionary_elements' }
-				]);
+				return drillIn<T.DictionaryElements | undefined>(this._entries, tree);
 			},
 			$with: {
 				entries: (v: NonNullable<T.Dictionary['_entries']>) => wrapDictionary({ ...data, _entries: v }, tree)
@@ -6548,10 +6470,7 @@ export function wrapExceptClauseGroup1(
 			),
 
 			content() {
-				return drillAs<T.ExceptClauseAs | T.ExceptClauseList>(this._content, tree, [
-					{ from: 'except_clause_as', to: '_except_clause_as' },
-					{ from: 'except_clause_list', to: '_except_clause_list' }
-				]);
+				return drillIn<T.ExceptClauseAs | T.ExceptClauseList>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.ExceptClauseGroup1['_content']>) =>
@@ -6833,9 +6752,10 @@ export function wrapDictPatternElements(
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			elements() {
-				return drillAsAll<T.KeyValuePattern | T.SplatPattern>(this._element, tree, [
-					{ from: 'dict_pattern_group1', to: '_key_value_pattern' }
-				]);
+				return drillInAll<T.KeyValuePattern | T.SplatPattern>(
+					this._element as readonly (T.KeyValuePattern | T.SplatPattern)[] | undefined,
+					tree
+				);
 			},
 			$with: {}
 		},
@@ -7129,9 +7049,7 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 			),
 
 			listPatternCasePatterns() {
-				return drillAs<T.ListPatternCasePatterns | undefined>(this._list_pattern_case_patterns, tree, [
-					{ from: 'list_pattern_case_patterns', to: '_list_pattern_case_patterns' }
-				]);
+				return drillIn<T.ListPatternCasePatterns | undefined>(this._list_pattern_case_patterns, tree);
 			},
 			$with: {
 				listPatternCasePatterns: (v: NonNullable<T.CaseTuplePattern['_list_pattern_case_patterns']>) =>
@@ -7157,9 +7075,7 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle) {
 			),
 
 			listPatternCasePatterns() {
-				return drillAs<T.ListPatternCasePatterns | undefined>(this._list_pattern_case_patterns, tree, [
-					{ from: 'list_pattern_case_patterns', to: '_list_pattern_case_patterns' }
-				]);
+				return drillIn<T.ListPatternCasePatterns | undefined>(this._list_pattern_case_patterns, tree);
 			},
 			$with: {
 				listPatternCasePatterns: (v: NonNullable<T.CaseListPattern['_list_pattern_case_patterns']>) =>
@@ -7581,9 +7497,7 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle) {
 			),
 
 			withClauseWithItems() {
-				return drillAs<T.WithClauseWithItems>(this._with_clause_with_items, tree, [
-					{ from: 'with_clause_with_items', to: '_with_clause_with_items' }
-				]);
+				return drillIn<T.WithClauseWithItems>(this._with_clause_with_items, tree);
 			},
 			$with: {
 				withClauseWithItems: (v: NonNullable<T.WithClauseParen['_with_clause_with_items']>) =>
@@ -8213,54 +8127,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 
 const _aliasTargetToSource: Record<string, string> = {
 	_statement_group1: '_simple_statements',
-	argument_list_elements: '_argument_list_elements',
-	assignment_eq: '_assignment_eq',
-	assignment_type: '_assignment_type',
-	assignment_typed: '_assignment_typed',
-	augmented_assignment_operator: '_augmented_assignment_operator',
-	case_patterns: '_case_patterns',
-	collection_elements: '_collection_elements',
-	comparison_operator_comparator: '_comparison_operator_comparator',
-	dict_pattern_elements: '_dict_pattern_elements',
-	dictionary_elements: '_dictionary_elements',
-	except_clause_as: '_except_clause_as',
-	except_clause_group1: '_except_clause_group1',
-	except_clause_list: '_except_clause_list',
-	expression_list_expressions: '_expression_list_expressions',
-	expression_statement_tuple: '_expression_statement_tuple',
-	expression_within_for_in_clause: '_expression_within_for_in_clause',
-	expressions: '_expressions',
-	f_expression: '_f_expression',
-	future_import_statement_group2: '_future_import_statement_group2',
-	import_list: '_import_list',
-	key_value_pattern: '_key_value_pattern',
-	kw_async_marker: '_kw_async_marker',
-	left_hand_side: '_left_hand_side',
-	list_pattern_case_patterns: '_list_pattern_case_patterns',
-	match_block: '_match_block',
-	match_block_block: '_match_block_block',
-	named_expression_lhs: '_named_expression_lhs',
-	pattern_list_patterns: '_pattern_list_patterns',
-	patterns: '_patterns',
-	right_hand_side: '_right_hand_side',
-	simple_pattern: '_simple_pattern',
-	simple_pattern_negative: '_simple_pattern_negative',
-	simple_statement: '_simple_statement',
-	simple_statements: '_simple_statements',
-	simple_statements_elements: '_simple_statements_elements',
-	slice_group1: '_slice_group1',
-	statement: '_statement',
-	statement_group1: '_simple_statements',
-	subjects: '_subjects',
-	subscripts: '_subscripts',
-	suite_block_with_indent: '_suite_block_with_indent',
-	types: '_types',
-	unary_operator_operator: '_unary_operator_operator',
-	wildcard_pattern: '_wildcard_pattern',
-	with_clause_bare: '_with_clause_bare',
-	with_clause_paren: '_with_clause_paren',
-	with_clause_with_items: '_with_clause_with_items',
-	yield_from_clause: '_yield_from_clause'
+	statement_group1: '_simple_statements'
 };
 
 function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {
@@ -8287,10 +8154,10 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 		typeof data.$type === 'number'
 			? (KIND_NAMES.get(data.$type as never) ?? String(data.$type))
 			: (data.$type as unknown as string);
-	// Canonical-hidden remap (Option Y): parser-output `$type`
-	// is the visible alias target (e.g. `range_pattern_left_with_right`);
-	// remap to the hidden alias source (`_range_pattern_left_with_right`)
-	// so dispatch + downstream consumers see the canonical form.
+	// Alias restamp: a parse `$type` whose node content belongs to a
+	// DIFFERENT storage kind (the parser kept two symbols for the alias)
+	// remaps to that kind so dispatch reaches its wrap function. Merged
+	// aliases need no entry — their single id already names the storage kind.
 	const canonical = _aliasTargetToSource[rawType];
 	if (canonical !== undefined) {
 		data = { ...data, $type: canonical as unknown as number };

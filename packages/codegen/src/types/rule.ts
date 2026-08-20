@@ -292,6 +292,38 @@ export function subtypeParseNamesOf<T extends PhaseName>(rule: SupertypeRule<T>)
 	return pairs;
 }
 
+/**
+ * Whether an aliased reference still requires a runtime parse→storage
+ * restamp. tree-sitter merges a hidden rule that is referenced ONLY through
+ * a single alias name into the alias symbol at generate time — one parser id
+ * serves both spellings, the wire `$type` already IS the storage kind, and a
+ * restamp would remap a node to itself. Distinct stamped ids mean the parser
+ * kept two symbols (the alias is not globally 1:1 with its source rule), so
+ * the wire kind genuinely differs from the storage kind. Missing ids keep
+ * the restamp — the merge cannot be proven from an absent stamp.
+ */
+export function aliasRestampRequired(parseKindId: number | undefined, storageKindId: number | undefined): boolean {
+	return parseKindId === undefined || storageKindId === undefined || parseKindId !== storageKindId;
+}
+
+/**
+ * `subtypeParseNamesOf` narrowed to the arms whose alias still needs a
+ * runtime restamp (see {@link aliasRestampRequired}), as
+ * `[parseName, storageName]` pairs — the shape wrap-layer drill accessors
+ * and the wrapNode alias map key their restamps on.
+ */
+export function subtypeRestampPairsOf<T extends PhaseName>(
+	rule: SupertypeRule<T>
+): ReadonlyArray<readonly [string, string]> {
+	const pairs: (readonly [string, string])[] = [];
+	for (const s of rule.subtypes) {
+		if (s.aliasedFrom === undefined || s.aliasedFrom === s.name) continue;
+		if (!aliasRestampRequired(s.kindId, s.aliasedFromId)) continue;
+		pairs.push([s.name, s.aliasedFrom]);
+	}
+	return pairs;
+}
+
 // Narrower pair than `NodeOrTerminal` because `types/` sits below `compiler/`
 // in the module layering and cannot import it — see glossary.
 export interface TransitiveSubtypeRef {

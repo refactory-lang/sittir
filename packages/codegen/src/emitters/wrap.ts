@@ -25,6 +25,7 @@ type BranchLikeForWrap = Extract<AssembledNode, { modelType: 'branch' }>;
 import { deriveUnnamedChildrenCardinality, resolveSlotAliasPairs } from '../compiler/model/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
+	collectAliasRestampMap,
 	hasOptionalElements,
 	isMultiple,
 	isNonEmpty,
@@ -1927,8 +1928,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('};');
 		lines.push('');
 
-		// _aliasTargetToSource — canonical-hidden remap (Option Y)
-		const aliasMap = collectAliasTargetToSourceMap(this.#nodeMap);
+		// _aliasTargetToSource — the wrapNode-level alias remap. Restamp
+		// pairs only: merged aliases (parser kept ONE symbol) resolve to the
+		// canonical spelling through KIND_NAMES on the native read and need
+		// no entry here.
+		const aliasMap = collectAliasRestampMap(this.#nodeMap);
 		lines.push('const _aliasTargetToSource: Record<string, string> = {');
 		for (const [target, source] of [...aliasMap.entries()].sort()) {
 			lines.push(`  '${target}': '${source}',`);
@@ -1983,10 +1987,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		} else {
 			lines.push('  const rawType = data.$type as unknown as string;');
 		}
-		lines.push('  // Canonical-hidden remap (Option Y): parser-output `$type`');
-		lines.push('  // is the visible alias target (e.g. `range_pattern_left_with_right`);');
-		lines.push('  // remap to the hidden alias source (`_range_pattern_left_with_right`)');
-		lines.push('  // so dispatch + downstream consumers see the canonical form.');
+		lines.push('  // Alias restamp: a parse `$type` whose node content belongs to a');
+		lines.push('  // DIFFERENT storage kind (the parser kept two symbols for the alias)');
+		lines.push('  // remaps to that kind so dispatch reaches its wrap function. Merged');
+		lines.push('  // aliases need no entry — their single id already names the storage kind.');
 		lines.push('  const canonical = _aliasTargetToSource[rawType];');
 		lines.push('  if (canonical !== undefined) {');
 		lines.push('    data = { ...data, $type: canonical as unknown as number };');

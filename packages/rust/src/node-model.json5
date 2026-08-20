@@ -194,49 +194,8 @@
     }
   },
   "fieldAliasMap": {
-    "expression_statement.content": {
-      "expression_statement_with_semi": "_expression_statement_with_semi"
-    },
-    "macro_definition.content": {
-      "macro_definition_paren": "_macro_definition_paren",
-      "macro_definition_bracket": "_macro_definition_bracket",
-      "macro_definition_brace": "_macro_definition_brace"
-    },
-    "token_tree_pattern.content": {
-      "token_tree_pattern_paren": "_token_tree_pattern_paren",
-      "token_tree_pattern_bracket": "_token_tree_pattern_bracket",
-      "token_tree_pattern_brace": "_token_tree_pattern_brace"
-    },
-    "token_repetition_pattern.token_patterns": {
-      "token_pattern_group1": "_non_special_token"
-    },
-    "token_tree.content": {
-      "token_tree_paren": "_token_tree_paren",
-      "token_tree_bracket": "_token_tree_bracket",
-      "token_tree_brace": "_token_tree_brace",
-      "delim_token_tree_paren": "_delim_token_tree_paren",
-      "delim_token_tree_bracket": "_delim_token_tree_bracket",
-      "delim_token_tree_brace": "_delim_token_tree_brace"
-    },
-    "token_repetition.tokens": {
-      "token_pattern_group1": "_non_special_token"
-    },
-    "attribute.attribute_group1": {
-      "attribute_group1": "_attribute_group1"
-    },
-    "mod_item.content": {
-      "mod_item_external": "_mod_item_external"
-    },
-    "foreign_mod_item.content": {
-      "foreign_mod_item_semi": "_foreign_mod_item_semi"
-    },
     "struct_item.name": {
       "type_identifier": "identifier"
-    },
-    "struct_item.content": {
-      "struct_item_brace": "_struct_item_brace",
-      "struct_item_tuple": "_struct_item_tuple",
-      "struct_item_unit": "_struct_item_unit"
     },
     "union_item.name": {
       "type_identifier": "identifier"
@@ -244,20 +203,11 @@
     "enum_item.name": {
       "type_identifier": "identifier"
     },
-    "enum_variant_list.enum_variant_list_elements": {
-      "enum_variant_list_elements": "_enum_variant_list_elements"
-    },
-    "field_declaration_list.field_declaration_list_elements": {
-      "field_declaration_list_elements": "_field_declaration_list_elements"
-    },
     "field_declaration.name": {
       "field_identifier": "identifier"
     },
     "field_declaration.type": {
       "primitive_type": "_primitive_type"
-    },
-    "ordered_field_declaration_list.attributes": {
-      "ordered_field_declaration_list_elements": "_ordered_field_declaration_list_elements"
     },
     "const_item.type": {
       "primitive_type": "_primitive_type"
@@ -277,23 +227,11 @@
     "function_signature_item.return_type": {
       "primitive_type": "_primitive_type"
     },
-    "where_clause.where_predicates": {
-      "where_predicates": "_where_predicates"
-    },
     "where_predicate.left": {
-      "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
-    },
-    "impl_item.trait_clause": {
-      "impl_item_positive_clause": "_impl_item_positive_clause",
-      "impl_item_negative_clause": "_impl_item_negative_clause"
+      "type_identifier": "identifier"
     },
     "impl_item.type": {
       "primitive_type": "_primitive_type"
-    },
-    "impl_item.content": {
-      "impl_item_body": "_impl_item_body",
-      "impl_item_semi": "_impl_item_semi"
     },
     "trait_item.name": {
       "type_identifier": "identifier"
@@ -310,9 +248,6 @@
     "removed_trait_bound.type": {
       "primitive_type": "_primitive_type"
     },
-    "type_parameters.type_parameters_elements": {
-      "type_parameters_elements": "_type_parameters_elements"
-    },
     "const_parameter.type": {
       "primitive_type": "_primitive_type"
     },
@@ -322,29 +257,11 @@
     "type_parameter.default_type": {
       "primitive_type": "_primitive_type"
     },
-    "let_declaration.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
     "let_declaration.type": {
       "primitive_type": "_primitive_type"
     },
-    "use_list.use_clauses": {
-      "use_clauses": "_use_clauses"
-    },
-    "parameters.parameters_elements": {
-      "parameters_elements": "_parameters_elements"
-    },
-    "variadic_parameter.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "parameter.name": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
     "parameter.type": {
       "primitive_type": "_primitive_type"
-    },
-    "visibility_modifier.content": {
-      "visibility_modifier_pub": "_visibility_modifier_pub"
     },
     "bracketed_type.content": {
       "primitive_type": "_primitive_type"
@@ -357,15 +274,6 @@
     },
     "array_type.element": {
       "primitive_type": "_primitive_type"
-    },
-    "for_lifetimes.lifetimes": {
-      "lifetimes": "_lifetimes"
-    },
-    "function_type.function_type_trait_form": {
-      "function_type_trait_form": "_function_type_trait_form"
-    },
-    "function_type.function_type_fn_form": {
-      "function_type_fn_form": "_function_type_fn_form"
     },
     "function_type.return_type": {
       "primitive_type": "_primitive_type"
@@ -385,12 +293,6 @@
     "bounded_type.right": {
       "primitive_type": "_primitive_type"
     },
-    "use_bounds.bounds": {
-      "use_bounds_elements": "_use_bounds_elements"
-    },
-    "type_arguments.type_arguments_elements": {
-      "type_arguments_elements": "_type_arguments_elements"
-    },
     "type_binding.name": {
       "type_identifier": "identifier"
     },
@@ -399,9 +301,6 @@
     },
     "reference_type.type": {
       "primitive_type": "_primitive_type"
-    },
-    "pointer_type.content": {
-      "pointer_type_const": "_pointer_type_const"
     },
     "pointer_type.type": {
       "primitive_type": "_primitive_type"
@@ -415,11 +314,6 @@
     "macro_invocation.token_tree": {
       "token_tree": "delim_token_tree"
     },
-    "delim_token_tree.content": {
-      "delim_token_tree_paren": "_delim_token_tree_paren",
-      "delim_token_tree_bracket": "_delim_token_tree_bracket",
-      "delim_token_tree_brace": "_delim_token_tree_brace"
-    },
     "scoped_identifier.path": {
       "generic_type": "generic_type_with_turbofish"
     },
@@ -432,32 +326,12 @@
     "scoped_type_identifier.name": {
       "type_identifier": "identifier"
     },
-    "range_expression.content": {
-      "range_expression_binary": "_range_expression_binary",
-      "range_expression_postfix": "_range_expression_postfix",
-      "range_expression_prefix": "_range_expression_prefix",
-      "range_expression_bare": "_range_expression_bare"
-    },
-    "reference_expression.content": {
-      "reference_expression_raw_const": "_reference_expression_raw_const",
-      "reference_expression_raw_mut": "_reference_expression_raw_mut"
-    },
     "type_cast_expression.type": {
       "primitive_type": "_primitive_type"
-    },
-    "arguments.arguments_elements": {
-      "arguments_elements": "_arguments_elements"
-    },
-    "array_expression.content": {
-      "array_expression_semi": "_array_expression_semi",
-      "array_expression_list": "_array_expression_list"
     },
     "struct_expression.name": {
       "type_identifier": "identifier",
       "scoped_type_identifier": "scoped_type_identifier_in_expression_position"
-    },
-    "field_initializer_list.initializers": {
-      "field_initializer_list_elements": "_field_initializer_list_elements"
     },
     "field_initializer.field": {
       "field_identifier": "identifier"
@@ -465,116 +339,32 @@
     "if_expression.condition": {
       "let_chain": "_let_chain"
     },
-    "let_condition.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "match_block.match_block_arms": {
-      "match_block_arms": "_match_block_arms"
-    },
-    "match_arm.content": {
-      "match_arm_with_comma": "_match_arm_with_comma"
-    },
-    "match_pattern.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
     "match_pattern.condition": {
       "let_chain": "_let_chain"
     },
     "while_expression.condition": {
       "let_chain": "_let_chain"
     },
-    "for_expression.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "closure_expression.content": {
-      "closure_expression_block": "_closure_expression_block",
-      "closure_expression_expr": "_closure_expression_expr"
-    },
-    "closure_parameters.parameters": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
     "field_expression.field": {
       "field_identifier": "identifier"
-    },
-    "tuple_pattern.elements": {
-      "tuple_pattern_elements": "_tuple_pattern_elements"
-    },
-    "slice_pattern.patterns": {
-      "patterns": "_patterns"
     },
     "tuple_struct_pattern.type": {
       "generic_type": "generic_type_with_turbofish"
     },
-    "tuple_struct_pattern.patterns": {
-      "patterns": "_patterns"
-    },
     "struct_pattern.type": {
       "type_identifier": "identifier"
     },
-    "struct_pattern.fields": {
-      "struct_pattern_elements": "_struct_pattern_elements"
-    },
     "field_pattern.content": {
-      "shorthand_field_identifier": "identifier",
-      "field_pattern_named": "_field_pattern_named"
-    },
-    "mut_pattern.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "range_pattern.content": {
-      "range_pattern_group2": "_range_pattern_group2",
-      "range_pattern_prefix": "_range_pattern_prefix"
-    },
-    "ref_pattern.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "captured_pattern.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "reference_pattern.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "or_pattern.content": {
-      "or_pattern_binary": "_or_pattern_binary",
-      "or_pattern_prefix": "_or_pattern_prefix"
-    },
-    "string_literal.string_open": {
-      "string_open": "_string_literal_open"
-    },
-    "raw_string_literal.raw_string_literal_start": {
-      "raw_string_literal_start": "_raw_string_literal_start"
+      "shorthand_field_identifier": "identifier"
     },
     "raw_string_literal.string_content": {
       "string_content": "raw_string_literal_content"
     },
-    "raw_string_literal.raw_string_literal_end": {
-      "raw_string_literal_end": "_raw_string_literal_end"
-    },
-    "line_comment.content": {
-      "line_comment_regular_dslash": "_line_comment_regular_dslash",
-      "line_comment_doc": "_line_comment_doc",
-      "line_comment_content": "_line_comment_content"
-    },
-    "block_comment.block_comment_group1": {
-      "block_comment_group1": "_block_comment_group1"
-    },
     "_attribute_group1.arguments": {
       "token_tree": "delim_token_tree"
     },
-    "_enum_variant_list_elements.element": {
-      "attributed_enum_variant": "_attributed_enum_variant"
-    },
-    "_field_declaration_list_elements.element": {
-      "attributed_field_declaration": "_attributed_field_declaration"
-    },
-    "_ordered_field_declaration_list_elements.element": {
-      "attributed_ordered_field": "_attributed_ordered_field"
-    },
     "_function_item_optional1.return_type": {
       "primitive_type": "_primitive_type"
-    },
-    "_type_parameters_elements.element": {
-      "attributed_type_parameter": "_attributed_type_parameter"
     },
     "_type_parameter_optional1.default_type": {
       "primitive_type": "_primitive_type"
@@ -582,42 +372,11 @@
     "_let_declaration_optional1.type": {
       "primitive_type": "_primitive_type"
     },
-    "_parameters_elements.element": {
-      "attributed_parameter": "_attributed_parameter"
-    },
-    "_variadic_parameter_optional1.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "_visibility_modifier_group1.content": {
-      "visibility_modifier_in_path": "_visibility_modifier_in_path"
-    },
     "_use_bounds_elements.element": {
       "type_identifier": "identifier"
     },
-    "_type_arguments_elements.element": {
-      "type_argument": "_type_argument"
-    },
-    "_arguments_elements.element": {
-      "attributed_argument": "_attributed_argument"
-    },
     "_match_pattern_optional1.condition": {
       "let_chain": "_let_chain"
-    },
-    "_tuple_pattern_elements.element": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "_patterns.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "_range_pattern_group2.content": {
-      "range_pattern_left_with_right": "_range_pattern_left_with_right",
-      "range_pattern_left_bare": "_range_pattern_left_bare"
-    },
-    "_block_comment_group1.outer": {
-      "outer_doc_comment_marker": "_outer_block_doc_comment_marker"
-    },
-    "_block_comment_group1.inner": {
-      "inner_doc_comment_marker": "_inner_block_doc_comment_marker"
     },
     "_block_comment_group1.doc": {
       "doc_comment": "_block_comment_content"
@@ -628,71 +387,20 @@
     "_impl_item_negative_clause.trait": {
       "type_identifier": "identifier"
     },
-    "_array_expression_semi.array_expression_group1": {
-      "array_expression_group1": "_array_expression_group1"
-    },
-    "_array_expression_list.arguments_elements": {
-      "arguments_elements": "_arguments_elements"
-    },
     "_closure_expression_block.return_type": {
       "primitive_type": "_primitive_type"
     },
     "_field_pattern_named.name": {
       "field_identifier": "identifier"
     },
-    "_field_pattern_named.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
     "_function_type_trait_form.trait": {
       "type_identifier": "identifier"
-    },
-    "_macro_definition_paren.macro_rules": {
-      "macro_rules": "_macro_rules"
-    },
-    "_macro_definition_bracket.macro_rules": {
-      "macro_rules": "_macro_rules"
-    },
-    "_macro_definition_brace.macro_rules": {
-      "macro_rules": "_macro_rules"
-    },
-    "_or_pattern_binary.left": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "_or_pattern_binary.right": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "_or_pattern_prefix.right": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "_visibility_modifier_pub.visibility_modifier_group1": {
-      "visibility_modifier_group1": "_visibility_modifier_group1"
     },
     "_line_comment_doc.outer": {
       "outer_doc_comment_marker": "_outer_line_doc_comment_marker"
     },
     "_line_comment_doc.inner": {
       "inner_doc_comment_marker": "_inner_line_doc_comment_marker"
-    },
-    "_line_comment_doc.doc": {
-      "doc_comment": "_line_doc_content"
-    },
-    "_token_tree_pattern_paren.token_patterns": {
-      "token_pattern_group1": "_non_special_token"
-    },
-    "_token_tree_pattern_bracket.token_patterns": {
-      "token_pattern_group1": "_non_special_token"
-    },
-    "_token_tree_pattern_brace.token_patterns": {
-      "token_pattern_group1": "_non_special_token"
-    },
-    "_token_tree_paren.tokens": {
-      "token_pattern_group1": "_non_special_token"
-    },
-    "_token_tree_bracket.tokens": {
-      "token_pattern_group1": "_non_special_token"
-    },
-    "_token_tree_brace.tokens": {
-      "token_pattern_group1": "_non_special_token"
     },
     "_delim_token_tree_paren.delim_tokens": {
       "token_tree": "delim_token_tree"
@@ -711,9 +419,6 @@
     },
     "_type_argument.content": {
       "primitive_type": "_primitive_type"
-    },
-    "_visibility_modifier_pub_parens.visibility_modifier_group1": {
-      "visibility_modifier_group1": "_visibility_modifier_group1"
     }
   },
   "factorySlots": {

@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "c6784ce1e65de250ae02efaee81223d7129d273fff3230dabb5d95d3e65f6d42",
+  "source_hash": "ef7aa0080b17b59681657e09b0f757393f160d3418f755031f10f297f7c4f997",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "a68791f006c68d52cc30954799de766e129e2ed734013c670a87f4e94d0add04",
     "packages/python/.sittir/grammar.js": "f5dc742d3f8a4674cf8b7c39e31424ffd740159b57c65a0f35ed895b4510a872",
@@ -26,11 +26,11 @@
     "packages/python/src/index.ts": "880825c1918b377123a9d40694e8e53aff1483cb384c8a0e4a025e1e23f4de0c",
     "packages/python/src/ir.ts": "5027b86d108cf99289cf04b91d61acba77dbaca8c589baf2061c87906f83c61e",
     "packages/python/src/is.ts": "cc5f5cc9cbf105e2c523dcb1486cc783266aae176771879c3f6219c7ad6eb85f",
-    "packages/python/src/node-model.json5": "81efb587df006567758ff54a16f18a298f0db68344a982a8c6f9012e3c5fb704",
+    "packages/python/src/node-model.json5": "81d48bca433888a9653a1a2f10c9fdc971a84946e047713c7c62be0621370a6c",
     "packages/python/src/type-test.ts": "80712685e721c9d56d38a5dbd30e9ec992ebb6eb18ec25bf4b6f59d4bba02d57",
     "packages/python/src/types.ts": "b68882879c39c0baa735bdb360ad846d48596573d190329b10c9c19e9a6b0244",
     "packages/python/src/utils.ts": "d2538a7dadc51d6ab68a280f6f67e240854484580a17e992bb9206d1fa288276",
-    "packages/python/src/wrap.ts": "fc7e89fa25dc236178786dd514c2e78c55c1bf943c27ed7b72304deb4c9d5345",
+    "packages/python/src/wrap.ts": "c1d6d0b86b3f3f6131c738672b1f25cd206f9fe82df8239390f8acc177bad8c1",
     "packages/python/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/python/templates/_argument_list_elements.jinja": "a505a721e618d919257953335c0eecb89741f16f416cd56ca3b5d4f2e1091047",
     "packages/python/templates/_assignment_eq.jinja": "150fdea50d889b1fbef4e38bb862aee38d11abdebb18b80b93550b3bf5cd7f94",

@@ -143,7 +143,13 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		expect(wrapSrc).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {');
 		expect(wrapSrc).toContain('right() { return drillIn<');
 		expect(wrapSrc).toContain("'_assignment_eq': (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),");
-		expect(wrapSrc).toContain("'assignment_eq': '_assignment_eq'");
+		// A hidden helper visible only through its own alias name is MERGED
+		// into that alias symbol by tree-sitter — one id serves both
+		// spellings, the native read's KIND_NAMES lookup already yields the
+		// canonical `_assignment_eq`, and an _aliasTargetToSource entry
+		// would remap the node to itself. The dispatch entry above is the
+		// whole runtime surface such a kind needs.
+		expect(wrapSrc).not.toContain("'assignment_eq': '_assignment_eq'");
 	});
 
 	it('keeps hidden alias-source helper wraps even without parser-symbol ids', () => {
