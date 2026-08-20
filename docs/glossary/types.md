@@ -722,10 +722,12 @@ grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
 /**
 	 * Alias provenance: when this symbol was produced by resolving
 	 * `alias($.aliasedFrom, $.name)`, `aliasedFrom` is the source kind
-	 * whose shape the parse tree body follows (while tree-sitter emits
-	 * the node with `$type === name`, the alias target). Preserved so
-	 * the wrap emitter can rewrite \$type at drill-in via drillAs().
-	 * Used by the wrap emitter for alias-target rewrites.
+	 * whose shape the parse tree body follows (while tree-sitter's display
+	 * tree labels the node `name`, the alias target, the wire `$type` is
+	 * the grammar symbol stamped by the native read). Preserved to feed
+	 * the display-name -> storage-kind pairs (`subtypeRestampPairsOf`,
+	 * `resolveSlotAliasPairs` -> node model `fieldAliasMap`) that the
+	 * corpus validators use to normalize display names.
 	 */
 ```
 

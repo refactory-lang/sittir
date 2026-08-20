@@ -307,6 +307,39 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 				// than fall back to a mismatched WASM ID.
 				const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
 				if (nativeCoords === null && handle.read) {
+					// The native read stores most leaf kinds SCALARIZED — collapsed
+					// to text inside parent storage, no node to locate — and alias
+					// targets emit under a different rule name. For a text-shaped
+					// kind that is not a locator failure: the sound comparison
+					// needs no native node at all. Feed the WASM node's text
+					// through both from() (the real leaf-coercion route, pattern
+					// guards included) and the factory, and compare the results.
+					const leafShape = factoryShapes[kind] ?? 'config';
+					if (leafShape === 'text') {
+						try {
+							const text = node1.text;
+							const fromResult = fromMap[kind]!(text as never) as AnyNodeData;
+							const factoryResult = (factoryMap[kind]! as (t: string) => AnyNodeData)(text);
+							const diffs = structuralDiff(fromResult, factoryResult, kindNameFromId);
+							if (diffs.length > 0) {
+								divergentCount++;
+								errors.push({
+									kind,
+									severity: 'warning',
+									message: `from() diverges: ${diffs.join('; ')}`
+								});
+							} else {
+								pass++;
+							}
+						} catch (e) {
+							errors.push({
+								kind,
+								severity: 'error',
+								message: `leaf text route throws: ${(e as Error).message}`
+							});
+						}
+						continue;
+					}
 					errors.push({
 						kind,
 						severity: 'error',
@@ -364,7 +397,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					// factory that must dispatch as `factory()` with no args).
 					const shape = factoryShapes[kind] ?? 'config';
 					const factory = factoryMap[kind]!;
-					if (shape === 'config' || shape === 'direct') {
+					if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
 						// ADR-0018: readNode emits `_<name>` top-level keys, not
 						// `$fields`. Use `nodeToConfig` which handles both shapes
 						// and recursively resolves children through factories.
@@ -378,7 +411,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							kindNameFromId,
 							kindLiteralText
 						});
-						if (shape === 'direct') {
+						if (shape === 'direct' || shape === 'forwarded') {
 							// Direct-call shape: use the sole field when metadata
 							// names one, otherwise treat it as a single child call.
 							const fieldNames = factoryFields[kind];
@@ -403,10 +436,11 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							readData.$text ?? (readData.$span ? entry.source.slice(readData.$span.start, readData.$span.end) : '');
 						factoryResult = (factory as (text: string) => AnyNodeData)(textForFactory);
 					} else if (shape === 'elements') {
-						// separatedList factory: `(elements, options?: {separatorKind?,
-						// leading?, trailing?})` — distinct calling convention from
-						// 'spread's rest-param factories (see classifyFactoryShape's
-						// separatedList case).
+						// separatedList factory: spread with a LEADING optional
+						// options bag — `(...elements)` / `({separatorKind?,
+						// leading?, trailing?}, ...elements)` — distinct calling
+						// convention from 'spread's plain rest-param factories (see
+						// classifyFactoryShape's separatedList case).
 						const config = nodeToConfig(readData, {
 							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,
 							factoryShapes,
@@ -419,12 +453,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						});
 						const elements = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
 						const options = separatedListFactoryOptions(readData, kindLiteralText);
-						factoryResult = (
-							factory as (
-								elements: readonly unknown[],
-								options?: { separatorKind?: string; leading?: boolean; trailing?: boolean }
-							) => AnyNodeData
-						)(elements, options);
+						const listFactory = factory as (...args: unknown[]) => AnyNodeData;
+						factoryResult = options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
 					} else {
 						const config = nodeToConfig(readData, {
 							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,

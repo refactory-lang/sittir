@@ -338,7 +338,11 @@ function emitBranchFrom(
 	// `classifyFactoryShape` returning 'direct' already guarantees the sole
 	// user slot is the only non-stamped field (resolveDirectFactorySlot) —
 	// no separate keyword-presence exclusion needed here.
-	const canDirectFactoryCall = soleField && classifyFactoryShape(node, nodeMap) === 'direct';
+	const shapeForDirect = classifyFactoryShape(node, nodeMap);
+	// 'forwarded' refines 'direct' — the factory still accepts the single
+	// direct value (a pre-built node dispatches via $type), so the same
+	// direct-call emission applies.
+	const canDirectFactoryCall = soleField && (shapeForDirect === 'direct' || shapeForDirect === 'forwarded');
 	lines.push(`export function ${fn}(input${opt}: ${inputType}): ${returnType} {`);
 	if (fields.length > 0) {
 		if (canDirectFactoryCall) {
@@ -618,6 +622,14 @@ function emitSeparatedListFrom(
 	const hasTrailingOption = node.trailingMode === 'optional';
 	const hasOptions = hasSeparatorKindOption || hasLeadingOption || hasTrailingOption;
 
+	// The factory's spread signature — `fn(...elements)` / `fn(options,
+	// ...elements)` — needs the elements ARRAY spread at the call, typed as
+	// the same rest-tuple the factory declares (mirrors
+	// emitSeparatedListFactory's elementsType derivation).
+	const elemTypeForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
+	const elementsType = node.nonEmpty ? `NonEmptyArray<${elemType}>` : `${elemTypeForArray}[]`;
+	const spreadElements = (varExpr: string): string => `...(${varExpr} as unknown as ${elementsType})`;
+
 	const buildOptionsPreservingCall = (varExpr: string): string => {
 		// `data`'s ambient type has no arbitrary storage keys (same reason
 		// `storageAccess` above needs its own `unknown` cast) — read the
@@ -635,7 +647,7 @@ function emitSeparatedListFrom(
 		}
 		if (hasLeadingOption) optionParts.push(`leading: ${sourceFields}._leading_sep`);
 		if (hasTrailingOption) optionParts.push(`trailing: ${sourceFields}._trailing_sep`);
-		return `${factory}(${varExpr} as Parameters<typeof ${factory}>[0], { ${optionParts.join(', ')} } as Parameters<typeof ${factory}>[1])`;
+		return `${factory}({ ${optionParts.join(', ')} }, ${spreadElements(varExpr)})`;
 	};
 
 	return emitRestParamFromResolver(
@@ -650,7 +662,7 @@ function emitSeparatedListFrom(
 		(varExpr, isSelfUnwrap) =>
 			isSelfUnwrap && hasOptions
 				? buildOptionsPreservingCall(varExpr)
-				: `${factory}(${varExpr} as Parameters<typeof ${factory}>[0])`,
+				: `${factory}(${spreadElements(varExpr)})`,
 		': readonly unknown[]'
 	);
 }
@@ -1126,15 +1138,13 @@ function emitWrapWithChildrenTable(
 				`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}(...(children as Parameters<typeof F.${e.factoryName}>));`
 			);
 		} else if (e.childSurface === 'array') {
-			// 'separatedList' — the whole array IS the `elements` argument, never
-			// spread and never indexed. See `emitSeparatedListFrom`'s doc comment.
-			// Direct cast (no `as unknown` intermediate) — `children`'s own
-			// declared param type is already `readonly unknown[]`, which tsgo
-			// accepts as directly comparable to the tuple-shaped
-			// `NonEmptyArray<T>` target (confirmed empirically; see
-			// `emitSeparatedListFrom`'s doc comment for the same finding).
+			// 'separatedList' — the factory's spread-with-leading-options
+			// signature takes the elements as REST arguments; spread the array
+			// into the call (the `unknown` launder is unavoidable here: the
+			// overloaded signature's Parameters<> resolves to the
+			// options-leading overload, not the rest tuple).
 			lines.push(
-				`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}(children as Parameters<typeof F.${e.factoryName}>[0]);`
+				`    case ${JSON.stringify(e.kind)}: return (F.${e.factoryName} as (...args: unknown[]) => unknown)(...children);`
 			);
 		} else {
 			lines.push(

@@ -546,24 +546,26 @@ overlap with `_type` is declared in `conflicts:`).
 				// the choice inside.
 ```
 
-### `gen_block` (`packages/rust/grammar.sittir.ts:562`)
+### `gen_block` (`packages/rust/grammar.sittir.ts`)
 
 ```text
 				// gen_block: seq('gen', optional('move'), $.block).
-				// Field-promotion wave 1 (016 task #23): symmetric to async_block
-				// — label the optional `move` punct as `move_marker` so render
-				// preserves it. Kept hand-promoted for the same render-spacing
-				// reason as async_block (see note above).
+				// Symmetric to async_block — label the optional `move` punct as
+				// `move_marker` so render preserves it. Kept hand-promoted for
+				// the same render-spacing reason as async_block (see note above).
 ```
 
 ### `generic_type` (`packages/rust/grammar.sittir.ts`)
 
-The base rule is deliberately left unchanged. Dispatch happens via `drillAs` at
-alias-declared field sites, so consumers see source-typed views — a
-`generic_type_with_turbofish` carrying the turbofish template. Validators walk
-the wrapped tree, rewrite `$type` to source, and use the
-`generic_type_with_turbofish` reparse wrapper, which accepts a turbofish in a
-scoped-path context.
+The base rule is deliberately left unchanged. The wire `$type` is the grammar
+symbol stamped by the native read, so a node parsed through
+`alias($.generic_type_with_turbofish, $.generic_type)` arrives as
+`generic_type_with_turbofish` even though tree-sitter's display tree labels it
+`generic_type` — consumers get the source-typed view with no rewrite step. The
+turbofish punct itself is field-labeled on the source kind (the
+`generic_type_with_turbofish` positional override below). Validator reparse
+candidates key on `generic_type_with_turbofish` directly, reparsed in a
+context that accepts a turbofish.
 
 ### `index_expression` (`packages/rust/grammar.sittir.ts:604`)
 

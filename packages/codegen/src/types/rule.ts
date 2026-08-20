@@ -292,6 +292,42 @@ export function subtypeParseNamesOf<T extends PhaseName>(rule: SupertypeRule<T>)
 	return pairs;
 }
 
+/**
+ * Whether an aliased reference's display (parse) name genuinely diverges
+ * from its storage kind. tree-sitter merges a hidden rule that is referenced
+ * ONLY through a single alias name into the alias symbol at generate time —
+ * one parser id serves both spellings, the wire `$type` already IS the
+ * storage kind, and a normalization pair would remap a node to itself.
+ * Distinct stamped ids mean the parser kept two symbols (the alias is not
+ * globally 1:1 with its source rule), so the display name genuinely differs
+ * from the storage kind. Missing ids keep the pair — the merge cannot be
+ * proven from an absent stamp.
+ */
+export function aliasRestampRequired(parseKindId: number | undefined, storageKindId: number | undefined): boolean {
+	return parseKindId === undefined || storageKindId === undefined || parseKindId !== storageKindId;
+}
+
+/**
+ * `subtypeParseNamesOf` narrowed to the arms whose display (parse) name
+ * genuinely differs from the storage kind on the wire (see
+ * {@link aliasRestampRequired}), as `[parseName, storageName]` pairs.
+ * Serialized into the node model's `fieldAliasMap` and consumed by the
+ * corpus validators (`validate/factory-render-parse.ts`, `validate/from.ts`)
+ * to normalize display names against storage kinds; the wire `$type` itself
+ * is the grammar symbol stamped by the native read and needs no restamp.
+ */
+export function subtypeRestampPairsOf<T extends PhaseName>(
+	rule: SupertypeRule<T>
+): ReadonlyArray<readonly [string, string]> {
+	const pairs: (readonly [string, string])[] = [];
+	for (const s of rule.subtypes) {
+		if (s.aliasedFrom === undefined || s.aliasedFrom === s.name) continue;
+		if (!aliasRestampRequired(s.kindId, s.aliasedFromId)) continue;
+		pairs.push([s.name, s.aliasedFrom]);
+	}
+	return pairs;
+}
+
 // Narrower pair than `NodeOrTerminal` because `types/` sits below `compiler/`
 // in the module layering and cannot import it — see glossary.
 export interface TransitiveSubtypeRef {

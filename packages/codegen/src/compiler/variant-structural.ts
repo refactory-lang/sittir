@@ -100,14 +100,11 @@
  *   coverage today (a pre-existing gap); fixing it is a separate follow-up
  *   (rust's committed node-model.json5 confirms zero drift on this front —
  *   `visibility_modifier`'s only committed child is `pub`).
- * - **No CHOICE node at all.** Some variant() registrations target a lone
- *   aliased SEQ member with no sibling alternation (python's
- *   `dict_pattern`'s `kv` child: `seq(SYMBOL dict_pattern_kv, REPEAT(...))`,
- *   not inside any CHOICE) — there is no "choice of named kinds" for the
- *   predicate to match against at all, by design (the predicate is
- *   CHOICE-centric, matching `isAllAliasChoice`/`findVariantChoice`'s own
- *   scope). `dict_pattern` has no committed node-model.json5 entry either —
- *   zero drift.
+ * - **No CHOICE node at all.** A variant() registration can target a lone
+ *   aliased SEQ member with no sibling alternation — there is no "choice
+ *   of named kinds" for the predicate to match against at all, by design
+ *   (the predicate is CHOICE-centric, matching `isAllAliasChoice`/
+ *   `findVariantChoice`'s own scope).
  * - **Supertype/Group union, not (only) a plain BRANCH.** Some
  *   variant-adoption parents classify to `SupertypeRule` (python's
  *   `_simple_pattern`) or `AssembledGroup` (ts's

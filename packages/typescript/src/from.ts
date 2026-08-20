@@ -336,11 +336,16 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	template_type: TSKindId.TemplateType,
 	type_query: TSKindId.TypeQuery,
 	literal_type: TSKindId.LiteralType,
+	type_arguments: TSKindId.TypeArguments,
+	type_parameters: TSKindId.TypeParameters,
 	tuple_type: TSKindId.TupleType,
-	_export_clause_group1: TSKindId.ExportClauseGroup1,
+	_export_specifiers: TSKindId.ExportSpecifiers,
 	_import_clause_group1: TSKindId.ImportClauseGroup1,
-	_named_imports_group1: TSKindId.NamedImportsGroup1,
-	_tuple_type_group1: TSKindId.TupleTypeGroup1,
+	_import_specifiers: TSKindId.ImportSpecifiers,
+	_formal_parameters_elements: TSKindId.FormalParametersElements,
+	_types: TSKindId.Types,
+	_type_parameters_elements: TSKindId.TypeParametersElements,
+	_tuple_type_members: TSKindId.TupleTypeMembers,
 	object_type_content: TSKindId.ObjectTypeContent,
 	_export_statement_default: TSKindId.ExportStatementDefault,
 	_public_field_definition_declare_first: TSKindId.PublicFieldDefinitionDeclareFirst
@@ -398,18 +403,28 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildTypeQuery(children[0] as Parameters<typeof F.buildTypeQuery>[0]);
 		case 'literal_type':
 			return F.buildLiteralType(children[0] as Parameters<typeof F.buildLiteralType>[0]);
+		case 'type_arguments':
+			return F.buildTypeArguments(children[0] as Parameters<typeof F.buildTypeArguments>[0]);
+		case 'type_parameters':
+			return F.buildTypeParameters(children[0] as Parameters<typeof F.buildTypeParameters>[0]);
 		case 'tuple_type':
 			return F.buildTupleType(children[0] as Parameters<typeof F.buildTupleType>[0]);
-		case '_export_clause_group1':
-			return F.buildExportClauseGroup1(children as Parameters<typeof F.buildExportClauseGroup1>[0]);
+		case '_export_specifiers':
+			return (F.buildExportSpecifiers as (...args: unknown[]) => unknown)(...children);
 		case '_import_clause_group1':
 			return F.buildImportClauseGroup1(children[0] as Parameters<typeof F.buildImportClauseGroup1>[0]);
-		case '_named_imports_group1':
-			return F.buildNamedImportsGroup1(children as Parameters<typeof F.buildNamedImportsGroup1>[0]);
-		case '_tuple_type_group1':
-			return F.buildTupleTypeGroup1(children as Parameters<typeof F.buildTupleTypeGroup1>[0]);
+		case '_import_specifiers':
+			return (F.buildImportSpecifiers as (...args: unknown[]) => unknown)(...children);
+		case '_formal_parameters_elements':
+			return (F.buildFormalParametersElements as (...args: unknown[]) => unknown)(...children);
+		case '_types':
+			return (F.buildTypes as (...args: unknown[]) => unknown)(...children);
+		case '_type_parameters_elements':
+			return (F.buildTypeParametersElements as (...args: unknown[]) => unknown)(...children);
+		case '_tuple_type_members':
+			return (F.buildTupleTypeMembers as (...args: unknown[]) => unknown)(...children);
 		case 'object_type_content':
-			return F.buildObjectTypeContent(children as Parameters<typeof F.buildObjectTypeContent>[0]);
+			return (F.buildObjectTypeContent as (...args: unknown[]) => unknown)(...children);
 		case '_export_statement_default':
 			return F.buildExportStatementDefault(children[0] as Parameters<typeof F.buildExportStatementDefault>[0]);
 		case '_public_field_definition_declare_first':
@@ -808,7 +823,7 @@ const _K33: readonly string[] = [
 	'_public_field_definition_abstract_first',
 	'_public_field_definition_readonly_first'
 ];
-const _K34: readonly string[] = ['predefined_type', '_type_identifier', 'this'];
+const _K34: readonly string[] = ['predefined_type', 'identifier', 'this'];
 const _K35: readonly string[] = [
 	'parenthesized_type',
 	'nested_type_identifier',
@@ -933,11 +948,11 @@ export function coerceToNamespaceExport(
 }
 
 export function coerceToExportClause(
-	input?: T.ExportClauseGroup1 | T.ExportClause
+	input?: T.ExportSpecifiers | T.ExportClause
 ): ReturnType<typeof F.buildExportClause> {
 	if (isNodeData(input) && input.$type === TSKindId.ExportClause) {
 		const data = input;
-		const child = (data as unknown as { _export_clause_group1?: unknown })._export_clause_group1;
+		const child = (data as unknown as { _export_specifiers?: unknown })._export_specifiers;
 		return F.buildExportClause(child as Parameters<typeof F.buildExportClause>[0]);
 	}
 	return F.buildExportClause(input as Parameters<typeof F.buildExportClause>[0]);
@@ -1017,11 +1032,11 @@ export function coerceToNamespaceImport(input: T.NamespaceImport.Loose): ReturnT
 }
 
 export function coerceToNamedImports(
-	input?: T.NamedImportsGroup1 | T.NamedImports
+	input?: T.ImportSpecifiers | T.NamedImports
 ): ReturnType<typeof F.buildNamedImports> {
 	if (isNodeData(input) && input.$type === TSKindId.NamedImports) {
 		const data = input;
-		const child = (data as unknown as { _named_imports_group1?: unknown })._named_imports_group1;
+		const child = (data as unknown as { _import_specifiers?: unknown })._import_specifiers;
 		return F.buildNamedImports(child as Parameters<typeof F.buildNamedImports>[0]);
 	}
 	return F.buildNamedImports(input as Parameters<typeof F.buildNamedImports>[0]);
@@ -1754,7 +1769,7 @@ export function coerceToAssignmentExpression(
 		left: _requireField(
 			'assignment_expression',
 			'left',
-			_resolveOne<T.ParenthesizedExpression | T.LhsExpression>(input.left, _K13, _K24)
+			_resolveOne<T.ParenthesizedExpression | T._LhsExpression>(input.left, _K13, _K24)
 		),
 		right: _requireField('assignment_expression', 'right', _resolveOne<T.Expression>(input.right, _K5, _K10))
 	});
@@ -2138,11 +2153,11 @@ export function coerceToClassBody(input?: T.ClassBody.Loose): ReturnType<typeof 
 }
 
 export function coerceToFormalParameters(
-	input?: T.FormalParametersGroup1 | T.FormalParameters
+	input?: T.FormalParametersElements | T.FormalParameters
 ): ReturnType<typeof F.buildFormalParameters> {
 	if (isNodeData(input) && input.$type === TSKindId.FormalParameters) {
 		const data = input;
-		const child = (data as unknown as { _formal_parameters_group1?: unknown })._formal_parameters_group1;
+		const child = (data as unknown as { _formal_parameters_elements?: unknown })._formal_parameters_elements;
 		return F.buildFormalParameters(child as Parameters<typeof F.buildFormalParameters>[0]);
 	}
 	return F.buildFormalParameters(input as Parameters<typeof F.buildFormalParameters>[0]);
@@ -2156,7 +2171,7 @@ export function coerceToClassStaticBlock(input: T.ClassStaticBlock.Loose): Retur
 	});
 }
 
-export function coerceToRestPattern(input?: T.LhsExpression | T.RestPattern): ReturnType<typeof F.buildRestPattern> {
+export function coerceToRestPattern(input?: T._LhsExpression | T.RestPattern): ReturnType<typeof F.buildRestPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.RestPattern) {
 		const data = input;
 		const child = (data as unknown as { _lhs_expression?: unknown })._lhs_expression;
@@ -2602,10 +2617,10 @@ export function coerceToEnumDeclaration(input: T.EnumDeclaration.Loose): ReturnT
 	});
 }
 
-export function coerceToEnumBody(input?: T.EnumBodyGroup1 | T.EnumBody): ReturnType<typeof F.buildEnumBody> {
+export function coerceToEnumBody(input?: T.EnumBodyElements | T.EnumBody): ReturnType<typeof F.buildEnumBody> {
 	if (isNodeData(input) && input.$type === TSKindId.EnumBody) {
 		const data = input;
-		const child = (data as unknown as { _enum_body_group1?: unknown })._enum_body_group1;
+		const child = (data as unknown as { _enum_body_elements?: unknown })._enum_body_elements;
 		return F.buildEnumBody(child as Parameters<typeof F.buildEnumBody>[0]);
 	}
 	return F.buildEnumBody(input as Parameters<typeof F.buildEnumBody>[0]);
@@ -3058,13 +3073,13 @@ export function coerceToPredefinedType(input: string | T.PredefinedType): Return
 	return F.buildPredefinedType(input as Parameters<typeof F.buildPredefinedType>[0]);
 }
 
-export function coerceToTypeArguments(input: T.TypeArguments.Loose): ReturnType<typeof F.buildTypeArguments> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeArguments>;
-	const _ne_types = _resolveMany<T.Type>(input.type, _K34, _K35);
-	_assertNonEmpty(_ne_types, 'type_arguments.types');
-	return F.buildTypeArguments({
-		type: _ne_types
-	});
+export function coerceToTypeArguments(input?: T.Types | T.TypeArguments): ReturnType<typeof F.buildTypeArguments> {
+	if (isNodeData(input) && input.$type === TSKindId.TypeArguments) {
+		const data = input;
+		const child = (data as unknown as { _types?: unknown })._types;
+		return F.buildTypeArguments(child as Parameters<typeof F.buildTypeArguments>[0]);
+	}
+	return F.buildTypeArguments(input as Parameters<typeof F.buildTypeArguments>[0]);
 }
 
 export function coerceToObjectType(input: T.ObjectType.Loose): ReturnType<typeof F.buildObjectType> {
@@ -3126,13 +3141,15 @@ export function coerceToPropertySignature(
 	});
 }
 
-export function coerceToTypeParameters(input: T.TypeParameters.Loose): ReturnType<typeof F.buildTypeParameters> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeParameters>;
-	const _ne_typeParameters = _resolveManyBranch<T.TypeParameter>(input.typeParameter, 'type_parameter');
-	_assertNonEmpty(_ne_typeParameters, 'type_parameters.typeParameters');
-	return F.buildTypeParameters({
-		typeParameter: _ne_typeParameters
-	});
+export function coerceToTypeParameters(
+	input?: T.TypeParametersElements | T.TypeParameters
+): ReturnType<typeof F.buildTypeParameters> {
+	if (isNodeData(input) && input.$type === TSKindId.TypeParameters) {
+		const data = input;
+		const child = (data as unknown as { _type_parameters_elements?: unknown })._type_parameters_elements;
+		return F.buildTypeParameters(child as Parameters<typeof F.buildTypeParameters>[0]);
+	}
+	return F.buildTypeParameters(input as Parameters<typeof F.buildTypeParameters>[0]);
 }
 
 export function coerceToTypeParameter(input: T.TypeParameter.Loose): ReturnType<typeof F.buildTypeParameter> {
@@ -3232,10 +3249,10 @@ export function coerceToArrayType(input: T.ArrayType.Loose): ReturnType<typeof F
 	);
 }
 
-export function coerceToTupleType(input?: T.TupleTypeGroup1 | T.TupleType): ReturnType<typeof F.buildTupleType> {
+export function coerceToTupleType(input?: T.TupleTypeMembers | T.TupleType): ReturnType<typeof F.buildTupleType> {
 	if (isNodeData(input) && input.$type === TSKindId.TupleType) {
 		const data = input;
-		const child = (data as unknown as { _tuple_type_group1?: unknown })._tuple_type_group1;
+		const child = (data as unknown as { _tuple_type_members?: unknown })._tuple_type_members;
 		return F.buildTupleType(child as Parameters<typeof F.buildTupleType>[0]);
 	}
 	return F.buildTupleType(input as Parameters<typeof F.buildTupleType>[0]);
@@ -3303,7 +3320,6 @@ export function coerceToObjectTypeContent(
 		const stored = (data as unknown as { _content?: unknown })._content;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildObjectTypeContent(
-			children as Parameters<typeof F.buildObjectTypeContent>[0],
 			{
 				separatorKind: (() => {
 					const sk = (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
@@ -3314,10 +3330,27 @@ export function coerceToObjectTypeContent(
 					._leading_sep,
 				trailing: (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
 					._trailing_sep
-			} as Parameters<typeof F.buildObjectTypeContent>[1]
+			},
+			...(children as unknown as NonEmptyArray<
+				| T.ExportStatement
+				| T.PropertySignature
+				| T.CallSignature
+				| T.ConstructSignature
+				| T.IndexSignature
+				| T.MethodSignature
+			>)
 		);
 	}
-	return F.buildObjectTypeContent(input as Parameters<typeof F.buildObjectTypeContent>[0]);
+	return F.buildObjectTypeContent(
+		...(input as unknown as NonEmptyArray<
+			| T.ExportStatement
+			| T.PropertySignature
+			| T.CallSignature
+			| T.ConstructSignature
+			| T.IndexSignature
+			| T.MethodSignature
+		>)
+	);
 }
 
 export function coerceToHtmlComment(input: string | T.HtmlComment): ReturnType<typeof F.buildHtmlComment> {

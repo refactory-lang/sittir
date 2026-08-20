@@ -42,7 +42,9 @@ import {
 	resolveHiddenKeywordLiteral,
 	classifyFactoryShape,
 	classifyChildFactorySurface,
+	keywordRefWireIdentity,
 	classifyFactoryEmission,
+	forwardedTargetKind,
 	resolveDirectFactorySlot,
 	collectAliasSourceKinds,
 	warnSkippedParserSymbol,
@@ -444,16 +446,12 @@ export function kindEnumTextMapExpr(
 			const kind = storageKindOfRef(value.node);
 			const resolved = nodeMap.nodes.get(kind);
 			if (resolved instanceof AssembledKeyword || resolved instanceof AssembledToken) {
-				// Same per-occurrence stamp preference as kindEnumTextIdPairs/
-				// classifyFieldStorageInfo (shared.ts): value.parseKind/
-				// parseKindId/storageKindId know about THIS reference site's
-				// alias target (e.g. rust's `_pointer_type_const`, aliased to
-				// visible `pointer_type_const`); the shared AssembledKeyword/
-				// Token instance's own resolvedKind/resolvedKindId don't.
+				// Same wire-identity derivation as kindEnumTextIdPairs/
+				// classifyFieldStorageInfo — see keywordRefWireIdentity
+				// (shared.ts) for the alias vs hidden-inlined split.
 				const text = resolved.text;
 				if (text === undefined) continue;
-				const kindName = value.parseKind?.name ?? resolved.resolvedKind;
-				const kindId = value.parseKindId ?? value.storageKindId ?? resolved.resolvedKindId;
+				const { kindName, kindId } = keywordRefWireIdentity(value, resolved);
 				const discriminant =
 					(kindId !== undefined ? kindDiscriminantExprForId(kindId, kindEntries) : undefined) ??
 					(kindName !== undefined && hasCatalogEntry(kindEntries, kindName)
@@ -649,6 +647,11 @@ function emitFieldCarryingFactory(
 	let signature: string;
 	let valueSourceFor: (f: AssembledNonterminal) => string;
 	let withLines: string[];
+	// Set by the two direct-convention branches below (singular container /
+	// single-field) — the inputs the forwarding wrapper needs when this kind
+	// classifies 'forwarded'.
+	let directParamType: string | undefined;
+	let directParamOptional = false;
 	// Which fields actually get storage + a getter. Container shape only
 	// stamps its ONE real slot — `node.fields` can hold other entries
 	// (e.g. keyword-presence markers) that `classifyBranchSlots`' userSlot
@@ -658,26 +661,43 @@ function emitFieldCarryingFactory(
 	let fieldsToEmit: readonly AssembledNonterminal[] = fields;
 
 	if (containerFacts) {
-		fieldsToEmit = [containerFacts.slot];
+		// The container's ONE user slot takes the positional child value; any
+		// OTHER field with an auto-stamp expression (a fixed-value enum slot
+		// like python `_simple_statements`' newline) still gets its stamped
+		// storage — same treatment the single-field and config shapes below
+		// give such fields. Fields that are neither (markers the single-slot
+		// classification excluded) stay un-emitted, as before.
+		const stampedExtras = fields.filter(
+			(f) => f !== containerFacts.slot && autoStampExpression(f, nodeMap) !== undefined
+		);
+		fieldsToEmit = [containerFacts.slot, ...stampedExtras];
 		const elementType = resolveContainerElementType(
 			{
 				kind: node.kind,
 				typeName: node.typeName,
 				treeTypeName: node.treeTypeName,
 				rawFactoryName: node.rawFactoryName,
-				fields
+				fields: [containerFacts.slot]
 			},
 			nodeMap
 		);
 		if (containerFacts.multiple) {
 			signature = `export function ${fn}(...children: ${elementType}[]) {`;
-			valueSourceFor = () => 'children';
+			valueSourceFor = (f) =>
+				f === containerFacts.slot
+					? 'children'
+					: slotStorageFromValueExpr(f, autoStampExpression(f, nodeMap)!, nodeMap, kindEntries);
 			withLines = [`    $with: { $children: (...vs: ${elementType}[]) => ${fn}(...vs) },`];
 		} else {
 			const optMark = containerFacts.required ? '' : '?';
 			signature = `export function ${fn}(child${optMark}: ${elementType}) {`;
-			valueSourceFor = () => 'child';
+			valueSourceFor = (f) =>
+				f === containerFacts.slot
+					? 'child'
+					: slotStorageFromValueExpr(f, autoStampExpression(f, nodeMap)!, nodeMap, kindEntries);
 			withLines = [`    $with: { $child: (v: ${elementType}) => ${fn}(v) },`];
+			directParamType = elementType;
+			directParamOptional = !containerFacts.required;
 		}
 	} else if (singleField) {
 		const elemType = `T.${node.typeName}.Config['${singleField.configKey}']`;
@@ -686,6 +706,10 @@ function emitFieldCarryingFactory(
 		signature = hasFlankOptions
 			? `export function ${fn}(${paramName}${optMark}: ${elemType}, options: ${flankOptionsType} = {}) {`
 			: `export function ${fn}(${paramName}${optMark}: ${elemType}) {`;
+		if (!hasFlankOptions) {
+			directParamType = elemType;
+			directParamOptional = !isRequired(singleField);
+		}
 		valueSourceFor = (f) =>
 			f === singleField
 				? slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries)
@@ -808,6 +832,45 @@ function emitFieldCarryingFactory(
 	}
 	lines.push('  }), methodsEngine);');
 	lines.push('}');
+
+	// 'forwarded' shape (see forwardedTargetKind, shared.ts): the direct
+	// convention's single child slot holds exactly ONE concrete kind, so the
+	// factory forwards that kind's constructor — callers pass either the
+	// forwarded constructor arguments (the child is built internally) or a
+	// pre-built node, discriminated by `$type`. The direct implementation
+	// above becomes the private tail; chains compose transitively because a
+	// forwarded TARGET factory performs the same dispatch itself.
+	const forwardTarget = directParamType !== undefined ? forwardedTargetKind(node, nodeMap) : null;
+	if (forwardTarget !== null) {
+		const targetFn = nodeMap.nodes.get(forwardTarget)!.rawFactoryName!;
+		lines[0] = lines[0]!.replace(`export function ${fn}(`, `function _${fn}(`);
+		const optMark = directParamOptional ? '?' : '';
+		const wrapper: string[] = [
+			`export function ${fn}(child${optMark}: ${directParamType}): ReturnType<typeof _${fn}>;`,
+			`export function ${fn}(...args: Parameters<typeof ${targetFn}>): ReturnType<typeof _${fn}>;`,
+			`export function ${fn}(...args: unknown[]) {`
+		];
+		wrapper.push(
+			// A single non-object argument (undefined = optional-empty; string
+			// = text-collapsed scalar storage; number = scalarized kind-enum
+			// storage; boolean = keyword-presence storage) keeps the direct
+			// pass-through semantics — read-side storage scalar-collapses such
+			// children, so constructing a node here would diverge from what a
+			// real parse stores. Only structured forwarded args (config
+			// objects, node spreads) construct the child.
+			`  if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {`,
+			`    return _${fn}(args[0] as ${directParamType});`,
+			`  }`,
+			`  const prebuilt =`,
+			`    args.length === 1 && typeof args[0] === 'object' && args[0] !== null &&`,
+			`    (args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(forwardTarget, nodeMap, kindEntries)});`,
+			`  return prebuilt`,
+			`    ? _${fn}(args[0] as ${directParamType})`,
+			`    : _${fn}((${targetFn} as (...a: unknown[]) => unknown)(...args) as ${directParamType});`,
+			'}'
+		);
+		lines.unshift(...wrapper);
+	}
 	return renameUnusedConfigParam(lines);
 }
 
@@ -1020,11 +1083,26 @@ function emitSeparatedListFactory(
 	const optionsType = `{ ${optionsTypeParts.join('; ')} }`;
 
 	const lines: string[] = [];
-	lines.push(
-		hasOptions
-			? `export function ${fn}(elements: ${elementsType}, options: ${optionsType} = {}) {`
-			: `export function ${fn}(elements: ${elementsType}) {`
-	);
+	// Spread signature with a LEADING optional options bag —
+	// `fn(...elements)` / `fn(options, ...elements)` — dispatched on the
+	// first argument: every element value is either a string literal or a
+	// node carrying `$type`, so a plain object WITHOUT `$type` can only be
+	// the options bag.
+	if (hasOptions) {
+		lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
+		lines.push(`export function ${fn}(options: ${optionsType}, ...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
+		lines.push(`export function ${fn}(...args: (${optionsType} | ${elemTypeForArray})[]) {`);
+		lines.push(
+			`  const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));`
+		);
+		lines.push(`  const options = (_optsFirst ? args[0] : {}) as ${optionsType};`);
+		lines.push(`  const elements = (_optsFirst ? args.slice(1) : args) as unknown as ${elementsType};`);
+		lines.push(`  return _${fn}(elements, options);`);
+		lines.push('}');
+		lines.push(`function _${fn}(elements: ${elementsType}, options: ${optionsType}) {`);
+	} else {
+		lines.push(`export function ${fn}(...elements: ${elementsType}) {`);
+	}
 	if (node.nonEmpty) {
 		lines.push(`  _assertNonEmpty(elements, '${node.kind}.elements');`);
 	}
@@ -1053,7 +1131,7 @@ function emitSeparatedListFactory(
 	if (hasLeadingOption) lines.push('    _leading_sep,');
 	if (hasTrailingOption) lines.push('    _trailing_sep,');
 	lines.push('    $with: {');
-	const optionsArg = hasOptions ? ', options' : '';
+	const optionsArg = hasOptions ? 'options, ' : '';
 	// Rest param type must match `elementsType` exactly (`NonEmptyArray<T>`
 	// when nonEmpty) — a plain `T[]` rest capture isn't assignable to the
 	// tuple-shaped `NonEmptyArray<T>` the factory's own `elements` parameter
@@ -1070,12 +1148,14 @@ function emitSeparatedListFactory(
 	// values, silently diverging from the true (still-repeated) rule shape
 	// — `node.nonEmpty` has no such degenerate case since it reads directly
 	// off `rule.type`, never off the derived value count.
-	lines.push(`      $children: (...vs: ${elementsType}) => ${fn}(vs${optionsArg}),`);
+	lines.push(`      $children: (...vs: ${elementsType}) => ${fn}(${optionsArg}...vs),`);
 	if (hasSeparatorKindOption) {
-		lines.push(`      separatorKind: (v: ${separatorKindUnion}) => ${fn}(elements, { ...options, separatorKind: v }),`);
+		lines.push(
+			`      separatorKind: (v: ${separatorKindUnion}) => ${fn}({ ...options, separatorKind: v }, ...elements),`
+		);
 	}
-	if (hasLeadingOption) lines.push(`      leading: (v: boolean) => ${fn}(elements, { ...options, leading: v }),`);
-	if (hasTrailingOption) lines.push(`      trailing: (v: boolean) => ${fn}(elements, { ...options, trailing: v }),`);
+	if (hasLeadingOption) lines.push(`      leading: (v: boolean) => ${fn}({ ...options, leading: v }, ...elements),`);
+	if (hasTrailingOption) lines.push(`      trailing: (v: boolean) => ${fn}({ ...options, trailing: v }, ...elements),`);
 	lines.push('    },');
 	lines.push('  }, {');
 	lines.push(`    ${contentAccessorName}: () => ${contentStorageKey},`);

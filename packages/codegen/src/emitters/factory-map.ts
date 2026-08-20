@@ -17,7 +17,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import { allSlotsOf, deriveSlotCardinality, resolveSlotAliasPairs, structuralFieldsOf } from '../compiler/model/node-map.ts';
-import { classifyFactoryShape, collectAliasSourceKinds, resolveFactoryFieldNames } from './shared.ts';
+import { classifyFactoryShape, collectAliasSourceKinds, forwardedTargetKind, resolveFactoryFieldNames } from './shared.ts';
 import type { FactoryShape } from './shared.ts';
 import type { PolymorphVariantDescriptor, PolymorphVariantMap } from '../polymorph-variant.ts';
 import { prefixNamedSuffix } from '../compiler/variant-structural.ts';
@@ -34,6 +34,10 @@ export interface FactorySlotMeta {
 
 export interface FactoryMapData {
 	readonly factoryShapes: Readonly<Record<string, FactoryShape>>;
+	/** Companion fact to a `'forwarded'` factoryShape: the kind whose
+	 *  constructor the factory forwards. Present iff the shape is
+	 *  'forwarded'; transitive chains resolve by following entries. */
+	readonly forwardsTo: Readonly<Record<string, string>>;
 	readonly fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
 	readonly factoryFields: Readonly<Record<string, readonly string[]>>;
 	readonly factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
@@ -44,11 +48,13 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	const aliasSet = collectAliasSourceKinds(nodeMap);
 
 	const factoryShapes: Record<string, FactoryShape> = {};
+	const forwardsTo: Record<string, string> = {};
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 		const shape = shapeOf(node, nodeMap);
 		if (shape) factoryShapes[kind] = shape;
+		if (shape === 'forwarded') forwardsTo[kind] = forwardedTargetKind(node, nodeMap)!;
 	}
 
 	const fieldAliasMap: Record<string, Record<string, string>> = {};
@@ -80,7 +86,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 
 	const polymorphVariants = collectVariantAdoptedBranches(nodeMap, aliasSet);
 
-	return { factoryShapes, fieldAliasMap, factoryFields, factorySlots, polymorphVariants };
+	return { factoryShapes, forwardsTo, fieldAliasMap, factoryFields, factorySlots, polymorphVariants };
 }
 
 function collectVariantAdoptedBranches(

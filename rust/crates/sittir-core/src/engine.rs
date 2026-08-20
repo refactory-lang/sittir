@@ -381,6 +381,7 @@ mod tests {
             node_handle: None,
             child_index: None,
             trivia_data: None,
+            slot_order: None,
         }
     }
 

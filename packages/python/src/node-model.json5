@@ -1,10 +1,9 @@
 {
   "name": "python",
-  "nodeCount": 259,
+  "nodeCount": 265,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
-    "_dict_pattern_kv",
     "_expression_within_for_in_clause",
     "_expressions",
     "_f_expression",
@@ -64,7 +63,7 @@
     "expression_list": {
       "definedBy": "override",
       "childKind": {
-        "expression_list_group1": "group1"
+        "expression_list_expressions": "expressions"
       }
     },
     "assignment": {
@@ -78,7 +77,7 @@
     "pattern_list": {
       "definedBy": "override",
       "childKind": {
-        "pattern_list_group1": "group1"
+        "pattern_list_patterns": "patterns"
       }
     },
     "yield": {
@@ -89,193 +88,23 @@
     }
   },
   "fieldAliasMap": {
-    "module.statements": {
-      "statement_group1": "_simple_statements"
-    },
-    "_simple_statements.newline": {
-      "newline": "_newline"
-    },
-    "future_import_statement.import_list": {
-      "future_import_statement_group1": "_import_list"
-    },
-    "import_from_statement.import_list": {
-      "future_import_statement_group1": "_import_list"
-    },
-    "expression_statement.content": {
-      "expression_statement_tuple": "_expression_statement_tuple"
-    },
-    "if_statement.consequence": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "elif_clause.consequence": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "else_clause.body": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
+    "import_statement.import_list": {
+      "names": "_import_list"
     },
     "match_statement.body": {
       "block": "_match_block"
     },
-    "_match_block.content": {
-      "match_block_block": "_match_block_block",
-      "newline": "_newline"
-    },
-    "case_clause.consequence": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "for_statement.body": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "while_statement.body": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "try_statement.body": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "except_clause.except_clause_group1": {
-      "except_clause_group1": "_except_clause_group1"
-    },
-    "except_clause.content": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "finally_clause.block": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "with_statement.body": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "with_clause.content": {
-      "with_clause_bare": "_with_clause_bare",
-      "with_clause_paren": "_with_clause_paren"
-    },
-    "function_definition.body": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "parameters.parameters": {
-      "parameter_list": "_parameters"
-    },
-    "lambda_parameters.parameters": {
-      "parameter_list": "_parameters"
-    },
-    "class_definition.body": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
     "parenthesized_list_splat.content": {
       "parenthesized_expression": "parenthesized_list_splat"
-    },
-    "argument_list.arguments": {
-      "argument_list_group1": "_argument_list_group1"
-    },
-    "decorator.newline": {
-      "newline": "_newline"
-    },
-    "_suite.content": {
-      "simple_statements": "_simple_statements",
-      "suite_block_with_indent": "_suite_block_with_indent",
-      "newline": "_newline"
-    },
-    "block.statements": {
-      "statement_group1": "_simple_statements"
-    },
-    "expression_list.tail": {
-      "expression_list_group1": "_expression_list_group1"
-    },
-    "case_pattern.content": {
-      "simple_pattern_negative": "_simple_pattern_negative",
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "union_pattern.simple_pattern": {
-      "simple_pattern_negative": "_simple_pattern_negative",
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "dict_pattern.dict_pattern_group2": {
-      "dict_pattern_group2": "_dict_pattern_group2"
-    },
-    "_key_value_pattern.key": {
-      "simple_pattern_negative": "_simple_pattern_negative",
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "keyword_pattern.simple_pattern": {
-      "simple_pattern_negative": "_simple_pattern_negative",
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "class_pattern.arguments": {
-      "list_pattern_group1": "_list_pattern_group1"
-    },
-    "tuple_pattern.patterns": {
-      "pattern_group": "_patterns"
-    },
-    "list_pattern.patterns": {
-      "pattern_group": "_patterns"
     },
     "as_pattern.alias": {
       "as_pattern_target": "expression"
     },
-    "comparison_operator.comparators": {
-      "comparison_operator_comparator": "_comparison_operator_comparator"
-    },
-    "assignment.content": {
-      "assignment_eq": "_assignment_eq",
-      "assignment_type": "_assignment_type",
-      "assignment_typed": "_assignment_typed"
-    },
-    "pattern_list.tail": {
-      "pattern_list_group1": "_pattern_list_group1"
-    },
-    "yield.content": {
-      "yield_from_clause": "_yield_from_clause"
-    },
-    "slice.step": {
-      "slice_group1": "_slice_group1"
-    },
-    "list.collection_elements": {
-      "element_list": "_collection_elements"
-    },
-    "set.collection_elements": {
-      "element_list": "_collection_elements"
-    },
-    "tuple.collection_elements": {
-      "element_list": "_collection_elements"
-    },
-    "dictionary.entries": {
-      "dictionary_group1": "_dictionary_group1"
-    },
     "format_specifier.content": {
       "format_expression": "interpolation"
     },
-    "_except_clause_group1.content": {
-      "except_clause_as": "_except_clause_as",
-      "except_clause_list": "_except_clause_list"
-    },
-    "_dict_pattern_group2.dict_pattern_kv": {
-      "dict_pattern_kv": "_dict_pattern_kv"
-    },
-    "_dict_pattern_group2.content": {
-      "dict_pattern_group1": "_key_value_pattern"
+    "_future_import_statement_group1.import_list": {
+      "names": "_import_list"
     }
   },
   "factorySlots": {
@@ -289,12 +118,12 @@
       }
     },
     "_simple_statements": {
-      "simple_statement": {
+      "simple_statements_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       },
       "newline": {
         "unnamed": false,
@@ -305,12 +134,12 @@
       }
     },
     "import_statement": {
-      "name": {
+      "import_list": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "relative_import": {
@@ -330,17 +159,10 @@
       }
     },
     "future_import_statement": {
-      "name": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "import_list": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -353,24 +175,10 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "wildcard_import": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "import_list": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -535,12 +343,12 @@
       }
     },
     "match_statement": {
-      "subject": {
+      "subjects": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       },
       "body": {
         "unnamed": false,
@@ -560,12 +368,12 @@
       }
     },
     "case_clause": {
-      "case_pattern": {
+      "case_patterns": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       },
       "guard": {
         "unnamed": false,
@@ -913,12 +721,12 @@
       }
     },
     "type_parameter": {
-      "type": {
+      "types": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "parenthesized_list_splat": {
@@ -1024,7 +832,7 @@
       }
     },
     "dict_pattern": {
-      "dict_pattern_group2": {
+      "dict_pattern_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1442,12 +1250,12 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "subscript": {
+      "subscripts": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "slice": {
@@ -1758,6 +1566,13 @@
         "required": true,
         "multiple": true,
         "nonEmpty": true
+      },
+      "comma": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "if_clause": {
@@ -1881,6 +1696,42 @@
         "nonEmpty": false
       }
     },
+    "_simple_statements_elements": {
+      "simple_statement": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_future_import_statement_group1": {
+      "import_list": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_subjects": {
+      "subject": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_case_patterns": {
+      "case_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
     "_except_clause_group1": {
       "content": {
         "unnamed": false,
@@ -1890,7 +1741,25 @@
         "nonEmpty": false
       }
     },
-    "_argument_list_group1": {
+    "_with_clause_with_items": {
+      "with_item": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_types": {
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_argument_list_elements": {
       "element": {
         "unnamed": false,
         "slotCount": 1,
@@ -1899,7 +1768,7 @@
         "nonEmpty": true
       }
     },
-    "_expression_list_group1": {
+    "_expression_list_expressions": {
       "expression": {
         "unnamed": false,
         "slotCount": 1,
@@ -1908,7 +1777,7 @@
         "nonEmpty": true
       }
     },
-    "_list_pattern_group1": {
+    "_list_pattern_case_patterns": {
       "case_pattern": {
         "unnamed": false,
         "slotCount": 1,
@@ -1917,24 +1786,26 @@
         "nonEmpty": true
       }
     },
-    "_dict_pattern_group2": {
-      "dict_pattern_kv": {
+    "_dict_pattern_elements": {
+      "element": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
-    "_pattern_list_group1": {
+    "_pattern_list_patterns": {
       "pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_subscripts": {
+      "subscript": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1951,7 +1822,7 @@
         "nonEmpty": false
       }
     },
-    "_dictionary_group1": {
+    "_dictionary_elements": {
       "element": {
         "unnamed": false,
         "slotCount": 1,
@@ -1977,20 +1848,20 @@
       }
     },
     "case_tuple_pattern": {
-      "case_pattern": {
+      "list_pattern_case_patterns": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
     "case_list_pattern": {
-      "case_pattern": {
+      "list_pattern_case_patterns": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -2097,12 +1968,12 @@
       }
     },
     "_with_clause_paren": {
-      "with_item": {
+      "with_clause_with_items": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "_match_block_block": {
@@ -2241,11 +2112,11 @@
       "text": "__future__"
     },
     {
-      "kind": "_argument_list_group1",
+      "kind": "_argument_list_elements",
       "modelType": "separatedList",
-      "typeName": "ArgumentListGroup1",
-      "factoryName": "argumentListGroup1",
-      "irKey": "argumentListGroup1",
+      "typeName": "ArgumentListElements",
+      "factoryName": "argumentListElements",
+      "irKey": "argumentListElements",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -2429,64 +2300,42 @@
       "factoryShape": "text"
     },
     {
+      "kind": "_case_patterns",
+      "modelType": "separatedList",
+      "typeName": "CasePatterns",
+      "factoryName": "casePatterns",
+      "irKey": "casePatterns",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "case_pattern"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "case_pattern"
+      ]
+    },
+    {
       "kind": "_collection_elements",
-      "modelType": "group",
+      "modelType": "separatedList",
       "typeName": "CollectionElements",
-      "factoryName": "_collectionElements",
+      "factoryName": "collectionElements",
       "irKey": "collectionElements",
       "hidden": false,
-      "name": "_collection_elements",
-      "fields": [
-        {
-          "name": "element",
-          "propertyName": "elements",
-          "paramName": "elements",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "expression",
-              "parseKind": "expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "yield",
-              "parseKind": "yield",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "list_splat",
-              "parseKind": "list_splat",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "parenthesized_list_splat",
-              "parseKind": "parenthesized_list_splat",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "expression",
-              "yield",
-              "list_splat",
-              "parenthesized_list_splat"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "expression",
+        "yield",
+        "list_splat",
+        "parenthesized_list_splat"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "element"
       ]
@@ -2638,92 +2487,31 @@
       "hidden": false
     },
     {
-      "kind": "_dict_pattern_group2",
-      "modelType": "branch",
-      "typeName": "DictPatternGroup2",
-      "factoryName": "dictPatternGroup2",
-      "irKey": "dictPatternGroup2",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "dict_pattern_kv",
-          "propertyName": "dictPatternKv",
-          "paramName": "dictPatternKv",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_dict_pattern_kv",
-              "parseKind": "dict_pattern_kv",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_dict_pattern_kv"
-            ]
-          }
-        },
-        {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_key_value_pattern",
-              "parseKind": "dict_pattern_group1",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "splat_pattern",
-              "parseKind": "splat_pattern",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_key_value_pattern",
-              "splat_pattern"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "dict_pattern_kv",
-        "content"
-      ]
-    },
-    {
-      "kind": "_dict_pattern_kv",
-      "modelType": "supertype",
-      "typeName": "DictPatternKv",
-      "irKey": "dictPatternKv",
-      "hidden": true,
-      "subtypes": [
-        "_key_value_pattern",
-        "splat_pattern"
-      ]
-    },
-    {
-      "kind": "_dictionary_group1",
+      "kind": "_dict_pattern_elements",
       "modelType": "separatedList",
-      "typeName": "DictionaryGroup1",
-      "factoryName": "dictionaryGroup1",
-      "irKey": "dictionaryGroup1",
+      "typeName": "DictPatternElements",
+      "factoryName": "dictPatternElements",
+      "irKey": "dictPatternElements",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "key_value_pattern",
+        "splat_pattern"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "element"
+      ]
+    },
+    {
+      "kind": "_dictionary_elements",
+      "modelType": "separatedList",
+      "typeName": "DictionaryElements",
+      "factoryName": "dictionaryElements",
+      "irKey": "dictionaryElements",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -2956,11 +2744,11 @@
       "children": []
     },
     {
-      "kind": "_expression_list_group1",
+      "kind": "_expression_list_expressions",
       "modelType": "separatedList",
-      "typeName": "ExpressionListGroup1",
-      "factoryName": "expressionListGroup1",
-      "irKey": "expressionListGroup1",
+      "typeName": "ExpressionListExpressions",
+      "factoryName": "expressionListExpressions",
+      "irKey": "expressionListExpressions",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -3084,48 +2872,60 @@
       "children": []
     },
     {
-      "kind": "_import_list",
-      "modelType": "group",
-      "typeName": "ImportList",
-      "factoryName": "_importList",
-      "irKey": "importList",
+      "kind": "_future_import_statement_group1",
+      "modelType": "branch",
+      "typeName": "FutureImportStatementGroup1",
+      "factoryName": "futureImportStatementGroup1",
+      "irKey": "futureImportStatementGroup1",
       "hidden": false,
-      "name": "_import_list",
       "fields": [
         {
-          "name": "name",
-          "propertyName": "names",
-          "paramName": "names",
+          "name": "import_list",
+          "propertyName": "importList",
+          "paramName": "importList",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "dotted_name",
-              "parseKind": "dotted_name",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "aliased_import",
-              "parseKind": "aliased_import",
+              "multiplicity": "single",
+              "name": "_import_list",
+              "parseKind": "names",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "dotted_name",
-              "aliased_import"
+              "_import_list"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_import_list",
+      "factoryFields": [
+        "import_list"
+      ]
+    },
+    {
+      "kind": "_import_list",
+      "modelType": "separatedList",
+      "typeName": "ImportList",
+      "factoryName": "importList",
+      "irKey": "importList",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "dotted_name",
+        "aliased_import"
+      ],
+      "factoryShape": "elements",
       "factoryFields": [
         "name"
       ]
@@ -3234,40 +3034,20 @@
       ]
     },
     {
-      "kind": "_list_pattern_group1",
-      "modelType": "group",
-      "typeName": "ListPatternGroup1",
-      "factoryName": "_listPatternGroup1",
-      "irKey": "listPatternGroup1",
+      "kind": "_list_pattern_case_patterns",
+      "modelType": "separatedList",
+      "typeName": "ListPatternCasePatterns",
+      "factoryName": "listPatternCasePatterns",
+      "irKey": "listPatternCasePatterns",
       "hidden": false,
-      "name": "_list_pattern_group1",
-      "fields": [
-        {
-          "name": "case_pattern",
-          "propertyName": "casePatterns",
-          "paramName": "casePatterns",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "case_pattern",
-              "parseKind": "case_pattern",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "case_pattern"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "case_pattern"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "case_pattern"
       ]
@@ -3399,49 +3179,29 @@
     },
     {
       "kind": "_parameters",
-      "modelType": "group",
+      "modelType": "separatedList",
       "typeName": "_Parameters",
       "factoryName": "_parameters",
-      "irKey": "parameters",
+      "irKey": "_parameters",
       "hidden": false,
-      "name": "_parameters",
-      "fields": [
-        {
-          "name": "parameter",
-          "propertyName": "parameters",
-          "paramName": "parameters",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "parameter",
-              "parseKind": "parameter",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "parameter"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "parameter"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "parameter"
       ]
     },
     {
-      "kind": "_pattern_list_group1",
+      "kind": "_pattern_list_patterns",
       "modelType": "separatedList",
-      "typeName": "PatternListGroup1",
-      "factoryName": "patternListGroup1",
-      "irKey": "patternListGroup1",
+      "typeName": "PatternListPatterns",
+      "factoryName": "patternListPatterns",
+      "irKey": "patternListPatterns",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -3457,39 +3217,19 @@
     },
     {
       "kind": "_patterns",
-      "modelType": "group",
+      "modelType": "separatedList",
       "typeName": "Patterns",
-      "factoryName": "_patterns",
+      "factoryName": "patterns",
       "irKey": "patterns",
       "hidden": false,
-      "name": "_patterns",
-      "fields": [
-        {
-          "name": "pattern",
-          "propertyName": "patterns",
-          "paramName": "patterns",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "pattern",
-              "parseKind": "pattern",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "pattern"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "pattern"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "pattern"
       ]
@@ -3570,12 +3310,33 @@
     },
     {
       "kind": "_simple_pattern_negative",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "SimplePatternNegative",
-      "factoryName": "simplePatternNegative",
+      "factoryName": "_simplePatternNegative",
       "irKey": "simplePatternNegative",
       "hidden": false,
+      "name": "_simple_pattern_negative",
       "fields": [
+        {
+          "name": "sign",
+          "propertyName": "sign",
+          "paramName": "sign",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-",
+              "parseKind": "dash"
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
         {
           "name": "content",
           "propertyName": "content",
@@ -3637,33 +3398,32 @@
     },
     {
       "kind": "_simple_statements",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "SimpleStatements",
-      "factoryName": "_simpleStatements",
+      "factoryName": "simpleStatements",
       "irKey": "simpleStatements",
       "hidden": false,
-      "name": "_simple_statements",
       "fields": [
         {
-          "name": "simple_statement",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
+          "name": "simple_statements_elements",
+          "propertyName": "simpleStatementsElements",
+          "paramName": "simpleStatementsElements",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_simple_statement",
-              "parseKind": "_simple_statement",
+              "multiplicity": "single",
+              "name": "_simple_statements_elements",
+              "parseKind": "simple_statements_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_simple_statement"
+              "_simple_statements_elements"
             ]
           }
         },
@@ -3692,7 +3452,27 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_simple_statements_elements",
+      "factoryFields": [
+        "simple_statements_elements"
+      ]
+    },
+    {
+      "kind": "_simple_statements_elements",
+      "modelType": "separatedList",
+      "typeName": "SimpleStatementsElements",
+      "factoryName": "simpleStatementsElements",
+      "irKey": "simpleStatementsElements",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "_simple_statement"
+      ],
+      "factoryShape": "elements",
       "factoryFields": [
         "simple_statement"
       ]
@@ -3763,6 +3543,45 @@
       "irKey": "_stringContent",
       "hidden": false,
       "factoryShape": "text"
+    },
+    {
+      "kind": "_subjects",
+      "modelType": "separatedList",
+      "typeName": "Subjects",
+      "factoryName": "subjects",
+      "irKey": "subjects",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "expression"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "subject"
+      ]
+    },
+    {
+      "kind": "_subscripts",
+      "modelType": "separatedList",
+      "typeName": "Subscripts",
+      "factoryName": "subscripts",
+      "irKey": "subscripts",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "expression",
+        "slice"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "subscript"
+      ]
     },
     {
       "kind": "_suite",
@@ -3847,9 +3666,29 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "block",
       "factoryFields": [
         "block"
+      ]
+    },
+    {
+      "kind": "_types",
+      "modelType": "separatedList",
+      "typeName": "Types",
+      "factoryName": "types",
+      "irKey": "types",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "type"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "type"
       ]
     },
     {
@@ -3879,78 +3718,77 @@
     },
     {
       "kind": "_with_clause_bare",
-      "modelType": "group",
+      "modelType": "separatedList",
       "typeName": "WithClauseBare",
-      "factoryName": "_withClauseBare",
+      "factoryName": "withClauseBare",
       "irKey": "withClauseBare",
       "hidden": false,
-      "name": "_with_clause_bare",
-      "fields": [
-        {
-          "name": "with_item",
-          "propertyName": "withItems",
-          "paramName": "withItems",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "with_item",
-              "parseKind": "with_item",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "with_item"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "with_item"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "with_item"
       ]
     },
     {
       "kind": "_with_clause_paren",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "WithClauseParen",
-      "factoryName": "_withClauseParen",
+      "factoryName": "withClauseParen",
       "irKey": "withClauseParen",
       "hidden": false,
-      "name": "_with_clause_paren",
       "fields": [
         {
-          "name": "with_item",
-          "propertyName": "withItems",
-          "paramName": "withItems",
+          "name": "with_clause_with_items",
+          "propertyName": "withClauseWithItems",
+          "paramName": "withClauseWithItems",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "with_item",
-              "parseKind": "with_item",
+              "multiplicity": "single",
+              "name": "_with_clause_with_items",
+              "parseKind": "with_clause_with_items",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "with_item"
+              "_with_clause_with_items"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_with_clause_with_items",
+      "factoryFields": [
+        "with_clause_with_items"
+      ]
+    },
+    {
+      "kind": "_with_clause_with_items",
+      "modelType": "separatedList",
+      "typeName": "WithClauseWithItems",
+      "factoryName": "withClauseWithItems",
+      "irKey": "withClauseWithItems",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "with_item"
+      ],
+      "factoryShape": "elements",
       "factoryFields": [
         "with_item"
       ]
@@ -4139,21 +3977,22 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_argument_list_group1",
-              "parseKind": "argument_list_group1",
+              "name": "_argument_list_elements",
+              "parseKind": "argument_list_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_argument_list_group1"
+              "_argument_list_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_argument_list_elements",
       "factoryFields": [
         "arguments"
       ]
@@ -5042,25 +4881,25 @@
       "hidden": false,
       "fields": [
         {
-          "name": "case_pattern",
+          "name": "case_patterns",
           "propertyName": "casePatterns",
           "paramName": "casePatterns",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "case_pattern",
-              "parseKind": "case_pattern",
+              "multiplicity": "single",
+              "name": "_case_patterns",
+              "parseKind": "case_patterns",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "case_pattern"
+              "_case_patterns"
             ]
           }
         },
@@ -5130,7 +4969,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "case_pattern",
+        "case_patterns",
         "guard",
         "consequence"
       ]
@@ -5144,33 +4983,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "case_pattern",
-          "propertyName": "casePatterns",
-          "paramName": "casePatterns",
+          "name": "list_pattern_case_patterns",
+          "propertyName": "listPatternCasePatterns",
+          "paramName": "listPatternCasePatterns",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "case_pattern",
-              "parseKind": "case_pattern",
+              "multiplicity": "optional",
+              "name": "_list_pattern_case_patterns",
+              "parseKind": "list_pattern_case_patterns",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "case_pattern"
+              "_list_pattern_case_patterns"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_list_pattern_case_patterns",
       "factoryFields": [
-        "case_pattern"
+        "list_pattern_case_patterns"
       ]
     },
     {
@@ -5236,33 +5076,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "case_pattern",
-          "propertyName": "casePatterns",
-          "paramName": "casePatterns",
+          "name": "list_pattern_case_patterns",
+          "propertyName": "listPatternCasePatterns",
+          "paramName": "listPatternCasePatterns",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "case_pattern",
-              "parseKind": "case_pattern",
+              "multiplicity": "optional",
+              "name": "_list_pattern_case_patterns",
+              "parseKind": "list_pattern_case_patterns",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "case_pattern"
+              "_list_pattern_case_patterns"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_list_pattern_case_patterns",
       "factoryFields": [
-        "case_pattern"
+        "list_pattern_case_patterns"
       ]
     },
     {
@@ -5482,15 +5323,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_list_pattern_group1",
-              "parseKind": "list_pattern_group1",
+              "name": "_list_pattern_case_patterns",
+              "parseKind": "list_pattern_case_patterns",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_list_pattern_group1"
+              "_list_pattern_case_patterns"
             ]
           }
         }
@@ -6273,9 +6114,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "dict_pattern_group2",
-          "propertyName": "dictPatternGroup2",
-          "paramName": "dictPatternGroup2",
+          "name": "dict_pattern_elements",
+          "propertyName": "dictPatternElements",
+          "paramName": "dictPatternElements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6283,23 +6124,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_dict_pattern_group2",
-              "parseKind": "dict_pattern_group2",
+              "name": "_dict_pattern_elements",
+              "parseKind": "dict_pattern_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_dict_pattern_group2"
+              "_dict_pattern_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_dict_pattern_elements",
       "factoryFields": [
-        "dict_pattern_group2"
+        "dict_pattern_elements"
       ]
     },
     {
@@ -6321,21 +6163,22 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_dictionary_group1",
-              "parseKind": "dictionary_group1",
+              "name": "_dictionary_elements",
+              "parseKind": "dictionary_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_dictionary_group1"
+              "_dictionary_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_dictionary_elements",
       "factoryFields": [
         "entries"
       ]
@@ -6995,15 +6838,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_expression_list_group1",
-              "parseKind": "expression_list_group1",
+              "name": "_expression_list_expressions",
+              "parseKind": "expression_list_expressions",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expression_list_group1"
+              "_expression_list_expressions"
             ]
           }
         }
@@ -7257,6 +7100,26 @@
             "kinds": [
               "_expression_within_for_in_clause"
             ]
+          }
+        },
+        {
+          "name": "comma",
+          "propertyName": "comma",
+          "paramName": "comma",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": ",",
+              "parseKind": "comma"
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": []
           }
         }
       ],
@@ -7652,48 +7515,24 @@
       "hidden": false,
       "fields": [
         {
-          "name": "name",
-          "propertyName": "names",
-          "paramName": "names",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "dotted_name",
-              "parseKind": "dotted_name",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "aliased_import",
-              "parseKind": "aliased_import",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "dotted_name",
-              "aliased_import"
-            ]
-          }
-        },
-        {
-          "name": "import_list",
-          "propertyName": "importList",
-          "paramName": "importList",
-          "required": false,
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_import_list",
+              "parseKind": "import_list",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_future_import_statement_group1",
               "parseKind": "future_import_statement_group1",
               "unresolved": true
             }
@@ -7701,16 +7540,16 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_import_list"
+              "_import_list",
+              "_future_import_statement_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "name",
-        "import_list"
+        "content"
       ]
     },
     {
@@ -8116,16 +7955,30 @@
           }
         },
         {
-          "name": "wildcard_import",
-          "propertyName": "wildcardImport",
-          "paramName": "wildcardImport",
-          "required": false,
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
+              "name": "_import_list",
+              "parseKind": "import_list",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_future_import_statement_group1",
+              "parseKind": "future_import_statement_group1",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "wildcard_import",
               "parseKind": "wildcard_import",
               "unresolved": true
@@ -8134,61 +7987,9 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "_import_list",
+              "_future_import_statement_group1",
               "wildcard_import"
-            ]
-          }
-        },
-        {
-          "name": "name",
-          "propertyName": "names",
-          "paramName": "names",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "dotted_name",
-              "parseKind": "dotted_name",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "aliased_import",
-              "parseKind": "aliased_import",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "dotted_name",
-              "aliased_import"
-            ]
-          }
-        },
-        {
-          "name": "import_list",
-          "propertyName": "importList",
-          "paramName": "importList",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_import_list",
-              "parseKind": "future_import_statement_group1",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_import_list"
             ]
           }
         }
@@ -8197,8 +7998,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "module_name",
-        "name",
-        "import_list"
+        "content"
       ]
     },
     {
@@ -8219,41 +8019,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "name",
-          "propertyName": "names",
-          "paramName": "names",
+          "name": "import_list",
+          "propertyName": "importList",
+          "paramName": "importList",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "dotted_name",
-              "parseKind": "dotted_name",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "aliased_import",
-              "parseKind": "aliased_import",
+              "multiplicity": "single",
+              "name": "_import_list",
+              "parseKind": "names",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "dotted_name",
-              "aliased_import"
+              "_import_list"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_import_list",
       "factoryFields": [
-        "name"
+        "import_list"
       ]
     },
     {
@@ -8629,7 +8422,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_parameters",
       "factoryFields": [
         "parameters"
       ]
@@ -8758,7 +8552,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_collection_elements",
       "factoryFields": [
         "collection_elements"
       ]
@@ -8858,7 +8653,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_patterns",
       "factoryFields": [
         "patterns"
       ]
@@ -9003,25 +8799,25 @@
       "hidden": false,
       "fields": [
         {
-          "name": "subject",
+          "name": "subjects",
           "propertyName": "subjects",
           "paramName": "subjects",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "expression",
-              "parseKind": "expression",
+              "multiplicity": "single",
+              "name": "_subjects",
+              "parseKind": "subjects",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "expression"
+              "_subjects"
             ]
           }
         },
@@ -9052,7 +8848,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "subject",
+        "subjects",
         "body"
       ]
     },
@@ -9452,7 +9248,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_parameters",
       "factoryFields": [
         "parameters"
       ]
@@ -9644,15 +9441,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_pattern_list_group1",
-              "parseKind": "pattern_list_group1",
+              "name": "_pattern_list_patterns",
+              "parseKind": "pattern_list_patterns",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_pattern_list_group1"
+              "_pattern_list_patterns"
             ]
           }
         }
@@ -10143,7 +9940,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_collection_elements",
       "factoryFields": [
         "collection_elements"
       ]
@@ -10663,33 +10461,25 @@
           }
         },
         {
-          "name": "subscript",
+          "name": "subscripts",
           "propertyName": "subscripts",
           "paramName": "subscripts",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "expression",
-              "parseKind": "expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "slice",
-              "parseKind": "slice",
+              "multiplicity": "single",
+              "name": "_subscripts",
+              "parseKind": "subscripts",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "expression",
-              "slice"
+              "_subscripts"
             ]
           }
         }
@@ -10698,7 +10488,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "value",
-        "subscript"
+        "subscripts"
       ]
     },
     {
@@ -10883,7 +10673,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_collection_elements",
       "factoryFields": [
         "collection_elements"
       ]
@@ -10921,7 +10712,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_patterns",
       "factoryFields": [
         "patterns"
       ]
@@ -11105,33 +10897,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "type",
+          "name": "types",
           "propertyName": "types",
           "paramName": "types",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "type",
-              "parseKind": "type",
+              "multiplicity": "single",
+              "name": "_types",
+              "parseKind": "types",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "type"
+              "_types"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_types",
       "factoryFields": [
-        "type"
+        "types"
       ]
     },
     {

@@ -89,7 +89,6 @@ const OVERRIDE_PARSER_KNOWN_ISSUES: Record<string, Set<string>> = {
 		'assignment_eq',
 		'assignment_type',
 		'assignment_typed',
-		'dict_pattern_kv',
 		'expression_statement_tuple',
 		'format_expression',
 		'match_block_block',

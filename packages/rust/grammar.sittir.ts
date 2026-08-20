@@ -38,8 +38,8 @@ const enrichedBase = enrich(base, {
 	// override (`_: field('modifier')` below) — same nested-field collision
 	// as `tuple_type`/`trait_bounds`, this time surfacing as a render-time
 	// unknown-kind-id error rather than a hard generate failure or an
-	// accessor-throw. `_where_clause_group1` regressed factory-render-parse
-	// (-2) and `_closure_parameters_optional1`/`_use_list_group1` each
+	// accessor-throw. `_where_predicates` regressed factory-render-parse
+	// (-2) and `_closure_parameters_optional1`/`_use_clauses` each
 	// regressed coverage (-1) when enabled — found via bisection against
 	// `validate:native`, root cause not further isolated (each is a small,
 	// contained loss, not a hard failure); left skipped until diagnosed.
@@ -470,7 +470,7 @@ export default grammar(
 				use_wildcard: ($) => seq(optional($._use_wildcard_clause), '*'),
 				_use_wildcard_clause: ($) => seq(field('path', $._path), '::'),
 
-				_where_clause_group1: ($, previous) => prec.right(0, previous),
+				_where_predicates: ($, previous) => prec.right(0, previous),
 
 				_pattern: ($, original) =>
 					transform(original, {
@@ -506,6 +506,21 @@ export default grammar(
 					}),
 
 				_string_literal_open: ($) => /[bc]?"/,
+
+				// raw_string_literal's delimiters are HIDDEN external-scanner
+				// tokens (`$._raw_string_literal_start`/`_end`) — invisible in
+				// the CST, so their per-occurrence text (the hash-run width:
+				// `r#"` vs `r###"`) never reaches the read layer, and the render
+				// had to invent a fixed single-hash spelling that corrupts any
+				// raw string whose content embeds `#"`-runs. Same fix as
+				// `string_literal`/`string_open` above: name the tokens via
+				// alias so each occurrence's real text survives as a captured
+				// slot.
+				raw_string_literal: ($, original) =>
+					transform(original, {
+						'0': alias($._raw_string_literal_start, $.raw_string_literal_start),
+						'2': alias($._raw_string_literal_end, $.raw_string_literal_end)
+					}),
 
 				_reference_expression_raw_const: ($) => seq('raw', 'const'),
 				_reference_expression_raw_mut: ($) => seq('raw', $.mutable_specifier),
@@ -566,9 +581,7 @@ export default grammar(
 			renderAs: (_$) => ({
 				_inner_line_doc_comment_marker: string('!'),
 				_outer_block_doc_comment_marker: string('*'),
-				_inner_block_doc_comment_marker: string('!'),
-				_raw_string_literal_start: string('r#"'),
-				_raw_string_literal_end: string('"#')
+				_inner_block_doc_comment_marker: string('!')
 			})
 		},
 		enrichedBase

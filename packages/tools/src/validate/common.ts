@@ -282,8 +282,8 @@ export function nativeTreeHandle(engine: NativeEngineLike, source: string): Tree
  * Build the read-side TreeHandle for the corpus validators. Selects
  * between the wasm/JS handle (default) and a native-engine handle
  * (when `SITTIR_BACKEND=native` is set AND the grammar-owned native
- * module loads). Native handles route every read — root + drill-in +
- * drillAs — through `engine.readNode(id)` so the suite exercises the
+ * module loads). Native handles route every read — root and drill-in
+ * alike — through `engine.readNode(id)` so the suite exercises the
  * full native pipeline end-to-end.
  *
  * The wasm `tree` is still required: validators use it for kind
@@ -736,11 +736,13 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		// use structural rendering (macro token content is
 		// author-declared-verbatim, mixes named and anon tokens).
 		delim_token_tree: (r) => `fn _f() { mac! ${r} }`,
-		// Post-alias-catalog-split (PR #165), the same content reads as
-		// `token_tree` — the `delim_token_tree` key above stopped matching
-		// and this kind's probing/fixtures silently vanished (19→0, see
-		// docs/KNOWN_ISSUES.md). Same wrapper body restores coverage.
-		token_tree: (r) => `fn _f() { mac! ${r} }`,
+		// `token_tree` (the REAL rule, macro_rules arm bodies) is disjoint
+		// from the aliased invocation/attribute form above: an invocation
+		// wrapper reparses the fragment as `delim_token_tree` whose variant
+		// children (`delim_token_tree_paren` …) mismatch the original's
+		// `token_tree_paren` on deep AST compare. A macro-rule right-hand
+		// side is the one context that parses a true `token_tree`.
+		token_tree: (r) => `macro_rules! _m { () => ${r} }`,
 		// visibility_modifier is a declaration-position prefix — has no
 		// supertype it fits under. Only fires when variant() adoption
 		// has been applied (see `wrapForReparse` — wrappers whose kind
@@ -779,25 +781,56 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		// declaration so the alias re-fires and reparse produces
 		// interface_body for AST-match parity.
 		interface_body: (r) => `interface _I ${r}`,
+		// Alias-position wrappers for the decorator variant family:
+		// `_decorator_member_expression` / `_decorator_call_expression` /
+		// `_decorator_parenthesized_expression` are restricted rules that
+		// exist only after `@`, and their member-object position admits
+		// `identifier` but not `super` — so in `@(super.decorate)` the word
+		// `super` lexes as a plain identifier. The generic `let _ = ${r};`
+		// expression wrapper reparses the same bytes where `super` is a
+		// `super` node, producing a leaf kind mismatch that is pure
+		// wrapper-context infidelity, not a render defect. Reparse in a real
+		// decorator position so leaf classification matches the original.
+		decorator_member_expression: (r) => `@${r}\nclass _W {}`,
+		decorator_call_expression: (r) => `@${r}\nclass _W {}`,
+		decorator_parenthesized_expression: (r) => `@${r}\nclass _W {}`,
 		// Kind-specific: `rest_pattern` (`...x`) appears in array
 		// destructuring, tuple types (TS), and parameter lists. The
 		// generic `pattern` wrapper `let ${r} = null;` produces a
 		// parse error — `let ...x = null` is invalid. Wrap in an
 		// array destructuring target so the rest-pattern surfaces.
-		rest_pattern: (r) => `let [${r}] = [];`
+		// `const`, not `let`: the override parser resolves `let [`'s
+		// declaration-vs-subscript ambiguity to the expression fork
+		// (`let` as reserved_identifier + subscript ERROR — see the
+		// KNOWN_ISSUES let-destructuring divergence), so a `let`
+		// wrapper never reparses; `const [` is unambiguous.
+		rest_pattern: (r) => `const [${r}] = [];`
 	},
 	python: {
 		module: (r) => r,
 		// tree-sitter-python supertypes are also unprefixed.
 		expression: (r) => `_ = ${r}`,
 		type: (r) => `_: ${r} = None`,
-		pattern: (r) => `match _:\n  case ${r}: pass`,
+		// The `pattern` supertype covers assignment/for/parameter targets
+		// (tuple_pattern, list_pattern, …) — NOT match-case patterns, which
+		// are the disjoint `case_*` family. A `match _:\n  case ${r}:`
+		// context reparses `(a,b)` as case_tuple_pattern, so the original
+		// kind is never found at the fragment offset. A for-loop target is
+		// a true pattern-supertype position and reproduces the same
+		// `tuple_pattern > ( pattern_group … )` subtree the corpus
+		// contexts (parameters, for_in_clause, lambda params) produce.
+		pattern: (r) => `for ${r} in _: pass`,
 		simple_statement: (r) => r,
 		compound_statement: (r) => r,
 		expression_statement: (r) => r,
 		assignment: (r) => r,
 		function_definition: (r) => r,
 		parameters: (r) => `def _f${r}:\n    pass`,
+		// Kind-specific: `_parameters` is the paren-LESS parameter interior
+		// (aliased as `parameter_list` in lambda contexts) — the visible
+		// `parameters` wrapper above expects the rendering to carry its own
+		// parens, so the interior needs them supplied here.
+		_parameters: (r) => `def _f(${r}):\n    pass`,
 		argument_list: (r) => `_f${r}`,
 		dotted_name: (r) => `import ${r}`,
 		// Kind-specific: `list_splat` (`*args`) only appears inside
@@ -955,6 +988,11 @@ export function wrapForReparse(
 ): WrapForReparseResult | null {
 	const wrappers = REPARSE_WRAPPERS[grammar];
 	if (!wrappers) return null;
+	// `kind` is the candidate's CANONICAL source kind (validator candidates
+	// are bucketed by the wire `$type`'s catalog name), so kind-specific
+	// wrappers keyed on source names — rust's disjoint `token_tree`
+	// (macro_rules arm body) vs `delim_token_tree` (invocation/attribute
+	// arguments) contexts — resolve directly through the lookups below.
 	// Canonical-hidden architecture (Option Y): the validator may pass
 	// a canonical hidden kind (`_x`) where REPARSE_WRAPPERS and
 	// `kindToSupertypes` are keyed on the visible alias-target name
@@ -962,22 +1000,13 @@ export function wrapForReparse(
 	// for both lookups, but preserve the original `kind` for kind-
 	// specific lookups (e.g. `_expression` is itself a wrapper key).
 	const visibleKind = kind.startsWith('_') && !wrappers[kind] ? kind.replace(/^_+/, '') : kind;
-	// Alias-target wrapper preference: when `kind` (renderedKind, the
-	// alias source after drillAs) differs from `targetKind` (the
-	// tree-sitter-emitted alias target), a wrapper keyed on the alias
-	// target — if one exists — reproduces the original parse position
-	// so reparse emits the same aliased kind. That keeps AST-match
-	// parity for kinds whose alias target doesn't survive a generic
-	// supertype wrapper (ts `interface_body` → `object_type` when
-	// reparsed in a `type _X = …;` context).
-	if (opts?.targetKind && opts.targetKind !== kind) {
-		const targetWrapper = wrappers[opts.targetKind];
-		if (targetWrapper) return applyWrapperTemplate(rendered, targetWrapper);
-	}
-	// Kind-specific wrapper beats supertype wrapper — some kinds only
-	// appear in contexts their supertype's generic wrapper doesn't
-	// produce (e.g. rust `mut_pattern` surfaces in match/if-let but
-	// NOT in plain `let` statements, which flatten it away).
+	// Kind-specific wrapper first — the SOURCE kind's own context is the
+	// most specific one known: some kinds only appear in contexts their
+	// supertype's generic wrapper doesn't produce (rust `mut_pattern`
+	// surfaces in match/if-let but NOT in plain `let` statements), and a
+	// source-keyed wrapper must beat the alias-target preference below
+	// (rust `delim_token_tree` has targetKind `token_tree`, whose OWN
+	// wrapper is the disjoint macro_rules-body context).
 	const direct = wrappers[kind] ?? wrappers[visibleKind];
 	if (direct) {
 		const gateKey = wrappers[kind] ? kind : visibleKind;
@@ -988,7 +1017,28 @@ export function wrapForReparse(
 		}
 		return applyWrapperTemplate(rendered, direct);
 	}
-	return selectAndApplySupertypeWrapper(visibleKind, wrappers, kindToSupertypes, rendered);
+	// Alias-target wrapper preference: when `kind` (the canonical source)
+	// differs from `targetKind` (the tree-sitter-emitted alias target), a
+	// wrapper keyed on the alias target — if one exists — reproduces the
+	// original parse position so reparse emits the same aliased kind. That
+	// keeps AST-match parity for kinds whose alias target doesn't survive
+	// a generic supertype wrapper (ts `interface_body` → `object_type`
+	// when reparsed in a `type _X = …;` context).
+	if (opts?.targetKind && opts.targetKind !== kind) {
+		const targetWrapper = wrappers[opts.targetKind];
+		if (targetWrapper) return applyWrapperTemplate(rendered, targetWrapper);
+	}
+	const bySource = selectAndApplySupertypeWrapper(visibleKind, wrappers, kindToSupertypes, rendered);
+	if (bySource !== null) return bySource;
+	// An alias-source occurrence sits in its alias TARGET's grammar
+	// position, so the target's supertype context is an equally valid
+	// reparse context — reach it when the source kind has no supertype
+	// edges of its own (e.g. python's `lambda_within_for_in_clause`,
+	// whose display `lambda` is the name the supertype graph knows).
+	if (opts?.targetKind && opts.targetKind !== visibleKind) {
+		return selectAndApplySupertypeWrapper(opts.targetKind, wrappers, kindToSupertypes, rendered);
+	}
+	return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -1010,16 +1060,13 @@ export const WRAP_MODULE_PATHS: Record<string, string> = {
 
 /**
  * Dynamic import of a grammar's `readTreeNode` entry point. Used by
- * validators to build source-typed wrapped views (ADR-0006) — the
- * wrap layer's drillAs() rewrites `$type` at alias-declared field
- * sites so validator render dispatches through the source template.
+ * validators to build source-typed wrapped views — the wire `$type` is
+ * the grammar symbol, so nodes arrive under their source kind and the
+ * validator render dispatches through the source template directly.
  */
 export async function loadReadTreeNode(
 	grammar: string
-): Promise<
-	| ((handle: TreeHandle, nodeHandle?: number, childIndex?: number, asType?: readonly { from: string; to: string }[]) => unknown)
-	| null
-> {
+): Promise<((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null> {
 	const p = WRAP_MODULE_PATHS[grammar];
 	if (!p) return null;
 	try {
@@ -1131,8 +1178,9 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
  * Walk a wrapped tree via declared getters, calling `visit` on each
  * encountered wrapped node. Enumeration uses `Object.keys` + accessor
  * invocation — accessors defined via `{get foo() {}}` appear as
- * enumerable keys and fire on read, so drillAs() along the way rewrites
- * $type from alias target to source at declared-field sites.
+ * enumerable keys and fire on read, so each child materializes through
+ * the wrap layer's drill-in ($type on every node is the grammar-symbol
+ * wire identity stamped by the read).
  *
  * `$`-prefixed keys are spread NodeData metadata (not child getters)
  * and get skipped. Leaves short-circuit when accessing a getter that
@@ -1146,7 +1194,8 @@ export function walkWrappedTree(
 	const seen = new Set<string>();
 	const recurse = (w: unknown): void => {
 		if (!isWrappedNodeData(w)) return;
-		// ADR-0017: use $nodeHandle + $childIndex as a composite dedup key.
+		// $nodeHandle + $childIndex form the composite dedup key: a handle can
+		// repeat across child positions, so neither part suffices alone.
 		const handle = w.$nodeHandle;
 		const childIdx = w.$childIndex;
 		if (handle != null && childIdx != null) {
@@ -1378,6 +1427,29 @@ export async function loadKindNameFromId(grammar: string): Promise<((id: number)
 				return undefined;
 			}
 		};
+	} catch {
+		return undefined;
+	}
+}
+
+/**
+ * Load the CANONICAL (catalog-key) kind-name resolver — `KIND_NAMES`, the
+ * wrap-dispatch name table, NOT the parser display labels. Alias-source
+ * kinds diverge between the two (rust `delim_token_tree` displays as
+ * `token_tree`); use this wherever the SOURCE identity of a node matters —
+ * e.g. selecting a reparse wrapper context — and `loadKindNameFromId`
+ * wherever tree-sitter's own `.type` string must match.
+ */
+export async function loadCanonicalKindNameFromId(
+	grammar: string
+): Promise<((id: number) => string | undefined) | undefined> {
+	const typesModulePath = TYPES_MODULE_PATHS[grammar];
+	if (!typesModulePath) return undefined;
+	try {
+		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const kindNames = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
+		if (!kindNames) return undefined;
+		return (id: number) => kindNames.get(id);
 	} catch {
 		return undefined;
 	}
@@ -1666,22 +1738,19 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	if (shape === 'spread') {
 		return factory(...childArgs);
 	}
-	// 'elements' shape: separatedList factory — `(elements, options?:
-	// {separatorKind?, leading?, trailing?})`, distinct from 'spread's
-	// rest-param convention (see classifyFactoryShape).
+	// 'elements' shape: separatedList factory — spread with a LEADING
+	// optional options bag, `(...elements)` / `({separatorKind?, leading?,
+	// trailing?}, ...elements)` — distinct from 'spread's plain rest-param
+	// convention (see classifyFactoryShape).
 	if (shape === 'elements') {
 		const elementsOptions = separatedListFactoryOptions(drilled, opts.kindLiteralText);
-		return (
-			factory as unknown as (
-				elements: readonly unknown[],
-				options?: { separatorKind?: string; leading?: boolean; trailing?: boolean }
-			) => unknown
-		)(childArgs, elementsOptions);
+		const listFactory = factory as unknown as (...args: unknown[]) => unknown;
+		return elementsOptions !== undefined ? listFactory(elementsOptions, ...childArgs) : listFactory(...childArgs);
 	}
 	// 'direct' shape: factory takes one direct value rather than a config
 	// object. Field-backed direct calls use factoryFields metadata; child-
 	// backed direct calls take the first `children` element.
-	if (shape === 'direct') {
+	if (shape === 'direct' || shape === 'forwarded') {
 		const { factoryFields } = opts;
 		const fieldNames = factoryFields?.[kind];
 		const rawName = fieldNames?.[0];

@@ -54,12 +54,25 @@ pub fn read_node(
     read_ts_node(node, source, node_handle)
 }
 
+/// The `$type` every read stamps: tree-sitter's pre-alias GRAMMAR symbol —
+/// the production rule that actually parsed the node. For `alias($.X, $.Y)`
+/// occurrences this recovers `X`, so aliased nodes arrive on the wire
+/// already under their source identity and no per-field restamp is needed.
+/// The alias/display symbol is presentation: a role the node plays at its
+/// position, which the position (the consuming slot) already encodes —
+/// acceptance sets and slot keying carry the source ids so no consumer
+/// needs the display symbol as identity.
+fn stamped_kind(node: &tree_sitter::Node<'_>) -> KindId {
+    KindId(node.grammar_id())
+}
+
 /// One-level read core — converts a tree-sitter `Node` into `NodeData`.
 fn read_ts_node(node: tree_sitter::Node<'_>, source: &str, node_handle: Option<u32>) -> NodeData {
-    // Phase B-inverse: use tree-sitter's numeric kind_id() directly instead
-    // of the string kind() so NodeData.type_: KindId flows end-to-end without
-    // a heap-allocated String per node.
-    let kind = KindId(node.kind_id());
+    // Phase B-inverse: numeric ids directly instead of the string kind()
+    // so NodeData.type_: KindId flows end-to-end without a heap-allocated
+    // String per node; identity comes from the grammar symbol (see
+    // `stamped_kind`).
+    let kind = stamped_kind(&node);
 
     let named = node.is_named();
     let byte_range = node.byte_range();
@@ -68,7 +81,7 @@ fn read_ts_node(node: tree_sitter::Node<'_>, source: &str, node_handle: Option<u
         end: byte_range.end as u32,
     };
 
-    let (fields, children) = read_children(node, source, node_handle);
+    let (fields, children, slot_order) = read_children(node, source, node_handle);
 
     // Leaf heuristic: no named fields AND no (named) children. The
     // tree-sitter convention is that purely-anonymous terminals are
@@ -102,6 +115,7 @@ fn read_ts_node(node: tree_sitter::Node<'_>, source: &str, node_handle: Option<u
         node_handle,
         child_index: None,
         trivia_data: compute_trivia(node, source),
+        slot_order,
     }
 }
 
@@ -184,8 +198,10 @@ fn compute_trivia(node: tree_sitter::Node<'_>, source: &str) -> Option<NodeTrivi
 }
 
 /// Walk a node's children once, partitioning by whether the child
-/// occupies a field slot. Returns `(fields, children)` ready to drop
-/// into `NodeData`.
+/// occupies a field slot. Returns `(fields, children, slot_order)` ready
+/// to drop into `NodeData` — `slot_order` is the cross-bucket interleave
+/// stamp (see `NodeData::slot_order`), present only on multi-bucket
+/// parents.
 ///
 /// Field-slot arity: multiple children on the same field name are
 /// collapsed into `FieldValue::Multiple`; a lone child becomes
@@ -203,9 +219,14 @@ fn read_children(
     node: tree_sitter::Node<'_>,
     source: &str,
     node_handle: Option<u32>,
-) -> (Option<IndexMap<String, FieldValue>>, Option<Vec<NodeData>>) {
+) -> (
+    Option<IndexMap<String, FieldValue>>,
+    Option<Vec<NodeData>>,
+    Option<Vec<String>>,
+) {
     let mut fields_acc: IndexMap<String, Vec<NodeData>> = IndexMap::new();
     let mut children_acc: Vec<NodeData> = Vec::new();
+    let mut slot_order_acc: Vec<String> = Vec::new();
 
     let child_count = node.child_count() as u32;
     for i in 0..child_count {
@@ -223,12 +244,16 @@ fn read_children(
             read_child_stub(child, source, node_handle, i as u16)
         };
         match field_name {
-            Some(name) => assign_named_slot(&mut fields_acc, &name, data),
+            Some(name) => {
+                slot_order_acc.push(name.clone());
+                assign_named_slot(&mut fields_acc, &name, data);
+            }
             None => {
                 if child.is_named() {
                     // Named child without a field tag — route by kind to a `_<kind>` slot.
                     // This produces a kind-named storage entry in the serialized NodeData,
                     // uniform with field-tagged slots (spec 2026-05-17 kind-named slots).
+                    slot_order_acc.push(child.kind().to_string());
                     assign_named_slot(&mut fields_acc, child.kind(), data);
                 } else {
                     // Anonymous literal token — stays in the legacy children bucket
@@ -239,6 +264,14 @@ fn read_children(
         }
     }
 
+    // The cross-bucket interleave stamp is only meaningful when there are
+    // two or more buckets to interleave; single-bucket nodes already
+    // preserve document order inside the bucket itself.
+    let slot_order = if fields_acc.len() >= 2 {
+        Some(slot_order_acc)
+    } else {
+        None
+    };
     let fields = if fields_acc.is_empty() {
         None
     } else {
@@ -247,7 +280,7 @@ fn read_children(
             let value = if v.len() == 1 {
                 FieldValue::Single(Box::new(v.pop().expect("len==1")))
             } else {
-                FieldValue::Multiple(v)
+                FieldValue::Multiple(v.into_iter().map(Some).collect())
             };
             fields.insert(k, value);
         }
@@ -258,7 +291,7 @@ fn read_children(
     } else {
         Some(children_acc)
     };
-    (fields, children)
+    (fields, children, slot_order)
 }
 
 fn read_child_stub(
@@ -269,7 +302,7 @@ fn read_child_stub(
 ) -> NodeData {
     let byte_range = child.byte_range();
     NodeData {
-        type_: KindId(child.kind_id()),
+        type_: stamped_kind(&child),
         source: Source::Ts,
         named: child.is_named(),
         fields: None,
@@ -282,13 +315,14 @@ fn read_child_stub(
         node_handle: parent_handle,
         child_index: Some(child_index),
         trivia_data: None,
+        slot_order: None,
     }
 }
 
 fn read_materialized_leaf(child: tree_sitter::Node<'_>, source: &str) -> NodeData {
     let byte_range = child.byte_range();
     NodeData {
-        type_: KindId(child.kind_id()),
+        type_: stamped_kind(&child),
         source: Source::Ts,
         named: child.is_named(),
         fields: None,
@@ -301,6 +335,7 @@ fn read_materialized_leaf(child: tree_sitter::Node<'_>, source: &str) -> NodeDat
         node_handle: None,
         child_index: None,
         trivia_data: None,
+        slot_order: None,
     }
 }
 

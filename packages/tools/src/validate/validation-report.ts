@@ -186,6 +186,12 @@ export function countSClassEntries(
 	const counts: Record<string, Partial<Record<SClass, number>>> = {};
 	for (const e of entries) {
 		if (!e.sClass) continue;
+		// Resolved audit records (severity 'info' — e.g. enrich's
+		// "automatically resolved" unalias trail) document fixes already
+		// applied to the compiled grammar. They are provenance kept for
+		// visibility, not open failures, and do not count against a
+		// class ceiling.
+		if ((e as { severity?: string }).severity === 'info') continue;
 		const row = (counts[e.grammar] ??= {});
 		row[e.sClass] = (row[e.sClass] ?? 0) + 1;
 	}

@@ -2619,3 +2619,19 @@ pub struct Loaf<T: Sized, const N: usize = 1>([T; N]);
       (array_type
         (type_identifier)
         (identifier)))))
+
+================================================================================
+Block comments
+================================================================================
+
+/* plain block comment */
+fn main() {}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (block_comment)
+  (function_item
+    (identifier)
+    (parameters)
+    (block)))

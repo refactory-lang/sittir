@@ -91,6 +91,14 @@ export interface AnyNodeData {
 	$nodeHandle?: number;
 	/** Position in parent's child array for child(i) access. */
 	$childIndex?: number;
+	/** Document-order route names (field or kind) of this node's named-slot
+	 * children, stamped by the native reader on multi-bucket parents. The
+	 * per-slot `_<name>` buckets each preserve document order internally,
+	 * but the wire cannot express cross-bucket interleave — and
+	 * text-collapsed leaf members carry no `$span` to re-derive it — so
+	 * the wrap layer's bucket merge consumes this stamp. Absent on
+	 * single-bucket nodes, leaves, and factory output. */
+	$slotOrder?: readonly string[];
 	/** Whether this is a named (vs anonymous) node in the grammar.
 	 * Optional at the type level because generated kind interfaces
 	 * omit it by convention (factory output always sets it at runtime). */

@@ -486,20 +486,21 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	lines.push('export const KIND_NAMES: ReadonlyMap<number, string> = new Map([');
 	for (const entry of entries) {
 		// Always the canonical catalog key (`entry.kind`), never
-		// `entry.symbolName`. KIND_NAMES id->name lookups feed `wrapNode`'s
-		// dispatch tables (`_wrapTable` / `_aliasTargetToSource`,
-		// packages/*/src/wrap.ts), which are keyed by the catalog's
-		// canonical (possibly hidden, `_`-prefixed) name — NOT by the raw
-		// C-parser display label `ts_symbol_names[]` happens to carry.
-		// Substituting a symbolName here (e.g. `_template_chars`'s
-		// `string_fragment`, or `_patterns`'s `pattern_group`) breaks that
-		// lookup silently: the node falls through to the unknown-kind
-		// fallback and comes back unwrapped, with no error thrown. This
-		// holds even for entries whose symbolName was preserved across a
-		// `joinIdNames` alias-id collision — genuinely visible-aliased
-		// kinds are resolved through a *different* path (tree-sitter's own
-		// string `$type` output, via `_aliasTargetToSource`), not through
-		// this numeric-id map.
+		// `entry.symbolName`. KIND_NAMES id->name lookups feed the
+		// generated runtime's canonical-name projections (`wrapNode`'s
+		// name materialization and wrap-kind filtering, `kindIdFromName`
+		// round-trips, the engine/boundary kind views — packages/*/src/),
+		// which are keyed by the catalog's canonical (possibly hidden,
+		// `_`-prefixed) name — NOT by the raw C-parser display label
+		// `ts_symbol_names[]` happens to carry. Substituting a symbolName
+		// here (e.g. `_template_chars`'s `string_fragment`, or `_patterns`'s
+		// `pattern_group`) breaks those lookups silently: the node falls
+		// through to the unknown-kind fallback and comes back unwrapped,
+		// with no error thrown. This holds even for entries whose
+		// symbolName was preserved across a `joinIdNames` alias-id
+		// collision — the wire `$type` is the grammar-symbol id, so a
+		// visible-aliased node arrives under its canonical kind's id (or
+		// the parseId row below) and resolves through this same map.
 		//
 		// Two OTHER consumers prefer the C-parser display label instead
 		// (`entry.symbolName`) and must NOT read this map — see

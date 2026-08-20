@@ -86,7 +86,9 @@ describe('slot structural signals', () => {
 		const box = getBranch(nodeMap, 'box');
 		const slot = box.fields[0];
 		expect(slot?.isUnnamed).toBe(true);
-		expect(classifyFactoryShape(box, nodeMap)).toBe('direct');
+		// The sole slot holds a single concrete kind, so the shape is the
+		// forwarding refinement of 'direct'; the child SURFACE stays 'direct'.
+		expect(classifyFactoryShape(box, nodeMap)).toBe('forwarded');
 		expect(classifyChildFactorySurface(box, nodeMap)).toBe('direct');
 	});
 

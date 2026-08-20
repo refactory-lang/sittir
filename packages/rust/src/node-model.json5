@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 363,
+  "nodeCount": 365,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -20,7 +20,7 @@
     "_tokens",
     "_type",
     "_use_clause",
-    "token_pattern_group1"
+    "non_special_token"
   ],
   "externals": [
     "_block_comment_content",
@@ -194,49 +194,8 @@
     }
   },
   "fieldAliasMap": {
-    "expression_statement.content": {
-      "expression_statement_with_semi": "_expression_statement_with_semi"
-    },
-    "macro_definition.content": {
-      "macro_definition_paren": "_macro_definition_paren",
-      "macro_definition_bracket": "_macro_definition_bracket",
-      "macro_definition_brace": "_macro_definition_brace"
-    },
-    "token_tree_pattern.content": {
-      "token_tree_pattern_paren": "_token_tree_pattern_paren",
-      "token_tree_pattern_bracket": "_token_tree_pattern_bracket",
-      "token_tree_pattern_brace": "_token_tree_pattern_brace"
-    },
-    "token_repetition_pattern.token_patterns": {
-      "token_pattern_group1": "_non_special_token"
-    },
-    "token_tree.content": {
-      "token_tree_paren": "_token_tree_paren",
-      "token_tree_bracket": "_token_tree_bracket",
-      "token_tree_brace": "_token_tree_brace",
-      "delim_token_tree_paren": "_delim_token_tree_paren",
-      "delim_token_tree_bracket": "_delim_token_tree_bracket",
-      "delim_token_tree_brace": "_delim_token_tree_brace"
-    },
-    "token_repetition.tokens": {
-      "token_pattern_group1": "_non_special_token"
-    },
-    "attribute.attribute_group1": {
-      "attribute_group1": "_attribute_group1"
-    },
-    "mod_item.content": {
-      "mod_item_external": "_mod_item_external"
-    },
-    "foreign_mod_item.content": {
-      "foreign_mod_item_semi": "_foreign_mod_item_semi"
-    },
     "struct_item.name": {
       "type_identifier": "identifier"
-    },
-    "struct_item.content": {
-      "struct_item_brace": "_struct_item_brace",
-      "struct_item_tuple": "_struct_item_tuple",
-      "struct_item_unit": "_struct_item_unit"
     },
     "union_item.name": {
       "type_identifier": "identifier"
@@ -244,56 +203,42 @@
     "enum_item.name": {
       "type_identifier": "identifier"
     },
-    "enum_variant_list.enum_variant_list_group1": {
-      "enum_variant_list_group1": "_enum_variant_list_group1"
-    },
-    "field_declaration_list.field_declaration_list_group1": {
-      "field_declaration_list_group1": "_field_declaration_list_group1"
-    },
     "field_declaration.name": {
       "field_identifier": "identifier"
     },
     "field_declaration.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
-    "ordered_field_declaration_list.attributes": {
-      "ordered_field_declaration_list_group1": "_ordered_field_declaration_list_group1"
-    },
     "const_item.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "static_item.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "type_item.name": {
       "type_identifier": "identifier"
     },
     "type_item.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "function_item.return_type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "function_signature_item.return_type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
-    },
-    "where_clause.where_clause_group1": {
-      "where_clause_group1": "_where_clause_group1"
     },
     "where_predicate.left": {
-      "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
-    },
-    "impl_item.trait_clause": {
-      "impl_item_positive_clause": "_impl_item_positive_clause",
-      "impl_item_negative_clause": "_impl_item_negative_clause"
+      "type_identifier": "identifier"
     },
     "impl_item.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
-    },
-    "impl_item.content": {
-      "impl_item_body": "_impl_item_body",
-      "impl_item_semi": "_impl_item_semi"
     },
     "trait_item.name": {
       "type_identifier": "identifier"
@@ -302,72 +247,58 @@
       "type_identifier": "identifier"
     },
     "trait_bounds.bounds": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "higher_ranked_trait_bound.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "removed_trait_bound.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
-    "type_parameters.element": {
-      "attributed_type_parameter": "_attributed_type_parameter"
-    },
     "const_parameter.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "type_parameter.name": {
       "type_identifier": "identifier"
     },
     "type_parameter.default_type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
-    },
-    "let_declaration.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
     },
     "let_declaration.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
-    },
-    "use_list.use_list_group1": {
-      "use_list_group1": "_use_list_group1"
-    },
-    "parameters.parameters_group1": {
-      "parameters_group1": "_parameters_group1"
-    },
-    "variadic_parameter.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "parameter.name": {
-      "wildcard_pattern": "_wildcard_pattern"
     },
     "parameter.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
-    "visibility_modifier.content": {
-      "visibility_modifier_pub": "_visibility_modifier_pub"
-    },
     "bracketed_type.content": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "qualified_type.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "qualified_type.alias": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "array_type.element": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
-    "function_type.function_type_trait_form": {
-      "function_type_trait_form": "_function_type_trait_form"
-    },
-    "function_type.function_type_fn_form": {
-      "function_type_fn_form": "_function_type_fn_form"
-    },
     "function_type.return_type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "tuple_type.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "generic_type.type": {
@@ -377,30 +308,26 @@
       "type_identifier": "identifier"
     },
     "bounded_type.left": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "bounded_type.right": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
-    },
-    "use_bounds.bounds": {
-      "use_bounds_group1": "_use_bounds_group1"
-    },
-    "type_arguments.element": {
-      "type_argument": "_type_argument"
     },
     "type_binding.name": {
       "type_identifier": "identifier"
     },
     "type_binding.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "reference_type.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
-    "pointer_type.content": {
-      "pointer_type_const": "_pointer_type_const"
-    },
     "pointer_type.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "abstract_type.trait": {
@@ -411,11 +338,6 @@
     },
     "macro_invocation.token_tree": {
       "token_tree": "delim_token_tree"
-    },
-    "delim_token_tree.content": {
-      "delim_token_tree_paren": "_delim_token_tree_paren",
-      "delim_token_tree_bracket": "_delim_token_tree_bracket",
-      "delim_token_tree_brace": "_delim_token_tree_brace"
     },
     "scoped_identifier.path": {
       "generic_type": "generic_type_with_turbofish"
@@ -429,32 +351,13 @@
     "scoped_type_identifier.name": {
       "type_identifier": "identifier"
     },
-    "range_expression.content": {
-      "range_expression_binary": "_range_expression_binary",
-      "range_expression_postfix": "_range_expression_postfix",
-      "range_expression_prefix": "_range_expression_prefix",
-      "range_expression_bare": "_range_expression_bare"
-    },
-    "reference_expression.content": {
-      "reference_expression_raw_const": "_reference_expression_raw_const",
-      "reference_expression_raw_mut": "_reference_expression_raw_mut"
-    },
     "type_cast_expression.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
-    },
-    "arguments.arguments_group1": {
-      "arguments_group1": "_arguments_group1"
-    },
-    "array_expression.content": {
-      "array_expression_semi": "_array_expression_semi",
-      "array_expression_list": "_array_expression_list"
     },
     "struct_expression.name": {
       "type_identifier": "identifier",
       "scoped_type_identifier": "scoped_type_identifier_in_expression_position"
-    },
-    "field_initializer_list.initializers": {
-      "field_initializer_list_group1": "_field_initializer_list_group1"
     },
     "field_initializer.field": {
       "field_identifier": "identifier"
@@ -462,147 +365,47 @@
     "if_expression.condition": {
       "let_chain": "_let_chain"
     },
-    "let_condition.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "match_block.match_block_arms": {
-      "match_block_arms": "_match_block_arms"
-    },
-    "match_arm.content": {
-      "match_arm_with_comma": "_match_arm_with_comma"
-    },
-    "match_pattern.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
     "match_pattern.condition": {
       "let_chain": "_let_chain"
     },
     "while_expression.condition": {
       "let_chain": "_let_chain"
     },
-    "for_expression.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "closure_expression.content": {
-      "closure_expression_block": "_closure_expression_block",
-      "closure_expression_expr": "_closure_expression_expr"
-    },
-    "closure_parameters.parameters": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
     "field_expression.field": {
       "field_identifier": "identifier"
-    },
-    "tuple_pattern.elements": {
-      "tuple_pattern_group1": "_tuple_pattern_group1"
-    },
-    "slice_pattern.slice_pattern_group1": {
-      "slice_pattern_group1": "_slice_pattern_group1"
     },
     "tuple_struct_pattern.type": {
       "generic_type": "generic_type_with_turbofish"
     },
-    "tuple_struct_pattern.slice_pattern_group1": {
-      "slice_pattern_group1": "_slice_pattern_group1"
-    },
     "struct_pattern.type": {
       "type_identifier": "identifier"
     },
-    "struct_pattern.fields": {
-      "struct_pattern_group1": "_struct_pattern_group1"
-    },
     "field_pattern.content": {
-      "shorthand_field_identifier": "identifier",
-      "field_pattern_named": "_field_pattern_named"
-    },
-    "mut_pattern.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "range_pattern.content": {
-      "range_pattern_group2": "_range_pattern_group2",
-      "range_pattern_prefix": "_range_pattern_prefix"
-    },
-    "ref_pattern.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "captured_pattern.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "reference_pattern.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "or_pattern.content": {
-      "or_pattern_binary": "_or_pattern_binary",
-      "or_pattern_prefix": "_or_pattern_prefix"
-    },
-    "string_literal.string_open": {
-      "string_open": "_string_literal_open"
+      "shorthand_field_identifier": "identifier"
     },
     "raw_string_literal.string_content": {
       "string_content": "raw_string_literal_content"
     },
-    "line_comment.content": {
-      "line_comment_regular_dslash": "_line_comment_regular_dslash",
-      "line_comment_doc": "_line_comment_doc",
-      "line_comment_content": "_line_comment_content"
-    },
-    "block_comment.block_comment_group1": {
-      "block_comment_group1": "_block_comment_group1"
-    },
     "_attribute_group1.arguments": {
       "token_tree": "delim_token_tree"
     },
-    "_enum_variant_list_group1.element": {
-      "attributed_enum_variant": "_attributed_enum_variant"
-    },
-    "_field_declaration_list_group1.element": {
-      "attributed_field_declaration": "_attributed_field_declaration"
-    },
-    "_ordered_field_declaration_list_group1.element": {
-      "attributed_ordered_field": "_attributed_ordered_field"
-    },
     "_function_item_optional1.return_type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_type_parameter_optional1.default_type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_let_declaration_optional1.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
-    "_parameters_group1.element": {
-      "attributed_parameter": "_attributed_parameter"
-    },
-    "_variadic_parameter_optional1.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "_visibility_modifier_group1.content": {
-      "visibility_modifier_in_path": "_visibility_modifier_in_path"
-    },
-    "_use_bounds_group1.element": {
+    "_use_bounds_elements.element": {
       "type_identifier": "identifier"
-    },
-    "_arguments_group1.element": {
-      "attributed_argument": "_attributed_argument"
     },
     "_match_pattern_optional1.condition": {
       "let_chain": "_let_chain"
-    },
-    "_tuple_pattern_group1.element": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "_slice_pattern_group1.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "_range_pattern_group2.content": {
-      "range_pattern_left_with_right": "_range_pattern_left_with_right",
-      "range_pattern_left_bare": "_range_pattern_left_bare"
-    },
-    "_block_comment_group1.outer": {
-      "outer_doc_comment_marker": "_outer_block_doc_comment_marker"
-    },
-    "_block_comment_group1.inner": {
-      "inner_doc_comment_marker": "_inner_block_doc_comment_marker"
     },
     "_block_comment_group1.doc": {
       "doc_comment": "_block_comment_content"
@@ -613,62 +416,21 @@
     "_impl_item_negative_clause.trait": {
       "type_identifier": "identifier"
     },
-    "_array_expression_semi.array_expression_group1": {
-      "array_expression_group1": "_array_expression_group1"
-    },
-    "_array_expression_list.arguments_group1": {
-      "arguments_group1": "_arguments_group1"
-    },
     "_closure_expression_block.return_type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_field_pattern_named.name": {
       "field_identifier": "identifier"
     },
-    "_field_pattern_named.pattern": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
     "_function_type_trait_form.trait": {
       "type_identifier": "identifier"
-    },
-    "_or_pattern_binary.left": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "_or_pattern_binary.right": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "_or_pattern_prefix.right": {
-      "wildcard_pattern": "_wildcard_pattern"
-    },
-    "_visibility_modifier_pub.visibility_modifier_group1": {
-      "visibility_modifier_group1": "_visibility_modifier_group1"
     },
     "_line_comment_doc.outer": {
       "outer_doc_comment_marker": "_outer_line_doc_comment_marker"
     },
     "_line_comment_doc.inner": {
       "inner_doc_comment_marker": "_inner_line_doc_comment_marker"
-    },
-    "_line_comment_doc.doc": {
-      "doc_comment": "_line_doc_content"
-    },
-    "_token_tree_pattern_paren.token_patterns": {
-      "token_pattern_group1": "_non_special_token"
-    },
-    "_token_tree_pattern_bracket.token_patterns": {
-      "token_pattern_group1": "_non_special_token"
-    },
-    "_token_tree_pattern_brace.token_patterns": {
-      "token_pattern_group1": "_non_special_token"
-    },
-    "_token_tree_paren.tokens": {
-      "token_pattern_group1": "_non_special_token"
-    },
-    "_token_tree_bracket.tokens": {
-      "token_pattern_group1": "_non_special_token"
-    },
-    "_token_tree_brace.tokens": {
-      "token_pattern_group1": "_non_special_token"
     },
     "_delim_token_tree_paren.delim_tokens": {
       "token_tree": "delim_token_tree"
@@ -680,16 +442,16 @@
       "token_tree": "delim_token_tree"
     },
     "_attributed_parameter.content": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_attributed_ordered_field.type": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_type_argument.content": {
+      "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
-    },
-    "_visibility_modifier_pub_parens.visibility_modifier_group1": {
-      "visibility_modifier_group1": "_visibility_modifier_group1"
     }
   },
   "factorySlots": {
@@ -1024,7 +786,7 @@
       }
     },
     "enum_variant_list": {
-      "enum_variant_list_group1": {
+      "enum_variant_list_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1063,7 +825,7 @@
       }
     },
     "field_declaration_list": {
-      "field_declaration_list_group1": {
+      "field_declaration_list_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1370,7 +1132,7 @@
       }
     },
     "where_clause": {
-      "where_clause_group1": {
+      "where_predicates": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1554,12 +1316,12 @@
       }
     },
     "type_parameters": {
-      "element": {
+      "type_parameters_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "const_parameter": {
@@ -1694,7 +1456,7 @@
       }
     },
     "use_list": {
-      "use_list_group1": {
+      "use_clauses": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1728,7 +1490,7 @@
       }
     },
     "parameters": {
-      "parameters_group1": {
+      "parameters_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1874,12 +1636,12 @@
       }
     },
     "for_lifetimes": {
-      "lifetime": {
+      "lifetimes": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "function_type": {
@@ -2009,12 +1771,12 @@
       }
     },
     "type_arguments": {
-      "element": {
+      "type_arguments_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "type_binding": {
@@ -2340,7 +2102,7 @@
       }
     },
     "arguments": {
-      "arguments_group1": {
+      "arguments_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2911,7 +2673,7 @@
       }
     },
     "slice_pattern": {
-      "slice_pattern_group1": {
+      "patterns": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2927,7 +2689,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "slice_pattern_group1": {
+      "patterns": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3075,7 +2837,21 @@
       }
     },
     "raw_string_literal": {
+      "raw_string_literal_start": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "string_content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "raw_string_literal_end": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3110,6 +2886,15 @@
         "nonEmpty": false
       }
     },
+    "_macro_rules": {
+      "macro_rule": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
     "_attribute_group1": {
       "value": {
         "unnamed": false,
@@ -3126,7 +2911,7 @@
         "nonEmpty": false
       }
     },
-    "_enum_variant_list_group1": {
+    "_enum_variant_list_elements": {
       "element": {
         "unnamed": false,
         "slotCount": 1,
@@ -3135,7 +2920,7 @@
         "nonEmpty": true
       }
     },
-    "_field_declaration_list_group1": {
+    "_field_declaration_list_elements": {
       "element": {
         "unnamed": false,
         "slotCount": 1,
@@ -3144,7 +2929,7 @@
         "nonEmpty": true
       }
     },
-    "_ordered_field_declaration_list_group1": {
+    "_ordered_field_declaration_list_elements": {
       "element": {
         "unnamed": false,
         "slotCount": 1,
@@ -3153,7 +2938,7 @@
         "nonEmpty": true
       }
     },
-    "_where_clause_group1": {
+    "_where_predicates": {
       "where_predicate": {
         "unnamed": false,
         "slotCount": 1,
@@ -3162,7 +2947,16 @@
         "nonEmpty": true
       }
     },
-    "_use_list_group1": {
+    "_type_parameters_elements": {
+      "element": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_use_clauses": {
       "use_clause": {
         "unnamed": false,
         "slotCount": 1,
@@ -3171,7 +2965,7 @@
         "nonEmpty": true
       }
     },
-    "_parameters_group1": {
+    "_parameters_elements": {
       "element": {
         "unnamed": false,
         "slotCount": 1,
@@ -3189,7 +2983,16 @@
         "nonEmpty": false
       }
     },
-    "_use_bounds_group1": {
+    "_lifetimes": {
+      "lifetime": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_use_bounds_elements": {
       "element": {
         "unnamed": false,
         "slotCount": 1,
@@ -3198,7 +3001,16 @@
         "nonEmpty": true
       }
     },
-    "_arguments_group1": {
+    "_type_arguments_elements": {
+      "element": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_arguments_elements": {
       "element": {
         "unnamed": false,
         "slotCount": 1,
@@ -3223,7 +3035,7 @@
         "nonEmpty": false
       }
     },
-    "_field_initializer_list_group1": {
+    "_field_initializer_list_elements": {
       "element": {
         "unnamed": false,
         "slotCount": 1,
@@ -3232,7 +3044,7 @@
         "nonEmpty": true
       }
     },
-    "_tuple_pattern_group1": {
+    "_tuple_pattern_elements": {
       "element": {
         "unnamed": false,
         "slotCount": 1,
@@ -3241,7 +3053,7 @@
         "nonEmpty": true
       }
     },
-    "_slice_pattern_group1": {
+    "_patterns": {
       "pattern": {
         "unnamed": false,
         "slotCount": 1,
@@ -3250,7 +3062,7 @@
         "nonEmpty": true
       }
     },
-    "_struct_pattern_group1": {
+    "_struct_pattern_elements": {
       "element": {
         "unnamed": false,
         "slotCount": 1,
@@ -3358,7 +3170,7 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "arguments_group1": {
+      "arguments_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3426,29 +3238,29 @@
       }
     },
     "_macro_definition_paren": {
-      "macro_rule": {
+      "macro_rules": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
     "_macro_definition_bracket": {
-      "macro_rule": {
+      "macro_rules": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
     "_macro_definition_brace": {
-      "macro_rule": {
+      "macro_rules": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -3881,16 +3693,6 @@
   },
   "nodes": [
     {
-      "kind": "\"#",
-      "modelType": "token",
-      "typeName": "TokDqHash",
-      "irKey": "tokDqHash",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\\\"#\" as const",
-      "text": "\"#"
-    },
-    {
       "kind": "_",
       "modelType": "keyword",
       "typeName": "Anonymous",
@@ -3936,11 +3738,11 @@
       "children": []
     },
     {
-      "kind": "_arguments_group1",
+      "kind": "_arguments_elements",
       "modelType": "separatedList",
-      "typeName": "ArgumentsGroup1",
-      "factoryName": "argumentsGroup1",
-      "irKey": "argumentsGroup1",
+      "typeName": "ArgumentsElements",
+      "factoryName": "argumentsElements",
+      "irKey": "argumentsElements",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -4050,9 +3852,9 @@
           }
         },
         {
-          "name": "arguments_group1",
-          "propertyName": "argumentsGroup1",
-          "paramName": "argumentsGroup1",
+          "name": "arguments_elements",
+          "propertyName": "argumentsElements",
+          "paramName": "argumentsElements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -4060,15 +3862,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_arguments_group1",
-              "parseKind": "arguments_group1",
+              "name": "_arguments_elements",
+              "parseKind": "arguments_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_arguments_group1"
+              "_arguments_elements"
             ]
           }
         }
@@ -4077,7 +3879,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "attributes",
-        "arguments_group1"
+        "arguments_elements"
       ]
     },
     {
@@ -5180,16 +4982,16 @@
       "subtypes": [
         "_non_delim_token",
         "delim_token_tree",
-        "token_pattern_group1",
+        "non_special_token",
         "token_tree_punctuation"
       ]
     },
     {
-      "kind": "_enum_variant_list_group1",
+      "kind": "_enum_variant_list_elements",
       "modelType": "separatedList",
-      "typeName": "EnumVariantListGroup1",
-      "factoryName": "enumVariantListGroup1",
-      "irKey": "enumVariantListGroup1",
+      "typeName": "EnumVariantListElements",
+      "factoryName": "enumVariantListElements",
+      "irKey": "enumVariantListElements",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -5455,11 +5257,11 @@
       "children": []
     },
     {
-      "kind": "_field_declaration_list_group1",
+      "kind": "_field_declaration_list_elements",
       "modelType": "separatedList",
-      "typeName": "FieldDeclarationListGroup1",
-      "factoryName": "fieldDeclarationListGroup1",
-      "irKey": "fieldDeclarationListGroup1",
+      "typeName": "FieldDeclarationListElements",
+      "factoryName": "fieldDeclarationListElements",
+      "irKey": "fieldDeclarationListElements",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -5483,11 +5285,11 @@
       "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*"
     },
     {
-      "kind": "_field_initializer_list_group1",
+      "kind": "_field_initializer_list_elements",
       "modelType": "separatedList",
-      "typeName": "FieldInitializerListGroup1",
-      "factoryName": "fieldInitializerListGroup1",
-      "irKey": "fieldInitializerListGroup1",
+      "typeName": "FieldInitializerListElements",
+      "factoryName": "fieldInitializerListElements",
+      "irKey": "fieldInitializerListElements",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -5644,7 +5446,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "function_modifiers",
       "factoryFields": [
         "function_modifiers"
       ]
@@ -5728,7 +5531,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "declaration_list",
       "factoryFields": [
         "declaration_list"
       ]
@@ -6064,6 +5868,25 @@
       "children": []
     },
     {
+      "kind": "_lifetimes",
+      "modelType": "separatedList",
+      "typeName": "Lifetimes",
+      "factoryName": "lifetimes",
+      "irKey": "lifetimes",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "lifetime"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "lifetime"
+      ]
+    },
+    {
       "kind": "_line_comment_content",
       "modelType": "pattern",
       "typeName": "LineCommentContent",
@@ -6216,33 +6039,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "macro_rule",
+          "name": "macro_rules",
           "propertyName": "macroRules",
           "paramName": "macroRules",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "macro_rule",
-              "parseKind": "macro_rule",
+              "multiplicity": "optional",
+              "name": "_macro_rules",
+              "parseKind": "macro_rules",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "macro_rule"
+              "_macro_rules"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_macro_rules",
       "factoryFields": [
-        "macro_rule"
+        "macro_rules"
       ]
     },
     {
@@ -6254,33 +6078,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "macro_rule",
+          "name": "macro_rules",
           "propertyName": "macroRules",
           "paramName": "macroRules",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "macro_rule",
-              "parseKind": "macro_rule",
+              "multiplicity": "optional",
+              "name": "_macro_rules",
+              "parseKind": "macro_rules",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "macro_rule"
+              "_macro_rules"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_macro_rules",
       "factoryFields": [
-        "macro_rule"
+        "macro_rules"
       ]
     },
     {
@@ -6292,31 +6117,51 @@
       "hidden": false,
       "fields": [
         {
-          "name": "macro_rule",
+          "name": "macro_rules",
           "propertyName": "macroRules",
           "paramName": "macroRules",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "macro_rule",
-              "parseKind": "macro_rule",
+              "multiplicity": "optional",
+              "name": "_macro_rules",
+              "parseKind": "macro_rules",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "macro_rule"
+              "_macro_rules"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_macro_rules",
+      "factoryFields": [
+        "macro_rules"
+      ]
+    },
+    {
+      "kind": "_macro_rules",
+      "modelType": "separatedList",
+      "typeName": "MacroRules",
+      "factoryName": "macroRules",
+      "irKey": "macroRules",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "macro_rule"
+      ],
+      "factoryShape": "elements",
       "factoryFields": [
         "macro_rule"
       ]
@@ -6497,7 +6342,7 @@
     {
       "kind": "_non_special_token",
       "modelType": "supertype",
-      "typeName": "NonSpecialToken",
+      "typeName": "_NonSpecialToken",
       "irKey": "nonSpecialToken",
       "hidden": true,
       "subtypes": [
@@ -6621,11 +6466,11 @@
       ]
     },
     {
-      "kind": "_ordered_field_declaration_list_group1",
+      "kind": "_ordered_field_declaration_list_elements",
       "modelType": "separatedList",
-      "typeName": "OrderedFieldDeclarationListGroup1",
-      "factoryName": "orderedFieldDeclarationListGroup1",
-      "irKey": "orderedFieldDeclarationListGroup1",
+      "typeName": "OrderedFieldDeclarationListElements",
+      "factoryName": "orderedFieldDeclarationListElements",
+      "irKey": "orderedFieldDeclarationListElements",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -6660,11 +6505,11 @@
       "text": "/"
     },
     {
-      "kind": "_parameters_group1",
+      "kind": "_parameters_elements",
       "modelType": "separatedList",
-      "typeName": "ParametersGroup1",
-      "factoryName": "parametersGroup1",
-      "irKey": "parametersGroup1",
+      "typeName": "ParametersElements",
+      "factoryName": "parametersElements",
+      "irKey": "parametersElements",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -6727,6 +6572,25 @@
         "struct_pattern",
         "tuple_pattern",
         "tuple_struct_pattern"
+      ]
+    },
+    {
+      "kind": "_patterns",
+      "modelType": "separatedList",
+      "typeName": "Patterns",
+      "factoryName": "patterns",
+      "irKey": "patterns",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "_pattern"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "pattern"
       ]
     },
     {
@@ -7244,23 +7108,21 @@
     },
     {
       "kind": "_raw_string_literal_end",
-      "modelType": "token",
+      "modelType": "pattern",
       "typeName": "RawStringLiteralEnd",
+      "factoryName": "rawStringLiteralEnd",
       "irKey": "rawStringLiteralEnd",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\\\"#\" as const",
-      "text": "\"#"
+      "hidden": false,
+      "factoryShape": "text"
     },
     {
       "kind": "_raw_string_literal_start",
-      "modelType": "token",
+      "modelType": "pattern",
       "typeName": "RawStringLiteralStart",
+      "factoryName": "rawStringLiteralStart",
       "irKey": "rawStringLiteralStart",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"r#\\\"\" as const",
-      "text": "r#\""
+      "hidden": false,
+      "factoryShape": "text"
     },
     {
       "kind": "_reference_expression_raw_const",
@@ -7320,25 +7182,6 @@
         "default",
         "union",
         "gen"
-      ]
-    },
-    {
-      "kind": "_slice_pattern_group1",
-      "modelType": "separatedList",
-      "typeName": "SlicePatternGroup1",
-      "factoryName": "slicePatternGroup1",
-      "irKey": "slicePatternGroup1",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
-      "elementKinds": [
-        "_pattern"
-      ],
-      "factoryShape": "elements",
-      "factoryFields": [
-        "pattern"
       ]
     },
     {
@@ -7520,11 +7363,11 @@
       "text": ";"
     },
     {
-      "kind": "_struct_pattern_group1",
+      "kind": "_struct_pattern_elements",
       "modelType": "separatedList",
-      "typeName": "StructPatternGroup1",
-      "factoryName": "structPatternGroup1",
-      "irKey": "structPatternGroup1",
+      "typeName": "StructPatternElements",
+      "factoryName": "structPatternElements",
+      "irKey": "structPatternElements",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -7925,11 +7768,11 @@
       ]
     },
     {
-      "kind": "_tuple_pattern_group1",
+      "kind": "_tuple_pattern_elements",
       "modelType": "separatedList",
-      "typeName": "TuplePatternGroup1",
-      "factoryName": "tuplePatternGroup1",
-      "irKey": "tuplePatternGroup1",
+      "typeName": "TuplePatternElements",
+      "factoryName": "tuplePatternElements",
+      "irKey": "tuplePatternElements",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -7952,13 +7795,13 @@
       "hidden": true,
       "subtypes": [
         "_primitive_type",
-        "_type_identifier",
         "abstract_type",
         "array_type",
         "bounded_type",
         "dynamic_type",
         "function_type",
         "generic_type",
+        "identifier",
         "macro_invocation",
         "metavariable",
         "never_type",
@@ -8065,6 +7908,25 @@
       ]
     },
     {
+      "kind": "_type_arguments_elements",
+      "modelType": "separatedList",
+      "typeName": "TypeArgumentsElements",
+      "factoryName": "typeArgumentsElements",
+      "irKey": "typeArgumentsElements",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "type_argument"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "element"
+      ]
+    },
+    {
       "kind": "_type_identifier",
       "modelType": "pattern",
       "typeName": "TypeIdentifier",
@@ -8109,11 +7971,30 @@
       "children": []
     },
     {
-      "kind": "_use_bounds_group1",
+      "kind": "_type_parameters_elements",
       "modelType": "separatedList",
-      "typeName": "UseBoundsGroup1",
-      "factoryName": "useBoundsGroup1",
-      "irKey": "useBoundsGroup1",
+      "typeName": "TypeParametersElements",
+      "factoryName": "typeParametersElements",
+      "irKey": "typeParametersElements",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_type_parameter"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "element"
+      ]
+    },
+    {
+      "kind": "_use_bounds_elements",
+      "modelType": "separatedList",
+      "typeName": "UseBoundsElements",
+      "factoryName": "useBoundsElements",
+      "irKey": "useBoundsElements",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -8150,11 +8031,11 @@
       ]
     },
     {
-      "kind": "_use_list_group1",
+      "kind": "_use_clauses",
       "modelType": "separatedList",
-      "typeName": "UseListGroup1",
-      "factoryName": "useListGroup1",
-      "irKey": "useListGroup1",
+      "typeName": "UseClauses",
+      "factoryName": "useClauses",
+      "irKey": "useClauses",
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
@@ -8435,40 +8316,20 @@
       "children": []
     },
     {
-      "kind": "_where_clause_group1",
-      "modelType": "group",
-      "typeName": "WhereClauseGroup1",
-      "factoryName": "_whereClauseGroup1",
-      "irKey": "whereClauseGroup1",
+      "kind": "_where_predicates",
+      "modelType": "separatedList",
+      "typeName": "WherePredicates",
+      "factoryName": "wherePredicates",
+      "irKey": "wherePredicates",
       "hidden": false,
-      "name": "_where_clause_group1",
-      "fields": [
-        {
-          "name": "where_predicate",
-          "propertyName": "wherePredicates",
-          "paramName": "wherePredicates",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "where_predicate",
-              "parseKind": "where_predicate",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "where_predicate"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "where_predicate"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "where_predicate"
       ]
@@ -8658,9 +8519,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "arguments_group1",
-          "propertyName": "argumentsGroup1",
-          "paramName": "argumentsGroup1",
+          "name": "arguments_elements",
+          "propertyName": "argumentsElements",
+          "paramName": "argumentsElements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8668,23 +8529,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_arguments_group1",
-              "parseKind": "arguments_group1",
+              "name": "_arguments_elements",
+              "parseKind": "arguments_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_arguments_group1"
+              "_arguments_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_arguments_elements",
       "factoryFields": [
-        "arguments_group1"
+        "arguments_elements"
       ]
     },
     {
@@ -9155,7 +9017,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "attribute",
       "factoryFields": [
         "attribute"
       ]
@@ -9561,7 +9424,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_block_comment_group1",
       "factoryFields": [
         "block_comment_group1"
       ]
@@ -10320,7 +10184,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "block",
       "factoryFields": [
         "body"
       ]
@@ -10589,7 +10454,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "label",
       "factoryFields": [
         "label"
       ]
@@ -11196,9 +11062,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "enum_variant_list_group1",
-          "propertyName": "enumVariantListGroup1",
-          "paramName": "enumVariantListGroup1",
+          "name": "enum_variant_list_elements",
+          "propertyName": "enumVariantListElements",
+          "paramName": "enumVariantListElements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11206,23 +11072,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_enum_variant_list_group1",
-              "parseKind": "enum_variant_list_group1",
+              "name": "_enum_variant_list_elements",
+              "parseKind": "enum_variant_list_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_enum_variant_list_group1"
+              "_enum_variant_list_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_enum_variant_list_elements",
       "factoryFields": [
-        "enum_variant_list_group1"
+        "enum_variant_list_elements"
       ]
     },
     {
@@ -11453,7 +11320,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "string_literal",
       "factoryFields": [
         "string_literal"
       ]
@@ -11553,9 +11421,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "field_declaration_list_group1",
-          "propertyName": "fieldDeclarationListGroup1",
-          "paramName": "fieldDeclarationListGroup1",
+          "name": "field_declaration_list_elements",
+          "propertyName": "fieldDeclarationListElements",
+          "paramName": "fieldDeclarationListElements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11563,23 +11431,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_field_declaration_list_group1",
-              "parseKind": "field_declaration_list_group1",
+              "name": "_field_declaration_list_elements",
+              "parseKind": "field_declaration_list_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_field_declaration_list_group1"
+              "_field_declaration_list_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_field_declaration_list_elements",
       "factoryFields": [
-        "field_declaration_list_group1"
+        "field_declaration_list_elements"
       ]
     },
     {
@@ -11765,21 +11634,22 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_field_initializer_list_group1",
-              "parseKind": "field_initializer_list_group1",
+              "name": "_field_initializer_list_elements",
+              "parseKind": "field_initializer_list_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_field_initializer_list_group1"
+              "_field_initializer_list_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_field_initializer_list_elements",
       "factoryFields": [
         "initializers"
       ]
@@ -12026,33 +11896,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "lifetime",
+          "name": "lifetimes",
           "propertyName": "lifetimes",
           "paramName": "lifetimes",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "lifetime",
-              "parseKind": "lifetime",
+              "multiplicity": "single",
+              "name": "_lifetimes",
+              "parseKind": "lifetimes",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "lifetime"
+              "_lifetimes"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_lifetimes",
       "factoryFields": [
-        "lifetime"
+        "lifetimes"
       ]
     },
     {
@@ -13628,7 +13499,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "attribute",
       "factoryFields": [
         "attribute"
       ]
@@ -13675,7 +13547,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "identifier",
       "factoryFields": [
         "identifier"
       ]
@@ -14053,7 +13926,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "identifier",
       "factoryFields": [
         "identifier"
       ]
@@ -14633,7 +14507,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_match_block_arms",
       "factoryFields": [
         "match_block_arms"
       ]
@@ -15029,6 +14904,30 @@
       "text": "!"
     },
     {
+      "kind": "non_special_token",
+      "modelType": "supertype",
+      "typeName": "NonSpecialToken",
+      "irKey": "nonSpecialToken",
+      "hidden": true,
+      "subtypes": [
+        "_literal",
+        "_primitive_type",
+        "_token_keywords",
+        "_token_tree_punctuation",
+        "boolean_literal",
+        "char_literal",
+        "crate",
+        "float_literal",
+        "identifier",
+        "integer_literal",
+        "mutable_specifier",
+        "raw_string_literal",
+        "self",
+        "string_literal",
+        "super"
+      ]
+    },
+    {
       "kind": "or_pattern",
       "modelType": "branch",
       "typeName": "OrPattern",
@@ -15093,21 +14992,22 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_ordered_field_declaration_list_group1",
-              "parseKind": "ordered_field_declaration_list_group1",
+              "name": "_ordered_field_declaration_list_elements",
+              "parseKind": "ordered_field_declaration_list_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_ordered_field_declaration_list_group1"
+              "_ordered_field_declaration_list_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_ordered_field_declaration_list_elements",
       "factoryFields": [
         "attributes"
       ]
@@ -15214,9 +15114,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "parameters_group1",
-          "propertyName": "parametersGroup1",
-          "paramName": "parametersGroup1",
+          "name": "parameters_elements",
+          "propertyName": "parametersElements",
+          "paramName": "parametersElements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -15224,23 +15124,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_parameters_group1",
-              "parseKind": "parameters_group1",
+              "name": "_parameters_elements",
+              "parseKind": "parameters_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_parameters_group1"
+              "_parameters_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_parameters_elements",
       "factoryFields": [
-        "parameters_group1"
+        "parameters_elements"
       ]
     },
     {
@@ -15475,16 +15376,6 @@
       ]
     },
     {
-      "kind": "r#\"",
-      "modelType": "token",
-      "typeName": "TokRHashDq",
-      "irKey": "tokRHashDq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"r#\\\"\" as const",
-      "text": "r#\""
-    },
-    {
       "kind": "range_expression",
       "modelType": "branch",
       "typeName": "RangeExpression",
@@ -15612,6 +15503,29 @@
       "hidden": false,
       "fields": [
         {
+          "name": "raw_string_literal_start",
+          "propertyName": "rawStringLiteralStart",
+          "paramName": "rawStringLiteralStart",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_raw_string_literal_start",
+              "parseKind": "raw_string_literal_start",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_raw_string_literal_start"
+            ]
+          }
+        },
+        {
           "name": "string_content",
           "propertyName": "stringContent",
           "paramName": "stringContent",
@@ -15633,12 +15547,37 @@
               "raw_string_literal_content"
             ]
           }
+        },
+        {
+          "name": "raw_string_literal_end",
+          "propertyName": "rawStringLiteralEnd",
+          "paramName": "rawStringLiteralEnd",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_raw_string_literal_end",
+              "parseKind": "raw_string_literal_end",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_raw_string_literal_end"
+            ]
+          }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
-        "string_content"
+        "raw_string_literal_start",
+        "string_content",
+        "raw_string_literal_end"
       ]
     },
     {
@@ -16593,9 +16532,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "slice_pattern_group1",
-          "propertyName": "slicePatternGroup1",
-          "paramName": "slicePatternGroup1",
+          "name": "patterns",
+          "propertyName": "patterns",
+          "paramName": "patterns",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -16603,23 +16542,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_slice_pattern_group1",
-              "parseKind": "slice_pattern_group1",
+              "name": "_patterns",
+              "parseKind": "patterns",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_slice_pattern_group1"
+              "_patterns"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_patterns",
       "factoryFields": [
-        "slice_pattern_group1"
+        "patterns"
       ]
     },
     {
@@ -17225,15 +17165,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_struct_pattern_group1",
-              "parseKind": "struct_pattern_group1",
+              "name": "_struct_pattern_elements",
+              "parseKind": "struct_pattern_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_struct_pattern_group1"
+              "_struct_pattern_elements"
             ]
           }
         }
@@ -17317,30 +17257,6 @@
       "factoryFields": [
         "name",
         "type"
-      ]
-    },
-    {
-      "kind": "token_pattern_group1",
-      "modelType": "supertype",
-      "typeName": "TokenPatternGroup1",
-      "irKey": "tokenPatternGroup1",
-      "hidden": true,
-      "subtypes": [
-        "_literal",
-        "_primitive_type",
-        "_token_keywords",
-        "_token_tree_punctuation",
-        "boolean_literal",
-        "char_literal",
-        "crate",
-        "float_literal",
-        "identifier",
-        "integer_literal",
-        "mutable_specifier",
-        "raw_string_literal",
-        "self",
-        "string_literal",
-        "super"
       ]
     },
     {
@@ -17942,7 +17858,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "block",
       "factoryFields": [
         "block"
       ]
@@ -18066,21 +17983,22 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_tuple_pattern_group1",
-              "parseKind": "tuple_pattern_group1",
+              "name": "_tuple_pattern_elements",
+              "parseKind": "tuple_pattern_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_tuple_pattern_group1"
+              "_tuple_pattern_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_tuple_pattern_elements",
       "factoryFields": [
         "elements"
       ]
@@ -18133,9 +18051,9 @@
           }
         },
         {
-          "name": "slice_pattern_group1",
-          "propertyName": "slicePatternGroup1",
-          "paramName": "slicePatternGroup1",
+          "name": "patterns",
+          "propertyName": "patterns",
+          "paramName": "patterns",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -18143,15 +18061,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_slice_pattern_group1",
-              "parseKind": "slice_pattern_group1",
+              "name": "_patterns",
+              "parseKind": "patterns",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_slice_pattern_group1"
+              "_patterns"
             ]
           }
         }
@@ -18160,7 +18078,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "type",
-        "slice_pattern_group1"
+        "patterns"
       ]
     },
     {
@@ -18221,33 +18139,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "element",
-          "propertyName": "elements",
-          "paramName": "elements",
+          "name": "type_arguments_elements",
+          "propertyName": "typeArgumentsElements",
+          "paramName": "typeArgumentsElements",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_type_argument",
-              "parseKind": "type_argument",
+              "multiplicity": "single",
+              "name": "_type_arguments_elements",
+              "parseKind": "type_arguments_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_argument"
+              "_type_arguments_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_type_arguments_elements",
       "factoryFields": [
-        "element"
+        "type_arguments_elements"
       ]
     },
     {
@@ -18651,33 +18570,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "element",
-          "propertyName": "elements",
-          "paramName": "elements",
+          "name": "type_parameters_elements",
+          "propertyName": "typeParametersElements",
+          "paramName": "typeParametersElements",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_attributed_type_parameter",
-              "parseKind": "attributed_type_parameter",
+              "multiplicity": "single",
+              "name": "_type_parameters_elements",
+              "parseKind": "type_parameters_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_attributed_type_parameter"
+              "_type_parameters_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_type_parameters_elements",
       "factoryFields": [
-        "element"
+        "type_parameters_elements"
       ]
     },
     {
@@ -18960,7 +18880,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "block",
       "factoryFields": [
         "block"
       ]
@@ -19057,21 +18978,22 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_use_bounds_group1",
-              "parseKind": "use_bounds_group1",
+              "name": "_use_bounds_elements",
+              "parseKind": "use_bounds_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_use_bounds_group1"
+              "_use_bounds_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_use_bounds_elements",
       "factoryFields": [
         "bounds"
       ]
@@ -19147,9 +19069,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "use_list_group1",
-          "propertyName": "useListGroup1",
-          "paramName": "useListGroup1",
+          "name": "use_clauses",
+          "propertyName": "useClauses",
+          "paramName": "useClauses",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -19157,23 +19079,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_use_list_group1",
-              "parseKind": "use_list_group1",
+              "name": "_use_clauses",
+              "parseKind": "use_clauses",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_use_list_group1"
+              "_use_clauses"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_use_clauses",
       "factoryFields": [
-        "use_list_group1"
+        "use_clauses"
       ]
     },
     {
@@ -19341,9 +19264,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "where_clause_group1",
-          "propertyName": "whereClauseGroup1",
-          "paramName": "whereClauseGroup1",
+          "name": "where_predicates",
+          "propertyName": "wherePredicates",
+          "paramName": "wherePredicates",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -19351,23 +19274,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_where_clause_group1",
-              "parseKind": "where_clause_group1",
+              "name": "_where_predicates",
+              "parseKind": "where_predicates",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_where_clause_group1"
+              "_where_predicates"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_where_predicates",
       "factoryFields": [
-        "where_clause_group1"
+        "where_predicates"
       ]
     },
     {

@@ -199,6 +199,15 @@ export interface LinkedGrammar {
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	readonly contentAliasedFrom?: ReadonlyMap<string, string>;
 	readonly contentAliasedTo?: ReadonlyMap<string, readonly string[]>;
+	/**
+	 * Anon-token wire ids that can wear a kind: `alias('tok', $.kind)`
+	 * occurrences (soft keywords used as identifiers, punctuation aliased
+	 * into a named wrapper). The wire (`$type` = grammar symbol) delivers
+	 * the TOKEN's own id at such occurrences, so any union decode arm for
+	 * `kind` must accept these ids alongside the kind's own. Keyed by the
+	 * alias-target kind name in both its spellings (visible + `_`-hidden).
+	 */
+	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly wordMatcher?: RegExp;
 }
 
@@ -223,6 +232,7 @@ export interface NormalizedGrammar {
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly refineForms?: Map<string, RefineForm[]>;
 }
 
@@ -233,6 +243,7 @@ export interface SimplifiedGrammar {
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly rules: Record<string, SimplifiedRule>;
 	readonly normalizedRules: Record<string, RenderRule>;
 	readonly supertypes: Set<string>;
@@ -268,6 +279,7 @@ export interface NodeMap {
 	readonly nodeByRuleId: ReadonlyMap<RuleId, AssembledNode>;
 	readonly slotByRuleId: ReadonlyMap<RuleId, AssembledNonterminal>;
 	readonly aliasedHiddenKinds?: ReadonlyMap<string, string>;
+	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly signatures: SignaturePool;
 	readonly derivations: DerivationLog;
 	readonly linkRules?: Record<string, Rule<'link'>>;

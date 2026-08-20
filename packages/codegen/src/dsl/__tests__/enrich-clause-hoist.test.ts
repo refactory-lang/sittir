@@ -430,11 +430,12 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 		// This absorbed body is now a genuinely separator-variable repeat body
 		// (a top-level repeat with an adjacent stranded optional(',') flank), so
 		// per group-classify.ts's `isInlineSafe` qualification it takes the
-		// VISIBLE promotion path (`_parent_group1`, not the old hidden
-		// `_parent_optional1` inline-hoist) — same path a multi-slot/bare-choice
-		// body already uses. Absorption itself (this test's actual subject) is
-		// unaffected: the fold still happens before the isInlineSafe branch runs.
-		const hoisted = rules['_parent_group1'] as {
+		// VISIBLE promotion path (named after its element field — `_items` —
+		// not the old hidden `_parent_optional1` inline-hoist) — same path a
+		// multi-slot/bare-choice body already uses. Absorption itself (this
+		// test's actual subject) is unaffected: the fold still happens before
+		// the isInlineSafe branch runs.
+		const hoisted = rules['_items'] as {
 			members: Array<{ type: string; content?: { type: string; value?: string } }>;
 		};
 		expect(hoisted.members.length).toBe(3);
@@ -487,8 +488,8 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 
 		// A CHOICE-shaped separator (',' or ';') is itself a genuinely
 		// per-instance-variable separator, so this body also takes the VISIBLE
-		// promotion path (`_parent_group1`) — see the plain-STRING case above.
-		const hoisted = rules['_parent_group1'] as {
+		// promotion path (`_items`) — see the plain-STRING case above.
+		const hoisted = rules['_items'] as {
 			members: Array<{ type: string; content?: { type: string; value?: string } }>;
 		};
 		expect(hoisted.members.length).toBe(3);

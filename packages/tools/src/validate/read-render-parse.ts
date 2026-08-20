@@ -21,6 +21,7 @@ import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
 	loadKindNameFromId,
+	loadCanonicalKindNameFromId,
 	loadKindNames,
 	loadKindIdFromName,
 	buildReadHandle,
@@ -220,13 +221,36 @@ function collectVisibleChildren(n: TSNode, namedExtras: ReadonlySet<string>): TS
 	return out;
 }
 
+/**
+ * Same-text leaf kind pairs the AST compare tolerates, per grammar — an
+ * audited allowlist for positional leaf re-classification the reparse
+ * wrapper genuinely cannot reproduce. A pair NOT listed here fails the
+ * compare even when the bytes match — an unlisted same-text kind swap is
+ * a real regression signal, not alias noise. Keys are order-insensitive
+ * via {@link leafAliasKey}.
+ *
+ * Currently EMPTY: every known positional case is handled by a
+ * context-faithful reparse wrapper instead (the decorator variant family
+ * wraps in a real `@…` position — see `REPARSE_WRAPPERS.typescript`), so
+ * leaf classification matches exactly. Adding an entry here requires the
+ * same audit that emptied it: instrument the tolerance, run
+ * validate:native across all grammars, and list only pairs whose context
+ * a wrapper cannot express.
+ */
+export const LEAF_ALIAS_TOLERANCE_BY_GRAMMAR: Record<string, ReadonlySet<string>> = {};
+
+export function leafAliasKey(a: string, b: string): string {
+	return a < b ? `${a}|${b}` : `${b}|${a}`;
+}
+
 export function astStructuralDiff(
 	a: TSNode,
 	b: TSNode,
 	namedExtras: ReadonlySet<string>,
 	path: string = '',
 	rootAliasPair?: readonly [string, string],
-	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>
+	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>,
+	leafAliasPairs?: ReadonlySet<string>
 ): string | null {
 	// Root-level alias tolerance: `a`/`b` are the same underlying content —
 	// `wrapForReparse`'s synthetic wrapper context doesn't always reproduce
@@ -242,17 +266,16 @@ export function astStructuralDiff(
 		((a.type === rootAliasPair[0] && b.type === rootAliasPair[1]) ||
 			(a.type === rootAliasPair[1] && b.type === rootAliasPair[0]));
 	if (a.type !== b.type && !rootAliasTolerated) {
-		// Byte-identical leaf tolerance: upstream grammars define restricted
-		// variant rules aliased to canonical display names (decorators'
-		// `_decorator_parenthesized_expression`, type_query's call variants),
-		// and those variants can classify a leaf differently than the
-		// canonical rule the reparse wrapper routes through — e.g. `super`
-		// inside `@(super.decorate)` lexes as a plain identifier in decorator
-		// context but as a `super` node in expression context. Both parses
-		// cover the exact same bytes; leaf classification is positional, not
-		// content. Tolerate only childless nodes with identical text — any
-		// structural or byte difference still fails.
-		if (a.childCount === 0 && b.childCount === 0 && a.text === b.text) {
+		// Byte-identical leaf tolerance, gated on the grammar's audited pair
+		// allowlist ({@link LEAF_ALIAS_TOLERANCE_BY_GRAMMAR}): only childless
+		// nodes with identical text AND an allowlisted kind pair pass — any
+		// structural or byte difference, or an unlisted kind pair, still fails.
+		if (
+			a.childCount === 0 &&
+			b.childCount === 0 &&
+			a.text === b.text &&
+			leafAliasPairs?.has(leafAliasKey(a.type, b.type)) === true
+		) {
 			return null;
 		}
 		return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
@@ -321,7 +344,15 @@ export function astStructuralDiff(
 			continue;
 		}
 		// Named child — recurse.
-		const sub = astStructuralDiff(ac, bc, namedExtras, `${path || a.type}[${i}].${ac.type}`, undefined, variantChildKinds);
+		const sub = astStructuralDiff(
+			ac,
+			bc,
+			namedExtras,
+			`${path || a.type}[${i}].${ac.type}`,
+			undefined,
+			variantChildKinds,
+			leafAliasPairs
+		);
 		if (sub) return sub;
 	}
 	return null;
@@ -375,20 +406,23 @@ export interface ReadRenderParseResult {
 /**
  * Width, in rendered bytes, of a candidate's own leading trivia — the text
  * `render_with_trivia!` (Rust) / its JS-engine counterpart writes BEFORE the
- * candidate's own content, each entry followed by a `"\n"` separator. The
- * candidate's real node starts this many bytes after where its `rendered`
- * string (trivia included) was spliced into the reparse wrapper, so the
- * offset-based lookup below must skip past it. Returns 0 when there's no
- * leading trivia (the common case).
+ * candidate's own content. The candidate's real node starts this many bytes
+ * after where its `rendered` string (trivia included) was spliced into the
+ * reparse wrapper, so the offset-based lookup below must skip past it.
+ * Returns 0 when there's no leading trivia (the common case).
+ *
+ * Derived by differencing two engine renders (with vs. without the leading
+ * trivia) rather than rendering each trivia entry standalone: trivia entries
+ * are embedded raw at read time (never wrapped into model shape), and only
+ * the in-context `TriviaTransport` decode carries the verbatim `$text`
+ * fallback for that raw shape — a standalone root render of the same entry
+ * hard-fails decoding (`Missing field _content`).
  */
 export function leadingTriviaRenderedWidth(data: AnyNodeData, render: (node: AnyNodeData) => string): number {
 	const leading = data.$triviaData?.leading;
 	if (!leading || leading.length === 0) return 0;
-	let width = 0;
-	for (const entry of leading) {
-		width += render(entry).length + 1; // +1 for the "\n" render_with_trivia! writes after each entry
-	}
-	return width;
+	const stripped = { ...data, $triviaData: { ...data.$triviaData, leading: undefined } } as AnyNodeData;
+	return render(data).length - render(stripped).length;
 }
 
 /**
@@ -551,6 +585,7 @@ export async function validateReadRenderParse(
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
+	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
 	const variantChildKinds = await loadVariantChildKindsByOwner(grammar);
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
@@ -608,26 +643,38 @@ export async function validateReadRenderParse(
 				continue; // Corpus entries with parse errors (intentional error tests)
 			}
 
-			// Candidate enumeration by SOURCE kind (the wrap layer's drillAs result),
-			// not the parser DISPLAY kind. Build the native read handle and walk the
-			// WRAPPED tree ONCE: every node arrives as its true source kind, so each
-			// is read/rendered directly with NO asType override.
+			// Candidate enumeration by SOURCE kind — the CANONICAL catalog name of
+			// the wire `$type` (the grammar symbol the read stamps). Display names
+			// are non-injective at alias-source kinds (a true `token_tree` and a
+			// `delim_token_tree` occurrence both display "token_tree"), so keying
+			// by display would merge kinds that need e.g. disjoint reparse
+			// wrappers; display names are resolved per candidate below, only at
+			// the WASM `.type` seams. Build the native read handle and walk the
+			// WRAPPED tree ONCE.
 			const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
-			const candidatesByKind = new Map<string, { start: number; end: number; node: WrappedNodeData }[]>();
+			const candidatesByKind = new Map<
+				string,
+				{ start: number; end: number; node: WrappedNodeData; displayKind: string }[]
+			>();
 			if (readTreeNodeFn && handle.read) {
 				const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
 				const seen = new Set<string>();
 				walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
 					if (w.$named === false) return;
-					const sourceKind = kindNameFromId ? kindNameFromId(w.$type) : undefined;
-					if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
+					const displayKind = kindNameFromId?.(w.$type);
+					const sourceKind = canonicalKindNameFromId?.(w.$type);
+					// Testable-surface filter is CANONICAL-keyed, like the bucketing:
+					// template filenames carry canonical spellings, so hidden minted
+					// kinds (whose display name differs) are admitted and probed
+					// against their own templates rather than silently skipped.
+					if (displayKind === undefined || sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
 					const span = (w as { $span?: { start: number; end: number } }).$span;
 					if (span == null) return;
 					const dedup = `${sourceKind}@${span.start}:${span.end}`;
 					if (seen.has(dedup)) return;
 					seen.add(dedup);
 					const list = candidatesByKind.get(sourceKind) ?? [];
-					list.push({ start: span.start, end: span.end, node: w });
+					list.push({ start: span.start, end: span.end, node: w, displayKind });
 					candidatesByKind.set(sourceKind, list);
 				}, onAccessorThrow);
 			}
@@ -669,10 +716,12 @@ export async function validateReadRenderParse(
 					// WASM node at this span: the AST-compare target and the parser
 					// DISPLAY kind (targetKind) used for post-reparse node lookup.
 					// Prefer the same-span node whose type matches the candidate's
-					// kind (so the compare anchors on `tuple_struct_pattern`, not the
-					// enclosing same-span `match_pattern`); fall back to the outermost.
+					// DISPLAY kind — WASM `.type` speaks display names, so the
+					// canonical bucket kind can never match here (so the compare
+					// anchors on `tuple_struct_pattern`, not the enclosing same-span
+					// `match_pattern`); fall back to the outermost.
 					const node1ForAst =
-						findNodeBySpanOfKind(tree1.rootNode, nodeStartIndex, nodeEndIndex, kind) ??
+						findNodeBySpanOfKind(tree1.rootNode, nodeStartIndex, nodeEndIndex, cand.displayKind) ??
 						findNodeBySpan(tree1.rootNode, nodeStartIndex, nodeEndIndex);
 					const tsVisibleKind = node1ForAst?.type;
 
@@ -711,7 +760,7 @@ export async function validateReadRenderParse(
 						continue;
 					}
 					const renderedKind = kind;
-					const targetKind = tsVisibleKind ?? kind;
+					const targetKind = tsVisibleKind ?? cand.displayKind;
 
 					// Emit a per-kind progress breadcrumb to stderr when running as
 					// an isolation worker (SITTIR_ISOLATE_WORKER=1). MUST use
@@ -730,7 +779,9 @@ export async function validateReadRenderParse(
 							writeSync(2, `[dump-render] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} rendered=${JSON.stringify(rendered)}\n`);
 						}
 
-						// Wrap for reparse using supertype context
+						// Wrap for reparse using supertype context. `renderedKind` IS the
+						// canonical source kind (candidates are bucketed by it), so the
+						// wrapper lookup needs no separate source resolution.
 						const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
 							adoptedVariantKinds: adoptedVariantKindNames,
 							targetKind
@@ -827,7 +878,15 @@ export async function validateReadRenderParse(
 						const rootAliasPair: readonly [string, string] | undefined =
 							renderedKind !== targetKind ? [renderedKind, targetKind] : undefined;
 						const diff = node1ForAst
-							? astStructuralDiff(node1ForAst, node2, namedExtras, '', rootAliasPair, variantChildKinds)
+							? astStructuralDiff(
+									node1ForAst,
+									node2,
+									namedExtras,
+									'',
+									rootAliasPair,
+									variantChildKinds,
+									LEAF_ALIAS_TOLERANCE_BY_GRAMMAR[grammar]
+								)
 							: null;
 						if (diff) {
 							kindAstMismatches.push({

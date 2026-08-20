@@ -181,6 +181,7 @@ export const type = {
 	unit: F.buildUnitType,
 	array: _attach(FR.coerceToArrayType, { from: FR.coerceToArrayType, strict: F.buildArrayType }),
 	function: _attach(FR.coerceToFunctionType, { from: FR.coerceToFunctionType, strict: F.buildFunctionType }),
+	identifier: F.buildIdentifier,
 	macro: _attach(FR.coerceToMacroInvocation, { from: FR.coerceToMacroInvocation, strict: F.buildMacroInvocation }),
 	dynamic: _attach(FR.coerceToDynamicType, { from: FR.coerceToDynamicType, strict: F.buildDynamicType }),
 	bounded: _attach(FR.coerceToBoundedType, { from: FR.coerceToBoundedType, strict: F.buildBoundedType }),
@@ -504,23 +505,6 @@ export const path = {
 	super: F.buildSuper,
 	crate: F.buildCrate,
 	scoped: _attach(FR.coerceToScopedIdentifier, { from: FR.coerceToScopedIdentifier, strict: F.buildScopedIdentifier })
-} as const;
-
-export const tokenPatternGroup1 = {
-	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
-	rawString: _attach(FR.coerceToRawStringLiteral, {
-		from: FR.coerceToRawStringLiteral,
-		strict: F.buildRawStringLiteral
-	}),
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	mutable: F.buildMutableSpecifier,
-	self: F.buildSelf,
-	super: F.buildSuper,
-	crate: F.buildCrate
 } as const;
 
 // Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
@@ -1075,6 +1059,5 @@ export const ir = {
 	literal,
 	literalPattern,
 	path,
-	tokenPatternGroup1,
 	from
 } as const;

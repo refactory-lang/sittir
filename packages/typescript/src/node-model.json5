@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 415,
+  "nodeCount": 417,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -26,7 +26,7 @@
     "_tuple_type_member",
     "declaration",
     "expression",
-    "for_header_group1",
+    "lhs_expression",
     "pattern",
     "primary_expression",
     "primary_type",
@@ -182,75 +182,21 @@
     }
   },
   "fieldAliasMap": {
-    "export_statement.content": {
-      "export_statement_default": "_export_statement_default",
-      "export_statement_type_export": "_export_statement_type_export",
-      "export_statement_equals_export": "_export_statement_equals_export",
-      "export_statement_namespace_export": "_export_statement_namespace_export"
-    },
-    "export_clause.export_clause_group1": {
-      "export_clause_group1": "_export_clause_group1"
-    },
-    "import_statement.from_clause": {
-      "import_statement_group1": "_import_statement_group1"
-    },
-    "import_clause.content": {
-      "import_clause_default_import": "_import_clause_default_import"
-    },
-    "named_imports.named_imports_group1": {
-      "named_imports_group1": "_named_imports_group1"
-    },
-    "import_specifier.content": {
-      "import_specifier_as": "_import_specifier_as"
-    },
-    "variable_declarator.content": {
-      "variable_declarator_group1": "_variable_declarator_group1",
-      "variable_declarator_group2": "_variable_declarator_group2"
-    },
-    "statement_block.automatic_semicolon": {
-      "automatic_semicolon": "_automatic_semicolon"
-    },
-    "for_in_statement.content": {
-      "for_header_lhs": "_for_header_lhs",
-      "for_header_var_kind": "_for_header_var_kind",
-      "for_header_let_const_kind": "_for_header_let_const_kind"
-    },
-    "_for_header.content": {
-      "for_header_lhs": "_for_header_lhs",
-      "for_header_var_kind": "_for_header_var_kind",
-      "for_header_let_const_kind": "_for_header_let_const_kind"
-    },
     "break_statement.label": {
       "statement_identifier": "identifier"
     },
     "continue_statement.label": {
       "statement_identifier": "identifier"
     },
-    "labeled_statement.label": {
-      "statement_identifier": "_statement_identifier"
-    },
-    "catch_clause.catch_clause_group1": {
-      "catch_clause_group1": "_catch_clause_group1"
-    },
     "parenthesized_expression.content": {
-      "parenthesized_expression_typed": "_parenthesized_expression_typed",
       "member_expression": "decorator_member_expression",
       "call_expression": "decorator_call_expression"
     },
-    "object.properties": {
-      "shorthand_property_identifier": "_shorthand_property_identifier"
-    },
-    "object_pattern.properties": {
-      "shorthand_property_identifier_pattern": "_shorthand_property_identifier_pattern"
-    },
     "assignment_pattern.left": {
-      "for_header_group1": "_lhs_expression"
-    },
-    "object_assignment_pattern.left": {
-      "shorthand_property_identifier_pattern": "_shorthand_property_identifier_pattern"
+      "lhs_expression": "_lhs_expression"
     },
     "array_pattern.elements": {
-      "for_header_group1": "_lhs_expression"
+      "lhs_expression": "_lhs_expression"
     },
     "jsx_opening_element.jsx_opening_element_content": {
       "jsx_opening_element_content": "_jsx_opening_element_content"
@@ -279,63 +225,11 @@
     "class_declaration.name": {
       "type_identifier": "identifier"
     },
-    "class_declaration.automatic_semicolon": {
-      "automatic_semicolon": "_automatic_semicolon"
-    },
-    "class_heritage.content": {
-      "class_heritage_extends_clause": "_class_heritage_extends_clause"
-    },
-    "function_declaration.automatic_semicolon": {
-      "automatic_semicolon": "_automatic_semicolon"
-    },
-    "generator_function_declaration.automatic_semicolon": {
-      "automatic_semicolon": "_automatic_semicolon"
-    },
-    "arrow_function.content": {
-      "arrow_function_parameter": "_arrow_function_parameter",
-      "arrow_function__call_signature": "_arrow_function__call_signature"
-    },
-    "call_expression.content": {
-      "call_expression_call": "_call_expression_call",
-      "call_expression_template_call": "_call_expression_template_call",
-      "call_expression_member": "_call_expression_member"
-    },
-    "new_expression.constructor": {
-      "reserved_identifier": "_reserved_identifier"
-    },
-    "member_expression.object": {
-      "reserved_identifier": "_reserved_identifier"
-    },
     "member_expression.property": {
       "property_identifier": "identifier"
     },
-    "subscript_expression.object": {
-      "reserved_identifier": "_reserved_identifier"
-    },
     "assignment_expression.left": {
-      "for_header_group1": "_lhs_expression",
-      "reserved_identifier": "_reserved_identifier"
-    },
-    "augmented_assignment_expression.left": {
-      "reserved_identifier": "_reserved_identifier"
-    },
-    "binary_expression.binary_expression_group1": {
-      "binary_expression_group1": "_binary_expression_group1"
-    },
-    "update_expression.content": {
-      "update_expression_postfix": "_update_expression_postfix",
-      "update_expression_prefix": "_update_expression_prefix"
-    },
-    "string.content": {
-      "string_double": "_string_double",
-      "string_single": "_string_single"
-    },
-    "template_string.elements": {
-      "string_fragment": "_template_chars"
-    },
-    "meta_property.content": {
-      "meta_property_group1": "_meta_property_group1",
-      "meta_property_group2": "_meta_property_group2"
+      "lhs_expression": "_lhs_expression"
     },
     "decorator.content": {
       "member_expression": "decorator_member_expression",
@@ -351,58 +245,11 @@
     "decorator_call_expression.function": {
       "member_expression": "decorator_member_expression"
     },
-    "class_body.content": {
-      "class_body_method": "_class_body_method",
-      "class_body_method_sig": "_class_body_method_sig",
-      "class_body_member": "_class_body_member"
-    },
-    "field_definition.property": {
-      "property_identifier": "_property_identifier"
-    },
-    "formal_parameters.formal_parameters_group1": {
-      "formal_parameters_group1": "_formal_parameters_group1"
-    },
-    "class_static_block.automatic_semicolon": {
-      "automatic_semicolon": "_automatic_semicolon"
-    },
-    "rest_pattern.lhs_expression": {
-      "reserved_identifier": "_reserved_identifier"
-    },
-    "method_definition.name": {
-      "property_identifier": "_property_identifier"
-    },
-    "pair.key": {
-      "property_identifier": "_property_identifier"
-    },
-    "pair_pattern.key": {
-      "property_identifier": "_property_identifier"
-    },
     "pair_pattern.value": {
-      "for_header_group1": "_lhs_expression"
-    },
-    "public_field_definition.visibility_prefix": {
-      "public_field_definition_declare_first": "_public_field_definition_declare_first",
-      "public_field_definition_access_first": "_public_field_definition_access_first"
-    },
-    "public_field_definition.content": {
-      "public_field_definition_static_mods": "_public_field_definition_static_mods",
-      "public_field_definition_abstract_first": "_public_field_definition_abstract_first",
-      "public_field_definition_readonly_first": "_public_field_definition_readonly_first"
-    },
-    "public_field_definition.name": {
-      "property_identifier": "_property_identifier"
+      "lhs_expression": "_lhs_expression"
     },
     "_jsx_start_opening_element.jsx_opening_element_content": {
       "jsx_opening_element_content": "_jsx_opening_element_content"
-    },
-    "method_signature.name": {
-      "property_identifier": "_property_identifier"
-    },
-    "abstract_method_signature.name": {
-      "property_identifier": "_property_identifier"
-    },
-    "function_signature.semicolon": {
-      "function_signature_automatic_semicolon": "_function_signature_automatic_semicolon"
     },
     "decorator_parenthesized_expression.content": {
       "member_expression": "decorator_member_expression",
@@ -416,16 +263,9 @@
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
-    "extends_clause.extends_clause_single": {
-      "extends_clause_single": "_extends_clause_single"
-    },
     "implements_clause.type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "ambient_declaration.content": {
-      "ambient_declaration_global": "_ambient_declaration_global",
-      "ambient_declaration_module": "_ambient_declaration_module"
     },
     "abstract_class_declaration.name": {
       "type_identifier": "identifier"
@@ -442,12 +282,6 @@
     "extends_type_clause.type": {
       "type_identifier": "identifier"
     },
-    "enum_body.enum_body_group1": {
-      "enum_body_group1": "_enum_body_group1"
-    },
-    "enum_assignment.name": {
-      "property_identifier": "_property_identifier"
-    },
     "type_alias_declaration.name": {
       "type_identifier": "identifier"
     },
@@ -456,13 +290,13 @@
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "required_parameter.pattern": {
-      "for_header_group1": "_lhs_expression"
+      "lhs_expression": "_lhs_expression"
     },
     "optional_parameter.pattern": {
-      "for_header_group1": "_lhs_expression"
+      "lhs_expression": "_lhs_expression"
     },
     "_parameter_name.pattern": {
-      "for_header_group1": "_lhs_expression"
+      "lhs_expression": "_lhs_expression"
     },
     "omitting_type_annotation.type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
@@ -503,10 +337,8 @@
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "template_type.content": {
+      "_type_identifier": "identifier",
       "this_type": "this"
-    },
-    "template_literal_type.elements": {
-      "string_fragment": "_template_chars"
     },
     "infer_type.type_identifier": {
       "type_identifier": "identifier"
@@ -566,9 +398,11 @@
       "instantiation_expression": "_type_query_instantiation_expression"
     },
     "index_type_query.primary_type": {
+      "_type_identifier": "identifier",
       "this_type": "this"
     },
     "lookup_type.primary_type": {
+      "_type_identifier": "identifier",
       "this_type": "this"
     },
     "lookup_type.index_type": {
@@ -590,18 +424,12 @@
       "unary_expression": "_number"
     },
     "flow_maybe_type.primary_type": {
+      "_type_identifier": "identifier",
       "this_type": "this"
     },
     "parenthesized_type.type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "type_arguments.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "property_signature.name": {
-      "property_identifier": "_property_identifier"
     },
     "type_parameter.name": {
       "type_identifier": "identifier"
@@ -614,14 +442,9 @@
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
-    "index_signature.content": {
-      "index_signature_colon": "_index_signature_colon"
-    },
     "array_type.primary_type": {
+      "_type_identifier": "identifier",
       "this_type": "this"
-    },
-    "tuple_type.tuple_type_group1": {
-      "tuple_type_group1": "_tuple_type_group1"
     },
     "readonly_type.type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
@@ -650,9 +473,6 @@
     "_jsx_start_opening_element_group1.name": {
       "member_expression": "nested_identifier"
     },
-    "_enum_body_group1.content": {
-      "property_identifier": "_property_identifier"
-    },
     "_infer_type_optional1.type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
@@ -661,7 +481,11 @@
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
-    "_tuple_type_group1.tuple_type_member": {
+    "_types.type": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "_tuple_type_members.tuple_type_member": {
       "required_parameter": "tuple_parameter",
       "optional_parameter": "optional_tuple_parameter"
     },
@@ -672,49 +496,12 @@
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
-    "_export_statement_default.content": {
-      "export_statement_default_from_arm": "_export_statement_default_from_arm",
-      "export_statement_default_decl_arm": "_export_statement_default_decl_arm"
-    },
-    "_arrow_function_parameter.parameter": {
-      "reserved_identifier": "_reserved_identifier"
-    },
-    "_import_clause_default_import.import_clause_group1": {
-      "import_clause_group1": "_import_clause_group1"
-    },
-    "_index_signature_colon.name": {
-      "reserved_identifier": "_reserved_identifier"
-    },
     "_index_signature_colon.index_type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
-    "_export_statement_default_from_arm.content": {
-      "export_statement_default_star_from": "_export_statement_default_star_from",
-      "export_statement_default_ns_from": "_export_statement_default_ns_from",
-      "export_statement_default_clause_from": "_export_statement_default_clause_from"
-    },
-    "_export_statement_default_decl_arm.content": {
-      "export_statement_default_default_kw": "_export_statement_default_default_kw"
-    },
-    "_export_statement_default_default_kw.content": {
-      "export_statement_default_value": "_export_statement_default_value"
-    },
-    "_class_body_method_sig.terminator": {
-      "function_signature_automatic_semicolon": "_function_signature_automatic_semicolon"
-    },
     "_for_header_lhs.left": {
-      "for_header_group1": "_lhs_expression",
-      "reserved_identifier": "_reserved_identifier"
-    },
-    "_for_header_let_const_kind.automatic_semicolon": {
-      "automatic_semicolon": "_automatic_semicolon"
-    },
-    "_call_expression_template_call.function": {
-      "reserved_identifier": "_reserved_identifier"
-    },
-    "_call_expression_member.function": {
-      "reserved_identifier": "_reserved_identifier"
+      "lhs_expression": "_lhs_expression"
     },
     "_jsx_opening_element_content.jsx_start_opening_element_group1": {
       "jsx_start_opening_element_group1": "_jsx_start_opening_element_group1"
@@ -756,7 +543,7 @@
       }
     },
     "export_clause": {
-      "export_clause_group1": {
+      "export_specifiers": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -836,7 +623,7 @@
       }
     },
     "named_imports": {
-      "named_imports_group1": {
+      "import_specifiers": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2171,7 +1958,7 @@
       }
     },
     "formal_parameters": {
-      "formal_parameters_group1": {
+      "formal_parameters_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2875,7 +2662,7 @@
       }
     },
     "enum_body": {
-      "enum_body_group1": {
+      "enum_body_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3474,12 +3261,12 @@
       }
     },
     "type_arguments": {
-      "type": {
+      "types": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "object_type": {
@@ -3580,12 +3367,12 @@
       }
     },
     "type_parameters": {
-      "type_parameter": {
+      "type_parameters_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "type_parameter": {
@@ -3713,7 +3500,7 @@
       }
     },
     "tuple_type": {
-      "tuple_type_group1": {
+      "tuple_type_members": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3785,7 +3572,7 @@
         "nonEmpty": false
       }
     },
-    "_export_clause_group1": {
+    "_export_specifiers": {
       "export_specifier": {
         "unnamed": false,
         "slotCount": 1,
@@ -3819,7 +3606,7 @@
         "nonEmpty": false
       }
     },
-    "_named_imports_group1": {
+    "_import_specifiers": {
       "import_specifier": {
         "unnamed": false,
         "slotCount": 1,
@@ -3906,7 +3693,7 @@
         "nonEmpty": false
       }
     },
-    "_formal_parameters_group1": {
+    "_formal_parameters_elements": {
       "formal_parameter": {
         "unnamed": false,
         "slotCount": 1,
@@ -3931,7 +3718,7 @@
         "nonEmpty": false
       }
     },
-    "_enum_body_group1": {
+    "_enum_body_elements": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -3940,7 +3727,25 @@
         "nonEmpty": false
       }
     },
-    "_tuple_type_group1": {
+    "_types": {
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_type_parameters_elements": {
+      "type_parameter": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_tuple_type_members": {
       "tuple_type_member": {
         "unnamed": false,
         "slotCount": 1,
@@ -5806,13 +5611,13 @@
       ]
     },
     {
-      "kind": "_enum_body_group1",
+      "kind": "_enum_body_elements",
       "modelType": "group",
-      "typeName": "EnumBodyGroup1",
-      "factoryName": "_enumBodyGroup1",
-      "irKey": "enumBodyGroup1",
+      "typeName": "EnumBodyElements",
+      "factoryName": "_enumBodyElements",
+      "irKey": "enumBodyElements",
       "hidden": false,
-      "name": "_enum_body_group1",
+      "name": "_enum_body_elements",
       "fields": [
         {
           "name": "content",
@@ -5853,25 +5658,6 @@
       ]
     },
     {
-      "kind": "_export_clause_group1",
-      "modelType": "separatedList",
-      "typeName": "ExportClauseGroup1",
-      "factoryName": "exportClauseGroup1",
-      "irKey": "exportClauseGroup1",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
-      "elementKinds": [
-        "export_specifier"
-      ],
-      "factoryShape": "elements",
-      "factoryFields": [
-        "export_specifier"
-      ]
-    },
-    {
       "kind": "_export_specifier_optional1",
       "modelType": "group",
       "typeName": "ExportSpecifierOptional1",
@@ -5905,6 +5691,25 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "_export_specifiers",
+      "modelType": "separatedList",
+      "typeName": "ExportSpecifiers",
+      "factoryName": "exportSpecifiers",
+      "irKey": "exportSpecifiers",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "export_specifier"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "export_specifier"
+      ]
     },
     {
       "kind": "_export_statement_default",
@@ -6879,7 +6684,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_lhs_expression",
-              "parseKind": "for_header_group1",
+              "parseKind": "lhs_expression",
               "unresolved": true
             },
             {
@@ -7008,40 +6813,20 @@
       ]
     },
     {
-      "kind": "_formal_parameters_group1",
-      "modelType": "group",
-      "typeName": "FormalParametersGroup1",
-      "factoryName": "_formalParametersGroup1",
-      "irKey": "formalParametersGroup1",
+      "kind": "_formal_parameters_elements",
+      "modelType": "separatedList",
+      "typeName": "FormalParametersElements",
+      "factoryName": "formalParametersElements",
+      "irKey": "formalParametersElements",
       "hidden": false,
-      "name": "_formal_parameters_group1",
-      "fields": [
-        {
-          "name": "formal_parameter",
-          "propertyName": "formalParameters",
-          "paramName": "formalParameters",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_formal_parameter",
-              "parseKind": "_formal_parameter",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_formal_parameter"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "_formal_parameter"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "formal_parameter"
       ]
@@ -7287,6 +7072,25 @@
       "factoryFields": [
         "name",
         "alias"
+      ]
+    },
+    {
+      "kind": "_import_specifiers",
+      "modelType": "separatedList",
+      "typeName": "ImportSpecifiers",
+      "factoryName": "importSpecifiers",
+      "irKey": "importSpecifiers",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "import_specifier"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "import_specifier"
       ]
     },
     {
@@ -8003,7 +7807,7 @@
     {
       "kind": "_lhs_expression",
       "modelType": "supertype",
-      "typeName": "LhsExpression",
+      "typeName": "_LhsExpression",
       "irKey": "lhsExpression",
       "hidden": true,
       "subtypes": [
@@ -8157,25 +7961,6 @@
       "subtypes": [
         "identifier",
         "string"
-      ]
-    },
-    {
-      "kind": "_named_imports_group1",
-      "modelType": "separatedList",
-      "typeName": "NamedImportsGroup1",
-      "factoryName": "namedImportsGroup1",
-      "irKey": "namedImportsGroup1",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
-      "elementKinds": [
-        "import_specifier"
-      ],
-      "factoryShape": "elements",
-      "factoryFields": [
-        "import_specifier"
       ]
     },
     {
@@ -8632,7 +8417,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "accessibility_modifier",
       "factoryFields": [
         "accessibility_modifier"
       ]
@@ -8973,25 +8759,6 @@
       "hidden": false
     },
     {
-      "kind": "_tuple_type_group1",
-      "modelType": "separatedList",
-      "typeName": "TupleTypeGroup1",
-      "factoryName": "tupleTypeGroup1",
-      "irKey": "tupleTypeGroup1",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
-      "elementKinds": [
-        "_tuple_type_member"
-      ],
-      "factoryShape": "elements",
-      "factoryFields": [
-        "tuple_type_member"
-      ]
-    },
-    {
       "kind": "_tuple_type_member",
       "modelType": "supertype",
       "typeName": "TupleTypeMember",
@@ -9006,12 +8773,50 @@
       ]
     },
     {
+      "kind": "_tuple_type_members",
+      "modelType": "separatedList",
+      "typeName": "TupleTypeMembers",
+      "factoryName": "tupleTypeMembers",
+      "irKey": "tupleTypeMembers",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "_tuple_type_member"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "tuple_type_member"
+      ]
+    },
+    {
       "kind": "_type_identifier",
       "modelType": "pattern",
       "typeName": "TypeIdentifier",
       "factoryName": "typeIdentifier",
       "irKey": "typeIdentifier",
       "hidden": false
+    },
+    {
+      "kind": "_type_parameters_elements",
+      "modelType": "separatedList",
+      "typeName": "TypeParametersElements",
+      "factoryName": "typeParametersElements",
+      "irKey": "typeParametersElements",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "type_parameter"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "type_parameter"
+      ]
     },
     {
       "kind": "_type_query_call_expression",
@@ -9584,6 +9389,25 @@
       "factoryFields": [
         "object",
         "index"
+      ]
+    },
+    {
+      "kind": "_types",
+      "modelType": "separatedList",
+      "typeName": "Types",
+      "factoryName": "types",
+      "irKey": "types",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "type"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "type"
       ]
     },
     {
@@ -10897,7 +10721,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "asserts",
       "factoryFields": [
         "asserts"
       ]
@@ -10949,7 +10774,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_lhs_expression",
-              "parseKind": "for_header_group1",
+              "parseKind": "lhs_expression",
               "unresolved": true
             }
           ],
@@ -12892,7 +12717,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_semicolon",
       "factoryFields": [
         "semicolon"
       ]
@@ -13538,9 +13364,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "enum_body_group1",
-          "propertyName": "enumBodyGroup1",
-          "paramName": "enumBodyGroup1",
+          "name": "enum_body_elements",
+          "propertyName": "enumBodyElements",
+          "paramName": "enumBodyElements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -13548,23 +13374,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_enum_body_group1",
-              "parseKind": "enum_body_group1",
+              "name": "_enum_body_elements",
+              "parseKind": "enum_body_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_enum_body_group1"
+              "_enum_body_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_enum_body_elements",
       "factoryFields": [
-        "enum_body_group1"
+        "enum_body_elements"
       ]
     },
     {
@@ -13731,9 +13558,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "export_clause_group1",
-          "propertyName": "exportClauseGroup1",
-          "paramName": "exportClauseGroup1",
+          "name": "export_specifiers",
+          "propertyName": "exportSpecifiers",
+          "paramName": "exportSpecifiers",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -13741,23 +13568,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_export_clause_group1",
-              "parseKind": "export_clause_group1",
+              "name": "_export_specifiers",
+              "parseKind": "export_specifiers",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_export_clause_group1"
+              "_export_specifiers"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_export_specifiers",
       "factoryFields": [
-        "export_clause_group1"
+        "export_specifiers"
       ]
     },
     {
@@ -14265,7 +14093,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "statement_block",
       "factoryFields": [
         "body"
       ]
@@ -14318,25 +14147,6 @@
       "stampExpression": "\"for\" as const",
       "text": "for",
       "factoryShape": "text"
-    },
-    {
-      "kind": "for_header_group1",
-      "modelType": "supertype",
-      "typeName": "ForHeaderGroup1",
-      "irKey": "forHeaderGroup1",
-      "hidden": true,
-      "subtypes": [
-        "_destructuring_pattern",
-        "_identifier",
-        "_reserved_identifier",
-        "array_pattern",
-        "identifier",
-        "member_expression",
-        "non_null_expression",
-        "object_pattern",
-        "subscript_expression",
-        "undefined"
-      ]
     },
     {
       "kind": "for_in_statement",
@@ -14635,9 +14445,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "formal_parameters_group1",
-          "propertyName": "formalParametersGroup1",
-          "paramName": "formalParametersGroup1",
+          "name": "formal_parameters_elements",
+          "propertyName": "formalParametersElements",
+          "paramName": "formalParametersElements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -14645,23 +14455,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_formal_parameters_group1",
-              "parseKind": "formal_parameters_group1",
+              "name": "_formal_parameters_elements",
+              "parseKind": "formal_parameters_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_formal_parameters_group1"
+              "_formal_parameters_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_formal_parameters_elements",
       "factoryFields": [
-        "formal_parameters_group1"
+        "formal_parameters_elements"
       ]
     },
     {
@@ -17457,7 +17268,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_jsx_opening_element_content",
       "factoryFields": [
         "jsx_opening_element_content"
       ]
@@ -17495,7 +17307,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_jsx_opening_element_content",
       "factoryFields": [
         "jsx_opening_element_content"
       ]
@@ -17686,6 +17499,25 @@
         "kind",
         "declarators",
         "semicolon"
+      ]
+    },
+    {
+      "kind": "lhs_expression",
+      "modelType": "supertype",
+      "typeName": "LhsExpression",
+      "irKey": "lhsExpression",
+      "hidden": true,
+      "subtypes": [
+        "_destructuring_pattern",
+        "_identifier",
+        "_reserved_identifier",
+        "array_pattern",
+        "identifier",
+        "member_expression",
+        "non_null_expression",
+        "object_pattern",
+        "subscript_expression",
+        "undefined"
       ]
     },
     {
@@ -18831,9 +18663,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "named_imports_group1",
-          "propertyName": "namedImportsGroup1",
-          "paramName": "namedImportsGroup1",
+          "name": "import_specifiers",
+          "propertyName": "importSpecifiers",
+          "paramName": "importSpecifiers",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -18841,23 +18673,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_named_imports_group1",
-              "parseKind": "named_imports_group1",
+              "name": "_import_specifiers",
+              "parseKind": "import_specifiers",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_named_imports_group1"
+              "_import_specifiers"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_import_specifiers",
       "factoryFields": [
-        "named_imports_group1"
+        "import_specifiers"
       ]
     },
     {
@@ -18942,7 +18775,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "identifier",
       "factoryFields": [
         "identifier"
       ]
@@ -20323,12 +20157,12 @@
       "irKey": "primaryType",
       "hidden": true,
       "subtypes": [
-        "_type_identifier",
         "array_type",
         "conditional_type",
         "existential_type",
         "flow_maybe_type",
         "generic_type",
+        "identifier",
         "index_type_query",
         "intersection_type",
         "literal_type",
@@ -22580,9 +22414,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "tuple_type_group1",
-          "propertyName": "tupleTypeGroup1",
-          "paramName": "tupleTypeGroup1",
+          "name": "tuple_type_members",
+          "propertyName": "tupleTypeMembers",
+          "paramName": "tupleTypeMembers",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -22590,23 +22424,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_tuple_type_group1",
-              "parseKind": "tuple_type_group1",
+              "name": "_tuple_type_members",
+              "parseKind": "tuple_type_members",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_tuple_type_group1"
+              "_tuple_type_members"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_tuple_type_members",
       "factoryFields": [
-        "tuple_type_group1"
+        "tuple_type_members"
       ]
     },
     {
@@ -22782,33 +22617,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "type",
+          "name": "types",
           "propertyName": "types",
           "paramName": "types",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "type",
-              "parseKind": "type",
+              "multiplicity": "single",
+              "name": "_types",
+              "parseKind": "types",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "type"
+              "_types"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_types",
       "factoryFields": [
-        "type"
+        "types"
       ]
     },
     {
@@ -22991,33 +22827,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "type_parameter",
-          "propertyName": "typeParameters",
-          "paramName": "typeParameters",
+          "name": "type_parameters_elements",
+          "propertyName": "typeParametersElements",
+          "paramName": "typeParametersElements",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "type_parameter",
-              "parseKind": "type_parameter",
+              "multiplicity": "single",
+              "name": "_type_parameters_elements",
+              "parseKind": "type_parameters_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "type_parameter"
+              "_type_parameters_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_type_parameters_elements",
       "factoryFields": [
-        "type_parameter"
+        "type_parameters_elements"
       ]
     },
     {
@@ -23131,7 +22968,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "type_predicate",
       "factoryFields": [
         "type_predicate"
       ]

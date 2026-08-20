@@ -110,9 +110,8 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): S
 	// ordinary single-use fold case, e.g. `extends_clause` → `_extends_clause_single`.)
 	const twinned = new Set<string>();
 	// Hidden kinds named in a `supertype.subtypes` array (referenced by NAME,
-	// not a `symbol()` body ref — e.g. py `_key_value_pattern` ∈
-	// `_dict_pattern_kv.subtypes`). Folding such a kind dangles the supertype,
-	// which references it by name. Structural fact, not metadata (§D-2a).
+	// not a `symbol()` body ref). Folding such a kind dangles the supertype,
+	// which references it by name. Structural fact, not metadata.
 	const supertypeNamed = new Set<string>();
 
 	const isHidden = (name: string): boolean => name.startsWith('_');
@@ -415,6 +414,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		derivations: linked.derivations,
 		aliasedHiddenKinds: linked.aliasedHiddenKinds,
 		topLevelAliasBodies: linked.topLevelAliasBodies,
+		terminalAliasWireIds: linked.terminalAliasWireIds,
 		parentAliasedKinds: linked.parentAliasedKinds,
 		visibleAliasTargets: linked.visibleAliasTargets,
 		refineForms: linked.refineForms
@@ -477,6 +477,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		derivations: linked.derivations,
 		aliasedHiddenKinds: linked.aliasedHiddenKinds,
 		topLevelAliasBodies: linked.topLevelAliasBodies,
+		terminalAliasWireIds: linked.terminalAliasWireIds,
 		refineForms: linked.refineForms,
 		parentAliasedKinds: linked.parentAliasedKinds,
 		visibleAliasTargets: linked.visibleAliasTargets
@@ -943,10 +944,11 @@ export function rulesEqual(a: Rule<'link'>, b: Rule<'link'>): boolean {
 		case SYMBOL:
 			// Include aliasedFrom: two symbols with the same `.name` but
 			// different alias provenance point at the same kind but carry
-			// different drillAs metadata. Treating them as equal lets
-			// factoring collapse to one branch and silently drop the
-			// aliasSources entry from the other (see
-			// node-model.json5 diff for `_index_signature_colon.name`).
+			// different display-name facts (the per-value `parseKind` that
+			// feeds the node model's `fieldAliasMap`). Treating them as
+			// equal lets factoring collapse to one branch and silently
+			// drop the other branch's alias fact from the node model
+			// (e.g. `_index_signature_colon.name`).
 			return a.name === (b as typeof a).name && a.aliasedFrom === (b as typeof a).aliasedFrom;
 		case SEQ:
 			return (

@@ -15,14 +15,13 @@ import type {
 	Literal,
 	LiteralPattern,
 	NonDelimToken,
-	NonSpecialToken,
 	Path,
 	Pattern,
 	Statement,
 	TokenPattern,
-	TokenPatternGroup1,
 	Tokens,
 	UseClause,
+	_NonSpecialToken,
 	_Type
 } from './types.js';
 
@@ -226,35 +225,48 @@ export interface IsGuards {
 	rawStringLiteral<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RawStringLiteral };
 	lineComment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LineComment };
 	blockComment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BlockComment };
+	MacroRules<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroRules };
 	AttributeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributeGroup1 };
-	EnumVariantListGroup1<T extends { readonly $type: number }>(
+	EnumVariantListElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.EnumVariantListGroup1 };
-	FieldDeclarationListGroup1<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.EnumVariantListElements };
+	FieldDeclarationListElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.FieldDeclarationListGroup1 };
-	OrderedFieldDeclarationListGroup1<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.FieldDeclarationListElements };
+	OrderedFieldDeclarationListElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.OrderedFieldDeclarationListGroup1 };
-	UseListGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseListGroup1 };
-	ParametersGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ParametersGroup1 };
+	): v is T & { readonly $type: TSKindId.OrderedFieldDeclarationListElements };
+	WherePredicates<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WherePredicates };
+	TypeParametersElements<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.TypeParametersElements };
+	UseClauses<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseClauses };
+	ParametersElements<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.ParametersElements };
 	VisibilityModifierGroup1<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.VisibilityModifierGroup1 };
-	UseBoundsGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseBoundsGroup1 };
-	ArgumentsGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArgumentsGroup1 };
-	FieldInitializerListGroup1<T extends { readonly $type: number }>(
+	Lifetimes<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Lifetimes };
+	UseBoundsElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.FieldInitializerListGroup1 };
-	TuplePatternGroup1<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.UseBoundsElements };
+	TypeArgumentsElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.TuplePatternGroup1 };
-	SlicePatternGroup1<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.TypeArgumentsElements };
+	ArgumentsElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.SlicePatternGroup1 };
-	StructPatternGroup1<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.ArgumentsElements };
+	FieldInitializerListElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.StructPatternGroup1 };
+	): v is T & { readonly $type: TSKindId.FieldInitializerListElements };
+	TuplePatternElements<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.TuplePatternElements };
+	Patterns<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Patterns };
+	StructPatternElements<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.StructPatternElements };
 	ReferenceExpressionRawMut<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ReferenceExpressionRawMut };
@@ -301,7 +313,7 @@ export interface IsGuards {
 	declarationStatement(v: { readonly $type: string | number }): v is DeclarationStatement;
 	tokenPattern(v: { readonly $type: string | number }): v is TokenPattern;
 	tokens(v: { readonly $type: string | number }): v is Tokens;
-	nonSpecialToken(v: { readonly $type: string | number }): v is NonSpecialToken;
+	nonSpecialToken(v: { readonly $type: string | number }): v is _NonSpecialToken;
 	useClause(v: { readonly $type: string | number }): v is UseClause;
 	type(v: { readonly $type: string | number }): v is _Type;
 	expressionExceptRange(v: { readonly $type: string | number }): v is ExpressionExceptRange;
@@ -314,7 +326,6 @@ export interface IsGuards {
 	literal(v: { readonly $type: string | number }): v is Literal;
 	literalPattern(v: { readonly $type: string | number }): v is LiteralPattern;
 	path(v: { readonly $type: string | number }): v is Path;
-	tokenPatternGroup1(v: { readonly $type: string | number }): v is TokenPatternGroup1;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -477,27 +488,36 @@ export interface AssertGuards {
 	rawStringLiteral(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RawStringLiteral };
 	lineComment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LineComment };
 	blockComment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BlockComment };
+	MacroRules(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroRules };
 	AttributeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributeGroup1 };
-	EnumVariantListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumVariantListGroup1 };
-	FieldDeclarationListGroup1(v: {
+	EnumVariantListElements(v: {
 		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.FieldDeclarationListGroup1 };
-	OrderedFieldDeclarationListGroup1(v: {
+	}): asserts v is { readonly $type: TSKindId.EnumVariantListElements };
+	FieldDeclarationListElements(v: {
 		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.OrderedFieldDeclarationListGroup1 };
-	UseListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseListGroup1 };
-	ParametersGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParametersGroup1 };
+	}): asserts v is { readonly $type: TSKindId.FieldDeclarationListElements };
+	OrderedFieldDeclarationListElements(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.OrderedFieldDeclarationListElements };
+	WherePredicates(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WherePredicates };
+	TypeParametersElements(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.TypeParametersElements };
+	UseClauses(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseClauses };
+	ParametersElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParametersElements };
 	VisibilityModifierGroup1(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.VisibilityModifierGroup1 };
-	UseBoundsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseBoundsGroup1 };
-	ArgumentsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArgumentsGroup1 };
-	FieldInitializerListGroup1(v: {
+	Lifetimes(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Lifetimes };
+	UseBoundsElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseBoundsElements };
+	TypeArgumentsElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeArgumentsElements };
+	ArgumentsElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArgumentsElements };
+	FieldInitializerListElements(v: {
 		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.FieldInitializerListGroup1 };
-	TuplePatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TuplePatternGroup1 };
-	SlicePatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SlicePatternGroup1 };
-	StructPatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StructPatternGroup1 };
+	}): asserts v is { readonly $type: TSKindId.FieldInitializerListElements };
+	TuplePatternElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TuplePatternElements };
+	Patterns(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Patterns };
+	StructPatternElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StructPatternElements };
 	ReferenceExpressionRawMut(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ReferenceExpressionRawMut };
@@ -528,7 +548,7 @@ export interface AssertGuards {
 	declarationStatement(v: { readonly $type: string | number }): asserts v is DeclarationStatement;
 	tokenPattern(v: { readonly $type: string | number }): asserts v is TokenPattern;
 	tokens(v: { readonly $type: string | number }): asserts v is Tokens;
-	nonSpecialToken(v: { readonly $type: string | number }): asserts v is NonSpecialToken;
+	nonSpecialToken(v: { readonly $type: string | number }): asserts v is _NonSpecialToken;
 	useClause(v: { readonly $type: string | number }): asserts v is UseClause;
 	type(v: { readonly $type: string | number }): asserts v is _Type;
 	expressionExceptRange(v: { readonly $type: string | number }): asserts v is ExpressionExceptRange;
@@ -541,7 +561,6 @@ export interface AssertGuards {
 	literal(v: { readonly $type: string | number }): asserts v is Literal;
 	literalPattern(v: { readonly $type: string | number }): asserts v is LiteralPattern;
 	path(v: { readonly $type: string | number }): asserts v is Path;
-	tokenPatternGroup1(v: { readonly $type: string | number }): asserts v is TokenPatternGroup1;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -559,16 +578,14 @@ const _supertype_declarationStatement_ids = new Set<number>([
 	186, 240, 161, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
 ]);
 const _supertype_tokenPattern_ids = new Set<number>([
-	164, 166, 165, 136, 312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 343, 344
+	164, 166, 165, 136, 312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 347, 348
 ]);
 const _supertype_tokens_ids = new Set<number>([
-	168, 169, 136, 312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 343, 344
+	168, 169, 136, 312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 347, 348
 ]);
-const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 343, 344]);
+const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 347, 348]);
 const _supertype_useClause_ids = new Set<number>([133, 1, 136, 134, 135, 244, 209, 208, 207, 210]);
-const _supertype_type_ids = new Set<number>([
-	236, 233, 136, 234, 227, 246, 224, 225, 221, 223, 435, 240, 237, 229, 199
-]);
+const _supertype_type_ids = new Set<number>([236, 233, 136, 234, 227, 246, 224, 225, 221, 223, 1, 240, 237, 229, 199]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
 	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 123, 314, 121, 151, 1, 133, 244, 226, 288, 289, 259, 261,
 	240, 262, 285, 286, 287, 136, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
@@ -581,20 +598,17 @@ const _supertype_expressionEndingWithBlock_ids = new Set<number>([
 	290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
 ]);
 const _supertype_delimTokens_ids = new Set<number>([241]);
-const _supertype_nonDelimToken_ids = new Set<number>([312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 343, 344]);
+const _supertype_nonDelimToken_ids = new Set<number>([312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 347, 348]);
 const _supertype_condition_ids = new Set<number>([
 	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 123, 314, 121, 151, 1, 133, 244, 226, 288, 289, 259, 261,
 	240, 262, 285, 286, 287, 136, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247, 269, 270
 ]);
 const _supertype_pattern_ids = new Set<number>([
-	312, 313, 123, 314, 121, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 303, 304, 308, 281, 240, 346
+	312, 313, 123, 314, 121, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 303, 304, 308, 281, 240, 350
 ]);
 const _supertype_literal_ids = new Set<number>([312, 313, 123, 314, 121, 151]);
 const _supertype_literalPattern_ids = new Set<number>([312, 313, 123, 314, 121, 151, 311]);
 const _supertype_path_ids = new Set<number>([133, 1, 136, 134, 135, 244]);
-const _supertype_tokenPatternGroup1_ids = new Set<number>([
-	312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 343, 344
-]);
 
 const _kindIdByKind = new Map<string, number>([
 	['identifier', TSKindId.Identifier],
@@ -647,7 +661,9 @@ const _kindIdByKind = new Map<string, number>([
 	['raw', TSKindId.Raw],
 	['_line_comment_content', TSKindId.LineCommentContent],
 	['string_content', TSKindId.StringContent],
+	['_raw_string_literal_start', TSKindId.RawStringLiteralStart],
 	['raw_string_literal_content', TSKindId.RawStringLiteralContent],
+	['_raw_string_literal_end', TSKindId.RawStringLiteralEnd],
 	['float_literal', TSKindId.FloatLiteral],
 	['_line_doc_content', TSKindId.LineDocContent],
 	['_error_sentinel', TSKindId.ErrorSentinel],
@@ -797,21 +813,25 @@ const _kindIdByKind = new Map<string, number>([
 	['block_comment', TSKindId.BlockComment],
 	['_kw_ref_marker', TSKindId.KwRefMarker],
 	['_kw_move_marker', TSKindId.KwMoveMarker],
+	['_macro_rules', TSKindId.MacroRules],
 	['_attribute_group1', TSKindId.AttributeGroup1],
-	['_enum_variant_list_group1', TSKindId.EnumVariantListGroup1],
-	['_field_declaration_list_group1', TSKindId.FieldDeclarationListGroup1],
-	['_ordered_field_declaration_list_group1', TSKindId.OrderedFieldDeclarationListGroup1],
-	['_where_clause_group1', TSKindId.WhereClauseGroup1],
-	['_use_list_group1', TSKindId.UseListGroup1],
-	['_parameters_group1', TSKindId.ParametersGroup1],
+	['_enum_variant_list_elements', TSKindId.EnumVariantListElements],
+	['_field_declaration_list_elements', TSKindId.FieldDeclarationListElements],
+	['_ordered_field_declaration_list_elements', TSKindId.OrderedFieldDeclarationListElements],
+	['_where_predicates', TSKindId.WherePredicates],
+	['_type_parameters_elements', TSKindId.TypeParametersElements],
+	['_use_clauses', TSKindId.UseClauses],
+	['_parameters_elements', TSKindId.ParametersElements],
 	['_visibility_modifier_group1', TSKindId.VisibilityModifierGroup1],
-	['_use_bounds_group1', TSKindId.UseBoundsGroup1],
-	['_arguments_group1', TSKindId.ArgumentsGroup1],
+	['_lifetimes', TSKindId.Lifetimes],
+	['_use_bounds_elements', TSKindId.UseBoundsElements],
+	['_type_arguments_elements', TSKindId.TypeArgumentsElements],
+	['_arguments_elements', TSKindId.ArgumentsElements],
 	['_array_expression_group1', TSKindId.ArrayExpressionGroup1],
-	['_field_initializer_list_group1', TSKindId.FieldInitializerListGroup1],
-	['_tuple_pattern_group1', TSKindId.TuplePatternGroup1],
-	['_slice_pattern_group1', TSKindId.SlicePatternGroup1],
-	['_struct_pattern_group1', TSKindId.StructPatternGroup1],
+	['_field_initializer_list_elements', TSKindId.FieldInitializerListElements],
+	['_tuple_pattern_elements', TSKindId.TuplePatternElements],
+	['_patterns', TSKindId.Patterns],
+	['_struct_pattern_elements', TSKindId.StructPatternElements],
 	['_range_pattern_group2', TSKindId.RangePatternGroup2],
 	['_block_comment_group1', TSKindId.BlockCommentGroup1],
 	['_token_tree_punctuation', TSKindId.TokenTreePunctuation],
@@ -1011,19 +1031,24 @@ export const is = {
 	rawStringLiteral: _g(TSKindId.RawStringLiteral),
 	lineComment: _g(TSKindId.LineComment),
 	blockComment: _g(TSKindId.BlockComment),
+	MacroRules: _g(TSKindId.MacroRules),
 	AttributeGroup1: _g(TSKindId.AttributeGroup1),
-	EnumVariantListGroup1: _g(TSKindId.EnumVariantListGroup1),
-	FieldDeclarationListGroup1: _g(TSKindId.FieldDeclarationListGroup1),
-	OrderedFieldDeclarationListGroup1: _g(TSKindId.OrderedFieldDeclarationListGroup1),
-	UseListGroup1: _g(TSKindId.UseListGroup1),
-	ParametersGroup1: _g(TSKindId.ParametersGroup1),
+	EnumVariantListElements: _g(TSKindId.EnumVariantListElements),
+	FieldDeclarationListElements: _g(TSKindId.FieldDeclarationListElements),
+	OrderedFieldDeclarationListElements: _g(TSKindId.OrderedFieldDeclarationListElements),
+	WherePredicates: _g(TSKindId.WherePredicates),
+	TypeParametersElements: _g(TSKindId.TypeParametersElements),
+	UseClauses: _g(TSKindId.UseClauses),
+	ParametersElements: _g(TSKindId.ParametersElements),
 	VisibilityModifierGroup1: _g(TSKindId.VisibilityModifierGroup1),
-	UseBoundsGroup1: _g(TSKindId.UseBoundsGroup1),
-	ArgumentsGroup1: _g(TSKindId.ArgumentsGroup1),
-	FieldInitializerListGroup1: _g(TSKindId.FieldInitializerListGroup1),
-	TuplePatternGroup1: _g(TSKindId.TuplePatternGroup1),
-	SlicePatternGroup1: _g(TSKindId.SlicePatternGroup1),
-	StructPatternGroup1: _g(TSKindId.StructPatternGroup1),
+	Lifetimes: _g(TSKindId.Lifetimes),
+	UseBoundsElements: _g(TSKindId.UseBoundsElements),
+	TypeArgumentsElements: _g(TSKindId.TypeArgumentsElements),
+	ArgumentsElements: _g(TSKindId.ArgumentsElements),
+	FieldInitializerListElements: _g(TSKindId.FieldInitializerListElements),
+	TuplePatternElements: _g(TSKindId.TuplePatternElements),
+	Patterns: _g(TSKindId.Patterns),
+	StructPatternElements: _g(TSKindId.StructPatternElements),
 	ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
 	ImplItemBody: _g(TSKindId.ImplItemBody),
 	ClosureExpressionExpr: _g(TSKindId.ClosureExpressionExpr),
@@ -1059,8 +1084,7 @@ export const is = {
 	pattern: _sg(_supertype_pattern_ids),
 	literal: _sg(_supertype_literal_ids),
 	literalPattern: _sg(_supertype_literalPattern_ids),
-	path: _sg(_supertype_path_ids),
-	tokenPatternGroup1: _sg(_supertype_tokenPatternGroup1_ids)
+	path: _sg(_supertype_path_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -1229,22 +1253,33 @@ export const assert = {
 	rawStringLiteral: _makeAssert('rawStringLiteral', is.rawStringLiteral as _AnyGuard),
 	lineComment: _makeAssert('lineComment', is.lineComment as _AnyGuard),
 	blockComment: _makeAssert('blockComment', is.blockComment as _AnyGuard),
+	MacroRules: _makeAssert('MacroRules', is.MacroRules as _AnyGuard),
 	AttributeGroup1: _makeAssert('AttributeGroup1', is.AttributeGroup1 as _AnyGuard),
-	EnumVariantListGroup1: _makeAssert('EnumVariantListGroup1', is.EnumVariantListGroup1 as _AnyGuard),
-	FieldDeclarationListGroup1: _makeAssert('FieldDeclarationListGroup1', is.FieldDeclarationListGroup1 as _AnyGuard),
-	OrderedFieldDeclarationListGroup1: _makeAssert(
-		'OrderedFieldDeclarationListGroup1',
-		is.OrderedFieldDeclarationListGroup1 as _AnyGuard
+	EnumVariantListElements: _makeAssert('EnumVariantListElements', is.EnumVariantListElements as _AnyGuard),
+	FieldDeclarationListElements: _makeAssert(
+		'FieldDeclarationListElements',
+		is.FieldDeclarationListElements as _AnyGuard
 	),
-	UseListGroup1: _makeAssert('UseListGroup1', is.UseListGroup1 as _AnyGuard),
-	ParametersGroup1: _makeAssert('ParametersGroup1', is.ParametersGroup1 as _AnyGuard),
+	OrderedFieldDeclarationListElements: _makeAssert(
+		'OrderedFieldDeclarationListElements',
+		is.OrderedFieldDeclarationListElements as _AnyGuard
+	),
+	WherePredicates: _makeAssert('WherePredicates', is.WherePredicates as _AnyGuard),
+	TypeParametersElements: _makeAssert('TypeParametersElements', is.TypeParametersElements as _AnyGuard),
+	UseClauses: _makeAssert('UseClauses', is.UseClauses as _AnyGuard),
+	ParametersElements: _makeAssert('ParametersElements', is.ParametersElements as _AnyGuard),
 	VisibilityModifierGroup1: _makeAssert('VisibilityModifierGroup1', is.VisibilityModifierGroup1 as _AnyGuard),
-	UseBoundsGroup1: _makeAssert('UseBoundsGroup1', is.UseBoundsGroup1 as _AnyGuard),
-	ArgumentsGroup1: _makeAssert('ArgumentsGroup1', is.ArgumentsGroup1 as _AnyGuard),
-	FieldInitializerListGroup1: _makeAssert('FieldInitializerListGroup1', is.FieldInitializerListGroup1 as _AnyGuard),
-	TuplePatternGroup1: _makeAssert('TuplePatternGroup1', is.TuplePatternGroup1 as _AnyGuard),
-	SlicePatternGroup1: _makeAssert('SlicePatternGroup1', is.SlicePatternGroup1 as _AnyGuard),
-	StructPatternGroup1: _makeAssert('StructPatternGroup1', is.StructPatternGroup1 as _AnyGuard),
+	Lifetimes: _makeAssert('Lifetimes', is.Lifetimes as _AnyGuard),
+	UseBoundsElements: _makeAssert('UseBoundsElements', is.UseBoundsElements as _AnyGuard),
+	TypeArgumentsElements: _makeAssert('TypeArgumentsElements', is.TypeArgumentsElements as _AnyGuard),
+	ArgumentsElements: _makeAssert('ArgumentsElements', is.ArgumentsElements as _AnyGuard),
+	FieldInitializerListElements: _makeAssert(
+		'FieldInitializerListElements',
+		is.FieldInitializerListElements as _AnyGuard
+	),
+	TuplePatternElements: _makeAssert('TuplePatternElements', is.TuplePatternElements as _AnyGuard),
+	Patterns: _makeAssert('Patterns', is.Patterns as _AnyGuard),
+	StructPatternElements: _makeAssert('StructPatternElements', is.StructPatternElements as _AnyGuard),
 	ReferenceExpressionRawMut: _makeAssert('ReferenceExpressionRawMut', is.ReferenceExpressionRawMut as _AnyGuard),
 	ImplItemBody: _makeAssert('ImplItemBody', is.ImplItemBody as _AnyGuard),
 	ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),
@@ -1277,8 +1312,7 @@ export const assert = {
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
 	literal: _makeAssert('literal', is.literal as _AnyGuard),
 	literalPattern: _makeAssert('literalPattern', is.literalPattern as _AnyGuard),
-	path: _makeAssert('path', is.path as _AnyGuard),
-	tokenPatternGroup1: _makeAssert('tokenPatternGroup1', is.tokenPatternGroup1 as _AnyGuard)
+	path: _makeAssert('path', is.path as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

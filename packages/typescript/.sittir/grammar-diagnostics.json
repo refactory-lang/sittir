@@ -28,8 +28,8 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",
-    "ownerKind": "_enum_body_group1",
-    "message": "[collect-slots] kind '_enum_body_group1': choice rule:_enum_body_group1:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
+    "ownerKind": "_enum_body_elements",
+    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -170,6 +170,22 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "typescript",
+    "ownerKind": "_lhs_expression",
+    "message": "[assemble] typeName collision: kind '_lhs_expression' renamed 'LhsExpression' → '_LhsExpression' (visible sibling(s): 'lhs_expression')",
+    "canProceed": true,
+    "details": {
+      "typeName": "LhsExpression",
+      "newType": "_LhsExpression",
+      "visibleKinds": [
+        "lhs_expression"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
     "ownerKind": "_number",
     "message": "[assemble] typeName collision: kind '_number' renamed 'Number' → '_Number' (visible sibling(s): 'number')",
     "canProceed": true,
@@ -257,7 +273,7 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "39 referenced kind(s) resolved no parser kindId",
+    "message": "38 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -297,7 +313,6 @@
         "jsx_opening_element_content",
         "jsx_self_closing_element",
         "jsx_start_opening_element_group1",
-        "statement_identifier_group1",
         "unescaped_double_jsx_string_fragment",
         "unescaped_single_jsx_string_fragment"
       ]
@@ -368,7 +383,7 @@
   },
   {
     "code": "kindid-vaporized-symbols",
-    "message": "17 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
+    "message": "16 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -387,7 +402,6 @@
         "jsx_opening_element_content",
         "jsx_self_closing_element",
         "jsx_start_opening_element_group1",
-        "statement_identifier_group1",
         "unescaped_double_jsx_string_fragment",
         "unescaped_single_jsx_string_fragment"
       ]

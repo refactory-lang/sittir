@@ -84,6 +84,9 @@ interface SerializedNodeBase {
 	isParameterless?: boolean;
 	stampExpression?: string;
 	factoryShape?: FactoryShape;
+	/** Companion fact to factoryShape 'forwarded': the kind whose constructor
+	 *  this kind's factory forwards (see buildFactoryMap.forwardsTo). */
+	forwardsTo?: string;
 	factoryFields?: string[];
 }
 
@@ -188,6 +191,8 @@ export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
 		const serialized = serializeNode(node);
 		const factoryShape = factoryData.factoryShapes[kind];
 		if (factoryShape !== undefined) serialized.factoryShape = factoryShape;
+		const forwardsTo = factoryData.forwardsTo[kind];
+		if (forwardsTo !== undefined) serialized.forwardsTo = forwardsTo;
 		const factoryFields = factoryData.factoryFields[kind];
 		if (factoryFields !== undefined) serialized.factoryFields = [...factoryFields];
 		nodes.push(serialized);

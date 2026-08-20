@@ -348,8 +348,33 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		complexAliasTargetHidden.size > 0 ? complexAliasTargetHidden : undefined
 	);
 	const stampMisses: KindIdStampMisses = { symbols: new Set(), literals: new Set() };
-	canonicalizeCatalogLiteralRefs(rules, kindEntries, stampMisses);
-	canonicalizeCatalogLiteralRefsInMap(topLevelAliasBodies, kindEntries, stampMisses);
+	// Occurrence identity for alias-bodied mints: a ref to a rule whose
+	// entire body is `alias($.source, $.display)` is, in grammar truth, an
+	// occurrence of `source` — the parser keeps `source`'s symbol as the
+	// node's grammar kind, and the wire ($type = grammar symbol) delivers
+	// that id. Map mint name -> alias source name so ref stamping can chase
+	// it and populate `aliasedFrom`/`aliasedFromId` (the storage-side facts)
+	// the same way a directly-aliased occurrence gets them.
+	const aliasBodySourceNames = new Map<string, string>();
+	for (const [name, rawRule] of Object.entries(raw.rules)) {
+		if (!name.startsWith('_')) continue;
+		const content = extractTopLevelNamedAliasContent(rawRule as Rule<'link'>);
+		if (!content) continue;
+		const source = extractAliasedFromName(content, linkCtx.supertypes);
+		if (source !== undefined && source !== name) aliasBodySourceNames.set(name, source);
+	}
+	// Two bags: the linked rules carry the link-distributed form (literal
+	// SYMBOLs with both ids stamped), while `alias(choice('tok', …), $.kind)`
+	// shapes survive only in the RAW rules — link collapses those arms into
+	// plain refs of the alias target (e.g. `keyword_identifier` classifying
+	// as a supertype of two bare `identifier` refs), discarding the texts.
+	const stampCtx: StampKindIdsCtx = { kindEntries, misses: stampMisses, aliasBodySourceNames };
+	canonicalizeCatalogLiteralRefs(rules, stampCtx);
+	canonicalizeCatalogLiteralRefsInMap(topLevelAliasBodies, stampCtx);
+	const terminalAliasWireIds = collectTerminalAliasWireIds(
+		[rules, raw.rules as unknown as Record<string, Rule<'link'>>],
+		stampCtx
+	);
 	// `raw.inline` (evaluate's own DSL-level record) drops inherited
 	// base-grammar inline entries — the parser's actual compiled inline set
 	// lives in grammar.json (see generate.ts's own NormalizeCtx construction,
@@ -388,6 +413,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		derivations,
 		aliasedHiddenKinds,
 		topLevelAliasBodies,
+		terminalAliasWireIds: terminalAliasWireIds.size > 0 ? terminalAliasWireIds : undefined,
 		refineForms: raw.refineForms,
 		parentAliasedKinds,
 		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined
@@ -424,39 +450,44 @@ export interface KindIdStampMisses {
 	readonly literals: Set<string>;
 }
 
-function canonicalizeCatalogLiteralRefs(
-	rules: Record<string, Rule<'link'>>,
-	kindEntries: readonly GeneratedKindEntry[],
-	misses: KindIdStampMisses
-): void {
+export interface StampKindIdsCtx {
+	readonly kindEntries: readonly GeneratedKindEntry[];
+	readonly misses: KindIdStampMisses;
+	readonly aliasBodySourceNames?: ReadonlyMap<string, string>;
+}
+
+function canonicalizeCatalogLiteralRefs(rules: Record<string, Rule<'link'>>, ctx: StampKindIdsCtx): void {
 	for (const [name, rule] of Object.entries(rules)) {
-		rules[name] = canonicalizeRuleLiterals(rule, kindEntries, false, misses);
+		rules[name] = canonicalizeRuleLiterals(rule, ctx.kindEntries, false, ctx.misses, true, ctx.aliasBodySourceNames);
 	}
 }
 
-function canonicalizeCatalogLiteralRefsInMap(
-	rules: Map<string, Rule<'link'>>,
-	kindEntries: readonly GeneratedKindEntry[],
-	misses: KindIdStampMisses
-): void {
+function canonicalizeCatalogLiteralRefsInMap(rules: Map<string, Rule<'link'>>, ctx: StampKindIdsCtx): void {
 	for (const [name, rule] of rules.entries()) {
-		rules.set(name, canonicalizeRuleLiterals(rule, kindEntries, false, misses));
+		rules.set(name, canonicalizeRuleLiterals(rule, ctx.kindEntries, false, ctx.misses, true, ctx.aliasBodySourceNames));
 	}
 }
 
-function stampSymbolRefKindIds(
-	rule: SymbolRule<'link'>,
-	kindEntries: readonly GeneratedKindEntry[],
-	misses: KindIdStampMisses
-): SymbolRule<'link'> {
+function stampSymbolRefKindIds(rule: SymbolRule<'link'>, ctx: StampKindIdsCtx): SymbolRule<'link'> {
+	const { kindEntries, misses, aliasBodySourceNames } = ctx;
 	// Link-minted literal symbol: its value IS the literal text, so the
 	// id resolves through the literal chain (anon token outranks a
 	// same-spelled NAMED rule) — same resolution deriveValuesForRule
 	// applies to these.
 	if (rule.literal !== undefined) {
-		// An alias-of-terminal mint stamps its kindId from the alias target
-		// name (a NAMED parse kind); that stamp wins over text resolution.
-		if (rule.kindId !== undefined) return rule;
+		if (rule.kindId !== undefined) {
+			// Alias-of-terminal mint: `kindId` (stamped at mint from the alias
+			// target name) is the DISPLAY symbol. The literal's own anon token
+			// is the grammar symbol — the id the wire actually delivers — so
+			// it stamps as the storage-side fact.
+			if (rule.aliasedFromId !== undefined) return rule;
+			const entry = findEntryForLiteralText(kindEntries, rule.literal);
+			if (entry === undefined) {
+				misses.literals.add(rule.literal);
+				return rule;
+			}
+			return { ...rule, aliasedFromId: entry.parseId ?? entry.id };
+		}
 		const entry = findEntryForLiteralText(kindEntries, rule.literal);
 		if (entry === undefined) {
 			misses.literals.add(rule.literal);
@@ -465,16 +496,32 @@ function stampSymbolRefKindIds(
 		return { ...rule, kindId: entry.parseId ?? entry.id };
 	}
 	// kindId is always the id of this occurrence's own name; aliasedFromId
-	// is a SEPARATE fact that exists only when aliasedFrom is present — no
-	// fallback between the two (that fallback is a consumer's job:
-	// aliasedFromId ?? kindId for whoever needs the effective storage id).
+	// is the storage-side fact, present whenever the occurrence is aliased —
+	// either directly (`aliasedFrom` stamped at the reference site) or
+	// through an alias-bodied mint (a target rule whose whole body is
+	// `alias($.source, …)`: the occurrence is, in grammar truth, `source`,
+	// and the wire delivers `source`'s id). No fallback between the two
+	// here — that is a consumer's job (aliasedFromId ?? kindId for whoever
+	// needs the effective storage id).
 	const nameEntry = findEntryForKindName(kindEntries, rule.name);
 	if (nameEntry === undefined) misses.symbols.add(rule.name);
+	let aliasedFrom = rule.aliasedFrom;
+	if (aliasedFrom === undefined && aliasBodySourceNames !== undefined) {
+		let current = rule.name;
+		const seen = new Set([current]);
+		for (;;) {
+			const next = aliasBodySourceNames.get(current);
+			if (next === undefined || seen.has(next)) break;
+			seen.add(next);
+			current = next;
+		}
+		if (current !== rule.name) aliasedFrom = current;
+	}
 	let aliasedFromId: number | undefined;
-	if (rule.aliasedFrom !== undefined) {
-		const aliasedFromEntry = findEntryForKindName(kindEntries, rule.aliasedFrom);
+	if (aliasedFrom !== undefined) {
+		const aliasedFromEntry = findEntryForKindName(kindEntries, aliasedFrom);
 		if (aliasedFromEntry === undefined) {
-			misses.symbols.add(rule.aliasedFrom);
+			misses.symbols.add(aliasedFrom);
 		} else {
 			aliasedFromId = aliasedFromEntry.id;
 		}
@@ -483,6 +530,7 @@ function stampSymbolRefKindIds(
 	return {
 		...rule,
 		kindId: nameEntry?.parseId ?? nameEntry?.id,
+		aliasedFrom,
 		aliasedFromId
 	};
 }
@@ -492,19 +540,22 @@ export function canonicalizeRuleLiterals(
 	kindEntries: readonly GeneratedKindEntry[],
 	allowLiteralRewrite: boolean,
 	misses: KindIdStampMisses,
-	stampable = true
+	stampable = true,
+	aliasBodySourceNames?: ReadonlyMap<string, string>
 ): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ:
 			return {
 				...rule,
-				members: rule.members.map((member) => canonicalizeRuleLiterals(member, kindEntries, false, misses, stampable))
+				members: rule.members.map((member) =>
+					canonicalizeRuleLiterals(member, kindEntries, false, misses, stampable, aliasBodySourceNames)
+				)
 			};
 		case CHOICE:
 			return {
 				...rule,
 				members: rule.members.map((member) =>
-					canonicalizeRuleLiterals(member, kindEntries, allowLiteralRewrite, misses, stampable)
+					canonicalizeRuleLiterals(member, kindEntries, allowLiteralRewrite, misses, stampable, aliasBodySourceNames)
 				)
 			};
 		case OPTIONAL:
@@ -514,27 +565,46 @@ export function canonicalizeRuleLiterals(
 		case GROUP:
 			return {
 				...rule,
-				content: canonicalizeRuleLiterals(rule.content, kindEntries, allowLiteralRewrite, misses, stampable)
+				content: canonicalizeRuleLiterals(
+					rule.content,
+					kindEntries,
+					allowLiteralRewrite,
+					misses,
+					stampable,
+					aliasBodySourceNames
+				)
 			};
 		case TOKEN:
 			return {
 				...rule,
-				content: canonicalizeRuleLiterals(rule.content, kindEntries, allowLiteralRewrite, misses, false)
+				content: canonicalizeRuleLiterals(
+					rule.content,
+					kindEntries,
+					allowLiteralRewrite,
+					misses,
+					false,
+					aliasBodySourceNames
+				)
 			};
 		case FIELD:
 			return {
 				...rule,
-				content: canonicalizeRuleLiterals(rule.content, kindEntries, true, misses, stampable)
+				content: canonicalizeRuleLiterals(rule.content, kindEntries, true, misses, stampable, aliasBodySourceNames)
 			};
 		case SYMBOL:
-			return !stampable || kindEntries.length === 0 ? rule : stampSymbolRefKindIds(rule, kindEntries, misses);
+			return !stampable || kindEntries.length === 0
+				? rule
+				: stampSymbolRefKindIds(rule, { kindEntries, misses, aliasBodySourceNames });
 		case SUPERTYPE:
 			// Each subtype ref stamps exactly like a top-level SYMBOL occurrence —
 			// same catalog, same helper — since collectSubtypeRefs mints these
 			// before this pass runs and doesn't stamp them itself.
 			return !stampable || kindEntries.length === 0
 				? rule
-				: { ...rule, subtypes: rule.subtypes.map((s) => stampSymbolRefKindIds(s, kindEntries, misses)) };
+				: {
+						...rule,
+						subtypes: rule.subtypes.map((s) => stampSymbolRefKindIds(s, { kindEntries, misses, aliasBodySourceNames }))
+					};
 		case STRING: {
 			if (allowLiteralRewrite) {
 				const entry = findEntryForLiteralText(kindEntries, rule.value);
@@ -975,6 +1045,81 @@ function collectTopLevelAliasBodies(
 		const resolvedContent = resolveRule(content, ctx, name);
 		out.set(name, dereferenceTopLevelAliasBody(resolvedContent, ctx, resolvedRules, new Set()));
 	}
+	return out;
+}
+
+/**
+ * Kind name → anon-token wire ids from `alias('tok', $.kind)` occurrences
+ * anywhere in the linked rule tree. `stampSymbolRefKindIds` records each
+ * such occurrence as a literal SYMBOL with `kindId` (the alias-target
+ * display symbol) plus `aliasedFromId` (the token's own grammar symbol —
+ * the id the wire delivers); this collects those stamps kind-wide so
+ * decode arms can accept the token ids even where the occurrence itself
+ * is swallowed by supertype expansion (e.g. python's inlined
+ * `keyword_identifier` body: `match`-as-identifier never appears as a
+ * slot value, only as the `identifier` subtype). Registered under both
+ * kind spellings (occurrence name + its `_`-toggled twin) so lookups by
+ * either surface find it.
+ */
+function collectTerminalAliasWireIds(
+	ruleBags: readonly Record<string, Rule<'link'>>[],
+	ctx: StampKindIdsCtx
+): Map<string, readonly number[]> {
+	const { kindEntries } = ctx;
+	const out = new Map<string, number[]>();
+	const add = (kind: string, id: number): void => {
+		const ids = out.get(kind);
+		if (ids === undefined) out.set(kind, [id]);
+		else if (!ids.includes(id)) ids.push(id);
+	};
+	const addBothSpellings = (kind: string, id: number): void => {
+		add(kind, id);
+		add(kind.startsWith('_') ? kind.replace(/^_+/, '') : `_${kind}`, id);
+	};
+	// Terminal texts under a rule shell — a bare STRING, or a CHOICE of
+	// STRINGs (through PREC/TOKEN wrappers), the two shapes `alias(tok,
+	// $.kind)` declarations take. Anything else (a SYMBOL, a SEQ) means the
+	// alias source isn't a terminal set — not this fact.
+	const terminalTexts = (rule: Rule<'link'>): string[] | undefined => {
+		if (rule.type === STRING) return [rule.value];
+		if (rule.type === CHOICE) {
+			const texts: string[] = [];
+			for (const m of (rule as { members: Rule<'link'>[] }).members) {
+				const inner = terminalTexts(m);
+				if (inner === undefined) return undefined;
+				texts.push(...inner);
+			}
+			return texts;
+		}
+		const content = (rule as { content?: Rule<'link'> }).content;
+		if (content !== undefined) return terminalTexts(content);
+		return undefined;
+	};
+	const visit = (rule: Rule<'link'>): void => {
+		if (rule.type === SYMBOL) {
+			// Link-distributed form: the alias-of-terminal occurrence already
+			// minted as a literal SYMBOL carrying both ids.
+			if (rule.literal !== undefined && rule.kindId !== undefined && rule.aliasedFromId !== undefined) {
+				addBothSpellings(rule.name, rule.aliasedFromId);
+			}
+			return;
+		}
+		if (rule.type === ALIAS && rule.named) {
+			const texts = terminalTexts(rule.content);
+			if (texts !== undefined) {
+				for (const text of texts) {
+					const entry = findEntryForLiteralText(kindEntries, text);
+					if (entry !== undefined) addBothSpellings(rule.value, entry.parseId ?? entry.id);
+				}
+				return;
+			}
+		}
+		const members = (rule as { members?: Rule<'link'>[] }).members;
+		if (Array.isArray(members)) for (const m of members) visit(m);
+		const content = (rule as { content?: Rule<'link'> }).content;
+		if (content !== undefined) visit(content);
+	};
+	for (const bag of ruleBags) for (const rule of Object.values(bag)) visit(rule);
 	return out;
 }
 
@@ -2182,7 +2327,7 @@ export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
 	// prefix separator becomes a between-separator once the head merges into
 	// the same list. Clear the positional `leading: 'mandatory'` the inner
 	// sep-first repeat lift stamped; only a HEADLESS sep-first repeat (no
-	// absorbable head in its rule, e.g. python `_expression_list_group1`)
+	// absorbable head in its rule, e.g. python `_expression_list_expressions`)
 	// keeps it and renders the flank.
 	// Case 1: [x, repeat(sep, x)]
 	if (members.length === 2 && repeatIdx === 1 && matchesElem(members[0]!)) {
@@ -2287,7 +2432,7 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 				// captures no leading anon (no separator precedes its first
 				// element) and the filter degrades to a plain between-join,
 				// while a HEADLESS group (head lives outside the group, e.g.
-				// python `_expression_list_group1`) captures its leading ','
+				// python `_expression_list_expressions`) captures its leading ','
 				// and renders `,2,3` — previously these reversed to `2,3,`
 				// because only the trailing flank was ever stamped.
 				return {

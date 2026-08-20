@@ -20,19 +20,7 @@ const enrichedBase = enrich(base, {
 	// dropping every gap. None of enrich's other passes touch this rule's
 	// shape anyway, so exempting it from all of them is a no-op beyond the
 	// one pass that matters here.
-	//
-	// `_dict_pattern_group2`'s leading and repeated occurrences are the
-	// SAME `choice($._key_value_pattern, $.splat_pattern)` body (tree-sitter's
-	// `commaSep1` passes one shared choice object to both positions), so
-	// `fieldSeparatedListElements` fields both as `element` — but `dict_pattern`'s
-	// own override (`'1/0/0/0': 'kv'`) already targets the leading occurrence
-	// to mint the visible `dict_pattern_kv` kind. Auto-fielding it first left
-	// the override's positional path pointing at an already-FIELD-wrapped
-	// node instead of the bare choice it expects — the override silently no
-	// longer applies, and `dict_pattern_kv` stops existing as a distinct
-	// exported kind. Same override-collision class found in rust's
-	// `tuple_type`/`trait_bounds` and typescript's `lexical_declaration`.
-	skip: ['string_content', '_dict_pattern_group2']
+	skip: ['string_content']
 });
 export default grammar(
 	enrichedBase,
@@ -81,8 +69,6 @@ export default grammar(
 				// union-slot routing, which has no notion of "gate an anonymous
 				// seq arm with no discriminating field of its own."
 				_suite: { 1: 'block_with_indent' },
-
-				dict_pattern: { '1/0/0/0': 'kv' },
 
 				_simple_pattern: { '11': 'negative' },
 
@@ -144,6 +130,17 @@ export default grammar(
 					4: field('alternative')
 				},
 
+				// Arm 11 of `_simple_pattern` is the negative-literal shape
+				// (`seq(optional('-'), choice(integer, float))`, minted as
+				// `simple_pattern_negative`): the optional `-` is an anonymous
+				// token enrich's optional-keyword promotion skips (not
+				// word-shaped), so unfielded it lands in `$other` and never
+				// renders. Fielding it mints `_kw_sign` — the same mechanism
+				// `complex_pattern`'s leading `-` uses via its position-0 field.
+				_simple_pattern: {
+					'11/0': field('sign')
+				},
+
 				constrained_type: {
 					0: field('base_type'),
 					2: field('constraint')
@@ -166,7 +163,8 @@ export default grammar(
 				},
 
 				for_in_clause: {
-					'0/0': field('async_marker')
+					'0/0': field('async_marker'),
+					'5/0': field('comma')
 				},
 
 				finally_clause: {
@@ -263,10 +261,15 @@ export default grammar(
 				set: ($) => seq('{', alias($._collection_elements, $.element_list), '}'),
 				tuple: ($) => seq('(', optional(alias($._collection_elements, $.element_list)), ')'),
 
+				// Reference the shared case-pattern list kind (the enrich mint
+				// serving _list_pattern/_tuple_pattern/class_pattern) instead of
+				// respelling the list inline — the visible list node carries the
+				// per-instance trailing-separator fact; an inline spelling would
+				// keep per-field flank capture alive on these two kinds alone.
 				case_tuple_pattern: ($) =>
-					seq('(', optional(seq($.case_pattern, repeat(seq(',', $.case_pattern)), optional(','))), ')'),
+					seq('(', optional(alias($._list_pattern_case_patterns, $.list_pattern_case_patterns)), ')'),
 				case_list_pattern: ($) =>
-					seq('[', optional(seq($.case_pattern, repeat(seq(',', $.case_pattern)), optional(','))), ']'),
+					seq('[', optional(alias($._list_pattern_case_patterns, $.list_pattern_case_patterns)), ']'),
 
 				// Case-context as-pattern split — same two-rules-one-parse-kind class
 				// as `case_tuple_pattern`/`case_list_pattern` just above. Base

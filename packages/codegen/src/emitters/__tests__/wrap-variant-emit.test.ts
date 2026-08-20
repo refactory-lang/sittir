@@ -128,9 +128,12 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		expect(emitFieldAccessorLinesBody.match(/resolveSlotDrillExprs\(/g)?.length).toBe(1);
 	});
 
-	it('keeps wrap-kind filtering aware of alias-target kinds', () => {
-		expect(wrapEmitterSource).toContain('const canonical = _aliasTargetToSource[kind];');
-		expect(wrapEmitterSource).toContain('allowedStripped === canonical');
+	it('wrap-kind filtering matches storage kinds without an alias remap', () => {
+		// The wire `$type` is the grammar symbol, so filter candidates arrive
+		// already under their storage kind — spelling tolerance (`_`-stripped
+		// twins) is the only normalization the filter performs.
+		expect(wrapEmitterSource).not.toContain('_aliasTargetToSource');
+		expect(wrapEmitterSource).toContain('allowedStripped === kind');
 	});
 
 	it('passes scalar singular values through wrap-kind filtering', () => {
@@ -143,7 +146,13 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		expect(wrapSrc).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {');
 		expect(wrapSrc).toContain('right() { return drillIn<');
 		expect(wrapSrc).toContain("'_assignment_eq': (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),");
-		expect(wrapSrc).toContain("'assignment_eq': '_assignment_eq'");
+		// A hidden helper visible only through its own alias name is MERGED
+		// into that alias symbol by tree-sitter — one id serves both
+		// spellings, and the native read's KIND_NAMES lookup already yields
+		// the canonical `_assignment_eq`; a display->canonical remap entry
+		// would remap the node to itself. The dispatch entry above is the
+		// whole runtime surface such a kind needs.
+		expect(wrapSrc).not.toContain("'assignment_eq': '_assignment_eq'");
 	});
 
 	it('keeps hidden alias-source helper wraps even without parser-symbol ids', () => {
@@ -154,7 +163,9 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		});
 
 		expect(wrapSrc).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {');
-		expect(wrapSrc).toContain("'_assignment_eq': (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),");
+		// With a catalog present the dispatch table is numeric-keyed; the
+		// rescue-emitted kind keys by its TSKindId member like every other.
+		expect(wrapSrc).toContain('[TSKindId.AssignmentEq]: (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),');
 	});
 
 	it('emits hidden helper wraps even when no factory surface exists', () => {

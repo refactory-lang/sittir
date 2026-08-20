@@ -505,7 +505,7 @@ function buildFactoryNodeData(
 	if (!factory) return null;
 	try {
 		const shape = factoryShapes[renderedKind] ?? 'config';
-		if (shape === 'config' || shape === 'direct') {
+		if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
 			const config = nodeToConfig(referenceData, {
 				factoryMap,
 				factoryShapes,
@@ -519,7 +519,7 @@ function buildFactoryNodeData(
 				kindNameFromId,
 				kindLiteralText
 			});
-			if (shape === 'direct') {
+			if (shape === 'direct' || shape === 'forwarded') {
 				// Direct-call shape: extract the sole field value when metadata
 				// names one, otherwise treat it as a single child call.
 				const fieldNames = factoryFields[renderedKind];
@@ -543,10 +543,11 @@ function buildFactoryNodeData(
 			const text = (referenceData as { $text?: string }).$text ?? '';
 			return (factory as (text: string) => AnyNodeData)(text);
 		} else if (shape === 'elements') {
-			// separatedList factory: `(elements, options?: {separatorKind?, leading?, trailing?})`
-			// — distinct calling convention from 'spread's rest-param
-			// factories (both used to share the 'spread' tag; see
-			// classifyFactoryShape's separatedList case).
+			// separatedList factory: spread with a LEADING optional options bag
+			// — `(...elements)` / `({separatorKind?, leading?, trailing?},
+			// ...elements)` — distinct calling convention from 'spread's plain
+			// rest-param factories (see classifyFactoryShape's separatedList
+			// case).
 			const config = nodeToConfig(referenceData, {
 				factoryMap,
 				factoryShapes,
@@ -562,12 +563,8 @@ function buildFactoryNodeData(
 			});
 			const elements = getChildFactoryArgs(renderedKind, config, factorySlots, factoryFields);
 			const options = separatedListFactoryOptions(referenceData, kindLiteralText);
-			return (
-				factory as (
-					elements: readonly unknown[],
-					options?: { separatorKind?: string; leading?: boolean; trailing?: boolean }
-				) => AnyNodeData
-			)(elements, options);
+			const listFactory = factory as (...args: unknown[]) => AnyNodeData;
+			return options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
 		} else {
 			// shape === 'spread' — child-spread factory.
 			const config = nodeToConfig(referenceData, {

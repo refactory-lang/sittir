@@ -46,7 +46,7 @@ export type TypescriptGrammar = {
 	readonly pattern: {
 		type: 'pattern';
 		named: true;
-		subtypes: [{ type: 'for_header_group1'; named: true }, { type: 'rest_pattern'; named: true }];
+		subtypes: [{ type: 'lhs_expression'; named: true }, { type: 'rest_pattern'; named: true }];
 	};
 	readonly primary_expression: {
 		type: 'primary_expression';
@@ -369,7 +369,7 @@ export type TypescriptGrammar = {
 			left: {
 				multiple: false;
 				required: true;
-				types: [{ type: 'for_header_group1'; named: true }, { type: 'parenthesized_expression'; named: true }];
+				types: [{ type: 'lhs_expression'; named: true }, { type: 'parenthesized_expression'; named: true }];
 			};
 			right: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
 			using_marker: { multiple: false; required: false; types: [{ type: 'using'; named: false }] };
@@ -824,10 +824,10 @@ export type TypescriptGrammar = {
 		type: 'enum_body';
 		named: true;
 		fields: {};
-		children: { multiple: false; required: false; types: [{ type: 'enum_body_group1'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'enum_body_elements'; named: true }] };
 	};
-	readonly enum_body_group1: {
-		type: 'enum_body_group1';
+	readonly enum_body_elements: {
+		type: 'enum_body_elements';
 		named: true;
 		fields: {
 			name: {
@@ -858,14 +858,7 @@ export type TypescriptGrammar = {
 		type: 'export_clause';
 		named: true;
 		fields: {};
-		children: { multiple: false; required: false; types: [{ type: 'export_clause_group1'; named: true }] };
-	};
-	readonly export_clause_group1: {
-		type: 'export_clause_group1';
-		named: true;
-		fields: {
-			export_specifier: { multiple: true; required: true; types: [{ type: 'export_specifier'; named: true }] };
-		};
+		children: { multiple: false; required: false; types: [{ type: 'export_specifiers'; named: true }] };
 	};
 	readonly export_specifier: {
 		type: 'export_specifier';
@@ -886,6 +879,13 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [{ type: 'identifier'; named: true }, { type: 'string'; named: true }];
 			};
+		};
+	};
+	readonly export_specifiers: {
+		type: 'export_specifiers';
+		named: true;
+		fields: {
+			export_specifier: { multiple: true; required: true; types: [{ type: 'export_specifier'; named: true }] };
 		};
 	};
 	readonly export_statement: {
@@ -1066,25 +1066,6 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: { primary_type: { multiple: false; required: true; types: [{ type: 'primary_type'; named: true }] } };
 	};
-	readonly for_header_group1: {
-		type: 'for_header_group1';
-		named: true;
-		fields: {};
-		children: {
-			multiple: false;
-			required: true;
-			types: [
-				{ type: 'array_pattern'; named: true },
-				{ type: 'identifier'; named: true },
-				{ type: 'member_expression'; named: true },
-				{ type: 'non_null_expression'; named: true },
-				{ type: 'object_pattern'; named: true },
-				{ type: 'reserved_identifier'; named: true },
-				{ type: 'subscript_expression'; named: true },
-				{ type: 'undefined'; named: true }
-			];
-		};
-	};
 	readonly for_header_let_const_kind: {
 		type: 'for_header_let_const_kind';
 		named: true;
@@ -1113,7 +1094,7 @@ export type TypescriptGrammar = {
 			left: {
 				multiple: false;
 				required: true;
-				types: [{ type: 'for_header_group1'; named: true }, { type: 'parenthesized_expression'; named: true }];
+				types: [{ type: 'lhs_expression'; named: true }, { type: 'parenthesized_expression'; named: true }];
 			};
 		};
 	};
@@ -1198,10 +1179,10 @@ export type TypescriptGrammar = {
 		type: 'formal_parameters';
 		named: true;
 		fields: {};
-		children: { multiple: false; required: false; types: [{ type: 'formal_parameters_group1'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'formal_parameters_elements'; named: true }] };
 	};
-	readonly formal_parameters_group1: {
-		type: 'formal_parameters_group1';
+	readonly formal_parameters_elements: {
+		type: 'formal_parameters_elements';
 		named: true;
 		fields: {
 			formal_parameter: {
@@ -1464,6 +1445,13 @@ export type TypescriptGrammar = {
 			};
 		};
 	};
+	readonly import_specifiers: {
+		type: 'import_specifiers';
+		named: true;
+		fields: {
+			import_specifier: { multiple: true; required: true; types: [{ type: 'import_specifier'; named: true }] };
+		};
+	};
 	readonly import_statement: {
 		type: 'import_statement';
 		named: true;
@@ -1632,6 +1620,25 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
 			};
+		};
+	};
+	readonly lhs_expression: {
+		type: 'lhs_expression';
+		named: true;
+		fields: {};
+		children: {
+			multiple: false;
+			required: true;
+			types: [
+				{ type: 'array_pattern'; named: true },
+				{ type: 'identifier'; named: true },
+				{ type: 'member_expression'; named: true },
+				{ type: 'non_null_expression'; named: true },
+				{ type: 'object_pattern'; named: true },
+				{ type: 'reserved_identifier'; named: true },
+				{ type: 'subscript_expression'; named: true },
+				{ type: 'undefined'; named: true }
+			];
 		};
 	};
 	readonly literal_type: {
@@ -1809,14 +1816,7 @@ export type TypescriptGrammar = {
 		type: 'named_imports';
 		named: true;
 		fields: {};
-		children: { multiple: false; required: false; types: [{ type: 'named_imports_group1'; named: true }] };
-	};
-	readonly named_imports_group1: {
-		type: 'named_imports_group1';
-		named: true;
-		fields: {
-			import_specifier: { multiple: true; required: true; types: [{ type: 'import_specifier'; named: true }] };
-		};
+		children: { multiple: false; required: false; types: [{ type: 'import_specifiers'; named: true }] };
 	};
 	readonly namespace_export: {
 		type: 'namespace_export';
@@ -2444,10 +2444,10 @@ export type TypescriptGrammar = {
 		type: 'tuple_type';
 		named: true;
 		fields: {};
-		children: { multiple: false; required: false; types: [{ type: 'tuple_type_group1'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'tuple_type_members'; named: true }] };
 	};
-	readonly tuple_type_group1: {
-		type: 'tuple_type_group1';
+	readonly tuple_type_members: {
+		type: 'tuple_type_members';
 		named: true;
 		fields: {
 			tuple_type_member: {
@@ -2485,7 +2485,8 @@ export type TypescriptGrammar = {
 	readonly type_arguments: {
 		type: 'type_arguments';
 		named: true;
-		fields: { type: { multiple: true; required: true; types: [{ type: 'type'; named: true }] } };
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'types'; named: true }] };
 	};
 	readonly type_assertion: {
 		type: 'type_assertion';
@@ -2507,6 +2508,12 @@ export type TypescriptGrammar = {
 	};
 	readonly type_parameters: {
 		type: 'type_parameters';
+		named: true;
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'type_parameters_elements'; named: true }] };
+	};
+	readonly type_parameters_elements: {
+		type: 'type_parameters_elements';
 		named: true;
 		fields: { type_parameter: { multiple: true; required: true; types: [{ type: 'type_parameter'; named: true }] } };
 	};
@@ -2548,6 +2555,11 @@ export type TypescriptGrammar = {
 				{ type: 'this'; named: true }
 			];
 		};
+	};
+	readonly types: {
+		type: 'types';
+		named: true;
+		fields: { type: { multiple: true; required: true; types: [{ type: 'type'; named: true }] } };
 	};
 	readonly unary_expression: {
 		type: 'unary_expression';

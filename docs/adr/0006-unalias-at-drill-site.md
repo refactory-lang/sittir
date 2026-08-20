@@ -1,6 +1,6 @@
 # ADR 0006 — Unalias grammar-aliased kinds at drill site, keep alias source as canonical `$type`
 
-**Status**: Proposed
+**Status**: Superseded — the drillAs/runtime-restamp mechanism this ADR proposed was implemented and later deleted; the wire `$type` is now the grammar symbol stamped by the native read, with alias provenance carried as `aliasedFrom`/`aliasedFromId` stamps at link
 **Date**: 2026-04-19
 **Related**: `packages/core/src/readNode.ts`, `packages/*/src/wrap.ts`, memory note `project_alias_collapse_dead_kinds.md`, commit 8841e76
 
