@@ -613,26 +613,38 @@ export async function validateReadRenderParse(
 				continue; // Corpus entries with parse errors (intentional error tests)
 			}
 
-			// Candidate enumeration by SOURCE kind (the wrap layer's drillAs result),
-			// not the parser DISPLAY kind. Build the native read handle and walk the
-			// WRAPPED tree ONCE: every node arrives as its true source kind, so each
-			// is read/rendered directly with NO asType override.
+			// Candidate enumeration by SOURCE kind — the CANONICAL catalog name of
+			// the wire `$type` (the grammar symbol the read stamps). Display names
+			// are non-injective at alias-source kinds (a true `token_tree` and a
+			// `delim_token_tree` occurrence both display "token_tree"), so keying
+			// by display would merge kinds that need e.g. disjoint reparse
+			// wrappers; display names are resolved per candidate below, only at
+			// the WASM `.type` seams. Build the native read handle and walk the
+			// WRAPPED tree ONCE.
 			const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
-			const candidatesByKind = new Map<string, { start: number; end: number; node: WrappedNodeData }[]>();
+			const candidatesByKind = new Map<
+				string,
+				{ start: number; end: number; node: WrappedNodeData; displayKind: string }[]
+			>();
 			if (readTreeNodeFn && handle.read) {
 				const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
 				const seen = new Set<string>();
 				walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
 					if (w.$named === false) return;
-					const sourceKind = kindNameFromId ? kindNameFromId(w.$type) : undefined;
-					if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
+					const displayKind = kindNameFromId?.(w.$type);
+					const sourceKind = canonicalKindNameFromId?.(w.$type);
+					// Testable-surface filter stays DISPLAY-keyed (the surface the
+					// template listing has always admitted — hidden-canonical kinds
+					// whose display differs stay untested here); bucketing is
+					// canonical so kinds sharing a display name stay distinct.
+					if (displayKind === undefined || sourceKind === undefined || !ruleKinds.has(displayKind)) return;
 					const span = (w as { $span?: { start: number; end: number } }).$span;
 					if (span == null) return;
 					const dedup = `${sourceKind}@${span.start}:${span.end}`;
 					if (seen.has(dedup)) return;
 					seen.add(dedup);
 					const list = candidatesByKind.get(sourceKind) ?? [];
-					list.push({ start: span.start, end: span.end, node: w });
+					list.push({ start: span.start, end: span.end, node: w, displayKind });
 					candidatesByKind.set(sourceKind, list);
 				}, onAccessorThrow);
 			}
@@ -674,10 +686,12 @@ export async function validateReadRenderParse(
 					// WASM node at this span: the AST-compare target and the parser
 					// DISPLAY kind (targetKind) used for post-reparse node lookup.
 					// Prefer the same-span node whose type matches the candidate's
-					// kind (so the compare anchors on `tuple_struct_pattern`, not the
-					// enclosing same-span `match_pattern`); fall back to the outermost.
+					// DISPLAY kind — WASM `.type` speaks display names, so the
+					// canonical bucket kind can never match here (so the compare
+					// anchors on `tuple_struct_pattern`, not the enclosing same-span
+					// `match_pattern`); fall back to the outermost.
 					const node1ForAst =
-						findNodeBySpanOfKind(tree1.rootNode, nodeStartIndex, nodeEndIndex, kind) ??
+						findNodeBySpanOfKind(tree1.rootNode, nodeStartIndex, nodeEndIndex, cand.displayKind) ??
 						findNodeBySpan(tree1.rootNode, nodeStartIndex, nodeEndIndex);
 					const tsVisibleKind = node1ForAst?.type;
 
@@ -716,7 +730,7 @@ export async function validateReadRenderParse(
 						continue;
 					}
 					const renderedKind = kind;
-					const targetKind = tsVisibleKind ?? kind;
+					const targetKind = tsVisibleKind ?? cand.displayKind;
 
 					// Emit a per-kind progress breadcrumb to stderr when running as
 					// an isolation worker (SITTIR_ISOLATE_WORKER=1). MUST use
@@ -735,14 +749,12 @@ export async function validateReadRenderParse(
 							writeSync(2, `[dump-render] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} rendered=${JSON.stringify(rendered)}\n`);
 						}
 
-						// Wrap for reparse using supertype context. `sourceKind` is the
-						// candidate's canonical catalog name — display names are
-						// non-injective at alias-source kinds, and only the source
-						// identity can pick the right context there.
+						// Wrap for reparse using supertype context. `renderedKind` IS the
+						// canonical source kind (candidates are bucketed by it), so the
+						// wrapper lookup needs no separate source resolution.
 						const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
 							adoptedVariantKinds: adoptedVariantKindNames,
-							targetKind,
-							sourceKind: canonicalKindNameFromId?.(cand.node.$type)
+							targetKind
 						});
 						if (wrapped === null) continue; // no supertype - skip this candidate
 						// Skip candidates whose render produces only whitespace: an

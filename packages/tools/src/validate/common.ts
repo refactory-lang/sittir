@@ -966,23 +966,15 @@ export function wrapForReparse(
 	kind: string,
 	grammar: string,
 	kindToSupertypes: Map<string, string[]>,
-	opts?: { adoptedVariantKinds?: ReadonlySet<string>; targetKind?: string; sourceKind?: string }
+	opts?: { adoptedVariantKinds?: ReadonlySet<string>; targetKind?: string }
 ): WrapForReparseResult | null {
 	const wrappers = REPARSE_WRAPPERS[grammar];
 	if (!wrappers) return null;
-	// Source-identity wrapper preference: `kind` arrives keyed by the parser
-	// DISPLAY name, which is non-injective at alias-source kinds — rust's
-	// true `token_tree` (macro_rules arm body) and `delim_token_tree`
-	// (invocation/attribute arguments) BOTH display as `token_tree`, yet
-	// need disjoint reparse contexts to reproduce their own variant
-	// children. When the caller resolves the candidate's canonical source
-	// kind and a wrapper is keyed on it, that wrapper is the most specific
-	// context known — it wins over both the alias-target preference and
-	// the display-keyed direct lookup below.
-	if (opts?.sourceKind && opts.sourceKind !== kind) {
-		const sourceWrapper = wrappers[opts.sourceKind];
-		if (sourceWrapper) return applyWrapperTemplate(rendered, sourceWrapper);
-	}
+	// `kind` is the candidate's CANONICAL source kind (validator candidates
+	// are bucketed by the wire `$type`'s catalog name), so kind-specific
+	// wrappers keyed on source names — rust's disjoint `token_tree`
+	// (macro_rules arm body) vs `delim_token_tree` (invocation/attribute
+	// arguments) contexts — resolve directly through the lookups below.
 	// Canonical-hidden architecture (Option Y): the validator may pass
 	// a canonical hidden kind (`_x`) where REPARSE_WRAPPERS and
 	// `kindToSupertypes` are keyed on the visible alias-target name
@@ -990,22 +982,13 @@ export function wrapForReparse(
 	// for both lookups, but preserve the original `kind` for kind-
 	// specific lookups (e.g. `_expression` is itself a wrapper key).
 	const visibleKind = kind.startsWith('_') && !wrappers[kind] ? kind.replace(/^_+/, '') : kind;
-	// Alias-target wrapper preference: when `kind` (renderedKind, the
-	// alias source after drillAs) differs from `targetKind` (the
-	// tree-sitter-emitted alias target), a wrapper keyed on the alias
-	// target — if one exists — reproduces the original parse position
-	// so reparse emits the same aliased kind. That keeps AST-match
-	// parity for kinds whose alias target doesn't survive a generic
-	// supertype wrapper (ts `interface_body` → `object_type` when
-	// reparsed in a `type _X = …;` context).
-	if (opts?.targetKind && opts.targetKind !== kind) {
-		const targetWrapper = wrappers[opts.targetKind];
-		if (targetWrapper) return applyWrapperTemplate(rendered, targetWrapper);
-	}
-	// Kind-specific wrapper beats supertype wrapper — some kinds only
-	// appear in contexts their supertype's generic wrapper doesn't
-	// produce (e.g. rust `mut_pattern` surfaces in match/if-let but
-	// NOT in plain `let` statements, which flatten it away).
+	// Kind-specific wrapper first — the SOURCE kind's own context is the
+	// most specific one known: some kinds only appear in contexts their
+	// supertype's generic wrapper doesn't produce (rust `mut_pattern`
+	// surfaces in match/if-let but NOT in plain `let` statements), and a
+	// source-keyed wrapper must beat the alias-target preference below
+	// (rust `delim_token_tree` has targetKind `token_tree`, whose OWN
+	// wrapper is the disjoint macro_rules-body context).
 	const direct = wrappers[kind] ?? wrappers[visibleKind];
 	if (direct) {
 		const gateKey = wrappers[kind] ? kind : visibleKind;
@@ -1016,7 +999,28 @@ export function wrapForReparse(
 		}
 		return applyWrapperTemplate(rendered, direct);
 	}
-	return selectAndApplySupertypeWrapper(visibleKind, wrappers, kindToSupertypes, rendered);
+	// Alias-target wrapper preference: when `kind` (the canonical source)
+	// differs from `targetKind` (the tree-sitter-emitted alias target), a
+	// wrapper keyed on the alias target — if one exists — reproduces the
+	// original parse position so reparse emits the same aliased kind. That
+	// keeps AST-match parity for kinds whose alias target doesn't survive
+	// a generic supertype wrapper (ts `interface_body` → `object_type`
+	// when reparsed in a `type _X = …;` context).
+	if (opts?.targetKind && opts.targetKind !== kind) {
+		const targetWrapper = wrappers[opts.targetKind];
+		if (targetWrapper) return applyWrapperTemplate(rendered, targetWrapper);
+	}
+	const bySource = selectAndApplySupertypeWrapper(visibleKind, wrappers, kindToSupertypes, rendered);
+	if (bySource !== null) return bySource;
+	// An alias-source occurrence sits in its alias TARGET's grammar
+	// position, so the target's supertype context is an equally valid
+	// reparse context — reach it when the source kind has no supertype
+	// edges of its own (e.g. python's `lambda_within_for_in_clause`,
+	// whose display `lambda` is the name the supertype graph knows).
+	if (opts?.targetKind && opts.targetKind !== visibleKind) {
+		return selectAndApplySupertypeWrapper(opts.targetKind, wrappers, kindToSupertypes, rendered);
+	}
+	return null;
 }
 
 // ---------------------------------------------------------------------------
