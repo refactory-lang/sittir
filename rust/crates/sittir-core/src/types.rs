@@ -416,13 +416,19 @@ impl napi::bindgen_prelude::TypeName for Source {
 }
 
 /// Value stored in a `NodeData` named slot map. Untagged so the wire
-/// shape is simply the value (object | array | string) at each `_<slot>`
-/// property, matching the JS de-hoisted layout.
+/// shape is simply the value (object | array | string | boolean) at each
+/// `_<slot>` property, matching the JS de-hoisted layout. `Bool` carries
+/// presence flags (e.g. a separated list's `_trailing_sep`) — slots only,
+/// never `$other` children. `Multiple` entries are `Option` because array
+/// slots carry `null` holes for sparse-array elisions (ts `[, a, ]`) —
+/// the generated transports model the same positions as
+/// `Vec<Option<...>>`.
 #[derive(Debug, Clone, PartialEq)]
 pub enum FieldValue {
     Single(Box<NodeData>),
-    Multiple(Vec<NodeData>),
+    Multiple(Vec<Option<NodeData>>),
     Text(String),
+    Bool(bool),
 }
 
 impl Serialize for FieldValue {
@@ -434,20 +440,23 @@ impl Serialize for FieldValue {
                 None => child.serialize(serializer),
             },
             Self::Multiple(items) => {
-                if items.iter().all(|item| scalar_leaf_value(item).is_some()) {
-                    let mut seq = serializer.serialize_seq(Some(items.len()))?;
-                    for item in items {
-                        match scalar_leaf_value(item).expect("checked is_some above") {
-                            FieldScalar::Text(text) => seq.serialize_element(text)?,
-                            FieldScalar::KindId(kind) => seq.serialize_element(&kind.get())?,
-                        }
+                let mut seq = serializer.serialize_seq(Some(items.len()))?;
+                for item in items {
+                    match item {
+                        None => seq.serialize_element(&None::<NodeData>)?,
+                        Some(node) => match scalar_leaf_value(node) {
+                            Some(FieldScalar::Text(text)) => seq.serialize_element(text)?,
+                            Some(FieldScalar::KindId(kind)) => {
+                                seq.serialize_element(&kind.get())?
+                            }
+                            None => seq.serialize_element(node)?,
+                        },
                     }
-                    seq.end()
-                } else {
-                    items.serialize(serializer)
                 }
+                seq.end()
             }
             Self::Text(text) => serializer.serialize_str(text),
+            Self::Bool(flag) => serializer.serialize_bool(*flag),
         }
     }
 }
@@ -460,7 +469,11 @@ impl<'de> Deserialize<'de> for FieldValue {
             type Value = FieldValue;
 
             fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-                formatter.write_str("a node object, scalar leaf, or array of node/scalar leaves")
+                formatter.write_str("a node object, scalar leaf, boolean flag, or array of node/scalar leaves")
+            }
+
+            fn visit_bool<E: serde::de::Error>(self, value: bool) -> Result<Self::Value, E> {
+                Ok(FieldValue::Bool(value))
             }
 
             fn visit_map<A: serde::de::MapAccess<'de>>(self, map: A) -> Result<Self::Value, A::Error> {
@@ -483,12 +496,12 @@ impl<'de> Deserialize<'de> for FieldValue {
 
             fn visit_seq<A: SeqAccess<'de>>(self, mut seq: A) -> Result<Self::Value, A::Error> {
                 let mut items = Vec::new();
-                while let Some(item) = seq.next_element::<FieldValueItem>()? {
-                    match item {
-                        FieldValueItem::Node(node) => items.push(node),
-                        FieldValueItem::Text(text) => items.push(scalar_text_leaf(text)),
-                        FieldValueItem::KindId(kind) => items.push(scalar_kind_leaf(kind)),
-                    }
+                while let Some(item) = seq.next_element::<Option<FieldValueItem>>()? {
+                    items.push(item.map(|item| match item {
+                        FieldValueItem::Node(node) => node,
+                        FieldValueItem::Text(text) => scalar_text_leaf(text),
+                        FieldValueItem::KindId(kind) => scalar_kind_leaf(kind),
+                    }));
                 }
                 Ok(FieldValue::Multiple(items))
             }

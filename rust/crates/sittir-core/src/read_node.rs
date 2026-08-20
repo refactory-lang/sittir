@@ -260,7 +260,7 @@ fn read_children(
             let value = if v.len() == 1 {
                 FieldValue::Single(Box::new(v.pop().expect("len==1")))
             } else {
-                FieldValue::Multiple(v)
+                FieldValue::Multiple(v.into_iter().map(Some).collect())
             };
             fields.insert(k, value);
         }

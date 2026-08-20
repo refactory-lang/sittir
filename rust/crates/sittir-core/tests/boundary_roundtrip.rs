@@ -148,7 +148,7 @@ fn field_value_untagged_shape() {
     // Leaf-backed Single/Multiple collapse to scalar/string-or-number wire
     // values; branch-backed values stay object/array.
     let single = FieldValue::Single(Box::new(sample_slot_leaf()));
-    let multiple = FieldValue::Multiple(vec![sample_slot_leaf()]);
+    let multiple = FieldValue::Multiple(vec![Some(sample_slot_leaf())]);
     let text = FieldValue::Text("unsafe".to_string());
 
     assert!(serde_json::to_value(&single).unwrap().is_string());
@@ -171,6 +171,33 @@ fn field_value_deserializes_from_each_variant() {
 
     let kind: FieldValue = serde_json::from_str("85").unwrap();
     assert!(matches!(kind, FieldValue::Single(ref node) if node.type_ == KindId(85)));
+}
+
+#[test]
+fn field_value_array_holes_roundtrip() {
+    // Sparse-array elisions (ts `[, a, ]`) store `null` holes in array slots.
+    let arr: FieldValue = serde_json::from_str(r#"[null,"a",null]"#).unwrap();
+    let FieldValue::Multiple(ref items) = arr else {
+        panic!("expected Multiple")
+    };
+    assert!(items[0].is_none());
+    assert!(matches!(items[1].as_ref(), Some(node) if node.text.as_deref() == Some("a")));
+    assert!(items[2].is_none());
+    assert_eq!(serde_json::to_string(&arr).unwrap(), r#"[null,"a",null]"#);
+}
+
+#[test]
+fn field_value_boolean_slot_roundtrips() {
+    // Separator-presence slots (e.g. `_trailing_sep`) store a bare boolean.
+    let val: FieldValue = serde_json::from_str("false").unwrap();
+    assert!(matches!(val, FieldValue::Bool(false)));
+    assert_eq!(serde_json::to_string(&val).unwrap(), "false");
+
+    let json = r#"{"$type":237,"$source":0,"$named":true,"_trailing_sep":false}"#;
+    let node: NodeData = serde_json::from_str(json).unwrap();
+    let field = node.fields.as_ref().unwrap().get("trailing_sep").unwrap();
+    assert!(matches!(field, FieldValue::Bool(false)));
+    assert_eq!(serde_json::to_string(&node).unwrap(), json);
 }
 
 #[test]
