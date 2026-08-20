@@ -2459,7 +2459,28 @@ export function unwrapStructuralPassthroughs(rule: Rule<'link'>): Rule<'link'> {
  * Introduced alongside the rename of the previous
  * open-text `AssembledLeaf` class to `AssembledPattern`.
  */
-export abstract class AssembledLeaf<R extends AnyRule = Rule<'link'>> extends AssembledNodeBase<R> {}
+export abstract class AssembledLeaf<R extends AnyRule = Rule<'link'>> extends AssembledNodeBase<R> {
+	/**
+	 * Grammar-declared immediacy: this kind's token forbids preceding
+	 * whitespace, so its rendered text must never receive a seam space.
+	 * Read from the rule attrs Link pushes down when flattening a
+	 * `token.immediate(...)` wrapper (or stamps on declared-immediate
+	 * synthetic externals) — the wrapper node itself no longer exists at
+	 * this phase. The TOKEN-wrapper check covers rules whose wrapper
+	 * survives (inline/unflattened positions).
+	 */
+	get immediate(): boolean {
+		const rule = this.rule as { immediate?: boolean; type?: string };
+		return rule.immediate === true || (this.rule.type === TOKEN && (this.rule as TokenRule).immediate);
+	}
+
+	/** This kind's rule lexes as one token (`token(...)` wrapper, pushed
+	 * attr, or external scanner symbol). */
+	get tokenized(): boolean {
+		const rule = this.rule as { tokenized?: boolean };
+		return rule.tokenized === true || this.rule.type === TOKEN;
+	}
+}
 
 export class AssembledPattern extends AssembledLeaf<Rule<'link'>> {
 	readonly modelType = 'pattern' as const;
@@ -2660,14 +2681,6 @@ export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule
 	get text(): string | undefined {
 		if (this.rule.type === STRING) return this.rule.value;
 		return undefined;
-	}
-
-	get immediate(): boolean {
-		return this.rule.type === TOKEN && this.rule.immediate;
-	}
-
-	get tokenized(): boolean {
-		return this.rule.type === TOKEN;
 	}
 
 	override get stampChildExpression(): string | undefined {

@@ -4517,6 +4517,22 @@ var grammar_sittir_default = grammar(
       visibleExternals: (_$) => ({
         _newline: string("\n")
       }),
+      // String-interior scanner tokens: the external scanner claims their
+      // characters directly, so no whitespace can ever precede them — a
+      // string's plain-text run abutting an escape is one lexical region,
+      // not a token seam, and the rendered text must never receive a seam
+      // space. `token.immediate` cannot be written on an externals entry,
+      // so each token's sittir-side `renderAs` body carries the wrapper:
+      // the TOKEN flatten at link pushes `immediate` onto the rule the
+      // render pipeline sees. The pattern bodies are nominal text shapes
+      // (these leaves render verbatim from wire text, never from the
+      // pattern).
+      renderAs: (_$) => ({
+        string_start: token.immediate(/[a-zA-Z]*["']+/),
+        _string_content: token.immediate(/[^"'\\{}\n]+/),
+        escape_interpolation: token.immediate(/\{\{|\}\}/),
+        string_end: token.immediate(/["']+/)
+      }),
       polymorphs: {
         assignment: { "1/0": "eq", "1/1": "type", "1/2": "typed" },
         expression_statement: {
@@ -4713,6 +4729,25 @@ var grammar_sittir_default = grammar(
               alias($._string_content, $.string_fragment)
             )
           )
+        ),
+        // `format_specifier`'s text run behaves immediate — its regex
+        // absorbs any whitespace as content, so inter-token extras can
+        // never materialize before it — but upstream writes plain
+        // `token(...)`. Declaring `token.immediate` matters beyond the
+        // parse: the text|text seam is load-bearing for RENDERING and
+        // not subsumed by static char-class analysis. At parse time two
+        // adjacent text runs can't occur (greedy lexing), but
+        // factory-built nodes CAN pass ['10', 'd'] as separate items;
+        // a seam check would inject '10 d' — corrupting the format
+        // spec, where raw '10d' is the only correct output (verbatim
+        // content: a space is semantics). Both sides are
+        // class-indeterminate, so only the declared-immediacy fact can
+        // clear that seam. (The text↔format_expression seams, by
+        // contrast, are statically safe via the interpolation's fixed
+        // non-word '{'/'}' flanks.)
+        format_specifier: ($) => seq(
+          ":",
+          repeat(choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression)))
         ),
         parameters: ($) => seq("(", optional(alias($._parameters, $.parameter_list)), ")"),
         lambda_parameters: ($) => alias($._parameters, $.parameter_list),

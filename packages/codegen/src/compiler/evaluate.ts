@@ -419,7 +419,7 @@ function stripPrecedenceWrappers(rules: Record<string, Rule<'evaluate'>>): void 
 // `token(x)` — are locked in. Downstream phases (Link onward) already expect
 // immediate-ness as TokenRule's boolean field, never a separate type tag —
 // see docs/glossary/compiler-model.md's `NodeRef.immediate`.
-function normalizeImmediateTokens(rules: Record<string, Rule<'evaluate'>>): void {
+function foldImmediateTokenRule(rule: Rule<'evaluate'>): Rule<'evaluate'> {
 	const toToken = (r: Rule<'evaluate'>): Rule<'evaluate'> =>
 		r.type === 'IMMEDIATE_TOKEN'
 			? ({
@@ -428,11 +428,15 @@ function normalizeImmediateTokens(rules: Record<string, Rule<'evaluate'>>): void
 					immediate: true
 				} as Rule<'evaluate'>)
 			: r;
-	const walker = new RuleWalker<Rule<'evaluate'>>(rules);
+	const walker = new RuleWalker<Rule<'evaluate'>>({});
+	return toToken(walker.map(rule, toToken));
+}
+
+function normalizeImmediateTokens(rules: Record<string, Rule<'evaluate'>>): void {
 	for (const name of Object.keys(rules)) {
 		const rule = rules[name];
 		if (!rule) continue;
-		const normalized = toToken(walker.map(rule, toToken));
+		const normalized = foldImmediateTokenRule(rule);
 		if (normalized !== rule) rules[name] = normalized;
 	}
 }
@@ -821,7 +825,12 @@ function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<s
 
 	const result: Record<string, Rule<'evaluate'>> = {};
 	for (const [name, rawBody] of Object.entries(rawEntries)) {
-		const rule = coerceToRule(rawBody as Input);
+		// Drained bodies enter AFTER the rules-map normalizeImmediateTokens
+		// pass, and the returned record is also re-applied at link — fold
+		// `token.immediate(...)` wrappers here so no destination ever sees a
+		// raw IMMEDIATE_TOKEN tag (an immediate-declared external's renderAs
+		// body is the sanctioned way to declare its immediacy).
+		const rule = foldImmediateTokenRule(coerceToRule(rawBody as Input));
 		result[name] = rule;
 		// Inject into the rules map as a sittir-side synthesized rule so
 		// downstream pipeline phases (link, template-walker, etc.) treat
@@ -849,7 +858,12 @@ function drainVisibleExternalsMetadata(
 
 	const result: Record<string, Rule<'evaluate'>> = {};
 	for (const [name, rawBody] of Object.entries(rawEntries)) {
-		const rule = coerceToRule(rawBody as Input);
+		// Drained bodies enter AFTER the rules-map normalizeImmediateTokens
+		// pass, and the returned record is also re-applied at link — fold
+		// `token.immediate(...)` wrappers here so no destination ever sees a
+		// raw IMMEDIATE_TOKEN tag (an immediate-declared external's renderAs
+		// body is the sanctioned way to declare its immediacy).
+		const rule = foldImmediateTokenRule(coerceToRule(rawBody as Input));
 		result[name] = rule;
 		// Mirror drainRenderAsMetadata: inject the body into the rules map
 		// under the HIDDEN name, replacing the external's empty-pattern

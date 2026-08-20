@@ -440,7 +440,13 @@ function stripResolvedRoleRules(rules: Record<string, Rule<'link'>>): void {
 function createSyntheticExternalRules(rules: Record<string, Rule<'link'>>, externals: readonly string[]): void {
 	for (const ext of externals) {
 		if (!rules[ext]) {
-			rules[ext] = { type: PATTERN, value: '' } as Rule<'link'>;
+			// External scanner symbols lex as one token by nature —
+			// `tokenized` is derivable here. `immediate` is NOT synthesized:
+			// an external whose token forbids preceding whitespace declares
+			// that via its `renderAs` body wrapped in `token.immediate(...)`
+			// (which gives it a real rule instead of this synthetic one, and
+			// the TOKEN flatten above pushes the stamp down).
+			rules[ext] = { type: PATTERN, value: '', tokenized: true } as Rule<'link'>;
 		}
 	}
 }
@@ -1617,9 +1623,21 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 				content: resolveRule(rule.content, ctx, currentName)
 			};
 
-		case TOKEN:
-			// Flatten: extract content
-			return resolveRule(rule.content, ctx, currentName);
+		case TOKEN: {
+			// Flatten the wrapper, pushing its lexical facts down onto the
+			// resolved content as rule attrs (the wrapper node dies here, so
+			// without the push-down `escape_sequence`'s IMMEDIATE_TOKEN root
+			// would vanish into a bare SEQ and the immediacy fact would be
+			// unrecoverable downstream). `tokenized` always; `immediate` only
+			// when the wrapper declares it — an inner `token.immediate` nested
+			// under a plain outer `token` keeps its own stamp.
+			const content = resolveRule(rule.content, ctx, currentName);
+			return {
+				...content,
+				tokenized: true,
+				...(rule.immediate ? { immediate: true } : {})
+			};
+		}
 
 		case ALIAS: {
 			// Every named alias routes uniformly through provenance

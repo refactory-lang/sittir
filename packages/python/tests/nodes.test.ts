@@ -2160,33 +2160,6 @@ describe('print_statement_group2', () => {
 	});
 });
 
-describe('string_start', () => {
-	it('factory produces correct type', () => {
-		const node = ir.stringStart('test');
-		expect(node.$type).toBe(TSKindId.StringStart);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
-	});
-});
-
-describe('escape_interpolation', () => {
-	it('factory produces correct type', () => {
-		const node = ir.escapeInterpolation('test');
-		expect(node.$type).toBe(TSKindId.EscapeInterpolation);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
-	});
-});
-
-describe('string_end', () => {
-	it('factory produces correct type', () => {
-		const node = ir.stringEnd('test');
-		expect(node.$type).toBe(TSKindId.StringEnd);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
-	});
-});
-
 describe('except', () => {
 	it('factory produces correct type', () => {
 		const node = ir.except('test');

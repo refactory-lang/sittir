@@ -29,19 +29,22 @@ import {
 	AssembledBranch,
 	AssembledEnum,
 	AssembledGroup,
+	AssembledLeaf,
 	AssembledSeparatedList,
 	deriveUnnamedChildrenCardinality,
 	hasOptionalElements,
 	isMultiple,
 	isRequired,
 	isNodeRef,
+	isTerminalValue,
 	kindsOf,
 	structuralFieldsOf,
 	allFormFieldsOf,
 	allSlotsOf,
 	aliasTargetToSourceMapOf,
 	acceptedIdPairsByKindOf,
-	storageKindOfRef
+	storageKindOfRef,
+	storageKindOfValue
 } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type { TemplateFile } from './template-hash.ts';
@@ -1138,8 +1141,16 @@ function renderTypedLeafFn(node: AssembledNode): string[] {
 		node instanceof AssembledEnum
 			? `dest.write_str(&t.to_string()).map_err(::askama::Error::from)`
 			: `dest.write_str(&t.text).map_err(::askama::Error::from)`;
+	// Grammar-declared immediacy (`token.immediate`, or an immediate-declared
+	// external's renderAs body): no whitespace may precede this token, so its
+	// write must not receive a seam space — mark the root SpacingWriter to
+	// skip the check for exactly this chunk. Placed here (inside the trivia-
+	// wrapped render fn) so factory-attached leading trivia still seams
+	// normally before the mark applies to the token text itself.
+	const mark = node instanceof AssembledLeaf && node.immediate ? [`    ::sittir_core::spacing::mark_adjacent();`] : [];
 	return [
 		`fn ${fnName}(t: &${typeName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`,
+		...mark,
 		`    ${body}`,
 		`}`,
 		``
@@ -2752,6 +2763,46 @@ function hasAnyConcreteChildKind(kinds: readonly string[], nodeMap: NodeMap): bo
 	return expandConcreteTransportKinds(kinds, nodeMap).length > 0;
 }
 
+function isImmediateLeafKind(kind: string, nodeMap: NodeMap): boolean {
+	const node = nodeMap.nodes.get(kind);
+	return node instanceof AssembledLeaf && node.immediate;
+}
+
+/**
+ * True when every SCALAR-capable source of this slot is grammar-immediate —
+ * the gate for marking the slot enum's `Verbatim` arm adjacent. Scalars on
+ * the wire erase kind identity (a text-collapsed leaf and an inline terminal
+ * both arrive as bare strings), so the arm can only be marked when ALL
+ * sources that can produce one forbid preceding whitespace: inline
+ * `TerminalValue`s via their own `immediate` stamp (§H1 threading), leaf
+ * kind refs via the referenced node's stamp. Non-leaf refs can't scalarize
+ * through this arm's normal path and are ignored. Requires at least one
+ * scalar-capable source — a vacuous pass would mark arms whose scalars come
+ * from paths this gate can't see.
+ */
+function slotVerbatimIsImmediate(entry: PerSlotChildEnum, nodeMap: NodeMap): boolean {
+	const owner = nodeMap.nodes.get(entry.ownerKind);
+	if (!owner) return false;
+	const slot = allSlotsOf(owner).find((s) => s.name === entry.fieldName);
+	if (!slot) return false;
+	let sawScalarSource = false;
+	for (const v of slot.values) {
+		if (isTerminalValue(v)) {
+			sawScalarSource = true;
+			if (v.immediate !== true) return false;
+		} else if (isNodeRef(v)) {
+			const kind = storageKindOfValue(v);
+			if (kind === undefined) continue;
+			const node = nodeMap.nodes.get(kind);
+			if (node instanceof AssembledLeaf) {
+				sawScalarSource = true;
+				if (!node.immediate) return false;
+			}
+		}
+	}
+	return sawScalarSource;
+}
+
 function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: NodeMap): PerSlotChildEnum[] {
 	const entries: PerSlotChildEnum[] = [];
 	const seen = new Set<string>();
@@ -3103,15 +3154,23 @@ function emitPerSlotChildEnum(
 	for (const literal of entry.literals) {
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant !== undefined) {
-			lines.push(
-				`            ${enumName}::${variant} => dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from),`
-			);
+			// A literal arm for an immediate token kind writes seam-free —
+			// grammar forbids whitespace before it (see `mark_adjacent`).
+			const arm = isImmediateLeafKind(literal.kind, nodeMap)
+				? `{ ::sittir_core::spacing::mark_adjacent(); dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from) }`
+				: `dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from)`;
+			lines.push(`            ${enumName}::${variant} => ${arm},`);
 		}
 	}
 	if (admitsVerbatim) {
-		lines.push(
-			`            ${enumName}::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),`
-		);
+		// See `slotVerbatimIsImmediate` — scalars erase kind identity, so
+		// the arm is marked only when every scalar-capable source forbids
+		// preceding whitespace (string fragments/escapes, format-spec text
+		// runs); code-token scalars (identifiers, keywords) keep seams.
+		const arm = slotVerbatimIsImmediate(entry, nodeMap)
+			? `{ ::sittir_core::spacing::mark_adjacent(); dest.write_str(&inner.text).map_err(::askama::Error::from) }`
+			: `dest.write_str(&inner.text).map_err(::askama::Error::from)`;
+		lines.push(`            ${enumName}::Verbatim(inner) => ${arm},`);
 	}
 	lines.push(`        }`);
 	lines.push(`    }`);

@@ -123,7 +123,7 @@ describe('Link — reference resolution', () => {
 		expect(rule!.type).toBe('REPEAT1');
 	});
 
-	it('flattens token to its content', () => {
+	it('flattens token to its content, pushing the lexical facts down as attrs', () => {
 		const raw = makeRaw({
 			comment: {
 				type: TOKEN,
@@ -132,7 +132,21 @@ describe('Link — reference resolution', () => {
 			}
 		});
 		const linked = link(raw);
-		expect(linked.rules['comment']).toEqual({ type: 'STRING', value: '//' });
+		// The wrapper dies here — `tokenized` (and `immediate`, when declared)
+		// must survive as rule attrs or the fact is unrecoverable downstream.
+		expect(linked.rules['comment']).toEqual({ type: 'STRING', value: '//', tokenized: true });
+	});
+
+	it('pushes immediate=true down when flattening token.immediate', () => {
+		const raw = makeRaw({
+			esc: {
+				type: TOKEN,
+				content: { type: STRING, value: '\\n' },
+				immediate: true
+			}
+		});
+		const linked = link(raw);
+		expect(linked.rules['esc']).toEqual({ type: 'STRING', value: '\\n', tokenized: true, immediate: true });
 	});
 });
 

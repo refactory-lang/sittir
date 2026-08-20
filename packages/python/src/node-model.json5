@@ -3542,6 +3542,7 @@
       "factoryName": "_stringContent",
       "irKey": "_stringContent",
       "hidden": false,
+      "pattern": "[^\"'\\\\{}\\n]+",
       "factoryShape": "text"
     },
     {
@@ -6574,6 +6575,7 @@
       "factoryName": "escapeInterpolation",
       "irKey": "escapeInterpolation",
       "hidden": false,
+      "pattern": "\\{\\{|\\}\\}",
       "factoryShape": "text"
     },
     {
@@ -10418,6 +10420,7 @@
       "factoryName": "stringEnd",
       "irKey": "stringEnd",
       "hidden": false,
+      "pattern": "[\"']+",
       "factoryShape": "text"
     },
     {
@@ -10427,6 +10430,7 @@
       "factoryName": "stringStart",
       "irKey": "stringStart",
       "hidden": false,
+      "pattern": "[a-zA-Z]*[\"']+",
       "factoryShape": "text"
     },
     {

@@ -34539,7 +34539,7 @@ impl RenderableTransport for StringDoubleElementsTransportSlot {
         match self {
             StringDoubleElementsTransportSlot::UnescapedDoubleStringFragment(inner) => inner.render_into(dest),
             StringDoubleElementsTransportSlot::EscapeSequence(inner) => inner.render_into(dest),
-            StringDoubleElementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            StringDoubleElementsTransportSlot::Verbatim(inner) => { ::sittir_core::spacing::mark_adjacent(); dest.write_str(&inner.text).map_err(::askama::Error::from) },
         }
     }
 }
@@ -34643,7 +34643,7 @@ impl RenderableTransport for StringSingleElements2TransportSlot {
         match self {
             StringSingleElements2TransportSlot::UnescapedSingleStringFragment(inner) => inner.render_into(dest),
             StringSingleElements2TransportSlot::EscapeSequence(inner) => inner.render_into(dest),
-            StringSingleElements2TransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            StringSingleElements2TransportSlot::Verbatim(inner) => { ::sittir_core::spacing::mark_adjacent(); dest.write_str(&inner.text).map_err(::askama::Error::from) },
         }
     }
 }
@@ -64395,10 +64395,12 @@ fn render_jsx_string(node: &JsxStringTransport, dest: &mut dyn ::std::fmt::Write
 }
 
 fn render_unescaped_double_jsx_string_fragment(t: &UnescapedDoubleJsxStringFragmentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
 fn render_unescaped_single_jsx_string_fragment(t: &UnescapedSingleJsxStringFragmentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -64756,14 +64758,17 @@ fn render_string(node: &StringTransport, dest: &mut dyn ::std::fmt::Write) -> Re
 }
 
 fn render_unescaped_double_string_fragment(t: &UnescapedDoubleStringFragmentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
 fn render_unescaped_single_string_fragment(t: &UnescapedSingleStringFragmentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
 fn render_escape_sequence(t: &EscapeSequenceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -64811,10 +64816,12 @@ fn render_regex(node: &RegexTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
 }
 
 fn render_regex_pattern(t: &RegexPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
 fn render_regex_flags(t: &RegexFlagsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 

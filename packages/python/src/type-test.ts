@@ -568,14 +568,14 @@ export type _Type_AugmentedAssignmentOperator = _TypeAssert<
 		| TSKindId.PipeEq
 	>
 >;
-export type _Type_Indent = _TypeAssert<_TypeExtends<Indent['$type'], TSKindId.Indent>>;
-export type _Type_Dedent = _TypeAssert<_TypeExtends<Dedent['$type'], TSKindId.Dedent>>;
 export type _Type_StringStart = _TypeAssert<_TypeExtends<StringStart['$type'], TSKindId.StringStart>>;
 export type _Type__StringContent = _TypeAssert<_TypeExtends<_StringContent['$type'], TSKindId._StringContent>>;
 export type _Type_EscapeInterpolation = _TypeAssert<
 	_TypeExtends<EscapeInterpolation['$type'], TSKindId.EscapeInterpolation>
 >;
 export type _Type_StringEnd = _TypeAssert<_TypeExtends<StringEnd['$type'], TSKindId.StringEnd>>;
+export type _Type_Indent = _TypeAssert<_TypeExtends<Indent['$type'], TSKindId.Indent>>;
+export type _Type_Dedent = _TypeAssert<_TypeExtends<Dedent['$type'], TSKindId.Dedent>>;
 export type _Type_CloseBracket = _TypeAssert<_TypeExtends<CloseBracket['$type'], ']'>>;
 export type _Type_CloseParen = _TypeAssert<_TypeExtends<CloseParen['$type'], ')'>>;
 export type _Type_CloseBrace = _TypeAssert<_TypeExtends<CloseBrace['$type'], '}'>>;
@@ -796,14 +796,14 @@ export type _Tree_UnaryOperatorOperator = _TypeAssert<
 export type _Tree_AugmentedAssignmentOperator = _TypeAssert<
 	_TypeExtends<AugmentedAssignmentOperatorTree['type'], '_augmented_assignment_operator'>
 >;
-export type _Tree_Indent = _TypeAssert<_TypeExtends<IndentTree['type'], '_indent'>>;
-export type _Tree_Dedent = _TypeAssert<_TypeExtends<DedentTree['type'], '_dedent'>>;
 export type _Tree_StringStart = _TypeAssert<_TypeExtends<StringStartTree['type'], 'string_start'>>;
 export type _Tree__StringContent = _TypeAssert<_TypeExtends<_StringContentTree['type'], '_string_content'>>;
 export type _Tree_EscapeInterpolation = _TypeAssert<
 	_TypeExtends<EscapeInterpolationTree['type'], 'escape_interpolation'>
 >;
 export type _Tree_StringEnd = _TypeAssert<_TypeExtends<StringEndTree['type'], 'string_end'>>;
+export type _Tree_Indent = _TypeAssert<_TypeExtends<IndentTree['type'], '_indent'>>;
+export type _Tree_Dedent = _TypeAssert<_TypeExtends<DedentTree['type'], '_dedent'>>;
 export type _Tree_CloseBracket = _TypeAssert<_TypeExtends<CloseBracketTree['type'], ']'>>;
 export type _Tree_CloseParen = _TypeAssert<_TypeExtends<CloseParenTree['type'], ')'>>;
 export type _Tree_CloseBrace = _TypeAssert<_TypeExtends<CloseBraceTree['type'], '}'>>;
