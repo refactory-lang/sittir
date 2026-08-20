@@ -10,7 +10,7 @@
 //! Invariants (enforced by struct + serde helpers):
 //! - `$type`, `$source`, `$named` are required on the wire.
 //! - Named slots serialize as top-level `_<slot>` keys.
-//! - `$other`, `$text`, `$span`, `$nodeHandle`, `$childIndex`
+//! - `$other`, `$text`, `$span`, `$nodeHandle`, `$childIndex`, `$slotOrder`
 //!   are elided when `None` (`serde skip_serializing_if`).
 //! - No other top-level `$`-prefixed keys are emitted — enrichment
 //!   fields (`$variant`, `$raw`, supertype labels) live on the TS side.
@@ -140,6 +140,18 @@ pub struct NodeData {
     ///
     /// Mirrors `NodeTrivia` in `@sittir/types` (spec 023 T016).
     pub trivia_data: Option<NodeTrivia>,
+
+    /// Document-order route names (field or kind) of this node's named
+    /// slot children, one entry per child, stamped by `read_children`
+    /// when the node has two or more named slot buckets. The per-bucket
+    /// `_<slot>` arrays each preserve document order internally, but the
+    /// wire cannot express CROSS-bucket interleave — and scalar-collapsed
+    /// leaf members carry no `$span` to re-derive it from — so the wrap
+    /// layer's bucket merge consumes this stamp to reassemble document
+    /// order. Absent on single-bucket nodes, leaves, and
+    /// factory-constructed nodes (factories populate the canonical merged
+    /// slot directly).
+    pub slot_order: Option<Vec<String>>,
 }
 
 #[derive(Serialize)]
@@ -181,6 +193,12 @@ struct NodeDataSer<'a> {
         skip_serializing_if = "Option::is_none"
     )]
     trivia_data: &'a Option<NodeTrivia>,
+    #[serde(
+        rename = "$slotOrder",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    slot_order: &'a Option<Vec<String>>,
 }
 
 #[derive(Deserialize)]
@@ -207,6 +225,8 @@ struct NodeDataDe {
     child_index: Option<u16>,
     #[serde(rename = "$triviaData", default)]
     trivia_data: Option<NodeTrivia>,
+    #[serde(rename = "$slotOrder", default)]
+    slot_order: Option<Vec<String>>,
 }
 
 fn serialize_slot_fields<S>(
@@ -304,6 +324,7 @@ impl Serialize for NodeData {
             node_handle: &self.node_handle,
             child_index: &self.child_index,
             trivia_data: &self.trivia_data,
+            slot_order: &self.slot_order,
         }
         .serialize(serializer)
     }
@@ -336,6 +357,7 @@ impl<'de> Deserialize<'de> for NodeData {
             node_handle: wire.node_handle,
             child_index: wire.child_index,
             trivia_data: wire.trivia_data,
+            slot_order: wire.slot_order,
         })
     }
 }
@@ -572,6 +594,7 @@ fn scalar_text_leaf(text: String) -> NodeData {
         node_handle: None,
         child_index: None,
         trivia_data: None,
+        slot_order: None,
     }
 }
 
@@ -587,6 +610,7 @@ fn scalar_kind_leaf(kind: KindId) -> NodeData {
         node_handle: None,
         child_index: None,
         trivia_data: None,
+        slot_order: None,
     }
 }
 

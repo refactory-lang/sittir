@@ -225,6 +225,42 @@ function _concatInSourceOrder<T>(parts: readonly (T | readonly T[] | undefined)[
 		.sort(([a, ai], [b, bi]) => pos(a) - pos(b) || ai - bi)
 		.map(([e]) => e);
 }
+// _interleaveBySlotOrder — reassemble a repeated heterogeneous-union
+// slot's per-route wire buckets into document order by walking the
+// parent's `$slotOrder` stamp (route names in child order, emitted by
+// the native reader on multi-bucket parents) with a cursor per bucket.
+// Text-collapsed scalar leaves carry no `$span`, so a position sort
+// cannot order them — the stamp is the only cross-bucket order source.
+// Nodes without the stamp (older captures) fall back to the position
+// sort; elements the stamp does not cover are appended in bucket order
+// so a mismatch never drops members.
+function _interleaveBySlotOrder<T>(
+	data: { readonly $slotOrder?: readonly string[] },
+	pairs: readonly (readonly [string, T | readonly T[] | undefined])[]
+): readonly T[] {
+	const order = data.$slotOrder;
+	if (!Array.isArray(order)) return _concatInSourceOrder(pairs.map(([, v]) => v));
+	const buckets = new Map<string, readonly T[]>();
+	for (const [route, value] of pairs) {
+		if (value === undefined) continue;
+		buckets.set(route, _toArr(value));
+	}
+	const cursors = new Map<string, number>();
+	const out: T[] = [];
+	for (const route of order) {
+		const bucket = buckets.get(route);
+		if (!bucket) continue;
+		const i = cursors.get(route) ?? 0;
+		if (i < bucket.length) {
+			out.push(bucket[i] as T);
+			cursors.set(route, i + 1);
+		}
+	}
+	for (const [route, bucket] of buckets) {
+		for (let i = cursors.get(route) ?? 0; i < bucket.length; i++) out.push(bucket[i] as T);
+	}
+	return out;
+}
 // Drill-in helpers — call back through `readTreeNode` so the same
 // per-handle dispatch + wrap pipeline runs at every level. Layering:
 //   readTreeNode (public entry)
@@ -6087,11 +6123,11 @@ export function wrapStringContent(
 			_content: normalizeRepeatedWrapSlot(
 				data._content !== undefined
 					? _toArr(data._content)
-					: _concatInSourceOrder([
-							data._escape_interpolation,
-							data._escape_sequence,
-							data._not_escape_sequence,
-							data._string_content
+					: _interleaveBySlotOrder(data as _NodeData, [
+							['escape_interpolation', data._escape_interpolation],
+							['escape_sequence', data._escape_sequence],
+							['not_escape_sequence', data._not_escape_sequence],
+							['string_content', data._string_content]
 						]),
 				false,
 				'content',
@@ -6211,7 +6247,9 @@ export function wrapFormatSpecifier(
 			..._omitWrapKeys(data, ['_format_expression']),
 			$type: TSKindId.FormatSpecifier as const,
 			_content: normalizeRepeatedWrapSlot(
-				data._content !== undefined ? _toArr(data._content) : _concatInSourceOrder([data._format_expression]),
+				data._content !== undefined
+					? _toArr(data._content)
+					: _interleaveBySlotOrder(data as _NodeData, [['format_expression', data._format_expression]]),
 				false,
 				'content',
 				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
@@ -6532,39 +6570,39 @@ export function wrapExpressionListExpressions(
 	const _content = normalizeRepeatedWrapSlot(
 		data._expression !== undefined
 			? _toArr(data._expression)
-			: _concatInSourceOrder([
-					data._comparison_operator,
-					data._not_operator,
-					data._boolean_operator,
-					data._lambda,
-					data._await,
-					data._binary_operator,
-					data._identifier,
-					data._string,
-					data._concatenated_string,
-					data._integer,
-					data._float,
-					data._true,
-					data._false,
-					data._none,
-					data._unary_operator,
-					data._attribute,
-					data._subscript,
-					data._call,
-					data._list,
-					data._list_comprehension,
-					data._dictionary,
-					data._dictionary_comprehension,
-					data._set,
-					data._set_comprehension,
-					data._tuple,
-					data._parenthesized_expression,
-					data._generator_expression,
-					data._ellipsis,
-					data._list_splat_pattern,
-					data._conditional_expression,
-					data._named_expression,
-					data._as_pattern
+			: _interleaveBySlotOrder(data as _NodeData, [
+					['comparison_operator', data._comparison_operator],
+					['not_operator', data._not_operator],
+					['boolean_operator', data._boolean_operator],
+					['lambda', data._lambda],
+					['await', data._await],
+					['binary_operator', data._binary_operator],
+					['identifier', data._identifier],
+					['string', data._string],
+					['concatenated_string', data._concatenated_string],
+					['integer', data._integer],
+					['float', data._float],
+					['true', data._true],
+					['false', data._false],
+					['none', data._none],
+					['unary_operator', data._unary_operator],
+					['attribute', data._attribute],
+					['subscript', data._subscript],
+					['call', data._call],
+					['list', data._list],
+					['list_comprehension', data._list_comprehension],
+					['dictionary', data._dictionary],
+					['dictionary_comprehension', data._dictionary_comprehension],
+					['set', data._set],
+					['set_comprehension', data._set_comprehension],
+					['tuple', data._tuple],
+					['parenthesized_expression', data._parenthesized_expression],
+					['generator_expression', data._generator_expression],
+					['ellipsis', data._ellipsis],
+					['list_splat_pattern', data._list_splat_pattern],
+					['conditional_expression', data._conditional_expression],
+					['named_expression', data._named_expression],
+					['as_pattern', data._as_pattern]
 				]),
 		true,
 		'expression',
@@ -6696,13 +6734,13 @@ export function wrapPatternListPatterns(
 	const _content = normalizeRepeatedWrapSlot(
 		data._pattern !== undefined
 			? _toArr(data._pattern)
-			: _concatInSourceOrder([
-					data._identifier,
-					data._subscript,
-					data._attribute,
-					data._list_splat_pattern,
-					data._tuple_pattern,
-					data._list_pattern
+			: _interleaveBySlotOrder(data as _NodeData, [
+					['identifier', data._identifier],
+					['subscript', data._subscript],
+					['attribute', data._attribute],
+					['list_splat_pattern', data._list_splat_pattern],
+					['tuple_pattern', data._tuple_pattern],
+					['list_pattern', data._list_pattern]
 				]),
 		true,
 		'pattern',

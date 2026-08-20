@@ -29,6 +29,7 @@ fn sample_leaf() -> NodeData {
         node_handle: Some(7),
         child_index: None,
         trivia_data: None,
+        slot_order: None,
     }
 }
 
@@ -59,6 +60,7 @@ fn sample_branch() -> NodeData {
         node_handle: None,
         child_index: None,
         trivia_data: None,
+        slot_order: None,
     }
 }
 
@@ -174,6 +176,21 @@ fn field_value_deserializes_from_each_variant() {
 }
 
 #[test]
+fn slot_order_roundtrips_and_elides_when_absent() {
+    // Multi-bucket parents stamp `$slotOrder` (cross-bucket interleave);
+    // it must survive a wire roundtrip and stay absent everywhere else.
+    let json = r#"{"$type":372,"$source":0,"$named":true,"_name":["A"],"_enum_assignment":["B"],"$slotOrder":["name","enum_assignment"]}"#;
+    let node: NodeData = serde_json::from_str(json).unwrap();
+    assert_eq!(
+        node.slot_order.as_deref(),
+        Some(&["name".to_string(), "enum_assignment".to_string()][..])
+    );
+    assert_eq!(serde_json::to_string(&node).unwrap(), json);
+
+    assert!(!serde_json::to_string(&sample_leaf()).unwrap().contains("$slotOrder"));
+}
+
+#[test]
 fn field_value_array_holes_roundtrip() {
     // Sparse-array elisions (ts `[, a, ]`) store `null` holes in array slots.
     let arr: FieldValue = serde_json::from_str(r#"[null,"a",null]"#).unwrap();
@@ -218,12 +235,14 @@ fn anonymous_leaf_children_scalarize_on_the_wire() {
             node_handle: None,
             child_index: None,
             trivia_data: None,
+            slot_order: None,
         }]),
         text: None,
         span: None,
         node_handle: None,
         child_index: None,
         trivia_data: None,
+        slot_order: None,
     };
     let json = serde_json::to_string(&node).unwrap();
     let v = wire(&json);
@@ -294,5 +313,6 @@ fn is_allowed_node_key(key: &str) -> bool {
             | "$nodeHandle"
             | "$childIndex"
             | "$triviaData"
+            | "$slotOrder"
     ) || key.starts_with('_')
 }

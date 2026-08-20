@@ -225,6 +225,42 @@ function _concatInSourceOrder<T>(parts: readonly (T | readonly T[] | undefined)[
 		.sort(([a, ai], [b, bi]) => pos(a) - pos(b) || ai - bi)
 		.map(([e]) => e);
 }
+// _interleaveBySlotOrder — reassemble a repeated heterogeneous-union
+// slot's per-route wire buckets into document order by walking the
+// parent's `$slotOrder` stamp (route names in child order, emitted by
+// the native reader on multi-bucket parents) with a cursor per bucket.
+// Text-collapsed scalar leaves carry no `$span`, so a position sort
+// cannot order them — the stamp is the only cross-bucket order source.
+// Nodes without the stamp (older captures) fall back to the position
+// sort; elements the stamp does not cover are appended in bucket order
+// so a mismatch never drops members.
+function _interleaveBySlotOrder<T>(
+	data: { readonly $slotOrder?: readonly string[] },
+	pairs: readonly (readonly [string, T | readonly T[] | undefined])[]
+): readonly T[] {
+	const order = data.$slotOrder;
+	if (!Array.isArray(order)) return _concatInSourceOrder(pairs.map(([, v]) => v));
+	const buckets = new Map<string, readonly T[]>();
+	for (const [route, value] of pairs) {
+		if (value === undefined) continue;
+		buckets.set(route, _toArr(value));
+	}
+	const cursors = new Map<string, number>();
+	const out: T[] = [];
+	for (const route of order) {
+		const bucket = buckets.get(route);
+		if (!bucket) continue;
+		const i = cursors.get(route) ?? 0;
+		if (i < bucket.length) {
+			out.push(bucket[i] as T);
+			cursors.set(route, i + 1);
+		}
+	}
+	for (const [route, bucket] of buckets) {
+		for (let i = cursors.get(route) ?? 0; i < bucket.length; i++) out.push(bucket[i] as T);
+	}
+	return out;
+}
 // Drill-in helpers — call back through `readTreeNode` so the same
 // per-handle dispatch + wrap pipeline runs at every level. Layering:
 //   readTreeNode (public entry)
@@ -10422,16 +10458,16 @@ export function wrapEnumBodyElements(
 				_filterWrapChildrenByKind(
 					data._content !== undefined
 						? _toArr(data._content)
-						: _concatInSourceOrder([
-								data._name,
-								data._enum_assignment,
-								data._property_identifier,
-								data._identifier,
-								data._reserved_identifier,
-								data._private_property_identifier,
-								data._string,
-								data._number,
-								data._computed_property_name
+						: _interleaveBySlotOrder(data as _NodeData, [
+								['name', data._name],
+								['enum_assignment', data._enum_assignment],
+								['property_identifier', data._property_identifier],
+								['identifier', data._identifier],
+								['reserved_identifier', data._reserved_identifier],
+								['private_property_identifier', data._private_property_identifier],
+								['string', data._string],
+								['number', data._number],
+								['computed_property_name', data._computed_property_name]
 							]),
 					[
 						'enum_assignment',
@@ -10685,13 +10721,13 @@ export function wrapObjectTypeContent(
 	const _content = normalizeRepeatedWrapSlot(
 		data._content !== undefined
 			? _toArr(data._content)
-			: _concatInSourceOrder([
-					data._export_statement,
-					data._property_signature,
-					data._call_signature,
-					data._construct_signature,
-					data._index_signature,
-					data._method_signature
+			: _interleaveBySlotOrder(data as _NodeData, [
+					['export_statement', data._export_statement],
+					['property_signature', data._property_signature],
+					['call_signature', data._call_signature],
+					['construct_signature', data._construct_signature],
+					['index_signature', data._index_signature],
+					['method_signature', data._method_signature]
 				]),
 		true,
 		'content',

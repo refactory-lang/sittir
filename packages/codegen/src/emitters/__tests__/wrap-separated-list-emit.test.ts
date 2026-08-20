@@ -137,12 +137,12 @@ describe('wrap emitter — separatedList', () => {
 		// `_separatorKindOf`, never stored or exposed as an accessor) combines
 		// candidate keys from more than one real field here (`_key_item` AND
 		// `_val_item`), which don't share a common element type. Both the
-		// outer `normalizeRepeatedWrapSlot` and inner `_concatInSourceOrder`
+		// outer `normalizeRepeatedWrapSlot` and inner `_interleaveBySlotOrder`
 		// calls must carry an explicit `<unknown>` type argument — regressing
 		// either one back to bare inference reproduces the real
 		// EnumAssignment/PropertyName CI type error this shape was built to
 		// catch (TypeScript's `enum_body_elements`).
 		expect(emitted).toContain('const _content = normalizeRepeatedWrapSlot<unknown>(');
-		expect(emitted).toContain('_concatInSourceOrder<unknown>([');
+		expect(emitted).toContain('_interleaveBySlotOrder<unknown>(');
 	});
 });

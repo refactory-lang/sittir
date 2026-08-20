@@ -498,16 +498,25 @@ function resolveSlotStoreExpr(
 			// authoritative on its own — normalize it (scalar-or-array, via the
 			// same `_toArr` the concat path uses) rather than merging it into
 			// the candidate concat.
-			const sources = candidates.map((k) => dataAccessExpr(dataExpr, k));
+			// Pair each candidate storage key with its read-route name (the
+			// storage key minus the `_` prefix — the same name the reader
+			// records in `$slotOrder`), so `_interleaveBySlotOrder` can walk
+			// the parent's stamped document order with per-bucket cursors.
+			const sources = candidates.map(
+				(k) => `[${JSON.stringify(k.startsWith('_') ? k.slice(1) : k)}, ${dataAccessExpr(dataExpr, k)}]`
+			);
 			// See resolveSlotDrillExprs's ResolveSlotDrillConfig.forceUnknownElement
 			// doc comment: a multi-field AssembledSeparatedList's internal
 			// `_content` probe can combine candidate keys from more than one real
-			// slot with no common element type — `_concatInSourceOrder`'s own
+			// slot with no common element type — `_interleaveBySlotOrder`'s own
 			// generic inference (independent of the outer normalizeRepeatedWrapSlot
 			// call) needs the same explicit widening, or it silently picks one
 			// candidate's type and rejects the others.
 			const concatTypeArg = forceUnknownElement ? '<unknown>' : '';
-			const candidateExpr = sources.length > 0 ? `_concatInSourceOrder${concatTypeArg}([${sources.join(', ')}])` : '[]';
+			const candidateExpr =
+				sources.length > 0
+					? `_interleaveBySlotOrder${concatTypeArg}(${dataExpr} as _NodeData, [${sources.join(', ')}])`
+					: '[]';
 			return `(${canonicalExpr} !== undefined ? _toArr(${canonicalExpr}) : ${candidateExpr})`;
 		}
 
@@ -1311,8 +1320,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource) || usesSplitElided;
 		const usesNormalizeSingular = /\bnormalizeSingularWrapSlot\b/.test(bodySource);
 		const usesNormalizeRepeated = /\bnormalizeRepeatedWrapSlot\b/.test(bodySource);
-		const usesConcatInSourceOrder = /\b_concatInSourceOrder\b/.test(bodySource);
-		// `_concatInSourceOrder` calls `_toArr`, so emit `_toArr` whenever either is used.
+		const usesInterleaveBySlotOrder = /\b_interleaveBySlotOrder\b/.test(bodySource);
+		// `_interleaveBySlotOrder` falls back to `_concatInSourceOrder` (and both
+		// call `_toArr`), so emit each helper whenever a caller above it is used.
+		const usesConcatInSourceOrder = /\b_concatInSourceOrder\b/.test(bodySource) || usesInterleaveBySlotOrder;
 		const usesToArr = /\b_toArr\b/.test(bodySource) || usesConcatInSourceOrder;
 		const usesOmitWrapKeys = /\b_omitWrapKeys\b/.test(bodySource);
 		const usesIsReadTextLeaf = /\b_isReadTextLeaf\b/.test(bodySource);
@@ -1525,6 +1536,46 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    .map((e, i) => [e, i] as const)',
 						'    .sort(([a, ai], [b, bi]) => pos(a) - pos(b) || ai - bi)',
 						'    .map(([e]) => e);',
+						'}'
+					]
+				: []),
+			...(usesInterleaveBySlotOrder
+				? [
+						'// _interleaveBySlotOrder — reassemble a repeated heterogeneous-union',
+						"// slot's per-route wire buckets into document order by walking the",
+						'// parent\'s `$slotOrder` stamp (route names in child order, emitted by',
+						'// the native reader on multi-bucket parents) with a cursor per bucket.',
+						'// Text-collapsed scalar leaves carry no `$span`, so a position sort',
+						'// cannot order them — the stamp is the only cross-bucket order source.',
+						'// Nodes without the stamp (older captures) fall back to the position',
+						'// sort; elements the stamp does not cover are appended in bucket order',
+						'// so a mismatch never drops members.',
+						'function _interleaveBySlotOrder<T>(',
+						'  data: { readonly $slotOrder?: readonly string[] },',
+						'  pairs: readonly (readonly [string, T | readonly T[] | undefined])[]',
+						'): readonly T[] {',
+						'  const order = data.$slotOrder;',
+						'  if (!Array.isArray(order)) return _concatInSourceOrder(pairs.map(([, v]) => v));',
+						'  const buckets = new Map<string, readonly T[]>();',
+						'  for (const [route, value] of pairs) {',
+						'    if (value === undefined) continue;',
+						'    buckets.set(route, _toArr(value));',
+						'  }',
+						'  const cursors = new Map<string, number>();',
+						'  const out: T[] = [];',
+						'  for (const route of order) {',
+						'    const bucket = buckets.get(route);',
+						'    if (!bucket) continue;',
+						'    const i = cursors.get(route) ?? 0;',
+						'    if (i < bucket.length) {',
+						'      out.push(bucket[i] as T);',
+						'      cursors.set(route, i + 1);',
+						'    }',
+						'  }',
+						'  for (const [route, bucket] of buckets) {',
+						'    for (let i = cursors.get(route) ?? 0; i < bucket.length; i++) out.push(bucket[i] as T);',
+						'  }',
+						'  return out;',
 						'}'
 					]
 				: []),

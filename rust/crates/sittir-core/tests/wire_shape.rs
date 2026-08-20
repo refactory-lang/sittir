@@ -40,6 +40,7 @@ fn complex_node() -> NodeData {
             node_handle: None,
             child_index: None,
             trivia_data: None,
+            slot_order: None,
         })),
     );
     fields.insert(
@@ -55,6 +56,7 @@ fn complex_node() -> NodeData {
             node_handle: None,
             child_index: None,
             trivia_data: None,
+            slot_order: None,
         })]),
     );
     fields.insert("op".to_string(), FieldValue::Text("+".to_string()));
@@ -74,12 +76,14 @@ fn complex_node() -> NodeData {
             node_handle: None,
             child_index: Some(2),
             trivia_data: None,
+            slot_order: None,
         }]),
         text: None,
         span: Some(Span { start: 0, end: 9 }),
         node_handle: None,
         child_index: None,
         trivia_data: None,
+        slot_order: None,
     }
 }
 
