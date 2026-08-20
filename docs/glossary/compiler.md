@@ -1097,9 +1097,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *
  * Why: downstream (link's `resolveNamedAliasWithProvenance`) produces
  * `symbol(target, aliasedFrom: source)` ONLY when the alias source is
- * a bare symbol. For inline content it can't stamp `aliasedFrom` and
- * drillAs loses the CST-visible target. By making every alias source
- * a named hidden rule here, we uniformly preserve alias-target
+ * a bare symbol. For inline content it can't stamp `aliasedFrom`, and
+ * without that stamp the display-name ↔ storage-kind linkage is lost to
+ * everything downstream that consumes it (the node model's
+ * `fieldAliasMap`, validator name normalization). By making every alias
+ * source a named hidden rule here, we uniformly preserve alias-target
  * metadata through the pipeline.
  *
  * Also: the rules map now has a single named entry per alias target
@@ -2354,9 +2356,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *   Hidden symbols (`$._match_block`) are valid alias sources — they still
  *   have concrete shape interfaces emitted from Assemble and are the canonical
  *   type factories/types surface. Tree-sitter emits `_match_block`'s body
- *   structure at the node labeled `block` per `alias($._match_block, $.block)`,
- *   and the drillAs layer rewrites `$type` at wrap time so downstream sees the
- *   source kind.
+ *   structure at the node labeled `block` per `alias($._match_block, $.block)`;
+ *   the wire `$type` is the grammar symbol stamped by the native read, so
+ *   downstream sees the source kind's identity without any rewrite step.
  *
  *   Supertypes (`alias($.expression, $.as_pattern_target)`) are NOT valid alias
  *   sources: supertypes are abstract unions with no concrete shape of their own.
@@ -2510,8 +2512,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * @returns A `SymbolRule<'link'>` for `targetName`, with `aliasedFrom` set when the
  *   body resolves to a concrete non-supertype symbol.
  * @remarks
- *   Preserving alias provenance lets the wrap emitter rewrite `$type` at
- *   drill-in via `drillAs()` for alias-target rewrites.
+ *   Preserving alias provenance (`aliasedFrom` set here; `aliasedFromId`
+ *   stamped later in link's kind-id pass)
+ *   feeds the display-name -> storage-kind pairs (`subtypeRestampPairsOf`,
+ *   `resolveSlotAliasPairs`, serialized as the node model's `fieldAliasMap`)
+ *   the corpus validators use to normalize parse-tree display names against
+ *   storage kinds.
  */
 ```
 

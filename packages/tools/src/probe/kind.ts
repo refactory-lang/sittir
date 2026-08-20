@@ -25,8 +25,8 @@
  *                text / field-name / children). Shows EXACTLY what tree-sitter
  *                emits, including anonymous tokens and field assignments.
  * - `nodeData`:  output of `readTreeNode(root)` — sittir's NodeData view.
- *                Shows `$fields` / `$other` / `$type` identity after
- *                drillAs remapping.
+ *                Shows `$fields` / `$other` / `$type` (the grammar-symbol
+ *                wire identity stamped by the read).
  * - `rendered`:  output of `render(nodeData)` — the text re-emitted by the
  *                render pipeline.
  * - `diff`:      trivial comparison: source length, rendered length,
@@ -552,7 +552,7 @@ export async function probe(
 	// The native engine parses internally via the `tree_sitter` Rust
 	// crate (zero web-tree-sitter). A `nativeTreeHandle` wraps the
 	// engine; the grammar's `readTreeNode` then routes the read +
-	// every drill-in / drillAs through `tree.read(id)` → napi. tree-
+	// every drill-in through `tree.read(id)` → napi. tree-
 	// sitter `Node::id()` is per-tree, so the engine that parsed the
 	// tree owns the id space — the per-handle dispatch keeps reads
 	// inside that engine. Wasm parser above is kept only so the
@@ -570,7 +570,7 @@ export async function probe(
 			// address the native engine's tree (separate id spaces).
 			// Read root via the native handle, walk its NodeData to
 			// find the matching subtree, then re-read THAT node by its
-			// native `$nodeId` so drillAs / drillIn fire under napi.
+			// native `$nodeId` so drill-in fires under napi.
 			const root = readTreeNodeFn ? readTreeNodeFn(handle) : handle.read?.();
 			const target = opts.kind
 				? findInNodeData(root, opts.kind)

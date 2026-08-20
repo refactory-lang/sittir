@@ -944,10 +944,11 @@ export function rulesEqual(a: Rule<'link'>, b: Rule<'link'>): boolean {
 		case SYMBOL:
 			// Include aliasedFrom: two symbols with the same `.name` but
 			// different alias provenance point at the same kind but carry
-			// different drillAs metadata. Treating them as equal lets
-			// factoring collapse to one branch and silently drop the
-			// aliasSources entry from the other (see
-			// node-model.json5 diff for `_index_signature_colon.name`).
+			// different display-name facts (the per-value `parseKind` that
+			// feeds the node model's `fieldAliasMap`). Treating them as
+			// equal lets factoring collapse to one branch and silently
+			// drop the other branch's alias fact from the node model
+			// (e.g. `_index_signature_colon.name`).
 			return a.name === (b as typeof a).name && a.aliasedFrom === (b as typeof a).aliasedFrom;
 		case SEQ:
 			return (

@@ -1848,9 +1848,12 @@ export function aliasTargetToSourceMapOf(slot: {
 }
 
 /**
- * Resolve every {parseName -> storageName} restamp pair a slot's runtime
- * value can require — the same fact `wrap.ts`'s drillAs/drillAsAll
- * accessors key their alias restamp on. Two sources, unioned:
+ * Resolve every {parseName -> storageName} pair a slot's runtime value can
+ * present — the display (parse) names that diverge from the storage kind.
+ * Serialized as the node model's `fieldAliasMap` and consumed by the corpus
+ * validators to normalize display names against storage kinds (the wire
+ * `$type` is the grammar symbol stamped by the native read, so no runtime
+ * restamp exists). Two sources, unioned:
  *
  * 1. The slot's own values, where a NodeRef's stamped parse-kind differs
  *    from its storage kind (a directly-aliased arm, e.g. a polymorphic
@@ -1866,7 +1869,7 @@ export function aliasTargetToSourceMapOf(slot: {
  * Both sources admit only aliases the parser kept two symbols for
  * ({@link aliasRestampRequired}): a hidden rule merged into its sole alias
  * name arrives on the wire ALREADY under the storage kind's id, so a
- * restamp pair for it would remap every occurrence to itself.
+ * pair for it would remap every occurrence to itself.
  *
  * `ctx.nodes` is duck-typed against `NodeMap['nodes']` rather than
  * importing the `NodeMap` type directly — `NodeMap` (in
@@ -1942,7 +1945,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	// names are the distinct value parse-as (CST / alias-target) kinds.
 	const parseNames = slot.fieldName !== undefined ? [slot.fieldName] : valueParseNamesOf(slot);
 	// storageName derives from the STORAGE / render-source kind (`value.node` —
-	// how the value is stored and keyed via `drillAs`), NOT `parseKind`. The two
+	// the kind the value is stored and typed under), NOT `parseKind`. The two
 	// projections are parallel and must NOT cross: storageKind→storageName,
 	// parseKind→parseNames. `distinctStorageKinds` mirrors `kindsOf` (node-ref
 	// values' source kind). A slot whose values share ONE storage kind is named
@@ -1951,10 +1954,10 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	// to the generic `content` (the parseName `block` is NOT its storage name).
 	// Storage kinds from node-ref values (the render-source kind via `value.node`).
 	const nodeRefStorageKinds = [...new Set(slot.values.filter(isNodeRef).map((v) => storageKindOfRef(v.node)))];
-	// PR-P Task 3 step 3: when a slot is PURELY inline literals (no node-refs),
-	// its storage kind is the literal's resolved catalog kind — so a slot holding
-	// a single resolved literal is named after that kind instead of the generic
-	// `content` (§4c — `content` is for genuinely-anonymous multi-kind unions).
+	// When a slot is PURELY inline literals (no node-refs), its storage kind is
+	// the literal's resolved catalog kind — so a slot holding a single resolved
+	// literal is named after that kind instead of the generic `content`
+	// (`content` is reserved for genuinely-anonymous multi-kind unions).
 	// A MIXED ref+literal slot keeps its ref-based naming (the literal is
 	// incidental punctuation, not the storage identity) — e.g. `splat_pattern`'s
 	// `{identifier, _}` stays `identifier`, not `content`. Unresolved literals
