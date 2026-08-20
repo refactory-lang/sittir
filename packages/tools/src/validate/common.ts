@@ -786,7 +786,12 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		// generic `pattern` wrapper `let ${r} = null;` produces a
 		// parse error — `let ...x = null` is invalid. Wrap in an
 		// array destructuring target so the rest-pattern surfaces.
-		rest_pattern: (r) => `let [${r}] = [];`
+		// `const`, not `let`: the override parser resolves `let [`'s
+		// declaration-vs-subscript ambiguity to the expression fork
+		// (`let` as reserved_identifier + subscript ERROR — see the
+		// KNOWN_ISSUES let-destructuring divergence), so a `let`
+		// wrapper never reparses; `const [` is unambiguous.
+		rest_pattern: (r) => `const [${r}] = [];`
 	},
 	python: {
 		module: (r) => r,

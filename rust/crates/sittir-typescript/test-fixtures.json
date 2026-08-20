@@ -124220,6 +124220,36 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": 261,
+      "$source": 0,
+      "$named": true,
+      "$other": [
+        61
+      ],
+      "$span": {
+        "start": 184,
+        "end": 188
+      },
+      "$nodeHandle": 30,
+      "_lhs_expression": "c"
+    },
+    "expectedOutput": "...c"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "...c",
+    "pattern": "rest_pattern",
+    "edits": [],
+    "expectedSourceOut": "...c",
+    "expectedReparseTree": "(rest_pattern (identifier))",
+    "wrappedText": "const [...c] = [];",
+    "wrappedOffset": 7
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": 166,
       "$source": 0,
       "$named": true,
@@ -143241,6 +143271,146 @@
     "expectedReparseTree": "(required_parameter pattern: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type)))",
     "wrappedText": "function _f(...args:any) {}",
     "wrappedOffset": 12
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 261,
+      "$source": 0,
+      "$named": true,
+      "$other": [
+        61
+      ],
+      "$span": {
+        "start": 33,
+        "end": 40
+      },
+      "$nodeHandle": 11,
+      "_lhs_expression": "args"
+    },
+    "expectedOutput": "...args"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "...args",
+    "pattern": "rest_pattern",
+    "edits": [],
+    "expectedSourceOut": "...args",
+    "expectedReparseTree": "(rest_pattern (identifier))",
+    "wrappedText": "const [...args] = [];",
+    "wrappedOffset": 7
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 261,
+      "$source": 0,
+      "$named": true,
+      "$other": [
+        61
+      ],
+      "$span": {
+        "start": 84,
+        "end": 91
+      },
+      "$nodeHandle": 23,
+      "_lhs_expression": "args"
+    },
+    "expectedOutput": "...args"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "...args",
+    "pattern": "rest_pattern",
+    "edits": [],
+    "expectedSourceOut": "...args",
+    "expectedReparseTree": "(rest_pattern (identifier))",
+    "wrappedText": "const [...args] = [];",
+    "wrappedOffset": 7
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 303,
+      "$source": 0,
+      "$named": true,
+      "_type": {
+        "$type": 336,
+        "$source": 0,
+        "$named": true,
+        "$text": "any",
+        "$span": {
+          "start": 42,
+          "end": 45
+        },
+        "$nodeHandle": 163
+      },
+      "$other": [
+        30
+      ],
+      "$span": {
+        "start": 40,
+        "end": 45
+      },
+      "$nodeHandle": 12
+    },
+    "expectedOutput": ":any"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": any",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ":any",
+    "expectedReparseTree": "(type_annotation type: (predefined_type))",
+    "wrappedText": "let _:any;",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 303,
+      "$source": 0,
+      "$named": true,
+      "_type": {
+        "$type": 336,
+        "$source": 0,
+        "$named": true,
+        "$text": "any",
+        "$span": {
+          "start": 93,
+          "end": 96
+        },
+        "$nodeHandle": 164
+      },
+      "$other": [
+        30
+      ],
+      "$span": {
+        "start": 91,
+        "end": 96
+      },
+      "$nodeHandle": 24
+    },
+    "expectedOutput": ":any"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": any",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ":any",
+    "expectedReparseTree": "(type_annotation type: (predefined_type))",
+    "wrappedText": "let _:any;",
+    "wrappedOffset": 5
   },
   {
     "kind": "render",
