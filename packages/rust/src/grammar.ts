@@ -1636,7 +1636,19 @@ export type RustGrammar = {
 	readonly raw_string_literal: {
 		type: 'raw_string_literal';
 		named: true;
-		fields: { string_content: { multiple: false; required: true; types: [{ type: 'string_content'; named: true }] } };
+		fields: {
+			raw_string_literal_end: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'raw_string_literal_end'; named: true }];
+			};
+			raw_string_literal_start: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'raw_string_literal_start'; named: true }];
+			};
+			string_content: { multiple: false; required: true; types: [{ type: 'string_content'; named: true }] };
+		};
 	};
 	readonly ref_pattern: {
 		type: 'ref_pattern';
@@ -2604,6 +2616,8 @@ export type RustGrammar = {
 	readonly primitive_type: { type: 'primitive_type'; named: true };
 	readonly _anonymous_pub: { type: 'pub'; named: false };
 	readonly _anonymous_raw: { type: 'raw'; named: false };
+	readonly raw_string_literal_end: { type: 'raw_string_literal_end'; named: true };
+	readonly raw_string_literal_start: { type: 'raw_string_literal_start'; named: true };
 	readonly _anonymous_ref: { type: 'ref'; named: false };
 	readonly _anonymous_return: { type: 'return'; named: false };
 	readonly self: { type: 'self'; named: true };

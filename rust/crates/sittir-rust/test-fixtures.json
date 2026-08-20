@@ -111590,9 +111590,9 @@
           "$named": true,
           "$span": {
             "start": 0,
-            "end": 10
+            "end": 9
           },
-          "$nodeHandle": 7,
+          "$nodeHandle": 16,
           "_content": {
             "$type": 384,
             "$source": 0,
@@ -111601,21 +111601,23 @@
               "$type": 313,
               "$source": 0,
               "$named": true,
+              "_raw_string_literal_start": "r#\"",
               "_string_content": "abc",
+              "_raw_string_literal_end": "\"#",
               "$span": {
                 "start": 0,
-                "end": 9
+                "end": 8
               },
-              "$nodeHandle": 10
+              "$nodeHandle": 22
             },
             "$other": [
               2
             ],
             "$span": {
               "start": 0,
-              "end": 10
+              "end": 9
             },
-            "$nodeHandle": 9
+            "$nodeHandle": 21
           }
         },
         {
@@ -111623,10 +111625,10 @@
           "$source": 0,
           "$named": true,
           "$span": {
-            "start": 11,
-            "end": 23
+            "start": 10,
+            "end": 20
           },
-          "$nodeHandle": 8,
+          "$nodeHandle": 17,
           "_content": {
             "$type": 384,
             "$source": 0,
@@ -111635,41 +111637,151 @@
               "$type": 313,
               "$source": 0,
               "$named": true,
-              "_string_content": "abc",
+              "_raw_string_literal_start": "r##\"",
+              "_string_content": "ok",
+              "_raw_string_literal_end": "\"##",
               "$span": {
-                "start": 11,
-                "end": 22
+                "start": 10,
+                "end": 19
               },
-              "$nodeHandle": 12
+              "$nodeHandle": 24
             },
             "$other": [
               2
             ],
             "$span": {
-              "start": 11,
-              "end": 23
+              "start": 10,
+              "end": 20
             },
-            "$nodeHandle": 11
+            "$nodeHandle": 23
+          }
+        },
+        {
+          "$type": 160,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 21,
+            "end": 40
+          },
+          "$nodeHandle": 18,
+          "_content": {
+            "$type": 384,
+            "$source": 0,
+            "$named": true,
+            "_expression": {
+              "$type": 313,
+              "$source": 0,
+              "$named": true,
+              "_raw_string_literal_start": "r##\"",
+              "_string_content": "foo #\"# bar",
+              "_raw_string_literal_end": "\"##",
+              "$span": {
+                "start": 21,
+                "end": 39
+              },
+              "$nodeHandle": 26
+            },
+            "$other": [
+              2
+            ],
+            "$span": {
+              "start": 21,
+              "end": 40
+            },
+            "$nodeHandle": 25
+          }
+        },
+        {
+          "$type": 160,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 41,
+            "end": 64
+          },
+          "$nodeHandle": 19,
+          "_content": {
+            "$type": 384,
+            "$source": 0,
+            "$named": true,
+            "_expression": {
+              "$type": 313,
+              "$source": 0,
+              "$named": true,
+              "_raw_string_literal_start": "r###\"",
+              "_string_content": "foo ##\"## bar",
+              "_raw_string_literal_end": "\"###",
+              "$span": {
+                "start": 41,
+                "end": 63
+              },
+              "$nodeHandle": 28
+            },
+            "$other": [
+              2
+            ],
+            "$span": {
+              "start": 41,
+              "end": 64
+            },
+            "$nodeHandle": 27
+          }
+        },
+        {
+          "$type": 160,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 65,
+            "end": 94
+          },
+          "$nodeHandle": 20,
+          "_content": {
+            "$type": 384,
+            "$source": 0,
+            "$named": true,
+            "_expression": {
+              "$type": 313,
+              "$source": 0,
+              "$named": true,
+              "_raw_string_literal_start": "r######\"",
+              "_string_content": "foo ##### bar",
+              "_raw_string_literal_end": "\"######",
+              "$span": {
+                "start": 65,
+                "end": 93
+              },
+              "$nodeHandle": 30
+            },
+            "$other": [
+              2
+            ],
+            "$span": {
+              "start": 65,
+              "end": 94
+            },
+            "$nodeHandle": 29
           }
         }
       ],
       "$span": {
         "start": 0,
-        "end": 23
+        "end": 94
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "r#\"abc\"#;r#\"abc\"#;"
+    "expectedOutput": "r#\"abc\"#;r##\"ok\"##;r##\"foo #\"# bar\"##;r###\"foo ##\"## bar\"###;r######\"foo ##### bar\"######;"
   },
   {
     "kind": "roundtrip",
     "grammar": "rust",
-    "sourceIn": "br#\"abc\"#;\nbr##\"abc\"##;",
+    "sourceIn": "r#\"abc\"#; r##\"ok\"##;\nr##\"foo #\"# bar\"##;\nr###\"foo ##\"## bar\"###;\nr######\"foo ##### bar\"######;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "r#\"abc\"#;r#\"abc\"#;",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal string_content: (string_content)))) statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal string_content: (string_content)))))",
-    "wrappedText": "r#\"abc\"#;r#\"abc\"#;",
+    "expectedSourceOut": "r#\"abc\"#;r##\"ok\"##;r##\"foo #\"# bar\"##;r###\"foo ##\"## bar\"###;r######\"foo ##### bar\"######;",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))) statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))) statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))) statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))) statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))))",
+    "wrappedText": "r#\"abc\"#;r##\"ok\"##;r##\"foo #\"# bar\"##;r###\"foo ##\"## bar\"###;r######\"foo ##### bar\"######;",
     "wrappedOffset": 0
   },
   {
@@ -111679,23 +111791,25 @@
       "$type": 313,
       "$source": 0,
       "$named": true,
+      "_raw_string_literal_start": "r#\"",
       "_string_content": "abc",
+      "_raw_string_literal_end": "\"#",
       "$span": {
         "start": 0,
-        "end": 9
+        "end": 8
       },
-      "$nodeHandle": 4
+      "$nodeHandle": 7
     },
     "expectedOutput": "r#\"abc\"#"
   },
   {
     "kind": "roundtrip",
     "grammar": "rust",
-    "sourceIn": "br#\"abc\"#",
+    "sourceIn": "r#\"abc\"#",
     "pattern": "raw_string_literal",
     "edits": [],
     "expectedSourceOut": "r#\"abc\"#",
-    "expectedReparseTree": "(raw_string_literal string_content: (string_content))",
+    "expectedReparseTree": "(raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end))",
     "wrappedText": "fn _f() { let _ = r#\"abc\"#; }",
     "wrappedOffset": 18
   },
@@ -111706,24 +111820,113 @@
       "$type": 313,
       "$source": 0,
       "$named": true,
-      "_string_content": "abc",
+      "_raw_string_literal_start": "r##\"",
+      "_string_content": "ok",
+      "_raw_string_literal_end": "\"##",
       "$span": {
-        "start": 11,
-        "end": 22
+        "start": 10,
+        "end": 19
       },
-      "$nodeHandle": 6
+      "$nodeHandle": 9
     },
-    "expectedOutput": "r#\"abc\"#"
+    "expectedOutput": "r##\"ok\"##"
   },
   {
     "kind": "roundtrip",
     "grammar": "rust",
-    "sourceIn": "br##\"abc\"##",
+    "sourceIn": "r##\"ok\"##",
     "pattern": "raw_string_literal",
     "edits": [],
-    "expectedSourceOut": "r#\"abc\"#",
-    "expectedReparseTree": "(raw_string_literal string_content: (string_content))",
-    "wrappedText": "fn _f() { let _ = r#\"abc\"#; }",
+    "expectedSourceOut": "r##\"ok\"##",
+    "expectedReparseTree": "(raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end))",
+    "wrappedText": "fn _f() { let _ = r##\"ok\"##; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 313,
+      "$source": 0,
+      "$named": true,
+      "_raw_string_literal_start": "r##\"",
+      "_string_content": "foo #\"# bar",
+      "_raw_string_literal_end": "\"##",
+      "$span": {
+        "start": 21,
+        "end": 39
+      },
+      "$nodeHandle": 11
+    },
+    "expectedOutput": "r##\"foo #\"# bar\"##"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "r##\"foo #\"# bar\"##",
+    "pattern": "raw_string_literal",
+    "edits": [],
+    "expectedSourceOut": "r##\"foo #\"# bar\"##",
+    "expectedReparseTree": "(raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end))",
+    "wrappedText": "fn _f() { let _ = r##\"foo #\"# bar\"##; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 313,
+      "$source": 0,
+      "$named": true,
+      "_raw_string_literal_start": "r###\"",
+      "_string_content": "foo ##\"## bar",
+      "_raw_string_literal_end": "\"###",
+      "$span": {
+        "start": 41,
+        "end": 63
+      },
+      "$nodeHandle": 13
+    },
+    "expectedOutput": "r###\"foo ##\"## bar\"###"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "r###\"foo ##\"## bar\"###",
+    "pattern": "raw_string_literal",
+    "edits": [],
+    "expectedSourceOut": "r###\"foo ##\"## bar\"###",
+    "expectedReparseTree": "(raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end))",
+    "wrappedText": "fn _f() { let _ = r###\"foo ##\"## bar\"###; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 313,
+      "$source": 0,
+      "$named": true,
+      "_raw_string_literal_start": "r######\"",
+      "_string_content": "foo ##### bar",
+      "_raw_string_literal_end": "\"######",
+      "$span": {
+        "start": 65,
+        "end": 93
+      },
+      "$nodeHandle": 15
+    },
+    "expectedOutput": "r######\"foo ##### bar\"######"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "r######\"foo ##### bar\"######",
+    "pattern": "raw_string_literal",
+    "edits": [],
+    "expectedSourceOut": "r######\"foo ##### bar\"######",
+    "expectedReparseTree": "(raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end))",
+    "wrappedText": "fn _f() { let _ = r######\"foo ##### bar\"######; }",
     "wrappedOffset": 18
   },
   {
@@ -111751,7 +111954,9 @@
               "$type": 313,
               "$source": 0,
               "$named": true,
+              "_raw_string_literal_start": "br#\"",
               "_string_content": "abc",
+              "_raw_string_literal_end": "\"#",
               "$span": {
                 "start": 0,
                 "end": 9
@@ -111785,7 +111990,9 @@
               "$type": 313,
               "$source": 0,
               "$named": true,
+              "_raw_string_literal_start": "br##\"",
               "_string_content": "abc",
+              "_raw_string_literal_end": "\"##",
               "$span": {
                 "start": 11,
                 "end": 22
@@ -111809,17 +112016,17 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "r#\"abc\"#;r#\"abc\"#;"
+    "expectedOutput": "br#\"abc\"#;br##\"abc\"##;"
   },
   {
     "kind": "roundtrip",
     "grammar": "rust",
-    "sourceIn": "cr#\"abc\"#;\ncr##\"abc\"##;",
+    "sourceIn": "br#\"abc\"#;\nbr##\"abc\"##;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "r#\"abc\"#;r#\"abc\"#;",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal string_content: (string_content)))) statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal string_content: (string_content)))))",
-    "wrappedText": "r#\"abc\"#;r#\"abc\"#;",
+    "expectedSourceOut": "br#\"abc\"#;br##\"abc\"##;",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))) statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))))",
+    "wrappedText": "br#\"abc\"#;br##\"abc\"##;",
     "wrappedOffset": 0
   },
   {
@@ -111829,24 +112036,26 @@
       "$type": 313,
       "$source": 0,
       "$named": true,
+      "_raw_string_literal_start": "br#\"",
       "_string_content": "abc",
+      "_raw_string_literal_end": "\"#",
       "$span": {
         "start": 0,
         "end": 9
       },
       "$nodeHandle": 4
     },
-    "expectedOutput": "r#\"abc\"#"
+    "expectedOutput": "br#\"abc\"#"
   },
   {
     "kind": "roundtrip",
     "grammar": "rust",
-    "sourceIn": "cr#\"abc\"#",
+    "sourceIn": "br#\"abc\"#",
     "pattern": "raw_string_literal",
     "edits": [],
-    "expectedSourceOut": "r#\"abc\"#",
-    "expectedReparseTree": "(raw_string_literal string_content: (string_content))",
-    "wrappedText": "fn _f() { let _ = r#\"abc\"#; }",
+    "expectedSourceOut": "br#\"abc\"#",
+    "expectedReparseTree": "(raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end))",
+    "wrappedText": "fn _f() { let _ = br#\"abc\"#; }",
     "wrappedOffset": 18
   },
   {
@@ -111856,14 +112065,174 @@
       "$type": 313,
       "$source": 0,
       "$named": true,
+      "_raw_string_literal_start": "br##\"",
       "_string_content": "abc",
+      "_raw_string_literal_end": "\"##",
       "$span": {
         "start": 11,
         "end": 22
       },
       "$nodeHandle": 6
     },
-    "expectedOutput": "r#\"abc\"#"
+    "expectedOutput": "br##\"abc\"##"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "br##\"abc\"##",
+    "pattern": "raw_string_literal",
+    "edits": [],
+    "expectedSourceOut": "br##\"abc\"##",
+    "expectedReparseTree": "(raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end))",
+    "wrappedText": "fn _f() { let _ = br##\"abc\"##; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 160,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 0,
+            "end": 10
+          },
+          "$nodeHandle": 7,
+          "_content": {
+            "$type": 384,
+            "$source": 0,
+            "$named": true,
+            "_expression": {
+              "$type": 313,
+              "$source": 0,
+              "$named": true,
+              "_raw_string_literal_start": "cr#\"",
+              "_string_content": "abc",
+              "_raw_string_literal_end": "\"#",
+              "$span": {
+                "start": 0,
+                "end": 9
+              },
+              "$nodeHandle": 10
+            },
+            "$other": [
+              2
+            ],
+            "$span": {
+              "start": 0,
+              "end": 10
+            },
+            "$nodeHandle": 9
+          }
+        },
+        {
+          "$type": 160,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 11,
+            "end": 23
+          },
+          "$nodeHandle": 8,
+          "_content": {
+            "$type": 384,
+            "$source": 0,
+            "$named": true,
+            "_expression": {
+              "$type": 313,
+              "$source": 0,
+              "$named": true,
+              "_raw_string_literal_start": "cr##\"",
+              "_string_content": "abc",
+              "_raw_string_literal_end": "\"##",
+              "$span": {
+                "start": 11,
+                "end": 22
+              },
+              "$nodeHandle": 12
+            },
+            "$other": [
+              2
+            ],
+            "$span": {
+              "start": 11,
+              "end": 23
+            },
+            "$nodeHandle": 11
+          }
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 23
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "cr#\"abc\"#;cr##\"abc\"##;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "cr#\"abc\"#;\ncr##\"abc\"##;",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "cr#\"abc\"#;cr##\"abc\"##;",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))) statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))))",
+    "wrappedText": "cr#\"abc\"#;cr##\"abc\"##;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 313,
+      "$source": 0,
+      "$named": true,
+      "_raw_string_literal_start": "cr#\"",
+      "_string_content": "abc",
+      "_raw_string_literal_end": "\"#",
+      "$span": {
+        "start": 0,
+        "end": 9
+      },
+      "$nodeHandle": 4
+    },
+    "expectedOutput": "cr#\"abc\"#"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "cr#\"abc\"#",
+    "pattern": "raw_string_literal",
+    "edits": [],
+    "expectedSourceOut": "cr#\"abc\"#",
+    "expectedReparseTree": "(raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end))",
+    "wrappedText": "fn _f() { let _ = cr#\"abc\"#; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 313,
+      "$source": 0,
+      "$named": true,
+      "_raw_string_literal_start": "cr##\"",
+      "_string_content": "abc",
+      "_raw_string_literal_end": "\"##",
+      "$span": {
+        "start": 11,
+        "end": 22
+      },
+      "$nodeHandle": 6
+    },
+    "expectedOutput": "cr##\"abc\"##"
   },
   {
     "kind": "roundtrip",
@@ -111871,9 +112240,9 @@
     "sourceIn": "cr##\"abc\"##",
     "pattern": "raw_string_literal",
     "edits": [],
-    "expectedSourceOut": "r#\"abc\"#",
-    "expectedReparseTree": "(raw_string_literal string_content: (string_content))",
-    "wrappedText": "fn _f() { let _ = r#\"abc\"#; }",
+    "expectedSourceOut": "cr##\"abc\"##",
+    "expectedReparseTree": "(raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end))",
+    "wrappedText": "fn _f() { let _ = cr##\"abc\"##; }",
     "wrappedOffset": 18
   },
   {

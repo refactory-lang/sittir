@@ -2500,21 +2500,19 @@ describe('string_literal', () => {
 describe('raw_string_literal', () => {
 	it('factory produces correct type', () => {
 		const node = ir.rawStringLiteral({
-			$type: TSKindId.RawStringLiteralContent,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
+			rawStringLiteralStart: { $type: TSKindId.RawStringLiteralStart, $text: 'test', $source: 2, $named: true } as any,
+			stringContent: { $type: TSKindId.RawStringLiteralContent, $text: 'test', $source: 2, $named: true } as any,
+			rawStringLiteralEnd: { $type: TSKindId.RawStringLiteralEnd, $text: 'test', $source: 2, $named: true } as any
+		});
 		expect(node.$type).toBe(TSKindId.RawStringLiteral);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.rawStringLiteral({
-			$type: TSKindId.RawStringLiteralContent,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
+			rawStringLiteralStart: { $type: TSKindId.RawStringLiteralStart, $text: 'test', $source: 2, $named: true } as any,
+			stringContent: { $type: TSKindId.RawStringLiteralContent, $text: 'test', $source: 2, $named: true } as any,
+			rawStringLiteralEnd: { $type: TSKindId.RawStringLiteralEnd, $text: 'test', $source: 2, $named: true } as any
+		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

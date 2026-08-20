@@ -1800,7 +1800,9 @@ export interface RawStringLiteralTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _raw_string_literal_start: RawStringLiteralStartTransport
   _string_content: RawStringLiteralContentTransport
+  _raw_string_literal_end: RawStringLiteralEndTransport
 }
 
 export interface ReferenceExpressionRawMutTransport {

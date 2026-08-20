@@ -437,7 +437,9 @@ export const enum SyntaxKind {
 	LineCommentRegularDslash = '_line_comment_regular_dslash',
 	LineCommentContent = '_line_comment_content',
 	StringContent = 'string_content',
+	RawStringLiteralStart = '_raw_string_literal_start',
 	RawStringLiteralContent = 'raw_string_literal_content',
+	RawStringLiteralEnd = '_raw_string_literal_end',
 	FloatLiteral = 'float_literal',
 	LineDocContent = '_line_doc_content',
 	ErrorSentinel = '_error_sentinel',
@@ -1513,9 +1515,9 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[145, '_line_comment_regular_dslash_token2'],
 	[146, 'line_comment_content'],
 	[147, 'string_content'],
-	[148, '_raw_string_literal_start'],
+	[148, 'raw_string_literal_start'],
 	[149, 'string_content'],
-	[150, '_raw_string_literal_end'],
+	[150, 'raw_string_literal_end'],
 	[151, 'float_literal'],
 	[152, 'outer_doc_comment_marker'],
 	[153, 'inner_doc_comment_marker'],
@@ -2806,6 +2808,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.StringLiteralOpen;
 		case 'line_comment_content':
 			return TSKindId.LineCommentContent;
+		case 'raw_string_literal_start':
+			return TSKindId.RawStringLiteralStart;
+		case 'raw_string_literal_end':
+			return TSKindId.RawStringLiteralEnd;
 		case 'outer_doc_comment_marker':
 			return TSKindId.OuterBlockDocCommentMarker;
 		case 'inner_doc_comment_marker':
@@ -4738,8 +4744,12 @@ export interface StringLiteral {
 
 export interface RawStringLiteral {
 	readonly $type: TSKindId.RawStringLiteral;
+	readonly _raw_string_literal_start: RawStringLiteralStart;
 	readonly _string_content: RawStringLiteralContent;
+	readonly _raw_string_literal_end: RawStringLiteralEnd;
+	rawStringLiteralStart(): RawStringLiteralStart;
 	stringContent(): RawStringLiteralContent;
+	rawStringLiteralEnd(): RawStringLiteralEnd;
 }
 
 export interface Comment {
@@ -5587,7 +5597,9 @@ export type ReferenceExpressionRawConst = Terminal<TSKindId.ReferenceExpressionR
 export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
 export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
 export type StringContent = Terminal<TSKindId.StringContent, string>;
+export type RawStringLiteralStart = Terminal<TSKindId.RawStringLiteralStart, string>;
 export type RawStringLiteralContent = Terminal<TSKindId.RawStringLiteralContent, string>;
+export type RawStringLiteralEnd = Terminal<TSKindId.RawStringLiteralEnd, string>;
 export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
 export type LineDocContent = Terminal<TSKindId.LineDocContent, string>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
@@ -6040,8 +6052,14 @@ export interface LineCommentContentTree extends AnyTreeNode {
 	readonly type: '_line_comment_content';
 }
 export interface StringContentTree extends TreeNode<'string_content'> {}
+export interface RawStringLiteralStartTree extends AnyTreeNode {
+	readonly type: '_raw_string_literal_start';
+}
 export interface RawStringLiteralContentTree extends AnyTreeNode {
 	readonly type: 'raw_string_literal_content';
+}
+export interface RawStringLiteralEndTree extends AnyTreeNode {
+	readonly type: '_raw_string_literal_end';
 }
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
 export interface LineDocContentTree extends AnyTreeNode {
@@ -7397,7 +7415,9 @@ export interface KindMap {
 	_line_comment_regular_dslash: LineCommentRegularDslash;
 	_line_comment_content: LineCommentContent;
 	string_content: StringContent;
+	_raw_string_literal_start: RawStringLiteralStart;
 	raw_string_literal_content: RawStringLiteralContent;
+	_raw_string_literal_end: RawStringLiteralEnd;
 	float_literal: FloatLiteral;
 	_line_doc_content: LineDocContent;
 	_error_sentinel: ErrorSentinel;

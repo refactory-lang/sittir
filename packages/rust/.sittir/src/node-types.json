@@ -4693,6 +4693,26 @@
     "type": "raw_string_literal",
     "named": true,
     "fields": {
+      "raw_string_literal_end": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "raw_string_literal_end",
+            "named": true
+          }
+        ]
+      },
+      "raw_string_literal_start": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "raw_string_literal_start",
+            "named": true
+          }
+        ]
+      },
       "string_content": {
         "multiple": false,
         "required": true,
@@ -7415,6 +7435,14 @@
   {
     "type": "raw",
     "named": false
+  },
+  {
+    "type": "raw_string_literal_end",
+    "named": true
+  },
+  {
+    "type": "raw_string_literal_start",
+    "named": true
   },
   {
     "type": "ref",

@@ -1153,6 +1153,8 @@ pub struct RangePatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "raw_string_literal.jinja", escape = "none")]
 pub struct RawStringLiteralTemplate<'a> {
+    pub raw_string_literal_end: SingleNonterminalView<'a>,
+    pub raw_string_literal_start: SingleNonterminalView<'a>,
     pub string_content: SingleNonterminalView<'a>,
 }
 

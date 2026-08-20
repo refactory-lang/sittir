@@ -4198,44 +4198,32 @@ export function buildStringLiteral(config: T.StringLiteral.Config) {
 	);
 }
 
-export function buildRawStringLiteral(
-	child: T.RawStringLiteral.Config['stringContent']
-): ReturnType<typeof _buildRawStringLiteral>;
-export function buildRawStringLiteral(
-	...args: Parameters<typeof buildRawStringLiteralContent>
-): ReturnType<typeof _buildRawStringLiteral>;
-export function buildRawStringLiteral(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildRawStringLiteral(args[0] as T.RawStringLiteral.Config['stringContent']);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.RawStringLiteralContent as const);
-	return prebuilt
-		? _buildRawStringLiteral(args[0] as T.RawStringLiteral.Config['stringContent'])
-		: _buildRawStringLiteral(
-				(buildRawStringLiteralContent as (...a: unknown[]) => unknown)(
-					...args
-				) as T.RawStringLiteral.Config['stringContent']
-			);
-}
-function _buildRawStringLiteral(stringContent: T.RawStringLiteral.Config['stringContent']) {
-	const _string_content = stringContent;
+export function buildRawStringLiteral(config: T.RawStringLiteral.Config) {
+	const _raw_string_literal_start = config.rawStringLiteralStart;
+	const _string_content = config.stringContent;
+	const _raw_string_literal_end = config.rawStringLiteralEnd;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.RawStringLiteral as const,
 				$source: 2 as const,
 				$named: true as const,
+				_raw_string_literal_start,
 				_string_content,
+				_raw_string_literal_end,
 				$with: {
-					stringContent: (value: T.RawStringLiteral.Config['stringContent']) => buildRawStringLiteral(value)
+					rawStringLiteralStart: (value: T.RawStringLiteralStart) =>
+						buildRawStringLiteral({ ...config, rawStringLiteralStart: value }),
+					stringContent: (value: T.RawStringLiteralContent) =>
+						buildRawStringLiteral({ ...config, stringContent: value }),
+					rawStringLiteralEnd: (value: T.RawStringLiteralEnd) =>
+						buildRawStringLiteral({ ...config, rawStringLiteralEnd: value })
 				}
 			},
 			{
-				stringContent: () => _string_content
+				rawStringLiteralStart: () => _raw_string_literal_start,
+				stringContent: () => _string_content,
+				rawStringLiteralEnd: () => _raw_string_literal_end
 			}
 		),
 		methodsEngine
@@ -6569,12 +6557,40 @@ export function buildStringContent(text: string) {
 	);
 }
 
+export function buildRawStringLiteralStart(text: string) {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_raw_string_literal_start: text must be non-empty`);
+	return withMethods(
+		{
+			$type: TSKindId.RawStringLiteralStart as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export function buildRawStringLiteralContent(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`raw_string_literal_content: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.RawStringLiteralContent as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildRawStringLiteralEnd(text: string) {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_raw_string_literal_end: text must be non-empty`);
+	return withMethods(
+		{
+			$type: TSKindId.RawStringLiteralEnd as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -6868,7 +6884,9 @@ export type FluentKindMap = {
 	_type_argument: FluentNode<'_type_argument', T.TypeArgument.Config>;
 	_match_block_arms: T.MatchBlockArms;
 	string_content: T.StringContent;
+	_raw_string_literal_start: T.RawStringLiteralStart;
 	raw_string_literal_content: T.RawStringLiteralContent;
+	_raw_string_literal_end: T.RawStringLiteralEnd;
 	float_literal: T.FloatLiteral;
 	_line_doc_content: T.LineDocContent;
 	_error_sentinel: T.ErrorSentinel;
@@ -7105,7 +7123,9 @@ export const _factoryMap = {
 	_type_argument: buildTypeArgument,
 	_match_block_arms: buildMatchBlockArms,
 	string_content: buildStringContent,
+	_raw_string_literal_start: buildRawStringLiteralStart,
 	raw_string_literal_content: buildRawStringLiteralContent,
+	_raw_string_literal_end: buildRawStringLiteralEnd,
 	float_literal: buildFloatLiteral,
 	_line_doc_content: buildLineDocContent,
 	_error_sentinel: buildErrorSentinel

@@ -8703,21 +8703,49 @@ export function wrapRawStringLiteral(data: T.RawStringLiteral, tree: TreeHandle)
 		{
 			...data,
 			$type: TSKindId.RawStringLiteral as const,
+			_raw_string_literal_start: normalizeSingularWrapSlot(
+				data._raw_string_literal_start,
+				'raw_string_literal_start',
+				true,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'raw_string_literal_start', span: (data as _NodeData).$span }
+			),
 			_string_content: normalizeSingularWrapSlot(data._string_content, 'string_content', true, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'string_content',
 				span: (data as _NodeData).$span
 			}),
+			_raw_string_literal_end: normalizeSingularWrapSlot(
+				data._raw_string_literal_end,
+				'raw_string_literal_end',
+				true,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'raw_string_literal_end', span: (data as _NodeData).$span }
+			),
 
+			rawStringLiteralStart() {
+				return drillAs<T.RawStringLiteralStart>(this._raw_string_literal_start, tree, [
+					{ from: 'raw_string_literal_start', to: '_raw_string_literal_start' }
+				]);
+			},
 			stringContent() {
 				return drillAs<T.RawStringLiteralContent>(this._string_content, tree, [
 					{ from: 'string_content', to: 'raw_string_literal_content' }
 				]);
 			},
+			rawStringLiteralEnd() {
+				return drillAs<T.RawStringLiteralEnd>(this._raw_string_literal_end, tree, [
+					{ from: 'raw_string_literal_end', to: '_raw_string_literal_end' }
+				]);
+			},
 			$with: {
+				rawStringLiteralStart: (v: NonNullable<T.RawStringLiteral['_raw_string_literal_start']>) =>
+					wrapRawStringLiteral({ ...data, _raw_string_literal_start: v }, tree),
 				stringContent: (v: NonNullable<T.RawStringLiteral['_string_content']>) =>
-					wrapRawStringLiteral({ ...data, _string_content: v }, tree)
+					wrapRawStringLiteral({ ...data, _string_content: v }, tree),
+				rawStringLiteralEnd: (v: NonNullable<T.RawStringLiteral['_raw_string_literal_end']>) =>
+					wrapRawStringLiteral({ ...data, _raw_string_literal_end: v }, tree)
 			}
 		},
 		methodsEngine
@@ -11779,7 +11807,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_type_argument: (d, t) => wrapTypeArgument(d as unknown as T.TypeArgument, t),
 	_match_block_arms: (d, t) => wrapMatchBlockArms(d as unknown as T.MatchBlockArms, t),
 	string_content: (d) => ({ ...d, $type: TSKindId.StringContent as const }),
+	_raw_string_literal_start: (d) => ({ ...d, $type: TSKindId.RawStringLiteralStart as const }),
 	raw_string_literal_content: (d) => ({ ...d, $type: TSKindId.RawStringLiteralContent as const }),
+	_raw_string_literal_end: (d) => ({ ...d, $type: TSKindId.RawStringLiteralEnd as const }),
 	float_literal: (d) => ({ ...d, $type: TSKindId.FloatLiteral as const }),
 	_line_doc_content: (d) => ({ ...d, $type: TSKindId.LineDocContent as const }),
 	_error_sentinel: (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const }),
@@ -11855,6 +11885,8 @@ const _aliasTargetToSource: Record<string, string> = {
 	range_pattern_group2: '_range_pattern_group2',
 	range_pattern_left_with_right: '_range_pattern_left_with_right',
 	range_pattern_prefix: '_range_pattern_prefix',
+	raw_string_literal_end: '_raw_string_literal_end',
+	raw_string_literal_start: '_raw_string_literal_start',
 	reference_expression_raw_const: '_reference_expression_raw_const',
 	reference_expression_raw_mut: '_reference_expression_raw_mut',
 	statement: '_statement',

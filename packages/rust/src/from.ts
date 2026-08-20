@@ -2713,20 +2713,24 @@ export function coerceToStringLiteral(input: T.StringLiteral.Loose): ReturnType<
 }
 
 export function coerceToRawStringLiteral(input: T.RawStringLiteral.Loose): ReturnType<typeof F.buildRawStringLiteral> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.RawStringLiteral)
-		return input as unknown as ReturnType<typeof F.buildRawStringLiteral>;
-	return F.buildRawStringLiteral(
-		_requireField(
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildRawStringLiteral>;
+	return F.buildRawStringLiteral({
+		rawStringLiteralStart: _requireField(
+			'raw_string_literal',
+			'rawStringLiteralStart',
+			_resolveOneLeaf<T.RawStringLiteralStart>(input.rawStringLiteralStart, '_raw_string_literal_start')
+		),
+		stringContent: _requireField(
 			'raw_string_literal',
 			'stringContent',
-			_resolveOneLeaf<T.RawStringLiteralContent>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'stringContent' in input
-					? input.stringContent
-					: input,
-				'raw_string_literal_content'
-			)
+			_resolveOneLeaf<T.RawStringLiteralContent>(input.stringContent, 'raw_string_literal_content')
+		),
+		rawStringLiteralEnd: _requireField(
+			'raw_string_literal',
+			'rawStringLiteralEnd',
+			_resolveOneLeaf<T.RawStringLiteralEnd>(input.rawStringLiteralEnd, '_raw_string_literal_end')
 		)
-	);
+	});
 }
 
 export function coerceToCharLiteral(input: string | T.CharLiteral): ReturnType<typeof F.buildCharLiteral> {

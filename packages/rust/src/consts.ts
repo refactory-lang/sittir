@@ -191,6 +191,8 @@ export const LEAF_KINDS = [
 	'_line_doc_content',
 	'_pointer_type_const',
 	'_primitive_type',
+	'_raw_string_literal_end',
+	'_raw_string_literal_start',
 	'_reference_expression_raw_const',
 	'_reserved_identifier',
 	'_string_literal_open',
@@ -309,7 +311,6 @@ export const KEYWORDS = [
 
 /** Operator/punctuation tokens. */
 export const OPERATORS = [
-	'"#',
 	'_foreign_mod_item_semi',
 	'_impl_item_semi',
 	'_inner_block_doc_comment_marker',
@@ -320,8 +321,6 @@ export const OPERATORS = [
 	'_outer_line_doc_comment_marker',
 	'_range_expression_bare',
 	'_range_pattern_left_bare',
-	'_raw_string_literal_end',
-	'_raw_string_literal_start',
 	'_struct_item_unit',
 	'amp',
 	'amp_amp',
@@ -353,7 +352,6 @@ export const OPERATORS = [
 	'plus',
 	'pound',
 	'qmark',
-	'r#"',
 	'rbrace',
 	'rbrack',
 	'remaining_field_pattern',
@@ -2147,6 +2145,8 @@ export const enum TSFieldId {
 	FieldPath = 50,
 	FieldPattern = 51,
 	FieldPub = 52,
+	FieldRawStringLiteralEnd = 53,
+	FieldRawStringLiteralStart = 54,
 	FieldRefMarker = 55,
 	FieldReference = 56,
 	FieldReturnType = 57,
@@ -2232,6 +2232,8 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	path: TSFieldId.FieldPath,
 	pattern: TSFieldId.FieldPattern,
 	pub: TSFieldId.FieldPub,
+	raw_string_literal_end: TSFieldId.FieldRawStringLiteralEnd,
+	raw_string_literal_start: TSFieldId.FieldRawStringLiteralStart,
 	ref_marker: TSFieldId.FieldRefMarker,
 	reference: TSFieldId.FieldReference,
 	return_type: TSFieldId.FieldReturnType,
@@ -2317,6 +2319,8 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldPath]: 'path',
 	[TSFieldId.FieldPattern]: 'pattern',
 	[TSFieldId.FieldPub]: 'pub',
+	[TSFieldId.FieldRawStringLiteralEnd]: 'raw_string_literal_end',
+	[TSFieldId.FieldRawStringLiteralStart]: 'raw_string_literal_start',
 	[TSFieldId.FieldRefMarker]: 'ref_marker',
 	[TSFieldId.FieldReference]: 'reference',
 	[TSFieldId.FieldReturnType]: 'return_type',
@@ -2407,6 +2411,18 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'path', id: 50, enumName: 'FieldPath', cName: 'field_path' },
 	{ name: 'pattern', id: 51, enumName: 'FieldPattern', cName: 'field_pattern' },
 	{ name: 'pub', id: 52, enumName: 'FieldPub', cName: 'field_pub' },
+	{
+		name: 'raw_string_literal_end',
+		id: 53,
+		enumName: 'FieldRawStringLiteralEnd',
+		cName: 'field_raw_string_literal_end'
+	},
+	{
+		name: 'raw_string_literal_start',
+		id: 54,
+		enumName: 'FieldRawStringLiteralStart',
+		cName: 'field_raw_string_literal_start'
+	},
 	{ name: 'ref_marker', id: 55, enumName: 'FieldRefMarker', cName: 'field_ref_marker' },
 	{ name: 'reference', id: 56, enumName: 'FieldReference', cName: 'field_reference' },
 	{ name: 'return_type', id: 57, enumName: 'FieldReturnType', cName: 'field_return_type' },
@@ -2804,7 +2820,11 @@ export const FIELD_MAP: Record<
 	],
 	range_expression: [{ name: 'content', required: true, multiple: false }],
 	range_pattern: [{ name: 'content', required: true, multiple: false }],
-	raw_string_literal: [{ name: 'stringContent', required: true, multiple: false }],
+	raw_string_literal: [
+		{ name: 'rawStringLiteralStart', required: true, multiple: false },
+		{ name: 'stringContent', required: true, multiple: false },
+		{ name: 'rawStringLiteralEnd', required: true, multiple: false }
+	],
 	ref_pattern: [{ name: 'pattern', required: true, multiple: false }],
 	reference_expression: [
 		{ name: 'content', required: false, multiple: false },

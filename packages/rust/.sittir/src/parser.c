@@ -610,9 +610,9 @@ static const char * const ts_symbol_names[] = {
   [aux_sym__line_comment_regular_dslash_token2] = "_line_comment_regular_dslash_token2",
   [sym__line_comment_content] = "line_comment_content",
   [sym_string_content] = "string_content",
-  [sym__raw_string_literal_start] = "_raw_string_literal_start",
+  [sym__raw_string_literal_start] = "raw_string_literal_start",
   [sym_raw_string_literal_content] = "string_content",
-  [sym__raw_string_literal_end] = "_raw_string_literal_end",
+  [sym__raw_string_literal_end] = "raw_string_literal_end",
   [sym_float_literal] = "float_literal",
   [sym__outer_block_doc_comment_marker] = "outer_doc_comment_marker",
   [sym__inner_block_doc_comment_marker] = "inner_doc_comment_marker",
@@ -1941,7 +1941,7 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .named = true,
   },
   [sym__raw_string_literal_start] = {
-    .visible = false,
+    .visible = true,
     .named = true,
   },
   [sym_raw_string_literal_content] = {
@@ -1949,7 +1949,7 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .named = true,
   },
   [sym__raw_string_literal_end] = {
-    .visible = false,
+    .visible = true,
     .named = true,
   },
   [sym_float_literal] = {

@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 367,
+  "nodeCount": 365,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -541,8 +541,14 @@
     "string_literal.string_open": {
       "string_open": "_string_literal_open"
     },
+    "raw_string_literal.raw_string_literal_start": {
+      "raw_string_literal_start": "_raw_string_literal_start"
+    },
     "raw_string_literal.string_content": {
       "string_content": "raw_string_literal_content"
+    },
+    "raw_string_literal.raw_string_literal_end": {
+      "raw_string_literal_end": "_raw_string_literal_end"
     },
     "line_comment.content": {
       "line_comment_regular_dslash": "_line_comment_regular_dslash",
@@ -3093,7 +3099,21 @@
       }
     },
     "raw_string_literal": {
+      "raw_string_literal_start": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "string_content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "raw_string_literal_end": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3934,16 +3954,6 @@
     }
   },
   "nodes": [
-    {
-      "kind": "\"#",
-      "modelType": "token",
-      "typeName": "TokDqHash",
-      "irKey": "tokDqHash",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\\\"#\" as const",
-      "text": "\"#"
-    },
     {
       "kind": "_",
       "modelType": "keyword",
@@ -7360,23 +7370,21 @@
     },
     {
       "kind": "_raw_string_literal_end",
-      "modelType": "token",
+      "modelType": "pattern",
       "typeName": "RawStringLiteralEnd",
+      "factoryName": "rawStringLiteralEnd",
       "irKey": "rawStringLiteralEnd",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\\\"#\" as const",
-      "text": "\"#"
+      "hidden": false,
+      "factoryShape": "text"
     },
     {
       "kind": "_raw_string_literal_start",
-      "modelType": "token",
+      "modelType": "pattern",
       "typeName": "RawStringLiteralStart",
+      "factoryName": "rawStringLiteralStart",
       "irKey": "rawStringLiteralStart",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"r#\\\"\" as const",
-      "text": "r#\""
+      "hidden": false,
+      "factoryShape": "text"
     },
     {
       "kind": "_reference_expression_raw_const",
@@ -15606,16 +15614,6 @@
       ]
     },
     {
-      "kind": "r#\"",
-      "modelType": "token",
-      "typeName": "TokRHashDq",
-      "irKey": "tokRHashDq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"r#\\\"\" as const",
-      "text": "r#\""
-    },
-    {
       "kind": "range_expression",
       "modelType": "branch",
       "typeName": "RangeExpression",
@@ -15743,6 +15741,29 @@
       "hidden": false,
       "fields": [
         {
+          "name": "raw_string_literal_start",
+          "propertyName": "rawStringLiteralStart",
+          "paramName": "rawStringLiteralStart",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_raw_string_literal_start",
+              "parseKind": "raw_string_literal_start",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_raw_string_literal_start"
+            ]
+          }
+        },
+        {
           "name": "string_content",
           "propertyName": "stringContent",
           "paramName": "stringContent",
@@ -15764,13 +15785,37 @@
               "raw_string_literal_content"
             ]
           }
+        },
+        {
+          "name": "raw_string_literal_end",
+          "propertyName": "rawStringLiteralEnd",
+          "paramName": "rawStringLiteralEnd",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_raw_string_literal_end",
+              "parseKind": "raw_string_literal_end",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_raw_string_literal_end"
+            ]
+          }
         }
       ],
       "children": [],
-      "factoryShape": "forwarded",
-      "forwardsTo": "raw_string_literal_content",
+      "factoryShape": "config",
       "factoryFields": [
-        "string_content"
+        "raw_string_literal_start",
+        "string_content",
+        "raw_string_literal_end"
       ]
     },
     {

@@ -8191,8 +8191,13 @@
           "type": "FIELD",
           "name": "raw_string_literal_start",
           "content": {
-            "type": "SYMBOL",
-            "name": "_raw_string_literal_start"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_raw_string_literal_start"
+            },
+            "named": true,
+            "value": "raw_string_literal_start"
           },
           "metadata": {
             "fieldSource": "override"
@@ -8218,8 +8223,13 @@
           "type": "FIELD",
           "name": "raw_string_literal_end",
           "content": {
-            "type": "SYMBOL",
-            "name": "_raw_string_literal_end"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_raw_string_literal_end"
+            },
+            "named": true,
+            "value": "raw_string_literal_end"
           },
           "metadata": {
             "fieldSource": "override"
