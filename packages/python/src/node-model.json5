@@ -10383,14 +10383,14 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_not_escape_sequence",
-              "parseKind": "_not_escape_sequence",
+              "parseKind": "not_escape_sequence",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_string_content",
-              "parseKind": "_string_content",
+              "parseKind": "string_fragment",
               "unresolved": true
             }
           ],

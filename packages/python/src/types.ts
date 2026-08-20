@@ -1041,7 +1041,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[102, '_indent'],
 	[103, '_dedent'],
 	[104, 'string_start'],
-	[105, '_string_content'],
+	[105, 'string_fragment'],
 	[106, 'escape_interpolation'],
 	[107, 'string_end'],
 	[108, 'module'],
@@ -1167,7 +1167,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[228, 'string_content'],
 	[229, 'interpolation'],
 	[230, '_f_expression'],
-	[231, '_not_escape_sequence'],
+	[231, 'not_escape_sequence'],
 	[232, 'format_specifier'],
 	[233, 'await'],
 	[234, 'positional_separator'],
@@ -1972,6 +1972,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LtGt;
 		case 'newline':
 			return TSKindId.Newline;
+		case 'string_fragment':
+			return TSKindId._StringContent;
 		case 'simple_statements':
 			return TSKindId.SimpleStatements;
 		case 'import_list':
@@ -1988,6 +1990,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.IsNot;
 		case 'element_list':
 			return TSKindId.CollectionElements;
+		case 'not_escape_sequence':
+			return TSKindId.NotEscapeSequence;
 		case 'simple_statements_elements':
 			return TSKindId.SimpleStatementsElements;
 		case 'future_import_statement_group1':

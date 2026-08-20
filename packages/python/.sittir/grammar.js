@@ -4693,6 +4693,27 @@ var grammar_sittir_default = grammar(
         },
         _except_clause_as: ($) => seq(field("value", $.expression), optional($._except_clause_as_optional1)),
         _except_clause_as_optional1: ($) => seq("as", field("alias", $.expression)),
+        // `string_content`'s plain-text runs (`_string_content`) and
+        // invalid-escape runs (`_not_escape_sequence`) are hidden
+        // tokens — absent from the CST, so a read can only see the
+        // escape children and any string mixing text with escapes
+        // loses its text through the slot-based render (the verbatim
+        // $text fallback fires only when ALL slots are empty).
+        // Alias both visible so fragments surface as leaf nodes the
+        // read captures; the reader's `$slotOrder` stamp then merges
+        // the per-kind buckets back into document order. Mirrors
+        // tree-sitter-typescript, whose string fragments are visible
+        // named tokens (`unescaped_double_string_fragment`).
+        string_content: ($) => prec.right(
+          repeat1(
+            choice(
+              $.escape_interpolation,
+              $.escape_sequence,
+              alias($._not_escape_sequence, $.not_escape_sequence),
+              alias($._string_content, $.string_fragment)
+            )
+          )
+        ),
         parameters: ($) => seq("(", optional(alias($._parameters, $.parameter_list)), ")"),
         lambda_parameters: ($) => alias($._parameters, $.parameter_list),
         tuple_pattern: ($) => seq("(", optional(alias($._patterns, $.pattern_group)), ")"),

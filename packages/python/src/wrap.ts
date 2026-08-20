@@ -6106,7 +6106,7 @@ export function wrapStringContent(
 			| '\\'
 			| T._StringContent
 			| readonly (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)[];
-		readonly _string_content?:
+		readonly _string_fragment?:
 			| T.EscapeInterpolation
 			| T.EscapeSequence
 			| '\\'
@@ -6118,7 +6118,7 @@ export function wrapStringContent(
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.StringContent as const }, methodsEngine);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_escape_interpolation', '_escape_sequence', '_not_escape_sequence', '_string_content']),
+			..._omitWrapKeys(data, ['_escape_interpolation', '_escape_sequence', '_not_escape_sequence', '_string_fragment']),
 			$type: TSKindId.StringContent as const,
 			_content: normalizeRepeatedWrapSlot(
 				data._content !== undefined
@@ -6127,7 +6127,7 @@ export function wrapStringContent(
 							['escape_interpolation', data._escape_interpolation],
 							['escape_sequence', data._escape_sequence],
 							['not_escape_sequence', data._not_escape_sequence],
-							['string_content', data._string_content]
+							['string_fragment', data._string_fragment]
 						]),
 				false,
 				'content',
