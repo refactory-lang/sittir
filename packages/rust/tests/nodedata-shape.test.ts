@@ -238,7 +238,8 @@ describe('ADR-0018 Phase 2 factory shape — container node', () => {
 		// no generic `$children` fallback key.
 		const keys = Object.keys(container);
 		const storageKeys = keys.filter((k) => k.startsWith('_'));
-		expect(storageKeys).toEqual(['_declaration_statement']);
+		// Repeated/array slots carry pluralized kind-derived storage keys.
+		expect(storageKeys).toEqual(['_declaration_statements']);
 	});
 
 	// See the "CONFIRMED DEFERRED" note above the branch-node isFrozen case —

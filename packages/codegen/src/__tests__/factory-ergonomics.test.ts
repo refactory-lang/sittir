@@ -45,8 +45,12 @@ describe('factory ergonomics', () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories.ts'), 'utf-8');
-			// buildLabel(identifier: ...) — direct value, not buildLabel(config: T.Label.Config)
-			expect(content).toMatch(/export function buildLabel\(identifier:/);
+			// label's sole slot holds a single concrete kind, so the factory is
+			// the FORWARDED refinement of the direct form: a public wrapper
+			// accepting the child or the child's constructor args, over a
+			// private direct implementation that keeps the sanitized param.
+			expect(content).toMatch(/export function buildLabel\(child\??:/);
+			expect(content).toMatch(/function _buildLabel\(identifier/);
 			// Should NOT have a config parameter
 			expect(content).not.toMatch(/export function buildLabel\(config/);
 		});
@@ -64,8 +68,8 @@ describe('factory ergonomics', () => {
 			const { resolve } = await import('node:path');
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories.ts'), 'utf-8');
 			// $with.identifier setter should call buildLabel(value) not buildLabel({...config, identifier: value})
-			// Find the label factory and check its $with block
-			const labelMatch = content.match(/export function buildLabel\(identifier:[\s\S]*?\n\}/);
+			// Find the label factory implementation and check its $with block
+			const labelMatch = content.match(/function _buildLabel\(identifier[\s\S]*?\n\}/);
 			expect(labelMatch).not.toBeNull();
 			const labelBody = labelMatch![0];
 			// The setter calls buildLabel(value) directly

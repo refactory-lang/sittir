@@ -1,4 +1,10 @@
 export { run as listKinds, type ListKindsOptions } from './discover/list-kinds.ts';
+export {
+	run as separatedLists,
+	computeSeparatedListsCensus,
+	type SeparatedListsOptions,
+	type SeparatedListsCensus
+} from './discover/separated-lists.ts';
 export { run as probeKind, type ProbeKindOptions } from './probe/kind.ts';
 export { run as probeStages, type ProbeStagesOptions } from './probe/stages.ts';
 export { run as variantDerivationProbe, type VariantDerivationProbeOptions } from './probe/variant-derivation.ts';

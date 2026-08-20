@@ -1,8 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { buildValidationReportEntries, classifySClass, writeValidationReport } from '../validation-report.ts';
+import {
+	buildValidationReportEntries,
+	checkSClassCeilings,
+	classifySClass,
+	countSClassEntries,
+	writeValidationReport,
+	type SClassCeilings,
+	type ValidationReportEntry
+} from '../validation-report.ts';
 import { readFileSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 describe('buildValidationReportEntries', () => {
 	it('maps grammar diagnostics into report entries tagged source=grammar', () => {
@@ -104,6 +113,71 @@ describe('classifySClass', () => {
 				message: 'render: Missing field `_left` on IfExpressionTransport._condition on ExpressionStatementTransport._content on SourceFileTransport._statements'
 			})
 		).toBeUndefined();
+	});
+});
+
+function entry(grammar: string, sClass?: ValidationReportEntry['sClass']): ValidationReportEntry {
+	return { source: 'validator', grammar, backend: 'native', code: 'x', severity: 'error', message: 'm', sClass };
+}
+
+describe('countSClassEntries', () => {
+	it('counts classified entries per grammar per class, skipping unclassified ones', () => {
+		const counts = countSClassEntries([entry('rust', 'S1'), entry('rust', 'S1'), entry('rust'), entry('python', 'S8')]);
+		expect(counts).toEqual({ rust: { S1: 2 }, python: { S8: 1 } });
+	});
+});
+
+describe('checkSClassCeilings', () => {
+	const ceilings: SClassCeilings = { rust: { S1: 2 } };
+
+	it('passes when every class is at its ceiling', () => {
+		const verdict = checkSClassCeilings([entry('rust', 'S1'), entry('rust', 'S1')], ceilings, ['rust']);
+		expect(verdict.violations).toEqual([]);
+		expect(verdict.improvements).toEqual([]);
+	});
+
+	it('flags a count above its ceiling as a violation', () => {
+		const verdict = checkSClassCeilings([entry('rust', 'S1'), entry('rust', 'S1'), entry('rust', 'S1')], ceilings, [
+			'rust'
+		]);
+		expect(verdict.violations).toEqual([{ grammar: 'rust', sClass: 'S1', count: 3, ceiling: 2 }]);
+	});
+
+	it('treats a class (or grammar) absent from the ceilings file as ceiling 0 — cleared classes stay cleared by omission', () => {
+		const verdict = checkSClassCeilings([entry('rust', 'S7'), entry('python', 'S2')], ceilings, ['rust', 'python']);
+		expect(verdict.violations).toEqual([
+			{ grammar: 'rust', sClass: 'S7', count: 1, ceiling: 0 },
+			{ grammar: 'python', sClass: 'S2', count: 1, ceiling: 0 }
+		]);
+	});
+
+	it('reports a count below a non-zero ceiling as an improvement (ceiling should be ratcheted down), not a violation', () => {
+		const verdict = checkSClassCeilings([entry('rust', 'S1')], ceilings, ['rust']);
+		expect(verdict.violations).toEqual([]);
+		expect(verdict.improvements).toEqual([{ grammar: 'rust', sClass: 'S1', count: 1, ceiling: 2 }]);
+	});
+
+	it('judges only the grammars actually validated this run', () => {
+		const verdict = checkSClassCeilings([entry('python', 'S2')], ceilings, ['rust']);
+		expect(verdict.violations).toEqual([]);
+	});
+});
+
+describe('committed S-class ratchet', () => {
+	// The committed validation-report.json is refreshed by every
+	// `validate counts` run (which also enforces the ceilings live). This
+	// pins the same invariant on the committed pair of artifacts, so a
+	// report committed past the gate — or a ceilings edit that loosens one —
+	// fails the suite.
+	it('committed validation-report.json stays within committed sclass-ceilings.json', () => {
+		const toolsRoot = fileURLToPath(new URL('../../..', import.meta.url));
+		const report = JSON.parse(
+			readFileSync(join(toolsRoot, 'validation-report.json'), 'utf8')
+		) as ValidationReportEntry[];
+		const ceilings = JSON.parse(readFileSync(join(toolsRoot, 'sclass-ceilings.json'), 'utf8')) as SClassCeilings;
+		const grammars = [...new Set(report.map((e) => e.grammar))];
+		const { violations } = checkSClassCeilings(report, ceilings, grammars);
+		expect(violations).toEqual([]);
 	});
 });
 

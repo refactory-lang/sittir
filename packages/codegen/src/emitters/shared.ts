@@ -7,6 +7,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNonterminal,
 	NodeOrTerminal,
+	NodeRef,
 	AssembledNode,
 	AssembledBranch,
 	AssembledGroup,
@@ -24,6 +25,7 @@ import {
 	isRequired,
 	isMultiple,
 	isNonEmpty,
+	hasOptionalElements,
 	deriveSlotCardinality,
 	deriveChildrenCardinality,
 	allSlotsOf,
@@ -77,7 +79,7 @@ import type { KindEnumEntry } from './kind-discriminant.ts';
 import { hasCatalogEntry } from './kind-discriminant.ts';
 
 // Re-export derived helpers so emitters can import from one place.
-export { isRequired, isMultiple, isNonEmpty, deriveSlotCardinality, deriveChildrenCardinality };
+export { isRequired, isMultiple, isNonEmpty, hasOptionalElements, deriveSlotCardinality, deriveChildrenCardinality };
 
 export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	const out = new Set<string>();
@@ -526,8 +528,7 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 				// at link time — its correct wire id lives on `value.parseKind`/
 				// `value.parseKindId`, stamped per-occurrence, not on the
 				// canonical AssembledKeyword instance shared across all sites).
-				const kindName = value.parseKind?.name ?? node.resolvedKind;
-				const kindId = value.parseKindId ?? value.storageKindId ?? node.resolvedKindId;
+				const { kindName, kindId } = keywordRefWireIdentity(value, node);
 				if (kindName === undefined || text === undefined) return verbatim();
 				if (!seenKinds.has(kindName)) {
 					seenKinds.add(kindName);
@@ -571,6 +572,38 @@ export function computeFieldStorageInfo(nodeMap: NodeMap): void {
 	}
 }
 
+/**
+ * The wire identity a keyword/token REFERENCE surfaces under in a real
+ * parse. An ALIASED occurrence surfaces as its alias target — the
+ * per-occurrence `parseKind`/`parseKindId` stamps (e.g. rust's
+ * `_pointer_type_const` aliased to visible `pointer_type_const`). An
+ * UNALIASED reference to a HIDDEN keyword/token rule surfaces as the rule's
+ * CONTENT — hidden rules are inlined, so the parse yields the anon token,
+ * whose identity is the node's literal-chain stamp (`resolvedKind`/
+ * `resolvedKindId`, anon-wins): stamping the rule's own id there compares a
+ * kind no parse can produce (typescript `_kw_static_marker` id vs the anon
+ * `'static'` token the tree actually holds). A visible unaliased rule
+ * surfaces as itself. Single preference derivation — every enum/keyword
+ * storage emitter consumes this instead of ordering the stamps locally.
+ */
+export function keywordRefWireIdentity(
+	value: NodeRef,
+	node: { resolvedKind?: string; resolvedKindId?: number }
+): { kindName: string | undefined; kindId: number | undefined } {
+	const ownKind = storageKindOfRef(value.node);
+	const aliased = value.parseKind !== undefined && value.parseKind.name !== ownKind;
+	if (!aliased && ownKind.startsWith('_')) {
+		return {
+			kindName: node.resolvedKind ?? value.parseKind?.name,
+			kindId: node.resolvedKindId ?? value.parseKindId ?? value.storageKindId
+		};
+	}
+	return {
+		kindName: value.parseKind?.name ?? node.resolvedKind,
+		kindId: value.parseKindId ?? value.storageKindId ?? node.resolvedKindId
+	};
+}
+
 export function kindEnumTextIdPairs(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap,
@@ -591,14 +624,11 @@ export function kindEnumTextIdPairs(
 				continue;
 			}
 			if ((node instanceof AssembledKeyword || node instanceof AssembledToken) && node.text !== undefined) {
-				// Same per-occurrence-stamp preference as classifyFieldStorageInfo
-				// — value.parseKind/parseKindId know about this specific
-				// reference site's alias target; the shared node's own
-				// resolvedKind/resolvedKindId don't.
-				const kindName = value.parseKind?.name ?? node.resolvedKind;
-				const stampedId = value.parseKindId ?? value.storageKindId;
+				// Same wire-identity derivation as classifyFieldStorageInfo /
+				// kindEnumTextMapExpr — see keywordRefWireIdentity.
+				const { kindName, kindId } = keywordRefWireIdentity(value, node);
 				const entry = kindEntries?.find((e) => e.kind === kindName);
-				push(node.text, stampedId ?? entry?.id);
+				push(node.text, kindId ?? entry?.id);
 			}
 			continue;
 		}
@@ -621,7 +651,7 @@ export function resolveFieldStorageInfo(
 // ---------------------------------------------------------------------------
 
 export type { BranchSlotClass } from '../compiler/model/node-map.ts';
-export type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements';
+export type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements' | 'forwarded';
 export type ChildFactorySurface = 'direct' | 'spread';
 
 export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): BranchSlotClass {
@@ -669,6 +699,56 @@ export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: Node
 	return slot;
 }
 
+/**
+ * The single derivation of the direct-value factory calling convention:
+ * the sole named singular user slot qualifies ONLY when it is also the
+ * node's only non-stamped field. A keyword-presence marker or hidden-infra
+ * slot is caller-settable surface a direct signature has nowhere to
+ * accept, so its presence keeps the config-object surface. Both the
+ * factories emitter (signature) and `classifyFactoryShape` (metadata)
+ * consume this — they must never disagree, or every shape consumer
+ * (validators, `from()` resolvers) calls the factory with the wrong
+ * argument shape and marker fields silently drop.
+ */
+export function resolveDirectFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
+	const slot = resolveSingleFieldFactorySlot(node, nodeMap);
+	if (!slot) return undefined;
+	const nonStampFields = node.fields.filter((f) => stampExpressionFor(f, nodeMap) === undefined);
+	return nonStampFields.length === 1 ? slot : undefined;
+}
+
+/**
+ * The stamped forwarding fact: a factory whose calling convention would be
+ * 'direct' (one singular user slot) FORWARDS the slot's constructor when the
+ * slot holds exactly ONE concrete node kind — the factory accepts that
+ * kind's constructor arguments (building the child internally) or a
+ * pre-built node, discriminated by `$type`. A union slot has no unique
+ * constructor to forward and stays 'direct'; a literal-bearing slot
+ * likewise. Classified ONCE here — every consumer (factory/from emitters,
+ * node-model serialization, validators) reads the stamp, never re-derives
+ * the single-slot-single-kind predicate.
+ */
+export function forwardedTargetKind(node: AssembledNode, nodeMap: NodeMap): string | null {
+	if (!isSlotBearingCompound(node)) return null;
+	// refine() kinds emit per-form config factories (emitRefineFormFactory)
+	// — the forwarding wrapper's positional dispatch has no place there.
+	if (nodeMap.refineForms?.has(node.kind)) return null;
+	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
+	if (slotClass.tag !== 'singleSlot' || slotClass.arity !== 'singular') return null;
+	const slot = slotClass.slot;
+	if (slotLiteralValues(slot).length > 0) return null;
+	const kinds = slotKindNames(slot);
+	if (kinds.length !== 1) return null;
+	// A field carrying per-instance flank options keeps the direct/config
+	// surface (its factory signature carries an options parameter the
+	// forwarding dispatch has no slot for).
+	if (node.fields.some((f) => f.trailingMode === 'optional' || f.leadingMode === 'optional')) return null;
+	const target = nodeMap.nodes.get(kinds[0]!);
+	// The target must itself emit a factory to forward to.
+	if (!target?.rawFactoryName) return null;
+	return kinds[0]!;
+}
+
 export function configurableFactoryFields(
 	fields: readonly AssembledNonterminal[],
 	nodeMap: NodeMap
@@ -708,7 +788,10 @@ export function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMa
 	if (node.modelType !== 'branch') return null;
 	const shape = classifyFactoryShape(node, nodeMap);
 	if (shape === 'spread') return 'spread';
-	if (shape !== 'direct') return null;
+	// 'forwarded' refines 'direct' (same positional child surface, plus the
+	// factory also accepts the child's constructor args) — the child SURFACE
+	// is 'direct' either way.
+	if (shape !== 'direct' && shape !== 'forwarded') return null;
 	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 	return slotClass.tag === 'singleSlot' && slotClass.slot.isUnnamed ? 'direct' : null;
 }
@@ -720,9 +803,15 @@ export interface UnnamedChildSlotFacts {
 	readonly nonEmpty: boolean;
 }
 
-export function unnamedChildSlotFacts(fields: readonly AssembledNonterminal[]): UnnamedChildSlotFacts | null {
-	const slot = fields[0];
-	if (!slot) return null;
+export function unnamedChildSlotFacts(node: AssembledNode, nodeMap: NodeMap): UnnamedChildSlotFacts | null {
+	// The container's stamped slot is the classified sole user slot — NOT
+	// positionally `fields[0]`, which can be a keyword-presence marker
+	// preceding the payload (e.g. rust field_pattern's [ref_marker,
+	// mutable_specifier, content]). Same derivation classifyBranchSlots
+	// uses to pick the container shape in the first place.
+	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
+	if (slotClass.tag !== 'singleSlot') return null;
+	const slot = slotClass.slot;
 	return { slot, multiple: isMultiple(slot), required: isRequired(slot), nonEmpty: isNonEmpty(slot) };
 }
 
@@ -755,20 +844,27 @@ export function classifyFactoryShape(
 					// either way, same as a visible kind's. (Per the
 					// rust-slot-surface-contract architecture: named and unnamed
 					// slots share one derivation path, driven by real arity —
-					// not by kind-name prefix.)
-					return slotClass.arity === 'singular' ? 'direct' : 'spread';
+					// not by kind-name prefix.) A singular slot holding exactly
+					// one concrete kind forwards that kind's constructor
+					// ('forwarded' — see forwardedTargetKind); a union slot has
+					// no unique constructor and stays 'direct'.
+					if (slotClass.arity !== 'singular') return 'spread';
+					return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
 				}
-				// Named single field: hidden kinds keep the config-object
-				// surface — their factories are always called with a config
-				// object by the polymorph form wrapper that owns them, never
-				// the ergonomic direct-value shortcut.
-				if (!node.kind.startsWith('_') && slotClass.arity === 'singular') return 'direct';
-				return 'config';
+				// Named single field: direct only when the emitter would emit
+				// the direct-value signature (sole non-stamped field, visible
+				// kind — see resolveDirectFactorySlot). Hidden kinds and
+				// marker-carrying kinds keep the config-object surface. Same
+				// forwarding refinement as the unnamed case.
+				if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
+				return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
 			}
 			return 'config';
 		}
-		case 'group':
-			return resolveSingleFieldFactorySlot(node, nodeMap) ? 'direct' : 'config';
+		case 'group': {
+			if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
+			return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
+		}
 		default:
 			return null;
 	}
@@ -919,35 +1015,54 @@ export function wordCharAsciiTable(wordMatcher: RegExp): boolean[] {
 }
 
 /**
- * Per-grammar symbol-character class: every ASCII PUNCTUATION character
- * that participates in some multi-character anonymous literal token (e.g.
- * rust's `.` and `=` from `..`/`..=`/`=>`). Two such characters adjacent at
- * a SpacingWriter write seam risk the same maximal-munch collision the
- * word-class table guards against — a longer real token could start
- * exactly where two independently-rendered writes meet (e.g. a bare
- * range-pattern `..` immediately followed by a match arm's `=>` re-lexes
- * as `..=` plus a dangling `>`). Derived from the grammar's own
- * anonymous-literal inventory — never hand-picked.
+ * Per-grammar punctuation merge-hazard pairs: every ordered pair of
+ * DIFFERING ASCII punctuation characters that appear adjacent inside some
+ * multi-character anonymous literal token. A seam whose boundary chars
+ * form such a pair risks the same maximal-munch collision the word-class
+ * table guards against — the lexer's munch at the seam continues past the
+ * left char into the right exactly when some real token contains that
+ * transition (e.g. a bare range-pattern `..` immediately followed by a
+ * match arm's `=>` re-lexes as `..=` plus a dangling `>`, via the `.`→`=`
+ * transition inside `..=`). A pair occurring in NO token (`!`→`[`, rust's
+ * `#![...]`; `:`→`<`, the turbofish) cannot extend any munch and stays
+ * tight. Derived from the grammar's own anonymous-literal inventory —
+ * never hand-picked.
+ *
+ * Identical-char pairs are deliberately excluded: a real doubled-char
+ * token (rust's `>>`) only exists with its own disambiguation context in
+ * the grammar (nested-generic `>` `>` re-lexes correctly), and spacing
+ * every repeated symbol char would make already-common constructs noisy
+ * for no correctness gain — same exemption the SpacingWriter's seam check
+ * applies.
  *
  * Word-class and whitespace characters are excluded even when they occur
  * inside a multi-character literal (e.g. python's `alias($._not_in, 'not
  * in')` — a compound-keyword token whose spelling embeds a literal space
  * and letters): those characters are either already covered by the
- * word-class table or, for whitespace, never risk a token-fusion seam —
- * including them corrupted indentation-sensitive rendering by flagging
- * plain spaces as merge-hazardous.
+ * word-class table or, for whitespace, never risk a token-fusion seam.
+ *
+ * This IS the literal-spanning seam check, reduced losslessly to the
+ * junction chars: a literal spanning a seam always places its junction
+ * transition adjacent inside itself, so testing the junction pair alone
+ * misses nothing. Returns sorted `[left, right]` char-code pairs — the
+ * single derivation behind BOTH the emitted SpacingWriter pair table
+ * (render-module.ts) and the template emitter's static-seam join
+ * (templates.ts).
  */
-export function symbolCharAsciiTable(literals: readonly { readonly text: string }[]): boolean[] {
-	const table: boolean[] = Array.from({ length: 128 }, () => false);
+export function literalMergePairs(literals: readonly { readonly text: string }[]): [number, number][] {
+	const excluded = /[A-Za-z0-9_\s]/;
+	const pairs = new Set<number>();
 	for (const literal of literals) {
 		if (literal.text.length < 2) continue;
-		for (const ch of literal.text) {
-			const code = ch.charCodeAt(0);
-			if (code >= 128 || /[A-Za-z0-9_\s]/.test(ch)) continue;
-			table[code] = true;
+		for (let i = 0; i + 1 < literal.text.length; i++) {
+			const a = literal.text.charCodeAt(i);
+			const b = literal.text.charCodeAt(i + 1);
+			if (a === b || a >= 128 || b >= 128) continue;
+			if (excluded.test(literal.text[i]!) || excluded.test(literal.text[i + 1]!)) continue;
+			pairs.add(a * 128 + b);
 		}
 	}
-	return table;
+	return [...pairs].sort((x, y) => x - y).map((p) => [Math.floor(p / 128), p % 128]);
 }
 
 /**

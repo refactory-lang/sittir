@@ -21,10 +21,32 @@
  */
 
 import * as esbuild from 'esbuild';
-import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, statSync } from 'node:fs';
+import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+/**
+ * Content-aware write: skip when the file already holds identical bytes.
+ * Not just an mtime nicety — `compileParser`'s regenerate-vs-skip guard
+ * compares `grammar.js`'s mtime against the compiled parser's, and a
+ * same-content rewrite here would force a full (slow, non-atomic)
+ * `tree-sitter generate` downstream, whose in-place rewrite of
+ * `.sittir/src/grammar.json` races any concurrent reader hashing it
+ * (the generated-manifest check under parallel vitest workers).
+ */
+function writeFileIfChanged(path: string, content: string | Uint8Array): void {
+	if (existsSync(path)) {
+		try {
+			const existing = readFileSync(path);
+			const next = typeof content === 'string' ? Buffer.from(content) : Buffer.from(content);
+			if (existing.equals(next)) return;
+		} catch {
+			// Unreadable existing file — fall through and overwrite.
+		}
+	}
+	writeFileSync(path, content);
+}
 
 const requireFromHere = createRequire(import.meta.url);
 
@@ -69,7 +91,7 @@ export async function transpileOverrides(opts: TranspileOptions): Promise<Transp
 	//   2. `name` is required by tree-sitter's parser-generator —
 	//      it reads the package name from the nearest package.json
 	//      to identify the grammar.
-	writeFileSync(
+	writeFileIfChanged(
 		join(outputDir, 'package.json'),
 		JSON.stringify(
 			{
@@ -89,7 +111,7 @@ export async function transpileOverrides(opts: TranspileOptions): Promise<Transp
 
 	// Tree-sitter.json — required for ABI 15 (current). Without this,
 	// tree-sitter generate falls back to ABI 14 with a warning.
-	writeFileSync(
+	writeFileIfChanged(
 		join(outputDir, 'tree-sitter.json'),
 		JSON.stringify(
 			{
@@ -141,7 +163,11 @@ export async function transpileOverrides(opts: TranspileOptions): Promise<Transp
 		footer: {
 			js: 'if (module.exports && module.exports.default) module.exports = module.exports.default;'
 		},
-		write: true,
+		// `write: false` + writeFileIfChanged below: the bundle is
+		// byte-deterministic for unchanged input, so skipping the
+		// identical rewrite keeps grammar.js's mtime stable and
+		// compileParser's regenerate-vs-skip guard honest.
+		write: false,
 		metafile: true,
 		logLevel: 'silent'
 	});
@@ -149,6 +175,10 @@ export async function transpileOverrides(opts: TranspileOptions): Promise<Transp
 	if (result.errors.length > 0) {
 		const messages = result.errors.map((e) => e.text).join('\n');
 		throw new Error(`transpileOverrides(${opts.grammar}): esbuild errors:\n${messages}`);
+	}
+
+	for (const file of result.outputFiles ?? []) {
+		writeFileIfChanged(file.path, file.contents);
 	}
 
 	const meta = result.metafile!;

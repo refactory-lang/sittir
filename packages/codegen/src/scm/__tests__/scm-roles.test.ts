@@ -216,11 +216,15 @@ describe('ir.from.* canonical factories — Rust', () => {
 		expect(node.$text).toBe('3.14');
 	});
 
-	it('from.string("hello") produces string_literal', async () => {
+	it('from.string is not emitted — string_literal is not auto-composable', async () => {
+		// Rust's string_literal factory takes a config with an explicit
+		// `stringOpen` slot (the open-quote token variant) plus an
+		// `elements` array — there is no single-positional-child surface
+		// for emitFromString to compose, and the emitter deliberately
+		// skips rather than inventing a default quote style. If a
+		// composition rule is added later, this pin flips deliberately.
 		const { from } = await loadFrom(RUST_IR);
-		const node = from.string('hello');
-		// string_literal is a branch; verify it has a valid $type
-		expect(node.$type).toBeTruthy();
+		expect(from.string).toBeUndefined();
 	});
 
 	it('from.type("String") produces type_identifier', async () => {

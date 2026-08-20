@@ -8,8 +8,20 @@ vi.mock('@sittir/codegen/run-codegen', () => ({
 	RUST_RENDER_GRAMMARS: ['rust', 'typescript', 'python']
 }));
 
+// The gen action's post-generate half is real code from @sittir/tools: an
+// unmocked emitParityFixtures runs a genuine native-engine fixture
+// extraction and rewrites the committed rust/crates/sittir-<g>/
+// test-fixtures.json (with run-to-run reparse-wrapper variance) every time
+// the `--all` routing tests below parse. These tests verify routing only —
+// stub the whole post-generate surface.
+vi.mock('@sittir/tools', () => ({
+	emitParityFixtures: vi.fn().mockResolvedValue(undefined),
+	runRoundtripProbes: vi.fn().mockResolvedValue(0)
+}));
+
 import { gen } from '../../src/commands/gen.ts';
 import { runFullRegen, runCodegen, runStandaloneSteps } from '@sittir/codegen/run-codegen';
+import { emitParityFixtures } from '@sittir/tools';
 
 describe('gen command', () => {
 	it('registers a single gen command with --grammar/--all/--output/--nodes', () => {
@@ -29,6 +41,7 @@ describe('gen command', () => {
 			expect.objectContaining({ grammar: 'rust', all: true, outputDir: 'packages/rust/src' })
 		);
 		expect(vi.mocked(runCodegen)).not.toHaveBeenCalled();
+		expect(vi.mocked(emitParityFixtures)).toHaveBeenCalledWith('rust', 'packages/rust/templates');
 	});
 	it('routes --nodes (no --all) to runCodegen', async () => {
 		vi.clearAllMocks();
@@ -63,6 +76,9 @@ describe('gen command', () => {
 		expect(vi.mocked(runFullRegen)).toHaveBeenCalledWith(
 			expect.objectContaining({ buildNative: false, allowDiagnostics: ['parsekind-noninjective'] })
 		);
+		// --no-build-native means fixture extraction has no fresh native
+		// binary to run against — the action must skip it, not emit stale.
+		expect(vi.mocked(emitParityFixtures)).not.toHaveBeenCalled();
 	});
 	it('runs standalone --transpile with only --grammar (no --output/--nodes/--all)', async () => {
 		vi.clearAllMocks();

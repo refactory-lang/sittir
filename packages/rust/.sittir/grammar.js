@@ -208,6 +208,9 @@ function setGroupLiftRuleMap(map) {
 function getGroupLiftRuleBody(name) {
   return groupLiftRuleMap?.get(name);
 }
+function setGroupLiftRuleBody(name, body) {
+  groupLiftRuleMap?.set(name, body);
+}
 function descendThroughGroupLiftSymbol(rule, segments, patch, precStack) {
   const name = rule.name;
   if (!name) {
@@ -714,7 +717,6 @@ function diagnoseParseKindCollisions(input) {
   const diagnostics = [];
   for (const [parseKey, bucket] of byParseKind) {
     const parseKind = bucket[0].parseKind;
-    const storageKinds = distinct(bucket.map((value) => value.storageKind));
     const storageIdentities = distinct(bucket.map((value) => kindKey(value.storageKindId, value.storageKind)));
     if (storageIdentities.length <= 1) continue;
     const signatures = distinct(bucket.map((value) => value.structuralSignature));
@@ -722,18 +724,31 @@ function diagnoseParseKindCollisions(input) {
       mergedByParseKind.set(parseKey, pickRepresentative(bucket, parseKind));
       continue;
     }
-    diagnostics.push({
-      code: "parsekind-noninjective",
-      severity: "error",
-      message: `Slot '${input.slotName}' of kind '${input.ownerKind}' collapses [${storageKinds.join(", ")}] onto parse kind '${parseKind}'.`,
-      canProceed: true,
-      ownerKind: input.ownerKind,
-      slotName: input.slotName,
-      shape: "propose-distinct-alias",
-      parseKind,
-      storageKinds,
-      proposal: `Slot '${input.slotName}' of kind '${input.ownerKind}' collapses distinct storage kinds [${storageKinds.join(", ")}] onto parse kind '${parseKind}'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.`
-    });
+    const byWireIdentity = /* @__PURE__ */ new Map();
+    for (const value of bucket) {
+      const wireKey = value.storageKindId !== void 0 ? `#${value.storageKindId}` : `?${parseKey}`;
+      const group = byWireIdentity.get(wireKey) ?? [];
+      group.push(value);
+      byWireIdentity.set(wireKey, group);
+    }
+    for (const group of byWireIdentity.values()) {
+      const groupStorageIdentities = distinct(group.map((value) => kindKey(value.storageKindId, value.storageKind)));
+      if (groupStorageIdentities.length <= 1) continue;
+      if (distinct(group.map((value) => value.structuralSignature)).length === 1) continue;
+      const storageKinds = distinct(group.map((value) => value.storageKind));
+      diagnostics.push({
+        code: "parsekind-noninjective",
+        severity: "error",
+        message: `Slot '${input.slotName}' of kind '${input.ownerKind}' collapses [${storageKinds.join(", ")}] onto parse kind '${parseKind}'.`,
+        canProceed: true,
+        ownerKind: input.ownerKind,
+        slotName: input.slotName,
+        shape: "propose-distinct-alias",
+        parseKind,
+        storageKinds,
+        proposal: `Slot '${input.slotName}' of kind '${input.ownerKind}' collapses distinct storage kinds [${storageKinds.join(", ")}] onto parse kind '${parseKind}'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.`
+      });
+    }
   }
   if (mergedByParseKind.size === 0) {
     return { values: input.values.map((value) => value.original), diagnostics };
@@ -1043,20 +1058,43 @@ function enrich(baseInput, config) {
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
-    enrichedRules[name] = rule && !enrichSkip.has(name) ? applyEnrichPasses(
-      name,
-      rule,
-      kwRules,
-      supertypeNames,
-      rulesBag,
-      clauseGroupRules,
-      clauseDedupeMap,
-      groupDedupeMap,
-      visibleGroupHiddenNames,
-      clauseGroupOwners,
-      wordMatcher,
-      unaliasSink
-    ) : rule;
+    enrichedRules[name] = rule && !enrichSkip.has(name) ? applyFieldWrapPasses(name, rule, kwRules, supertypeNames, rulesBag, wordMatcher) : rule;
+  }
+  for (const name of Object.keys(enrichedRules)) {
+    const rule = enrichedRules[name];
+    if (!rule || enrichSkip.has(name)) continue;
+    if (!isSeqType(rule.type)) continue;
+    const info = separatedListBodyInfo(rule);
+    if (!info?.flankCarrying || info.form !== "head") continue;
+    const members = rule.members;
+    if (info.flatMembers === members) continue;
+    enrichedRules[name] = { ...rule, members: info.flatMembers };
+  }
+  separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
+  separatedListEnrichSkip = enrichSkip;
+  hiddenListPromotionNames = /* @__PURE__ */ new Map();
+  try {
+    for (const name of Object.keys(enrichedRules)) {
+      const rule = enrichedRules[name];
+      if (!rule || enrichSkip.has(name)) continue;
+      enrichedRules[name] = applyHoistAndUnalias(
+        name,
+        rule,
+        kwRules,
+        supertypeNames,
+        rulesBag,
+        clauseGroupRules,
+        clauseDedupeMap,
+        groupDedupeMap,
+        visibleGroupHiddenNames,
+        clauseGroupOwners,
+        unaliasSink
+      );
+    }
+  } finally {
+    separatedListNameCounts = null;
+    separatedListEnrichSkip = null;
+    hiddenListPromotionNames = null;
   }
   for (const groupName of Object.keys(clauseGroupRules)) {
     const groupBody = clauseGroupRules[groupName];
@@ -1144,7 +1182,7 @@ function getEnrichVisibleGroupSources(grammar2) {
   if (names instanceof Set) return names;
   return /* @__PURE__ */ new Set();
 }
-function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, wordMatcher, unaliasSink) {
+function applyFieldWrapPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, wordMatcher) {
   const MAX_ITERATIONS = 8;
   let r = rule;
   let converged = false;
@@ -1152,6 +1190,7 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     const before = r;
     r = applySymbolToField(ruleName, r, supertypeNames);
     r = applyChoiceArmFieldWrap(ruleName, r, supertypeNames, rulesBag);
+    r = applyRepeatUnionFieldPromotion(ruleName, r, rulesBag);
     r = applyOptionalKeyword(ruleName, r, kwRules, rulesBag, wordMatcher);
     if (r === before) {
       converged = true;
@@ -1162,6 +1201,10 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations
 `);
   }
+  return r;
+}
+function applyHoistAndUnalias(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, unaliasSink) {
+  let r = rule;
   const clauseHoistCounter = { opt: 0, grp: 0, supertypeNames };
   r = applyClauseHoist(
     ruleName,
@@ -1369,11 +1412,18 @@ function isEligibleFieldReferent(name, mergedRules, supertypeNames) {
 function sameElementShape(a, b) {
   return ruleKey(a) === ruleKey(b);
 }
-function deriveElementFieldName(elementRule) {
-  let cursor = elementRule;
-  while (isPrecWrapper(cursor)) {
-    cursor = cursor.content;
+function peelTransparentElementWrappers(rule) {
+  if (isPrecWrapper(rule)) {
+    return peelTransparentElementWrappers(rule.content);
   }
+  const members = rule.members;
+  if (isChoiceType(rule.type) && members?.length === 1) {
+    return peelTransparentElementWrappers(members[0]);
+  }
+  return rule;
+}
+function deriveElementFieldName(elementRule) {
+  const cursor = peelTransparentElementWrappers(elementRule);
   const t = cursor.type;
   if (t === "SYMBOL") {
     return cursor.name.replace(/^_/, "");
@@ -1569,6 +1619,60 @@ function nativeRuleFn(...names) {
 function makeField(name, content) {
   const field3 = nativeRuleFn("field");
   return { ...field3(name, content), metadata: makeRuleMetadata({ fieldSource: "enriched" }) };
+}
+function applyRepeatUnionFieldPromotion(ruleName, rule, rulesBag) {
+  const preExistingFieldNames = /* @__PURE__ */ new Set();
+  const collectNames = (node) => {
+    const n = node;
+    if (isFieldType(n.type) && typeof n.name === "string" && n.metadata?.fieldSource !== "enriched") {
+      preExistingFieldNames.add(n.name);
+    }
+    if (n.members) for (const m of n.members) collectNames(m);
+    else if (n.content) collectNames(n.content);
+  };
+  collectNames(rule);
+  const mintedBySymbol = /* @__PURE__ */ new Map();
+  const mintedNames = /* @__PURE__ */ new Set();
+  const rebuild = (node) => {
+    const n = node;
+    if (isFieldType(n.type)) return node;
+    if (isRepeatType(n.type) && n.content) {
+      let inner = n.content;
+      while (isPrecWrapper(inner)) inner = inner.content;
+      const sym = inner;
+      if (sym.type === "SYMBOL" && typeof sym.name === "string" && sym.name.startsWith("_")) {
+        const target = rulesBag[sym.name];
+        if (target !== void 0 && isChoiceType(target.type)) {
+          const fieldName = mintedBySymbol.get(sym.name) ?? pluralizeFieldName(sym.name.replace(/^_+/, ""));
+          const mintedForOther = mintedNames.has(fieldName) && mintedBySymbol.get(sym.name) !== fieldName;
+          if (preExistingFieldNames.has(fieldName) || mintedForOther) {
+            reportSkip("repeat-union-field", ruleName, `field '${fieldName}' already exists`);
+            return node;
+          }
+          mintedBySymbol.set(sym.name, fieldName);
+          mintedNames.add(fieldName);
+          return makeField(fieldName, node);
+        }
+      }
+      const content = rebuild(n.content);
+      return content === n.content ? node : { ...node, content };
+    }
+    if (n.members) {
+      let changed = false;
+      const members = n.members.map((m) => {
+        const r = rebuild(m);
+        if (r !== m) changed = true;
+        return r;
+      });
+      return changed ? { ...node, members } : node;
+    }
+    if (n.content) {
+      const content = rebuild(n.content);
+      return content === n.content ? node : { ...node, content };
+    }
+    return node;
+  };
+  return rebuild(rule);
 }
 function makeSymbol(name) {
   const symFn = nativeRuleFn("sym");
@@ -2090,6 +2194,194 @@ function appendTrailingMemberToOptionalSeq(optSeqRule, trailingOptional) {
   const newSeqBody = { ...seqBody, members: [...seqMembers, trailingOptional] };
   return rebuildOptional(optSeqRule, newSeqBody);
 }
+function separatedListElementName(rule) {
+  const t = rule.type;
+  if (typeof t !== "string") return null;
+  if (isFieldType(t)) {
+    const name = rule.name;
+    return typeof name === "string" ? name : null;
+  }
+  if (isSymbolType(t)) {
+    const name = rule.name;
+    return typeof name === "string" ? name.replace(/^_+/, "") : null;
+  }
+  if (isChoiceType(t)) {
+    const members = rule.members;
+    if (Array.isArray(members) && members.length === 1) return separatedListElementName(members[0]);
+    return null;
+  }
+  if (isPrecWrapper(rule) || typeEq(t, "ALIAS")) {
+    const content = rule.content;
+    return content ? separatedListElementName(content) : null;
+  }
+  return null;
+}
+function peelOptionalEitherSpelling(rule) {
+  const peeled = peelOptional(rule);
+  return peeled.isOptional ? peeled.inner : null;
+}
+function separatedListBodyInfo(body) {
+  if (!isSeqType(body.type)) return null;
+  const members = body.members;
+  if (!Array.isArray(members) || members.length === 0) return null;
+  const separatorRepeatOf = (m) => {
+    if (!isRepeatType(m.type)) return null;
+    const content = m.content;
+    return content ? detectRepeatSeparator(content) : null;
+  };
+  if (members.length >= 2 && !members.some((m) => separatorRepeatOf(m) !== null)) {
+    const nestedIdx = members.findIndex((m) => {
+      if (!isSeqType(m.type)) return false;
+      const inner = m.members;
+      return Array.isArray(inner) && inner.some((im) => separatorRepeatOf(im) !== null);
+    });
+    if (nestedIdx !== -1) {
+      const headMembers = members[nestedIdx].members;
+      return separatedListBodyInfo({
+        ...body,
+        members: [...members.slice(0, nestedIdx), ...headMembers, ...members.slice(nestedIdx + 1)]
+      });
+    }
+  }
+  const repeatIdx = members.findIndex((m) => separatorRepeatOf(m) !== null);
+  if (repeatIdx === -1) return null;
+  const detected = separatorRepeatOf(members[repeatIdx]);
+  const separatorIsChoice = typeEq(detected.separator.type, "CHOICE");
+  const separatorLiteral = typeEq(detected.separator.type, "STRING") ? detected.separator.value : null;
+  const elementName = separatedListElementName(detected.content);
+  if (detected.trailing !== true) {
+    if (repeatIdx === 0) {
+      if (!typeEq(members[0].type, "REPEAT1")) return null;
+      if (members.length !== 2) return null;
+      const flank = peelOptionalEitherSpelling(members[1]);
+      const flankLit = flank && isStringType(flank.type) ? flank.value : null;
+      if (flankLit === null || separatorLiteral !== null && flankLit !== separatorLiteral) return null;
+      return { elementName, flankCarrying: true, form: "leading", element: detected.content, separatorRule: detected.separator, flatMembers: members };
+    }
+    const head = members[repeatIdx - 1];
+    if (separatedListElementName(head) !== elementName || elementName === null) {
+      if (ruleKey(head) !== ruleKey(detected.content)) return null;
+    }
+    let flankCarrying = separatorIsChoice;
+    for (const [i, m] of members.entries()) {
+      if (i === repeatIdx || i === repeatIdx - 1) continue;
+      if (isStringType(m.type) && m.value === separatorLiteral) {
+        continue;
+      }
+      const inner = peelOptionalEitherSpelling(m);
+      const innerLit = inner && isStringType(inner.type) ? inner.value : null;
+      const innerMatchesChoiceSep = inner !== null && separatorIsChoice && isChoiceType(inner.type ?? "");
+      if (innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral) || innerMatchesChoiceSep) {
+        flankCarrying = true;
+        continue;
+      }
+      return null;
+    }
+    return { elementName, flankCarrying, form: "head", element: detected.content, separatorRule: detected.separator, flatMembers: members };
+  }
+  if (repeatIdx !== 0 || members.length !== 2) return null;
+  const tail = peelOptionalEitherSpelling(members[1]);
+  if (tail === null) return null;
+  if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
+  if (elementName === null && ruleKey(tail) !== ruleKey(detected.content)) return null;
+  return { elementName, flankCarrying: true, form: "tail", element: detected.content, separatorRule: detected.separator, flatMembers: members };
+}
+function detectInlineSeparatedListRuns(members) {
+  const carriesRepeat = (m) => {
+    if (isRepeatType(m.type)) return true;
+    if (!isSeqType(m.type)) return false;
+    const inner = m.members;
+    return Array.isArray(inner) && inner.some((im) => isRepeatType(im.type));
+  };
+  const runs = [];
+  let i = 0;
+  while (i < members.length) {
+    let consumed = 0;
+    for (const size of [3, 2, 1]) {
+      if (i + size > members.length || size === members.length) continue;
+      const window = members.slice(i, i + size);
+      if (!window.some(carriesRepeat)) continue;
+      const synthetic = size === 1 && isSeqType(window[0].type) ? window[0] : { type: "SEQ", members: window };
+      const info = separatedListBodyInfo(synthetic);
+      if (info?.flankCarrying) {
+        if (info.form === "tail") {
+          const repeatMember = window[0];
+          const prev = i > 0 ? members[i - 1] : void 0;
+          const prevIsPair = prev !== void 0 && ruleKey(prev) === ruleKey(repeatMember.content);
+          if (typeEq(repeatMember.type, "REPEAT1") || prevIsPair) continue;
+        }
+        runs.push({ info, key: ruleKey(synthetic), body: synthetic, start: i, size });
+        consumed = size;
+        break;
+      }
+    }
+    i += consumed || 1;
+  }
+  return runs;
+}
+function collectSeparatedListNameProposals(rules) {
+  const keysByName = /* @__PURE__ */ new Map();
+  const record = (info, key) => {
+    if (info.elementName === null) return;
+    const plural = pluralizeFieldName(info.elementName);
+    let keys = keysByName.get(plural);
+    if (!keys) keysByName.set(plural, keys = /* @__PURE__ */ new Set());
+    keys.add(key);
+  };
+  const visit = (rule) => {
+    if (!rule || typeof rule !== "object") return;
+    const t = rule.type;
+    if (typeof t !== "string") return;
+    if (isSeqType(t)) {
+      const rawMembers = rule.members;
+      if (Array.isArray(rawMembers)) {
+        const members2 = absorbTrailingListSeparators(rawMembers) ?? rawMembers;
+        const folded = members2 === rawMembers ? rule : { ...rule, members: members2 };
+        const whole = separatedListBodyInfo(folded);
+        if (whole?.flankCarrying) {
+          record(whole, ruleKey(folded));
+        } else {
+          for (const run of detectInlineSeparatedListRuns(members2)) record(run.info, run.key);
+        }
+        for (const m of members2) visit(m);
+        return;
+      }
+    }
+    const content = rule.content;
+    if (content) visit(content);
+    const members = rule.members;
+    if (Array.isArray(members)) for (const m of members) visit(m);
+  };
+  for (const name of Object.keys(rules)) visit(rules[name]);
+  return new Map([...keysByName].map(([name, keys]) => [name, keys.size]));
+}
+var separatedListNameCounts = null;
+var separatedListEnrichSkip = null;
+var hiddenListPromotionNames = null;
+function promoteHiddenListRef(member, rulesBag) {
+  if (separatedListNameCounts === null || hiddenListPromotionNames === null) return member;
+  if (!isSymbolType(member.type)) return member;
+  const name = member.name;
+  if (typeof name !== "string" || !name.startsWith("_")) return member;
+  if (separatedListEnrichSkip?.has(name)) return member;
+  let visibleName = hiddenListPromotionNames.get(name);
+  if (visibleName === void 0) {
+    const body = rulesBag[name];
+    if (!body || !isSeqType(body.type)) return member;
+    const info = separatedListBodyInfo(body);
+    if (!info?.flankCarrying || info.form !== "head") return member;
+    const base2 = name.replace(/^_+/, "");
+    const bare = info.elementName !== null ? pluralizeFieldName(info.elementName) : null;
+    const candidates = [];
+    if (bare !== null && separatedListNameCounts.get(bare) === 1) candidates.push(bare);
+    if (bare !== null && base2 !== bare && !base2.endsWith(`_${bare}`)) candidates.push(`${base2}_${bare}`);
+    candidates.push(base2.endsWith("_elements") ? base2 : `${base2}_elements`);
+    visibleName = candidates.find((c) => !(c in rulesBag) && !(`_${c}` in rulesBag));
+    if (visibleName === void 0) return member;
+    hiddenListPromotionNames.set(name, visibleName);
+  }
+  return makeVisibleGroupAlias(member, visibleName);
+}
 function absorbTrailingListSeparators(members) {
   let changed = false;
   const out = [];
@@ -2238,7 +2530,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     const members = absorbed ?? rawMembers;
     let changed = absorbed !== null;
     const newMembers = members.map((m) => {
-      const out = applyClauseHoist(
+      let out = applyClauseHoist(
         parentKind,
         m,
         rulesBag,
@@ -2250,9 +2542,42 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         clauseGroupOwners,
         ambientPrec
       );
+      out = promoteHiddenListRef(out, rulesBag);
       if (out !== m) changed = true;
       return out;
     });
+    if (separatedListNameCounts !== null && separatedListBodyInfo({ ...rule, members: newMembers }) === null) {
+      const runs = detectInlineSeparatedListRuns(newMembers);
+      for (let r = runs.length - 1; r >= 0; r--) {
+        const run = runs[r];
+        const isTail = run.info.form === "tail";
+        const seqFn = nativeRuleFn("seq");
+        const repeatFn = nativeRuleFn("repeat");
+        const optionalFn = nativeRuleFn("optional", "opt");
+        const body = isTail ? seqFn(
+          run.info.element,
+          repeatFn(seqFn(run.info.separatorRule, run.info.element)),
+          optionalFn(run.info.separatorRule)
+        ) : seqFn(...run.info.flatMembers);
+        const names = visibleGroupSynthName(
+          body,
+          parentKind,
+          groupDedupeMap,
+          counter,
+          rulesBag,
+          clauseGroupRules,
+          ambientPrec
+        );
+        if (names === null) continue;
+        visibleGroupHiddenNames.add(names.hiddenName);
+        if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
+        const symbolRef = makeGroupLiftSymbol(body, names.hiddenName);
+        const aliasRule = makeVisibleGroupAlias(symbolRef, names.visibleName);
+        const replacement = isTail ? optionalFn(aliasRule) : aliasRule;
+        newMembers.splice(run.start, run.size, replacement);
+        changed = true;
+      }
+    }
     return changed ? { ...rule, members: newMembers } : rule;
   }
   if (isChoiceType(rule.type)) {
@@ -2293,7 +2618,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         collidingLeadingNames,
         ambientPrec
       );
-      const final = promoted ?? out;
+      const final = promoteHiddenListRef(promoted ?? out, rulesBag);
       if (final !== m) changed = true;
       return final;
     });
@@ -2548,6 +2873,13 @@ function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag,
   return name;
 }
 function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, ambientPrec, enclosingFieldName) {
+  if (process.env.SITTIR_DEBUG_LISTNAME) {
+    const info = separatedListBodyInfo(content);
+    process.stderr.write(
+      `[listname] mint for parent='${parentKind}' list=${JSON.stringify(info)} counts=${info?.elementName ? separatedListNameCounts?.get(pluralizeFieldName(info.elementName)) : "-"}
+`
+    );
+  }
   const registeredBody = ambientPrec ? { ...ambientPrec, content } : content;
   const key = ruleKey(registeredBody);
   const existing = groupDedupeMap[key];
@@ -2557,12 +2889,28 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
     return { visibleName: existing, hiddenName: hiddenName2 };
   }
   const base2 = parentKind.replace(/^_+/, "");
-  const register = (visibleName2) => {
+  const register = (visibleName2, body = registeredBody) => {
     const hiddenName2 = `_${visibleName2}`;
     groupDedupeMap[key] = visibleName2;
-    clauseGroupRules[hiddenName2] = registeredBody;
+    clauseGroupRules[hiddenName2] = body;
     return { visibleName: visibleName2, hiddenName: hiddenName2 };
   };
+  const listInfo = separatedListNameCounts !== null ? separatedListBodyInfo(content) : null;
+  if (listInfo?.flankCarrying) {
+    const nameFree = (n) => !(n in rulesBag) && !(`_${n}` in rulesBag) && !(n in clauseGroupRules) && !(`_${n}` in clauseGroupRules);
+    const bare = listInfo.elementName !== null ? pluralizeFieldName(listInfo.elementName) : null;
+    const candidates = [];
+    if (bare !== null && separatedListNameCounts.get(bare) === 1) candidates.push(bare);
+    if (bare !== null && base2 !== bare && !base2.endsWith(`_${bare}`)) candidates.push(`${base2}_${bare}`);
+    if (bare !== `${base2}_elements`) candidates.push(base2.endsWith("_elements") ? base2 : `${base2}_elements`);
+    const flatBody = { ...content, members: listInfo.flatMembers };
+    const registeredFlat = ambientPrec ? { ...ambientPrec, content: flatBody } : flatBody;
+    for (const candidate of candidates) {
+      if (!nameFree(candidate)) continue;
+      const skipped = separatedListEnrichSkip !== null && (separatedListEnrichSkip.has(candidate) || separatedListEnrichSkip.has(`_${candidate}`));
+      return register(candidate, skipped ? registeredBody : registeredFlat);
+    }
+  }
   if (enclosingFieldName !== void 0) {
     const visibleName2 = `${base2}_${enclosingFieldName}`;
     if (!(visibleName2 in rulesBag) && !(`_${visibleName2}` in rulesBag) && !(`_${visibleName2}` in clauseGroupRules)) {
@@ -2584,6 +2932,11 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
 function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedupeMap, counter, rulesBag) {
   const existing = groupDedupeMap[existingHiddenName];
   if (existing !== void 0) return { visibleName: existing };
+  const natural = existingHiddenName.replace(/^_+/, "");
+  if (natural.length > 0 && !(natural in rulesBag)) {
+    groupDedupeMap[existingHiddenName] = natural;
+    return { visibleName: natural };
+  }
   counter.grp += 1;
   const visibleName = `${parentKind.replace(/^_+/, "")}_group${counter.grp}`;
   if (visibleName in rulesBag) {
@@ -3345,6 +3698,58 @@ function unifyChoiceArmFieldNames(content, unifiedName) {
   if (!anyChanged) return content;
   return { ...r, members: newMembers };
 }
+function relabelUniformFieldSet(content, newName) {
+  const names = /* @__PURE__ */ new Set();
+  let anyRepeatedOccurrence = false;
+  let sawUnfieldedSymbol = false;
+  const liftBodies = /* @__PURE__ */ new Map();
+  const collect = (n, inRepeat) => {
+    if (!n || typeof n !== "object") return;
+    if (isFieldLike(n)) {
+      names.add(n.name);
+      if (inRepeat) anyRepeatedOccurrence = true;
+      return;
+    }
+    if (isEnrichGroupLiftSymbol(n)) {
+      const liftName = n.name;
+      const body = liftName === void 0 ? void 0 : getGroupLiftRuleBody(liftName);
+      if (liftName !== void 0 && body !== void 0 && !liftBodies.has(liftName)) {
+        liftBodies.set(liftName, body);
+        collect(body, inRepeat);
+      }
+      return;
+    }
+    const t = n.type;
+    if (t === "SYMBOL" || t === "ALIAS") {
+      sawUnfieldedSymbol = true;
+      return;
+    }
+    const entersRepeat = inRepeat || t === "REPEAT" || t === "REPEAT1";
+    const r = n;
+    if (Array.isArray(r.members)) {
+      for (const m of r.members) collect(m, entersRepeat);
+    } else if (r.content && typeof r.content === "object") {
+      collect(r.content, entersRepeat);
+    }
+  };
+  collect(content, false);
+  if (names.size !== 1 || names.has(newName) || !anyRepeatedOccurrence || sawUnfieldedSymbol) return null;
+  const rewrite = (n) => {
+    if (!n || typeof n !== "object") return n;
+    if (isFieldLike(n)) {
+      return { ...n, name: newName, metadata: makeRuleMetadata({ fieldSource: "override" }) };
+    }
+    if (isEnrichGroupLiftSymbol(n)) return n;
+    const r = n;
+    if (Array.isArray(r.members)) return { ...n, members: r.members.map(rewrite) };
+    if (r.content && typeof r.content === "object") return { ...n, content: rewrite(r.content) };
+    return n;
+  };
+  for (const [liftName, body] of liftBodies) {
+    setGroupLiftRuleBody(liftName, rewrite(body));
+  }
+  return rewrite(content);
+}
 function resolveFieldPlaceholder(patch, originalMember, precStack) {
   let content = originalMember;
   if (isFieldLike(content)) {
@@ -3372,6 +3777,10 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
       };
       const reconstructed = nested.reconstruct(renamedField);
       return reconstructed;
+    }
+    const relabeled = relabelUniformFieldSet(content, patch.name);
+    if (relabeled !== null) {
+      return relabeled;
     }
     const unified = unifyChoiceArmFieldNames(content, patch.name);
     if (unified !== content) {
@@ -4074,18 +4483,15 @@ var enrichedBase = enrich(base_default, {
   // override (`_: field('modifier')` below) — same nested-field collision
   // as `tuple_type`/`trait_bounds`, this time surfacing as a render-time
   // unknown-kind-id error rather than a hard generate failure or an
-  // accessor-throw. `_where_clause_group1` regressed factory-render-parse
-  // (-2) and `_closure_parameters_optional1`/`_use_list_group1` each
+  // accessor-throw. `_where_predicates` regressed factory-render-parse
+  // (-2) and `_closure_parameters_optional1`/`_use_clauses` each
   // regressed coverage (-1) when enabled — found via bisection against
   // `validate:native`, root cause not further isolated (each is a small,
   // contained loss, not a hard failure); left skipped until diagnosed.
   skip: [
     "tuple_type",
     "trait_bounds",
-    "function_modifiers",
-    "_where_clause_group1",
-    "_closure_parameters_optional1",
-    "_use_list_group1"
+    "function_modifiers"
   ]
 });
 var grammar_sittir_default = grammar(
@@ -4313,6 +4719,10 @@ var grammar_sittir_default = grammar(
           "1/1": variant("doc"),
           "1/2": variant("content")
         },
+        // The token-tree repeats' element fields (`field('delim_tokens',
+        // repeat($._delim_tokens))` and siblings) come from enrich's
+        // repeat-union field promotion (dsl/enrich.ts) — no override
+        // needed here; only the visible-variant splits remain.
         token_tree_pattern: {
           0: variant("paren"),
           1: variant("bracket"),
@@ -4386,6 +4796,26 @@ var grammar_sittir_default = grammar(
             members: [...members.slice(0, 8), $._token_keywords]
           };
         },
+        // `$` is the one token-tree token the base grammar keeps OUT of
+        // `_non_special_token` (in macro-definition patterns `$` must stay
+        // bindable as the metavariable sigil) and splices into invocation
+        // token trees as a bare STRING arm instead. A bare literal arm has
+        // no kind identity, so the read's array capture cannot materialize
+        // it into `_delim_tokens` — `a!($)` read back and re-rendered as
+        // `a!()`. Alias the STRING itself to the same visible punctuation
+        // kind its 44 sibling tokens already use: the parse content stays
+        // the literal `'$'` (only the node's name changes — no lexing or LR
+        // impact), and definition-context `$` is untouched. NOT the
+        // transform-spec `alias('name')` helper — that substitutes an
+        // aliased reference to the whole `_token_tree_punctuation` RULE,
+        // which makes every punctuation token doubly derivable here and is
+        // a real LR ambiguity.
+        _non_delim_token: ($, original) => ({
+          ...original,
+          members: original.members.map(
+            (m) => m.type === "STRING" && m.value === "$" ? alias2("$", $.token_tree_punctuation) : m
+          )
+        }),
         _token_keywords: ($) => choice(
           "'",
           "as",
@@ -4419,7 +4849,7 @@ var grammar_sittir_default = grammar(
         ),
         use_wildcard: ($) => seq(optional($._use_wildcard_clause), "*"),
         _use_wildcard_clause: ($) => seq(field2("path", $._path), "::"),
-        _where_clause_group1: ($, previous) => prec.right(0, previous),
+        _where_predicates: ($, previous) => prec.right(0, previous),
         _pattern: ($, original) => transform2(original, {
           "-1": alias2($._wildcard_pattern, $.wildcard_pattern)
         }),
@@ -4446,6 +4876,19 @@ var grammar_sittir_default = grammar(
           "0": alias2($._string_literal_open, $.string_open)
         }),
         _string_literal_open: ($) => /[bc]?"/,
+        // raw_string_literal's delimiters are HIDDEN external-scanner
+        // tokens (`$._raw_string_literal_start`/`_end`) — invisible in
+        // the CST, so their per-occurrence text (the hash-run width:
+        // `r#"` vs `r###"`) never reaches the read layer, and the render
+        // had to invent a fixed single-hash spelling that corrupts any
+        // raw string whose content embeds `#"`-runs. Same fix as
+        // `string_literal`/`string_open` above: name the tokens via
+        // alias so each occurrence's real text survives as a captured
+        // slot.
+        raw_string_literal: ($, original) => transform2(original, {
+          "0": alias2($._raw_string_literal_start, $.raw_string_literal_start),
+          "2": alias2($._raw_string_literal_end, $.raw_string_literal_end)
+        }),
         _reference_expression_raw_const: ($) => seq("raw", "const"),
         _reference_expression_raw_mut: ($) => seq("raw", $.mutable_specifier),
         reference_expression: ($) => prec(
@@ -4495,21 +4938,10 @@ var grammar_sittir_default = grammar(
           )
         )
       },
-      //TODO: remove
-      expectTestFailures: {
-        async_block: "#130 \u2014 factory returns block $type / no $render accessor",
-        block_comment: "#130 \u2014 factory output has no $render accessor",
-        gen_block: "#130 \u2014 factory returns block $type / no $render accessor",
-        reference_pattern: "#130 \u2014 factory returns wrong $type / no $render accessor",
-        self_parameter: "#130 \u2014 factory output has no $render accessor",
-        variadic_parameter: "#130 \u2014 factory output has no $render accessor"
-      },
       renderAs: (_$) => ({
         _inner_line_doc_comment_marker: string("!"),
         _outer_block_doc_comment_marker: string("*"),
-        _inner_block_doc_comment_marker: string("!"),
-        _raw_string_literal_start: string('r#"'),
-        _raw_string_literal_end: string('"#')
+        _inner_block_doc_comment_marker: string("!")
       })
     },
     enrichedBase

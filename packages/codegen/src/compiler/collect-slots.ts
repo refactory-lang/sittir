@@ -58,7 +58,7 @@ import {
 	mergeFlankMode,
 	mergeSourceRuleIds,
 	recordAssembleWarning,
-	stampSeparatorOnValues
+	stampListFactsOnValues
 } from './model/node-map.ts';
 import { findRepeatFlag } from '../dsl/rule-transforms.ts';
 
@@ -530,7 +530,10 @@ function buildSlot(
 				`slot-value stamp path (see this guard's comment in collect-slots.ts).`
 		});
 	}
-	const values: readonly NodeOrTerminal[] = stampSeparatorOnValues([...dedupedValues], separatorStr);
+	const values: readonly NodeOrTerminal[] = stampListFactsOnValues([...dedupedValues], {
+		separator: separatorStr,
+		optionalElement: (rule as { optionalElement?: boolean }).optionalElement
+	});
 
 	// A sanctioned union slot's addressable positions are every one of its
 	// arms, not just the CHOICE root — the render-rule's per-arm scan
@@ -569,12 +572,21 @@ export function collectSlots(
 	switch (rule.type) {
 		case SEQ: {
 			// Distribute: the seq is not a slot; its members are.
-			// Each member now carries its own multiplicity intrinsically (pushed
-			// down by wrapper-deletion's seq case via combineMultiplicity), so
-			// no inheritance from the seq node is needed — the seq carries no
-			// multiplicity after deleteWrapper. Pass `inherited` unchanged.
+			// Members usually carry their own multiplicity intrinsically (pushed
+			// down by wrapper-deletion's seq case via combineMultiplicity), and a
+			// member's own stamp always wins (`slotMultiplicity`). But a seq NODE
+			// can itself carry a unit multiplicity: the co-optional-literal
+			// retention in wrapper-deletion, and an optional hidden-group ref
+			// spliced open by inlining (`withAttrsFrom` stamps the ref's
+			// multiplicity on the spliced seq, not its leaves). A member with no
+			// own stamp inside such a unit is only as required as the unit —
+			// thread the seq's multiplicity as the inherited default, or a
+			// mandatory member of an optional unit mis-derives as a required
+			// single (e.g. index_signature's `readonly` marker inside its
+			// optional modifier group).
+			const seqMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
 			const seqSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
-			return rule.members.flatMap((m) => collectSlots(m, kindForName, kindEntries, inherited, seqSep));
+			return rule.members.flatMap((m) => collectSlots(m, kindForName, kindEntries, seqMult, seqSep));
 		}
 
 		case VARIANT:

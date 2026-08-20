@@ -17,7 +17,7 @@ import {
 import {
 	isValidIdent,
 	isAutoStampField,
-	resolveSingleFieldFactorySlot,
+	resolveDirectFactorySlot,
 	classifyChildFactorySurface,
 	isRequired,
 	isMultiple,
@@ -168,6 +168,11 @@ function emitBranchTest(
 
 	// Gap 5: single-field-no-children factories take the value directly.
 	// Detect and emit a direct-value call instead of a config-object.
+	// `resolveDirectFactorySlot` is the same derivation the factories and
+	// from emitters use for the calling convention — a marker-carrying kind
+	// (e.g. class_static_block's automatic_semicolon) is config-shaped, and
+	// a direct-value call against its config coercion would hit the
+	// NodeData passthrough and return the child unchanged.
 	//
 	// Excludes a sole field backed by a KindEnum (e.g. debugger_statement's
 	// `semicolon`, coerced via coerceKindEnumStorage in the emitted
@@ -178,7 +183,7 @@ function emitBranchTest(
 	// (untested here) matches Gap 5's premise for that shape. The
 	// object-config form below is always type-correct regardless of field
 	// shape, since coerceToXxx checks `input.<fieldName>` first.
-	const singleFieldSlot = resolveSingleFieldFactorySlot(node, nodeMap);
+	const singleFieldSlot = resolveDirectFactorySlot(node, nodeMap);
 	const singleFieldIsKindEnum =
 		singleFieldSlot !== undefined && kindEnumTextIdPairs(singleFieldSlot, nodeMap, kindEntries).length > 0;
 
@@ -248,12 +253,11 @@ function emitContainerTest(
 	//     input, so the no-arg form `ir.kind()` would fail at
 	//     runtime even though it type-checks.
 	//
-	// The unnamed slot backing a container factory lives at `node.fields[0]`
-	// (post-unification) — `unnamedChildSlotFacts` is the same canonical
-	// derivation `emitContainerFactory` (factories.ts) bases its real
-	// signature on. Read it here too, so the test placeholder matches what
-	// the factory actually requires.
-	const facts = unnamedChildSlotFacts(node.fields);
+	// `unnamedChildSlotFacts` is the same canonical derivation
+	// `emitFieldCarryingFactory` (factories.ts) bases its real signature
+	// on. Read it here too, so the test placeholder matches what the
+	// factory actually requires.
+	const facts = unnamedChildSlotFacts(node, nodeMap);
 	const requiredSingular = facts && !facts.multiple && facts.required;
 	const anyNonEmpty = facts?.nonEmpty ?? false;
 	// Candidate kind names for the slot, preferring each value's `parseKind`
@@ -544,7 +548,22 @@ function buildDummyStub(
 	nextVisiting.add(kind);
 	const fieldParts: string[] = [];
 	for (const f of allSlotsOf(node)) {
-		if (!isRequired(f) || isAutoStampField(f, nodeMap)) continue;
+		if (!isRequired(f)) continue;
+		if (isAutoStampField(f, nodeMap)) {
+			// A required auto-stamp is not config surface, but this RAW stub
+			// bypasses the factory that would stamp it, and the native
+			// transport declares its storage key mandatory (python
+			// decorator's `_newline` — a factory-built or read node always
+			// carries it, so the stub must too). Emit the pre-coerced
+			// storage value inline for the coercible storage shapes;
+			// verbatim-storage stamps stay omitted (their text lives in the
+			// template, not the wire).
+			const stampInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
+			if (stampInfo.kind === 'boolean' || stampInfo.kind === 'bitflag' || stampInfo.kind === 'kindEnum') {
+				fieldParts.push(`${f.storageKey}: ${dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting)}`);
+			}
+			continue;
+		}
 		const value = isMultiple(f)
 			? `[${dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting)}]`
 			: dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting);

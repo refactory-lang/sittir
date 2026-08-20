@@ -61,6 +61,7 @@ import {
 	isRequired,
 	isMultiple,
 	isNonEmpty,
+	hasOptionalElements,
 	slotKindNames,
 	slotLiteralValues,
 	resolveHiddenKeywordLiteral,
@@ -485,20 +486,21 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	lines.push('export const KIND_NAMES: ReadonlyMap<number, string> = new Map([');
 	for (const entry of entries) {
 		// Always the canonical catalog key (`entry.kind`), never
-		// `entry.symbolName`. KIND_NAMES id->name lookups feed `wrapNode`'s
-		// dispatch tables (`_wrapTable` / `_aliasTargetToSource`,
-		// packages/*/src/wrap.ts), which are keyed by the catalog's
-		// canonical (possibly hidden, `_`-prefixed) name — NOT by the raw
-		// C-parser display label `ts_symbol_names[]` happens to carry.
-		// Substituting a symbolName here (e.g. `_template_chars`'s
-		// `string_fragment`, or `_patterns`'s `pattern_group`) breaks that
-		// lookup silently: the node falls through to the unknown-kind
-		// fallback and comes back unwrapped, with no error thrown. This
-		// holds even for entries whose symbolName was preserved across a
-		// `joinIdNames` alias-id collision — genuinely visible-aliased
-		// kinds are resolved through a *different* path (tree-sitter's own
-		// string `$type` output, via `_aliasTargetToSource`), not through
-		// this numeric-id map.
+		// `entry.symbolName`. KIND_NAMES id->name lookups feed the
+		// generated runtime's canonical-name projections (`wrapNode`'s
+		// name materialization and wrap-kind filtering, `kindIdFromName`
+		// round-trips, the engine/boundary kind views — packages/*/src/),
+		// which are keyed by the catalog's canonical (possibly hidden,
+		// `_`-prefixed) name — NOT by the raw C-parser display label
+		// `ts_symbol_names[]` happens to carry. Substituting a symbolName
+		// here (e.g. `_template_chars`'s `string_fragment`, or `_patterns`'s
+		// `pattern_group`) breaks those lookups silently: the node falls
+		// through to the unknown-kind fallback and comes back unwrapped,
+		// with no error thrown. This holds even for entries whose
+		// symbolName was preserved across a `joinIdNames` alias-id
+		// collision — the wire `$type` is the grammar-symbol id, so a
+		// visible-aliased node arrives under its canonical kind's id (or
+		// the parseId row below) and resolves through this same map.
 		//
 		// Two OTHER consumers prefer the C-parser display label instead
 		// (`entry.symbolName`) and must NOT read this map — see
@@ -741,7 +743,14 @@ function emitSupertypeUnionDeclarations(
 		generatedTypes.add(typeName);
 
 		const resolvedSubs = st.subtypes.map((sub) => {
-			const n = nodeMap.nodes.get(sub);
+			// Canonical-hidden fallback (Option Y): an alias-target subtype's
+			// node lives under the pre-promotion hidden name (`_<sub>`) when
+			// no visible node was minted for the target — e.g. rust's
+			// `alias('$', $.token_tree_punctuation)` arm names the parse kind,
+			// whose only NodeMap entry is the hidden `_token_tree_punctuation`
+			// rule. Same fallback buildDummyStub (test.ts) and
+			// validateTemplateCoverage use.
+			const n = nodeMap.nodes.get(sub) ?? nodeMap.nodes.get(`_${sub}`);
 			if (!n) {
 				throw new Error(`types: supertype '${st.kind}' references subtype '${sub}' which is not in NodeMap.`);
 			}
@@ -888,7 +897,10 @@ function emitInterface(
 			const opt = isRequired(f) ? '' : '?';
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
-				emitFieldArrayDeclaration(lines, f.storageKey, opt, storageType, isNonEmpty(f));
+				// Elidable separated-list positions store holes as `undefined`
+				// entries (array elision, `[a, , b]`).
+				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;
+				emitFieldArrayDeclaration(lines, f.storageKey, opt, elemType, isNonEmpty(f));
 			} else {
 				lines.push(`  readonly ${f.storageKey}${opt}: ${storageType};`);
 			}
@@ -904,7 +916,8 @@ function emitInterface(
 			const opt = isRequired(f) ? '' : '?';
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				// Multiple accessor returns the array type (same as storage type).
-				const arrType = isNonEmpty(f) ? `NonEmptyArray<${storageType}>` : `readonly (${storageType})[]`;
+				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;
+				const arrType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `readonly (${elemType})[]`;
 				lines.push(`  ${propName}(): ${arrType};`);
 			} else {
 				lines.push(`  ${propName}(): ${storageType}${opt ? ' | undefined' : ''};`);

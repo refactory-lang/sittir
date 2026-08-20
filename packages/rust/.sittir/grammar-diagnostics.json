@@ -13,26 +13,18 @@
   },
   {
     "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
+    "code": "typename-collision",
+    "severity": "info",
     "grammar": "rust",
-    "ownerKind": "r#\"",
-    "message": "[assemble] anonymous literal \"r#\\\"\" resolved no parser kindId — keyed by raw text 'r#\"'",
+    "ownerKind": "_non_special_token",
+    "message": "[assemble] typeName collision: kind '_non_special_token' renamed 'NonSpecialToken' → '_NonSpecialToken' (visible sibling(s): 'non_special_token')",
     "canProceed": true,
     "details": {
-      "literalText": "r#\""
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "rust",
-    "ownerKind": "\"#",
-    "message": "[assemble] anonymous literal \"\\\"#\" resolved no parser kindId — keyed by raw text '\"#'",
-    "canProceed": true,
-    "details": {
-      "literalText": "\"#"
+      "typeName": "NonSpecialToken",
+      "newType": "_NonSpecialToken",
+      "visibleKinds": [
+        "non_special_token"
+      ]
     }
   },
   {
@@ -92,15 +84,13 @@
   },
   {
     "code": "kindid-unstamped-literals",
-    "message": "5 literal(s) resolved no parser kindId",
+    "message": "3 literal(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "texts": [
-        "\"#",
         "\\",
         "b",
-        "mut",
-        "r#\""
+        "mut"
       ]
     },
     "severity": "warning",
@@ -145,16 +135,14 @@
   },
   {
     "code": "kindid-vaporized-literals",
-    "message": "5 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "3 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "texts": [
-        "\"#",
         "\\",
         "b",
-        "mut",
-        "r#\""
+        "mut"
       ]
     },
     "scope": "grammar",

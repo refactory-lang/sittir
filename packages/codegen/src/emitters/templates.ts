@@ -59,7 +59,8 @@ import type {
 } from '../compiler/model/node-map.ts';
 import type { Rule, RuleBase, RenderRule, Multiplicity } from '../types/rule.ts';
 import type { CodegenEmitter } from './emitter.ts';
-import { classifyTemplateEmission, wordCharAsciiTable } from './shared.ts';
+import { classifyTemplateEmission, literalMergePairs, wordCharAsciiTable } from './shared.ts';
+import { getTransportProjection } from './transport-projection-cache.ts';
 
 export interface EmitTemplatesConfig {
 	grammar: string;
@@ -75,6 +76,12 @@ export interface EmitCtx {
 	readonly nodeMap: NodeMap;
 	readonly wordMatcher: RegExp;
 	readonly isWordChar: (c: string) => boolean;
+	// Same merge-hazard pairs the emitted SpacingWriter table uses (one
+	// derivation: literalMergePairs over the transport literal inventory) —
+	// consumed by the static-seam join so emit-time and render-time apply
+	// ONE seam law: space only where the seam's char transition occurs
+	// inside some real token of the grammar.
+	readonly isLiteralMergePair: (l: string, r: string) => boolean;
 	readonly externals: readonly string[];
 	readonly rules: Record<string, RenderRule>;
 	readonly visitingHelpers: Set<string>;
@@ -187,6 +194,13 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			isWordChar: (() => {
 				const table = wordCharAsciiTable(this.#wordMatcher);
 				return (c: string) => (c.charCodeAt(0) < 128 ? table[c.charCodeAt(0)]! : /[\p{L}\p{N}]/u.test(c));
+			})(),
+			isLiteralMergePair: (() => {
+				const pairs = new Set(
+					literalMergePairs(getTransportProjection(config.nodeMap).literals).map(([a, b]) => a * 128 + b)
+				);
+				return (l: string, r: string) =>
+					l.charCodeAt(0) < 128 && r.charCodeAt(0) < 128 && pairs.has(l.charCodeAt(0) * 128 + r.charCodeAt(0));
 			})(),
 			externals: [...(config.nodeMap.externals ?? [])],
 			rules: config.nodeMap.normalizedRules ?? {},
@@ -422,17 +436,28 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			// Static-static seams only (spec v2 note: "space baked into the
 			// literal"): askama compiles adjacent template literals into ONE
 			// write, so the render-time writer never sees a seam between two
-			// static words ('abstract' + 'class' glued to 'abstractclass').
-			// Apply the writer's exact invariant to the statically-known seam
-			// chars. Template syntax chars ('{' of '{%'/'{{') are not
-			// word-class, so conditional/slot boundaries fall through to the
-			// runtime writer untouched.
+			// static tokens — neither two words ('abstract' + 'class' glued to
+			// 'abstractclass') nor a punctuation merge-hazard pair ('..' +
+			// '=>' glued to '..=>', which re-lexes as '..=' plus a dangling
+			// '>'). Apply the writer's exact invariant — BOTH halves, word
+			// seam and hazard-pair seam — to the statically-known seam chars.
+			// A '}' left edge or '{' right edge is always TEMPLATE SYNTAX
+			// ('}}'/'%}' and '{{'/'{%'), never a real brace: escapeLiteral pads
+			// real braces with spaces ('{ '/' }'), which makes them seam-inert.
+			// Tag boundaries are dynamic and belong to the runtime writer,
+			// which sees the real rendered characters.
 			const joinParts = (segments: string[]): string => {
 				let body = segments[0]!;
 				for (let i = 1; i < segments.length; i++) {
 					const l = body[body.length - 1]!;
 					const r = segments[i]![0]!;
-					if (ctx.isWordChar(l) && ctx.isWordChar(r)) body += ' ';
+					if (l === '}' || r === '{') {
+						body += segments[i]!;
+						continue;
+					}
+					const wordSeam = ctx.isWordChar(l) && ctx.isWordChar(r);
+					const symbolSeam = l !== r && ctx.isLiteralMergePair(l, r);
+					if (wordSeam || symbolSeam) body += ' ';
 					body += segments[i]!;
 				}
 				return body;
@@ -665,7 +690,7 @@ function selectJoinFilter(
 	if (leading) return 'joinWithLeading';
 	// Fallback: read trailing/leading from the slot's per-value entries.
 	// This handles the case where the separator was stamped onto slot values
-	// by `stampSeparatorOnValues` but the rule itself (a rebuilt choice from
+	// by `stampListFactsOnValues` but the rule itself (a rebuilt choice from
 	// `fanOutSeqChoices`/`factorChoiceBranches`) carries no flank flags.
 	if (slot !== undefined) {
 		const multiVal = slot.values.find((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
@@ -698,7 +723,7 @@ function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonter
 		slot.values.every((v) => isTerminalValue(v) && v.immediate === true);
 	// Separator resolution: prefer the rule's own separator (directly carried),
 	// then fall back to the slot values' per-entry separator (stamped by
-	// `stampSeparatorOnValues` when the separator flowed from a repeat wrapper
+	// `stampListFactsOnValues` when the separator flowed from a repeat wrapper
 	// through wrapper-deletion). This handles the case where `fanOutSeqChoices`/
 	// `factorChoiceBranches` rebuilt a choice carrying only the rule id (not the
 	// separator), so the outer choice has no separator but the slot values do.
@@ -924,10 +949,20 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 				// symbolFieldName: when present, it's the outer FIELD's own name
 				// (e.g. `name`/`semicolon`) — prefer it over a condKey derived
 				// from the helper's inner content, since the outer field's
-				// presence is what the wire/read layer actually populates.
+				// presence is what the wire/read layer actually populates. That
+				// only holds when a slot actually carries the outer name: when
+				// the helper's INNER field names the slot instead (infer_type's
+				// `constraint` ref around a helper whose inner field is `type`),
+				// the outer name is unaddressable and its gate is never true —
+				// fall through to the helper-derived key.
 				if (multiplicity === 'optional' && helperBody) {
+					const symbolFieldKey = symbolFieldName?.toLowerCase();
+					const addressableFieldKey =
+						symbolFieldKey !== undefined && (ctx.ownerSlots === undefined || ctx.ownerSlots[symbolFieldKey] !== undefined)
+							? symbolFieldKey
+							: undefined;
 					const condKey =
-						symbolFieldName?.toLowerCase() ??
+						addressableFieldKey ??
 						pickConditionalKey(helperRenderRule, helperCtx) ??
 						(rule.name.replace(/^_+/, '') || 'children').toLowerCase();
 					return `{% if ${condKey} | isPresent %}${helperBody}{% endif %}`;
@@ -999,11 +1034,19 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 const warnedMultiSlotGroups = new Set<string>();
 function warnMultiSlotMultiplicityGroup(rule: Extract<RenderRule, { type: 'SEQ' }>, ctx: EmitCtx): void {
 	const keys = new Set<string>();
+	let hasUnitMandatoryKey = false;
 	for (const m of rule.members) {
 		const k = pickConditionalKey(m, ctx);
-		if (k) keys.add(k);
+		if (!k) continue;
+		keys.add(k);
+		const memberMult = (m as { multiplicity?: Multiplicity }).multiplicity;
+		if (memberMult !== 'optional' && memberMult !== 'array') hasUnitMandatoryKey = true;
 	}
 	if (keys.size <= 1) return;
+	// A unit-mandatory keyed member IS a sound single gate (the unit occurs
+	// exactly when it is present — pickConditionalKey selects it), so
+	// multi-slot is only unsound when every keyed member is optional.
+	if (hasUnitMandatoryKey) return;
 	// Message label: the distinct internal slot names identify the offending
 	// group precisely enough for a diagnostic (the hidden source-kind name
 	// this seq was spliced from is not available here without a metadata
@@ -1024,7 +1067,16 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	// by the enrich / push-down pass).
 	const contentFieldName = (content as { fieldName?: string }).fieldName;
 	if (contentFieldName !== undefined) {
-		return contentFieldName.toLowerCase();
+		const key = contentFieldName.toLowerCase();
+		// A fieldName no actual slot carries cannot gate anything — its
+		// `| isPresent` is never true. This happens when an override fields
+		// an optional GROUP REF (`field('constraint', optional(_helper))`)
+		// whose splice stamps the name on the seq node while the slot takes
+		// its name from the field INSIDE the helper (infer_type: gate said
+		// `constraint`, slot is `type`). Fall through to the structural
+		// search so the gate lands on a real slot; without ownerSlots
+		// (unit-test contexts) keep the historical name-trusting behavior.
+		if (ctx.ownerSlots === undefined || ctx.ownerSlots[key] !== undefined) return key;
 	}
 	// Transparent wrappers — recurse. FIELD/TOKEN/ALIAS are WrapperPhase-only
 	// (types/rule.ts) and never survive into RenderRule — applyWrapperDeletion
@@ -1035,13 +1087,24 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	if (content.type === VARIANT || content.type === GROUP) {
 		return pickConditionalKey(content.content, ctx);
 	}
-	// A seq with a member that has a field name — use that field.
+	// A seq with a member that has a field name — use that field. Prefer a
+	// UNIT-MANDATORY member (no own optional/array stamp): the unit occurs
+	// exactly when that slot is present, so it is a sound `| isPresent`
+	// gate. An optional-within-unit member can be absent while the unit
+	// still renders (index_signature's `sign` before its mandatory
+	// `readonly` marker), so gating on it drops the unit's mandatory
+	// content; it survives only as the fallback when every keyed member is
+	// optional.
 	if (content.type === SEQ) {
+		let fallback: string | undefined;
 		for (const m of content.members) {
 			const key = pickConditionalKey(m, ctx);
-			if (key) return key;
+			if (!key) continue;
+			const memberMult = (m as { multiplicity?: Multiplicity }).multiplicity;
+			if (memberMult !== 'optional' && memberMult !== 'array') return key;
+			fallback ??= key;
 		}
-		return undefined;
+		return fallback;
 	}
 	// A choice whose branches carry field names — gate on the first branch
 	// that yields a key (mirrors the seq-member loop above). Without this,
@@ -1061,6 +1124,40 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 		return (sym.name.replace(/^_+/, '') || 'children').toLowerCase();
 	}
 	return undefined;
+}
+
+// True when the fragment can stand alone as a template: it never closes an
+// `{% if %}` it didn't open, and closes every one it did.
+function isTagBalanced(fragment: string): boolean {
+	const tagRe = /\{%-?\s*(if|endif)\b[^%]*?%\}/g;
+	let depth = 0;
+	for (let m = tagRe.exec(fragment); m !== null; m = tagRe.exec(fragment)) {
+		if (m[1] === 'if') depth++;
+		else if (--depth < 0) return false;
+	}
+	return depth === 0;
+}
+
+// Longest common trailing suffix across all bodies, trimmed forward to the
+// earliest `{{`/`{%` boundary from which the fragment is tag-balanced —
+// i.e. the largest shared tail that can be lifted out of every body and
+// emitted as a standalone template fragment.
+function commonBalancedTrailingTail(bodies: readonly string[]): string {
+	if (bodies.length < 2) return '';
+	let suffix = bodies[0]!;
+	for (let i = 1; i < bodies.length; i++) {
+		const b = bodies[i]!;
+		let n = 0;
+		while (n < suffix.length && n < b.length && suffix[suffix.length - 1 - n] === b[b.length - 1 - n]) n++;
+		suffix = suffix.slice(suffix.length - n);
+		if (suffix === '') return '';
+	}
+	for (let p = 0; p < suffix.length; p++) {
+		if (!suffix.startsWith('{{', p) && !suffix.startsWith('{%', p)) continue;
+		const cand = suffix.slice(p);
+		if (isTagBalanced(cand)) return cand;
+	}
+	return '';
 }
 
 function scanArmBody(body: string): { key: string | undefined; needsGate: boolean; discriminatorKey: string | undefined } {
@@ -1278,9 +1375,24 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			}
 			armInfos.push({ key, discriminatorKey, body, needsGate, delta });
 		}
+		let hoistedTail = '';
 		if (!ungateableArm) {
 			const countByKey = new Map<string, number>();
 			for (const info of armInfos) countByKey.set(info.key, (countByKey.get(info.key) ?? 0) + 1);
+			// EVERY arm keying on the same ungated trailing reference means
+			// that reference is not arm content at all — it is a slot of the
+			// enclosing SEQ that the choice fan-out distributed into each arm
+			// (rust `function_type`: both form arms end in `{{ parameters }}`).
+			// Gating it inside the arm blocks renders NOTHING for that slot
+			// when no arm slot is stamped, even though the model derived it as
+			// required. Lift the largest shared balanced tail out of every arm
+			// body and emit it once, ungated, after the blocks — for a
+			// well-formed node (exactly one arm present) the output is the
+			// same text, one tail render either way.
+			const sharedTailKey =
+				armInfos.length >= 2 && countByKey.size === 1 && literalFallback === undefined
+					? armInfos[0]!.key
+					: undefined;
 			for (const info of armInfos) {
 				if (
 					(countByKey.get(info.key) ?? 0) > 1 &&
@@ -1289,6 +1401,15 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 					ctx.ownerSlots?.[info.discriminatorKey] !== undefined
 				) {
 					info.key = info.discriminatorKey;
+				}
+			}
+			if (sharedTailKey !== undefined) {
+				const tail = commonBalancedTrailingTail(armInfos.map((i) => i.body));
+				if (tail !== '' && new RegExp(`\\{\\{-?\\s*${escapeRegex(sharedTailKey)}\\b`).test(tail)) {
+					hoistedTail = tail;
+					for (const info of armInfos) {
+						info.body = info.body.slice(0, info.body.length - tail.length);
+					}
 				}
 			}
 		}
@@ -1305,6 +1426,9 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 		// into the returned text.
 		const arraySlotDeltaByKey = new Map<string, AssembledNonterminal[]>();
 		for (const info of armInfos) {
+			// An arm whose whole body was the hoisted shared tail has nothing
+			// arm-specific left to gate — the unconditional tail covers it.
+			if (info.body === '') continue;
 			const block = info.needsGate ? `{% if ${info.key} | isPresent %}${info.body}{% endif %}` : info.body;
 			const prev = blockByKey.get(info.key);
 			if (prev === undefined || block.length > prev.length) {
@@ -1331,11 +1455,11 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			parts.push(`{% else %}${literalFallback}{% endif %}`);
 			return parts.join('');
 		}
-		if (!ungateableArm && blockByKey.size >= 2) {
+		if (!ungateableArm && (blockByKey.size >= 2 || (hoistedTail !== '' && blockByKey.size >= 1))) {
 			for (const delta of arraySlotDeltaByKey.values()) {
 				for (const s of delta) ctx.emittedArraySlots.add(s);
 			}
-			return [...blockByKey.values()].join('');
+			return [...blockByKey.values()].join('') + hoistedTail;
 		}
 		// ungateableArm, or fewer than 2 distinct keys with no usable literal
 		// fallback: falls through to the first-arm-wins loop below. Every

@@ -9,7 +9,7 @@
  * `safeParamName()`-sanitized spelling, e.g. `arguments` → `arguments_`) —
  * a bare `arguments` parameter is invalid in an ECMAScript module and broke
  * loading the emitted factories.ts entirely (surfaced by python's
- * `argument_list`'s newly-promoted single-field `_argument_list_group1`
+ * `argument_list`'s newly-promoted single-field `_argument_list_elements`
  * body, whose sole slot is named `arguments`).
  */
 
@@ -46,7 +46,10 @@ describe('factories emitter — single-field factory reserved-word parameter nam
 		const nodeMap = makeReservedWordSingleFieldNodeMap();
 		const emitted = emitFactories({ grammar: 'test', nodeMap });
 
-		expect(emitted).toContain('export function buildCall(arguments_');
-		expect(emitted).not.toMatch(/export function buildCall\(arguments[?:]/);
+		// `call` forwards its sole slot's single kind, so the sanitized param
+		// lives on the private direct implementation behind the forwarding
+		// wrapper.
+		expect(emitted).toContain('function _buildCall(arguments_');
+		expect(emitted).not.toMatch(/function _?buildCall\(arguments[?:]/);
 	});
 });

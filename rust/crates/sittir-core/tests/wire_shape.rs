@@ -40,11 +40,12 @@ fn complex_node() -> NodeData {
             node_handle: None,
             child_index: None,
             trivia_data: None,
+            slot_order: None,
         })),
     );
     fields.insert(
         "values".to_string(),
-        FieldValue::Multiple(vec![NodeData {
+        FieldValue::Multiple(vec![Some(NodeData {
             type_: K_INTEGER_LITERAL,
             source: Source::Ts,
             named: true,
@@ -55,7 +56,8 @@ fn complex_node() -> NodeData {
             node_handle: None,
             child_index: None,
             trivia_data: None,
-        }]),
+            slot_order: None,
+        })]),
     );
     fields.insert("op".to_string(), FieldValue::Text("+".to_string()));
     NodeData {
@@ -74,12 +76,14 @@ fn complex_node() -> NodeData {
             node_handle: None,
             child_index: Some(2),
             trivia_data: None,
+            slot_order: None,
         }]),
         text: None,
         span: Some(Span { start: 0, end: 9 }),
         node_handle: None,
         child_index: None,
         trivia_data: None,
+        slot_order: None,
     }
 }
 

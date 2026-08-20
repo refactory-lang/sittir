@@ -31,6 +31,7 @@ import {
 	AssembledGroup,
 	AssembledSeparatedList,
 	deriveUnnamedChildrenCardinality,
+	hasOptionalElements,
 	isMultiple,
 	isRequired,
 	isNodeRef,
@@ -62,7 +63,7 @@ import {
 	classifyPrimitiveField,
 	type PrimitiveFieldStorage,
 	wordCharAsciiTable,
-	symbolCharAsciiTable,
+	literalMergePairs,
 	fieldTypeComponents
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
@@ -788,7 +789,7 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!node.userFacing) continue;
 		// Separator — scan slot values for stamped separators (set by
-		// deriveSlotsRawFromLeafAttr via stampSeparatorOnValues for named
+		// deriveSlotsRawFromLeafAttr via stampListFactsOnValues for named
 		// field slots). Falls back to node.separator (AssembledBranch /
 		// AssembledSeparatedList simplified-rule-or-raw-rule separator) for
 		// container-shaped nodes whose separator lives on the rule rather
@@ -928,10 +929,10 @@ function renderTypedDispatch(
 	// via the pair test in wordCharAsciiTable; >=0x80 falls back to
 	// Unicode alphanumerics.
 	const wordTable = wordCharAsciiTable(nodeMap.wordMatcher ?? /\w/);
-	// Per-grammar symbol class, derived from this grammar's own anonymous
-	// literal inventory (`literals`, already collected for the unit-variant
-	// arms below) — see symbolCharAsciiTable's doc comment.
-	const symbolTable = symbolCharAsciiTable(literals);
+	// Per-grammar punctuation merge-hazard pairs, derived from this grammar's
+	// own anonymous literal inventory (`literals`, already collected for the
+	// unit-variant arms below) — see literalMergePairs' doc comment.
+	const mergePairs = literalMergePairs(literals);
 	lines.push(`/// Word-class table derived from this grammar's Link-pinned word pattern.`);
 	lines.push(
 		`static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core::spacing::WordMatcher::new(`
@@ -939,7 +940,13 @@ function renderTypedDispatch(
 	lines.push(`    [${wordTable.map((b) => (b ? 'true' : 'false')).join(', ')}],`);
 	lines.push(`    char::is_alphanumeric,`);
 	lines.push(`)`);
-	lines.push(`.with_symbol_class([${symbolTable.map((b) => (b ? 'true' : 'false')).join(', ')}]);`);
+	lines.push(
+		`.with_literal_merge_pairs(&[${mergePairs.map(([a, b]) => `(${a}, ${b})`).join(', ')}]); // ${
+			mergePairs.length === 0
+				? 'no multi-char punctuation transitions in this grammar'
+				: mergePairs.map(([a, b]) => JSON.stringify(String.fromCharCode(a) + String.fromCharCode(b))).join(' ')
+		}`
+	);
 	lines.push('');
 	lines.push(`pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {`);
 	lines.push(`    let mut s = String::new();`);
@@ -1194,9 +1201,14 @@ function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: strin
 	return lines;
 }
 
-function emitListSlotBuffer(ident: string, required: boolean, filterAnon = false): string[] {
+function emitListSlotBuffer(ident: string, required: boolean, filterAnon = false, optionalElement = false): string[] {
 	const R = RENDERABLE_PREFIX;
-	const mapBody = `${R}Renderable::Transport(t)`;
+	// An elidable position (`Vec<Option<T>>`) renders a hole as empty text —
+	// it still occupies a join position, so `Joined` emits the separators
+	// around it (`[a, , b]` reproduces its bytes).
+	const mapBody = optionalElement
+		? `match t { Some(t) => ${R}Renderable::Transport(t), None => ${R}Renderable::Text("") }`
+		: `${R}Renderable::Transport(t)`;
 	if (required) {
 		return emitIterCollectBuffer(ident, `node.${ident}`, mapBody, filterAnon);
 	}
@@ -1346,7 +1358,11 @@ function buildTypedTemplateBody(
 		const rIdent = rustFieldIdent(f.storageName);
 		if (emittedBufferIdents.has(rIdent)) continue;
 		emittedBufferIdents.add(rIdent);
-		lines.push(...emitListSlotBuffer(rIdent, f.required));
+		const slotForBuf =
+			slotModel !== undefined
+				? [...slotModel.named, ...slotModel.unnamed].find((s) => s.storageName === f.storageName)
+				: undefined;
+		lines.push(...emitListSlotBuffer(rIdent, f.required, false, slotForBuf !== undefined && hasOptionalElements(slotForBuf)));
 	}
 
 	// Build template struct — all single-value fields use Renderable::Transport.
@@ -2107,7 +2123,23 @@ function emitTransportEnumFromNapiValueBody(
 	return lines;
 }
 
-function emitAliasUnwrapRecurseArm(aliasId: number, enumName: string, errorLabel: string): string[] {
+interface AliasLeafTrial {
+	readonly typeName: string;
+	readonly variant: string;
+}
+
+function emitAliasUnwrapRecurseArm(
+	aliasId: number,
+	enumName: string,
+	errorLabel: string,
+	// Leaf-collapsed alias occurrences ({$type: <aliasId>, $text} — the
+	// reader scalar-collapses leaf content, so there is NO kind-keyed child
+	// to unwrap) dispatch the SAME object through the alias expansion's own
+	// leaf variants. Text-validated enum variants must come first in this
+	// list; a mis-typed leaf dispatch is benign for RENDER (a leaf renders
+	// its own $text either way), but the enum's membership check is exact.
+	leafTrials: readonly AliasLeafTrial[] = []
+): string[] {
 	const arms: string[] = [];
 	arms.push(`                ${aliasId} => {`);
 	arms.push(`                    if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {`);
@@ -2124,6 +2156,11 @@ function emitAliasUnwrapRecurseArm(aliasId: number, enumName: string, errorLabel
 	arms.push(`                            }`);
 	arms.push(`                        }`);
 	arms.push(`                    }`);
+	for (const trial of leafTrials) {
+		arms.push(
+			`                    if let Ok(v) = ${trial.typeName}::from_napi_value(env, napi_val) { return Ok(Self::${trial.variant}(v)); }`
+		);
+	}
 	arms.push(
 		`                    Err(::napi::Error::from_reason(${JSON.stringify(
 			`${errorLabel} kind id ${aliasId} in ${enumName}: no kind-keyed child slot to unwrap`
@@ -2131,6 +2168,38 @@ function emitAliasUnwrapRecurseArm(aliasId: number, enumName: string, errorLabel
 	);
 	arms.push(`                },`);
 	return arms;
+}
+
+/** Leaf modelTypes an alias occurrence can scalar-collapse into — the trial
+ *  set for {@link emitAliasUnwrapRecurseArm}, text-validated enums first. */
+function aliasLeafTrialOrder(modelType: string): number {
+	switch (modelType) {
+		case 'enum':
+			return 0;
+		case 'keyword':
+			return 1;
+		case 'token':
+			return 2;
+		case 'pattern':
+			return 3;
+		default:
+			return -1;
+	}
+}
+
+/** The supertype closure of `kinds`: every kind reachable by walking
+ *  supertype subtype lists transitively (the kinds themselves included). */
+function supertypeClosureOf(kinds: readonly string[], nodeMap: NodeMap): Set<string> {
+	const seen = new Set<string>();
+	const queue = [...kinds];
+	while (queue.length > 0) {
+		const kind = queue.pop()!;
+		if (seen.has(kind)) continue;
+		seen.add(kind);
+		const node = nodeMap.nodes.get(kind);
+		if (node?.modelType === 'supertype') queue.push(...node.subtypeNames);
+	}
+	return seen;
 }
 
 function emitSupertypeTransportEnum(
@@ -2245,10 +2314,19 @@ function emitSupertypeTransportEnum(
 			// trials would probe the wrong object). Unwrap the kind-keyed slot
 			// and re-dispatch Self on the concrete child, which carries its own
 			// `$type`.
+			const selfAliasLeafTrials = validSubtypes
+				.map(({ subKind, subNode }) => ({
+					subKind,
+					subNode,
+					order: aliasLeafTrialOrder(subNode.modelType)
+				}))
+				.filter((t) => t.order >= 0)
+				.sort((a, b) => a.order - b.order)
+				.map((t) => ({ typeName: rustTransportStructName(t.subNode), variant: rustTypeIdent(t.subNode.typeName) }));
 			for (const aliasId of selfAliasIds ?? []) {
 				if (emittedIds.has(aliasId)) continue;
 				emittedIds.add(aliasId);
-				arms.push(...emitAliasUnwrapRecurseArm(aliasId, enumName, 'self-alias'));
+				arms.push(...emitAliasUnwrapRecurseArm(aliasId, enumName, 'self-alias', selfAliasLeafTrials));
 			}
 			for (const { subKind, subNode } of validSubtypes) {
 				const variant = rustTypeIdent(subNode.typeName);
@@ -2552,6 +2630,15 @@ function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[]
 	if (node.modelType === 'pattern' && node.fixedLiteralText !== undefined && kindEntries !== undefined) {
 		const literalId = findKindEntryForLiteral(kindEntries, node.fixedLiteralText)?.id;
 		if (literalId !== undefined) acceptedIds.push(literalId);
+	}
+	// Anon-token occurrences aliased to this kind (`alias('match',
+	// $.identifier)` — soft keywords as names): the wire delivers the
+	// TOKEN's own grammar-symbol id there, and supertype expansion swallows
+	// the occurrence (only the kind survives as a subtype), so the token
+	// ids reach decode arms only through this kind-level stamp.
+	const terminalIds = nodeMap?.terminalAliasWireIds?.get(kind);
+	if (terminalIds !== undefined) {
+		for (const id of terminalIds) if (!acceptedIds.includes(id)) acceptedIds.push(id);
 	}
 	return acceptedIds;
 }
@@ -2876,14 +2963,39 @@ function emitPerSlotChildEnum(
 		// supertype's cross-supertype self-alias id. Scoped tightly to
 		// exactly this shape (flattened-supertype storage target already
 		// covered by this same enum); NOT a general alias-name fallback.
-		for (const [parseName, storageKind] of Object.entries(entry.parseAliases)) {
-			if (!entry.kinds.includes(storageKind)) continue;
+		// The storage target may sit ANYWHERE in the slot's supertype closure,
+		// not only in the raw kind list — typescript's `_property_name` slot
+		// reaches `_property_identifier` one supertype deeper, and the alias
+		// occurrence's wire id (`alias_sym_property_identifier`) still needs
+		// an arm here. The closure's own `subtypeParseNames` facts (the
+		// per-subtype alias names link stamped on each supertype) join the
+		// grammar-wide parseAliases map — that is where a NESTED supertype's
+		// alias spelling lives.
+		const kindsClosure = supertypeClosureOf(entry.kinds, nodeMap);
+		const validKindSet = new Map(validKinds.map((v) => [v.kind, v] as const));
+		const aliasPairs: Record<string, string> = { ...entry.parseAliases };
+		for (const closureKind of kindsClosure) {
+			const closureNode = nodeMap.nodes.get(closureKind);
+			if (closureNode?.modelType !== 'supertype') continue;
+			for (const [storage, parse] of Object.entries(closureNode.subtypeParseNames ?? {})) {
+				aliasPairs[parse] ??= storage;
+			}
+		}
+		for (const [parseName, storageKind] of Object.entries(aliasPairs)) {
+			if (!kindsClosure.has(storageKind)) continue;
 			if (nodeMap.nodes.get(storageKind)?.modelType !== 'supertype') continue;
 			const parseEntry = kindEntries !== undefined ? findKindEntry(kindEntries, parseName) : undefined;
 			const aliasId = parseEntry?.parseId ?? parseEntry?.id ?? kindIdByKind.get(parseName);
 			if (aliasId === undefined || emittedIds.has(aliasId)) continue;
 			emittedIds.add(aliasId);
-			kindIdArms.push(...emitAliasUnwrapRecurseArm(aliasId, enumName, 'alias-wrapper'));
+			// Leaf trials: the alias storage's own concrete expansion, restricted
+			// to leaf variants THIS enum carries (see emitAliasUnwrapRecurseArm).
+			const leafTrials = expandConcreteTransportKinds([storageKind], nodeMap)
+				.map((e) => ({ e, order: aliasLeafTrialOrder(e.node.modelType), own: validKindSet.get(e.kind) }))
+				.filter((t) => t.order >= 0 && t.own !== undefined)
+				.sort((a, b) => a.order - b.order)
+				.map((t) => ({ typeName: t.own!.concreteName, variant: rustTypeIdent(t.own!.node.typeName) }));
+			kindIdArms.push(...emitAliasUnwrapRecurseArm(aliasId, enumName, 'alias-wrapper', leafTrials));
 		}
 		kindIdArms.push(`                other => Err(::napi::Error::from_reason(format!(`);
 		kindIdArms.push(`                    "unknown kind id {other} in ${enumName}",`);
@@ -3891,7 +4003,7 @@ function renderTransportField(
 			rustTransportSlotType(
 				kindsOf(field),
 				nodeMap,
-				{ required, multiple: isMultiple(field) },
+				{ required, multiple: isMultiple(field), optionalElement: hasOptionalElements(field) },
 				parentKind,
 				typeName,
 				field.name,
@@ -3905,13 +4017,13 @@ function renderTransportField(
 function rustTransportSlotType(
 	slotKinds: readonly string[],
 	nodeMap: NodeMap,
-	cardinality: { required: boolean; multiple: boolean },
+	cardinality: { required: boolean; multiple: boolean; optionalElement?: boolean },
 	parentKind: string,
 	typeName: string,
 	fieldName: string,
 	literalTexts: readonly string[] = []
 ): string {
-	const { required, multiple } = cardinality;
+	const { required, multiple, optionalElement } = cardinality;
 	// Mixed-content override: a field with named kinds AND anonymous literal
 	// content is heterogeneous regardless of classifier (e.g. `function_modifiers.modifier`
 	// which accepts `extern_modifier` OR bare keywords like `async`/`const`/`unsafe`).
@@ -3948,7 +4060,10 @@ function rustTransportSlotType(
 
 	const wrap = (inner: string): string => {
 		if (multiple) {
-			const vec = `Vec<${inner}>`;
+			// Elidable separated-list positions (array elision, `[a, , b]`): a
+			// hole is a real position holding no element — `None` entries, which
+			// napi maps from the wire's `undefined` entries natively.
+			const vec = optionalElement ? `Vec<Option<${inner}>>` : `Vec<${inner}>`;
 			if (required) return vec;
 			return `Option<${vec}>`;
 		}

@@ -28,8 +28,8 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",
-    "ownerKind": "_enum_body_group1",
-    "message": "[collect-slots] kind '_enum_body_group1': choice rule:_enum_body_group1:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
+    "ownerKind": "_enum_body_elements",
+    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -170,6 +170,22 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "typescript",
+    "ownerKind": "_lhs_expression",
+    "message": "[assemble] typeName collision: kind '_lhs_expression' renamed 'LhsExpression' → '_LhsExpression' (visible sibling(s): 'lhs_expression')",
+    "canProceed": true,
+    "details": {
+      "typeName": "LhsExpression",
+      "newType": "_LhsExpression",
+      "visibleKinds": [
+        "lhs_expression"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
     "ownerKind": "_number",
     "message": "[assemble] typeName collision: kind '_number' renamed 'Number' → '_Number' (visible sibling(s): 'number')",
     "canProceed": true,
@@ -234,6 +250,19 @@
     "code": "multi-slot-nested-seq",
     "severity": "warning",
     "grammar": "typescript",
+    "ownerKind": "_index_signature_optional1",
+    "message": "Kind '_index_signature_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position.",
+    "proposal": "Kind '_index_signature_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position. Propose: register a visible groups: entry so this substructure becomes a single group slot in the parent.",
+    "canProceed": true,
+    "details": {
+      "slotCount": 2
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "multi-slot-nested-seq",
+    "severity": "warning",
+    "grammar": "typescript",
     "ownerKind": "_type_identifier",
     "message": "Kind '_type_identifier' has a multi-slot seq with 2 slots in a repeat/optional slot position.",
     "proposal": "Kind '_type_identifier' has a multi-slot seq with 2 slots in a repeat/optional slot position. Propose: register a visible groups: entry so this substructure becomes a single group slot in the parent.",
@@ -244,7 +273,7 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "39 referenced kind(s) resolved no parser kindId",
+    "message": "38 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -269,9 +298,9 @@
         "_jsx_start_opening_element_group1",
         "_jsx_string",
         "_kw_optional_marker",
+        "_kw_readonly_marker",
         "_mapped_type_clause_optional1",
         "_operator",
-        "_semicolon",
         "_unary_expression_operator",
         "html_character_reference",
         "jsx_attribute",
@@ -284,7 +313,6 @@
         "jsx_opening_element_content",
         "jsx_self_closing_element",
         "jsx_start_opening_element_group1",
-        "statement_identifier_group1",
         "unescaped_double_jsx_string_fragment",
         "unescaped_single_jsx_string_fragment"
       ]
@@ -346,8 +374,8 @@
         "_jsx_identifier",
         "_jsx_start_opening_element",
         "_kw_optional_marker",
-        "_mapped_type_clause_optional1",
-        "_semicolon"
+        "_kw_readonly_marker",
+        "_mapped_type_clause_optional1"
       ]
     },
     "scope": "grammar",
@@ -355,7 +383,7 @@
   },
   {
     "code": "kindid-vaporized-symbols",
-    "message": "17 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
+    "message": "16 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -374,7 +402,6 @@
         "jsx_opening_element_content",
         "jsx_self_closing_element",
         "jsx_start_opening_element_group1",
-        "statement_identifier_group1",
         "unescaped_double_jsx_string_fragment",
         "unescaped_single_jsx_string_fragment"
       ]

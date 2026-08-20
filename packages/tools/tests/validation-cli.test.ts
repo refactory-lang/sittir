@@ -21,7 +21,12 @@ vi.mock('../src/run.ts', () => ({
 		skip: 0,
 		astMatchPass: 8,
 		errors: [],
-		astMismatches: []
+		astMismatches: [],
+		// Without this field collectValidatorFailuresForGrammar throws
+		// ("accessorThrows is not iterable") and every test below silently
+		// exercises runCountsCli's whole-grammar CATCH path instead of the
+		// happy path it means to pin.
+		accessorThrows: []
 	}),
 	runCoverage: vi.fn().mockReturnValue({ grammar: 'rust', total: 10, pass: 10, fail: 0, issues: [] }),
 	runFactory: vi.fn().mockResolvedValue({
@@ -49,6 +54,16 @@ vi.mock('../src/validate/common.ts', async (importOriginal) => {
 		...actual,
 		cachedNativeEngineProfile: vi.fn().mockReturnValue(undefined)
 	};
+});
+
+// The in-process runCountsCli path ends in writeMergedValidationReport,
+// whose output path is cwd-relative — under vitest that cwd is the repo
+// root, so an unmocked write clobbers the real committed
+// packages/tools/validation-report.json with this file's mocked-run
+// entries. Stub ONLY the disk write; entry building stays real.
+vi.mock('../src/validate/validation-report.ts', async (importOriginal) => {
+	const actual = await importOriginal<typeof import('../src/validate/validation-report.ts')>();
+	return { ...actual, writeValidationReport: vi.fn() };
 });
 
 // Mock readHistory so runHistoryCli tests are deterministic.

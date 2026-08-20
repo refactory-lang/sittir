@@ -238,10 +238,6 @@ export const keywordIdentifier = {
 	identifier: F.buildIdentifier
 } as const;
 
-export const dictPatternKv = {
-	splat: _attach(FR.coerceToSplatPattern, { from: FR.coerceToSplatPattern, strict: F.buildSplatPattern })
-} as const;
-
 // Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
 // Spec 023 US6. Tree-shakeable via standalone `from` export; also `ir.from.*`.
 export const from = {
@@ -672,6 +668,5 @@ export const ir = {
 	rightHandSide,
 	fExpression,
 	keywordIdentifier,
-	dictPatternKv,
 	from
 } as const;

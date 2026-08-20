@@ -162,17 +162,29 @@ jobs:
       - name: Resolve base SHA
         id: base
         run: echo "sha=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+      # The committed baseline lives at packages/tools/baselines/native.json
+      # (moved out of the archived specs/ tree). A base SHA that predates the
+      # file skips the diff rather than failing — the gate self-activates for
+      # every PR whose base carries the baseline.
       - name: Snapshot base native.json
+        id: snapshot
         run: |
           mkdir -p /tmp/016-base
-          git show "${{ steps.base.outputs.sha }}:specs/016-parity-regressions/baselines/native.json" \
-            > /tmp/016-base/native.json
+          if git show "${{ steps.base.outputs.sha }}:packages/tools/baselines/native.json" \
+            > /tmp/016-base/native.json 2>/dev/null; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::base SHA has no packages/tools/baselines/native.json — skipping baseline diff"
+          fi
       - name: Collect head native.json
+        if: steps.snapshot.outputs.present == 'true'
         run: |
           mkdir -p /tmp/016-head
           SITTIR_BACKEND=native npx tsx packages/tools/src/scripts/collect-baseline.ts \
             > /tmp/016-head/native.json
       - name: Diff native.json against base (verdict rules)
+        if: steps.snapshot.outputs.present == 'true'
         run: |
           npx tsx packages/tools/src/scripts/check-baseline-regression.ts \
             --base /tmp/016-base/native.json \
@@ -180,7 +192,7 @@ jobs:
 
   # Spec 054 — perf regression-checker (native only). Compares the FFI
   # roundtrip + call-count from a fresh native-backend metrics run against
-  # the committed `specs/054-post-016-perf-tracking/baselines/perf-native.json`.
+  # the committed `packages/tools/baselines/perf-native.json`.
   # Regressions > 10% on `ffi.meanRoundtripMs` or `ffi.totalCalls` fail the
   # build EXCEPT when `SITTIR_METRICS_FFI_WARN_ONLY=1` (set below for the
   # one-month calibration window per FR-008). Skipped when napi build

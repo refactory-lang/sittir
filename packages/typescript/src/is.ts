@@ -11,14 +11,12 @@ import type {
 	DestructuringPattern,
 	Expression,
 	Expressions,
-	ForHeaderGroup1,
 	FormalParameter,
 	ImportIdentifier,
 	JsxAttributeName,
 	JsxAttributeValue,
 	JsxChild,
 	JsxElementName,
-	LhsExpression,
 	ModuleExportName,
 	Pattern,
 	PrimaryExpression,
@@ -34,6 +32,7 @@ import type {
 	_JsxAttribute,
 	_JsxElement,
 	_JsxIdentifier,
+	_LhsExpression,
 	_PropertyIdentifier
 } from './types.js';
 
@@ -286,19 +285,22 @@ export interface IsGuards {
 	unionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UnionType };
 	intersectionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IntersectionType };
 	functionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionType };
-	ExportClauseGroup1<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ExportClauseGroup1 };
+	ExportSpecifiers<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportSpecifiers };
 	ImportStatementGroup1<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ImportStatementGroup1 };
 	ImportClauseGroup1<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ImportClauseGroup1 };
-	NamedImportsGroup1<T extends { readonly $type: number }>(
+	ImportSpecifiers<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportSpecifiers };
+	FormalParametersElements<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.NamedImportsGroup1 };
-	TupleTypeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleTypeGroup1 };
+	): v is T & { readonly $type: TSKindId.FormalParametersElements };
+	Types<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Types };
+	TypeParametersElements<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.TypeParametersElements };
+	TupleTypeMembers<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleTypeMembers };
 	objectTypeContent<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ObjectTypeContent };
@@ -342,7 +344,7 @@ export interface IsGuards {
 	jsxAttributeName(v: { readonly $type: string | number }): v is JsxAttributeName;
 	jsxAttributeValue(v: { readonly $type: string | number }): v is JsxAttributeValue;
 	formalParameter(v: { readonly $type: string | number }): v is FormalParameter;
-	lhsExpression(v: { readonly $type: string | number }): v is LhsExpression;
+	lhsExpression(v: { readonly $type: string | number }): v is _LhsExpression;
 	augmentedAssignmentLhs(v: { readonly $type: string | number }): v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number }): v is DestructuringPattern;
 	identifier(v: { readonly $type: string | number }): v is _Identifier;
@@ -356,7 +358,6 @@ export interface IsGuards {
 	type(v: { readonly $type: string | number }): v is Type;
 	tupleTypeMember(v: { readonly $type: string | number }): v is TupleTypeMember;
 	primaryType(v: { readonly $type: string | number }): v is PrimaryType;
-	forHeaderGroup1(v: { readonly $type: string | number }): v is ForHeaderGroup1;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -538,11 +539,18 @@ export interface AssertGuards {
 	unionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UnionType };
 	intersectionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IntersectionType };
 	functionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionType };
-	ExportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportClauseGroup1 };
+	ExportSpecifiers(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportSpecifiers };
 	ImportStatementGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportStatementGroup1 };
 	ImportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseGroup1 };
-	NamedImportsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NamedImportsGroup1 };
-	TupleTypeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleTypeGroup1 };
+	ImportSpecifiers(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportSpecifiers };
+	FormalParametersElements(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.FormalParametersElements };
+	Types(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Types };
+	TypeParametersElements(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.TypeParametersElements };
+	TupleTypeMembers(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleTypeMembers };
 	objectTypeContent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectTypeContent };
 	ExportStatementDefault(v: {
 		readonly $type: number;
@@ -584,7 +592,7 @@ export interface AssertGuards {
 	jsxAttributeName(v: { readonly $type: string | number }): asserts v is JsxAttributeName;
 	jsxAttributeValue(v: { readonly $type: string | number }): asserts v is JsxAttributeValue;
 	formalParameter(v: { readonly $type: string | number }): asserts v is FormalParameter;
-	lhsExpression(v: { readonly $type: string | number }): asserts v is LhsExpression;
+	lhsExpression(v: { readonly $type: string | number }): asserts v is _LhsExpression;
 	augmentedAssignmentLhs(v: { readonly $type: string | number }): asserts v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number }): asserts v is DestructuringPattern;
 	identifier(v: { readonly $type: string | number }): asserts v is _Identifier;
@@ -600,7 +608,6 @@ export interface AssertGuards {
 	type(v: { readonly $type: string | number }): asserts v is Type;
 	tupleTypeMember(v: { readonly $type: string | number }): asserts v is TupleTypeMember;
 	primaryType(v: { readonly $type: string | number }): asserts v is PrimaryType;
-	forHeaderGroup1(v: { readonly $type: string | number }): asserts v is ForHeaderGroup1;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -623,30 +630,29 @@ const _supertype_expression_ids = new Set<number>([
 	275, 276, 277, 285, 274, 237, 239, 233, 245, 244, 243, 246, 232, 212
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	235, 234, 209, 105, 1, 443, 100, 101, 98, 248, 249, 251, 102, 103, 104, 213, 217, 223, 227, 225, 220, 252, 231, 269
+	235, 234, 209, 105, 1, 444, 100, 101, 98, 248, 249, 251, 102, 103, 104, 213, 217, 223, 227, 225, 220, 252, 231, 269
 ]);
 const _supertype_jsxChild_ids = new Set<number>([163]);
 const _supertype_jsxIdentifier_ids = new Set<number>([1]);
 const _supertype_jsxElementName_ids = new Set<number>([1, 219]);
 const _supertype_jsxAttributeName_ids = new Set<number>([1]);
 const _supertype_formalParameter_ids = new Set<number>([297, 298]);
-const _supertype_lhsExpression_ids = new Set<number>([234, 235, 105, 1, 443, 214, 218, 269]);
-const _supertype_augmentedAssignmentLhs_ids = new Set<number>([234, 235, 443, 1, 209, 269]);
+const _supertype_lhsExpression_ids = new Set<number>([234, 235, 105, 1, 444, 214, 218, 269]);
+const _supertype_augmentedAssignmentLhs_ids = new Set<number>([234, 235, 444, 1, 209, 269]);
 const _supertype_destructuringPattern_ids = new Set<number>([214, 218]);
 const _supertype_identifier_ids = new Set<number>([105, 1]);
-const _supertype_pattern_ids = new Set<number>([234, 235, 105, 1, 443, 214, 218, 269, 261]);
-const _supertype_propertyName_ids = new Set<number>([1, 443, 99, 248, 98, 266]);
-const _supertype_statementIdentifier_ids = new Set<number>([1, 443]);
-const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 443]);
-const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 443]);
-const _supertype_propertyIdentifier_ids = new Set<number>([1, 443]);
+const _supertype_pattern_ids = new Set<number>([234, 235, 105, 1, 444, 214, 218, 269, 261]);
+const _supertype_propertyName_ids = new Set<number>([1, 444, 99, 248, 98, 266]);
+const _supertype_statementIdentifier_ids = new Set<number>([1, 444]);
+const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 444]);
+const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 444]);
+const _supertype_propertyIdentifier_ids = new Set<number>([1, 444]);
 const _supertype_importIdentifier_ids = new Set<number>([1]);
 const _supertype_type_ids = new Set<number>([352, 349, 314, 318, 304, 305]);
 const _supertype_tupleTypeMember_ids = new Set<number>([309, 310, 311, 312]);
 const _supertype_primaryType_ids = new Set<number>([
-	335, 336, 448, 288, 320, 338, 347, 348, 334, 327, 328, 100, 331, 329, 319, 317, 351, 350
+	335, 336, 1, 288, 320, 338, 347, 348, 334, 327, 328, 100, 331, 329, 319, 317, 351, 350
 ]);
-const _supertype_forHeaderGroup1_ids = new Set<number>([234, 235, 105, 1, 443, 214, 218, 269]);
 
 const _kindIdByKind = new Map<string, number>([
 	['identifier', TSKindId.Identifier],
@@ -894,22 +900,23 @@ const _kindIdByKind = new Map<string, number>([
 	['function_type', TSKindId.FunctionType],
 	['_kw_async_marker', TSKindId.KwAsyncMarker],
 	['_kw_static_marker', TSKindId.KwStaticMarker],
-	['_kw_readonly_marker', TSKindId.KwReadonlyMarker],
 	['_kw_abstract_marker', TSKindId.KwAbstractMarker],
 	['_kw_const_marker', TSKindId.KwConstMarker],
-	['_export_clause_group1', TSKindId.ExportClauseGroup1],
+	['_export_specifiers', TSKindId.ExportSpecifiers],
 	['_import_statement_group1', TSKindId.ImportStatementGroup1],
 	['_import_clause_group1', TSKindId.ImportClauseGroup1],
-	['_named_imports_group1', TSKindId.NamedImportsGroup1],
+	['_import_specifiers', TSKindId.ImportSpecifiers],
 	['_variable_declarator_group1', TSKindId.VariableDeclaratorGroup1],
 	['_variable_declarator_group2', TSKindId.VariableDeclaratorGroup2],
 	['_catch_clause_group1', TSKindId.CatchClauseGroup1],
 	['_binary_expression_group1', TSKindId.BinaryExpressionGroup1],
 	['_meta_property_group1', TSKindId.MetaPropertyGroup1],
 	['_meta_property_group2', TSKindId.MetaPropertyGroup2],
-	['_formal_parameters_group1', TSKindId.FormalParametersGroup1],
-	['_enum_body_group1', TSKindId.EnumBodyGroup1],
-	['_tuple_type_group1', TSKindId.TupleTypeGroup1],
+	['_formal_parameters_elements', TSKindId.FormalParametersElements],
+	['_enum_body_elements', TSKindId.EnumBodyElements],
+	['_types', TSKindId.Types],
+	['_type_parameters_elements', TSKindId.TypeParametersElements],
+	['_tuple_type_members', TSKindId.TupleTypeMembers],
 	['_kind', TSKindId.Kind],
 	['__for_header_operator', TSKindId.ForHeaderOperator],
 	['_ambient_declaration_global', TSKindId.AmbientDeclarationGlobal],
@@ -952,6 +959,7 @@ const _kindIdByKind = new Map<string, number>([
 	['_update_expression_postfix', TSKindId.UpdateExpressionPostfix],
 	['_update_expression_prefix', TSKindId.UpdateExpressionPrefix],
 	['_reserved_identifier', TSKindId.ReservedIdentifier],
+	['_semicolon', TSKindId.Semicolon],
 	['_type_identifier', TSKindId.TypeIdentifier]
 ]);
 
@@ -1107,11 +1115,14 @@ export const is = {
 	unionType: _g(TSKindId.UnionType),
 	intersectionType: _g(TSKindId.IntersectionType),
 	functionType: _g(TSKindId.FunctionType),
-	ExportClauseGroup1: _g(TSKindId.ExportClauseGroup1),
+	ExportSpecifiers: _g(TSKindId.ExportSpecifiers),
 	ImportStatementGroup1: _g(TSKindId.ImportStatementGroup1),
 	ImportClauseGroup1: _g(TSKindId.ImportClauseGroup1),
-	NamedImportsGroup1: _g(TSKindId.NamedImportsGroup1),
-	TupleTypeGroup1: _g(TSKindId.TupleTypeGroup1),
+	ImportSpecifiers: _g(TSKindId.ImportSpecifiers),
+	FormalParametersElements: _g(TSKindId.FormalParametersElements),
+	Types: _g(TSKindId.Types),
+	TypeParametersElements: _g(TSKindId.TypeParametersElements),
+	TupleTypeMembers: _g(TSKindId.TupleTypeMembers),
 	objectTypeContent: _g(TSKindId.ObjectTypeContent),
 	ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
 	ArrowFunctionParameter: _g(TSKindId.ArrowFunctionParameter),
@@ -1153,8 +1164,7 @@ export const is = {
 	importIdentifier: _sg(_supertype_importIdentifier_ids),
 	type: _sg(_supertype_type_ids),
 	tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
-	primaryType: _sg(_supertype_primaryType_ids),
-	forHeaderGroup1: _sg(_supertype_forHeaderGroup1_ids)
+	primaryType: _sg(_supertype_primaryType_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -1340,11 +1350,14 @@ export const assert = {
 	unionType: _makeAssert('unionType', is.unionType as _AnyGuard),
 	intersectionType: _makeAssert('intersectionType', is.intersectionType as _AnyGuard),
 	functionType: _makeAssert('functionType', is.functionType as _AnyGuard),
-	ExportClauseGroup1: _makeAssert('ExportClauseGroup1', is.ExportClauseGroup1 as _AnyGuard),
+	ExportSpecifiers: _makeAssert('ExportSpecifiers', is.ExportSpecifiers as _AnyGuard),
 	ImportStatementGroup1: _makeAssert('ImportStatementGroup1', is.ImportStatementGroup1 as _AnyGuard),
 	ImportClauseGroup1: _makeAssert('ImportClauseGroup1', is.ImportClauseGroup1 as _AnyGuard),
-	NamedImportsGroup1: _makeAssert('NamedImportsGroup1', is.NamedImportsGroup1 as _AnyGuard),
-	TupleTypeGroup1: _makeAssert('TupleTypeGroup1', is.TupleTypeGroup1 as _AnyGuard),
+	ImportSpecifiers: _makeAssert('ImportSpecifiers', is.ImportSpecifiers as _AnyGuard),
+	FormalParametersElements: _makeAssert('FormalParametersElements', is.FormalParametersElements as _AnyGuard),
+	Types: _makeAssert('Types', is.Types as _AnyGuard),
+	TypeParametersElements: _makeAssert('TypeParametersElements', is.TypeParametersElements as _AnyGuard),
+	TupleTypeMembers: _makeAssert('TupleTypeMembers', is.TupleTypeMembers as _AnyGuard),
 	objectTypeContent: _makeAssert('objectTypeContent', is.objectTypeContent as _AnyGuard),
 	ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),
 	ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
@@ -1401,8 +1414,7 @@ export const assert = {
 	importIdentifier: _makeAssert('importIdentifier', is.importIdentifier as _AnyGuard),
 	type: _makeAssert('type', is.type as _AnyGuard),
 	tupleTypeMember: _makeAssert('tupleTypeMember', is.tupleTypeMember as _AnyGuard),
-	primaryType: _makeAssert('primaryType', is.primaryType as _AnyGuard),
-	forHeaderGroup1: _makeAssert('forHeaderGroup1', is.forHeaderGroup1 as _AnyGuard)
+	primaryType: _makeAssert('primaryType', is.primaryType as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

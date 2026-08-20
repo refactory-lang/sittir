@@ -121,6 +121,14 @@ function assertNativeNodeDataInternal(value: unknown, path: string): asserts val
 		if (value[key] === undefined) continue;
 		assertNativeFieldValue(value[key], `${path}.${key}`);
 	}
+	if (value.$slotOrder !== undefined) {
+		if (!Array.isArray(value.$slotOrder)) {
+			throw new TypeError(`${path}.$slotOrder must be an array, got ${describe(value.$slotOrder)}`);
+		}
+		for (const [index, route] of value.$slotOrder.entries()) {
+			assertString(route, `${path}.$slotOrder[${index}]`);
+		}
+	}
 	if (value.$other !== undefined) assertNativeChildren(value.$other, `${path}.$other`);
 	if (value.$text !== undefined) assertString(value.$text, `${path}.$text`);
 	if (value.$span !== undefined) assertNativeSpan(value.$span, `${path}.$span`);

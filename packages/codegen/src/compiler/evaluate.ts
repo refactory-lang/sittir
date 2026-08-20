@@ -47,6 +47,7 @@ import type { AnyRule } from '../types/rule.ts';
 import type { RawGrammar, DesugarDivergenceEvent } from './types.ts';
 import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
 import { classifyByType } from './rule-catalog.ts';
+import { collectUnreachableHiddenRules } from '../util/reachable-rules.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
@@ -688,7 +689,17 @@ function rewriteInlineAliases(
 				// Synthesizing `_existingKind` would collide with /
 				// over-ride the existing kind's meaning.
 				const targetAlreadyExists = rules[rule.value] !== undefined;
-				if (!targetAlreadyExists && !isBareSymbolToKnownSource) {
+				// A STRING body is self-carrying — link collapses the alias to a
+				// literal-carrying SYMBOL (parse kind = target, render text = the
+				// literal), so no hidden source is needed. Synthesizing here is
+				// not just unnecessary: when `_${target}` already exists with a
+				// DIFFERENT body (rust `alias('$', $.token_tree_punctuation)` vs
+				// the real `_token_tree_punctuation` punctuation choice), the
+				// unconditional content rewrite below would silently retarget
+				// the alias at that unrelated rule and DISCARD the literal —
+				// diverging from the parser, which keeps the string.
+				const isStringBody = inner.type === STRING;
+				if (!targetAlreadyExists && !isBareSymbolToKnownSource && !isStringBody) {
 					const syntheticHiddenName = `_${rule.value}`;
 					if (!rules[syntheticHiddenName]) {
 						rules[syntheticHiddenName] = recurse(rule.content);
@@ -944,17 +955,18 @@ function adoptFinalBaseRules(
 }
 
 function prunePlaceholderOrphans(rules: Record<string, Rule<'evaluate'>>, wireCtx: WireContext): void {
-	for (const name of Object.keys(rules)) {
-		if (!name.startsWith('_')) continue;
-		if (wireCtx.deposits.has(name)) continue;
-		const rule = rules[name];
-		if (!rule) continue;
-		if (isBlankRule(rule)) delete rules[name];
+	// Twin of `transpile/prune-grammar-json.ts` over the SAME shared
+	// reachability traversal — hidden rules nothing reaches (unfired wire
+	// placeholders, enrich mints stranded by an override redeclaring their
+	// owner) must vanish from the sittir-evaluated map exactly as they vanish
+	// from grammar.json, or the model carries kinds the parser never emits
+	// (the phantom-kind class). Only deposit-backed names root beyond visible
+	// rules — inline/conflict bookkeeping deliberately does not (an orphaned
+	// mint would keep itself alive through its own entries).
+	const protectedNames = new Set<string>(wireCtx.deposits.keys());
+	for (const name of collectUnreachableHiddenRules(rules, protectedNames)) {
+		delete rules[name];
 	}
-}
-
-function isBlankRule(rule: Rule<'evaluate'>): boolean {
-	return rule.type === CHOICE && rule.members.length === 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -1529,6 +1541,11 @@ function computeReachableRuleNames(rules: Record<string, Rule<'evaluate'>>): Set
 	for (const name of Object.keys(rules)) {
 		if (!name.startsWith('_')) reachable.add(name);
 	}
+	// A hidden-only grammar has no visible roots, so an empty seed set would
+	// prune EVERY rule as "orphaned" — but nothing is orphaned relative to a
+	// nonexistent root set, and evaluate() does not decide visibility policy
+	// (classification happens at Assemble). Keep every top-level rule.
+	if (reachable.size === 0) return new Set(Object.keys(rules));
 	for (const name of Object.keys(rules)) {
 		if (name.startsWith('_')) continue;
 		const rule = rules[name];

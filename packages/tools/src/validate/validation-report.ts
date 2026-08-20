@@ -167,3 +167,76 @@ export function buildValidationReportEntries(
 export function writeValidationReport(entries: readonly ValidationReportEntry[], outPath: string): void {
 	writeFileSync(outPath, JSON.stringify(entries, null, 2));
 }
+
+/**
+ * Per-grammar ceilings on how many report entries each S-class may carry —
+ * the committed shape of `packages/tools/sclass-ceilings.json`. A class
+ * absent from a grammar's row (or a grammar absent entirely) has ceiling 0:
+ * cleared classes stay cleared by omission, so a brand-new failure in a
+ * cleared class is a violation without anyone having to enumerate zeros.
+ */
+export type SClassCeilings = Readonly<Record<string, Readonly<Partial<Record<SClass, number>>>>>;
+
+const S_CLASSES: readonly SClass[] = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8'];
+
+/** Count classified report entries per grammar per S-class. Unclassified entries are outside the taxonomy and not counted. */
+export function countSClassEntries(
+	entries: readonly ValidationReportEntry[]
+): Record<string, Partial<Record<SClass, number>>> {
+	const counts: Record<string, Partial<Record<SClass, number>>> = {};
+	for (const e of entries) {
+		if (!e.sClass) continue;
+		// Resolved audit records (severity 'info' — e.g. enrich's
+		// "automatically resolved" unalias trail) document fixes already
+		// applied to the compiled grammar. They are provenance kept for
+		// visibility, not open failures, and do not count against a
+		// class ceiling.
+		if ((e as { severity?: string }).severity === 'info') continue;
+		const row = (counts[e.grammar] ??= {});
+		row[e.sClass] = (row[e.sClass] ?? 0) + 1;
+	}
+	return counts;
+}
+
+export interface SClassCeilingViolation {
+	readonly grammar: string;
+	readonly sClass: SClass;
+	readonly count: number;
+	readonly ceiling: number;
+}
+
+export interface SClassCeilingVerdict {
+	/** (grammar, class) pairs whose entry count EXCEEDS the committed ceiling — new debt, fails the run. */
+	readonly violations: readonly SClassCeilingViolation[];
+	/** (grammar, class) pairs whose entry count is BELOW a non-zero ceiling — the ceiling should be ratcheted down in the same commit. */
+	readonly improvements: readonly SClassCeilingViolation[];
+}
+
+/**
+ * The S-class ratchet: compare classified report-entry counts against the
+ * committed per-grammar ceilings. A count above its ceiling means the change
+ * being validated minted new debt in that source class — the fix is at the
+ * source, never a raised ceiling. A count below a non-zero ceiling means
+ * debt was paid down; the ceiling only ever moves toward zero, so lower it
+ * in the same commit. Only `grammars` actually validated this run are
+ * compared — a single-grammar `validate counts <g>` run must not judge the
+ * grammars it never measured.
+ */
+export function checkSClassCeilings(
+	entries: readonly ValidationReportEntry[],
+	ceilings: SClassCeilings,
+	grammars: readonly string[]
+): SClassCeilingVerdict {
+	const counts = countSClassEntries(entries);
+	const violations: SClassCeilingViolation[] = [];
+	const improvements: SClassCeilingViolation[] = [];
+	for (const grammar of grammars) {
+		for (const sClass of S_CLASSES) {
+			const count = counts[grammar]?.[sClass] ?? 0;
+			const ceiling = ceilings[grammar]?.[sClass] ?? 0;
+			if (count > ceiling) violations.push({ grammar, sClass, count, ceiling });
+			else if (count < ceiling) improvements.push({ grammar, sClass, count, ceiling });
+		}
+	}
+	return { violations, improvements };
+}

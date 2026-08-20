@@ -50,6 +50,21 @@ corpus-affecting changes report raw per-grammar counts (fromPass/fromTotal,
 covPass/covTotal, rtPass/rtTotal/rtAstMatchPass, factoryPass/factoryTotal),
 compared against a recorded baseline — not eyeballed.
 
+Two committed ratchets back the run (both only ever tighten):
+
+- `packages/tools/baselines/native.json` — exact per-grammar validator
+  floors (pass counts, AST-match counts, parity fixtures, per-validator
+  `failingKinds` = the documented exclusions). Refresh with
+  `sittir tool check-baseline --collect --backend native`; CI diffs a fresh
+  head collection against the base commit's copy via
+  `sittir tool check-baseline --base <base.json> --head <head.json>`.
+- `packages/tools/sclass-ceilings.json` — per-grammar ceilings on
+  round-trip-fidelity S-class counts in `validation-report.json`. Every
+  `validate counts` run fails when a class exceeds its ceiling (new debt in
+  a tracked source class); a class absent from the file has ceiling 0, so
+  cleared classes stay cleared. When a run reports a class below its
+  ceiling, lower the ceiling in the same commit.
+
 ## Native engine build
 
 Each grammar's render engine is a Rust N-API crate under

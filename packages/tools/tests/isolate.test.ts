@@ -32,7 +32,11 @@ vi.mock('../src/run.ts', () => ({
 		skip: 0,
 		astMatchPass: 8,
 		errors: [],
-		astMismatches: []
+		astMismatches: [],
+		// Without this field collectValidatorFailuresForGrammar throws
+		// ("accessorThrows is not iterable") and the in-process test below
+		// silently exercises the whole-grammar CATCH path.
+		accessorThrows: []
 	}),
 	runCoverage: vi.fn().mockReturnValue({ grammar: 'rust', total: 10, pass: 10, fail: 0, issues: [] }),
 	runFactory: vi.fn().mockResolvedValue({
@@ -58,6 +62,16 @@ vi.mock('../src/history.ts', () => ({
 vi.mock('../src/native-staleness.ts', () => ({
 	warnIfNativeBinaryStale: vi.fn()
 }));
+
+// The isolate path ends in writeMergedValidationReport, whose output path is
+// cwd-relative — under vitest that cwd is the repo root, so an unmocked write
+// clobbers the real committed packages/tools/validation-report.json with this
+// file's fabricated single-grammar entries. Stub ONLY the disk write; the
+// entry building and S-class ceiling check stay real.
+vi.mock('../src/validate/validation-report.ts', async (importOriginal) => {
+	const actual = await importOriginal<typeof import('../src/validate/validation-report.ts')>();
+	return { ...actual, writeValidationReport: vi.fn() };
+});
 
 import { parseLastIsolateProgress, formatIsolateGrammarSummary, runCountsCli } from '../src/commands.ts';
 import { commitHistory } from '../src/history.ts';

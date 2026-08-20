@@ -36,6 +36,7 @@ interface WrapperAttrs {
 	aliasNamed?: boolean;
 	inline?: boolean;
 	nonterminal?: boolean;
+	optionalElement?: boolean;
 }
 
 function carrySeparatorForward(attrs: WrapperAttrs, ruleSeparator: unknown): RuleBase<'normalize'>['separator'] {
@@ -117,9 +118,21 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs, ownName?: st
 			// nonEmptyArray. This mirrors the original deriveSlotsRaw `case 'optional'`
 			// special-case and collectChildFromMember behavior.
 			const innerIsRepeatVariant = rule.content.type === REPEAT || rule.content.type === REPEAT1;
+			// An optional at the ELEMENT POSITION of a separated repeat (attrs
+			// already carry a collection multiplicity AND a separator — only the
+			// repeat/repeat1 cases set both) means individual positions may be
+			// blank: `[a, , b]` array elision. The optional wrapper itself is
+			// deleted here, so record the per-position-blank fact as a stamped
+			// attribute; slot derivation projects it onto values and storage
+			// types become `Array<X | undefined>`. An optional AROUND a repeat
+			// never matches (no separator in attrs yet), nor does a seq-pushed
+			// member multiplicity (seq pushes multiplicity without separator).
+			const isElidedElementPosition =
+				(attrs.multiplicity === 'array' || attrs.multiplicity === 'nonEmptyArray') && attrs.separator !== undefined;
 			const next: WrapperAttrs = {
 				...attrs,
 				multiplicity: attrs.multiplicity ?? (innerIsRepeatVariant ? 'array' : 'optional'),
+				optionalElement: attrs.optionalElement ?? (isElidedElementPosition || undefined),
 				// optional stays recursive: it forces a slot only when its
 				// content is intrinsically nonterminal (Table 2). optional(',')
 				// → no slot; optional(symbol)/optional(repeat) → slot.
@@ -237,6 +250,7 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs, ownName?: st
 				aliasedFrom: attrs.aliasedFrom,
 				aliasNamed: attrs.aliasNamed,
 				nonterminal: attrs.nonterminal,
+				optionalElement: attrs.optionalElement,
 				multiplicity: hasBareLiteral ? multToPush : undefined
 			};
 			return stampAttrs({ ...rule, members }, seqAttrs);
@@ -318,7 +332,8 @@ function stampAttrs(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule {
 		attrs.aliasedFrom === undefined &&
 		attrs.aliasNamed === undefined &&
 		attrs.inline === undefined &&
-		attrs.nonterminal === undefined
+		attrs.nonterminal === undefined &&
+		attrs.optionalElement === undefined
 	) {
 		return rule as RenderRule;
 	}
@@ -330,6 +345,7 @@ function stampAttrs(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule {
 	if (attrs.aliasNamed !== undefined) patch['aliasNamed'] = attrs.aliasNamed;
 	if (attrs.inline !== undefined) patch['inline'] = attrs.inline;
 	if (attrs.nonterminal !== undefined) patch['nonterminal'] = attrs.nonterminal;
+	if (attrs.optionalElement !== undefined) patch['optionalElement'] = attrs.optionalElement;
 	return { ...rule, ...patch } as RenderRule;
 }
 export function deleteWrapper(rule: Rule<'link'>, ownName?: string): RenderRule {

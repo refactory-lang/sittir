@@ -83,6 +83,13 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 				readonly leading?: SeparatorFlankMode;
 			};
 
+			// The deleted wrapper was an optional at the ELEMENT POSITION of a
+			// separated repeat: individual list positions may be blank (array
+			// elision, `[a, , b]`). Storage for such a slot is
+			// `Array<X | undefined>` — a hole is a real position holding no
+			// element, distinct from absence of the position.
+			readonly optionalElement?: boolean;
+
 			readonly aliasedFrom?: string;
 			readonly aliasNamed?: boolean;
 		}
@@ -281,6 +288,42 @@ export function subtypeParseNamesOf<T extends PhaseName>(rule: SupertypeRule<T>)
 	const pairs: Record<string, string> = {};
 	for (const s of rule.subtypes) {
 		if (s.aliasedFrom !== undefined && s.aliasedFrom !== s.name) pairs[s.aliasedFrom] = s.name;
+	}
+	return pairs;
+}
+
+/**
+ * Whether an aliased reference's display (parse) name genuinely diverges
+ * from its storage kind. tree-sitter merges a hidden rule that is referenced
+ * ONLY through a single alias name into the alias symbol at generate time —
+ * one parser id serves both spellings, the wire `$type` already IS the
+ * storage kind, and a normalization pair would remap a node to itself.
+ * Distinct stamped ids mean the parser kept two symbols (the alias is not
+ * globally 1:1 with its source rule), so the display name genuinely differs
+ * from the storage kind. Missing ids keep the pair — the merge cannot be
+ * proven from an absent stamp.
+ */
+export function aliasRestampRequired(parseKindId: number | undefined, storageKindId: number | undefined): boolean {
+	return parseKindId === undefined || storageKindId === undefined || parseKindId !== storageKindId;
+}
+
+/**
+ * `subtypeParseNamesOf` narrowed to the arms whose display (parse) name
+ * genuinely differs from the storage kind on the wire (see
+ * {@link aliasRestampRequired}), as `[parseName, storageName]` pairs.
+ * Serialized into the node model's `fieldAliasMap` and consumed by the
+ * corpus validators (`validate/factory-render-parse.ts`, `validate/from.ts`)
+ * to normalize display names against storage kinds; the wire `$type` itself
+ * is the grammar symbol stamped by the native read and needs no restamp.
+ */
+export function subtypeRestampPairsOf<T extends PhaseName>(
+	rule: SupertypeRule<T>
+): ReadonlyArray<readonly [string, string]> {
+	const pairs: (readonly [string, string])[] = [];
+	for (const s of rule.subtypes) {
+		if (s.aliasedFrom === undefined || s.aliasedFrom === s.name) continue;
+		if (!aliasRestampRequired(s.kindId, s.aliasedFromId)) continue;
+		pairs.push([s.name, s.aliasedFrom]);
 	}
 	return pairs;
 }

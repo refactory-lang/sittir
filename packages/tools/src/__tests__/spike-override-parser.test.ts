@@ -17,8 +17,12 @@ describe('spike: override-compiled parser', () => {
 		const root = tree.rootNode;
 
 		expect(root.type).toBe('module');
-		const expr = root.firstChild;
-		expect(expr.type).toBe('expression_statement');
+		// Navigate by descendant type, not fixed depth — the parse tree
+		// carries a visible statement_group1 layer (the multi-slot
+		// _simple_statements group is deliberately visible so its slots
+		// stay addressable).
+		const expr = root.descendantsOfType('expression_statement')[0];
+		expect(expr?.type).toBe('expression_statement');
 
 		const cond = expr.firstNamedChild;
 		expect(cond.type).toBe('conditional_expression');

@@ -17,8 +17,10 @@ import { cachedNativeEngineProfile } from './validate/common.ts';
 import type { ReadRenderParseFailure } from './validate/read-render-parse.ts';
 import {
 	buildValidationReportEntries,
+	checkSClassCeilings,
 	writeValidationReport,
 	type GrammarDiagnosticEntry,
+	type SClassCeilings,
 	type ValidatorDiagnostic,
 	type ValidationReportEntry
 } from './validate/validation-report.ts';
@@ -524,8 +526,8 @@ export function extractIsolateReportJson(stdout: string): {
 export function writeMergedValidationReport(
 	grammars: readonly Grammar[],
 	validatorFailuresByGrammar: Readonly<Record<string, readonly ValidatorDiagnostic[]>>
-): void {
-	if (grammars.length === 0) return;
+): ValidationReportEntry[] {
+	if (grammars.length === 0) return [];
 	const grammarDiagnosticsByGrammar: Record<string, GrammarDiagnosticEntry[]> = {};
 	for (const grammar of grammars) grammarDiagnosticsByGrammar[grammar] = readGrammarDiagnosticsEntries(grammar);
 	const freshEntries = buildValidationReportEntries(grammarDiagnosticsByGrammar, validatorFailuresByGrammar);
@@ -533,6 +535,46 @@ export function writeMergedValidationReport(
 	const replacedGrammars = new Set<string>(grammars);
 	const preserved = readExistingValidationReportEntries(outPath).filter((e) => !replacedGrammars.has(e.grammar));
 	writeValidationReport([...preserved, ...freshEntries], outPath);
+	return freshEntries;
+}
+
+/**
+ * The S-class ratchet gate on a fresh validation run: compare the freshly
+ * classified report entries for the grammars actually validated against the
+ * committed per-grammar ceilings in `packages/tools/sclass-ceilings.json`.
+ * A count above its ceiling means this run minted new debt in a tracked
+ * source class — the run fails; fix the source, never raise the ceiling. A
+ * count below a non-zero ceiling is a paid-down class — the ceiling should
+ * be lowered (toward omission = 0) in the same commit, surfaced here as a
+ * reminder rather than a failure.
+ *
+ * A missing or unparsable ceilings file is a hard error, not an empty
+ * default — silently treating it as "all ceilings 0" would fail every run
+ * on pre-existing documented debt, and treating it as "no gate" would
+ * silently disable the ratchet.
+ *
+ * Returns true when the gate passes.
+ */
+export function enforceSClassCeilings(grammars: readonly Grammar[], entries: readonly ValidationReportEntry[]): boolean {
+	const ceilingsPath = resolvePath(join('packages', 'tools', 'sclass-ceilings.json'));
+	let ceilings: SClassCeilings;
+	try {
+		ceilings = JSON.parse(readFileSync(ceilingsPath, 'utf8')) as SClassCeilings;
+	} catch (e) {
+		throw new Error(`enforceSClassCeilings: failed to read/parse ceilings at ${ceilingsPath}: ${(e as Error).message}`);
+	}
+	const { violations, improvements } = checkSClassCeilings(entries, ceilings, grammars);
+	for (const v of violations) {
+		console.error(
+			`✗ S-class ratchet: ${v.grammar} ${v.sClass} has ${v.count} report entr${v.count === 1 ? 'y' : 'ies'} (ceiling ${v.ceiling}) — new ${v.sClass} debt; fix the source, never raise the ceiling (${ceilingsPath})`
+		);
+	}
+	for (const i of improvements) {
+		console.log(
+			`  S-class ratchet: ${i.grammar} ${i.sClass} is at ${i.count} (ceiling ${i.ceiling}) — lower the ceiling in ${ceilingsPath} in this commit`
+		);
+	}
+	return violations.length === 0;
 }
 
 /**
@@ -628,7 +670,10 @@ export async function runCountsCli(
 		}
 		// One merged write covering every grammar attempted (ok, crashed, and
 		// error alike) — mirrors the non-isolate path's write-on-attempt policy.
-		writeMergedValidationReport(grammars, validatorFailuresByGrammar);
+		const freshEntries = writeMergedValidationReport(grammars, validatorFailuresByGrammar);
+		if (!enforceSClassCeilings(grammars, freshEntries)) {
+			process.exitCode = 1;
+		}
 		if (anyCrashed) {
 			process.exitCode = 1;
 		}
@@ -697,7 +742,10 @@ export async function runCountsCli(
 			console.log(`${ISOLATE_REPORT_JSON_PREFIX}${JSON.stringify(validatorFailuresByGrammar[grammar] ?? [])}`);
 		}
 	} else {
-		writeMergedValidationReport(grammars, validatorFailuresByGrammar);
+		const freshEntries = writeMergedValidationReport(grammars, validatorFailuresByGrammar);
+		if (!enforceSClassCeilings(grammars, freshEntries)) {
+			process.exitCode = 1;
+		}
 	}
 	// One commit per validation invocation covering every row just appended —
 	// keeps history reliably captured without a commit per grammar. Best-effort

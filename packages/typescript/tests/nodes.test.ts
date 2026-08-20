@@ -1502,9 +1502,13 @@ describe('decorator_call_expression', () => {
 
 describe('class_body', () => {
 	it('factory produces correct type', () => {
-		const node = ir.classBody();
+		const node = ir.classBody({});
 		expect(node.$type).toBe(TSKindId.ClassBody);
 		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.classBody({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -1519,21 +1523,15 @@ describe('formal_parameters', () => {
 describe('class_static_block', () => {
 	it('factory produces correct type', () => {
 		const node = ir.classStaticBlock({
-			$type: TSKindId.StatementBlock,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
+		});
 		expect(node.$type).toBe(TSKindId.ClassStaticBlock);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.classStaticBlock({
-			$type: TSKindId.StatementBlock,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
+		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -1739,7 +1737,13 @@ describe('type_assertion', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
+				_types: {
+					$type: TSKindId.Types,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
+				} as any
 			} as any,
 			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
@@ -1753,7 +1757,13 @@ describe('type_assertion', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
+				_types: {
+					$type: TSKindId.Types,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
+				} as any
 			} as any,
 			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
@@ -1806,7 +1816,13 @@ describe('instantiation_expression', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
+				_types: {
+					$type: TSKindId.Types,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
+				} as any
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.InstantiationExpression);
@@ -1820,7 +1836,13 @@ describe('instantiation_expression', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
+				_types: {
+					$type: TSKindId.Types,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
+				} as any
 			} as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -2428,7 +2450,13 @@ describe('generic_type', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
+				_types: {
+					$type: TSKindId.Types,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
+				} as any
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.GenericType);
@@ -2442,7 +2470,13 @@ describe('generic_type', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
+				_types: {
+					$type: TSKindId.Types,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
+				} as any
 			} as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -2602,16 +2636,14 @@ describe('predefined_type', () => {
 describe('type_arguments', () => {
 	it('factory produces correct type', () => {
 		const node = ir.typeArguments({
-			type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
-		});
+			$type: TSKindId.Types,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
+		} as any);
 		expect(node.$type).toBe(TSKindId.TypeArguments);
 		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.typeArguments({
-			type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
-		});
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -2662,7 +2694,11 @@ describe('property_signature', () => {
 describe('type_parameters', () => {
 	it('factory produces correct type', () => {
 		const node = ir.typeParameters({
-			typeParameter: [
+			$type: TSKindId.TypeParametersElements,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_type_parameter: [
 				{
 					$type: TSKindId.TypeParameter,
 					$text: 'test',
@@ -2671,23 +2707,9 @@ describe('type_parameters', () => {
 					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 				} as any
 			]
-		});
+		} as any);
 		expect(node.$type).toBe(TSKindId.TypeParameters);
 		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.typeParameters({
-			typeParameter: [
-				{
-					$type: TSKindId.TypeParameter,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			]
-		});
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

@@ -60,7 +60,7 @@ function emit(nodeMap: ReturnType<typeof makeMemberNodeMap>): string {
 }
 
 describe('from emitter — separatedList', () => {
-	it('coerceToMemberList passes children as the elements ARRAY via a direct (non-unknown-laundered) cast', () => {
+	it('coerceToMemberList spreads the elements into the factory call, preserving captured flank options on self-unwrap', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
@@ -69,24 +69,16 @@ describe('from emitter — separatedList', () => {
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
 		expect(emitted).toContain('export function coerceToMemberList(...input');
-		// Never spread the resolved elements into the factory call.
-		expect(emitted).not.toContain('...(children as');
-		expect(emitted).not.toContain('...(input as');
-		// Never bind a single indexed element either (that's the 'direct'/
-		// singular container shape, wrong for a genuinely multi-element list).
+		// The factory's signature is spread-with-leading-options — elements go
+		// in as REST arguments, never as one array argument and never indexed
+		// (that's the 'direct'/singular container shape, wrong for a
+		// genuinely multi-element list).
 		expect(emitted).not.toContain('children[0] as Parameters<typeof F.buildMemberList>[0]');
-		// Never launder through `unknown` — a direct cast is both possible
-		// (confirmed) and strictly safer: a future signature change that
-		// breaks the real overlap would surface as a real error here instead
-		// of silently compiling.
-		expect(emitted).not.toContain('as unknown as Parameters<typeof F.buildMemberList>');
-		// The array itself (not spread) must be the sole positional argument,
-		// via a direct cast.
-		expect(emitted).toMatch(/F\.buildMemberList\(children as Parameters<typeof F\.buildMemberList>\[0\]\)/);
-		expect(emitted).toMatch(/F\.buildMemberList\(input as Parameters<typeof F\.buildMemberList>\[0\]\)/);
+		expect(emitted).toMatch(/F\.buildMemberList\(\{ trailing: .*\}, \.\.\.\(children as unknown as NonEmptyArray<T\.Member>\)\)/);
+		expect(emitted).toMatch(/F\.buildMemberList\(\.\.\.\(input as unknown as NonEmptyArray<T\.Member>\)\)/);
 	});
 
-	it('_wrapWithChildren dispatches separatedList kinds with the array form via a direct cast, never spread or indexed', () => {
+	it('_wrapWithChildren dispatches separatedList kinds by spreading the children array, never indexing', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
@@ -95,10 +87,9 @@ describe('from emitter — separatedList', () => {
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
 		expect(emitted).toContain('function _wrapWithChildren(');
-		expect(emitted).not.toContain('return F.buildMemberList(...(children');
 		expect(emitted).not.toContain('return F.buildMemberList(children[0]');
 		expect(emitted).toMatch(
-			/case "member_list": return F\.buildMemberList\(children as Parameters<typeof F\.buildMemberList>\[0\]\);/
+			/case "member_list": return \(F\.buildMemberList as \(\.\.\.args: unknown\[\]\) => unknown\)\(\.\.\.children\);/
 		);
 	});
 });

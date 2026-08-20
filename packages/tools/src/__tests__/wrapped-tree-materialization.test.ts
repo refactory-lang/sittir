@@ -426,6 +426,10 @@ describe('wrapped tree materialization', () => {
 			} satisfies TreeHandle
 		);
 
-		expect(wrapped.identifier().$type).toBe('identifier');
+		// Routing is the live contract: the accessor finds the value under its
+		// parse-derived wire key. Identity is the wire's job — the read stamps
+		// the grammar symbol as `$type`, and the wrap performs no restamp, so a
+		// value arriving under a display spelling passes through unchanged.
+		expect(wrapped.identifier().$type).toBe('decorator');
 	});
 });

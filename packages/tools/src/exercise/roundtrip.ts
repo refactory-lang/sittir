@@ -2,7 +2,7 @@ import { createRenderer } from '@sittir/legacy-core';
 import type { AnyNodeData } from '@sittir/types';
 
 type GrammarName = 'rust' | 'typescript' | 'python';
-type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements';
+type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements' | 'forwarded';
 type FactoryFn = (...args: readonly unknown[]) => unknown;
 type FactorySlotMeta = {
 	readonly unnamed: boolean;
@@ -265,7 +265,7 @@ export function buildFactoryNode(
 	if (shape === 'spread') {
 		return factory(...childArgs);
 	}
-	if (shape === 'direct') {
+	if (shape === 'direct' || shape === 'forwarded') {
 		const fieldNames = artifacts.factoryFields[resolvedKind];
 		const rawName = fieldNames?.[0];
 		const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());

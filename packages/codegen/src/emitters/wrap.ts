@@ -22,9 +22,10 @@ import { AssembledNonterminal, valueParseKindsOf, valueParseLabelsOf } from '../
 import type { Rule } from '../types/rule.ts';
 
 type BranchLikeForWrap = Extract<AssembledNode, { modelType: 'branch' }>;
-import { deriveUnnamedChildrenCardinality, resolveSlotAliasPairs } from '../compiler/model/node-map.ts';
+import { deriveUnnamedChildrenCardinality } from '../compiler/model/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
+	hasOptionalElements,
 	isMultiple,
 	isNonEmpty,
 	isRequired,
@@ -33,7 +34,8 @@ import {
 	classifyWrapEmission,
 	warnSkippedParserSymbol,
 	canonicalSeparatedListField,
-	kindEnumTextIdPairs
+	kindEnumTextIdPairs,
+	fieldTypeComponents
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
@@ -43,6 +45,7 @@ import {
 	hasCatalogEntry,
 	kindDiscriminantExpr,
 	kindDiscriminantExprForId,
+	kindDiscriminantExprForLiteral,
 	collectCatalogKinds,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
@@ -225,13 +228,16 @@ interface ResolveSlotDrillConfig {
 	readonly elemType: string;
 	readonly required: boolean;
 	readonly nonEmpty?: boolean;
-	readonly alias?: readonly (readonly [string, string])[];
 	readonly storageInfo?: ReturnType<typeof resolveFieldStorageInfo>;
 	readonly allowedKinds?: readonly string[];
 	readonly candidateStorageKeys?: readonly string[];
 	readonly reclaimKindIdsExpr?: string;
 	readonly kindEnumTextIdPairs?: readonly (readonly [string, number])[];
 	readonly forceUnknownElement?: boolean;
+	// Elidable separated-list slot (`hasOptionalElements`): emitted expression
+	// for the separator's numeric kind id(s). Presence selects the
+	// position-splitting store path over filter+normalize.
+	readonly elidedSeparatorIdsExpr?: string;
 }
 
 function resolveSlotDrillExprs(
@@ -247,6 +253,19 @@ function resolveSlotDrillExprs(
 		config.candidateStorageKeys,
 		config.forceUnknownElement
 	);
+	// Elidable separated-list positions (array elision, `[a, , b]`): the raw
+	// wire array interleaves element entries with the separator's numeric kind
+	// id. Segment on those delimiters — one position per segment, an empty
+	// segment stores `undefined` — instead of filtering the numerics away
+	// (which collapses `[a, , b]` and `[a, b]` into identical storage).
+	if (config.elidedSeparatorIdsExpr !== undefined && slot.arity === 'many') {
+		const allowedArg =
+			config.allowedKinds && config.allowedKinds.length > 0 ? JSON.stringify(config.allowedKinds) : 'undefined';
+		return {
+			storeExpr: `splitElidedWrapSlot(${slotStoreExpr}, ${config.elidedSeparatorIdsExpr}, ${allowedArg})`,
+			accessorBody: resolveSlotAccessorBody(slot, `${config.elemType} | undefined`)
+		};
+	}
 	const filteredStoreExpr =
 		config.allowedKinds && config.allowedKinds.length > 0
 			? `_filterWrapChildrenByKind(${slotStoreExpr}, ${JSON.stringify(config.allowedKinds)})`
@@ -298,20 +317,6 @@ function resolveSlotDrillExprs(
 			accessorBody: `return this.${slot.storageKey}`
 		};
 	}
-	if (config.alias) {
-		const pairsExpr = `[${config.alias.map(([from, to]) => `{ from: ${JSON.stringify(from)}, to: ${JSON.stringify(to)} }`).join(', ')}]`;
-		if (slot.arity === 'many') {
-			return {
-				storeExpr: normalizedStoreExpr,
-				accessorBody: `return drillAsAll<${config.elemType}>(this.${slot.storageKey}, tree, ${pairsExpr})`
-			};
-		}
-		const returnType = config.required ? config.elemType : `${config.elemType} | undefined`;
-		return {
-			storeExpr: normalizedStoreExpr,
-			accessorBody: `return drillAs<${returnType}>(this.${slot.storageKey}, tree, ${pairsExpr})`
-		};
-	}
 	return {
 		storeExpr: normalizedStoreExpr,
 		accessorBody: resolveSlotAccessorBody(
@@ -327,7 +332,6 @@ interface UnnamedChildrenSlotConfig {
 	readonly required: boolean;
 	readonly nonEmpty: boolean;
 	readonly allowedKinds: readonly string[];
-	readonly alias?: readonly (readonly [string, string])[];
 }
 
 function resolveUnnamedSlotConfig(
@@ -344,33 +348,12 @@ function resolveUnnamedSlotConfig(
 		elemType: childElementType({ children }, nodeMap),
 		required: cardinality.required,
 		nonEmpty: cardinality.nonEmpty,
-		allowedKinds: [...new Set(children.flatMap((child) => deriveChildrenKinds(child, nodeMap)))],
-		alias: resolveChildrenAliasRewrite(children, nodeMap)
+		allowedKinds: [...new Set(children.flatMap((child) => deriveChildrenKinds(child, nodeMap)))]
 	};
 }
 
 function bitflagTextsExpr(texts: readonly string[]): string {
 	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
-}
-
-function resolveSlotAliasRewrite(
-	slot: AssembledNonterminal,
-	nodeMap: NodeMap
-): readonly (readonly [string, string])[] | undefined {
-	return resolveSlotAliasPairs(slot, nodeMap);
-}
-
-// Same alias-rewrite need as resolveSlotAliasRewrite, but for the unnamed
-// "children" ($other) slot, which is built from potentially several
-// AssembledNonterminal children rather than one field — merge pairs across
-// all of them (e.g. `_tuple_type_member`'s `required_parameter`/
-// `optional_parameter` arms each need their own rewrite).
-function resolveChildrenAliasRewrite(
-	children: readonly AssembledNonterminal[],
-	nodeMap: NodeMap
-): readonly (readonly [string, string])[] | undefined {
-	const pairs = children.flatMap((child) => resolveSlotAliasRewrite(child, nodeMap) ?? []);
-	return pairs.length > 0 ? pairs : undefined;
 }
 
 function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap): readonly string[] | undefined {
@@ -515,16 +498,25 @@ function resolveSlotStoreExpr(
 			// authoritative on its own — normalize it (scalar-or-array, via the
 			// same `_toArr` the concat path uses) rather than merging it into
 			// the candidate concat.
-			const sources = candidates.map((k) => dataAccessExpr(dataExpr, k));
+			// Pair each candidate storage key with its read-route name (the
+			// storage key minus the `_` prefix — the same name the reader
+			// records in `$slotOrder`), so `_interleaveBySlotOrder` can walk
+			// the parent's stamped document order with per-bucket cursors.
+			const sources = candidates.map(
+				(k) => `[${JSON.stringify(k.startsWith('_') ? k.slice(1) : k)}, ${dataAccessExpr(dataExpr, k)}]`
+			);
 			// See resolveSlotDrillExprs's ResolveSlotDrillConfig.forceUnknownElement
 			// doc comment: a multi-field AssembledSeparatedList's internal
 			// `_content` probe can combine candidate keys from more than one real
-			// slot with no common element type — `_concatInSourceOrder`'s own
+			// slot with no common element type — `_interleaveBySlotOrder`'s own
 			// generic inference (independent of the outer normalizeRepeatedWrapSlot
 			// call) needs the same explicit widening, or it silently picks one
 			// candidate's type and rejects the others.
 			const concatTypeArg = forceUnknownElement ? '<unknown>' : '';
-			const candidateExpr = sources.length > 0 ? `_concatInSourceOrder${concatTypeArg}([${sources.join(', ')}])` : '[]';
+			const candidateExpr =
+				sources.length > 0
+					? `_interleaveBySlotOrder${concatTypeArg}(${dataExpr} as _NodeData, [${sources.join(', ')}])`
+					: '[]';
 			return `(${canonicalExpr} !== undefined ? _toArr(${canonicalExpr}) : ${candidateExpr})`;
 		}
 
@@ -729,6 +721,9 @@ function emitSeparatedListWrap(
 	);
 	const paramType = buildSeparatedListWrapParamType(node.typeName, wireKeyTypes);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
+	if (wrapsAnonLiteralContent(node.fields, nodeMap)) {
+		lines.push(`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries, nodeMap)} }, methodsEngine);`);
+	}
 
 	const storageInfo = resolveFieldStorageInfo(contentSlot, nodeMap, kindEntries);
 	const candidateStorageKeys = collectSeparatedListContentStorageKeys(contentSlot, nodeMap, fieldBacked);
@@ -739,14 +734,13 @@ function emitSeparatedListWrap(
 		required: node.nonEmpty,
 		nonEmpty: node.nonEmpty,
 		storageInfo,
-		alias: resolveSlotAliasRewrite(contentSlot, nodeMap),
 		candidateStorageKeys: candidateStorageKeys.length > 0 ? candidateStorageKeys : undefined,
 		// Multi-field kinds (see doc comment above) route each field through
 		// emitFieldStorageLines/emitFieldAccessorLines separately — `_content`
 		// here is ONLY the internal `_hasSeparatorFlank`/`_separatorKindOf`
 		// probe bucket, never a real storage key or accessor. Its candidate
 		// keys can span more than one field's element type (e.g. TypeScript's
-		// enum_body_group1 mixes PropertyName-kind and EnumAssignment-kind
+		// enum_body_elements mixes PropertyName-kind and EnumAssignment-kind
 		// keys), which don't share a common generic T.
 		forceUnknownElement: node.fields.length > 1
 	});
@@ -862,7 +856,6 @@ function emitFieldStorageLines(
 	const collidedReclaimKinds = computeCollidedReclaimKinds(fields, ownerKind, nodeMap, kindEntries);
 	for (const f of fields) {
 		// f IS AssembledNonterminal — read getters directly (DRY: single source for arity/storageKey).
-		const aliasRewrite = resolveSlotAliasRewrite(f, nodeMap);
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
 		const allowedKinds =
@@ -894,12 +887,12 @@ function emitFieldStorageLines(
 			elemType: fieldElementType(f, nodeMap),
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
-			alias: aliasRewrite,
 			storageInfo,
 			allowedKinds,
 			candidateStorageKeys,
 			reclaimKindIdsExpr,
-			kindEnumTextIdPairs: storageInfo.kind === 'kindEnum' ? kindEnumTextIdPairs(f, nodeMap, kindEntries) : undefined
+			kindEnumTextIdPairs: storageInfo.kind === 'kindEnum' ? kindEnumTextIdPairs(f, nodeMap, kindEntries) : undefined,
+			elidedSeparatorIdsExpr: elidedSeparatorIdsExprOf(f, kindEntries)
 		});
 		lines.push(`    ${f.storageKey}: ${storeExpr},`);
 	}
@@ -968,6 +961,29 @@ function emitFieldFlankCaptureLines(
 	}
 }
 
+/**
+ * Emitted `[<sep kind id>, …]` expression for an elidable separated-list
+ * slot (`hasOptionalElements`), or undefined for every other slot. Throws
+ * (via `kindDiscriminantExprForLiteral`) when the separator literal has no
+ * catalog kind id — the splitter cannot recognize delimiters without one,
+ * and silently falling back would collapse holes.
+ */
+function elidedSeparatorIdsExprOf(
+	f: AssembledNonterminal,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | undefined {
+	if (!hasOptionalElements(f) || !kindEntries) return undefined;
+	const sepTexts = [
+		...new Set(
+			f.values
+				.filter((v) => v.optionalElement === true && v.separator !== undefined)
+				.map((v) => v.separator as string)
+		)
+	];
+	if (sepTexts.length === 0) return undefined;
+	return `[${sepTexts.map((text) => kindDiscriminantExprForLiteral(text, kindEntries)).join(', ')}]`;
+}
+
 function emitFieldAccessorLines(
 	fields: readonly AssembledNonterminal[],
 	dataExpr: string,
@@ -977,7 +993,6 @@ function emitFieldAccessorLines(
 ): void {
 	for (const f of fields) {
 		const propName = f.propertyName;
-		const aliasRewrite = resolveSlotAliasRewrite(f, nodeMap);
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
 		const allowedKinds =
@@ -989,12 +1004,37 @@ function emitFieldAccessorLines(
 			elemType: fieldElementType(f, nodeMap),
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
-			alias: aliasRewrite,
 			storageInfo,
-			allowedKinds
+			allowedKinds,
+			elidedSeparatorIdsExpr: elidedSeparatorIdsExprOf(f, kindEntries)
 		});
 		lines.push(`    ${propName}() { ${accessorBody}; },`);
 	}
+}
+
+// The `_isReadTextLeaf` pass-through applies only to kinds that declare
+// ANONYMOUS LITERAL TOKENS as legitimate slot content (e.g. python
+// `string_content`, whose content union includes bare `'\\'` escape
+// tokens, with implicit text gaps between them that only the leaf's
+// verbatim `$text` carries). For every other kind an all-anon-children
+// occurrence is genuinely EMPTY structure (an empty `{}` block, `()`
+// arguments) whose declared slot keys are a load-bearing wrap contract —
+// pass-through there breaks required-slot drills and from() field
+// comparison.
+function wrapsAnonLiteralContent(fields: readonly AssembledNonterminal[], nodeMap: NodeMap): boolean {
+	return fields.some((f) => fieldTypeComponents(f, nodeMap).some((c) => c.kind === 'literal'));
+}
+
+// `$type` restamp for the `_isReadTextLeaf` pass-through — same numeric
+// TSKindId discriminant the structural body stamps, so leaf pass-through
+// and structural output dispatch identically downstream.
+function wrapTextLeafTypeStamp(
+	node: { readonly kind: string },
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): string {
+	const entry = kindEntries?.find((e) => e.kind === node.kind);
+	return entry ? `, $type: TSKindId.${kindIdMemberName(nodeMap, node.kind)} as const` : '';
 }
 
 function emitFieldCarryingWrap(
@@ -1016,6 +1056,9 @@ function emitFieldCarryingWrap(
 	const needsOther = children.length > 0;
 	const paramType = buildWrapParamType(node.typeName, wireKeyTypes, needsOther ? "_NodeData['$other']" : undefined);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
+	if (wrapsAnonLiteralContent(fields, nodeMap)) {
+		lines.push(`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries, nodeMap)} }, methodsEngine);`);
+	}
 
 	// Shape A: inline object literal wrapped by withMethods<T>. No
 	// Object.defineProperty, no freezeNodeData, no Record<string,unknown> cast.
@@ -1066,7 +1109,6 @@ function emitFieldCarryingWrap(
 			required: childrenConfig.required,
 			nonEmpty: childrenConfig.nonEmpty,
 			allowedKinds: childrenConfig.allowedKinds,
-			alias: childrenConfig.alias
 		});
 		lines.push(`    $other: ${storeExpr},`);
 	}
@@ -1082,7 +1124,6 @@ function emitFieldCarryingWrap(
 			required: childrenConfig.required,
 			nonEmpty: childrenConfig.nonEmpty,
 			allowedKinds: childrenConfig.allowedKinds,
-			alias: childrenConfig.alias
 		});
 		lines.push(`    children() { ${accessorBody}; },`);
 	}
@@ -1267,8 +1308,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		// wrap functions) itself references.
 		const usesDrillIn = true;
 		const usesDrillInAll = true;
-		const usesDrillAs = /\bdrillAs\b/.test(bodySource);
-		const usesDrillAsAll = /\bdrillAsAll\b/.test(bodySource);
 		const usesProjectKindEnum = /\bprojectKindEnumStorage\b/.test(bodySource);
 		const usesSeparatorKindOf = /\b_separatorKindOf\b/.test(bodySource);
 		// `_separatorKindOf` calls `readTerminalFromOther`, so emit it whenever either is used.
@@ -1276,13 +1315,18 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesHasSeparatorFlank = /\b_hasSeparatorFlank\b/.test(bodySource);
 		const usesCoerceBoolean = /\bcoerceBooleanKeywordStorage\b/.test(bodySource);
 		const usesCoerceBitflag = /\bcoerceBitflagStorage\b/.test(bodySource);
-		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource);
+		const usesSplitElided = /\bsplitElidedWrapSlot\b/.test(bodySource);
+		// `splitElidedWrapSlot` calls `_filterWrapChildrenByKind` per segment.
+		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource) || usesSplitElided;
 		const usesNormalizeSingular = /\bnormalizeSingularWrapSlot\b/.test(bodySource);
 		const usesNormalizeRepeated = /\bnormalizeRepeatedWrapSlot\b/.test(bodySource);
-		const usesConcatInSourceOrder = /\b_concatInSourceOrder\b/.test(bodySource);
-		// `_concatInSourceOrder` calls `_toArr`, so emit `_toArr` whenever either is used.
+		const usesInterleaveBySlotOrder = /\b_interleaveBySlotOrder\b/.test(bodySource);
+		// `_interleaveBySlotOrder` falls back to `_concatInSourceOrder` (and both
+		// call `_toArr`), so emit each helper whenever a caller above it is used.
+		const usesConcatInSourceOrder = /\b_concatInSourceOrder\b/.test(bodySource) || usesInterleaveBySlotOrder;
 		const usesToArr = /\b_toArr\b/.test(bodySource) || usesConcatInSourceOrder;
 		const usesOmitWrapKeys = /\b_omitWrapKeys\b/.test(bodySource);
+		const usesIsReadTextLeaf = /\b_isReadTextLeaf\b/.test(bodySource);
 		const supertypeMembers = buildSupertypeMembersMap(this.#nodeMap);
 		const utilsImports = [
 			'withMethods',
@@ -1306,6 +1350,29 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			`import { ${utilsImports.join(', ')} } from './utils.js';`,
 			"import * as _factories from './factories.js';",
 			'',
+			...(usesIsReadTextLeaf
+				? [
+						'// A hydrated read-layer TEXT LEAF: the reader modeled no addressable',
+						'// structure (no `_<slot>` storage keys, no `$other`) and captured the',
+						"// node's verbatim `$text` — e.g. a `string_content` whose only CST",
+						'// children are anonymous escape tokens. Such data passes through the',
+						'// wrap untouched: fabricating this kind\'s (empty) slot storage on top',
+						'// of it would read as "structure" to every downstream structure probe',
+						"// — the validator's `$text` strip and the native render's",
+						'// all-slots-empty `$text` fast-path — replacing the leaf\'s verbatim',
+						'// text with an empty template render.',
+						'function _isReadTextLeaf(data: object): boolean {',
+						'  const d = data as { $text?: unknown; $other?: unknown };',
+						"  if (typeof d.$text !== 'string') return false;",
+						'  if (d.$other != null) return false;',
+						'  for (const key in data) {',
+						"    if (key.startsWith('_')) return false;",
+						'  }',
+						'  return true;',
+						'}',
+						''
+					]
+				: []),
 			...(usesOmitWrapKeys
 				? [
 						'// Drop CONSUMED raw candidate storage keys from the spread base. A',
@@ -1472,12 +1539,52 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'}'
 					]
 				: []),
+			...(usesInterleaveBySlotOrder
+				? [
+						'// _interleaveBySlotOrder — reassemble a repeated heterogeneous-union',
+						"// slot's per-route wire buckets into document order by walking the",
+						'// parent\'s `$slotOrder` stamp (route names in child order, emitted by',
+						'// the native reader on multi-bucket parents) with a cursor per bucket.',
+						'// Text-collapsed scalar leaves carry no `$span`, so a position sort',
+						'// cannot order them — the stamp is the only cross-bucket order source.',
+						'// Nodes without the stamp (older captures) fall back to the position',
+						'// sort; elements the stamp does not cover are appended in bucket order',
+						'// so a mismatch never drops members.',
+						'function _interleaveBySlotOrder<T>(',
+						'  data: { readonly $slotOrder?: readonly string[] },',
+						'  pairs: readonly (readonly [string, T | readonly T[] | undefined])[]',
+						'): readonly T[] {',
+						'  const order = data.$slotOrder;',
+						'  if (!Array.isArray(order)) return _concatInSourceOrder(pairs.map(([, v]) => v));',
+						'  const buckets = new Map<string, readonly T[]>();',
+						'  for (const [route, value] of pairs) {',
+						'    if (value === undefined) continue;',
+						'    buckets.set(route, _toArr(value));',
+						'  }',
+						'  const cursors = new Map<string, number>();',
+						'  const out: T[] = [];',
+						'  for (const route of order) {',
+						'    const bucket = buckets.get(route);',
+						'    if (!bucket) continue;',
+						'    const i = cursors.get(route) ?? 0;',
+						'    if (i < bucket.length) {',
+						'      out.push(bucket[i] as T);',
+						'      cursors.set(route, i + 1);',
+						'    }',
+						'  }',
+						'  for (const [route, bucket] of buckets) {',
+						'    for (let i = cursors.get(route) ?? 0; i < bucket.length; i++) out.push(bucket[i] as T);',
+						'  }',
+						'  return out;',
+						'}'
+					]
+				: []),
 			'// Drill-in helpers — call back through `readTreeNode` so the same',
 			'// per-handle dispatch + wrap pipeline runs at every level. Layering:',
 			'//   readTreeNode (public entry)',
 			'//     → readNode (handle-driven — tree.read for native, JS walker otherwise)',
 			'//       → wrapNode (dispatches on $type)',
-			'//         → drillIn / drillAs → readTreeNode (recurse)',
+			'//         → drillIn → readTreeNode (recurse)',
 			...(usesDrillIn
 				? [
 						'function drillIn<T>(entry: T, tree: TreeHandle): T {',
@@ -1494,48 +1601,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  if (!entries) return [];',
 						'  const arr = Array.isArray(entries) ? entries : [entries];',
 						'  return arr.map(e => drillIn(e, tree));',
-						'}'
-					]
-				: []),
-			...(usesDrillAs
-				? [
-						'// drillAs — field-site unalias for grammar `alias($.source, $.target)`',
-						'// declarations. `pairs` rewrites $type from one of possibly several',
-						"// tree-sitter alias targets back to the codegen-canonical source",
-						'// name between the read and the wrap (a polymorphic slot can have',
-						'// several simultaneously-aliased candidate kinds — e.g. every arm',
-						'// of a `choice()` aliasing onto its own shared canonical name).',
-						'// Conditional rewrite: only fires when the child\'s actual $type',
-						'// matches one pair\'s `from` (at most one can, since a given node',
-						'// has exactly one real kind); mixed-union fields pass through',
-						'// unchanged when the child arrived as a non-alias kind.',
-						'function drillAs<T>(entry: unknown, tree: TreeHandle, pairs: readonly { from: string; to: string }[]): T {',
-						'  if (!entry) return undefined as unknown as T;',
-						'  const e = entry as _NodeData;',
-						'  if (e.$nodeHandle == null || e.$childIndex == null) {',
-						'    if (typeof e === "object" && e !== null && e.$type != null) {',
-						'      const currentType = typeof e.$type === "number"',
-						'        ? KIND_NAMES.get(e.$type as never) ?? String(e.$type)',
-						'        : (e.$type as unknown as string);',
-						'      const hiddenCurrentType = currentType.startsWith("_") ? currentType.slice(1) : undefined;',
-						'      const match = pairs.find(p => currentType === p.from || hiddenCurrentType === p.from);',
-						'      if (!match) return e as unknown as T;',
-						'      let resolvedToId: number | undefined;',
-						'      try { resolvedToId = kindIdFromName(match.to) as unknown as number; } catch { resolvedToId = undefined; }',
-						'      return ({ ...e, $type: (resolvedToId ?? match.to) as unknown as number } as _NodeData) as unknown as T;',
-						'    }',
-						'    return entry as unknown as T;',
-						'  }',
-						'  return readTreeNode(tree, e.$nodeHandle, e.$childIndex, pairs) as unknown as T;',
-						'}'
-					]
-				: []),
-			...(usesDrillAsAll
-				? [
-						'function drillAsAll<T>(entries: unknown, tree: TreeHandle, pairs: readonly { from: string; to: string }[]): T[] {',
-						'  if (!entries) return [];',
-						'  const arr = Array.isArray(entries) ? entries : [entries];',
-						'  return arr.map(e => drillAs<T>(e, tree, pairs));',
 						'}'
 					]
 				: []),
@@ -1681,8 +1746,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'',
 						'function _matchesAllowedWrapKind(kind: string, allowedKinds: readonly string[]): boolean {',
 						'  if (allowedKinds.includes(kind)) return true;',
-						'  const canonical = _aliasTargetToSource[kind];',
-						'  if (canonical && allowedKinds.includes(canonical)) return true;',
 						'  const stripped = kind.startsWith("_") ? kind.slice(1) : undefined;',
 						'  if (stripped && allowedKinds.includes(stripped)) return true;',
 						'  for (const allowed of allowedKinds) {',
@@ -1690,12 +1753,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 							? [
 									'    const members = SUPERTYPE_MEMBERS[allowed] ?? SUPERTYPE_MEMBERS[allowed.startsWith("_") ? allowed.slice(1) : allowed];',
 									'    if (members?.has(kind)) return true;',
-									'    if (canonical !== undefined && members?.has(canonical)) return true;',
 									'    if (stripped !== undefined && members?.has(stripped)) return true;'
 								]
 							: []),
 						'    const allowedStripped = allowed.startsWith("_") ? allowed.slice(1) : allowed;',
-						'    if (allowedStripped === kind || (canonical !== undefined && allowedStripped === canonical) || (stripped !== undefined && allowedStripped === stripped)) return true;',
+						'    if (allowedStripped === kind || (stripped !== undefined && allowedStripped === stripped)) return true;',
 						'  }',
 						'  return false;',
 						'}',
@@ -1739,12 +1801,70 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'}'
 					]
 				: []),
+			...(usesSplitElided
+				? [
+						'',
+						'// Elidable separated-list positions (array elision, `[a, , b]`): the',
+						'// raw wire array interleaves element entries with the separator token —',
+						'// either as its bare numeric kind id (text-collapsed contexts) or as an',
+						'// anonymous node stub `{ $type: <id>, $named: false }` (node-stub',
+						'// contexts). Segment on those delimiters — each segment is one position',
+						'// holding 0-or-1 element; an empty position stores `undefined`.',
+						'// Idempotent over already-positional storage (a `$with` re-wrap carries',
+						'// no delimiters): with no delimiter present every entry is its own',
+						'// position, `undefined` holes intact.',
+						'function splitElidedWrapSlot<T>(',
+						'  value: T | readonly T[] | undefined,',
+						'  separatorKindIds: readonly number[],',
+						'  allowedKinds: readonly string[] | undefined',
+						'): readonly (T | undefined)[] {',
+						'  const items: readonly unknown[] = value == null ? [] : Array.isArray(value) ? value : [value];',
+						'  if (items.length === 0) return [];',
+						'  const isDelimiter = (e: unknown): boolean => {',
+						'    if (typeof e === "number") return separatorKindIds.includes(e);',
+						'    if (typeof e === "object" && e !== null) {',
+						'      const stub = e as { $type?: unknown; $named?: unknown };',
+						'      return stub.$named === false && typeof stub.$type === "number" && separatorKindIds.includes(stub.$type);',
+						'    }',
+						'    return false;',
+						'  };',
+						'  const keepFirst = (seg: readonly unknown[]): T | undefined => {',
+						'    const kept = allowedKinds ? (_filterWrapChildrenByKind(seg as readonly T[], allowedKinds) as readonly T[]) : (seg.filter((e) => e !== undefined) as readonly T[]);',
+						'    return kept.length > 0 ? kept[0] : undefined;',
+						'  };',
+						'  if (!items.some(isDelimiter)) {',
+						'    return (items as readonly (T | undefined)[]).map((e) => (e === undefined ? undefined : keepFirst([e])));',
+						'  }',
+						'  const positions: (T | undefined)[] = [];',
+						'  let segment: unknown[] = [];',
+						'  for (const entry of items) {',
+						'    if (isDelimiter(entry)) {',
+						'      positions.push(keepFirst(segment));',
+						'      segment = [];',
+						'    } else {',
+						'      segment.push(entry);',
+						'    }',
+						'  }',
+						'  positions.push(keepFirst(segment));',
+						'  return positions;',
+						'}'
+					]
+				: []),
 			''
 		];
 		lines.push(bodySource);
 
-		// _wrapTable — runtime dispatch by kind
-		lines.push('const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {');
+		// _wrapTable — runtime dispatch by kind. With a catalog, keys are the
+		// numeric TSKindId members (the wire `$type` IS the grammar-symbol id,
+		// so dispatch needs no id→name resolution); the catalog-less path
+		// (synthetic test grammars) keeps name keys and string dispatch.
+		const wrapTableKey = (kind: string, memberName: string): string =>
+			this.#kindEntries ? `[TSKindId.${memberName}]` : `'${kind}'`;
+		lines.push(
+			this.#kindEntries
+				? 'const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown> = {'
+				: 'const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {'
+		);
 		for (const [kind, node] of this.#nodeMap.nodes) {
 			if (
 				node.modelType === 'branch' ||
@@ -1755,32 +1875,19 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				node.modelType === 'separatedList'
 			) {
 				if (!this.#emittedStructuralKinds.has(kind)) continue;
-				lines.push(`  '${kind}': (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`);
+				lines.push(
+					`  ${wrapTableKey(kind, node.typeName)}: (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`
+				);
 			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || node.modelType === 'keyword') {
 				if (!node.factoryName) continue;
 				if (this.#kindEntries && !hasCatalogEntry(this.#kindEntries, kind)) continue;
 				if (this.#kindEntries) {
-					const entry = this.#kindEntries.find((e) => e.kind === kind);
-					if (entry) {
-						lines.push(
-							`  '${kind}': (d) => ({ ...d, $type: TSKindId.${kindIdMemberName(this.#nodeMap, kind)} as const }),`
-						);
-					} else {
-						lines.push(`  '${kind}': (d) => d,`);
-					}
+					const memberName = kindIdMemberName(this.#nodeMap, kind);
+					lines.push(`  [TSKindId.${memberName}]: (d) => ({ ...d, $type: TSKindId.${memberName} as const }),`);
 				} else {
 					lines.push(`  '${kind}': (d) => d,`);
 				}
 			}
-		}
-		lines.push('};');
-		lines.push('');
-
-		// _aliasTargetToSource — canonical-hidden remap (Option Y)
-		const aliasMap = collectAliasTargetToSourceMap(this.#nodeMap);
-		lines.push('const _aliasTargetToSource: Record<string, string> = {');
-		for (const [target, source] of [...aliasMap.entries()].sort()) {
-			lines.push(`  '${target}': '${source}',`);
 		}
 		lines.push('};');
 		lines.push('');
@@ -1821,26 +1928,16 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		// Public entry points
 		lines.push('/** Wrap a NodeData into its lazy read-only view. */');
 		lines.push('export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {');
-		lines.push('  // The native path now returns numeric $type');
-		lines.push('  // (KindId) from Rust; the JS wasm path still returns string $type.');
-		lines.push('  // Resolve to a kind-name string for the string-keyed dispatch tables,');
-		lines.push('  // then per-kind wrap functions stamp the numeric TSKindId.$type on output.');
 		if (this.#kindEntries) {
-			lines.push('  const rawType = typeof data.$type === "number"');
-			lines.push('    ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)');
-			lines.push('    : (data.$type as unknown as string);');
+			lines.push('  // The wire `$type` is the numeric grammar-symbol KindId — dispatch');
+			lines.push('  // is a direct id-keyed lookup. A non-numeric `$type` can only be a');
+			lines.push('  // catalog-less kind (the deprecated JS diagnostic lane stamps those');
+			lines.push('  // as strings), which never had a table entry to reach.');
+			lines.push('  const fn = typeof data.$type === "number" ? _wrapTable[data.$type] : undefined;');
 		} else {
 			lines.push('  const rawType = data.$type as unknown as string;');
+			lines.push('  const fn = _wrapTable[rawType];');
 		}
-		lines.push('  // Canonical-hidden remap (Option Y): parser-output `$type`');
-		lines.push('  // is the visible alias target (e.g. `range_pattern_left_with_right`);');
-		lines.push('  // remap to the hidden alias source (`_range_pattern_left_with_right`)');
-		lines.push('  // so dispatch + downstream consumers see the canonical form.');
-		lines.push('  const canonical = _aliasTargetToSource[rawType];');
-		lines.push('  if (canonical !== undefined) {');
-		lines.push('    data = { ...data, $type: canonical as unknown as number };');
-		lines.push('  }');
-		lines.push('  const fn = _wrapTable[canonical ?? rawType];');
 		lines.push(
 			'  if (!fn) return _drillUnknownKindChildren(data, tree); // unknown kind — still drill in its kind-named-slot children'
 		);
@@ -1850,7 +1947,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('/**');
 		lines.push(' * Per-handle dispatching `readNode` — the architectural seam where');
 		lines.push(' * the engine choice (JS vs native) lives. `readTreeNode`,');
-		lines.push(' * `drillIn` and `drillAs` all read through THIS function so the');
+		lines.push(' * and `drillIn` read through THIS function so the');
 		lines.push(' * wrap layer is engine-agnostic. tree-sitter `Node::id()` is');
 		lines.push(' * documented as "unique within a given syntax tree" and is a');
 		lines.push(' * raw pointer cast — different parses yield different ids — so');
@@ -1873,52 +1970,16 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('/**');
 		lines.push(' * Read a parsed tree node into a lazily-wrapped NodeData.');
 		lines.push(' * One level deep — getters drill into subtrees on demand by');
-		lines.push(' * recursing back through this same function.');
-		lines.push(' *');
-		lines.push(' * Optional `asType: { from, to }` rewrites `$type` between the read');
-		lines.push(" * and the wrap when the node's actual `$type === from`. Used by");
-		lines.push(' * `drillAs` for alias-target → alias-source rewrites at');
-		lines.push(' * declared field sites.');
+		lines.push(' * recursing back through this same function. The wire `$type` is');
+		lines.push(' * the grammar symbol (stamped by the read), so no per-site alias');
+		lines.push(' * rewriting exists between the read and the wrap.');
 		lines.push(' */');
 		lines.push('export function readTreeNode(');
 		lines.push('  tree: TreeHandle,');
 		lines.push('  handle?: number,');
 		lines.push('  childIndex?: number,');
-		lines.push('  asType?: readonly { from: string; to: string }[],');
 		lines.push('): unknown {');
-		lines.push('  let data = readNode(tree, handle, childIndex);');
-		lines.push('  // asType comparison must handle both string and numeric $type. A');
-		lines.push('  // slot can have MULTIPLE simultaneously-aliased candidate kinds');
-		lines.push('  // (e.g. a polymorphic choice where every arm aliases onto a');
-		lines.push('  // shared canonical name) — try each pair in turn; at most one');
-		lines.push("  // can match the node's actual (single) real kind.");
-		lines.push('  // When numeric (native path), convert to kind-name first for comparison.');
-		if (this.#kindEntries) {
-			lines.push('  if (asType) {');
-			lines.push('    const currentType = typeof data.$type === "number"');
-			lines.push('      ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)');
-			lines.push('      : (data.$type as unknown as string);');
-			lines.push('    const hiddenCurrentType = currentType.startsWith("_") ? currentType.slice(1) : undefined;');
-			lines.push(
-				'    const match = asType.find(p => currentType === p.from || hiddenCurrentType === p.from);'
-			);
-			lines.push('    if (match) {');
-			lines.push('      let resolvedAsTypeId: number | undefined;');
-			lines.push(
-				'      try { resolvedAsTypeId = kindIdFromName(match.to) as unknown as number; } catch { resolvedAsTypeId = undefined; }'
-			);
-			lines.push('      data = { ...data, $type: (resolvedAsTypeId ?? match.to) as unknown as number };');
-			lines.push('    }');
-			lines.push('  }');
-		} else {
-			lines.push('  if (asType) {');
-			lines.push('    const match = asType.find(p => (data.$type as unknown as string) === p.from);');
-			lines.push('    if (match) {');
-			lines.push('      data = { ...data, $type: match.to as unknown as number };');
-			lines.push('    }');
-			lines.push('  }');
-		}
-		lines.push('  return wrapNode(data, tree);');
+		lines.push('  return wrapNode(readNode(tree, handle, childIndex), tree);');
 		lines.push('}');
 		lines.push('');
 

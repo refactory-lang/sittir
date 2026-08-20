@@ -50,6 +50,9 @@ function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 		} as unknown as EmitCtx['nodeMap'],
 		wordMatcher: /^\w+$/,
 		isWordChar: (c: string) => /\w/.test(c),
+		// No merge-hazard pairs by default — tests opt in via overrides,
+		// mirroring how grammars opt in at emit time.
+		isLiteralMergePair: () => false,
 		externals: [],
 		rules: {},
 		visitingHelpers: new Set<string>(),
@@ -167,6 +170,30 @@ describe('emitRule — seq', () => {
 			]
 		};
 		expect(emitRule(rule, makeCtx())).toBe('(a b)');
+	});
+
+	it('inserts a space at a static merge-hazard punctuation seam, and only there', () => {
+		// Mirrors the SpacingWriter's pair rule at emit time: askama fuses
+		// adjacent template literals into one write, so a static '..' + '=>'
+		// seam is invisible to the runtime writer and would re-lex as '..='
+		// plus a dangling '>'. A pair in no token ('!' + '[') stays tight.
+		const hazardCtx = makeCtx({ isLiteralMergePair: (l: string, r: string) => l === '.' && r === '=' });
+		const hazard: SeqRule = {
+			type: SEQ,
+			members: [
+				{ type: STRING, value: '..' },
+				{ type: STRING, value: '=>' }
+			]
+		};
+		expect(emitRule(hazard, hazardCtx)).toBe('.. =>');
+		const benign: SeqRule = {
+			type: SEQ,
+			members: [
+				{ type: STRING, value: '!' },
+				{ type: STRING, value: '[' }
+			]
+		};
+		expect(emitRule(benign, hazardCtx)).toBe('![');
 	});
 });
 

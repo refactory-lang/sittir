@@ -20,9 +20,9 @@ const enrichedBase = enrich(base, {
 	// innermost field name, so 'declarators' ends up matching nothing
 	// (`accessor-throw: repeated slot "declarators" requires at least one
 	// value`).
-	// `_enum_body_group1`'s element is a multi-field separated list (each
+	// `_enum_body_elements`'s element is a multi-field separated list (each
 	// occurrence is either a bare `name` or an `enum_assignment` pattern —
-	// see the '#170' comment on `enum_body_group1` further down in this
+	// see the '#170' comment on `enum_body_elements` further down in this
 	// file) — a single uniform 'element' field loses that distinction the
 	// same way `emitSeparatedListFactory`'s existing single-field-storage
 	// path already does (a documented, pre-existing gap, not something
@@ -37,7 +37,7 @@ const enrichedBase = enrich(base, {
 	skip: [
 		'lexical_declaration',
 		'variable_declaration',
-		'_enum_body_group1',
+		'_enum_body_elements',
 		'object',
 		'object_pattern',
 		'array',
@@ -58,6 +58,10 @@ export default grammar(
 				[$.readonly_type, $._kw_readonly_marker],
 				[$.abstract_method_signature, $._kw_abstract_marker],
 				[$.index_signature, $._kw_readonly_marker],
+				// The fielded `readonly` in index_signature's modifier group makes
+				// `'class' '{' 'readonly' • '['` ambiguous with the sibling
+				// class-member rules that also start with a readonly modifier.
+				[$.method_definition, $.method_signature, $.index_signature, $._public_field_definition_readonly_first],
 				[$.primary_expression, $._kw_async_marker],
 				[$.primary_expression, $._property_name, $._kw_async_marker],
 				[$.primary_expression, $._kw_static_marker],
@@ -249,10 +253,13 @@ export default grammar(
 					'1/2/1/1/1': 'value'
 				},
 
+				// Paths traverse the `content` field the transforms stage below
+				// adds around the member repeat (polymorph paths apply AFTER the
+				// path patches — see the transform pipeline's ordering).
 				class_body: {
-					'1/0/0': 'method',
-					'1/0/1': 'method_sig',
-					'1/0/3': 'member'
+					'1/content:/0/0': 'method',
+					'1/content:/0/1': 'method_sig',
+					'1/content:/0/3': 'member'
 				},
 
 				_for_header: {
@@ -303,10 +310,20 @@ export default grammar(
 					1: field('expression')
 				},
 
-				class_body: {
-					'1/0/1/1': field('terminator'),
-					'1/0/3/1': field('terminator')
-				},
+				// Stage 2 fields the member repeat AFTER the arm-level paths of
+				// stage 1 resolve against the un-fielded shape: with the `';'`
+				// arm alias-identified (see the `class_body` rules: override),
+				// every element — members and stray semicolons alike — keys into
+				// one ordered `_content` array, retiring this kind's per-kind
+				// bucket merge.
+				class_body: [
+					{
+						'1/0/0/2': field('semicolon'),
+						'1/0/1/1': field('terminator'),
+						'1/0/3/1': field('terminator')
+					},
+					{ 1: field('content') }
+				],
 
 				abstract_method_signature: {
 					'3/0': field('accessor_kind'),
@@ -338,6 +355,15 @@ export default grammar(
 					0: field('attribute_kind')
 				},
 
+				index_signature: {
+					// Presence carrier for the bare `readonly` modifier: the
+					// enclosing optional group's only other slot (`sign`) is
+					// itself optional, so without this field a sign-less
+					// `readonly [k: string]: T` has nothing recording the
+					// group's occurrence and render drops the keyword.
+					'0/0/1': field('readonly_marker')
+				},
+
 				import_statement: {
 					1: field('import_clause'),
 					2: field('from_clause'),
@@ -345,8 +371,13 @@ export default grammar(
 				},
 
 				infer_type: {
-					1: field('type_identifier'),
-					2: field('constraint')
+					// No field on position 2 (the optional `extends` clause group):
+					// an outer field on an inlined hidden group makes tree-sitter tag
+					// every spliced child with the OUTER name, while the slot model
+					// names the slot from the inner field — the wire and the model
+					// then disagree and the clause never renders. The enrich-supplied
+					// inner field('type') is the single naming source.
+					1: field('type_identifier')
 				},
 
 				intersection_type: {
@@ -563,13 +594,42 @@ export default grammar(
 				import_require_clause: '#170 — Missing field _content on ImportRequireClauseTransport._source',
 				object_type_content: '#170 (#172-adjacent) — Missing field _content through export-arm transport',
 				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)',
-				enum_body_group1:
+				enum_body_elements:
 					'#170 — multi-field separatedList (name/enum_assignment); emitSeparatedListFactory only fixes the single-field-storage case, needs a real per-field partition of the flat elements array'
 			},
-			expectDiagnostics: {
-				'storagename-collision': ['_export_statement_group2']
-			},
 			rules: {
+				// The class-body repeat's bare `';'` arm (stray member-separator
+				// semicolons) has no kind identity, so the read's array capture
+				// cannot materialize it. Alias the STRING in place to the visible
+				// `semicolon` kind — the existing `_semicolon` enum (values
+				// `'\n'`/`';'`) already owns that name and member text, so the
+				// canonical-hidden lookup and enum transport serve it with no new
+				// machinery. An alias on a string renames the node only — no
+				// lexing/LR change — and the arm keeps its position, so the
+				// `class_body` path patches below stay valid. (NOT the one-arg
+				// `alias('semicolon')` patch helper — that synthesizes/reuses a
+				// `_semicolon` RULE for the arm, which would make class bodies
+				// accept automatic semicolons.)
+				class_body: ($, original) => ({
+					...original,
+					members: original.members.map((m) =>
+						(m as { type?: string; content?: { type?: string; members?: unknown[] } }).type === 'REPEAT'
+							? {
+									...m,
+									content: {
+										...(m as { content: { members: unknown[] } }).content,
+										members: (m as { content: { members: unknown[] } }).content.members.map((arm) =>
+											(arm as { type?: string; value?: string }).type === 'STRING' &&
+											(arm as { value?: string }).value === ';'
+												? { type: 'ALIAS', content: arm, named: true, value: 'semicolon' }
+												: arm
+										)
+									}
+								}
+							: m
+					)
+				}),
+
 				_reserved_identifier: ($, original) => {
 					const members = original.members;
 					const last = members[members.length - 1];

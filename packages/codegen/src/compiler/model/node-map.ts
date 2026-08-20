@@ -79,6 +79,8 @@ import {
 	isEnumChoiceRule,
 	isLinkSymbol,
 	subtypeParseNamesOf,
+	subtypeRestampPairsOf,
+	aliasRestampRequired,
 	transitiveParseKinds
 } from '../../types/rule.ts';
 import { isStringType } from '../../types/runtime-shapes.ts';
@@ -374,6 +376,12 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly separator?: string;
 	readonly trailing?: boolean;
 	readonly leading?: boolean;
+	// Separated-list positions may be individually blank (array elision,
+	// `[a, , b]`): storage is `Array<X | undefined>`, holes are `undefined`
+	// entries. Projected from the rule-level `optionalElement` stamp
+	// (wrapper-deletion) exactly as `separator` is; only meaningful on
+	// array/nonEmptyArray multiplicities.
+	readonly optionalElement?: boolean;
 	// Literal-only token-wrapper flags (see interface doc).
 	readonly immediate?: boolean;
 	readonly tokenized?: boolean;
@@ -422,6 +430,13 @@ export function isMultiple(slot: { values: readonly NodeOrTerminal[] }): boolean
 export function isNonEmpty(slot: { values: readonly NodeOrTerminal[] }): boolean {
 	const multis = slot.values.filter((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
 	return multis.length > 0 && multis.every((v) => v.multiplicity === 'nonEmptyArray');
+}
+
+/** Separated-list slot whose positions may be individually blank (array
+ *  elision, `[a, , b]`): storage is `Array<X | undefined>`, holes are
+ *  `undefined` entries. See `NodeRef.optionalElement`. */
+export function hasOptionalElements(slot: { values: readonly NodeOrTerminal[] }): boolean {
+	return slot.values.some((v) => v.optionalElement === true);
 }
 
 export interface SlotCardinality {
@@ -953,15 +968,25 @@ function resolveParseKindCollisions(
 function resolveParseKindCollisionsInSlot(slot: AssembledNonterminal, ctx: KindedDeriveCtx): AssembledNonterminal {
 	const describedValues: ParseKindCollisionValue<NodeOrTerminal>[] = slot.values.map((value) => {
 		const storageKind = storageKindOfValue(value);
+		// Mint stamps as collision-free identities — terminals carry theirs on
+		// resolvedKindId (the literal-chain stamp), node refs on storageKindId.
+		// Unstamped values resolve through the catalog: the collision check
+		// decides WIRE-identity injectivity (the grammar symbol the read stamps
+		// as `$type`), so an id must be recovered wherever one exists — a
+		// name-only fallback would conservatively re-flag arms the wire
+		// actually tells apart.
+		const stampedStorageKindId = isNodeRef(value) ? value.storageKindId : value.resolvedKindId;
+		const storageKindId =
+			stampedStorageKindId ??
+			(storageKind !== undefined && ctx.kindEntries !== undefined
+				? findEntryForKindName(ctx.kindEntries, storageKind)?.id
+				: undefined);
 		return {
 			original: value,
 			parseKind: value.parseKind?.name,
 			storageKind,
-			// PR-K3e: mint stamps as collision-free identities — terminals carry
-			// theirs on resolvedKindId (the literal-chain stamp), node refs on
-			// storageKindId. Absent stamps fall back to name keying in the core.
 			parseKindId: value.parseKindId,
-			storageKindId: isNodeRef(value) ? value.storageKindId : value.resolvedKindId,
+			storageKindId,
 			structuralSignature: structuralSignatureOfValue(value, ctx, storageKind),
 			preferRepresentative: storageKind !== undefined && storageKind === value.parseKind?.name
 		};
@@ -986,6 +1011,7 @@ function structuralSignatureOfValue(value: NodeOrTerminal, ctx: DeriveCtx, stora
 		value.separator ?? '',
 		value.trailing ? 't' : '',
 		value.leading ? 'l' : '',
+		value.optionalElement ? 'oe' : '',
 		isTerminalValue(value) && value.immediate ? 'i' : '',
 		isTerminalValue(value) && value.tokenized ? 'tok' : ''
 	].join('|');
@@ -1026,11 +1052,27 @@ export function extractSeparatorString(sep: RuleBase<'normalize'>['separator']):
 	return undefined;
 }
 
-export function stampSeparatorOnValues(values: NodeOrTerminal[], separatorStr: string | undefined): NodeOrTerminal[] {
-	if (!separatorStr) return values;
-	return values.map((v) =>
-		v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray' ? { ...v, separator: separatorStr } : v
-	);
+export interface ListSlotFactsCtx {
+	readonly separator?: string;
+	readonly optionalElement?: boolean;
+}
+
+/**
+ * Stamp separated-list facts (separator literal, per-position elidability)
+ * onto array/nonEmptyArray multiplicity values. Single-value slots are left
+ * unchanged.
+ */
+export function stampListFactsOnValues(values: NodeOrTerminal[], ctx: ListSlotFactsCtx): NodeOrTerminal[] {
+	const { separator, optionalElement } = ctx;
+	if (!separator && optionalElement !== true) return values;
+	return values.map((v) => {
+		if (v.multiplicity !== 'array' && v.multiplicity !== 'nonEmptyArray') return v;
+		return {
+			...v,
+			...(separator ? { separator } : {}),
+			...(optionalElement === true ? { optionalElement: true } : {})
+		};
+	});
 }
 
 /**
@@ -1806,21 +1848,28 @@ export function aliasTargetToSourceMapOf(slot: {
 }
 
 /**
- * Resolve every {parseName -> storageName} restamp pair a slot's runtime
- * value can require — the same fact `wrap.ts`'s drillAs/drillAsAll
- * accessors key their alias restamp on. Two sources, unioned:
+ * Resolve every {parseName -> storageName} pair a slot's runtime value can
+ * present — the display (parse) names that diverge from the storage kind.
+ * Serialized as the node model's `fieldAliasMap` and consumed by the corpus
+ * validators to normalize display names against storage kinds (the wire
+ * `$type` is the grammar symbol stamped by the native read, so no runtime
+ * restamp exists). Two sources, unioned:
  *
- * 1. {@link aliasTargetToSourceMapOf} — the slot's own values, where a
- *    NodeRef's stamped parse-kind differs from its storage kind (a
- *    directly-aliased arm, e.g. a polymorphic choice where several arms
- *    each alias onto their own shared canonical name).
+ * 1. The slot's own values, where a NodeRef's stamped parse-kind differs
+ *    from its storage kind (a directly-aliased arm, e.g. a polymorphic
+ *    choice where several arms each alias onto their own shared canonical
+ *    name).
  * 2. A slot whose value is a single opaque reference to a hidden
  *    supertype-modeled node (e.g. `_tuple_type_member`) rather than
  *    expanding directly into concrete arm NodeRefs — the per-arm alias
  *    info there lives one level down, in that node's own
- *    `subtypeParseNames` map (storageKind -> parseKind), which already
- *    records exactly which arms diverge (e.g. `tuple_parameter` ->
- *    `required_parameter`).
+ *    `subtypeRestampPairs` projection, which already records exactly
+ *    which arms diverge (e.g. `tuple_parameter` -> `required_parameter`).
+ *
+ * Both sources admit only aliases the parser kept two symbols for
+ * ({@link aliasRestampRequired}): a hidden rule merged into its sole alias
+ * name arrives on the wire ALREADY under the storage kind's id, so a
+ * pair for it would remap every occurrence to itself.
  *
  * `ctx.nodes` is duck-typed against `NodeMap['nodes']` rather than
  * importing the `NodeMap` type directly — `NodeMap` (in
@@ -1828,21 +1877,31 @@ export function aliasTargetToSourceMapOf(slot: {
  * THIS module, so a direct import here would be circular.
  */
 export interface SlotAliasPairsCtx {
-	readonly nodes: ReadonlyMap<string, { modelType: string; subtypeParseNames?: Readonly<Record<string, string>> }>;
+	readonly nodes: ReadonlyMap<
+		string,
+		{ modelType: string; subtypeRestampPairs?: ReadonlyArray<readonly [string, string]> }
+	>;
 }
 
 export function resolveSlotAliasPairs(
 	slot: { values: readonly NodeOrTerminal[] },
 	ctx: SlotAliasPairsCtx
 ): readonly (readonly [string, string])[] | undefined {
-	const pairs: (readonly [string, string])[] = Object.entries(aliasTargetToSourceMapOf(slot));
+	const byParseName = new Map<string, string>();
+	for (const value of slot.values) {
+		if (!isNodeRef(value)) continue;
+		const parseKind = value.parseKind?.name;
+		const sourceKind = storageKindOfRef(value.node);
+		if (parseKind === undefined || parseKind === sourceKind) continue;
+		if (!aliasRestampRequired(value.parseKindId, value.storageKindId)) continue;
+		byParseName.set(parseKind, sourceKind);
+	}
+	const pairs: (readonly [string, string])[] = [...byParseName.entries()];
 	for (const parseKind of valueParseKindsOf(slot)) {
 		const normalized = parseKind.startsWith('_') ? parseKind.slice(1) : parseKind;
 		const node = ctx.nodes.get(parseKind) ?? ctx.nodes.get(normalized);
 		if (node?.modelType !== 'supertype') continue;
-		for (const [storageKind, parseName] of Object.entries(node.subtypeParseNames ?? {})) {
-			if (storageKind !== parseName) pairs.push([parseName, storageKind]);
-		}
+		for (const pair of node.subtypeRestampPairs ?? []) pairs.push(pair);
 	}
 	return pairs.length > 0 ? pairs : undefined;
 }
@@ -1886,7 +1945,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	// names are the distinct value parse-as (CST / alias-target) kinds.
 	const parseNames = slot.fieldName !== undefined ? [slot.fieldName] : valueParseNamesOf(slot);
 	// storageName derives from the STORAGE / render-source kind (`value.node` —
-	// how the value is stored and keyed via `drillAs`), NOT `parseKind`. The two
+	// the kind the value is stored and typed under), NOT `parseKind`. The two
 	// projections are parallel and must NOT cross: storageKind→storageName,
 	// parseKind→parseNames. `distinctStorageKinds` mirrors `kindsOf` (node-ref
 	// values' source kind). A slot whose values share ONE storage kind is named
@@ -1895,10 +1954,10 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	// to the generic `content` (the parseName `block` is NOT its storage name).
 	// Storage kinds from node-ref values (the render-source kind via `value.node`).
 	const nodeRefStorageKinds = [...new Set(slot.values.filter(isNodeRef).map((v) => storageKindOfRef(v.node)))];
-	// PR-P Task 3 step 3: when a slot is PURELY inline literals (no node-refs),
-	// its storage kind is the literal's resolved catalog kind — so a slot holding
-	// a single resolved literal is named after that kind instead of the generic
-	// `content` (§4c — `content` is for genuinely-anonymous multi-kind unions).
+	// When a slot is PURELY inline literals (no node-refs), its storage kind is
+	// the literal's resolved catalog kind — so a slot holding a single resolved
+	// literal is named after that kind instead of the generic `content`
+	// (`content` is reserved for genuinely-anonymous multi-kind unions).
 	// A MIXED ref+literal slot keeps its ref-based naming (the literal is
 	// incidental punctuation, not the storage identity) — e.g. `splat_pattern`'s
 	// `{identifier, _}` stays `identifier`, not `content`. Unresolved literals
@@ -2737,6 +2796,12 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 		if (this.rule.type !== SUPERTYPE) return undefined;
 		const pairs = subtypeParseNamesOf(this.rule);
 		return Object.keys(pairs).length > 0 ? pairs : undefined;
+	}
+
+	get subtypeRestampPairs(): ReadonlyArray<readonly [string, string]> | undefined {
+		if (this.rule.type !== SUPERTYPE) return undefined;
+		const pairs = subtypeRestampPairsOf(this.rule);
+		return pairs.length > 0 ? pairs : undefined;
 	}
 }
 

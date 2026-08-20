@@ -230,6 +230,7 @@ fn is_allowed_node_key(key: &str) -> bool {
             | "$nodeHandle"
             | "$childIndex"
             | "$triviaData"
+            | "$slotOrder"
     ) || key.starts_with('_')
 }
 

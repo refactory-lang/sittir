@@ -38,6 +38,7 @@ import {
 	classifyChildFactorySurface,
 	classifyFromEmission,
 	unnamedChildSlotFacts,
+	type UnnamedChildSlotFacts,
 	canonicalSeparatedListField
 } from './shared.ts';
 import { fieldElementType, childElementType, kindEnumTextMapExpr } from './factories.ts';
@@ -278,7 +279,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	const childSurface = branchTarget !== null ? classifyChildFactorySurface(branchTarget, nodeMap) : null;
 	if (childSurface === 'direct' || childSurface === 'spread') {
 		if (branchTarget === null) return null;
-		const facts = unnamedChildSlotFacts(branchTarget.fields);
+		const facts = unnamedChildSlotFacts(branchTarget, nodeMap);
 		if (!facts) return null;
 		// Rest params (`...children`) always accept zero args. A singular
 		// positional `child` is safe only when it's itself optional.
@@ -310,7 +311,8 @@ function emitBranchFrom(
 				typeName: node.typeName,
 				rawFactoryName: node.rawFactoryName,
 				fromFunctionName: node.fromFunctionName,
-				fields: node.fields
+				fields: node.fields,
+				childSlotFacts: unnamedChildSlotFacts(node, nodeMap)
 			},
 			kindEntries,
 			nodeMap
@@ -333,10 +335,14 @@ function emitBranchFrom(
 	const soleField = !nodeMap.polymorphFormKinds.has(node.kind)
 		? resolveSingleFieldFactorySlot(node, nodeMap)
 		: undefined;
-	const canDirectFactoryCall =
-		soleField &&
-		classifyFactoryShape(node, nodeMap) === 'direct' &&
-		!node.fields.some((field) => keywordPresenceKind(field, nodeMap) !== null);
+	// `classifyFactoryShape` returning 'direct' already guarantees the sole
+	// user slot is the only non-stamped field (resolveDirectFactorySlot) —
+	// no separate keyword-presence exclusion needed here.
+	const shapeForDirect = classifyFactoryShape(node, nodeMap);
+	// 'forwarded' refines 'direct' — the factory still accepts the single
+	// direct value (a pre-built node dispatches via $type), so the same
+	// direct-call emission applies.
+	const canDirectFactoryCall = soleField && (shapeForDirect === 'direct' || shapeForDirect === 'forwarded');
 	lines.push(`export function ${fn}(input${opt}: ${inputType}): ${returnType} {`);
 	if (fields.length > 0) {
 		if (canDirectFactoryCall) {
@@ -429,9 +435,11 @@ interface ContainerFromNode {
 	readonly typeName: string;
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
-	// Post-unification: the unnamed-child slot is exposed via `fields[0]`. Its
-	// `storageName` drives the `_<name>` data key we read here.
 	readonly fields?: readonly AssembledNonterminal[];
+	// The container's classified sole user slot (unnamedChildSlotFacts) —
+	// its `storageName` drives the `_<name>` data key we read here. Computed
+	// by the caller from the full node; not derivable from `fields` alone.
+	readonly childSlotFacts: UnnamedChildSlotFacts | null;
 }
 
 function containerTypeCheck(kind: string, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): string {
@@ -572,11 +580,10 @@ function emitContainerFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const tName = `T.${node.typeName}`;
-	// Post-unification: the unnamed slot lives in `node.fields[0]` with a
-	// kind-derived `storageName`. The interface declares `_<storageName>` per
-	// slot (no `$other`), so the element type is the slot's element type and
-	// the data read is `data._<storageName>`.
-	const facts = unnamedChildSlotFacts(node.fields ?? []);
+	// The interface declares `_<storageName>` per slot (no `$other`), so the
+	// element type is the slot's element type and the data read is
+	// `data._<storageName>` — keyed off the classified sole user slot.
+	const facts = node.childSlotFacts;
 	const elementType = facts
 		? childElementType({ children: node.fields ?? [] }, nodeMap)
 		: `NonNullable<T.${node.typeName}['$other']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$other']>`;
@@ -615,6 +622,14 @@ function emitSeparatedListFrom(
 	const hasTrailingOption = node.trailingMode === 'optional';
 	const hasOptions = hasSeparatorKindOption || hasLeadingOption || hasTrailingOption;
 
+	// The factory's spread signature — `fn(...elements)` / `fn(options,
+	// ...elements)` — needs the elements ARRAY spread at the call, typed as
+	// the same rest-tuple the factory declares (mirrors
+	// emitSeparatedListFactory's elementsType derivation).
+	const elemTypeForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
+	const elementsType = node.nonEmpty ? `NonEmptyArray<${elemType}>` : `${elemTypeForArray}[]`;
+	const spreadElements = (varExpr: string): string => `...(${varExpr} as unknown as ${elementsType})`;
+
 	const buildOptionsPreservingCall = (varExpr: string): string => {
 		// `data`'s ambient type has no arbitrary storage keys (same reason
 		// `storageAccess` above needs its own `unknown` cast) — read the
@@ -632,7 +647,7 @@ function emitSeparatedListFrom(
 		}
 		if (hasLeadingOption) optionParts.push(`leading: ${sourceFields}._leading_sep`);
 		if (hasTrailingOption) optionParts.push(`trailing: ${sourceFields}._trailing_sep`);
-		return `${factory}(${varExpr} as Parameters<typeof ${factory}>[0], { ${optionParts.join(', ')} } as Parameters<typeof ${factory}>[1])`;
+		return `${factory}({ ${optionParts.join(', ')} }, ${spreadElements(varExpr)})`;
 	};
 
 	return emitRestParamFromResolver(
@@ -647,7 +662,7 @@ function emitSeparatedListFrom(
 		(varExpr, isSelfUnwrap) =>
 			isSelfUnwrap && hasOptions
 				? buildOptionsPreservingCall(varExpr)
-				: `${factory}(${varExpr} as Parameters<typeof ${factory}>[0])`,
+				: `${factory}(${spreadElements(varExpr)})`,
 		': readonly unknown[]'
 	);
 }
@@ -1086,7 +1101,7 @@ function collectWrapChildrenEntries(
 			// Real arity decides direct-vs-spread — see `unnamedChildSlotFacts`'s
 			// doc comment for why this reads the slot directly rather than
 			// trusting `classifyFactoryShape`'s label for the shape itself.
-			childSurface = unnamedChildSlotFacts(node.fields)?.multiple ? 'spread' : 'direct';
+			childSurface = unnamedChildSlotFacts(node, nodeMap)?.multiple ? 'spread' : 'direct';
 		}
 		entries.push({
 			kind,
@@ -1123,15 +1138,13 @@ function emitWrapWithChildrenTable(
 				`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}(...(children as Parameters<typeof F.${e.factoryName}>));`
 			);
 		} else if (e.childSurface === 'array') {
-			// 'separatedList' — the whole array IS the `elements` argument, never
-			// spread and never indexed. See `emitSeparatedListFrom`'s doc comment.
-			// Direct cast (no `as unknown` intermediate) — `children`'s own
-			// declared param type is already `readonly unknown[]`, which tsgo
-			// accepts as directly comparable to the tuple-shaped
-			// `NonEmptyArray<T>` target (confirmed empirically; see
-			// `emitSeparatedListFrom`'s doc comment for the same finding).
+			// 'separatedList' — the factory's spread-with-leading-options
+			// signature takes the elements as REST arguments; spread the array
+			// into the call (the `unknown` launder is unavoidable here: the
+			// overloaded signature's Parameters<> resolves to the
+			// options-leading overload, not the rest tuple).
 			lines.push(
-				`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}(children as Parameters<typeof F.${e.factoryName}>[0]);`
+				`    case ${JSON.stringify(e.kind)}: return (F.${e.factoryName} as (...args: unknown[]) => unknown)(...children);`
 			);
 		} else {
 			lines.push(

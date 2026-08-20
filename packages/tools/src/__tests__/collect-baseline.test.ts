@@ -1,7 +1,7 @@
 /**
  * Tests for `collect-baseline.ts` — the producer of the per-backend
  * BackendBaseline JSON files committed under
- * `specs/016-parity-regressions/baselines/{ts,native}.json`.
+ * `packages/tools/baselines/native.json`.
  *
  * Contract: see `specs/016-parity-regressions/contracts/baseline-json.md`.
  *
