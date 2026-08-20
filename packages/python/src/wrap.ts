@@ -6031,6 +6031,14 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle) {
 				'right',
 				{ tree, nodeType: data.$type, slotName: 'right', span: (data as _NodeData).$span }
 			),
+			_comma: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._comma, 'comma', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'comma',
+					span: (data as _NodeData).$span
+				})
+			),
 
 			asyncMarker() {
 				return this._async_marker;
@@ -6044,12 +6052,16 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle) {
 					tree
 				);
 			},
+			comma() {
+				return this._comma;
+			},
 			$with: {
 				asyncMarker: (v: NonNullable<T.ForInClause['_async_marker']>) =>
 					wrapForInClause({ ...data, _async_marker: v }, tree),
 				left: (v: NonNullable<T.ForInClause['_left']>) => wrapForInClause({ ...data, _left: v }, tree),
 				rights: (...v: NonEmptyArray<NonNullable<T.ForInClause['_right']>[number]>) =>
-					wrapForInClause({ ...data, _right: v }, tree)
+					wrapForInClause({ ...data, _right: v }, tree),
+				comma: (v: NonNullable<T.ForInClause['_comma']>) => wrapForInClause({ ...data, _comma: v }, tree)
 			}
 		},
 		methodsEngine

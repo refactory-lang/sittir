@@ -4903,8 +4903,15 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "STRING",
-                "value": ","
+                "type": "FIELD",
+                "name": "comma",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_kw_comma"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               },
               {
                 "type": "BLANK"
@@ -7230,6 +7237,14 @@
         "value": "-"
       }
     },
+    "_kw_comma": {
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "STRING",
+        "value": ","
+      }
+    },
     "_kw_eq_marker": {
       "type": "STRING",
       "value": "="
@@ -7609,6 +7624,7 @@
     "_function_definition_optional1",
     "_exec_statement_optional1",
     "_kw_real",
+    "_kw_comma",
     "_kw_eq_marker",
     "_kw_type"
   ],

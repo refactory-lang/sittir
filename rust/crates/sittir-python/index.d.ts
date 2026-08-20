@@ -766,6 +766,7 @@ export interface ForInClauseTransport {
   _async_marker?: KwAsyncMarkerTransport
   _left: LeftHandSideTransport
   _right: Array<ExpressionWithinForInClauseTransport>
+  _comma?: boolean
 }
 
 export interface FormatSpecifierTransport {

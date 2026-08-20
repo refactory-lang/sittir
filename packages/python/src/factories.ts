@@ -2819,6 +2819,7 @@ export function buildForInClause(config: T.ForInClause.Config) {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _left = config.left;
 	const _right = config.right ?? [];
+	const _comma = coerceBooleanKeywordStorage(config.comma);
 	return withMethods(
 		withAccessors(
 			{
@@ -2828,18 +2829,22 @@ export function buildForInClause(config: T.ForInClause.Config) {
 				_async_marker,
 				_left,
 				_right,
+				_comma,
 				$with: {
 					asyncMarker: (value?: NonNullable<Parameters<typeof buildForInClause>[0]>['asyncMarker']) =>
 						buildForInClause({ ...config, asyncMarker: value }),
 					left: (value: T.LeftHandSide) => buildForInClause({ ...config, left: value }),
 					rights: (...values: NonEmptyArray<T.ExpressionWithinForInClause>) =>
-						buildForInClause({ ...config, right: values })
+						buildForInClause({ ...config, right: values }),
+					comma: (value?: NonNullable<Parameters<typeof buildForInClause>[0]>['comma']) =>
+						buildForInClause({ ...config, comma: value })
 				}
 			},
 			{
 				asyncMarker: () => _async_marker,
 				left: () => _left,
-				rights: () => _right
+				rights: () => _right,
+				comma: () => _comma
 			}
 		),
 		methodsEngine

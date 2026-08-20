@@ -1,13 +1,13 @@
 {
     "backend": "native",
-    "commit": "23e6474",
+    "commit": "56d71a6",
     "grammars": {
         "python": {
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
-                "pass": 1256,
-                "total": 1256
+                "pass": 1259,
+                "total": 1259
             },
             "validators": {
                 "coverage": {
@@ -32,7 +32,7 @@
                     "total": 122
                 },
                 "roundtrip": {
-                    "astMatchPass": 110,
+                    "astMatchPass": 111,
                     "failingKinds": [
                         "module"
                     ],
@@ -129,7 +129,7 @@
     },
     "totals": {
         "fail": 29,
-        "pass": 9518,
-        "total": 9547
+        "pass": 9521,
+        "total": 9550
     }
 }

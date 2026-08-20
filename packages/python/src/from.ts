@@ -1945,7 +1945,8 @@ export function coerceToForInClause(input: T.ForInClause.Loose): ReturnType<type
 			'left',
 			_resolveOne<T.LeftHandSide>(input.left, _super_keyword_identifier, _K9)
 		),
-		right: _ne_rights
+		right: _ne_rights,
+		comma: _resolveBooleanKeyword(input.comma)
 	});
 }
 

@@ -2142,6 +2142,16 @@
           }
         ]
       },
+      "comma": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": ",",
+            "named": false
+          }
+        ]
+      },
       "left": {
         "multiple": false,
         "required": true,

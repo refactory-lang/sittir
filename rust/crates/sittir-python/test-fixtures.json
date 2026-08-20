@@ -55641,6 +55641,565 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 108,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 237,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 122,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 0,
+                  "end": 30
+                },
+                "$nodeHandle": 45,
+                "_content": {
+                  "$type": 220,
+                  "$source": 0,
+                  "$named": true,
+                  "_body": {
+                    "$type": 201,
+                    "$source": 0,
+                    "$named": true,
+                    "_value": {
+                      "$type": 201,
+                      "$source": 0,
+                      "$named": true,
+                      "_value": "a",
+                      "_subscripts": {
+                        "$type": 249,
+                        "$source": 0,
+                        "$named": true,
+                        "_subscript": [
+                          "b"
+                        ],
+                        "$span": {
+                          "start": 3,
+                          "end": 4
+                        },
+                        "$nodeHandle": 49,
+                        "_trailing_sep": false
+                      },
+                      "$other": [
+                        41,
+                        42
+                      ],
+                      "$span": {
+                        "start": 1,
+                        "end": 5
+                      },
+                      "$nodeHandle": 48
+                    },
+                    "_subscripts": {
+                      "$type": 249,
+                      "$source": 0,
+                      "$named": true,
+                      "_subscript": [
+                        "c"
+                      ],
+                      "$span": {
+                        "start": 6,
+                        "end": 7
+                      },
+                      "$nodeHandle": 50,
+                      "_trailing_sep": false
+                    },
+                    "$other": [
+                      41,
+                      42
+                    ],
+                    "$span": {
+                      "start": 1,
+                      "end": 8
+                    },
+                    "$nodeHandle": 47
+                  },
+                  "_comprehension_clauses": {
+                    "$type": 257,
+                    "$source": 0,
+                    "$named": true,
+                    "_content": [
+                      {
+                        "$type": 223,
+                        "$source": 0,
+                        "$named": true,
+                        "_left": {
+                          "$type": 197,
+                          "$source": 0,
+                          "$named": true,
+                          "_tail": {
+                            "$type": 248,
+                            "$source": 0,
+                            "$named": true,
+                            "$other": [
+                              6,
+                              6
+                            ],
+                            "$span": {
+                              "start": 14,
+                              "end": 20
+                            },
+                            "$nodeHandle": 54,
+                            "_pattern": [
+                              "b",
+                              "c"
+                            ],
+                            "_trailing_sep": false
+                          },
+                          "$span": {
+                            "start": 13,
+                            "end": 20
+                          },
+                          "$nodeHandle": 53,
+                          "_pattern": "a"
+                        },
+                        "_right": [
+                          "items"
+                        ],
+                        "$other": [
+                          24,
+                          25
+                        ],
+                        "$span": {
+                          "start": 9,
+                          "end": 29
+                        },
+                        "$nodeHandle": 52
+                      }
+                    ],
+                    "$span": {
+                      "start": 9,
+                      "end": 29
+                    },
+                    "$nodeHandle": 51
+                  },
+                  "$other": [
+                    33,
+                    34
+                  ],
+                  "$span": {
+                    "start": 0,
+                    "end": 30
+                  },
+                  "$nodeHandle": 46
+                }
+              }
+            ],
+            "$span": {
+              "start": 0,
+              "end": 30
+            },
+            "$nodeHandle": 44,
+            "_trailing_sep": false
+          },
+          "_newline": 101,
+          "$span": {
+            "start": 0,
+            "end": 30
+          },
+          "$nodeHandle": 40
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 237,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 122,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 31,
+                  "end": 57
+                },
+                "$nodeHandle": 56,
+                "_content": {
+                  "$type": 203,
+                  "$source": 0,
+                  "$named": true,
+                  "_function": "dict",
+                  "_arguments": {
+                    "$type": 220,
+                    "$source": 0,
+                    "$named": true,
+                    "_body": {
+                      "$type": 214,
+                      "$source": 0,
+                      "$named": true,
+                      "$other": [
+                        33,
+                        34
+                      ],
+                      "$span": {
+                        "start": 36,
+                        "end": 42
+                      },
+                      "$nodeHandle": 59,
+                      "_collection_elements": {
+                        "$type": 222,
+                        "$source": 0,
+                        "$named": true,
+                        "_element": [
+                          "a",
+                          "b"
+                        ],
+                        "$other": [
+                          6
+                        ],
+                        "$span": {
+                          "start": 37,
+                          "end": 41
+                        },
+                        "$nodeHandle": 60,
+                        "_trailing_sep": false
+                      }
+                    },
+                    "_comprehension_clauses": {
+                      "$type": 257,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        {
+                          "$type": 223,
+                          "$source": 0,
+                          "$named": true,
+                          "_left": {
+                            "$type": 197,
+                            "$source": 0,
+                            "$named": true,
+                            "_tail": {
+                              "$type": 248,
+                              "$source": 0,
+                              "$named": true,
+                              "$other": [
+                                6
+                              ],
+                              "$span": {
+                                "start": 48,
+                                "end": 51
+                              },
+                              "$nodeHandle": 64,
+                              "_pattern": [
+                                "b"
+                              ],
+                              "_trailing_sep": false
+                            },
+                            "$span": {
+                              "start": 47,
+                              "end": 51
+                            },
+                            "$nodeHandle": 63,
+                            "_pattern": "a"
+                          },
+                          "_right": [
+                            "d"
+                          ],
+                          "$other": [
+                            24,
+                            25
+                          ],
+                          "$span": {
+                            "start": 43,
+                            "end": 56
+                          },
+                          "$nodeHandle": 62
+                        }
+                      ],
+                      "$span": {
+                        "start": 43,
+                        "end": 56
+                      },
+                      "$nodeHandle": 61
+                    },
+                    "$other": [
+                      33,
+                      34
+                    ],
+                    "$span": {
+                      "start": 35,
+                      "end": 57
+                    },
+                    "$nodeHandle": 58
+                  },
+                  "$span": {
+                    "start": 31,
+                    "end": 57
+                  },
+                  "$nodeHandle": 57
+                }
+              }
+            ],
+            "$span": {
+              "start": 31,
+              "end": 57
+            },
+            "$nodeHandle": 55,
+            "_trailing_sep": false
+          },
+          "_newline": 101,
+          "$span": {
+            "start": 31,
+            "end": 57
+          },
+          "$nodeHandle": 41
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 237,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 122,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 58,
+                  "end": 84
+                },
+                "$nodeHandle": 66,
+                "_content": {
+                  "$type": 220,
+                  "$source": 0,
+                  "$named": true,
+                  "_body": "a",
+                  "_comprehension_clauses": {
+                    "$type": 257,
+                    "$source": 0,
+                    "$named": true,
+                    "_content": [
+                      {
+                        "$type": 223,
+                        "$source": 0,
+                        "$named": true,
+                        "_left": "b",
+                        "_right": [
+                          "c"
+                        ],
+                        "$other": [
+                          24,
+                          25
+                        ],
+                        "$span": {
+                          "start": 61,
+                          "end": 71
+                        },
+                        "$nodeHandle": 69
+                      },
+                      {
+                        "$type": 223,
+                        "$source": 0,
+                        "$named": true,
+                        "_left": "d",
+                        "_right": [
+                          "e"
+                        ],
+                        "_comma": true,
+                        "$other": [
+                          24,
+                          25
+                        ],
+                        "$span": {
+                          "start": 72,
+                          "end": 83
+                        },
+                        "$nodeHandle": 70
+                      }
+                    ],
+                    "$span": {
+                      "start": 61,
+                      "end": 83
+                    },
+                    "$nodeHandle": 68
+                  },
+                  "$other": [
+                    33,
+                    34
+                  ],
+                  "$span": {
+                    "start": 58,
+                    "end": 84
+                  },
+                  "$nodeHandle": 67
+                }
+              }
+            ],
+            "$span": {
+              "start": 58,
+              "end": 84
+            },
+            "$nodeHandle": 65,
+            "_trailing_sep": false
+          },
+          "_newline": 101,
+          "$span": {
+            "start": 58,
+            "end": 84
+          },
+          "$nodeHandle": 42
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 237,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 122,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 85,
+                  "end": 110
+                },
+                "$nodeHandle": 72,
+                "_content": {
+                  "$type": 220,
+                  "$source": 0,
+                  "$named": true,
+                  "_body": "x",
+                  "_comprehension_clauses": {
+                    "$type": 257,
+                    "$source": 0,
+                    "$named": true,
+                    "_content": [
+                      {
+                        "$type": 223,
+                        "$source": 0,
+                        "$named": true,
+                        "_left": "x",
+                        "_right": [
+                          {
+                            "$type": 203,
+                            "$source": 0,
+                            "$named": true,
+                            "_function": "range",
+                            "_arguments": {
+                              "$type": 157,
+                              "$source": 0,
+                              "$named": true,
+                              "_arguments": {
+                                "$type": 244,
+                                "$source": 0,
+                                "$named": true,
+                                "_element": [
+                                  "1",
+                                  "10"
+                                ],
+                                "$other": [
+                                  6
+                                ],
+                                "$span": {
+                                  "start": 103,
+                                  "end": 108
+                                },
+                                "$nodeHandle": 78,
+                                "_trailing_sep": false
+                              },
+                              "$other": [
+                                33,
+                                34
+                              ],
+                              "$span": {
+                                "start": 102,
+                                "end": 109
+                              },
+                              "$nodeHandle": 77
+                            },
+                            "$span": {
+                              "start": 97,
+                              "end": 109
+                            },
+                            "$nodeHandle": 76
+                          }
+                        ],
+                        "$other": [
+                          24,
+                          25
+                        ],
+                        "$span": {
+                          "start": 88,
+                          "end": 109
+                        },
+                        "$nodeHandle": 75
+                      }
+                    ],
+                    "$span": {
+                      "start": 88,
+                      "end": 109
+                    },
+                    "$nodeHandle": 74
+                  },
+                  "$other": [
+                    33,
+                    34
+                  ],
+                  "$span": {
+                    "start": 85,
+                    "end": 110
+                  },
+                  "$nodeHandle": 73
+                }
+              }
+            ],
+            "$span": {
+              "start": 85,
+              "end": 110
+            },
+            "$nodeHandle": 71,
+            "_trailing_sep": false
+          },
+          "_newline": 101,
+          "$span": {
+            "start": 85,
+            "end": 110
+          },
+          "$nodeHandle": 43
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 110
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "(a[b][c]for a,b,c in items)\ndict((a,b)for a,b in d)\n(a for b in c for d in e,)\n(x for x in range(1,10))\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "(a[b][c] for a, b, c in items)\ndict((a, b) for a, b in d)\n(a for b in c for d in e,)\n(x for x in range(1, 10))",
+    "pattern": "module",
+    "edits": [],
+    "expectedSourceOut": "(a[b][c]for a,b,c in items)\ndict((a,b)for a,b in d)\n(a for b in c for d in e,)\n(x for x in range(1,10))\n",
+    "expectedReparseTree": "(module statements: (statement_group1 (simple_statements_elements simple_statement: (expression_statement (generator_expression body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier) (identifier))) right: (identifier)))))) (newline)) statements: (statement_group1 (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (generator_expression body: (tuple (element_list element: (identifier) element: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) right: (identifier))))))) (newline)) statements: (statement_group1 (simple_statements_elements simple_statement: (expression_statement (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) statements: (statement_group1 (simple_statements_elements simple_statement: (expression_statement (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (integer) element: (integer))))))))) (newline)))",
+    "wrappedText": "(a[b][c]for a,b,c in items)\ndict((a,b)for a,b in d)\n(a for b in c for d in e,)\n(x for x in range(1,10))\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 122,
       "$source": 0,
       "$named": true,
@@ -55931,6 +56490,96 @@
     "expectedSourceOut": "dict((a,b)for a,b in d)",
     "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (generator_expression body: (tuple (element_list element: (identifier) element: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) right: (identifier))))))",
     "wrappedText": "dict((a,b)for a,b in d)",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 58,
+        "end": 84
+      },
+      "$nodeHandle": 27,
+      "_content": {
+        "$type": 220,
+        "$source": 0,
+        "$named": true,
+        "_body": "a",
+        "_comprehension_clauses": {
+          "$type": 257,
+          "$source": 0,
+          "$named": true,
+          "_content": [
+            {
+              "$type": 223,
+              "$source": 0,
+              "$named": true,
+              "_left": "b",
+              "_right": [
+                "c"
+              ],
+              "$other": [
+                24,
+                25
+              ],
+              "$span": {
+                "start": 61,
+                "end": 71
+              },
+              "$nodeHandle": 98
+            },
+            {
+              "$type": 223,
+              "$source": 0,
+              "$named": true,
+              "_left": "d",
+              "_right": [
+                "e"
+              ],
+              "_comma": true,
+              "$other": [
+                24,
+                25
+              ],
+              "$span": {
+                "start": 72,
+                "end": 83
+              },
+              "$nodeHandle": 99
+            }
+          ],
+          "$span": {
+            "start": 61,
+            "end": 83
+          },
+          "$nodeHandle": 97
+        },
+        "$other": [
+          33,
+          34
+        ],
+        "$span": {
+          "start": 58,
+          "end": 84
+        },
+        "$nodeHandle": 96
+      }
+    },
+    "expectedOutput": "(a for b in c for d in e,)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "(a for b in c for d in e,)",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "(a for b in c for d in e,)",
+    "expectedReparseTree": "(expression_statement (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))",
+    "wrappedText": "(a for b in c for d in e,)",
     "wrappedOffset": 0
   },
   {
@@ -56309,6 +56958,86 @@
     "expectedSourceOut": "((a,b)for a,b in d)",
     "expectedReparseTree": "(generator_expression body: (tuple (element_list element: (identifier) element: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) right: (identifier))))",
     "wrappedText": "_ = ((a,b)for a,b in d)",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 220,
+      "$source": 0,
+      "$named": true,
+      "_body": "a",
+      "_comprehension_clauses": {
+        "$type": 257,
+        "$source": 0,
+        "$named": true,
+        "_content": [
+          {
+            "$type": 223,
+            "$source": 0,
+            "$named": true,
+            "_left": "b",
+            "_right": [
+              "c"
+            ],
+            "$other": [
+              24,
+              25
+            ],
+            "$span": {
+              "start": 61,
+              "end": 71
+            },
+            "$nodeHandle": 121
+          },
+          {
+            "$type": 223,
+            "$source": 0,
+            "$named": true,
+            "_left": "d",
+            "_right": [
+              "e"
+            ],
+            "_comma": true,
+            "$other": [
+              24,
+              25
+            ],
+            "$span": {
+              "start": 72,
+              "end": 83
+            },
+            "$nodeHandle": 122
+          }
+        ],
+        "$span": {
+          "start": 61,
+          "end": 83
+        },
+        "$nodeHandle": 120
+      },
+      "$other": [
+        33,
+        34
+      ],
+      "$span": {
+        "start": 58,
+        "end": 84
+      },
+      "$nodeHandle": 28
+    },
+    "expectedOutput": "(a for b in c for d in e,)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "(a for b in c for d in e,)",
+    "pattern": "generator_expression",
+    "edits": [],
+    "expectedSourceOut": "(a for b in c for d in e,)",
+    "expectedReparseTree": "(generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))",
+    "wrappedText": "_ = (a for b in c for d in e,)",
     "wrappedOffset": 4
   },
   {

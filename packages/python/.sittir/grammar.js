@@ -4600,7 +4600,8 @@ var grammar_sittir_default = grammar(
           2: field("in_clause")
         },
         for_in_clause: {
-          "0/0": field("async_marker")
+          "0/0": field("async_marker"),
+          "5/0": field("comma")
         },
         finally_clause: {
           2: field("block")

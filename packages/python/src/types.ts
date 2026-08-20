@@ -3057,12 +3057,15 @@ export interface ForInClause {
 	readonly _async_marker?: boolean;
 	readonly _left: LeftHandSide;
 	readonly _right: NonEmptyArray<ExpressionWithinForInClause>;
+	readonly _comma?: boolean;
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
+		readonly comma?: BooleanKeyword<','>;
 	};
 	asyncMarker(): boolean | undefined;
 	left(): LeftHandSide;
 	rights(): NonEmptyArray<ExpressionWithinForInClause>;
+	comma(): boolean | undefined;
 }
 
 export interface IfClause {

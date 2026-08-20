@@ -602,6 +602,7 @@ pub struct FinallyClauseTemplate<'a> {
 #[template(path = "for_in_clause.jinja", escape = "none")]
 pub struct ForInClauseTemplate<'a> {
     pub async_marker: OptionalNonterminalView<'a>,
+    pub comma: OptionalNonterminalView<'a>,
     pub left: SingleNonterminalView<'a>,
     pub right: ListNonterminalView<'a>,
 }

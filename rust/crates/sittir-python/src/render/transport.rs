@@ -12315,6 +12315,90 @@ impl RenderableTransport for ForInClauseAsyncMarkerTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum ForInClauseCommaTransportSlot {
+    Literal4_2c,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseCommaTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    6 => Ok(Self::Literal4_2c),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ForInClauseCommaTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ForInClauseCommaTransportSlot")
+                )?;
+                match kind_id {
+                    6 => Ok(Self::Literal4_2c),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ForInClauseCommaTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ForInClauseCommaTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ForInClauseCommaTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ForInClauseCommaTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ForInClauseCommaTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ForInClauseCommaTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ForInClauseCommaTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ForInClauseCommaTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn for_in_clause_comma_transport_slot_to_any(t: ForInClauseCommaTransportSlot) -> AnyTransport {
+    match t {
+        ForInClauseCommaTransportSlot::Literal4_2c => AnyTransport::Literal4_2c,
+    }
+}
+
+impl RenderableTransport for ForInClauseCommaTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ForInClauseCommaTransportSlot::Literal4_2c => dest.write_str(",").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum StringContentTransportSlot {
     Interpolation(InterpolationTransport),
     StringContent(StringContentTransport),
@@ -20282,6 +20366,8 @@ pub struct ForInClauseTransport {
     pub left: LeftHandSideTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: Vec<ExpressionWithinForInClauseTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma"))]
+    pub comma: Option<bool>,
 }
 
 impl RenderableTransport for ForInClauseTransport {
@@ -33934,6 +34020,11 @@ fn render_for_in_clause(node: &ForInClauseTransport, dest: &mut dyn ::std::fmt::
         async_marker: match &node.async_marker {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
+        },
+        comma: if node.comma.unwrap_or(false) {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(","))
+        } else {
+            OptionalNonterminalView::Missing
         },
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         right: ListNonterminalView {

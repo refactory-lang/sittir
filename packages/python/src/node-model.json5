@@ -1766,6 +1766,13 @@
         "required": true,
         "multiple": true,
         "nonEmpty": true
+      },
+      "comma": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "if_clause": {
@@ -7293,6 +7300,26 @@
             "kinds": [
               "_expression_within_for_in_clause"
             ]
+          }
+        },
+        {
+          "name": "comma",
+          "propertyName": "comma",
+          "paramName": "comma",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": ",",
+              "parseKind": "comma"
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": []
           }
         }
       ],

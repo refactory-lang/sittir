@@ -821,6 +821,7 @@ export type PythonGrammar = {
 		named: true;
 		fields: {
 			async_marker: { multiple: false; required: false; types: [{ type: 'async'; named: false }] };
+			comma: { multiple: false; required: false; types: [{ type: ','; named: false }] };
 			left: {
 				multiple: false;
 				required: true;
