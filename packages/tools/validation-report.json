@@ -1323,18 +1323,6 @@
   },
   {
     "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "block_comment",
-    "severity": "error",
-    "message": "native coords unresolved for alias target — comparing against a mismatched WASM id would be unsound",
-    "stage": "from",
-    "code": "from-error",
-    "label": "block_comment",
-    "sClass": "S1"
-  },
-  {
-    "source": "validator",
     "grammar": "typescript",
     "backend": "native",
     "kind": "member_expression",

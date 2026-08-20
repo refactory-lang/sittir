@@ -75636,6 +75636,204 @@
             "$named": true,
             "$text": "()",
             "$span": {
+              "start": 33,
+              "end": 35
+            },
+            "$nodeHandle": 5
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 36,
+              "end": 38
+            },
+            "$nodeHandle": 6,
+            "_statements": []
+          },
+          "$other": [
+            60
+          ],
+          "$span": {
+            "start": 26,
+            "end": 38
+          },
+          "$nodeHandle": 4,
+          "$triviaData": {
+            "leading": [
+              {
+                "$type": 319,
+                "$source": 0,
+                "$named": true,
+                "$text": "/* plain block comment */",
+                "$span": {
+                  "start": 0,
+                  "end": 25
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 38
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "/* plain block comment */\nfn main(){  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "/* plain block comment */\nfn main() {}",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "/* plain block comment */\nfn main(){  }",
+    "expectedReparseTree": "(source_file (block_comment) statements: (function_item name: (identifier) parameters: (parameters) body: (block)))",
+    "wrappedText": "/* plain block comment */\nfn main(){  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 189,
+      "$source": 0,
+      "$named": true,
+      "_name": "main",
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 33,
+          "end": 35
+        },
+        "$nodeHandle": 7
+      },
+      "_body": {
+        "$type": 294,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 36,
+          "end": 38
+        },
+        "$nodeHandle": 8,
+        "_statements": []
+      },
+      "$other": [
+        60
+      ],
+      "$span": {
+        "start": 26,
+        "end": 38
+      },
+      "$nodeHandle": 1,
+      "$triviaData": {
+        "leading": [
+          {
+            "$type": 319,
+            "$source": 0,
+            "$named": true,
+            "$text": "/* plain block comment */",
+            "$span": {
+              "start": 0,
+              "end": 25
+            }
+          }
+        ]
+      }
+    },
+    "expectedOutput": "/* plain block comment */\nfn main(){  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "fn main() {}",
+    "pattern": "function_item",
+    "edits": [],
+    "expectedSourceOut": "/* plain block comment */\nfn main(){  }",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block))",
+    "wrappedText": "/* plain block comment */\nfn main(){  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 33,
+        "end": 35
+      },
+      "$nodeHandle": 2
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "()",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(parameters)",
+    "wrappedText": "fn _f() {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 294,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 36,
+        "end": 38
+      },
+      "$nodeHandle": 3,
+      "_statements": []
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{}",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(block)",
+    "wrappedText": "fn _f() { let _ = {  }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_name": "main",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "$text": "()",
+            "$span": {
               "start": 7,
               "end": 9
             },

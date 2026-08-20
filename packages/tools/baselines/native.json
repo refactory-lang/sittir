@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "61cc8ff",
+    "commit": "5c240e2",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -46,8 +46,8 @@
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
-                "pass": 1482,
-                "total": 1482
+                "pass": 1486,
+                "total": 1486
             },
             "validators": {
                 "coverage": {
@@ -57,26 +57,24 @@
                     "total": 204
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1503,
+                    "astMatchPass": 1507,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1503,
-                    "total": 1503
+                    "pass": 1507,
+                    "total": 1507
                 },
                 "from": {
-                    "failingKinds": [
-                        "block_comment"
-                    ],
+                    "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 145,
+                    "pass": 146,
                     "total": 146
                 },
                 "roundtrip": {
-                    "astMatchPass": 133,
+                    "astMatchPass": 134,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 133,
-                    "total": 136
+                    "pass": 134,
+                    "total": 137
                 }
             }
         },
@@ -105,7 +103,7 @@
                 },
                 "from": {
                     "failingKinds": [
-                        "call_expression"
+                        "member_expression"
                     ],
                     "formatDeferredKinds": [],
                     "pass": 139,
@@ -122,8 +120,8 @@
         }
     },
     "totals": {
-        "fail": 25,
-        "pass": 9562,
-        "total": 9587
+        "fail": 24,
+        "pass": 9572,
+        "total": 9596
     }
 }
