@@ -68789,6 +68789,799 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 108,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 134,
+          "$source": 0,
+          "$named": true,
+          "_subjects": {
+            "$type": 239,
+            "$source": 0,
+            "$named": true,
+            "_subject": [
+              "xxx"
+            ],
+            "$span": {
+              "start": 6,
+              "end": 9
+            },
+            "$nodeHandle": 65,
+            "_trailing_sep": false
+          },
+          "_body": {
+            "$type": 135,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 10,
+              "end": 203
+            },
+            "$nodeHandle": 66,
+            "_content": {
+              "$type": 267,
+              "$source": 0,
+              "$named": true,
+              "_alternative": [
+                {
+                  "$type": 136,
+                  "$source": 0,
+                  "$named": true,
+                  "_case_patterns": {
+                    "$type": 240,
+                    "$source": 0,
+                    "$named": true,
+                    "_case_pattern": [
+                      {
+                        "$type": 163,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 20,
+                          "end": 26
+                        },
+                        "$nodeHandle": 75,
+                        "_content": {
+                          "$type": 165,
+                          "$source": 0,
+                          "$named": true,
+                          "_simple_pattern": [
+                            {
+                              "$type": 269,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 20,
+                                "end": 21
+                              },
+                              "$nodeHandle": 77,
+                              "_content": "3"
+                            },
+                            {
+                              "$type": 269,
+                              "$source": 0,
+                              "$named": true,
+                              "_sign": true,
+                              "$span": {
+                                "start": 24,
+                                "end": 26
+                              },
+                              "$nodeHandle": 78,
+                              "_content": "3"
+                            }
+                          ],
+                          "$other": [
+                            44
+                          ],
+                          "$span": {
+                            "start": 20,
+                            "end": 26
+                          },
+                          "$nodeHandle": 76
+                        }
+                      }
+                    ],
+                    "$span": {
+                      "start": 20,
+                      "end": 26
+                    },
+                    "$nodeHandle": 74,
+                    "_trailing_sep": false
+                  },
+                  "_consequence": {
+                    "$type": 268,
+                    "$source": 0,
+                    "$named": true,
+                    "_block": {
+                      "$type": 160,
+                      "$source": 0,
+                      "$named": true,
+                      "_statements": [
+                        {
+                          "$type": 110,
+                          "$source": 0,
+                          "$named": true,
+                          "_simple_statements_elements": {
+                            "$type": 237,
+                            "$source": 0,
+                            "$named": true,
+                            "_simple_statement": [
+                              {
+                                "$type": 128,
+                                "$source": 0,
+                                "$named": true,
+                                "$text": "pass",
+                                "$span": {
+                                  "start": 34,
+                                  "end": 38
+                                },
+                                "$nodeHandle": 83
+                              }
+                            ],
+                            "$span": {
+                              "start": 34,
+                              "end": 38
+                            },
+                            "$nodeHandle": 82,
+                            "_trailing_sep": false
+                          },
+                          "_newline": 101,
+                          "$span": {
+                            "start": 34,
+                            "end": 38
+                          },
+                          "$nodeHandle": 81
+                        }
+                      ],
+                      "$span": {
+                        "start": 34,
+                        "end": 38
+                      },
+                      "$nodeHandle": 80
+                    },
+                    "$span": {
+                      "start": 27,
+                      "end": 38
+                    },
+                    "$nodeHandle": 79
+                  },
+                  "$other": [
+                    23,
+                    19
+                  ],
+                  "$span": {
+                    "start": 15,
+                    "end": 38
+                  },
+                  "$nodeHandle": 68
+                },
+                {
+                  "$type": 136,
+                  "$source": 0,
+                  "$named": true,
+                  "_case_patterns": {
+                    "$type": 240,
+                    "$source": 0,
+                    "$named": true,
+                    "_case_pattern": [
+                      {
+                        "$type": 163,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 48,
+                          "end": 59
+                        },
+                        "$nodeHandle": 85,
+                        "_content": {
+                          "$type": 227,
+                          "$source": 0,
+                          "$named": true,
+                          "_string_start": "\"",
+                          "_content": [
+                            "something"
+                          ],
+                          "_string_end": "\"",
+                          "$span": {
+                            "start": 48,
+                            "end": 59
+                          },
+                          "$nodeHandle": 86
+                        }
+                      }
+                    ],
+                    "$span": {
+                      "start": 48,
+                      "end": 59
+                    },
+                    "$nodeHandle": 84,
+                    "_trailing_sep": false
+                  },
+                  "_consequence": {
+                    "$type": 268,
+                    "$source": 0,
+                    "$named": true,
+                    "_block": {
+                      "$type": 160,
+                      "$source": 0,
+                      "$named": true,
+                      "_statements": [
+                        {
+                          "$type": 110,
+                          "$source": 0,
+                          "$named": true,
+                          "_simple_statements_elements": {
+                            "$type": 237,
+                            "$source": 0,
+                            "$named": true,
+                            "_simple_statement": [
+                              {
+                                "$type": 128,
+                                "$source": 0,
+                                "$named": true,
+                                "$text": "pass",
+                                "$span": {
+                                  "start": 67,
+                                  "end": 71
+                                },
+                                "$nodeHandle": 91
+                              }
+                            ],
+                            "$span": {
+                              "start": 67,
+                              "end": 71
+                            },
+                            "$nodeHandle": 90,
+                            "_trailing_sep": false
+                          },
+                          "_newline": 101,
+                          "$span": {
+                            "start": 67,
+                            "end": 71
+                          },
+                          "$nodeHandle": 89
+                        }
+                      ],
+                      "$span": {
+                        "start": 67,
+                        "end": 71
+                      },
+                      "$nodeHandle": 88
+                    },
+                    "$span": {
+                      "start": 60,
+                      "end": 71
+                    },
+                    "$nodeHandle": 87
+                  },
+                  "$other": [
+                    23,
+                    19
+                  ],
+                  "$span": {
+                    "start": 43,
+                    "end": 71
+                  },
+                  "$nodeHandle": 69
+                },
+                {
+                  "$type": 136,
+                  "$source": 0,
+                  "$named": true,
+                  "_case_patterns": {
+                    "$type": 240,
+                    "$source": 0,
+                    "$named": true,
+                    "_case_pattern": [
+                      {
+                        "$type": 163,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 81,
+                          "end": 99
+                        },
+                        "$nodeHandle": 93,
+                        "_content": {
+                          "$type": 226,
+                          "$source": 0,
+                          "$named": true,
+                          "_string": [
+                            {
+                              "$type": 227,
+                              "$source": 0,
+                              "$named": true,
+                              "_string_start": "\"",
+                              "_content": [
+                                "something"
+                              ],
+                              "_string_end": "\"",
+                              "$span": {
+                                "start": 81,
+                                "end": 92
+                              },
+                              "$nodeHandle": 95
+                            },
+                            {
+                              "$type": 227,
+                              "$source": 0,
+                              "$named": true,
+                              "_string_start": "\"",
+                              "_content": [
+                                "else"
+                              ],
+                              "_string_end": "\"",
+                              "$span": {
+                                "start": 93,
+                                "end": 99
+                              },
+                              "$nodeHandle": 96
+                            }
+                          ],
+                          "$span": {
+                            "start": 81,
+                            "end": 99
+                          },
+                          "$nodeHandle": 94
+                        }
+                      }
+                    ],
+                    "$span": {
+                      "start": 81,
+                      "end": 99
+                    },
+                    "$nodeHandle": 92,
+                    "_trailing_sep": false
+                  },
+                  "_consequence": {
+                    "$type": 268,
+                    "$source": 0,
+                    "$named": true,
+                    "_block": {
+                      "$type": 160,
+                      "$source": 0,
+                      "$named": true,
+                      "_statements": [
+                        {
+                          "$type": 110,
+                          "$source": 0,
+                          "$named": true,
+                          "_simple_statements_elements": {
+                            "$type": 237,
+                            "$source": 0,
+                            "$named": true,
+                            "_simple_statement": [
+                              {
+                                "$type": 128,
+                                "$source": 0,
+                                "$named": true,
+                                "$text": "pass",
+                                "$span": {
+                                  "start": 107,
+                                  "end": 111
+                                },
+                                "$nodeHandle": 101
+                              }
+                            ],
+                            "$span": {
+                              "start": 107,
+                              "end": 111
+                            },
+                            "$nodeHandle": 100,
+                            "_trailing_sep": false
+                          },
+                          "_newline": 101,
+                          "$span": {
+                            "start": 107,
+                            "end": 111
+                          },
+                          "$nodeHandle": 99
+                        }
+                      ],
+                      "$span": {
+                        "start": 107,
+                        "end": 111
+                      },
+                      "$nodeHandle": 98
+                    },
+                    "$span": {
+                      "start": 100,
+                      "end": 111
+                    },
+                    "$nodeHandle": 97
+                  },
+                  "$other": [
+                    23,
+                    19
+                  ],
+                  "$span": {
+                    "start": 76,
+                    "end": 111
+                  },
+                  "$nodeHandle": 70
+                },
+                {
+                  "$type": 136,
+                  "$source": 0,
+                  "$named": true,
+                  "_case_patterns": {
+                    "$type": 240,
+                    "$source": 0,
+                    "$named": true,
+                    "_case_pattern": [
+                      {
+                        "$type": 163,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 121,
+                          "end": 131
+                        },
+                        "$nodeHandle": 103,
+                        "_content": {
+                          "$type": 165,
+                          "$source": 0,
+                          "$named": true,
+                          "_simple_pattern": [
+                            {
+                              "$type": 269,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 121,
+                                "end": 124
+                              },
+                              "$nodeHandle": 105,
+                              "_content": "1.0"
+                            },
+                            {
+                              "$type": 269,
+                              "$source": 0,
+                              "$named": true,
+                              "_sign": true,
+                              "$span": {
+                                "start": 127,
+                                "end": 131
+                              },
+                              "$nodeHandle": 106,
+                              "_content": "1.0"
+                            }
+                          ],
+                          "$other": [
+                            44
+                          ],
+                          "$span": {
+                            "start": 121,
+                            "end": 131
+                          },
+                          "$nodeHandle": 104
+                        }
+                      }
+                    ],
+                    "$span": {
+                      "start": 121,
+                      "end": 131
+                    },
+                    "$nodeHandle": 102,
+                    "_trailing_sep": false
+                  },
+                  "_consequence": {
+                    "$type": 268,
+                    "$source": 0,
+                    "$named": true,
+                    "_block": {
+                      "$type": 160,
+                      "$source": 0,
+                      "$named": true,
+                      "_statements": [
+                        {
+                          "$type": 110,
+                          "$source": 0,
+                          "$named": true,
+                          "_simple_statements_elements": {
+                            "$type": 237,
+                            "$source": 0,
+                            "$named": true,
+                            "_simple_statement": [
+                              {
+                                "$type": 128,
+                                "$source": 0,
+                                "$named": true,
+                                "$text": "pass",
+                                "$span": {
+                                  "start": 139,
+                                  "end": 143
+                                },
+                                "$nodeHandle": 111
+                              }
+                            ],
+                            "$span": {
+                              "start": 139,
+                              "end": 143
+                            },
+                            "$nodeHandle": 110,
+                            "_trailing_sep": false
+                          },
+                          "_newline": 101,
+                          "$span": {
+                            "start": 139,
+                            "end": 143
+                          },
+                          "$nodeHandle": 109
+                        }
+                      ],
+                      "$span": {
+                        "start": 139,
+                        "end": 143
+                      },
+                      "$nodeHandle": 108
+                    },
+                    "$span": {
+                      "start": 132,
+                      "end": 143
+                    },
+                    "$nodeHandle": 107
+                  },
+                  "$other": [
+                    23,
+                    19
+                  ],
+                  "$span": {
+                    "start": 116,
+                    "end": 143
+                  },
+                  "$nodeHandle": 71
+                },
+                {
+                  "$type": 136,
+                  "$source": 0,
+                  "$named": true,
+                  "_case_patterns": {
+                    "$type": 240,
+                    "$source": 0,
+                    "$named": true,
+                    "_case_pattern": [
+                      {
+                        "$type": 163,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 153,
+                          "end": 165
+                        },
+                        "$nodeHandle": 113,
+                        "_content": {
+                          "$type": 165,
+                          "$source": 0,
+                          "$named": true,
+                          "_simple_pattern": [
+                            "True",
+                            "False"
+                          ],
+                          "$other": [
+                            44
+                          ],
+                          "$span": {
+                            "start": 153,
+                            "end": 165
+                          },
+                          "$nodeHandle": 114
+                        }
+                      }
+                    ],
+                    "$span": {
+                      "start": 153,
+                      "end": 165
+                    },
+                    "$nodeHandle": 112,
+                    "_trailing_sep": false
+                  },
+                  "_consequence": {
+                    "$type": 268,
+                    "$source": 0,
+                    "$named": true,
+                    "_block": {
+                      "$type": 160,
+                      "$source": 0,
+                      "$named": true,
+                      "_statements": [
+                        {
+                          "$type": 110,
+                          "$source": 0,
+                          "$named": true,
+                          "_simple_statements_elements": {
+                            "$type": 237,
+                            "$source": 0,
+                            "$named": true,
+                            "_simple_statement": [
+                              {
+                                "$type": 128,
+                                "$source": 0,
+                                "$named": true,
+                                "$text": "pass",
+                                "$span": {
+                                  "start": 173,
+                                  "end": 177
+                                },
+                                "$nodeHandle": 119
+                              }
+                            ],
+                            "$span": {
+                              "start": 173,
+                              "end": 177
+                            },
+                            "$nodeHandle": 118,
+                            "_trailing_sep": false
+                          },
+                          "_newline": 101,
+                          "$span": {
+                            "start": 173,
+                            "end": 177
+                          },
+                          "$nodeHandle": 117
+                        }
+                      ],
+                      "$span": {
+                        "start": 173,
+                        "end": 177
+                      },
+                      "$nodeHandle": 116
+                    },
+                    "$span": {
+                      "start": 166,
+                      "end": 177
+                    },
+                    "$nodeHandle": 115
+                  },
+                  "$other": [
+                    23,
+                    19
+                  ],
+                  "$span": {
+                    "start": 148,
+                    "end": 177
+                  },
+                  "$nodeHandle": 72
+                },
+                {
+                  "$type": 136,
+                  "$source": 0,
+                  "$named": true,
+                  "_case_patterns": {
+                    "$type": 240,
+                    "$source": 0,
+                    "$named": true,
+                    "_case_pattern": [
+                      {
+                        "$type": 163,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 187,
+                          "end": 191
+                        },
+                        "$nodeHandle": 121,
+                        "_content": "None"
+                      }
+                    ],
+                    "$span": {
+                      "start": 187,
+                      "end": 191
+                    },
+                    "$nodeHandle": 120,
+                    "_trailing_sep": false
+                  },
+                  "_consequence": {
+                    "$type": 268,
+                    "$source": 0,
+                    "$named": true,
+                    "_block": {
+                      "$type": 160,
+                      "$source": 0,
+                      "$named": true,
+                      "_statements": [
+                        {
+                          "$type": 110,
+                          "$source": 0,
+                          "$named": true,
+                          "_simple_statements_elements": {
+                            "$type": 237,
+                            "$source": 0,
+                            "$named": true,
+                            "_simple_statement": [
+                              {
+                                "$type": 128,
+                                "$source": 0,
+                                "$named": true,
+                                "$text": "pass",
+                                "$span": {
+                                  "start": 199,
+                                  "end": 203
+                                },
+                                "$nodeHandle": 126
+                              }
+                            ],
+                            "$span": {
+                              "start": 199,
+                              "end": 203
+                            },
+                            "$nodeHandle": 125,
+                            "_trailing_sep": false
+                          },
+                          "_newline": 101,
+                          "$span": {
+                            "start": 199,
+                            "end": 203
+                          },
+                          "$nodeHandle": 124
+                        }
+                      ],
+                      "$span": {
+                        "start": 199,
+                        "end": 203
+                      },
+                      "$nodeHandle": 123
+                    },
+                    "$span": {
+                      "start": 192,
+                      "end": 203
+                    },
+                    "$nodeHandle": 122
+                  },
+                  "$other": [
+                    23,
+                    19
+                  ],
+                  "$span": {
+                    "start": 182,
+                    "end": 203
+                  },
+                  "$nodeHandle": 73
+                }
+              ],
+              "$span": {
+                "start": 10,
+                "end": 203
+              },
+              "$nodeHandle": 67
+            }
+          },
+          "$other": [
+            22,
+            19
+          ],
+          "$span": {
+            "start": 0,
+            "end": 203
+          },
+          "$nodeHandle": 64
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 203
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "match xxx:\n  case 3|-3:\n    pass\n  case\"something\":\n    pass\n  case\"something\"\"else\":\n    pass\n  case 1.0|-1.0:\n    pass\n  case True|False:\n    pass\n  case None:\n    pass\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "match xxx:\n    case 3 | -3:\n      pass\n    case \"something\":\n      pass\n    case \"something\" \"else\":\n      pass\n    case 1.0 | -1.0:\n      pass\n    case True | False:\n      pass\n    case None:\n      pass",
+    "pattern": "module",
+    "edits": [],
+    "expectedSourceOut": "match xxx:\n  case 3|-3:\n    pass\n  case\"something\":\n    pass\n  case\"something\"\"else\":\n    pass\n  case 1.0|-1.0:\n    pass\n  case True|False:\n    pass\n  case None:\n    pass\n",
+    "expectedReparseTree": "(module statements: (match_statement (subjects subject: (identifier)) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (union_pattern simple_pattern: (simple_pattern_negative (integer)) simple_pattern: (simple_pattern_negative (integer))))) consequence: (suite_block_with_indent (block statements: (statement_group1 (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)))) consequence: (suite_block_with_indent (block statements: (statement_group1 (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (concatenated_string (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (suite_block_with_indent (block statements: (statement_group1 (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (union_pattern simple_pattern: (simple_pattern_negative (float)) simple_pattern: (simple_pattern_negative (float))))) consequence: (suite_block_with_indent (block statements: (statement_group1 (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (union_pattern simple_pattern: (true) simple_pattern: (false)))) consequence: (suite_block_with_indent (block statements: (statement_group1 (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (none))) consequence: (suite_block_with_indent (block statements: (statement_group1 (simple_statements_elements simple_statement: (pass_statement)) (newline)))))))))",
+    "wrappedText": "match xxx:\n  case 3|-3:\n    pass\n  case\"something\":\n    pass\n  case\"something\"\"else\":\n    pass\n  case 1.0|-1.0:\n    pass\n  case True|False:\n    pass\n  case None:\n    pass\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 227,
       "$source": 0,
       "$named": true,

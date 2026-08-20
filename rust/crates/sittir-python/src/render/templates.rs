@@ -236,6 +236,7 @@ pub struct PatternsTemplate<'a> {
 #[template(path = "_simple_pattern_negative.jinja", escape = "none")]
 pub struct SimplePatternNegativeTemplate<'a> {
     pub content: SingleNonterminalView<'a>,
+    pub sign: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

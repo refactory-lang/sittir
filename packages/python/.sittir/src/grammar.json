@@ -7151,16 +7151,23 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "-"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "sign",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_kw_sign"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "CHOICE",
@@ -7214,6 +7221,14 @@
     "_kw_real": {
       "type": "STRING",
       "value": "-"
+    },
+    "_kw_sign": {
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "STRING",
+        "value": "-"
+      }
     },
     "_kw_eq_marker": {
       "type": "STRING",
@@ -7589,6 +7604,7 @@
     "_left_hand_side",
     "keyword_identifier",
     "_except_clause_as_optional1",
+    "_kw_sign",
     "_raise_statement_optional1",
     "_function_definition_optional1",
     "_exec_statement_optional1",

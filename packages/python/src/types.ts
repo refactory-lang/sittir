@@ -3344,7 +3344,12 @@ export interface SuiteBlockWithIndent {
 
 export interface SimplePatternNegative {
 	readonly $type: TSKindId.SimplePatternNegative;
+	readonly _sign?: boolean;
 	readonly _content: Integer | Float;
+	readonly __inputHints__?: {
+		readonly sign?: BooleanKeyword<'-'>;
+	};
+	sign(): boolean | undefined;
 	content(): Integer | Float;
 }
 

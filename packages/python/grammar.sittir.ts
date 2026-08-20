@@ -130,6 +130,17 @@ export default grammar(
 					4: field('alternative')
 				},
 
+				// Arm 11 of `_simple_pattern` is the negative-literal shape
+				// (`seq(optional('-'), choice(integer, float))`, minted as
+				// `simple_pattern_negative`): the optional `-` is an anonymous
+				// token enrich's optional-keyword promotion skips (not
+				// word-shaped), so unfielded it lands in `$other` and never
+				// renders. Fielding it mints `_kw_sign` — the same mechanism
+				// `complex_pattern`'s leading `-` uses via its position-0 field.
+				_simple_pattern: {
+					'11/0': field('sign')
+				},
+
 				constrained_type: {
 					0: field('base_type'),
 					2: field('constraint')

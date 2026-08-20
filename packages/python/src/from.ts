@@ -317,7 +317,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_with_clause_bare: TSKindId.WithClauseBare,
 	_with_clause_paren: TSKindId.WithClauseParen,
 	_suite_block_with_indent: TSKindId.SuiteBlockWithIndent,
-	_simple_pattern_negative: TSKindId.SimplePatternNegative,
 	_yield_from_clause: TSKindId.YieldFromClause
 };
 
@@ -429,8 +428,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildWithClauseParen(children[0] as Parameters<typeof F.buildWithClauseParen>[0]);
 		case '_suite_block_with_indent':
 			return F.buildSuiteBlockWithIndent(children[0] as Parameters<typeof F.buildSuiteBlockWithIndent>[0]);
-		case '_simple_pattern_negative':
-			return F.buildSimplePatternNegative(children[0] as Parameters<typeof F.buildSimplePatternNegative>[0]);
 		case '_yield_from_clause':
 			return F.buildYieldFromClause(children[0] as Parameters<typeof F.buildYieldFromClause>[0]);
 		default:

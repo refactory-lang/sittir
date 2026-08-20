@@ -224,9 +224,6 @@ export interface IsGuards {
 	SuiteBlockWithIndent<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.SuiteBlockWithIndent };
-	SimplePatternNegative<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.SimplePatternNegative };
 	ExceptClauseList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExceptClauseList };
 	YieldFromClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.YieldFromClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
@@ -398,7 +395,6 @@ export interface AssertGuards {
 	WithClauseBare(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseBare };
 	WithClauseParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseParen };
 	SuiteBlockWithIndent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SuiteBlockWithIndent };
-	SimplePatternNegative(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SimplePatternNegative };
 	ExceptClauseList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseList };
 	YieldFromClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.YieldFromClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
@@ -789,7 +785,6 @@ export const is = {
 	WithClauseBare: _g(TSKindId.WithClauseBare),
 	WithClauseParen: _g(TSKindId.WithClauseParen),
 	SuiteBlockWithIndent: _g(TSKindId.SuiteBlockWithIndent),
-	SimplePatternNegative: _g(TSKindId.SimplePatternNegative),
 	ExceptClauseList: _g(TSKindId.ExceptClauseList),
 	YieldFromClause: _g(TSKindId.YieldFromClause),
 	kind: (v: { readonly $type: number }, k: string): boolean => {
@@ -967,7 +962,6 @@ export const assert = {
 	WithClauseBare: _makeAssert('WithClauseBare', is.WithClauseBare as _AnyGuard),
 	WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen as _AnyGuard),
 	SuiteBlockWithIndent: _makeAssert('SuiteBlockWithIndent', is.SuiteBlockWithIndent as _AnyGuard),
-	SimplePatternNegative: _makeAssert('SimplePatternNegative', is.SimplePatternNegative as _AnyGuard),
 	ExceptClauseList: _makeAssert('ExceptClauseList', is.ExceptClauseList as _AnyGuard),
 	YieldFromClause: _makeAssert('YieldFromClause', is.YieldFromClause as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),

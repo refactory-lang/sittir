@@ -244,8 +244,6 @@ import type {
 	SetComprehension,
 	SetComprehensionTree,
 	SetTree,
-	SimplePatternNegative,
-	SimplePatternNegativeTree,
 	SimpleStatements,
 	SimpleStatementsElements,
 	SimpleStatementsElementsTree,
@@ -531,9 +529,6 @@ export type _Type_WithClauseParen = _TypeAssert<_TypeExtends<WithClauseParen['$t
 export type _Type_SuiteBlockWithIndent = _TypeAssert<
 	_TypeExtends<SuiteBlockWithIndent['$type'], TSKindId.SuiteBlockWithIndent>
 >;
-export type _Type_SimplePatternNegative = _TypeAssert<
-	_TypeExtends<SimplePatternNegative['$type'], TSKindId.SimplePatternNegative>
->;
 export type _Type_ExceptClauseList = _TypeAssert<_TypeExtends<ExceptClauseList['$type'], TSKindId.ExceptClauseList>>;
 export type _Type_YieldFromClause = _TypeAssert<_TypeExtends<YieldFromClause['$type'], TSKindId.YieldFromClause>>;
 export type _Type_ImportPrefix = _TypeAssert<_TypeExtends<ImportPrefix['$type'], TSKindId.ImportPrefix>>;
@@ -776,9 +771,6 @@ export type _Tree_WithClauseBare = _TypeAssert<_TypeExtends<WithClauseBareTree['
 export type _Tree_WithClauseParen = _TypeAssert<_TypeExtends<WithClauseParenTree['type'], '_with_clause_paren'>>;
 export type _Tree_SuiteBlockWithIndent = _TypeAssert<
 	_TypeExtends<SuiteBlockWithIndentTree['type'], '_suite_block_with_indent'>
->;
-export type _Tree_SimplePatternNegative = _TypeAssert<
-	_TypeExtends<SimplePatternNegativeTree['type'], '_simple_pattern_negative'>
 >;
 export type _Tree_ExceptClauseList = _TypeAssert<_TypeExtends<ExceptClauseListTree['type'], '_except_clause_list'>>;
 export type _Tree_YieldFromClause = _TypeAssert<_TypeExtends<YieldFromClauseTree['type'], '_yield_from_clause'>>;

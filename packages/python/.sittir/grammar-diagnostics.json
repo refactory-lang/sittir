@@ -144,7 +144,7 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "15 referenced kind(s) resolved no parser kindId",
+    "message": "16 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -155,6 +155,7 @@
         "_function_definition_optional1",
         "_kw_eq_marker",
         "_kw_real",
+        "_kw_sign",
         "_kw_type",
         "_left_hand_side",
         "_raise_statement_optional1",
@@ -197,7 +198,7 @@
   },
   {
     "code": "kindid-inline-excluded-symbols",
-    "message": "13 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "14 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -209,6 +210,7 @@
         "_function_definition_optional1",
         "_kw_eq_marker",
         "_kw_real",
+        "_kw_sign",
         "_kw_type",
         "_left_hand_side",
         "_raise_statement_optional1",

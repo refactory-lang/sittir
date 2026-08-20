@@ -7637,10 +7637,20 @@ export function wrapSimplePatternNegative(
 	data: T.SimplePatternNegative & { readonly _integer?: T.Integer | T.Float; readonly _float?: T.Integer | T.Float },
 	tree: TreeHandle
 ) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.SimplePatternNegative as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_float', '_integer']),
 			$type: TSKindId.SimplePatternNegative as const,
+			_sign: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._sign, 'sign', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'sign',
+					span: (data as _NodeData).$span
+				})
+			),
 			_content: normalizeSingularWrapSlot(data._content ?? data._integer ?? data._float, 'content', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -7648,10 +7658,15 @@ export function wrapSimplePatternNegative(
 				span: (data as _NodeData).$span
 			}),
 
+			sign() {
+				return this._sign;
+			},
 			content() {
 				return drillIn<T.Integer | T.Float>(this._content, tree);
 			},
 			$with: {
+				sign: (v: NonNullable<T.SimplePatternNegative['_sign']>) =>
+					wrapSimplePatternNegative({ ...data, _sign: v }, tree),
 				content: (v: NonNullable<T.SimplePatternNegative['_content']>) =>
 					wrapSimplePatternNegative({ ...data, _content: v }, tree)
 			}

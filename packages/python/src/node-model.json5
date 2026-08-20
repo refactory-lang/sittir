@@ -3503,12 +3503,33 @@
     },
     {
       "kind": "_simple_pattern_negative",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "SimplePatternNegative",
-      "factoryName": "simplePatternNegative",
+      "factoryName": "_simplePatternNegative",
       "irKey": "simplePatternNegative",
       "hidden": false,
+      "name": "_simple_pattern_negative",
       "fields": [
+        {
+          "name": "sign",
+          "propertyName": "sign",
+          "paramName": "sign",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-",
+              "parseKind": "dash"
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
         {
           "name": "content",
           "propertyName": "content",

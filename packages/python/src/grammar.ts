@@ -1330,7 +1330,7 @@ export type PythonGrammar = {
 	readonly simple_pattern_negative: {
 		type: 'simple_pattern_negative';
 		named: true;
-		fields: {};
+		fields: { sign: { multiple: false; required: false; types: [{ type: '-'; named: false }] } };
 		children: {
 			multiple: false;
 			required: true;

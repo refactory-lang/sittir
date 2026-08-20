@@ -1400,6 +1400,7 @@ export interface SimplePatternNegativeTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _sign?: boolean
   _content: SimplePatternNegativeContentTransportSlot
 }
 

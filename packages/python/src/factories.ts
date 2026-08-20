@@ -4174,18 +4174,25 @@ function _buildSuiteBlockWithIndent(child: T.Block) {
 	);
 }
 
-export function buildSimplePatternNegative(child: T.Integer | T.Float) {
-	const _content = child;
+export function buildSimplePatternNegative(config: T.SimplePatternNegative.Config) {
+	const _sign = coerceBooleanKeywordStorage(config.sign);
+	const _content = config.content;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.SimplePatternNegative as const,
 				$source: 2 as const,
 				$named: true as const,
+				_sign,
 				_content,
-				$with: { $child: (v: T.Integer | T.Float) => buildSimplePatternNegative(v) }
+				$with: {
+					sign: (value?: NonNullable<Parameters<typeof buildSimplePatternNegative>[0]>['sign']) =>
+						buildSimplePatternNegative({ ...config, sign: value }),
+					content: (value: T.Integer | T.Float) => buildSimplePatternNegative({ ...config, content: value })
+				}
 			},
 			{
+				sign: () => _sign,
 				content: () => _content
 			}
 		),
@@ -4568,7 +4575,7 @@ export type FluentKindMap = {
 	_with_clause_paren: FluentNode<'_with_clause_paren', T.WithClauseParen.Config>;
 	_match_block_block: T.MatchBlockBlock;
 	_suite_block_with_indent: FluentNode<'_suite_block_with_indent', T.SuiteBlockWithIndent.Config>;
-	_simple_pattern_negative: FluentNode<'_simple_pattern_negative', T.SimplePatternNegative.Config>;
+	_simple_pattern_negative: T.SimplePatternNegative;
 	_except_clause_list: FluentNode<'_except_clause_list', T.ExceptClauseList.Config>;
 	_comparison_operator_comparator: T.ComparisonOperatorComparator;
 	_yield_from_clause: FluentNode<'_yield_from_clause', T.YieldFromClause.Config>;

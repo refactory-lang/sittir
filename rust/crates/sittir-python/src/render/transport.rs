@@ -13899,6 +13899,90 @@ impl RenderableTransport for ComprehensionClausesContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum SimplePatternNegativeSignTransportSlot {
+    Literal7_2d,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternNegativeSignTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    49 => Ok(Self::Literal7_2d),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SimplePatternNegativeSignTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in SimplePatternNegativeSignTransportSlot")
+                )?;
+                match kind_id {
+                    49 => Ok(Self::Literal7_2d),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SimplePatternNegativeSignTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("SimplePatternNegativeSignTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SimplePatternNegativeSignTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("SimplePatternNegativeSignTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SimplePatternNegativeSignTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SimplePatternNegativeSignTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SimplePatternNegativeSignTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SimplePatternNegativeSignTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn simple_pattern_negative_sign_transport_slot_to_any(t: SimplePatternNegativeSignTransportSlot) -> AnyTransport {
+    match t {
+        SimplePatternNegativeSignTransportSlot::Literal7_2d => AnyTransport::Literal7_2d,
+    }
+}
+
+impl RenderableTransport for SimplePatternNegativeSignTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            SimplePatternNegativeSignTransportSlot::Literal7_2d => dest.write_str("-").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum SimplePatternNegativeContentTransportSlot {
     Integer(IntegerTransport),
     Float(FloatTransport),
@@ -24296,6 +24380,8 @@ pub struct SimplePatternNegativeTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign"))]
+    pub sign: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: SimplePatternNegativeContentTransportSlot,
 }
@@ -34550,6 +34636,11 @@ fn render_suite_block_with_indent(node: &SuiteBlockWithIndentTransport, dest: &m
 fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = SimplePatternNegativeTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
+        sign: if node.sign.unwrap_or(false) {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("-"))
+        } else {
+            OptionalNonterminalView::Missing
+        },
     };
     template.render_into(dest)
 }
