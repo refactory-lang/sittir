@@ -66240,7 +66240,7 @@ fn render_enum_body_elements(node: &EnumBodyElementsTransport, dest: &mut dyn ::
             items: content_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: false,
+            trailing: node.content_trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)

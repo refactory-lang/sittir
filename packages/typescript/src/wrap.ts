@@ -10487,7 +10487,19 @@ export function wrapEnumBodyElements(
 			),
 			_content_trailing_sep: _hasSeparatorFlank(
 				{},
-				Array.isArray(data._content) ? data._content : [],
+				data._content !== undefined
+					? _toArr(data._content)
+					: [
+							..._toArr(data._name),
+							..._toArr(data._enum_assignment),
+							..._toArr(data._property_identifier),
+							..._toArr(data._identifier),
+							..._toArr(data._reserved_identifier),
+							..._toArr(data._private_property_identifier),
+							..._toArr(data._string),
+							..._toArr(data._number),
+							..._toArr(data._computed_property_name)
+						],
 				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
 					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
 				),

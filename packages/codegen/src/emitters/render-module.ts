@@ -547,6 +547,15 @@ function emitStruct(
 	// slot's emission gets its own — no node-wide fallback that would mask
 	// distinct per-slot separators behind a single first-match.
 	const separatorByName = new Map<string, string>();
+	// Per-slot separator flank modes: like the separator itself, these are
+	// slot stamps that must reach template emission even when the slot is
+	// UNNAMED — the surface only carries named slots, so a surface entry for
+	// unnamed storage (e.g. a merged union slot's `content`) is minted from
+	// the template body with default 'none' modes, silently hardcoding the
+	// rendered flank to absent. Collect from the assembled slots and let the
+	// stamp win over the surface default below.
+	const trailingModeByName = new Map<string, 'mandatory' | 'optional' | 'none'>();
+	const leadingModeByName = new Map<string, 'mandatory' | 'optional' | 'none'>();
 	const unnamedNames = new Set<string>();
 	if (node) {
 		for (const f of [...slotModel.named, ...slotModel.unnamed]) {
@@ -555,6 +564,8 @@ function emitStruct(
 			multipleByName.set(f.name, mul);
 			requiredByName.set(f.name, req);
 			storageByName.set(f.name, f.storageName);
+			if (f.trailingMode !== 'none') trailingModeByName.set(f.name, f.trailingMode);
+			if (f.leadingMode !== 'none') leadingModeByName.set(f.name, f.leadingMode);
 			for (const v of f.values) {
 				if (v.separator) {
 					separatorByName.set(f.name, v.separator);
@@ -603,6 +614,10 @@ function emitStruct(
 		multiple: multipleByName.get(slot.name) ?? false,
 		// Override required from assembly if available; fall back to surface.
 		required: requiredByName.has(slot.name) ? (requiredByName.get(slot.name) as boolean) : slot.required,
+		// Slot-stamped flank modes win over the surface's default (see the
+		// trailingModeByName doc comment above).
+		trailingMode: trailingModeByName.get(slot.name) ?? slot.trailingMode,
+		leadingMode: leadingModeByName.get(slot.name) ?? slot.leadingMode,
 		// Mark whether this slot has a corresponding field in the transport struct.
 		// Virtual presentation slots (from the template walker) are not in the
 		// transport struct and must be defaulted to "" in the typed dispatch path.

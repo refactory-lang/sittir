@@ -944,18 +944,32 @@ function emitFieldFlankCaptureLines(
 		const sepText = f.values.map((v) => v.separator).find((s): s is string => s !== undefined);
 		if (sepText === undefined || !hasCatalogEntry(kindEntries, sepText)) continue;
 		const kindExpr = kindDiscriminantExpr(sepText, nodeMap, kindEntries);
-		const contentExpr = `${dataExpr}.${f.storageKey}`;
+		// Content list for the count-based flank check. For a merged union
+		// slot (concrete candidate storage keys exist), a fresh read never
+		// populates the canonical key — the members sit in per-route candidate
+		// buckets — so counting the raw canonical key would read an empty
+		// list against a full separator count and stick the flank at `true`.
+		// Spread the candidate buckets instead (order is irrelevant here:
+		// only the member COUNT feeds the fallback); the canonical key wins
+		// outright once a `$with` setter populates it, mirroring
+		// `resolveSlotStoreExpr`.
+		const candidateKeys = (collectConcreteStorageKeys(f, nodeMap) ?? []).filter((k) => k !== f.storageKey);
+		const rawExpr = dataAccessExpr(dataExpr, f.storageKey);
+		const contentExpr =
+			candidateKeys.length > 0
+				? `(${rawExpr} !== undefined ? _toArr(${rawExpr}) : [${candidateKeys.map((k) => `..._toArr(${dataAccessExpr(dataExpr, k)})`).join(', ')}])`
+				: `(Array.isArray(${rawExpr}) ? ${rawExpr} : [])`;
 		const otherExpr =
 			`(Array.isArray(${dataExpr}.$other) ? ${dataExpr}.$other : ${dataExpr}.$other !== undefined ? [${dataExpr}.$other] : [])` +
 			`.filter((e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === ${kindExpr})`;
 		if (f.trailingMode === 'optional') {
 			lines.push(
-				`    ${f.storageKey}_trailing_sep: _hasSeparatorFlank({}, Array.isArray(${contentExpr}) ? ${contentExpr} : [], ${otherExpr}, "trailing", false, 0),`
+				`    ${f.storageKey}_trailing_sep: _hasSeparatorFlank({}, ${contentExpr}, ${otherExpr}, "trailing", false, 0),`
 			);
 		}
 		if (f.leadingMode === 'optional') {
 			lines.push(
-				`    ${f.storageKey}_leading_sep: _hasSeparatorFlank({}, Array.isArray(${contentExpr}) ? ${contentExpr} : [], ${otherExpr}, "leading", false, 0),`
+				`    ${f.storageKey}_leading_sep: _hasSeparatorFlank({}, ${contentExpr}, ${otherExpr}, "leading", false, 0),`
 			);
 		}
 	}
