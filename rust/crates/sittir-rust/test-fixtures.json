@@ -5894,7 +5894,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn main(){  }fn add(x:i32,y:i32)->i32{ return x+y; }fn takes_slice(slice:&str){ println!(\"Got: {}\",slice); }fn foo()->[u32;2]{ return[1,2]; }fn foo()->(u32,u16){ return(1,2); }fn foo(){ return }fn foo(x:impl FnOnce()->result::Result<T,E>){  }fn foo(#[attr]x:i32,#[attr]x:i64){  }fn accumulate(self)->Machine<{ State::Accumulate }>{  }fn foo(bar:impl for<'a>Baz<Quux<'a>>){  }",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))) element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) return_type: (primitive_type) body: (block statements: (expression_statement (expression_statement_with_semi expression: (return_expression expression: (binary_expression left: (identifier) right: (identifier))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (primitive_type)))))) body: (block statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (array_type element: (primitive_type) length: (integer_literal)) body: (block statements: (expression_statement (expression_statement_with_semi expression: (return_expression expression: (array_expression (array_expression_list (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (tuple_type type: (primitive_type) type: (primitive_type)) body: (block statements: (expression_statement (expression_statement_with_semi expression: (return_expression expression: (tuple_expression elements: (integer_literal) elements: (integer_literal))))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block trailing_expression: (return_expression))) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)) element: (type_argument (type_identifier))))))))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type))) element: (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))))) return_type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier))))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (abstract_type type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime identifier: (identifier))))))))))))))) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))) element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) return_type: (primitive_type) body: (block statements: (expression_statement (expression_statement_with_semi expression: (return_expression expression: (binary_expression left: (identifier) right: (identifier))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (primitive_type)))))) body: (block statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (array_type element: (primitive_type) length: (integer_literal)) body: (block statements: (expression_statement (expression_statement_with_semi expression: (return_expression expression: (array_expression (array_expression_list (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (tuple_type type: (primitive_type) type: (primitive_type)) body: (block statements: (expression_statement (expression_statement_with_semi expression: (return_expression expression: (tuple_expression elements: (integer_literal) elements: (integer_literal))))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block trailing_expression: (return_expression))) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)) element: (type_argument (type_identifier))))))))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type))) element: (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))))) return_type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier))))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (abstract_type type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime identifier: (identifier))))))))))))))) body: (block)))",
     "wrappedText": "fn main(){  }fn add(x:i32,y:i32)->i32{ return x+y; }fn takes_slice(slice:&str){ println!(\"Got: {}\",slice); }fn foo()->[u32;2]{ return[1,2]; }fn foo()->(u32,u16){ return(1,2); }fn foo(){ return }fn foo(x:impl FnOnce()->result::Result<T,E>){  }fn foo(#[attr]x:i32,#[attr]x:i64){  }fn accumulate(self)->Machine<{ State::Accumulate }>{  }fn foo(bar:impl for<'a>Baz<Quux<'a>>){  }",
     "wrappedOffset": 0
   },
@@ -6326,7 +6326,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn takes_slice(slice:&str){ println!(\"Got: {}\",slice); }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (primitive_type)))))) body: (block statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)))))))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (primitive_type)))))) body: (block statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))))))",
     "wrappedText": "fn takes_slice(slice:&str){ println!(\"Got: {}\",slice); }",
     "wrappedOffset": 0
   },
@@ -8741,7 +8741,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{ println!(\"Got: {}\",slice); }",
-    "expectedReparseTree": "(block statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))))))",
+    "expectedReparseTree": "(block statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))))",
     "wrappedText": "fn _f() { let _ = { println!(\"Got: {}\",slice); }; }",
     "wrappedOffset": 18
   },
@@ -10055,7 +10055,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "println!(\"Got: {}\",slice)",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))",
     "wrappedText": "println!(\"Got: {}\",slice)",
     "wrappedOffset": 0
   },
@@ -10126,7 +10126,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(\"Got: {}\",slice)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))",
     "wrappedText": "fn _f() { mac! (\"Got: {}\",slice) }",
     "wrappedOffset": 15
   },
@@ -35123,7 +35123,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "#[test]fn test_foo(){  }#[derive(Debug)]struct Baz;#[derive(Debug,Eq,)]struct Foo;#[cfg(target_os=\"macos\")]mod macos_only{  }#![allow(clippy::useless_transmute)]#[clippy::cyclomatic_complexity=\"100\"]",
-    "expectedReparseTree": "(source_file statements: (attribute_item attribute: (attribute path: (identifier))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))))) statements: (struct_item name: (type_identifier) (struct_item_unit)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))))) statements: (struct_item name: (type_identifier) (struct_item_unit)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))) statements: (mod_item name: (identifier) (declaration_list)) statements: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))))) statements: (attribute_item attribute: (attribute path: (scoped_identifier path: (identifier) name: (identifier)) (attribute_group1 value: (string_literal string_open: (string_open) elements: (string_content))))))",
+    "expectedReparseTree": "(source_file statements: (attribute_item attribute: (attribute path: (identifier))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) statements: (struct_item name: (type_identifier) (struct_item_unit)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) statements: (struct_item name: (type_identifier) (struct_item_unit)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) statements: (mod_item name: (identifier) (declaration_list)) statements: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) statements: (attribute_item attribute: (attribute path: (scoped_identifier path: (identifier) name: (identifier)) (attribute_group1 value: (string_literal string_open: (string_open) elements: (string_content))))))",
     "wrappedText": "#[test]fn test_foo(){  }#[derive(Debug)]struct Baz;#[derive(Debug,Eq,)]struct Foo;#[cfg(target_os=\"macos\")]mod macos_only{  }#![allow(clippy::useless_transmute)]#[clippy::cyclomatic_complexity=\"100\"]",
     "wrappedOffset": 0
   },
@@ -35244,7 +35244,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[derive(Debug)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))))",
     "wrappedText": "#[derive(Debug)]",
     "wrappedOffset": 0
   },
@@ -35346,7 +35346,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[derive(Debug,Eq,)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))))",
     "wrappedText": "#[derive(Debug,Eq,)]",
     "wrappedOffset": 0
   },
@@ -35453,7 +35453,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[cfg(target_os=\"macos\")]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))",
     "wrappedText": "#[cfg(target_os=\"macos\")]",
     "wrappedOffset": 0
   },
@@ -35688,7 +35688,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(Debug)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))",
     "wrappedText": "fn _f() { mac! (Debug) }",
     "wrappedOffset": 15
   },
@@ -35754,7 +35754,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(Debug,Eq,)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))",
     "wrappedText": "fn _f() { mac! (Debug,Eq,) }",
     "wrappedOffset": 15
   },
@@ -35825,7 +35825,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(target_os=\"macos\")",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))",
     "wrappedText": "fn _f() { mac! (target_os=\"macos\") }",
     "wrappedOffset": 15
   },
@@ -35880,7 +35880,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(clippy::useless_transmute)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))",
     "wrappedText": "fn _f() { mac! (clippy::useless_transmute) }",
     "wrappedOffset": 15
   },
@@ -36161,7 +36161,7 @@
     "pattern": "inner_attribute_item",
     "edits": [],
     "expectedSourceOut": "#![allow(clippy::useless_transmute)]",
-    "expectedReparseTree": "(inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)))))))",
+    "expectedReparseTree": "(inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))))",
     "wrappedText": "#![allow(clippy::useless_transmute)]",
     "wrappedOffset": 0
   },
@@ -36707,7 +36707,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "mod macos_only{ #![cfg(target_os=\"macos\")] }match ty{ #![cfg_attr(all(test,exhaustive),deny(non_exhaustive_omitted_patterns))]syn::Type::Array(ty)=>self.visit_type(&ty.elem), }",
-    "expectedReparseTree": "(source_file statements: (mod_item name: (identifier) (declaration_list declaration_statements: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm attributes: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))))))) pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) (patterns pattern: (identifier)))) value: (call_expression function: (field_expression value: (self) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (reference_expression value: (field_expression value: (identifier) field: (field_identifier)))))))))))))",
+    "expectedReparseTree": "(source_file statements: (mod_item name: (identifier) (declaration_list declaration_statements: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm attributes: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))))) pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) (patterns pattern: (identifier)))) value: (call_expression function: (field_expression value: (self) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (reference_expression value: (field_expression value: (identifier) field: (field_identifier)))))))))))))",
     "wrappedText": "mod macos_only{ #![cfg(target_os=\"macos\")] }match ty{ #![cfg_attr(all(test,exhaustive),deny(non_exhaustive_omitted_patterns))]syn::Type::Array(ty)=>self.visit_type(&ty.elem), }",
     "wrappedOffset": 0
   },
@@ -36845,7 +36845,7 @@
     "pattern": "mod_item",
     "edits": [],
     "expectedSourceOut": "mod macos_only{ #![cfg(target_os=\"macos\")] }",
-    "expectedReparseTree": "(mod_item name: (identifier) (declaration_list declaration_statements: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))))))))",
+    "expectedReparseTree": "(mod_item name: (identifier) (declaration_list declaration_statements: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))))",
     "wrappedText": "mod macos_only{ #![cfg(target_os=\"macos\")] }",
     "wrappedOffset": 0
   },
@@ -36953,7 +36953,7 @@
     "pattern": "inner_attribute_item",
     "edits": [],
     "expectedSourceOut": "#![cfg(target_os=\"macos\")]",
-    "expectedReparseTree": "(inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))))))",
+    "expectedReparseTree": "(inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))",
     "wrappedText": "#![cfg(target_os=\"macos\")]",
     "wrappedOffset": 0
   },
@@ -37111,7 +37111,7 @@
     "pattern": "inner_attribute_item",
     "edits": [],
     "expectedSourceOut": "#![cfg_attr(all(test,exhaustive),deny(non_exhaustive_omitted_patterns))]",
-    "expectedReparseTree": "(inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)))))))))",
+    "expectedReparseTree": "(inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))))))",
     "wrappedText": "#![cfg_attr(all(test,exhaustive),deny(non_exhaustive_omitted_patterns))]",
     "wrappedOffset": 0
   },
@@ -37182,7 +37182,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(target_os=\"macos\")",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))",
     "wrappedText": "fn _f() { mac! (target_os=\"macos\") }",
     "wrappedOffset": 15
   },
@@ -37303,7 +37303,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(all(test,exhaustive),deny(non_exhaustive_omitted_patterns))",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))",
     "wrappedText": "fn _f() { mac! (all(test,exhaustive),deny(non_exhaustive_omitted_patterns)) }",
     "wrappedOffset": 15
   },
@@ -37358,7 +37358,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(test,exhaustive)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))",
     "wrappedText": "fn _f() { mac! (test,exhaustive) }",
     "wrappedOffset": 15
   },
@@ -37401,7 +37401,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(non_exhaustive_omitted_patterns)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))",
     "wrappedText": "fn _f() { mac! (non_exhaustive_omitted_patterns) }",
     "wrappedOffset": 15
   },
@@ -37805,7 +37805,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match ty{ #![cfg_attr(all(test,exhaustive),deny(non_exhaustive_omitted_patterns))]syn::Type::Array(ty)=>self.visit_type(&ty.elem), }",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm attributes: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))))))) pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) (patterns pattern: (identifier)))) value: (call_expression function: (field_expression value: (self) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (reference_expression value: (field_expression value: (identifier) field: (field_identifier)))))))))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm attributes: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))))) pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) (patterns pattern: (identifier)))) value: (call_expression function: (field_expression value: (self) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (reference_expression value: (field_expression value: (identifier) field: (field_identifier)))))))))))",
     "wrappedText": "fn _f() { let _ = match ty{ #![cfg_attr(all(test,exhaustive),deny(non_exhaustive_omitted_patterns))]syn::Type::Array(ty)=>self.visit_type(&ty.elem), }; }",
     "wrappedOffset": 18
   },
@@ -38499,7 +38499,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "#[doc=include_str!(\"foo-doc.md\")]fn foo(){  }#[namespace=foo::bar]fn baz(){  }",
-    "expectedReparseTree": "(source_file statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 value: (scoped_identifier path: (identifier) name: (identifier))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 value: (scoped_identifier path: (identifier) name: (identifier))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)))",
     "wrappedText": "#[doc=include_str!(\"foo-doc.md\")]fn foo(){  }#[namespace=foo::bar]fn baz(){  }",
     "wrappedOffset": 0
   },
@@ -38611,7 +38611,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[doc=include_str!(\"foo-doc.md\")]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))))",
     "wrappedText": "#[doc=include_str!(\"foo-doc.md\")]",
     "wrappedOffset": 0
   },
@@ -38754,7 +38754,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "include_str!(\"foo-doc.md\")",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))",
     "wrappedText": "include_str!(\"foo-doc.md\")",
     "wrappedOffset": 0
   },
@@ -38813,7 +38813,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(\"foo-doc.md\")",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))",
     "wrappedText": "fn _f() { mac! (\"foo-doc.md\") }",
     "wrappedOffset": 15
   },
@@ -39564,7 +39564,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "foo(#[attr(=>arbitrary tokens<=)]x,y);foo(#[bar(some tokens are special in other contexts:$/';()*()+.)]x);",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))))) (identifier)) element: (attributed_argument (identifier))))))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))))) (identifier))))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier)) element: (attributed_argument (identifier))))))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier))))))))",
     "wrappedText": "foo(#[attr(=>arbitrary tokens<=)]x,y);foo(#[bar(some tokens are special in other contexts:$/';()*()+.)]x);",
     "wrappedOffset": 0
   },
@@ -39732,7 +39732,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "foo(#[attr(=>arbitrary tokens<=)]x,y)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))))) (identifier)) element: (attributed_argument (identifier)))))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier)) element: (attributed_argument (identifier)))))",
     "wrappedText": "fn _f() { let _ = foo(#[attr(=>arbitrary tokens<=)]x,y); }",
     "wrappedOffset": 18
   },
@@ -39997,7 +39997,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "foo(#[bar(some tokens are special in other contexts:$/';()*()+.)]x)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))))) (identifier)))))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier)))))",
     "wrappedText": "fn _f() { let _ = foo(#[bar(some tokens are special in other contexts:$/';()*()+.)]x); }",
     "wrappedOffset": 18
   },
@@ -40154,7 +40154,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(#[attr(=>arbitrary tokens<=)]x,y)",
-    "expectedReparseTree": "(arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))))) (identifier)) element: (attributed_argument (identifier))))",
+    "expectedReparseTree": "(arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier)) element: (attributed_argument (identifier))))",
     "wrappedText": "f(#[attr(=>arbitrary tokens<=)]x,y);",
     "wrappedOffset": 1
   },
@@ -40408,7 +40408,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(#[bar(some tokens are special in other contexts:$/';()*()+.)]x)",
-    "expectedReparseTree": "(arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))))) (identifier))))",
+    "expectedReparseTree": "(arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier))))",
     "wrappedText": "f(#[bar(some tokens are special in other contexts:$/';()*()+.)]x);",
     "wrappedOffset": 1
   },
@@ -40510,7 +40510,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[attr(=>arbitrary tokens<=)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))))",
     "wrappedText": "#[attr(=>arbitrary tokens<=)]",
     "wrappedOffset": 0
   },
@@ -40724,7 +40724,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[bar(some tokens are special in other contexts:$/';()*()+.)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)))))))",
     "wrappedText": "#[bar(some tokens are special in other contexts:$/';()*()+.)]",
     "wrappedOffset": 0
   },
@@ -40790,7 +40790,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(=>arbitrary tokens<=)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))",
     "wrappedText": "fn _f() { mac! (=>arbitrary tokens<=) }",
     "wrappedOffset": 15
   },
@@ -40968,7 +40968,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(some tokens are special in other contexts:$/';()*()+.)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))",
     "wrappedText": "fn _f() { mac! (some tokens are special in other contexts:$/';()*()+.) }",
     "wrappedOffset": 15
   },
@@ -41703,7 +41703,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;#[derive(Error,Debug)]pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }",
-    "expectedReparseTree": "(source_file (line_comment (line_comment_content)) statements: (use_declaration argument: (scoped_identifier path: (identifier) name: (identifier))) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (integer_literal))))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
+    "expectedReparseTree": "(source_file (line_comment (line_comment_content)) statements: (use_declaration argument: (scoped_identifier path: (identifier) name: (identifier))) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal))))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
     "wrappedText": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;#[derive(Error,Debug)]pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }",
     "wrappedOffset": 0
   },
@@ -41888,7 +41888,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[derive(Error,Debug)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))))",
     "wrappedText": "#[derive(Error,Debug)]",
     "wrappedOffset": 0
   },
@@ -42033,7 +42033,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (integer_literal)))))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal)))))))))",
     "wrappedText": "#[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]",
     "wrappedOffset": 0
   },
@@ -42198,7 +42198,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))))",
     "wrappedText": "#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]",
     "wrappedOffset": 0
   },
@@ -42253,7 +42253,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(Error,Debug)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))",
     "wrappedText": "fn _f() { mac! (Error,Debug) }",
     "wrappedOffset": 15
   },
@@ -42362,7 +42362,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(\"first letter must be lowercase but was {:?}\",first_char(.0))",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (integer_literal))))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal))))))",
     "wrappedText": "fn _f() { mac! (\"first letter must be lowercase but was {:?}\",first_char(.0)) }",
     "wrappedOffset": 15
   },
@@ -42416,7 +42416,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(.0)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (integer_literal))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal))))",
     "wrappedText": "fn _f() { mac! (.0) }",
     "wrappedOffset": 15
   },
@@ -42545,7 +42545,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))",
     "wrappedText": "fn _f() { mac! (\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi) }",
     "wrappedOffset": 15
   },
@@ -43072,7 +43072,7 @@
     "pattern": "enum_item",
     "edits": [],
     "expectedSourceOut": "pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }",
-    "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (integer_literal))))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier))))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier))))))))))",
+    "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal))))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier))))))))))",
     "wrappedText": "pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }",
     "wrappedOffset": 0
   },
@@ -43611,7 +43611,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))) statements: (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))))))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))) statements: (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))))))",
     "wrappedText": "fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }",
     "wrappedOffset": 0
   },
@@ -44035,7 +44035,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))) statements: (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))) statements: (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))))",
     "wrappedText": "fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }",
     "wrappedOffset": 0
   },
@@ -44461,7 +44461,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }",
-    "expectedReparseTree": "(block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))) statements: (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))))",
+    "expectedReparseTree": "(block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))) statements: (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))))",
     "wrappedText": "fn _f() { let _ = { bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }; }",
     "wrappedOffset": 18
   },
@@ -44634,7 +44634,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "bar(x,#[cfg(foo=\"bar\")]y)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier)))))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier)))))",
     "wrappedText": "fn _f() { let _ = bar(x,#[cfg(foo=\"bar\")]y); }",
     "wrappedOffset": 18
   },
@@ -44796,7 +44796,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(x,#[cfg(foo=\"bar\")]y)",
-    "expectedReparseTree": "(arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))",
+    "expectedReparseTree": "(arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))",
     "wrappedText": "f(x,#[cfg(foo=\"bar\")]y);",
     "wrappedOffset": 1
   },
@@ -44903,7 +44903,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[cfg(foo=\"bar\")]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))",
     "wrappedText": "#[cfg(foo=\"bar\")]",
     "wrappedOffset": 0
   },
@@ -45058,7 +45058,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(foo=\"bar\")",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))",
     "wrappedText": "fn _f() { mac! (foo=\"bar\") }",
     "wrappedOffset": 15
   },
@@ -82342,7 +82342,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "[];[1,2,3];[\"a\",\"b\",\"c\"];[0;128];[#[cfg(foo)]\"foo\",#[cfg(bar)]\"bar\",];",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list)))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal))))))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list (arguments_elements element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content)))))))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_semi (array_expression_group1 (integer_literal) length: (integer_literal)))))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))))) (arguments_elements element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))))) (string_literal string_open: (string_open) elements: (string_content)))))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list)))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal))))))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list (arguments_elements element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content)))))))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_semi (array_expression_group1 (integer_literal) length: (integer_literal)))))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) (arguments_elements element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) (string_literal string_open: (string_open) elements: (string_content)))))))))",
     "wrappedText": "[];[1,2,3];[\"a\",\"b\",\"c\"];[0;128];[#[cfg(foo)]\"foo\",#[cfg(bar)]\"bar\",];",
     "wrappedOffset": 0
   },
@@ -82913,7 +82913,7 @@
     "pattern": "array_expression",
     "edits": [],
     "expectedSourceOut": "[#[cfg(foo)]\"foo\",#[cfg(bar)]\"bar\",]",
-    "expectedReparseTree": "(array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))))) (arguments_elements element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))))) (string_literal string_open: (string_open) elements: (string_content))))))",
+    "expectedReparseTree": "(array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) (arguments_elements element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) (string_literal string_open: (string_open) elements: (string_content))))))",
     "wrappedText": "fn _f() { let _ = [#[cfg(foo)]\"foo\",#[cfg(bar)]\"bar\",]; }",
     "wrappedOffset": 18
   },
@@ -83157,7 +83157,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[cfg(foo)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))))",
     "wrappedText": "#[cfg(foo)]",
     "wrappedOffset": 0
   },
@@ -83236,7 +83236,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[cfg(bar)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))))",
     "wrappedText": "#[cfg(bar)]",
     "wrappedOffset": 0
   },
@@ -83279,7 +83279,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(foo)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))",
     "wrappedText": "fn _f() { mac! (foo) }",
     "wrappedOffset": 15
   },
@@ -83322,7 +83322,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(bar)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))",
     "wrappedText": "fn _f() { mac! (bar) }",
     "wrappedOffset": 15
   },
@@ -91001,7 +91001,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "match x{ 1=>{ \"one\" }2=>\"two\",-1=>1,-3.14=>3,#[attr1]3=>\"three\",macro!(4)=>\"four\",_=>\"something else\", }let msg=match x{ 0|1|10=>\"one of zero, one, or ten\",y if y<20=>\"less than 20, but not zero, one, or ten\",y if y==200=>if a{ \"200 (but this is not very stylish)\" }y if let Some(z)=foo&&z&&let Some(w)=bar=>\"very chained\",_=>\"something else\", };",
-    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (integer_literal)) (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (integer_literal)) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (negative_literal value: (integer_literal))) (match_arm_with_comma value: (integer_literal))) (match_arm pattern: (match_pattern pattern: (negative_literal value: (float_literal))) (match_arm_with_comma value: (integer_literal))) (match_arm attributes: (attribute_item attribute: (attribute path: (identifier))) pattern: (match_pattern pattern: (integer_literal)) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (integer_literal)))))) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))) statements: (let_declaration pattern: (identifier) value: (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal)))) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content))))) (match_arm pattern: (match_pattern pattern: (identifier) condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) value: (identifier)))) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (integer_literal)) (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (integer_literal)) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (negative_literal value: (integer_literal))) (match_arm_with_comma value: (integer_literal))) (match_arm pattern: (match_pattern pattern: (negative_literal value: (float_literal))) (match_arm_with_comma value: (integer_literal))) (match_arm attributes: (attribute_item attribute: (attribute path: (identifier))) pattern: (match_pattern pattern: (integer_literal)) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal)))))) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))) statements: (let_declaration pattern: (identifier) value: (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal)))) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content))))) (match_arm pattern: (match_pattern pattern: (identifier) condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) value: (identifier)))) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))))",
     "wrappedText": "match x{ 1=>{ \"one\" }2=>\"two\",-1=>1,-3.14=>3,#[attr1]3=>\"three\",macro!(4)=>\"four\",_=>\"something else\", }let msg=match x{ 0|1|10=>\"one of zero, one, or ten\",y if y<20=>\"less than 20, but not zero, one, or ten\",y if y==200=>if a{ \"200 (but this is not very stylish)\" }y if let Some(z)=foo&&z&&let Some(w)=bar=>\"very chained\",_=>\"something else\", };",
     "wrappedOffset": 0
   },
@@ -91503,7 +91503,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x{ 1=>{ \"one\" }2=>\"two\",-1=>1,-3.14=>3,#[attr1]3=>\"three\",macro!(4)=>\"four\",_=>\"something else\", }",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (integer_literal)) (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (integer_literal)) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (negative_literal value: (integer_literal))) (match_arm_with_comma value: (integer_literal))) (match_arm pattern: (match_pattern pattern: (negative_literal value: (float_literal))) (match_arm_with_comma value: (integer_literal))) (match_arm attributes: (attribute_item attribute: (attribute path: (identifier))) pattern: (match_pattern pattern: (integer_literal)) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (integer_literal)))))) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (integer_literal)) (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (integer_literal)) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (negative_literal value: (integer_literal))) (match_arm_with_comma value: (integer_literal))) (match_arm pattern: (match_pattern pattern: (negative_literal value: (float_literal))) (match_arm_with_comma value: (integer_literal))) (match_arm attributes: (attribute_item attribute: (attribute path: (identifier))) pattern: (match_pattern pattern: (integer_literal)) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal)))))) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))",
     "wrappedText": "fn _f() { let _ = match x{ 1=>{ \"one\" }2=>\"two\",-1=>1,-3.14=>3,#[attr1]3=>\"three\",macro!(4)=>\"four\",_=>\"something else\", }; }",
     "wrappedOffset": 18
   },
@@ -92629,7 +92629,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "macro!(4)",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (integer_literal)))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal)))))",
     "wrappedText": "macro!(4)",
     "wrappedOffset": 0
   },
@@ -92672,7 +92672,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(4)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (integer_literal))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal))))",
     "wrappedText": "fn _f() { mac! (4) }",
     "wrappedOffset": 15
   },
@@ -114768,7 +114768,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "a!(*a*);a!(&a&);a!(-a-);a!(b+c++);a!('a'..='z');a!('\\u{0}'..='\\u{2}');a!('lifetime)default!(a);union!(a);a!($);a!($());a!($a$);a!(${ $([a]) });a!($a$a:ident$($a);*);",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (char_literal)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (char_literal))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (char_literal)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (char_literal))))))) statements: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1) delim_tokens: (token_pattern_group1 (identifier))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree_punctuation)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_brace delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree (delim_token_tree_bracket delim_tokens: (token_pattern_group1 (identifier))))))))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (identifier)))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (char_literal)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (char_literal))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (char_literal)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (char_literal))))))) statements: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token) delim_tokens: (non_special_token (identifier))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree_punctuation)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_brace delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree (delim_token_tree_bracket delim_tokens: (non_special_token (identifier))))))))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))))))",
     "wrappedText": "a!(*a*);a!(&a&);a!(-a-);a!(b+c++);a!('a'..='z');a!('\\u{0}'..='\\u{2}');a!('lifetime)default!(a);union!(a);a!($);a!($());a!($a$);a!(${ $([a]) });a!($a$a:ident$($a);*);",
     "wrappedOffset": 0
   },
@@ -114847,7 +114847,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "a!(*a*)",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))",
     "wrappedText": "a!(*a*)",
     "wrappedOffset": 0
   },
@@ -114926,7 +114926,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "a!(&a&)",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))",
     "wrappedText": "a!(&a&)",
     "wrappedOffset": 0
   },
@@ -115005,7 +115005,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "a!(-a-)",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))",
     "wrappedText": "a!(-a-)",
     "wrappedOffset": 0
   },
@@ -115096,7 +115096,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "a!(b+c++)",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)))))",
     "wrappedText": "a!(b+c++)",
     "wrappedOffset": 0
   },
@@ -115165,7 +115165,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "a!('a'..='z')",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (char_literal)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (char_literal)))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (char_literal)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (char_literal)))))",
     "wrappedText": "a!('a'..='z')",
     "wrappedOffset": 0
   },
@@ -115234,7 +115234,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "a!('\\u{0}'..='\\u{2}')",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (char_literal)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (char_literal)))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (char_literal)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (char_literal)))))",
     "wrappedText": "a!('\\u{0}'..='\\u{2}')",
     "wrappedOffset": 0
   },
@@ -115302,7 +115302,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "a!('lifetime)",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1) delim_tokens: (token_pattern_group1 (identifier)))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token) delim_tokens: (non_special_token (identifier)))))",
     "wrappedText": "a!('lifetime)",
     "wrappedOffset": 0
   },
@@ -115359,7 +115359,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "default!(a)",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))",
     "wrappedText": "default!(a)",
     "wrappedOffset": 0
   },
@@ -115416,7 +115416,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "union!(a)",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))",
     "wrappedText": "union!(a)",
     "wrappedOffset": 0
   },
@@ -115637,7 +115637,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "a!($a$)",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree_punctuation))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree_punctuation))))",
     "wrappedText": "a!($a$)",
     "wrappedOffset": 0
   },
@@ -115792,7 +115792,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "a!(${ $([a]) })",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_brace delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree (delim_token_tree_bracket delim_tokens: (token_pattern_group1 (identifier)))))))))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_brace delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree (delim_token_tree_bracket delim_tokens: (non_special_token (identifier)))))))))))",
     "wrappedText": "a!(${ $([a]) })",
     "wrappedOffset": 0
   },
@@ -115951,7 +115951,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "a!($a$a:ident$($a);*)",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (identifier)))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)))))",
     "wrappedText": "a!($a$a:ident$($a);*)",
     "wrappedOffset": 0
   },
@@ -116016,7 +116016,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(*a*)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))",
     "wrappedText": "fn _f() { mac! (*a*) }",
     "wrappedOffset": 15
   },
@@ -116081,7 +116081,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(&a&)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))",
     "wrappedText": "fn _f() { mac! (&a&) }",
     "wrappedOffset": 15
   },
@@ -116146,7 +116146,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(-a-)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))",
     "wrappedText": "fn _f() { mac! (-a-) }",
     "wrappedOffset": 15
   },
@@ -116223,7 +116223,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(b+c++)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))",
     "wrappedText": "fn _f() { mac! (b+c++) }",
     "wrappedOffset": 15
   },
@@ -116278,7 +116278,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "('a'..='z')",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (char_literal)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (char_literal))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (char_literal)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (char_literal))))",
     "wrappedText": "fn _f() { mac! ('a'..='z') }",
     "wrappedOffset": 15
   },
@@ -116333,7 +116333,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "('\\u{0}'..='\\u{2}')",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (char_literal)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (char_literal))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (char_literal)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (char_literal))))",
     "wrappedText": "fn _f() { mac! ('\\u{0}'..='\\u{2}') }",
     "wrappedOffset": 15
   },
@@ -116387,7 +116387,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "('lifetime)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1) delim_tokens: (token_pattern_group1 (identifier))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token) delim_tokens: (non_special_token (identifier))))",
     "wrappedText": "fn _f() { mac! ('lifetime) }",
     "wrappedOffset": 15
   },
@@ -116430,7 +116430,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(a)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))",
     "wrappedText": "fn _f() { mac! (a) }",
     "wrappedOffset": 15
   },
@@ -116473,7 +116473,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(a)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (identifier))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))",
     "wrappedText": "fn _f() { mac! (a) }",
     "wrappedOffset": 15
   },
@@ -116689,7 +116689,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "($a$)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree_punctuation)))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree_punctuation)))",
     "wrappedText": "fn _f() { mac! ($a$) }",
     "wrappedOffset": 15
   },
@@ -116830,7 +116830,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(${ $([a]) })",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_brace delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree (delim_token_tree_bracket delim_tokens: (token_pattern_group1 (identifier))))))))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_brace delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree (delim_token_tree_bracket delim_tokens: (non_special_token (identifier))))))))))",
     "wrappedText": "fn _f() { mac! (${ $([a]) }) }",
     "wrappedOffset": 15
   },
@@ -116935,7 +116935,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "{ $([a]) }",
-    "expectedReparseTree": "(token_tree (delim_token_tree_brace delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree (delim_token_tree_bracket delim_tokens: (token_pattern_group1 (identifier))))))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_brace delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree (delim_token_tree_bracket delim_tokens: (non_special_token (identifier))))))))",
     "wrappedText": "fn _f() { mac! { $([a]) } }",
     "wrappedOffset": 15
   },
@@ -117004,7 +117004,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "([a])",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_tree (delim_token_tree_bracket delim_tokens: (token_pattern_group1 (identifier))))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_tree (delim_token_tree_bracket delim_tokens: (non_special_token (identifier))))))",
     "wrappedText": "fn _f() { mac! ([a]) }",
     "wrappedOffset": 15
   },
@@ -117047,7 +117047,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "[a]",
-    "expectedReparseTree": "(token_tree (delim_token_tree_bracket delim_tokens: (token_pattern_group1 (identifier))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_bracket delim_tokens: (non_special_token (identifier))))",
     "wrappedText": "fn _f() { mac! [a] }",
     "wrappedOffset": 15
   },
@@ -117192,7 +117192,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "($a$a:ident$($a);*)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (identifier)) delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (identifier)))) delim_tokens: (token_pattern_group1 (token_tree_punctuation)) delim_tokens: (token_pattern_group1 (token_tree_punctuation))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))",
     "wrappedText": "fn _f() { mac! ($a$a:ident$($a);*) }",
     "wrappedOffset": 15
   },
@@ -117245,7 +117245,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "($a)",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_pattern_group1 (identifier))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier))))",
     "wrappedText": "fn _f() { mac! ($a) }",
     "wrappedOffset": 15
   },
@@ -118625,7 +118625,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "macro_rules!say_hello{ ()=>(println!(\"Hello!\");) }macro_rules!four{ ()=>{ 1+3 }; }macro_rules!foo{ (x=>$e:expr)=>(println!(\"mode X: {}\",$e));(y=>$e:expr)=>(println!(\"mode Y: {}\",$e)) }macro_rules!o_O{ ($($x:expr;[$($y:expr)*])*)=>{ $($($x+$e)*)* } }macro_rules!zero_or_one{ ($($e:expr)?)=>{ $($e)? }; }macro_rules!empty[()=>{  };];",
-    "expectedReparseTree": "(source_file statements: (macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren)) right: (token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))) tokens: (token_pattern_group1 (token_tree_punctuation)))))))) statements: (macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren)) right: (token_tree (token_tree_brace tokens: (token_pattern_group1 (integer_literal)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_pattern_group1 (integer_literal)))))))) statements: (macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (token_pattern_group1 (identifier)) token_patterns: (token_pattern_group1 (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))) right: (token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))))) macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (token_pattern_group1 (identifier)) token_patterns: (token_pattern_group1 (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))) right: (token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable))))))))) statements: (macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (token_pattern_group1 (token_tree_punctuation)) token_patterns: (token_tree_pattern (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))))))) right: (token_tree (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable))))))))) statements: (macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))))) right: (token_tree (token_tree_brace tokens: (token_repetition tokens: (metavariable)))))))) statements: (macro_definition name: (identifier) (macro_definition_bracket (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren)) right: (token_tree (token_tree_brace)))))))",
+    "expectedReparseTree": "(source_file statements: (macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren)) right: (token_tree (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))) tokens: (non_special_token (token_tree_punctuation)))))))) statements: (macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren)) right: (token_tree (token_tree_brace tokens: (non_special_token (integer_literal)) tokens: (non_special_token (token_tree_punctuation)) tokens: (non_special_token (integer_literal)))))))) statements: (macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))) right: (token_tree (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))) macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))) right: (token_tree (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable))))))))) statements: (macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))))))) right: (token_tree (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable))))))))) statements: (macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))))) right: (token_tree (token_tree_brace tokens: (token_repetition tokens: (metavariable)))))))) statements: (macro_definition name: (identifier) (macro_definition_bracket (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren)) right: (token_tree (token_tree_brace)))))))",
     "wrappedText": "macro_rules!say_hello{ ()=>(println!(\"Hello!\");) }macro_rules!four{ ()=>{ 1+3 }; }macro_rules!foo{ (x=>$e:expr)=>(println!(\"mode X: {}\",$e));(y=>$e:expr)=>(println!(\"mode Y: {}\",$e)) }macro_rules!o_O{ ($($x:expr;[$($y:expr)*])*)=>{ $($($x+$e)*)* } }macro_rules!zero_or_one{ ($($e:expr)?)=>{ $($e)? }; }macro_rules!empty[()=>{  };];",
     "wrappedOffset": 0
   },
@@ -118808,7 +118808,7 @@
     "pattern": "macro_definition",
     "edits": [],
     "expectedSourceOut": "macro_rules!say_hello{ ()=>(println!(\"Hello!\");) }",
-    "expectedReparseTree": "(macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren)) right: (token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))) tokens: (token_pattern_group1 (token_tree_punctuation))))))))",
+    "expectedReparseTree": "(macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren)) right: (token_tree (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))) tokens: (non_special_token (token_tree_punctuation))))))))",
     "wrappedText": "macro_rules!say_hello{ ()=>(println!(\"Hello!\");) }",
     "wrappedOffset": 0
   },
@@ -118941,7 +118941,7 @@
     "pattern": "macro_definition",
     "edits": [],
     "expectedSourceOut": "macro_rules!four{ ()=>{ 1+3 }; }",
-    "expectedReparseTree": "(macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren)) right: (token_tree (token_tree_brace tokens: (token_pattern_group1 (integer_literal)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_pattern_group1 (integer_literal))))))))",
+    "expectedReparseTree": "(macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren)) right: (token_tree (token_tree_brace tokens: (non_special_token (integer_literal)) tokens: (non_special_token (token_tree_punctuation)) tokens: (non_special_token (integer_literal))))))))",
     "wrappedText": "macro_rules!four{ ()=>{ 1+3 }; }",
     "wrappedOffset": 0
   },
@@ -119337,7 +119337,7 @@
     "pattern": "macro_definition",
     "edits": [],
     "expectedSourceOut": "macro_rules!foo{ (x=>$e:expr)=>(println!(\"mode X: {}\",$e));(y=>$e:expr)=>(println!(\"mode Y: {}\",$e)) }",
-    "expectedReparseTree": "(macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (token_pattern_group1 (identifier)) token_patterns: (token_pattern_group1 (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))) right: (token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))))) macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (token_pattern_group1 (identifier)) token_patterns: (token_pattern_group1 (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))) right: (token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))))))))",
+    "expectedReparseTree": "(macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))) right: (token_tree (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))) macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))) right: (token_tree (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))))))",
     "wrappedText": "macro_rules!foo{ (x=>$e:expr)=>(println!(\"mode X: {}\",$e));(y=>$e:expr)=>(println!(\"mode Y: {}\",$e)) }",
     "wrappedOffset": 0
   },
@@ -119629,7 +119629,7 @@
     "pattern": "macro_definition",
     "edits": [],
     "expectedSourceOut": "macro_rules!o_O{ ($($x:expr;[$($y:expr)*])*)=>{ $($($x+$e)*)* } }",
-    "expectedReparseTree": "(macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (token_pattern_group1 (token_tree_punctuation)) token_patterns: (token_tree_pattern (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))))))) right: (token_tree (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))))))))",
+    "expectedReparseTree": "(macro_definition name: (identifier) (macro_definition_brace (macro_rules macro_rule: (macro_rule left: (token_tree_pattern (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))))))) right: (token_tree (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))))))",
     "wrappedText": "macro_rules!o_O{ ($($x:expr;[$($y:expr)*])*)=>{ $($($x+$e)*)* } }",
     "wrappedOffset": 0
   },
@@ -120030,7 +120030,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(println!(\"Hello!\");)",
-    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))) tokens: (token_pattern_group1 (token_tree_punctuation))))",
+    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))) tokens: (non_special_token (token_tree_punctuation))))",
     "wrappedText": "macro_rules! _m { () => (println!(\"Hello!\");) }",
     "wrappedOffset": 24
   },
@@ -120089,7 +120089,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(\"Hello!\")",
-    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))",
+    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))",
     "wrappedText": "macro_rules! _m { () => (\"Hello!\") }",
     "wrappedOffset": 24
   },
@@ -120144,7 +120144,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "{ 1+3 }",
-    "expectedReparseTree": "(token_tree (token_tree_brace tokens: (token_pattern_group1 (integer_literal)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_pattern_group1 (integer_literal))))",
+    "expectedReparseTree": "(token_tree (token_tree_brace tokens: (non_special_token (integer_literal)) tokens: (non_special_token (token_tree_punctuation)) tokens: (non_special_token (integer_literal))))",
     "wrappedText": "macro_rules! _m { () => { 1+3 } }",
     "wrappedOffset": 24
   },
@@ -120262,7 +120262,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(println!(\"mode X: {}\",$e))",
-    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))))",
+    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))",
     "wrappedText": "macro_rules! _m { () => (println!(\"mode X: {}\",$e)) }",
     "wrappedOffset": 24
   },
@@ -120342,7 +120342,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(\"mode X: {}\",$e)",
-    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))",
+    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))",
     "wrappedText": "macro_rules! _m { () => (\"mode X: {}\",$e) }",
     "wrappedOffset": 24
   },
@@ -120460,7 +120460,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(println!(\"mode Y: {}\",$e))",
-    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (token_pattern_group1 (identifier)) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))))",
+    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))",
     "wrappedText": "macro_rules! _m { () => (println!(\"mode Y: {}\",$e)) }",
     "wrappedOffset": 24
   },
@@ -120540,7 +120540,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(\"mode Y: {}\",$e)",
-    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))",
+    "expectedReparseTree": "(token_tree (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))",
     "wrappedText": "macro_rules! _m { () => (\"mode Y: {}\",$e) }",
     "wrappedOffset": 24
   },
@@ -120649,7 +120649,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "{ $($($x+$e)*)* }",
-    "expectedReparseTree": "(token_tree (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (token_pattern_group1 (token_tree_punctuation)) tokens: (metavariable)))))",
+    "expectedReparseTree": "(token_tree (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))",
     "wrappedText": "macro_rules! _m { () => { $($($x+$e)*)* } }",
     "wrappedOffset": 24
   },
@@ -122879,7 +122879,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "match x{ Person{ name,age }if age<5=>(\"toddler\",name),Person{ name:adult_name,age:_ }=>(\"adult\",adult_name), }match y{ Bar::T1(_,Some::<isize>(x))=>println!(\"{x}\"), }",
-    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements element: (field_pattern (shorthand_field_identifier)) element: (field_pattern (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_with_comma value: (tuple_expression elements: (string_literal string_open: (string_open) elements: (string_content)) elements: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements element: (field_pattern (field_pattern_named name: (field_identifier) pattern: (identifier))) element: (field_pattern (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern)))))) value: (tuple_expression elements: (string_literal string_open: (string_open) elements: (string_content)) elements: (identifier))))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)) (patterns pattern: (wildcard_pattern) pattern: (tuple_struct_pattern type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))) (patterns pattern: (identifier)))))) value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))))))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements element: (field_pattern (shorthand_field_identifier)) element: (field_pattern (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_with_comma value: (tuple_expression elements: (string_literal string_open: (string_open) elements: (string_content)) elements: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements element: (field_pattern (field_pattern_named name: (field_identifier) pattern: (identifier))) element: (field_pattern (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern)))))) value: (tuple_expression elements: (string_literal string_open: (string_open) elements: (string_content)) elements: (identifier))))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)) (patterns pattern: (wildcard_pattern) pattern: (tuple_struct_pattern type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))) (patterns pattern: (identifier)))))) value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))))))",
     "wrappedText": "match x{ Person{ name,age }if age<5=>(\"toddler\",name),Person{ name:adult_name,age:_ }=>(\"adult\",adult_name), }match y{ Bar::T1(_,Some::<isize>(x))=>println!(\"{x}\"), }",
     "wrappedOffset": 0
   },
@@ -123520,7 +123520,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match y{ Bar::T1(_,Some::<isize>(x))=>println!(\"{x}\"), }",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)) (patterns pattern: (wildcard_pattern) pattern: (tuple_struct_pattern type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))) (patterns pattern: (identifier)))))) value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))))))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)) (patterns pattern: (wildcard_pattern) pattern: (tuple_struct_pattern type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))) (patterns pattern: (identifier)))))) value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))))",
     "wrappedText": "fn _f() { let _ = match y{ Bar::T1(_,Some::<isize>(x))=>println!(\"{x}\"), }; }",
     "wrappedOffset": 18
   },
@@ -124362,7 +124362,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "println!(\"{x}\")",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))",
     "wrappedText": "println!(\"{x}\")",
     "wrappedOffset": 0
   },
@@ -124421,7 +124421,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(\"{x}\")",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))",
     "wrappedText": "fn _f() { mac! (\"{x}\") }",
     "wrappedOffset": 15
   },
@@ -136322,7 +136322,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn foo(x:i32){ const CUBE:i32=3.pow(3);match x{ CUBE=>println!(\"three cubed\"),_=>{  } } }fn foo(x:i32){ match x{ const{ 3.pow(3) }=>println!(\"three cubed\"),_=>{  } } }",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))))",
     "wrappedText": "fn foo(x:i32){ const CUBE:i32=3.pow(3);match x{ CUBE=>println!(\"three cubed\"),_=>{  } } }fn foo(x:i32){ match x{ const{ 3.pow(3) }=>println!(\"three cubed\"),_=>{  } } }",
     "wrappedOffset": 0
   },
@@ -136693,7 +136693,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo(x:i32){ const CUBE:i32=3.pow(3);match x{ CUBE=>println!(\"three cubed\"),_=>{  } } }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))))",
     "wrappedText": "fn foo(x:i32){ const CUBE:i32=3.pow(3);match x{ CUBE=>println!(\"three cubed\"),_=>{  } } }",
     "wrappedOffset": 0
   },
@@ -137073,7 +137073,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo(x:i32){ match x{ const{ 3.pow(3) }=>println!(\"three cubed\"),_=>{  } } }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))))",
     "wrappedText": "fn foo(x:i32){ match x{ const{ 3.pow(3) }=>println!(\"three cubed\"),_=>{  } } }",
     "wrappedOffset": 0
   },
@@ -137576,7 +137576,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{ const CUBE:i32=3.pow(3);match x{ CUBE=>println!(\"three cubed\"),_=>{  } } }",
-    "expectedReparseTree": "(block statements: (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))",
+    "expectedReparseTree": "(block statements: (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))",
     "wrappedText": "fn _f() { let _ = { const CUBE:i32=3.pow(3);match x{ CUBE=>println!(\"three cubed\"),_=>{  } } }; }",
     "wrappedOffset": 18
   },
@@ -137917,7 +137917,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{ match x{ const{ 3.pow(3) }=>println!(\"three cubed\"),_=>{  } } }",
-    "expectedReparseTree": "(block statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))",
+    "expectedReparseTree": "(block statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))",
     "wrappedText": "fn _f() { let _ = { match x{ const{ 3.pow(3) }=>println!(\"three cubed\"),_=>{  } } }; }",
     "wrappedOffset": 18
   },
@@ -138666,7 +138666,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x{ CUBE=>println!(\"three cubed\"),_=>{  } }",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))",
     "wrappedText": "fn _f() { let _ = match x{ CUBE=>println!(\"three cubed\"),_=>{  } }; }",
     "wrappedOffset": 18
   },
@@ -138954,7 +138954,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x{ const{ 3.pow(3) }=>println!(\"three cubed\"),_=>{  } }",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))",
     "wrappedText": "fn _f() { let _ = match x{ const{ 3.pow(3) }=>println!(\"three cubed\"),_=>{  } }; }",
     "wrappedOffset": 18
   },
@@ -139027,7 +139027,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "println!(\"three cubed\")",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))",
     "wrappedText": "println!(\"three cubed\")",
     "wrappedOffset": 0
   },
@@ -139100,7 +139100,7 @@
     "pattern": "macro_invocation",
     "edits": [],
     "expectedSourceOut": "println!(\"three cubed\")",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content))))))",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))",
     "wrappedText": "println!(\"three cubed\")",
     "wrappedOffset": 0
   },
@@ -139159,7 +139159,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(\"three cubed\")",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))",
     "wrappedText": "fn _f() { mac! (\"three cubed\") }",
     "wrappedOffset": 15
   },
@@ -139218,7 +139218,7 @@
     "pattern": "token_tree",
     "edits": [],
     "expectedSourceOut": "(\"three cubed\")",
-    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (token_pattern_group1 (string_literal string_open: (string_open) elements: (string_content)))))",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))",
     "wrappedText": "fn _f() { mac! (\"three cubed\") }",
     "wrappedOffset": 15
   },

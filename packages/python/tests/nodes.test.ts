@@ -54,7 +54,16 @@ describe('future_import_statement', () => {
 			$type: TSKindId.ImportList,
 			$text: 'test',
 			$source: 2,
-			$named: true
+			$named: true,
+			_name: [
+				{
+					$type: TSKindId.DottedName,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_identifier: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+				} as any
+			]
 		} as any);
 		expect(node.$type).toBe(TSKindId.FutureImportStatement);
 		expect(node.$source).toBe(2);

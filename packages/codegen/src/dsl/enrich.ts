@@ -3481,6 +3481,19 @@ function promoteExistingHiddenRuleName(
 ): { visibleName: string } | null {
 	const existing = groupDedupeMap[existingHiddenName];
 	if (existing !== undefined) return { visibleName: existing };
+	// The rule being promoted already HAS an identity — its own stripped
+	// name (`_simple_statements` surfacing visibly is `simple_statements`,
+	// not an ordinal `<parent>_group<N>`). Reusing the stripped spelling
+	// also converges with any other alias of the same rule under that name
+	// (e.g. an upstream reference-site alias): every site then shares ONE
+	// visible name, so tree-sitter keeps one symbol for the pair instead of
+	// minting a second visible kind for identical content. Ordinal naming
+	// survives only as the collision fallback.
+	const natural = existingHiddenName.replace(/^_+/, '');
+	if (natural.length > 0 && !(natural in rulesBag)) {
+		groupDedupeMap[existingHiddenName] = natural;
+		return { visibleName: natural };
+	}
 	counter.grp += 1;
 	const visibleName = `${parentKind.replace(/^_+/, '')}_group${counter.grp}`;
 	if (visibleName in rulesBag) {

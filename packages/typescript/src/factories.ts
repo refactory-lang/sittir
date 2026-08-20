@@ -1904,7 +1904,7 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 				$with: {
 					usingMarker: (value?: NonNullable<Parameters<typeof buildAssignmentExpression>[0]>['usingMarker']) =>
 						buildAssignmentExpression({ ...config, usingMarker: value }),
-					left: (value: T.ParenthesizedExpression | T.LhsExpression) =>
+					left: (value: T.ParenthesizedExpression | T._LhsExpression) =>
 						buildAssignmentExpression({ ...config, left: value }),
 					right: (value: T.Expression) => buildAssignmentExpression({ ...config, right: value })
 				}
@@ -2681,7 +2681,7 @@ export function buildClassStaticBlock(config: T.ClassStaticBlock.Config) {
 	);
 }
 
-export function buildRestPattern(child: T.LhsExpression) {
+export function buildRestPattern(child: T._LhsExpression) {
 	const _lhs_expression = child;
 	return withMethods(
 		withAccessors(
@@ -2690,7 +2690,7 @@ export function buildRestPattern(child: T.LhsExpression) {
 				$source: 2 as const,
 				$named: true as const,
 				_lhs_expression,
-				$with: { $child: (v: T.LhsExpression) => buildRestPattern(v) }
+				$with: { $child: (v: T._LhsExpression) => buildRestPattern(v) }
 			},
 			{
 				lhsExpression: () => _lhs_expression
@@ -6472,7 +6472,7 @@ export function buildForHeaderLhs(config: T.ForHeaderLhs.Config) {
 				$named: true as const,
 				_left,
 				$with: {
-					left: (value: T.LhsExpression | T.ParenthesizedExpression) => buildForHeaderLhs({ ...config, left: value })
+					left: (value: T._LhsExpression | T.ParenthesizedExpression) => buildForHeaderLhs({ ...config, left: value })
 				}
 			},
 			{

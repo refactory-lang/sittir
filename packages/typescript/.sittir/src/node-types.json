@@ -132,7 +132,7 @@
     "named": true,
     "subtypes": [
       {
-        "type": "for_header_group1",
+        "type": "lhs_expression",
         "named": true
       },
       {
@@ -996,7 +996,7 @@
         "required": true,
         "types": [
           {
-            "type": "for_header_group1",
+            "type": "lhs_expression",
             "named": true
           },
           {
@@ -3014,49 +3014,6 @@
     }
   },
   {
-    "type": "for_header_group1",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "array_pattern",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "member_expression",
-          "named": true
-        },
-        {
-          "type": "non_null_expression",
-          "named": true
-        },
-        {
-          "type": "object_pattern",
-          "named": true
-        },
-        {
-          "type": "reserved_identifier",
-          "named": true
-        },
-        {
-          "type": "subscript_expression",
-          "named": true
-        },
-        {
-          "type": "undefined",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "for_header_let_const_kind",
     "named": true,
     "fields": {
@@ -3113,7 +3070,7 @@
         "required": true,
         "types": [
           {
-            "type": "for_header_group1",
+            "type": "lhs_expression",
             "named": true
           },
           {
@@ -4619,6 +4576,49 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "lhs_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "array_pattern",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "member_expression",
+          "named": true
+        },
+        {
+          "type": "non_null_expression",
+          "named": true
+        },
+        {
+          "type": "object_pattern",
+          "named": true
+        },
+        {
+          "type": "reserved_identifier",
+          "named": true
+        },
+        {
+          "type": "subscript_expression",
+          "named": true
+        },
+        {
+          "type": "undefined",
+          "named": true
+        }
+      ]
     }
   },
   {

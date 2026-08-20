@@ -826,7 +826,7 @@
             "named": true
           },
           {
-            "type": "statement_group1",
+            "type": "simple_statements",
             "named": true
           }
         ]
@@ -1587,93 +1587,11 @@
         "required": true,
         "types": [
           {
-            "type": "dict_pattern_group1",
+            "type": "key_value_pattern",
             "named": true
           },
           {
             "type": "splat_pattern",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "dict_pattern_group1",
-    "named": true,
-    "fields": {
-      "key": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "case_list_pattern",
-            "named": true
-          },
-          {
-            "type": "case_tuple_pattern",
-            "named": true
-          },
-          {
-            "type": "class_pattern",
-            "named": true
-          },
-          {
-            "type": "complex_pattern",
-            "named": true
-          },
-          {
-            "type": "concatenated_string",
-            "named": true
-          },
-          {
-            "type": "dict_pattern",
-            "named": true
-          },
-          {
-            "type": "dotted_name",
-            "named": true
-          },
-          {
-            "type": "false",
-            "named": true
-          },
-          {
-            "type": "none",
-            "named": true
-          },
-          {
-            "type": "simple_pattern_negative",
-            "named": true
-          },
-          {
-            "type": "splat_pattern",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "true",
-            "named": true
-          },
-          {
-            "type": "union_pattern",
-            "named": true
-          },
-          {
-            "type": "wildcard_pattern",
-            "named": true
-          }
-        ]
-      },
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "case_pattern",
             "named": true
           }
         ]
@@ -2418,7 +2336,7 @@
           "named": true
         },
         {
-          "type": "future_import_statement_group2",
+          "type": "import_list",
           "named": true
         }
       ]
@@ -2426,26 +2344,6 @@
   },
   {
     "type": "future_import_statement_group1",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "aliased_import",
-            "named": true
-          },
-          {
-            "type": "dotted_name",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "future_import_statement_group2",
     "named": true,
     "fields": {},
     "children": {
@@ -2629,10 +2527,30 @@
           "named": true
         },
         {
-          "type": "future_import_statement_group2",
+          "type": "import_list",
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "import_list",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "aliased_import",
+            "named": true
+          },
+          {
+            "type": "dotted_name",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -2717,6 +2635,88 @@
     "type": "is not",
     "named": false,
     "fields": {}
+  },
+  {
+    "type": "key_value_pattern",
+    "named": true,
+    "fields": {
+      "key": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "case_list_pattern",
+            "named": true
+          },
+          {
+            "type": "case_tuple_pattern",
+            "named": true
+          },
+          {
+            "type": "class_pattern",
+            "named": true
+          },
+          {
+            "type": "complex_pattern",
+            "named": true
+          },
+          {
+            "type": "concatenated_string",
+            "named": true
+          },
+          {
+            "type": "dict_pattern",
+            "named": true
+          },
+          {
+            "type": "dotted_name",
+            "named": true
+          },
+          {
+            "type": "false",
+            "named": true
+          },
+          {
+            "type": "none",
+            "named": true
+          },
+          {
+            "type": "simple_pattern_negative",
+            "named": true
+          },
+          {
+            "type": "splat_pattern",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          },
+          {
+            "type": "true",
+            "named": true
+          },
+          {
+            "type": "union_pattern",
+            "named": true
+          },
+          {
+            "type": "wildcard_pattern",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "case_pattern",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "keyword_argument",
@@ -3095,7 +3095,7 @@
             "named": true
           },
           {
-            "type": "statement_group1",
+            "type": "simple_statements",
             "named": true
           }
         ]
@@ -3708,25 +3708,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "statement_group1",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "newline",
-          "named": true
-        },
-        {
-          "type": "simple_statements_elements",
-          "named": true
-        }
-      ]
     }
   },
   {

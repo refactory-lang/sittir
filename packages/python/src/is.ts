@@ -175,9 +175,9 @@ export interface IsGuards {
 	SimpleStatementsElements<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.SimpleStatementsElements };
-	FutureImportStatementGroup2<T extends { readonly $type: number }>(
+	FutureImportStatementGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.FutureImportStatementGroup2 };
+	): v is T & { readonly $type: TSKindId.FutureImportStatementGroup1 };
 	Subjects<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Subjects };
 	CasePatterns<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePatterns };
 	ExceptClauseGroup1<T extends { readonly $type: number }>(
@@ -366,9 +366,9 @@ export interface AssertGuards {
 	SimpleStatementsElements(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.SimpleStatementsElements };
-	FutureImportStatementGroup2(v: {
+	FutureImportStatementGroup1(v: {
 		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.FutureImportStatementGroup2 };
+	}): asserts v is { readonly $type: TSKindId.FutureImportStatementGroup1 };
 	Subjects(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Subjects };
 	CasePatterns(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CasePatterns };
 	ExceptClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseGroup1 };
@@ -616,7 +616,7 @@ const _kindIdByKind = new Map<string, number>([
 	['await', TSKindId.Await],
 	['_kw_async_marker', TSKindId.KwAsyncMarker],
 	['_simple_statements_elements', TSKindId.SimpleStatementsElements],
-	['_future_import_statement_group2', TSKindId.FutureImportStatementGroup2],
+	['_future_import_statement_group1', TSKindId.FutureImportStatementGroup1],
 	['_subjects', TSKindId.Subjects],
 	['_case_patterns', TSKindId.CasePatterns],
 	['_except_clause_group1', TSKindId.ExceptClauseGroup1],
@@ -762,7 +762,7 @@ export const is = {
 	formatSpecifier: _g(TSKindId.FormatSpecifier),
 	await: _g(TSKindId.Await),
 	SimpleStatementsElements: _g(TSKindId.SimpleStatementsElements),
-	FutureImportStatementGroup2: _g(TSKindId.FutureImportStatementGroup2),
+	FutureImportStatementGroup1: _g(TSKindId.FutureImportStatementGroup1),
 	Subjects: _g(TSKindId.Subjects),
 	CasePatterns: _g(TSKindId.CasePatterns),
 	ExceptClauseGroup1: _g(TSKindId.ExceptClauseGroup1),
@@ -939,7 +939,7 @@ export const assert = {
 	formatSpecifier: _makeAssert('formatSpecifier', is.formatSpecifier as _AnyGuard),
 	await: _makeAssert('await', is.await as _AnyGuard),
 	SimpleStatementsElements: _makeAssert('SimpleStatementsElements', is.SimpleStatementsElements as _AnyGuard),
-	FutureImportStatementGroup2: _makeAssert('FutureImportStatementGroup2', is.FutureImportStatementGroup2 as _AnyGuard),
+	FutureImportStatementGroup1: _makeAssert('FutureImportStatementGroup1', is.FutureImportStatementGroup1 as _AnyGuard),
 	Subjects: _makeAssert('Subjects', is.Subjects as _AnyGuard),
 	CasePatterns: _makeAssert('CasePatterns', is.CasePatterns as _AnyGuard),
 	ExceptClauseGroup1: _makeAssert('ExceptClauseGroup1', is.ExceptClauseGroup1 as _AnyGuard),

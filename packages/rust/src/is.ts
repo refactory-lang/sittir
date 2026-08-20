@@ -15,14 +15,13 @@ import type {
 	Literal,
 	LiteralPattern,
 	NonDelimToken,
-	NonSpecialToken,
 	Path,
 	Pattern,
 	Statement,
 	TokenPattern,
-	TokenPatternGroup1,
 	Tokens,
 	UseClause,
+	_NonSpecialToken,
 	_Type
 } from './types.js';
 
@@ -314,7 +313,7 @@ export interface IsGuards {
 	declarationStatement(v: { readonly $type: string | number }): v is DeclarationStatement;
 	tokenPattern(v: { readonly $type: string | number }): v is TokenPattern;
 	tokens(v: { readonly $type: string | number }): v is Tokens;
-	nonSpecialToken(v: { readonly $type: string | number }): v is NonSpecialToken;
+	nonSpecialToken(v: { readonly $type: string | number }): v is _NonSpecialToken;
 	useClause(v: { readonly $type: string | number }): v is UseClause;
 	type(v: { readonly $type: string | number }): v is _Type;
 	expressionExceptRange(v: { readonly $type: string | number }): v is ExpressionExceptRange;
@@ -327,7 +326,6 @@ export interface IsGuards {
 	literal(v: { readonly $type: string | number }): v is Literal;
 	literalPattern(v: { readonly $type: string | number }): v is LiteralPattern;
 	path(v: { readonly $type: string | number }): v is Path;
-	tokenPatternGroup1(v: { readonly $type: string | number }): v is TokenPatternGroup1;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -550,7 +548,7 @@ export interface AssertGuards {
 	declarationStatement(v: { readonly $type: string | number }): asserts v is DeclarationStatement;
 	tokenPattern(v: { readonly $type: string | number }): asserts v is TokenPattern;
 	tokens(v: { readonly $type: string | number }): asserts v is Tokens;
-	nonSpecialToken(v: { readonly $type: string | number }): asserts v is NonSpecialToken;
+	nonSpecialToken(v: { readonly $type: string | number }): asserts v is _NonSpecialToken;
 	useClause(v: { readonly $type: string | number }): asserts v is UseClause;
 	type(v: { readonly $type: string | number }): asserts v is _Type;
 	expressionExceptRange(v: { readonly $type: string | number }): asserts v is ExpressionExceptRange;
@@ -563,7 +561,6 @@ export interface AssertGuards {
 	literal(v: { readonly $type: string | number }): asserts v is Literal;
 	literalPattern(v: { readonly $type: string | number }): asserts v is LiteralPattern;
 	path(v: { readonly $type: string | number }): asserts v is Path;
-	tokenPatternGroup1(v: { readonly $type: string | number }): asserts v is TokenPatternGroup1;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -614,9 +611,6 @@ const _supertype_pattern_ids = new Set<number>([
 const _supertype_literal_ids = new Set<number>([312, 313, 123, 314, 121, 151]);
 const _supertype_literalPattern_ids = new Set<number>([312, 313, 123, 314, 121, 151, 311]);
 const _supertype_path_ids = new Set<number>([133, 1, 136, 134, 135, 244]);
-const _supertype_tokenPatternGroup1_ids = new Set<number>([
-	312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 347, 348
-]);
 
 const _kindIdByKind = new Map<string, number>([
 	['identifier', TSKindId.Identifier],
@@ -1092,8 +1086,7 @@ export const is = {
 	pattern: _sg(_supertype_pattern_ids),
 	literal: _sg(_supertype_literal_ids),
 	literalPattern: _sg(_supertype_literalPattern_ids),
-	path: _sg(_supertype_path_ids),
-	tokenPatternGroup1: _sg(_supertype_tokenPatternGroup1_ids)
+	path: _sg(_supertype_path_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -1321,8 +1314,7 @@ export const assert = {
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
 	literal: _makeAssert('literal', is.literal as _AnyGuard),
 	literalPattern: _makeAssert('literalPattern', is.literalPattern as _AnyGuard),
-	path: _makeAssert('path', is.path as _AnyGuard),
-	tokenPatternGroup1: _makeAssert('tokenPatternGroup1', is.tokenPatternGroup1 as _AnyGuard)
+	path: _makeAssert('path', is.path as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

@@ -620,7 +620,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         167 => "fragment_specifier", // "fragment_specifier"
         168 => "token_tree", // "token_tree"
         169 => "token_repetition", // "token_repetition"
-        170 => "token_pattern_group1", // "_non_special_token"
+        170 => "non_special_token", // "_non_special_token"
         171 => "attribute_item", // "attribute_item"
         172 => "inner_attribute_item", // "inner_attribute_item"
         173 => "attribute", // "attribute"

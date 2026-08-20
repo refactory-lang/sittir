@@ -506,23 +506,6 @@ export const path = {
 	scoped: _attach(FR.coerceToScopedIdentifier, { from: FR.coerceToScopedIdentifier, strict: F.buildScopedIdentifier })
 } as const;
 
-export const tokenPatternGroup1 = {
-	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
-	rawString: _attach(FR.coerceToRawStringLiteral, {
-		from: FR.coerceToRawStringLiteral,
-		strict: F.buildRawStringLiteral
-	}),
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	mutable: F.buildMutableSpecifier,
-	self: F.buildSelf,
-	super: F.buildSuper,
-	crate: F.buildCrate
-} as const;
-
 // Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
 // Spec 023 US6. Tree-shakeable via standalone `from` export; also `ir.from.*`.
 export const from = {
@@ -1075,6 +1058,5 @@ export const ir = {
 	literal,
 	literalPattern,
 	path,
-	tokenPatternGroup1,
 	from
 } as const;

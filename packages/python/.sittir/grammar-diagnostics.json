@@ -5,7 +5,7 @@
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [future_import_statement_group1, future_import_statement_group2] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [import_list, future_import_statement_group1] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -144,7 +144,7 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "17 referenced kind(s) resolved no parser kindId",
+    "message": "16 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -163,8 +163,7 @@
         "_simple_statement",
         "_suite",
         "_unary_operator_operator",
-        "keyword_identifier",
-        "statement_group1"
+        "keyword_identifier"
       ]
     },
     "severity": "warning",
@@ -219,19 +218,6 @@
         "_simple_statement",
         "_suite",
         "keyword_identifier"
-      ]
-    },
-    "scope": "grammar",
-    "grammar": "python"
-  },
-  {
-    "code": "kindid-vaporized-symbols",
-    "message": "1 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "statement_group1"
       ]
     },
     "scope": "grammar",

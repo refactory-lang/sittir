@@ -1883,7 +1883,7 @@
         "required": false,
         "types": [
           {
-            "type": "token_pattern_group1",
+            "type": "non_special_token",
             "named": true
           },
           {
@@ -1907,7 +1907,7 @@
         "required": false,
         "types": [
           {
-            "type": "token_pattern_group1",
+            "type": "non_special_token",
             "named": true
           },
           {
@@ -1931,7 +1931,7 @@
         "required": false,
         "types": [
           {
-            "type": "token_pattern_group1",
+            "type": "non_special_token",
             "named": true
           },
           {
@@ -4142,6 +4142,49 @@
     "fields": {}
   },
   {
+    "type": "non_special_token",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "_literal",
+          "named": true
+        },
+        {
+          "type": "crate",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "mutable_specifier",
+          "named": true
+        },
+        {
+          "type": "primitive_type",
+          "named": true
+        },
+        {
+          "type": "self",
+          "named": true
+        },
+        {
+          "type": "super",
+          "named": true
+        },
+        {
+          "type": "token_tree_punctuation",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "or_pattern",
     "named": true,
     "fields": {},
@@ -5492,49 +5535,6 @@
     }
   },
   {
-    "type": "token_pattern_group1",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "_literal",
-          "named": true
-        },
-        {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "mutable_specifier",
-          "named": true
-        },
-        {
-          "type": "primitive_type",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
-          "named": true
-        },
-        {
-          "type": "token_tree_punctuation",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "token_repetition",
     "named": true,
     "fields": {
@@ -5565,7 +5565,7 @@
             "named": true
           },
           {
-            "type": "token_pattern_group1",
+            "type": "non_special_token",
             "named": true
           },
           {
@@ -5611,11 +5611,11 @@
             "named": true
           },
           {
-            "type": "token_binding_pattern",
+            "type": "non_special_token",
             "named": true
           },
           {
-            "type": "token_pattern_group1",
+            "type": "token_binding_pattern",
             "named": true
           },
           {
@@ -5678,7 +5678,7 @@
             "named": true
           },
           {
-            "type": "token_pattern_group1",
+            "type": "non_special_token",
             "named": true
           },
           {
@@ -5706,7 +5706,7 @@
             "named": true
           },
           {
-            "type": "token_pattern_group1",
+            "type": "non_special_token",
             "named": true
           },
           {
@@ -5734,7 +5734,7 @@
             "named": true
           },
           {
-            "type": "token_pattern_group1",
+            "type": "non_special_token",
             "named": true
           },
           {
@@ -5785,11 +5785,11 @@
             "named": true
           },
           {
-            "type": "token_binding_pattern",
+            "type": "non_special_token",
             "named": true
           },
           {
-            "type": "token_pattern_group1",
+            "type": "token_binding_pattern",
             "named": true
           },
           {
@@ -5817,11 +5817,11 @@
             "named": true
           },
           {
-            "type": "token_binding_pattern",
+            "type": "non_special_token",
             "named": true
           },
           {
-            "type": "token_pattern_group1",
+            "type": "token_binding_pattern",
             "named": true
           },
           {
@@ -5849,11 +5849,11 @@
             "named": true
           },
           {
-            "type": "token_binding_pattern",
+            "type": "non_special_token",
             "named": true
           },
           {
-            "type": "token_pattern_group1",
+            "type": "token_binding_pattern",
             "named": true
           },
           {

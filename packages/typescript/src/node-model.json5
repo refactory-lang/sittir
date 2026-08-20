@@ -26,7 +26,7 @@
     "_tuple_type_member",
     "declaration",
     "expression",
-    "for_header_group1",
+    "lhs_expression",
     "pattern",
     "primary_expression",
     "primary_type",
@@ -193,10 +193,10 @@
       "call_expression": "decorator_call_expression"
     },
     "assignment_pattern.left": {
-      "for_header_group1": "_lhs_expression"
+      "lhs_expression": "_lhs_expression"
     },
     "array_pattern.elements": {
-      "for_header_group1": "_lhs_expression"
+      "lhs_expression": "_lhs_expression"
     },
     "jsx_opening_element.jsx_opening_element_content": {
       "jsx_opening_element_content": "_jsx_opening_element_content"
@@ -229,7 +229,7 @@
       "property_identifier": "identifier"
     },
     "assignment_expression.left": {
-      "for_header_group1": "_lhs_expression"
+      "lhs_expression": "_lhs_expression"
     },
     "decorator.content": {
       "member_expression": "decorator_member_expression",
@@ -246,7 +246,7 @@
       "member_expression": "decorator_member_expression"
     },
     "pair_pattern.value": {
-      "for_header_group1": "_lhs_expression"
+      "lhs_expression": "_lhs_expression"
     },
     "_jsx_start_opening_element.jsx_opening_element_content": {
       "jsx_opening_element_content": "_jsx_opening_element_content"
@@ -290,13 +290,13 @@
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "required_parameter.pattern": {
-      "for_header_group1": "_lhs_expression"
+      "lhs_expression": "_lhs_expression"
     },
     "optional_parameter.pattern": {
-      "for_header_group1": "_lhs_expression"
+      "lhs_expression": "_lhs_expression"
     },
     "_parameter_name.pattern": {
-      "for_header_group1": "_lhs_expression"
+      "lhs_expression": "_lhs_expression"
     },
     "omitting_type_annotation.type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
@@ -496,7 +496,7 @@
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "_for_header_lhs.left": {
-      "for_header_group1": "_lhs_expression"
+      "lhs_expression": "_lhs_expression"
     },
     "_jsx_opening_element_content.jsx_start_opening_element_group1": {
       "jsx_start_opening_element_group1": "_jsx_start_opening_element_group1"
@@ -6679,7 +6679,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_lhs_expression",
-              "parseKind": "for_header_group1",
+              "parseKind": "lhs_expression",
               "unresolved": true
             },
             {
@@ -7802,7 +7802,7 @@
     {
       "kind": "_lhs_expression",
       "modelType": "supertype",
-      "typeName": "LhsExpression",
+      "typeName": "_LhsExpression",
       "irKey": "lhsExpression",
       "hidden": true,
       "subtypes": [
@@ -10769,7 +10769,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_lhs_expression",
-              "parseKind": "for_header_group1",
+              "parseKind": "lhs_expression",
               "unresolved": true
             }
           ],
@@ -14144,25 +14144,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "for_header_group1",
-      "modelType": "supertype",
-      "typeName": "ForHeaderGroup1",
-      "irKey": "forHeaderGroup1",
-      "hidden": true,
-      "subtypes": [
-        "_destructuring_pattern",
-        "_identifier",
-        "_reserved_identifier",
-        "array_pattern",
-        "identifier",
-        "member_expression",
-        "non_null_expression",
-        "object_pattern",
-        "subscript_expression",
-        "undefined"
-      ]
-    },
-    {
       "kind": "for_in_statement",
       "modelType": "branch",
       "typeName": "ForInStatement",
@@ -17513,6 +17494,25 @@
         "kind",
         "declarators",
         "semicolon"
+      ]
+    },
+    {
+      "kind": "lhs_expression",
+      "modelType": "supertype",
+      "typeName": "LhsExpression",
+      "irKey": "lhsExpression",
+      "hidden": true,
+      "subtypes": [
+        "_destructuring_pattern",
+        "_identifier",
+        "_reserved_identifier",
+        "array_pattern",
+        "identifier",
+        "member_expression",
+        "non_null_expression",
+        "object_pattern",
+        "subscript_expression",
+        "undefined"
       ]
     },
     {

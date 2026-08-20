@@ -46,7 +46,7 @@ export type TypescriptGrammar = {
 	readonly pattern: {
 		type: 'pattern';
 		named: true;
-		subtypes: [{ type: 'for_header_group1'; named: true }, { type: 'rest_pattern'; named: true }];
+		subtypes: [{ type: 'lhs_expression'; named: true }, { type: 'rest_pattern'; named: true }];
 	};
 	readonly primary_expression: {
 		type: 'primary_expression';
@@ -369,7 +369,7 @@ export type TypescriptGrammar = {
 			left: {
 				multiple: false;
 				required: true;
-				types: [{ type: 'for_header_group1'; named: true }, { type: 'parenthesized_expression'; named: true }];
+				types: [{ type: 'lhs_expression'; named: true }, { type: 'parenthesized_expression'; named: true }];
 			};
 			right: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
 			using_marker: { multiple: false; required: false; types: [{ type: 'using'; named: false }] };
@@ -1066,25 +1066,6 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: { primary_type: { multiple: false; required: true; types: [{ type: 'primary_type'; named: true }] } };
 	};
-	readonly for_header_group1: {
-		type: 'for_header_group1';
-		named: true;
-		fields: {};
-		children: {
-			multiple: false;
-			required: true;
-			types: [
-				{ type: 'array_pattern'; named: true },
-				{ type: 'identifier'; named: true },
-				{ type: 'member_expression'; named: true },
-				{ type: 'non_null_expression'; named: true },
-				{ type: 'object_pattern'; named: true },
-				{ type: 'reserved_identifier'; named: true },
-				{ type: 'subscript_expression'; named: true },
-				{ type: 'undefined'; named: true }
-			];
-		};
-	};
 	readonly for_header_let_const_kind: {
 		type: 'for_header_let_const_kind';
 		named: true;
@@ -1113,7 +1094,7 @@ export type TypescriptGrammar = {
 			left: {
 				multiple: false;
 				required: true;
-				types: [{ type: 'for_header_group1'; named: true }, { type: 'parenthesized_expression'; named: true }];
+				types: [{ type: 'lhs_expression'; named: true }, { type: 'parenthesized_expression'; named: true }];
 			};
 		};
 	};
@@ -1639,6 +1620,25 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
 			};
+		};
+	};
+	readonly lhs_expression: {
+		type: 'lhs_expression';
+		named: true;
+		fields: {};
+		children: {
+			multiple: false;
+			required: true;
+			types: [
+				{ type: 'array_pattern'; named: true },
+				{ type: 'identifier'; named: true },
+				{ type: 'member_expression'; named: true },
+				{ type: 'non_null_expression'; named: true },
+				{ type: 'object_pattern'; named: true },
+				{ type: 'reserved_identifier'; named: true },
+				{ type: 'subscript_expression'; named: true },
+				{ type: 'undefined'; named: true }
+			];
 		};
 	};
 	readonly literal_type: {

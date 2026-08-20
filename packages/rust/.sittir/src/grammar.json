@@ -303,7 +303,7 @@
             "name": "_non_special_token"
           },
           "named": true,
-          "value": "token_pattern_group1",
+          "value": "non_special_token",
           "metadata": {
             "author": "enrich"
           }
@@ -532,7 +532,7 @@
             "name": "_non_special_token"
           },
           "named": true,
-          "value": "token_pattern_group1",
+          "value": "non_special_token",
           "metadata": {
             "author": "enrich"
           }
@@ -4806,7 +4806,7 @@
             "name": "_non_special_token"
           },
           "named": true,
-          "value": "token_pattern_group1",
+          "value": "non_special_token",
           "metadata": {
             "author": "enrich"
           }

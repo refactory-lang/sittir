@@ -20,7 +20,7 @@
     "_tokens",
     "_type",
     "_use_clause",
-    "token_pattern_group1"
+    "non_special_token"
   ],
   "externals": [
     "_block_comment_content",
@@ -4949,7 +4949,7 @@
       "subtypes": [
         "_non_delim_token",
         "delim_token_tree",
-        "token_pattern_group1",
+        "non_special_token",
         "token_tree_punctuation"
       ]
     },
@@ -6309,7 +6309,7 @@
     {
       "kind": "_non_special_token",
       "modelType": "supertype",
-      "typeName": "NonSpecialToken",
+      "typeName": "_NonSpecialToken",
       "irKey": "nonSpecialToken",
       "hidden": true,
       "subtypes": [
@@ -14871,6 +14871,30 @@
       "text": "!"
     },
     {
+      "kind": "non_special_token",
+      "modelType": "supertype",
+      "typeName": "NonSpecialToken",
+      "irKey": "nonSpecialToken",
+      "hidden": true,
+      "subtypes": [
+        "_literal",
+        "_primitive_type",
+        "_token_keywords",
+        "_token_tree_punctuation",
+        "boolean_literal",
+        "char_literal",
+        "crate",
+        "float_literal",
+        "identifier",
+        "integer_literal",
+        "mutable_specifier",
+        "raw_string_literal",
+        "self",
+        "string_literal",
+        "super"
+      ]
+    },
+    {
       "kind": "or_pattern",
       "modelType": "branch",
       "typeName": "OrPattern",
@@ -17200,30 +17224,6 @@
       "factoryFields": [
         "name",
         "type"
-      ]
-    },
-    {
-      "kind": "token_pattern_group1",
-      "modelType": "supertype",
-      "typeName": "TokenPatternGroup1",
-      "irKey": "tokenPatternGroup1",
-      "hidden": true,
-      "subtypes": [
-        "_literal",
-        "_primitive_type",
-        "_token_keywords",
-        "_token_tree_punctuation",
-        "boolean_literal",
-        "char_literal",
-        "crate",
-        "float_literal",
-        "identifier",
-        "integer_literal",
-        "mutable_specifier",
-        "raw_string_literal",
-        "self",
-        "string_literal",
-        "super"
       ]
     },
     {

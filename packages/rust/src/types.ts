@@ -653,7 +653,7 @@ export const enum TSKindId {
 	FragmentSpecifier = 167,
 	TokenTree = 168,
 	TokenRepetition = 169,
-	NonSpecialToken = 170,
+	_NonSpecialToken = 170,
 	AttributeItem = 171,
 	InnerAttributeItem = 172,
 	Attribute = 173,
@@ -1537,7 +1537,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[167, 'fragment_specifier'],
 	[168, 'token_tree'],
 	[169, 'token_repetition'],
-	[170, 'token_pattern_group1'],
+	[170, 'non_special_token'],
 	[171, 'attribute_item'],
 	[172, 'inner_attribute_item'],
 	[173, 'attribute'],
@@ -2153,7 +2153,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'token_repetition':
 			return TSKindId.TokenRepetition;
 		case '_non_special_token':
-			return TSKindId.NonSpecialToken;
+			return TSKindId._NonSpecialToken;
 		case 'attribute_item':
 			return TSKindId.AttributeItem;
 		case 'inner_attribute_item':
@@ -2818,8 +2818,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.InnerBlockDocCommentMarker;
 		case 'doc_comment':
 			return TSKindId.LineDocContent;
-		case 'token_pattern_group1':
-			return TSKindId.NonSpecialToken;
+		case 'non_special_token':
+			return TSKindId._NonSpecialToken;
 		case 'let_chain':
 			return TSKindId.LetChain;
 		case 'macro_rules':
@@ -3043,7 +3043,7 @@ export const enum TokenPatternKind {
 	TokenRepetitionPattern = 'token_repetition_pattern',
 	TokenBindingPattern = 'token_binding_pattern',
 	Metavariable = 'metavariable',
-	NonSpecialToken = '_non_special_token',
+	_NonSpecialToken = '_non_special_token',
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -3065,7 +3065,7 @@ export const enum TokensKind {
 	TokenTree = 'token_tree',
 	TokenRepetition = 'token_repetition',
 	Metavariable = 'metavariable',
-	NonSpecialToken = '_non_special_token',
+	_NonSpecialToken = '_non_special_token',
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -3083,7 +3083,7 @@ export const enum TokensKind {
 	TokenKeywords = '_token_keywords'
 }
 
-export const enum NonSpecialTokenKind {
+export const enum _NonSpecialTokenKind {
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -3254,13 +3254,13 @@ export const enum ExpressionEndingWithBlockKind {
 
 export const enum DelimTokensKind {
 	NonDelimToken = '_non_delim_token',
-	TokenPatternGroup1 = 'token_pattern_group1',
+	NonSpecialToken = 'non_special_token',
 	TokenTreePunctuation = 'token_tree_punctuation',
 	DelimTokenTree = 'delim_token_tree'
 }
 
 export const enum NonDelimTokenKind {
-	NonSpecialToken = '_non_special_token',
+	_NonSpecialToken = '_non_special_token',
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -3391,7 +3391,7 @@ export const enum PathKind {
 	ReservedIdentifier = '_reserved_identifier'
 }
 
-export const enum TokenPatternGroup1Kind {
+export const enum NonSpecialTokenKind {
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -6349,7 +6349,7 @@ export type TokensTree =
 	| TokenTreePunctuationTree
 	| TokenKeywordsTree;
 
-export type NonSpecialToken =
+export type _NonSpecialToken =
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -6365,7 +6365,7 @@ export type NonSpecialToken =
 	| TokenTreePunctuation
 	| TokenKeywords;
 
-export type NonSpecialTokenTree =
+export type _NonSpecialTokenTree =
 	| StringLiteralTree
 	| RawStringLiteralTree
 	| CharLiteralTree
@@ -6666,7 +6666,7 @@ export type DelimTokens = TokenTreePunctuation | DelimTokenTree;
 export type DelimTokensTree = TokenTreePunctuationTree | DelimTokenTreeTree;
 
 export type NonDelimToken =
-	| NonSpecialToken
+	| _NonSpecialToken
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -6684,7 +6684,7 @@ export type NonDelimToken =
 	| TokenTreePunctuation;
 
 export type NonDelimTokenTree =
-	| NonSpecialTokenTree
+	| _NonSpecialTokenTree
 	| StringLiteralTree
 	| RawStringLiteralTree
 	| CharLiteralTree
@@ -6896,7 +6896,7 @@ export type PathTree =
 	| ScopedIdentifierTree
 	| ReservedIdentifierTree;
 
-export type TokenPatternGroup1 =
+export type NonSpecialToken =
 	| Literal
 	| StringLiteral
 	| RawStringLiteral
@@ -6913,7 +6913,7 @@ export type TokenPatternGroup1 =
 	| TokenTreePunctuation
 	| TokenKeywords;
 
-export type TokenPatternGroup1Tree =
+export type NonSpecialTokenTree =
 	| LiteralTree
 	| StringLiteralTree
 	| RawStringLiteralTree

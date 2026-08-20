@@ -158,7 +158,7 @@ export function buildRelativeImport(config: T.RelativeImport.Config) {
 	);
 }
 
-export function buildFutureImportStatement(child: T.ImportList | T.FutureImportStatementGroup2) {
+export function buildFutureImportStatement(child: T.ImportList | T.FutureImportStatementGroup1) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -167,7 +167,7 @@ export function buildFutureImportStatement(child: T.ImportList | T.FutureImportS
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.ImportList | T.FutureImportStatementGroup2) => buildFutureImportStatement(v) }
+				$with: { $child: (v: T.ImportList | T.FutureImportStatementGroup1) => buildFutureImportStatement(v) }
 			},
 			{
 				content: () => _content
@@ -191,7 +191,7 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config) {
 				$with: {
 					moduleName: (value: T.RelativeImport | T.DottedName) =>
 						buildImportFromStatement({ ...config, moduleName: value }),
-					content: (value: T.ImportList | T.FutureImportStatementGroup2 | T.WildcardImport) =>
+					content: (value: T.ImportList | T.FutureImportStatementGroup1 | T.WildcardImport) =>
 						buildImportFromStatement({ ...config, content: value })
 				}
 			},
@@ -3224,15 +3224,15 @@ function _buildSimpleStatementsElements(elements: NonEmptyArray<T.SimpleStatemen
 	);
 }
 
-export function buildFutureImportStatementGroup2(
+export function buildFutureImportStatementGroup1(
 	child: T.ImportList
-): ReturnType<typeof _buildFutureImportStatementGroup2>;
-export function buildFutureImportStatementGroup2(
+): ReturnType<typeof _buildFutureImportStatementGroup1>;
+export function buildFutureImportStatementGroup1(
 	...args: Parameters<typeof buildImportList>
-): ReturnType<typeof _buildFutureImportStatementGroup2>;
-export function buildFutureImportStatementGroup2(...args: unknown[]) {
+): ReturnType<typeof _buildFutureImportStatementGroup1>;
+export function buildFutureImportStatementGroup1(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildFutureImportStatementGroup2(args[0] as T.ImportList);
+		return _buildFutureImportStatementGroup1(args[0] as T.ImportList);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -3240,19 +3240,19 @@ export function buildFutureImportStatementGroup2(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportList as const);
 	return prebuilt
-		? _buildFutureImportStatementGroup2(args[0] as T.ImportList)
-		: _buildFutureImportStatementGroup2((buildImportList as (...a: unknown[]) => unknown)(...args) as T.ImportList);
+		? _buildFutureImportStatementGroup1(args[0] as T.ImportList)
+		: _buildFutureImportStatementGroup1((buildImportList as (...a: unknown[]) => unknown)(...args) as T.ImportList);
 }
-function _buildFutureImportStatementGroup2(child: T.ImportList) {
+function _buildFutureImportStatementGroup1(child: T.ImportList) {
 	const _import_list = child;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.FutureImportStatementGroup2 as const,
+				$type: TSKindId.FutureImportStatementGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
 				_import_list,
-				$with: { $child: (v: T.ImportList) => buildFutureImportStatementGroup2(v) }
+				$with: { $child: (v: T.ImportList) => buildFutureImportStatementGroup1(v) }
 			},
 			{
 				importList: () => _import_list
@@ -4550,7 +4550,7 @@ export type FluentKindMap = {
 	comment: T.Comment;
 	line_continuation: T.LineContinuation;
 	_simple_statements_elements: FluentNode<'_simple_statements_elements', T.SimpleStatementsElements.Config>;
-	_future_import_statement_group2: FluentNode<'_future_import_statement_group2', T.FutureImportStatementGroup2.Config>;
+	_future_import_statement_group1: FluentNode<'_future_import_statement_group1', T.FutureImportStatementGroup1.Config>;
 	_subjects: FluentNode<'_subjects', T.Subjects.Config>;
 	_case_patterns: FluentNode<'_case_patterns', T.CasePatterns.Config>;
 	_except_clause_group1: FluentNode<'_except_clause_group1', T.ExceptClauseGroup1.Config>;
@@ -4722,7 +4722,7 @@ export const _factoryMap = {
 	comment: buildComment,
 	line_continuation: buildLineContinuation,
 	_simple_statements_elements: buildSimpleStatementsElements,
-	_future_import_statement_group2: buildFutureImportStatementGroup2,
+	_future_import_statement_group1: buildFutureImportStatementGroup1,
 	_subjects: buildSubjects,
 	_case_patterns: buildCasePatterns,
 	_except_clause_group1: buildExceptClauseGroup1,

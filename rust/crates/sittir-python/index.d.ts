@@ -822,7 +822,7 @@ export interface FunctionDefinitionTransport {
   _body: FunctionDefinitionBodyTransportSlot
 }
 
-export interface FutureImportStatementGroup2Transport {
+export interface FutureImportStatementGroup1Transport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string

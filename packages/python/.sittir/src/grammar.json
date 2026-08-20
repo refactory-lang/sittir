@@ -28,7 +28,7 @@
             "name": "_simple_statements"
           },
           "named": true,
-          "value": "statement_group1",
+          "value": "simple_statements",
           "metadata": {
             "author": "enrich"
           }
@@ -226,7 +226,7 @@
                 "name": "_import_list"
               },
               "named": true,
-              "value": "future_import_statement_group1",
+              "value": "import_list",
               "metadata": {
                 "author": "enrich"
               }
@@ -235,14 +235,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_future_import_statement_group2",
+                "name": "_future_import_statement_group1",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "future_import_statement_group2",
+              "value": "future_import_statement_group1",
               "metadata": {
                 "author": "enrich"
               }
@@ -300,7 +300,7 @@
                 "name": "_import_list"
               },
               "named": true,
-              "value": "future_import_statement_group1",
+              "value": "import_list",
               "metadata": {
                 "author": "enrich"
               }
@@ -309,14 +309,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_future_import_statement_group2",
+                "name": "_future_import_statement_group1",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "future_import_statement_group2",
+              "value": "future_import_statement_group1",
               "metadata": {
                 "author": "enrich"
               }
@@ -5812,7 +5812,7 @@
         }
       ]
     },
-    "_future_import_statement_group2": {
+    "_future_import_statement_group1": {
       "type": "SEQ",
       "members": [
         {
@@ -6337,7 +6337,7 @@
                   "name": "_key_value_pattern"
                 },
                 "named": true,
-                "value": "dict_pattern_group1",
+                "value": "key_value_pattern",
                 "metadata": {
                   "author": "enrich"
                 }
@@ -6374,7 +6374,7 @@
                         "name": "_key_value_pattern"
                       },
                       "named": true,
-                      "value": "dict_pattern_group1",
+                      "value": "key_value_pattern",
                       "metadata": {
                         "author": "enrich"
                       }
@@ -7432,10 +7432,10 @@
     ],
     [
       "future_import_statement",
-      "_future_import_statement_group2"
+      "_future_import_statement_group1"
     ],
     [
-      "_future_import_statement_group2"
+      "_future_import_statement_group1"
     ],
     [
       "match_statement",

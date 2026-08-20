@@ -720,7 +720,7 @@ export const enum TSKindId {
 	AwaitExpression = 233,
 	MemberExpression = 234,
 	SubscriptExpression = 235,
-	LhsExpression = 236,
+	_LhsExpression = 236,
 	AssignmentExpression = 237,
 	AugmentedAssignmentLhs = 238,
 	AugmentedAssignmentExpression = 239,
@@ -925,8 +925,7 @@ export const enum TSKindId {
 	ObjectTypeContentRepeat1 = 438,
 	_StringDoubleRepeat1 = 439,
 	_StringSingleRepeat1 = 440,
-	_ForHeaderGroup1 = 441,
-	_InterfaceBody = 442,
+	_InterfaceBody = 441,
 	_PropertyIdentifier = 443,
 	ReservedIdentifier = 444,
 	Semicolon = 445,
@@ -1174,6 +1173,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[234, 'member_expression'],
 	[235, 'subscript_expression'],
 	[236, '_lhs_expression'],
+	[442, '_lhs_expression'],
 	[237, 'assignment_expression'],
 	[238, '_augmented_assignment_lhs'],
 	[239, 'augmented_assignment_expression'],
@@ -1378,8 +1378,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[438, 'object_type_content_repeat1'],
 	[439, '_string_double_repeat1'],
 	[440, '_string_single_repeat1'],
-	[441, '_for_header_group1'],
-	[442, '_interface_body'],
+	[441, '_interface_body'],
 	[443, '_property_identifier'],
 	[444, '_reserved_identifier'],
 	[445, '_semicolon'],
@@ -1627,7 +1626,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[233, 'await_expression'],
 	[234, 'member_expression'],
 	[235, 'subscript_expression'],
-	[236, '_lhs_expression'],
+	[236, 'lhs_expression'],
+	[442, 'lhs_expression'],
 	[237, 'assignment_expression'],
 	[238, '_augmented_assignment_lhs'],
 	[239, 'augmented_assignment_expression'],
@@ -1832,8 +1832,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[438, 'object_type_content_repeat1'],
 	[439, '_string_double_repeat1'],
 	[440, '_string_single_repeat1'],
-	[441, 'for_header_group1'],
-	[442, 'interface_body'],
+	[441, 'interface_body'],
 	[443, 'property_identifier'],
 	[444, 'reserved_identifier'],
 	[445, 'semicolon'],
@@ -2323,7 +2322,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'subscript_expression':
 			return TSKindId.SubscriptExpression;
 		case '_lhs_expression':
-			return TSKindId.LhsExpression;
+			return TSKindId._LhsExpression;
 		case 'assignment_expression':
 			return TSKindId.AssignmentExpression;
 		case '_augmented_assignment_lhs':
@@ -2732,8 +2731,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._StringDoubleRepeat1;
 		case '_string_single_repeat1':
 			return TSKindId._StringSingleRepeat1;
-		case '_for_header_group1':
-			return TSKindId._ForHeaderGroup1;
 		case '_interface_body':
 			return TSKindId._InterfaceBody;
 		case '_property_identifier':
@@ -2894,6 +2891,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TemplateChars;
 		case 'function_signature_automatic_semicolon':
 			return TSKindId.FunctionSignatureAutomaticSemicolon;
+		case 'lhs_expression':
+			return TSKindId._LhsExpression;
 		case 'extends_clause_single':
 			return TSKindId.ExtendsClauseSingle;
 		case 'export_specifiers':
@@ -3002,8 +3001,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.UpdateExpressionPostfix;
 		case 'update_expression_prefix':
 			return TSKindId.UpdateExpressionPrefix;
-		case 'for_header_group1':
-			return TSKindId._ForHeaderGroup1;
 		case 'interface_body':
 			return TSKindId._InterfaceBody;
 		case 'property_identifier':
@@ -3176,7 +3173,7 @@ export const enum FormalParameterKind {
 	OptionalParameter = 'optional_parameter'
 }
 
-export const enum LhsExpressionKind {
+export const enum _LhsExpressionKind {
 	MemberExpression = 'member_expression',
 	SubscriptExpression = 'subscript_expression',
 	_Identifier = '_identifier',
@@ -3209,7 +3206,7 @@ export const enum _IdentifierKind {
 }
 
 export const enum PatternKind {
-	LhsExpression = '_lhs_expression',
+	_LhsExpression = '_lhs_expression',
 	MemberExpression = 'member_expression',
 	SubscriptExpression = 'subscript_expression',
 	_Identifier = '_identifier',
@@ -3302,7 +3299,7 @@ export const enum PropertyIdentifierKind {
 	Identifier = 'identifier'
 }
 
-export const enum ForHeaderGroup1Kind {
+export const enum LhsExpressionKind {
 	MemberExpression = 'member_expression',
 	SubscriptExpression = 'subscript_expression',
 	_Identifier = '_identifier',
@@ -4014,13 +4011,13 @@ export interface SubscriptExpression {
 export interface AssignmentExpression {
 	readonly $type: TSKindId.AssignmentExpression;
 	readonly _using_marker?: boolean;
-	readonly _left: ParenthesizedExpression | LhsExpression;
+	readonly _left: ParenthesizedExpression | _LhsExpression;
 	readonly _right: Expression;
 	readonly __inputHints__?: {
 		readonly using_marker?: BooleanKeyword<'using'>;
 	};
 	usingMarker(): boolean | undefined;
-	left(): ParenthesizedExpression | LhsExpression;
+	left(): ParenthesizedExpression | _LhsExpression;
 	right(): Expression;
 }
 
@@ -4272,8 +4269,8 @@ export interface ClassStaticBlock {
 
 export interface RestPattern {
 	readonly $type: TSKindId.RestPattern;
-	readonly _lhs_expression: LhsExpression;
-	lhsExpression(): LhsExpression;
+	readonly _lhs_expression: _LhsExpression;
+	lhsExpression(): _LhsExpression;
 }
 
 export interface MethodDefinition {
@@ -5502,8 +5499,8 @@ export interface ClassBodyMember {
 
 export interface ForHeaderLhs {
 	readonly $type: TSKindId.ForHeaderLhs;
-	readonly _left: LhsExpression | ParenthesizedExpression;
-	left(): LhsExpression | ParenthesizedExpression;
+	readonly _left: _LhsExpression | ParenthesizedExpression;
+	left(): _LhsExpression | ParenthesizedExpression;
 }
 
 export interface ForHeaderVarKind {
@@ -6725,7 +6722,7 @@ export type FormalParameter = RequiredParameter | OptionalParameter;
 
 export type FormalParameterTree = RequiredParameterTree | OptionalParameterTree;
 
-export type LhsExpression =
+export type _LhsExpression =
 	| MemberExpression
 	| SubscriptExpression
 	| Undefined
@@ -6735,7 +6732,7 @@ export type LhsExpression =
 	| ArrayPattern
 	| NonNullExpression;
 
-export type LhsExpressionTree =
+export type _LhsExpressionTree =
 	| MemberExpressionTree
 	| SubscriptExpressionTree
 	| UndefinedTree
@@ -6770,7 +6767,7 @@ export type _Identifier = Undefined | Identifier;
 export type _IdentifierTree = UndefinedTree | IdentifierTree;
 
 export type Pattern =
-	| LhsExpression
+	| _LhsExpression
 	| MemberExpression
 	| SubscriptExpression
 	| _Identifier
@@ -6784,7 +6781,7 @@ export type Pattern =
 	| RestPattern;
 
 export type PatternTree =
-	| LhsExpressionTree
+	| _LhsExpressionTree
 	| MemberExpressionTree
 	| SubscriptExpressionTree
 	| _IdentifierTree
@@ -6902,7 +6899,7 @@ export type PropertyIdentifier = JsxIdentifier | Identifier;
 
 export type PropertyIdentifierTree = JsxIdentifierTree | IdentifierTree;
 
-export type ForHeaderGroup1 =
+export type LhsExpression =
 	| MemberExpression
 	| SubscriptExpression
 	| _Identifier
@@ -6914,7 +6911,7 @@ export type ForHeaderGroup1 =
 	| ArrayPattern
 	| NonNullExpression;
 
-export type ForHeaderGroup1Tree =
+export type LhsExpressionTree =
 	| MemberExpressionTree
 	| SubscriptExpressionTree
 	| _IdentifierTree

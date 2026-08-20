@@ -355,22 +355,6 @@ export const primaryType = {
 	union: _attach(FR.coerceToUnionType, { from: FR.coerceToUnionType, strict: F.buildUnionType })
 } as const;
 
-export const forHeaderGroup1 = {
-	member: _attach(FR.coerceToMemberExpression, { from: FR.coerceToMemberExpression, strict: F.buildMemberExpression }),
-	subscript: _attach(FR.coerceToSubscriptExpression, {
-		from: FR.coerceToSubscriptExpression,
-		strict: F.buildSubscriptExpression
-	}),
-	undefined: F.buildUndefined,
-	identifier: F.buildIdentifier,
-	object: _attach(FR.coerceToObjectPattern, { from: FR.coerceToObjectPattern, strict: F.buildObjectPattern }),
-	array: _attach(FR.coerceToArrayPattern, { from: FR.coerceToArrayPattern, strict: F.buildArrayPattern }),
-	nonNull: _attach(FR.coerceToNonNullExpression, {
-		from: FR.coerceToNonNullExpression,
-		strict: F.buildNonNullExpression
-	})
-} as const;
-
 // Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
 // Spec 023 US6. Tree-shakeable via standalone `from` export; also `ir.from.*`.
 export const from = {
@@ -1051,6 +1035,5 @@ export const ir = {
 	type,
 	tupleTypeMember,
 	primaryType,
-	forHeaderGroup1,
 	from
 } as const;

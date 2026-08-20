@@ -245,7 +245,7 @@ pub const POSITIONAL_SEPARATOR: KindId = KindId(234);
 pub const KEYWORD_SEPARATOR: KindId = KindId(235);
 pub const _KW_ASYNC_MARKER: KindId = KindId(236);
 pub const _SIMPLE_STATEMENTS_ELEMENTS: KindId = KindId(237);
-pub const _FUTURE_IMPORT_STATEMENT_GROUP2: KindId = KindId(238);
+pub const _FUTURE_IMPORT_STATEMENT_GROUP1: KindId = KindId(238);
 pub const _SUBJECTS: KindId = KindId(239);
 pub const _CASE_PATTERNS: KindId = KindId(240);
 pub const _EXCEPT_CLAUSE_GROUP1: KindId = KindId(241);
@@ -438,7 +438,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         113 => "relative_import", // "relative_import"
         114 => "future_import_statement", // "future_import_statement"
         115 => "import_from_statement", // "import_from_statement"
-        116 => "future_import_statement_group1", // "_import_list"
+        116 => "import_list", // "_import_list"
         117 => "aliased_import", // "aliased_import"
         118 => "wildcard_import", // "wildcard_import"
         119 => "print_statement", // "print_statement"
@@ -489,7 +489,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         164 => "_simple_pattern", // "_simple_pattern"
         165 => "union_pattern", // "union_pattern"
         166 => "dict_pattern", // "dict_pattern"
-        167 => "dict_pattern_group1", // "_key_value_pattern"
+        167 => "key_value_pattern", // "_key_value_pattern"
         168 => "keyword_pattern", // "keyword_pattern"
         169 => "splat_pattern", // "splat_pattern"
         170 => "class_pattern", // "class_pattern"
@@ -560,7 +560,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         235 => "keyword_separator", // "keyword_separator"
         236 => "_kw_async_marker", // "_kw_async_marker"
         237 => "simple_statements_elements", // "_simple_statements_elements"
-        238 => "future_import_statement_group2", // "_future_import_statement_group2"
+        238 => "future_import_statement_group1", // "_future_import_statement_group1"
         239 => "subjects", // "_subjects"
         240 => "case_patterns", // "_case_patterns"
         241 => "except_clause_group1", // "_except_clause_group1"

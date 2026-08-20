@@ -1054,7 +1054,6 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'use',
 		'where',
 		'while',
-		'token_pattern_group1',
 		'delim_token_tree'
 	]),
 	_non_delim_token: new Set([
@@ -1309,7 +1308,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'union',
 		'gen'
 	]),
-	token_pattern_group1: new Set([
+	non_special_token: new Set([
 		'_literal',
 		'literal',
 		'string_literal',
@@ -2135,8 +2134,8 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapNonSpecialToken(
-	data: T.NonSpecialToken & { readonly $other?: T.NonSpecialToken | readonly T.NonSpecialToken[] },
+export function wrap_NonSpecialToken(
+	data: T._NonSpecialToken & { readonly $other?: T._NonSpecialToken | readonly T._NonSpecialToken[] },
 	tree: TreeHandle
 ) {
 	const kindKeyed = _firstKindKeyedWrapChild(data, [
@@ -2159,7 +2158,7 @@ export function wrapNonSpecialToken(
 		'token_tree_punctuation',
 		'_token_keywords',
 		'token_keywords'
-	]) as T.NonSpecialToken | readonly T.NonSpecialToken[] | undefined;
+	]) as T._NonSpecialToken | readonly T._NonSpecialToken[] | undefined;
 	const filtered =
 		kindKeyed ??
 		_filterWrapChildrenByKind(data.$other, [
@@ -2184,9 +2183,9 @@ export function wrapNonSpecialToken(
 			'token_keywords'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T.NonSpecialToken>(data as T.NonSpecialToken, tree);
+		return drillIn<T._NonSpecialToken>(data as T._NonSpecialToken, tree);
 	}
-	return drillIn<T.NonSpecialToken>(
+	return drillIn<T._NonSpecialToken>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
 			tree,
 			nodeType: data.$type,
@@ -5521,7 +5520,7 @@ export function wrapDelimTokens(
 	const kindKeyed = _firstKindKeyedWrapChild(data, [
 		'_non_delim_token',
 		'non_delim_token',
-		'token_pattern_group1',
+		'non_special_token',
 		'token_tree_punctuation',
 		'delim_token_tree'
 	]) as T.DelimTokens | readonly T.DelimTokens[] | undefined;
@@ -5530,7 +5529,7 @@ export function wrapDelimTokens(
 		_filterWrapChildrenByKind(data.$other, [
 			'_non_delim_token',
 			'non_delim_token',
-			'token_pattern_group1',
+			'non_special_token',
 			'token_tree_punctuation',
 			'delim_token_tree'
 		]);
@@ -11347,8 +11346,8 @@ export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapTokenPatternGroup1(
-	data: T.TokenPatternGroup1 & { readonly $other?: T.TokenPatternGroup1 | readonly T.TokenPatternGroup1[] },
+export function wrapNonSpecialToken(
+	data: T.NonSpecialToken & { readonly $other?: T.NonSpecialToken | readonly T.NonSpecialToken[] },
 	tree: TreeHandle
 ) {
 	const kindKeyed = _firstKindKeyedWrapChild(data, [
@@ -11371,7 +11370,7 @@ export function wrapTokenPatternGroup1(
 		'token_tree_punctuation',
 		'_token_keywords',
 		'token_keywords'
-	]) as T.TokenPatternGroup1 | readonly T.TokenPatternGroup1[] | undefined;
+	]) as T.NonSpecialToken | readonly T.NonSpecialToken[] | undefined;
 	const filtered =
 		kindKeyed ??
 		_filterWrapChildrenByKind(data.$other, [
@@ -11396,9 +11395,9 @@ export function wrapTokenPatternGroup1(
 			'token_keywords'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillIn<T.TokenPatternGroup1>(data as T.TokenPatternGroup1, tree);
+		return drillIn<T.NonSpecialToken>(data as T.NonSpecialToken, tree);
 	}
-	return drillIn<T.TokenPatternGroup1>(
+	return drillIn<T.NonSpecialToken>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
 			tree,
 			nodeType: data.$type,
@@ -11422,7 +11421,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	fragment_specifier: (d) => ({ ...d, $type: TSKindId.FragmentSpecifier as const }),
 	token_tree: (d, t) => wrapTokenTree(d as unknown as T.TokenTree, t),
 	token_repetition: (d, t) => wrapTokenRepetition(d as unknown as T.TokenRepetition, t),
-	_non_special_token: (d, t) => wrapNonSpecialToken(d as unknown as T.NonSpecialToken, t),
+	_non_special_token: (d, t) => wrap_NonSpecialToken(d as unknown as T._NonSpecialToken, t),
 	attribute_item: (d, t) => wrapAttributeItem(d as unknown as T.AttributeItem, t),
 	inner_attribute_item: (d, t) => wrapInnerAttributeItem(d as unknown as T.InnerAttributeItem, t),
 	attribute: (d, t) => wrapAttribute(d as unknown as T.Attribute, t),
@@ -11672,7 +11671,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	float_literal: (d) => ({ ...d, $type: TSKindId.FloatLiteral as const }),
 	_line_doc_content: (d) => ({ ...d, $type: TSKindId.LineDocContent as const }),
 	_error_sentinel: (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const }),
-	token_pattern_group1: (d, t) => wrapTokenPatternGroup1(d as unknown as T.TokenPatternGroup1, t)
+	non_special_token: (d, t) => wrapNonSpecialToken(d as unknown as T.NonSpecialToken, t)
 };
 
 const _aliasTargetToSource: Record<string, string> = {

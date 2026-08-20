@@ -200,7 +200,7 @@ export const enum SyntaxKind {
 	FormatSpecifier = 'format_specifier',
 	Await = 'await',
 	SimpleStatementsElements = '_simple_statements_elements',
-	FutureImportStatementGroup2 = '_future_import_statement_group2',
+	FutureImportStatementGroup1 = '_future_import_statement_group1',
 	RaiseStatementOptional1 = '_raise_statement_optional1',
 	Subjects = '_subjects',
 	CasePatterns = '_case_patterns',
@@ -547,7 +547,7 @@ export const enum TSKindId {
 	KeywordSeparator = 235,
 	KwAsyncMarker = 236,
 	SimpleStatementsElements = 237,
-	FutureImportStatementGroup2 = 238,
+	FutureImportStatementGroup1 = 238,
 	Subjects = 239,
 	CasePatterns = 240,
 	ExceptClauseGroup1 = 241,
@@ -733,7 +733,6 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[108, 'module'],
 	[109, '_statement'],
 	[110, '_simple_statements'],
-	[311, '_simple_statements'],
 	[111, 'import_statement'],
 	[112, 'import_prefix'],
 	[113, 'relative_import'],
@@ -861,7 +860,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[235, 'keyword_separator'],
 	[236, '_kw_async_marker'],
 	[237, '_simple_statements_elements'],
-	[238, '_future_import_statement_group2'],
+	[238, '_future_import_statement_group1'],
 	[239, '_subjects'],
 	[240, '_case_patterns'],
 	[241, '_except_clause_group1'],
@@ -1048,13 +1047,12 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[108, 'module'],
 	[109, '_statement'],
 	[110, 'simple_statements'],
-	[311, 'simple_statements'],
 	[111, 'import_statement'],
 	[112, 'import_prefix'],
 	[113, 'relative_import'],
 	[114, 'future_import_statement'],
 	[115, 'import_from_statement'],
-	[116, 'future_import_statement_group1'],
+	[116, 'import_list'],
 	[117, 'aliased_import'],
 	[118, 'wildcard_import'],
 	[119, 'print_statement'],
@@ -1105,7 +1103,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[164, '_simple_pattern'],
 	[165, 'union_pattern'],
 	[166, 'dict_pattern'],
-	[167, 'dict_pattern_group1'],
+	[167, 'key_value_pattern'],
 	[168, 'keyword_pattern'],
 	[169, 'splat_pattern'],
 	[170, 'class_pattern'],
@@ -1176,7 +1174,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[235, 'keyword_separator'],
 	[236, '_kw_async_marker'],
 	[237, 'simple_statements_elements'],
-	[238, 'future_import_statement_group2'],
+	[238, 'future_import_statement_group1'],
 	[239, 'subjects'],
 	[240, 'case_patterns'],
 	[241, 'except_clause_group1'],
@@ -1730,8 +1728,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.KwAsyncMarker;
 		case '_simple_statements_elements':
 			return TSKindId.SimpleStatementsElements;
-		case '_future_import_statement_group2':
-			return TSKindId.FutureImportStatementGroup2;
+		case '_future_import_statement_group1':
+			return TSKindId.FutureImportStatementGroup1;
 		case '_subjects':
 			return TSKindId.Subjects;
 		case '_case_patterns':
@@ -1976,9 +1974,9 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Newline;
 		case 'simple_statements':
 			return TSKindId.SimpleStatements;
-		case 'future_import_statement_group1':
+		case 'import_list':
 			return TSKindId.ImportList;
-		case 'dict_pattern_group1':
+		case 'key_value_pattern':
 			return TSKindId.KeyValuePattern;
 		case 'parameter_list':
 			return TSKindId._Parameters;
@@ -1992,8 +1990,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.CollectionElements;
 		case 'simple_statements_elements':
 			return TSKindId.SimpleStatementsElements;
-		case 'future_import_statement_group2':
-			return TSKindId.FutureImportStatementGroup2;
+		case 'future_import_statement_group1':
+			return TSKindId.FutureImportStatementGroup1;
 		case 'subjects':
 			return TSKindId.Subjects;
 		case 'case_patterns':
@@ -2259,16 +2257,16 @@ export interface RelativeImport {
 
 export interface FutureImportStatement {
 	readonly $type: TSKindId.FutureImportStatement;
-	readonly _content: ImportList | FutureImportStatementGroup2;
-	content(): ImportList | FutureImportStatementGroup2;
+	readonly _content: ImportList | FutureImportStatementGroup1;
+	content(): ImportList | FutureImportStatementGroup1;
 }
 
 export interface ImportFromStatement {
 	readonly $type: TSKindId.ImportFromStatement;
 	readonly _module_name: RelativeImport | DottedName;
-	readonly _content: ImportList | FutureImportStatementGroup2 | WildcardImport;
+	readonly _content: ImportList | FutureImportStatementGroup1 | WildcardImport;
 	moduleName(): RelativeImport | DottedName;
-	content(): ImportList | FutureImportStatementGroup2 | WildcardImport;
+	content(): ImportList | FutureImportStatementGroup1 | WildcardImport;
 }
 
 export interface ImportList {
@@ -3139,8 +3137,8 @@ export interface SimpleStatementsElements {
 	simpleStatements(): NonEmptyArray<SimpleStatement>;
 }
 
-export interface FutureImportStatementGroup2 {
-	readonly $type: TSKindId.FutureImportStatementGroup2;
+export interface FutureImportStatementGroup1 {
+	readonly $type: TSKindId.FutureImportStatementGroup1;
 	readonly _import_list: ImportList;
 	importList(): ImportList;
 }
@@ -3566,8 +3564,8 @@ export interface AwaitTree extends TreeNode<'await'> {}
 export interface SimpleStatementsElementsTree extends AnyTreeNode {
 	readonly type: '_simple_statements_elements';
 }
-export interface FutureImportStatementGroup2Tree extends AnyTreeNode {
-	readonly type: '_future_import_statement_group2';
+export interface FutureImportStatementGroup1Tree extends AnyTreeNode {
+	readonly type: '_future_import_statement_group1';
 }
 export interface RaiseStatementOptional1Tree extends AnyTreeNode {
 	readonly type: '_raise_statement_optional1';
@@ -4218,7 +4216,7 @@ export type PythonNode =
 	| FormatSpecifier
 	| Await
 	| SimpleStatementsElements
-	| FutureImportStatementGroup2
+	| FutureImportStatementGroup1
 	| RaiseStatementOptional1
 	| Subjects
 	| CasePatterns
@@ -4367,7 +4365,7 @@ export interface KindMap {
 	format_specifier: FormatSpecifier;
 	await: Await;
 	_simple_statements_elements: SimpleStatementsElements;
-	_future_import_statement_group2: FutureImportStatementGroup2;
+	_future_import_statement_group1: FutureImportStatementGroup1;
 	_raise_statement_optional1: RaiseStatementOptional1;
 	_subjects: Subjects;
 	_case_patterns: CasePatterns;
@@ -4615,8 +4613,8 @@ export interface SimpleStatementsElementsNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface FutureImportStatementGroup2Ns extends NodeNs<
-	FutureImportStatementGroup2,
+export interface FutureImportStatementGroup1Ns extends NodeNs<
+	FutureImportStatementGroup1,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
@@ -4854,7 +4852,7 @@ export interface NamespaceMap {
 	format_specifier: FormatSpecifierNs;
 	await: AwaitNs;
 	_simple_statements_elements: SimpleStatementsElementsNs;
-	_future_import_statement_group2: FutureImportStatementGroup2Ns;
+	_future_import_statement_group1: FutureImportStatementGroup1Ns;
 	_raise_statement_optional1: RaiseStatementOptional1Ns;
 	_subjects: SubjectsNs;
 	_case_patterns: CasePatternsNs;
@@ -5670,12 +5668,12 @@ export namespace SimpleStatementsElements {
 	export type Tree = TreeFor<'_simple_statements_elements'>;
 	export type Kind = '_simple_statements_elements';
 }
-export namespace FutureImportStatementGroup2 {
-	export type Config = ConfigFor<'_future_import_statement_group2'>;
-	export type Fluent = FluentFor<'_future_import_statement_group2'>;
-	export type Loose = LooseFor<'_future_import_statement_group2'>;
-	export type Tree = TreeFor<'_future_import_statement_group2'>;
-	export type Kind = '_future_import_statement_group2';
+export namespace FutureImportStatementGroup1 {
+	export type Config = ConfigFor<'_future_import_statement_group1'>;
+	export type Fluent = FluentFor<'_future_import_statement_group1'>;
+	export type Loose = LooseFor<'_future_import_statement_group1'>;
+	export type Tree = TreeFor<'_future_import_statement_group1'>;
+	export type Kind = '_future_import_statement_group1';
 }
 export namespace RaiseStatementOptional1 {
 	export type Config = ConfigFor<'_raise_statement_optional1'>;

@@ -460,8 +460,8 @@ enum ts_symbol_identifiers {
   aux_sym_object_type_content_repeat1 = 438,
   aux_sym__string_double_repeat1 = 439,
   aux_sym__string_single_repeat1 = 440,
-  alias_sym_for_header_group1 = 441,
-  alias_sym_interface_body = 442,
+  alias_sym_interface_body = 441,
+  alias_sym_lhs_expression = 442,
   alias_sym_property_identifier = 443,
   alias_sym_reserved_identifier = 444,
   alias_sym_semicolon = 445,
@@ -914,8 +914,8 @@ static const char * const ts_symbol_names[] = {
   [aux_sym_object_type_content_repeat1] = "object_type_content_repeat1",
   [aux_sym__string_double_repeat1] = "_string_double_repeat1",
   [aux_sym__string_single_repeat1] = "_string_single_repeat1",
-  [alias_sym_for_header_group1] = "for_header_group1",
   [alias_sym_interface_body] = "interface_body",
+  [alias_sym_lhs_expression] = "lhs_expression",
   [alias_sym_property_identifier] = "property_identifier",
   [alias_sym_reserved_identifier] = "reserved_identifier",
   [alias_sym_semicolon] = "semicolon",
@@ -1368,8 +1368,8 @@ static const TSSymbol ts_symbol_map[] = {
   [aux_sym_object_type_content_repeat1] = aux_sym_object_type_content_repeat1,
   [aux_sym__string_double_repeat1] = aux_sym__string_double_repeat1,
   [aux_sym__string_single_repeat1] = aux_sym__string_single_repeat1,
-  [alias_sym_for_header_group1] = alias_sym_for_header_group1,
   [alias_sym_interface_body] = alias_sym_interface_body,
+  [alias_sym_lhs_expression] = alias_sym_lhs_expression,
   [alias_sym_property_identifier] = alias_sym_property_identifier,
   [alias_sym_reserved_identifier] = alias_sym_reserved_identifier,
   [alias_sym_semicolon] = alias_sym_semicolon,
@@ -3152,11 +3152,11 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .visible = false,
     .named = false,
   },
-  [alias_sym_for_header_group1] = {
+  [alias_sym_interface_body] = {
     .visible = true,
     .named = true,
   },
-  [alias_sym_interface_body] = {
+  [alias_sym_lhs_expression] = {
     .visible = true,
     .named = true,
   },
@@ -9330,7 +9330,7 @@ static const TSSymbol ts_alias_sequences[PRODUCTION_ID_COUNT][MAX_ALIAS_SEQUENCE
     [0] = sym_identifier,
   },
   [28] = {
-    [0] = alias_sym_for_header_group1,
+    [0] = alias_sym_lhs_expression,
   },
   [36] = {
     [0] = alias_sym_type_identifier,
@@ -9357,7 +9357,7 @@ static const TSSymbol ts_alias_sequences[PRODUCTION_ID_COUNT][MAX_ALIAS_SEQUENCE
     [0] = alias_sym_statement_identifier,
   },
   [75] = {
-    [0] = alias_sym_for_header_group1,
+    [0] = alias_sym_lhs_expression,
   },
   [89] = {
     [1] = alias_sym_statement_identifier,
@@ -9394,7 +9394,7 @@ static const TSSymbol ts_alias_sequences[PRODUCTION_ID_COUNT][MAX_ALIAS_SEQUENCE
     [2] = alias_sym_property_identifier,
   },
   [141] = {
-    [0] = alias_sym_for_header_group1,
+    [0] = alias_sym_lhs_expression,
   },
   [149] = {
     [0] = alias_sym_shorthand_property_identifier_pattern,
@@ -9454,7 +9454,7 @@ static const TSSymbol ts_alias_sequences[PRODUCTION_ID_COUNT][MAX_ALIAS_SEQUENCE
     [3] = alias_sym_interface_body,
   },
   [257] = {
-    [1] = alias_sym_for_header_group1,
+    [1] = alias_sym_lhs_expression,
   },
   [260] = {
     [2] = alias_sym_type_identifier,
@@ -9561,7 +9561,7 @@ static const uint16_t ts_non_terminal_alias_map[] = {
     sym_member_expression,
   sym__lhs_expression, 2,
     sym__lhs_expression,
-    alias_sym_for_header_group1,
+    alias_sym_lhs_expression,
   sym_object_type, 2,
     sym_object_type,
     alias_sym_interface_body,
@@ -16060,7 +16060,7 @@ static const TSSymbol ts_supertype_map_entries[] = {
     sym_update_expression,
     sym_yield_expression,
   [29] =
-    alias_sym_for_header_group1,
+    alias_sym_lhs_expression,
     sym_rest_pattern,
   [31] =
     alias_sym_reserved_identifier,

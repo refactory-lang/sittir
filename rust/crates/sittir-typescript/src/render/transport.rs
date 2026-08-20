@@ -5072,7 +5072,7 @@ impl RenderableTransport for FormalParameterTransport {
 }
 
 #[derive(Debug, Clone)]
-pub enum LhsExpressionTransport {
+pub enum _LhsExpressionTransport {
     MemberExpression(MemberExpressionTransport),
     SubscriptExpression(SubscriptExpressionTransport),
     _Identifier(_IdentifierTransport),
@@ -5087,7 +5087,7 @@ pub enum LhsExpressionTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -5126,9 +5126,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionTransport {
                         if let Ok(value) = ArrayPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayPattern(value));
                         }
-                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in LhsExpressionTransport"))
+                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in _LhsExpressionTransport"))
                     },
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -5144,7 +5144,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionTransport {
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("self-alias kind id 441 in LhsExpressionTransport: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("self-alias kind id 442 in _LhsExpressionTransport: no kind-keyed child slot to unwrap"))
                     },
                     234 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
@@ -5240,7 +5240,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionTransport {
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LhsExpressionTransport",
+                        "unknown kind id {other} in _LhsExpressionTransport",
                     ))),
                 }
             }
@@ -5251,7 +5251,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionTransport {
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in LhsExpressionTransport")
+                    ::napi::Error::from_reason("$type property missing in _LhsExpressionTransport")
                 )?;
                 match kind_id {
                     236 => {
@@ -5285,9 +5285,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionTransport {
                         if let Ok(value) = ArrayPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayPattern(value));
                         }
-                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in LhsExpressionTransport"))
+                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in _LhsExpressionTransport"))
                     },
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -5303,7 +5303,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionTransport {
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("self-alias kind id 441 in LhsExpressionTransport: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("self-alias kind id 442 in _LhsExpressionTransport: no kind-keyed child slot to unwrap"))
                     },
                     234 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
@@ -5399,67 +5399,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionTransport {
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LhsExpressionTransport",
+                        "unknown kind id {other} in _LhsExpressionTransport",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("LhsExpressionTransport: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("_LhsExpressionTransport: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LhsExpressionTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for _LhsExpressionTransport {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LhsExpressionTransport is receive-only"))
+        Err(::napi::Error::from_reason("_LhsExpressionTransport is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LhsExpressionTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_LhsExpressionTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        LhsExpressionTransport::from_napi_value(env, napi_val).map(Box::new)
+        _LhsExpressionTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LhsExpressionTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_LhsExpressionTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        LhsExpressionTransport::to_napi_value(env, *val)
+        _LhsExpressionTransport::to_napi_value(env, *val)
     }
 }
 
-fn lhs_expression_transport_to_any(t: LhsExpressionTransport) -> AnyTransport {
+fn _lhs_expression_transport_to_any(t: _LhsExpressionTransport) -> AnyTransport {
     match t {
-        LhsExpressionTransport::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
-        LhsExpressionTransport::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
-        LhsExpressionTransport::_Identifier(inner) => _identifier_transport_to_any(inner),
-        LhsExpressionTransport::Undefined(inner) => AnyTransport::Undefined(inner),
-        LhsExpressionTransport::Identifier(inner) => AnyTransport::Identifier(inner),
-        LhsExpressionTransport::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
-        LhsExpressionTransport::DestructuringPattern(inner) => destructuring_pattern_transport_to_any(inner),
-        LhsExpressionTransport::ObjectPattern(inner) => AnyTransport::ObjectPattern(inner),
-        LhsExpressionTransport::ArrayPattern(inner) => AnyTransport::ArrayPattern(inner),
-        LhsExpressionTransport::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
-        LhsExpressionTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        _LhsExpressionTransport::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
+        _LhsExpressionTransport::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
+        _LhsExpressionTransport::_Identifier(inner) => _identifier_transport_to_any(inner),
+        _LhsExpressionTransport::Undefined(inner) => AnyTransport::Undefined(inner),
+        _LhsExpressionTransport::Identifier(inner) => AnyTransport::Identifier(inner),
+        _LhsExpressionTransport::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        _LhsExpressionTransport::DestructuringPattern(inner) => destructuring_pattern_transport_to_any(inner),
+        _LhsExpressionTransport::ObjectPattern(inner) => AnyTransport::ObjectPattern(inner),
+        _LhsExpressionTransport::ArrayPattern(inner) => AnyTransport::ArrayPattern(inner),
+        _LhsExpressionTransport::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
+        _LhsExpressionTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for LhsExpressionTransport {
+impl RenderableTransport for _LhsExpressionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_lhs_expression(self, dest)
+        render__lhs_expression(self, dest)
     }
 }
 
@@ -5971,7 +5971,7 @@ impl RenderableTransport for _IdentifierTransport {
 
 #[derive(Debug, Clone)]
 pub enum PatternTransport {
-    LhsExpression(LhsExpressionTransport),
+    _LhsExpression(_LhsExpressionTransport),
     MemberExpression(MemberExpressionTransport),
     SubscriptExpression(SubscriptExpressionTransport),
     _Identifier(_IdentifierTransport),
@@ -6017,8 +6017,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         if let Ok(value) = RestPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::RestPattern(value));
                         }
-                        if let Ok(value) = LhsExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::LhsExpression(value));
+                        if let Ok(value) = _LhsExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::_LhsExpression(value));
                         }
                         if let Ok(value) = _IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::_Identifier(value));
@@ -6034,38 +6034,38 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PatternTransport"))
                     },
-                    234 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    234 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    235 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    105 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    105 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    1 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    1 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    444 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    444 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    214 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    218 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    269 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    269 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    236 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    241 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    241 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    442 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
@@ -6173,8 +6173,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         if let Ok(value) = RestPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::RestPattern(value));
                         }
-                        if let Ok(value) = LhsExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::LhsExpression(value));
+                        if let Ok(value) = _LhsExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::_LhsExpression(value));
                         }
                         if let Ok(value) = _IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::_Identifier(value));
@@ -6190,38 +6190,38 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PatternTransport"))
                     },
-                    234 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    234 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    235 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    105 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    105 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    1 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    1 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    444 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    444 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    214 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    218 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    269 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    269 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    236 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    241 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    241 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    442 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
@@ -12540,7 +12540,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                     215 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -12556,7 +12556,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ArrayPatternElementsTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in ArrayPatternElementsTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ArrayPatternElementsTransportSlot",
@@ -12669,7 +12669,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                     215 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -12685,7 +12685,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ArrayPatternElementsTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in ArrayPatternElementsTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ArrayPatternElementsTransportSlot",
@@ -17239,7 +17239,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                     269 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -17255,7 +17255,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in AssignmentExpressionLeftTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in AssignmentExpressionLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AssignmentExpressionLeftTransportSlot",
@@ -17365,7 +17365,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                     269 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -17381,7 +17381,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in AssignmentExpressionLeftTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in AssignmentExpressionLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AssignmentExpressionLeftTransportSlot",
@@ -19941,7 +19941,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                     215 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -19957,7 +19957,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in PairPatternValueTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in PairPatternValueTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PairPatternValueTransportSlot",
@@ -20070,7 +20070,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                     215 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -20086,7 +20086,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in PairPatternValueTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in PairPatternValueTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PairPatternValueTransportSlot",
@@ -23255,7 +23255,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -23271,7 +23271,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in RequiredParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in RequiredParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RequiredParameterPatternTransportSlot",
@@ -23384,7 +23384,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -23400,7 +23400,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in RequiredParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in RequiredParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RequiredParameterPatternTransportSlot",
@@ -23683,7 +23683,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -23699,7 +23699,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in OptionalParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in OptionalParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in OptionalParameterPatternTransportSlot",
@@ -23812,7 +23812,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -23828,7 +23828,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in OptionalParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in OptionalParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in OptionalParameterPatternTransportSlot",
@@ -24111,7 +24111,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterNamePatternTransportSlo
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -24127,7 +24127,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterNamePatternTransportSlo
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ParameterNamePatternTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in ParameterNamePatternTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ParameterNamePatternTransportSlot",
@@ -24240,7 +24240,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterNamePatternTransportSlo
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -24256,7 +24256,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterNamePatternTransportSlo
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ParameterNamePatternTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in ParameterNamePatternTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ParameterNamePatternTransportSlot",
@@ -31975,7 +31975,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                     209 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -31991,7 +31991,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ForHeaderLhsLeftTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in ForHeaderLhsLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForHeaderLhsLeftTransportSlot",
@@ -32101,7 +32101,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                     209 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -32117,7 +32117,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ForHeaderLhsLeftTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in ForHeaderLhsLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForHeaderLhsLeftTransportSlot",
@@ -41716,7 +41716,7 @@ pub struct RestPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lhs_expression"))]
-    pub lhs_expression: LhsExpressionTransport,
+    pub lhs_expression: _LhsExpressionTransport,
 }
 
 impl RenderableTransport for RestPatternTransport {
@@ -67180,19 +67180,19 @@ fn render_formal_parameter(t: &FormalParameterTransport, dest: &mut dyn ::std::f
     }
 }
 
-fn render_lhs_expression(t: &LhsExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render__lhs_expression(t: &_LhsExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        LhsExpressionTransport::MemberExpression(inner) => inner.render_into(dest),
-        LhsExpressionTransport::SubscriptExpression(inner) => inner.render_into(dest),
-        LhsExpressionTransport::_Identifier(inner) => inner.render_into(dest),
-        LhsExpressionTransport::Undefined(inner) => inner.render_into(dest),
-        LhsExpressionTransport::Identifier(inner) => inner.render_into(dest),
-        LhsExpressionTransport::ReservedIdentifier(inner) => inner.render_into(dest),
-        LhsExpressionTransport::DestructuringPattern(inner) => inner.render_into(dest),
-        LhsExpressionTransport::ObjectPattern(inner) => inner.render_into(dest),
-        LhsExpressionTransport::ArrayPattern(inner) => inner.render_into(dest),
-        LhsExpressionTransport::NonNullExpression(inner) => inner.render_into(dest),
-        LhsExpressionTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        _LhsExpressionTransport::MemberExpression(inner) => inner.render_into(dest),
+        _LhsExpressionTransport::SubscriptExpression(inner) => inner.render_into(dest),
+        _LhsExpressionTransport::_Identifier(inner) => inner.render_into(dest),
+        _LhsExpressionTransport::Undefined(inner) => inner.render_into(dest),
+        _LhsExpressionTransport::Identifier(inner) => inner.render_into(dest),
+        _LhsExpressionTransport::ReservedIdentifier(inner) => inner.render_into(dest),
+        _LhsExpressionTransport::DestructuringPattern(inner) => inner.render_into(dest),
+        _LhsExpressionTransport::ObjectPattern(inner) => inner.render_into(dest),
+        _LhsExpressionTransport::ArrayPattern(inner) => inner.render_into(dest),
+        _LhsExpressionTransport::NonNullExpression(inner) => inner.render_into(dest),
+        _LhsExpressionTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
@@ -67225,7 +67225,7 @@ fn render__identifier(t: &_IdentifierTransport, dest: &mut dyn ::std::fmt::Write
 
 fn render_pattern(t: &PatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        PatternTransport::LhsExpression(inner) => inner.render_into(dest),
+        PatternTransport::_LhsExpression(inner) => inner.render_into(dest),
         PatternTransport::MemberExpression(inner) => inner.render_into(dest),
         PatternTransport::SubscriptExpression(inner) => inner.render_into(dest),
         PatternTransport::_Identifier(inner) => inner.render_into(dest),

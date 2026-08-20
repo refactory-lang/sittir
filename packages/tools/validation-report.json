@@ -21,6 +21,25 @@
     "scope": "grammar",
     "code": "typename-collision",
     "severity": "info",
+    "ownerKind": "_non_special_token",
+    "message": "[assemble] typeName collision: kind '_non_special_token' renamed 'NonSpecialToken' → '_NonSpecialToken' (visible sibling(s): 'non_special_token')",
+    "canProceed": true,
+    "details": {
+      "typeName": "NonSpecialToken",
+      "newType": "_NonSpecialToken",
+      "visibleKinds": [
+        "non_special_token"
+      ]
+    },
+    "location": "_non_special_token"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
     "ownerKind": "_type",
     "message": "[assemble] typeName collision: kind '_type' renamed 'Type' → '_Type' (visible sibling(s): 'type')",
     "canProceed": true,
@@ -418,6 +437,25 @@
     "scope": "grammar",
     "code": "typename-collision",
     "severity": "info",
+    "ownerKind": "_lhs_expression",
+    "message": "[assemble] typeName collision: kind '_lhs_expression' renamed 'LhsExpression' → '_LhsExpression' (visible sibling(s): 'lhs_expression')",
+    "canProceed": true,
+    "details": {
+      "typeName": "LhsExpression",
+      "newType": "_LhsExpression",
+      "visibleKinds": [
+        "lhs_expression"
+      ]
+    },
+    "location": "_lhs_expression"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
     "ownerKind": "_number",
     "message": "[assemble] typeName collision: kind '_number' renamed 'Number' → '_Number' (visible sibling(s): 'number')",
     "canProceed": true,
@@ -524,7 +562,7 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "39 referenced kind(s) resolved no parser kindId",
+    "message": "38 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -564,7 +602,6 @@
         "jsx_opening_element_content",
         "jsx_self_closing_element",
         "jsx_start_opening_element_group1",
-        "statement_identifier_group1",
         "unescaped_double_jsx_string_fragment",
         "unescaped_single_jsx_string_fragment"
       ]
@@ -641,7 +678,7 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-vaporized-symbols",
-    "message": "17 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
+    "message": "16 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -660,7 +697,6 @@
         "jsx_opening_element_content",
         "jsx_self_closing_element",
         "jsx_start_opening_element_group1",
-        "statement_identifier_group1",
         "unescaped_double_jsx_string_fragment",
         "unescaped_single_jsx_string_fragment"
       ]
@@ -923,7 +959,7 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [future_import_statement_group1, future_import_statement_group2] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [import_list, future_import_statement_group1] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -1093,7 +1129,7 @@
     "grammar": "python",
     "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "17 referenced kind(s) resolved no parser kindId",
+    "message": "16 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -1112,8 +1148,7 @@
         "_simple_statement",
         "_suite",
         "_unary_operator_operator",
-        "keyword_identifier",
-        "statement_group1"
+        "keyword_identifier"
       ]
     },
     "severity": "warning",
@@ -1172,21 +1207,6 @@
         "_simple_statement",
         "_suite",
         "keyword_identifier"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "code": "kindid-vaporized-symbols",
-    "message": "1 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "statement_group1"
       ]
     },
     "scope": "grammar"

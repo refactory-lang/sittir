@@ -1769,7 +1769,7 @@ export function coerceToAssignmentExpression(
 		left: _requireField(
 			'assignment_expression',
 			'left',
-			_resolveOne<T.ParenthesizedExpression | T.LhsExpression>(input.left, _K13, _K24)
+			_resolveOne<T.ParenthesizedExpression | T._LhsExpression>(input.left, _K13, _K24)
 		),
 		right: _requireField('assignment_expression', 'right', _resolveOne<T.Expression>(input.right, _K5, _K10))
 	});
@@ -2171,7 +2171,7 @@ export function coerceToClassStaticBlock(input: T.ClassStaticBlock.Loose): Retur
 	});
 }
 
-export function coerceToRestPattern(input?: T.LhsExpression | T.RestPattern): ReturnType<typeof F.buildRestPattern> {
+export function coerceToRestPattern(input?: T._LhsExpression | T.RestPattern): ReturnType<typeof F.buildRestPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.RestPattern) {
 		const data = input;
 		const child = (data as unknown as { _lhs_expression?: unknown })._lhs_expression;

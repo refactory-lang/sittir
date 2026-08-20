@@ -178,8 +178,8 @@ pub struct ExpressionStatementTupleTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_future_import_statement_group2.jinja", escape = "none")]
-pub struct FutureImportStatementGroup2Template<'a> {
+#[template(path = "_future_import_statement_group1.jinja", escape = "none")]
+pub struct FutureImportStatementGroup1Template<'a> {
     pub import_list: SingleNonterminalView<'a>,
 }
 

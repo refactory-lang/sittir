@@ -2625,7 +2625,7 @@ pub enum TokenPatternTransport {
     TokenRepetitionPattern(TokenRepetitionPatternTransport),
     TokenBindingPattern(TokenBindingPatternTransport),
     Metavariable(MetavariableTransport),
-    NonSpecialToken(NonSpecialTokenTransport),
+    _NonSpecialToken(_NonSpecialTokenTransport),
     StringLiteral(StringLiteralTransport),
     RawStringLiteral(RawStringLiteralTransport),
     CharLiteral(CharLiteralTransport),
@@ -2707,8 +2707,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NonSpecialToken(value));
+                        if let Ok(value) = _NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::_NonSpecialToken(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in TokenPatternTransport"))
                     },
@@ -2767,8 +2767,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NonSpecialToken(value));
+                        if let Ok(value) = _NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::_NonSpecialToken(value));
                         }
                         Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in TokenPatternTransport"))
                     },
@@ -2784,50 +2784,50 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                     136 => Ok(Self::Metavariable(
                         MetavariableTransport::from_napi_value(env, napi_val)?
                     )),
-                    312 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    312 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    313 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    313 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    123 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    123 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    314 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    121 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    121 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    151 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    151 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    1 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    1 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    80 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    80 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    133 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    133 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    134 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    134 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    135 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    135 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    347 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    347 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    348 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    170 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     125 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
@@ -3175,8 +3175,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NonSpecialToken(value));
+                        if let Ok(value) = _NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::_NonSpecialToken(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in TokenPatternTransport"))
                     },
@@ -3235,8 +3235,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NonSpecialToken(value));
+                        if let Ok(value) = _NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::_NonSpecialToken(value));
                         }
                         Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in TokenPatternTransport"))
                     },
@@ -3252,50 +3252,50 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                     136 => Ok(Self::Metavariable(
                         MetavariableTransport::from_napi_value(env, napi_val)?
                     )),
-                    312 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    312 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    313 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    313 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    123 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    123 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    314 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    121 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    121 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    151 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    151 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    1 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    1 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    80 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    80 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    133 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    133 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    134 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    134 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    135 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    135 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    347 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    347 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    348 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    170 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     125 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
@@ -3627,7 +3627,7 @@ pub enum TokensTransport {
     TokenTree(TokenTreeTransport),
     TokenRepetition(TokenRepetitionTransport),
     Metavariable(MetavariableTransport),
-    NonSpecialToken(NonSpecialTokenTransport),
+    _NonSpecialToken(_NonSpecialTokenTransport),
     StringLiteral(StringLiteralTransport),
     RawStringLiteral(RawStringLiteralTransport),
     CharLiteral(CharLiteralTransport),
@@ -3706,8 +3706,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NonSpecialToken(value));
+                        if let Ok(value) = _NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::_NonSpecialToken(value));
                         }
                         Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in TokensTransport"))
                     },
@@ -3720,50 +3720,50 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
                     136 => Ok(Self::Metavariable(
                         MetavariableTransport::from_napi_value(env, napi_val)?
                     )),
-                    312 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    312 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    313 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    313 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    123 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    123 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    314 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    121 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    121 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    151 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    151 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    1 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    1 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    80 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    80 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    133 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    133 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    134 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    134 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    135 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    135 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    347 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    347 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    348 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    170 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     125 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
@@ -4108,8 +4108,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NonSpecialToken(value));
+                        if let Ok(value) = _NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::_NonSpecialToken(value));
                         }
                         Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in TokensTransport"))
                     },
@@ -4122,50 +4122,50 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
                     136 => Ok(Self::Metavariable(
                         MetavariableTransport::from_napi_value(env, napi_val)?
                     )),
-                    312 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    312 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    313 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    313 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    123 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    123 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    314 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    121 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    121 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    151 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    151 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    1 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    1 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    80 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    80 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    133 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    133 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    134 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    134 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    135 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    135 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    347 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    347 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    348 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    170 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     125 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
@@ -4493,7 +4493,7 @@ impl RenderableTransport for TokensTransport {
 }
 
 #[derive(Debug, Clone)]
-pub enum NonSpecialTokenTransport {
+pub enum _NonSpecialTokenTransport {
     StringLiteral(StringLiteralTransport),
     RawStringLiteral(RawStringLiteralTransport),
     CharLiteral(CharLiteralTransport),
@@ -4512,7 +4512,7 @@ pub enum NonSpecialTokenTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for _NonSpecialTokenTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -4563,7 +4563,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in NonSpecialTokenTransport"))
+                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in _NonSpecialTokenTransport"))
                     },
                     309 => {
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
@@ -4608,7 +4608,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in NonSpecialTokenTransport"))
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in _NonSpecialTokenTransport"))
                     },
                     312 => Ok(Self::StringLiteral(
                         StringLiteralTransport::from_napi_value(env, napi_val)?
@@ -4929,7 +4929,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenTransport {
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in NonSpecialTokenTransport",
+                        "unknown kind id {other} in _NonSpecialTokenTransport",
                     ))),
                 }
             }
@@ -4940,7 +4940,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenTransport {
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in NonSpecialTokenTransport")
+                    ::napi::Error::from_reason("$type property missing in _NonSpecialTokenTransport")
                 )?;
                 match kind_id {
                     170 => {
@@ -4986,7 +4986,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in NonSpecialTokenTransport"))
+                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in _NonSpecialTokenTransport"))
                     },
                     309 => {
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
@@ -5031,7 +5031,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in NonSpecialTokenTransport"))
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in _NonSpecialTokenTransport"))
                     },
                     312 => Ok(Self::StringLiteral(
                         StringLiteralTransport::from_napi_value(env, napi_val)?
@@ -5352,71 +5352,71 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenTransport {
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in NonSpecialTokenTransport",
+                        "unknown kind id {other} in _NonSpecialTokenTransport",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("NonSpecialTokenTransport: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("_NonSpecialTokenTransport: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NonSpecialTokenTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for _NonSpecialTokenTransport {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("NonSpecialTokenTransport is receive-only"))
+        Err(::napi::Error::from_reason("_NonSpecialTokenTransport is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NonSpecialTokenTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_NonSpecialTokenTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        NonSpecialTokenTransport::from_napi_value(env, napi_val).map(Box::new)
+        _NonSpecialTokenTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NonSpecialTokenTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_NonSpecialTokenTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        NonSpecialTokenTransport::to_napi_value(env, *val)
+        _NonSpecialTokenTransport::to_napi_value(env, *val)
     }
 }
 
-fn non_special_token_transport_to_any(t: NonSpecialTokenTransport) -> AnyTransport {
+fn _non_special_token_transport_to_any(t: _NonSpecialTokenTransport) -> AnyTransport {
     match t {
-        NonSpecialTokenTransport::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
-        NonSpecialTokenTransport::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
-        NonSpecialTokenTransport::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
-        NonSpecialTokenTransport::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
-        NonSpecialTokenTransport::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
-        NonSpecialTokenTransport::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
-        NonSpecialTokenTransport::Identifier(inner) => AnyTransport::Identifier(inner),
-        NonSpecialTokenTransport::MutableSpecifier(inner) => AnyTransport::MutableSpecifier(inner),
-        NonSpecialTokenTransport::Self_(inner) => AnyTransport::Self_(inner),
-        NonSpecialTokenTransport::Super(inner) => AnyTransport::Super(inner),
-        NonSpecialTokenTransport::Crate(inner) => AnyTransport::Crate(inner),
-        NonSpecialTokenTransport::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
-        NonSpecialTokenTransport::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
-        NonSpecialTokenTransport::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
-        NonSpecialTokenTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        _NonSpecialTokenTransport::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
+        _NonSpecialTokenTransport::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
+        _NonSpecialTokenTransport::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
+        _NonSpecialTokenTransport::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
+        _NonSpecialTokenTransport::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
+        _NonSpecialTokenTransport::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
+        _NonSpecialTokenTransport::Identifier(inner) => AnyTransport::Identifier(inner),
+        _NonSpecialTokenTransport::MutableSpecifier(inner) => AnyTransport::MutableSpecifier(inner),
+        _NonSpecialTokenTransport::Self_(inner) => AnyTransport::Self_(inner),
+        _NonSpecialTokenTransport::Super(inner) => AnyTransport::Super(inner),
+        _NonSpecialTokenTransport::Crate(inner) => AnyTransport::Crate(inner),
+        _NonSpecialTokenTransport::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        _NonSpecialTokenTransport::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
+        _NonSpecialTokenTransport::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
+        _NonSpecialTokenTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for NonSpecialTokenTransport {
+impl RenderableTransport for _NonSpecialTokenTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_non_special_token(self, dest)
+        render__non_special_token(self, dest)
     }
 }
 
@@ -8344,7 +8344,7 @@ impl RenderableTransport for ExpressionEndingWithBlockTransport {
 #[derive(Debug, Clone)]
 pub enum DelimTokensTransport {
     NonDelimToken(NonDelimTokenTransport),
-    TokenPatternGroup1(TokenPatternGroup1Transport),
+    NonSpecialToken(NonSpecialTokenTransport),
     DelimTokenTree(DelimTokenTreeTransport),
     Verbatim(VerbatimTransport),
 }
@@ -8365,8 +8365,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                         if let Ok(value) = NonDelimTokenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NonDelimToken(value));
                         }
-                        if let Ok(value) = TokenPatternGroup1Transport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TokenPatternGroup1(value));
+                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::NonSpecialToken(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in DelimTokensTransport"))
                     },
@@ -8449,8 +8449,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                         if let Ok(value) = NonDelimTokenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NonDelimToken(value));
                         }
-                        if let Ok(value) = TokenPatternGroup1Transport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TokenPatternGroup1(value));
+                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::NonSpecialToken(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in DelimTokensTransport"))
                     },
@@ -8562,7 +8562,7 @@ impl RenderableTransport for DelimTokensTransport {
 
 #[derive(Debug, Clone)]
 pub enum NonDelimTokenTransport {
-    NonSpecialToken(NonSpecialTokenTransport),
+    _NonSpecialToken(_NonSpecialTokenTransport),
     StringLiteral(StringLiteralTransport),
     RawStringLiteral(RawStringLiteralTransport),
     CharLiteral(CharLiteralTransport),
@@ -8632,8 +8632,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NonSpecialToken(value));
+                        if let Ok(value) = _NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::_NonSpecialToken(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in NonDelimTokenTransport"))
                     },
@@ -8680,55 +8680,55 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NonSpecialToken(value));
+                        if let Ok(value) = _NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::_NonSpecialToken(value));
                         }
                         Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in NonDelimTokenTransport"))
                     },
-                    312 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    312 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    313 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    313 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    123 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    123 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    314 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    121 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    121 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    151 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    151 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    1 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    1 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    80 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    80 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    133 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    133 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    134 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    134 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    135 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    135 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    347 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    347 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    348 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    170 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     125 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
@@ -9064,8 +9064,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NonSpecialToken(value));
+                        if let Ok(value) = _NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::_NonSpecialToken(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in NonDelimTokenTransport"))
                     },
@@ -9112,55 +9112,55 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NonSpecialToken(value));
+                        if let Ok(value) = _NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::_NonSpecialToken(value));
                         }
                         Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in NonDelimTokenTransport"))
                     },
-                    312 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    312 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    313 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    313 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    123 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    123 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    314 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    314 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    121 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    121 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    151 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    151 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    1 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    1 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    80 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    80 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    133 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    133 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    134 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    134 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    135 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    135 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    347 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    347 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    348 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    170 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::_NonSpecialToken(
+                        _NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     125 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
@@ -9480,7 +9480,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NonDelimTokenTransport> {
 
 fn non_delim_token_transport_to_any(t: NonDelimTokenTransport) -> AnyTransport {
     match t {
-        NonDelimTokenTransport::NonSpecialToken(inner) => non_special_token_transport_to_any(inner),
+        NonDelimTokenTransport::_NonSpecialToken(inner) => _non_special_token_transport_to_any(inner),
         NonDelimTokenTransport::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
         NonDelimTokenTransport::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
         NonDelimTokenTransport::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
@@ -11390,7 +11390,7 @@ impl RenderableTransport for PathTransport {
 }
 
 #[derive(Debug, Clone)]
-pub enum TokenPatternGroup1Transport {
+pub enum NonSpecialTokenTransport {
     StringLiteral(StringLiteralTransport),
     RawStringLiteral(RawStringLiteralTransport),
     CharLiteral(CharLiteralTransport),
@@ -11409,7 +11409,7 @@ pub enum TokenPatternGroup1Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternGroup1Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -11460,7 +11460,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternGroup1Transport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in TokenPatternGroup1Transport"))
+                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in NonSpecialTokenTransport"))
                     },
                     309 => {
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
@@ -11505,7 +11505,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternGroup1Transport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in TokenPatternGroup1Transport"))
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in NonSpecialTokenTransport"))
                     },
                     312 => Ok(Self::StringLiteral(
                         StringLiteralTransport::from_napi_value(env, napi_val)?
@@ -11826,7 +11826,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternGroup1Transport {
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TokenPatternGroup1Transport",
+                        "unknown kind id {other} in NonSpecialTokenTransport",
                     ))),
                 }
             }
@@ -11837,7 +11837,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternGroup1Transport {
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in TokenPatternGroup1Transport")
+                    ::napi::Error::from_reason("$type property missing in NonSpecialTokenTransport")
                 )?;
                 match kind_id {
                     170 => {
@@ -11883,7 +11883,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternGroup1Transport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in TokenPatternGroup1Transport"))
+                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in NonSpecialTokenTransport"))
                     },
                     309 => {
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
@@ -11928,7 +11928,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternGroup1Transport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in TokenPatternGroup1Transport"))
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in NonSpecialTokenTransport"))
                     },
                     312 => Ok(Self::StringLiteral(
                         StringLiteralTransport::from_napi_value(env, napi_val)?
@@ -12249,71 +12249,71 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternGroup1Transport {
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TokenPatternGroup1Transport",
+                        "unknown kind id {other} in NonSpecialTokenTransport",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("TokenPatternGroup1Transport: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("NonSpecialTokenTransport: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TokenPatternGroup1Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for NonSpecialTokenTransport {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TokenPatternGroup1Transport is receive-only"))
+        Err(::napi::Error::from_reason("NonSpecialTokenTransport is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TokenPatternGroup1Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NonSpecialTokenTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TokenPatternGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+        NonSpecialTokenTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TokenPatternGroup1Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NonSpecialTokenTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TokenPatternGroup1Transport::to_napi_value(env, *val)
+        NonSpecialTokenTransport::to_napi_value(env, *val)
     }
 }
 
-fn token_pattern_group1_transport_to_any(t: TokenPatternGroup1Transport) -> AnyTransport {
+fn non_special_token_transport_to_any(t: NonSpecialTokenTransport) -> AnyTransport {
     match t {
-        TokenPatternGroup1Transport::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
-        TokenPatternGroup1Transport::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
-        TokenPatternGroup1Transport::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
-        TokenPatternGroup1Transport::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
-        TokenPatternGroup1Transport::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
-        TokenPatternGroup1Transport::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
-        TokenPatternGroup1Transport::Identifier(inner) => AnyTransport::Identifier(inner),
-        TokenPatternGroup1Transport::MutableSpecifier(inner) => AnyTransport::MutableSpecifier(inner),
-        TokenPatternGroup1Transport::Self_(inner) => AnyTransport::Self_(inner),
-        TokenPatternGroup1Transport::Super(inner) => AnyTransport::Super(inner),
-        TokenPatternGroup1Transport::Crate(inner) => AnyTransport::Crate(inner),
-        TokenPatternGroup1Transport::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
-        TokenPatternGroup1Transport::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
-        TokenPatternGroup1Transport::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
-        TokenPatternGroup1Transport::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        NonSpecialTokenTransport::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
+        NonSpecialTokenTransport::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
+        NonSpecialTokenTransport::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
+        NonSpecialTokenTransport::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
+        NonSpecialTokenTransport::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
+        NonSpecialTokenTransport::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
+        NonSpecialTokenTransport::Identifier(inner) => AnyTransport::Identifier(inner),
+        NonSpecialTokenTransport::MutableSpecifier(inner) => AnyTransport::MutableSpecifier(inner),
+        NonSpecialTokenTransport::Self_(inner) => AnyTransport::Self_(inner),
+        NonSpecialTokenTransport::Super(inner) => AnyTransport::Super(inner),
+        NonSpecialTokenTransport::Crate(inner) => AnyTransport::Crate(inner),
+        NonSpecialTokenTransport::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        NonSpecialTokenTransport::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
+        NonSpecialTokenTransport::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
+        NonSpecialTokenTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for TokenPatternGroup1Transport {
+impl RenderableTransport for NonSpecialTokenTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_token_pattern_group1(self, dest)
+        render_non_special_token(self, dest)
     }
 }
 
@@ -56582,7 +56582,7 @@ fn render_token_pattern(t: &TokenPatternTransport, dest: &mut dyn ::std::fmt::Wr
         TokenPatternTransport::TokenRepetitionPattern(inner) => inner.render_into(dest),
         TokenPatternTransport::TokenBindingPattern(inner) => inner.render_into(dest),
         TokenPatternTransport::Metavariable(inner) => inner.render_into(dest),
-        TokenPatternTransport::NonSpecialToken(inner) => inner.render_into(dest),
+        TokenPatternTransport::_NonSpecialToken(inner) => inner.render_into(dest),
         TokenPatternTransport::StringLiteral(inner) => inner.render_into(dest),
         TokenPatternTransport::RawStringLiteral(inner) => inner.render_into(dest),
         TokenPatternTransport::CharLiteral(inner) => inner.render_into(dest),
@@ -56606,7 +56606,7 @@ fn render_tokens(t: &TokensTransport, dest: &mut dyn ::std::fmt::Write) -> Resul
         TokensTransport::TokenTree(inner) => inner.render_into(dest),
         TokensTransport::TokenRepetition(inner) => inner.render_into(dest),
         TokensTransport::Metavariable(inner) => inner.render_into(dest),
-        TokensTransport::NonSpecialToken(inner) => inner.render_into(dest),
+        TokensTransport::_NonSpecialToken(inner) => inner.render_into(dest),
         TokensTransport::StringLiteral(inner) => inner.render_into(dest),
         TokensTransport::RawStringLiteral(inner) => inner.render_into(dest),
         TokensTransport::CharLiteral(inner) => inner.render_into(dest),
@@ -56625,23 +56625,23 @@ fn render_tokens(t: &TokensTransport, dest: &mut dyn ::std::fmt::Write) -> Resul
     }
 }
 
-fn render_non_special_token(t: &NonSpecialTokenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render__non_special_token(t: &_NonSpecialTokenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        NonSpecialTokenTransport::StringLiteral(inner) => inner.render_into(dest),
-        NonSpecialTokenTransport::RawStringLiteral(inner) => inner.render_into(dest),
-        NonSpecialTokenTransport::CharLiteral(inner) => inner.render_into(dest),
-        NonSpecialTokenTransport::BooleanLiteral(inner) => inner.render_into(dest),
-        NonSpecialTokenTransport::IntegerLiteral(inner) => inner.render_into(dest),
-        NonSpecialTokenTransport::FloatLiteral(inner) => inner.render_into(dest),
-        NonSpecialTokenTransport::Identifier(inner) => inner.render_into(dest),
-        NonSpecialTokenTransport::MutableSpecifier(inner) => inner.render_into(dest),
-        NonSpecialTokenTransport::Self_(inner) => inner.render_into(dest),
-        NonSpecialTokenTransport::Super(inner) => inner.render_into(dest),
-        NonSpecialTokenTransport::Crate(inner) => inner.render_into(dest),
-        NonSpecialTokenTransport::PrimitiveType(inner) => inner.render_into(dest),
-        NonSpecialTokenTransport::TokenTreePunctuation(inner) => inner.render_into(dest),
-        NonSpecialTokenTransport::TokenKeywords(inner) => inner.render_into(dest),
-        NonSpecialTokenTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        _NonSpecialTokenTransport::StringLiteral(inner) => inner.render_into(dest),
+        _NonSpecialTokenTransport::RawStringLiteral(inner) => inner.render_into(dest),
+        _NonSpecialTokenTransport::CharLiteral(inner) => inner.render_into(dest),
+        _NonSpecialTokenTransport::BooleanLiteral(inner) => inner.render_into(dest),
+        _NonSpecialTokenTransport::IntegerLiteral(inner) => inner.render_into(dest),
+        _NonSpecialTokenTransport::FloatLiteral(inner) => inner.render_into(dest),
+        _NonSpecialTokenTransport::Identifier(inner) => inner.render_into(dest),
+        _NonSpecialTokenTransport::MutableSpecifier(inner) => inner.render_into(dest),
+        _NonSpecialTokenTransport::Self_(inner) => inner.render_into(dest),
+        _NonSpecialTokenTransport::Super(inner) => inner.render_into(dest),
+        _NonSpecialTokenTransport::Crate(inner) => inner.render_into(dest),
+        _NonSpecialTokenTransport::PrimitiveType(inner) => inner.render_into(dest),
+        _NonSpecialTokenTransport::TokenTreePunctuation(inner) => inner.render_into(dest),
+        _NonSpecialTokenTransport::TokenKeywords(inner) => inner.render_into(dest),
+        _NonSpecialTokenTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 
@@ -56811,7 +56811,7 @@ fn render_expression_ending_with_block(t: &ExpressionEndingWithBlockTransport, d
 fn render_delim_tokens(t: &DelimTokensTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
         DelimTokensTransport::NonDelimToken(inner) => inner.render_into(dest),
-        DelimTokensTransport::TokenPatternGroup1(inner) => inner.render_into(dest),
+        DelimTokensTransport::NonSpecialToken(inner) => inner.render_into(dest),
         DelimTokensTransport::DelimTokenTree(inner) => inner.render_into(dest),
         DelimTokensTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
@@ -56819,7 +56819,7 @@ fn render_delim_tokens(t: &DelimTokensTransport, dest: &mut dyn ::std::fmt::Writ
 
 fn render_non_delim_token(t: &NonDelimTokenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        NonDelimTokenTransport::NonSpecialToken(inner) => inner.render_into(dest),
+        NonDelimTokenTransport::_NonSpecialToken(inner) => inner.render_into(dest),
         NonDelimTokenTransport::StringLiteral(inner) => inner.render_into(dest),
         NonDelimTokenTransport::RawStringLiteral(inner) => inner.render_into(dest),
         NonDelimTokenTransport::CharLiteral(inner) => inner.render_into(dest),
@@ -56953,23 +56953,23 @@ fn render_path(t: &PathTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
     }
 }
 
-fn render_token_pattern_group1(t: &TokenPatternGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_non_special_token(t: &NonSpecialTokenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        TokenPatternGroup1Transport::StringLiteral(inner) => inner.render_into(dest),
-        TokenPatternGroup1Transport::RawStringLiteral(inner) => inner.render_into(dest),
-        TokenPatternGroup1Transport::CharLiteral(inner) => inner.render_into(dest),
-        TokenPatternGroup1Transport::BooleanLiteral(inner) => inner.render_into(dest),
-        TokenPatternGroup1Transport::IntegerLiteral(inner) => inner.render_into(dest),
-        TokenPatternGroup1Transport::FloatLiteral(inner) => inner.render_into(dest),
-        TokenPatternGroup1Transport::Identifier(inner) => inner.render_into(dest),
-        TokenPatternGroup1Transport::MutableSpecifier(inner) => inner.render_into(dest),
-        TokenPatternGroup1Transport::Self_(inner) => inner.render_into(dest),
-        TokenPatternGroup1Transport::Super(inner) => inner.render_into(dest),
-        TokenPatternGroup1Transport::Crate(inner) => inner.render_into(dest),
-        TokenPatternGroup1Transport::PrimitiveType(inner) => inner.render_into(dest),
-        TokenPatternGroup1Transport::TokenTreePunctuation(inner) => inner.render_into(dest),
-        TokenPatternGroup1Transport::TokenKeywords(inner) => inner.render_into(dest),
-        TokenPatternGroup1Transport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        NonSpecialTokenTransport::StringLiteral(inner) => inner.render_into(dest),
+        NonSpecialTokenTransport::RawStringLiteral(inner) => inner.render_into(dest),
+        NonSpecialTokenTransport::CharLiteral(inner) => inner.render_into(dest),
+        NonSpecialTokenTransport::BooleanLiteral(inner) => inner.render_into(dest),
+        NonSpecialTokenTransport::IntegerLiteral(inner) => inner.render_into(dest),
+        NonSpecialTokenTransport::FloatLiteral(inner) => inner.render_into(dest),
+        NonSpecialTokenTransport::Identifier(inner) => inner.render_into(dest),
+        NonSpecialTokenTransport::MutableSpecifier(inner) => inner.render_into(dest),
+        NonSpecialTokenTransport::Self_(inner) => inner.render_into(dest),
+        NonSpecialTokenTransport::Super(inner) => inner.render_into(dest),
+        NonSpecialTokenTransport::Crate(inner) => inner.render_into(dest),
+        NonSpecialTokenTransport::PrimitiveType(inner) => inner.render_into(dest),
+        NonSpecialTokenTransport::TokenTreePunctuation(inner) => inner.render_into(dest),
+        NonSpecialTokenTransport::TokenKeywords(inner) => inner.render_into(dest),
+        NonSpecialTokenTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 

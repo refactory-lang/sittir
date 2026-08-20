@@ -2297,7 +2297,7 @@ export interface RestPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _lhs_expression: LhsExpressionTransport
+  _lhs_expression: _LhsExpressionTransport
 }
 
 export interface RestTypeTransport {

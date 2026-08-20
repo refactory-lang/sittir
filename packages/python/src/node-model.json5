@@ -38,8 +38,7 @@
     "future_import_statement": {
       "definedBy": "override",
       "childKind": {
-        "future_import_statement_group1": "group1",
-        "future_import_statement_group2": "group2"
+        "future_import_statement_group1": "group1"
       }
     },
     "expression_statement": {
@@ -89,59 +88,14 @@
     }
   },
   "fieldAliasMap": {
-    "module.statements": {
-      "statement_group1": "_simple_statements"
-    },
     "import_statement.import_list": {
       "names": "_import_list"
-    },
-    "if_statement.consequence": {
-      "simple_statements": "_simple_statements"
-    },
-    "elif_clause.consequence": {
-      "simple_statements": "_simple_statements"
-    },
-    "else_clause.body": {
-      "simple_statements": "_simple_statements"
     },
     "match_statement.body": {
       "block": "_match_block"
     },
-    "case_clause.consequence": {
-      "simple_statements": "_simple_statements"
-    },
-    "for_statement.body": {
-      "simple_statements": "_simple_statements"
-    },
-    "while_statement.body": {
-      "simple_statements": "_simple_statements"
-    },
-    "try_statement.body": {
-      "simple_statements": "_simple_statements"
-    },
-    "except_clause.content": {
-      "simple_statements": "_simple_statements"
-    },
-    "finally_clause.block": {
-      "simple_statements": "_simple_statements"
-    },
-    "with_statement.body": {
-      "simple_statements": "_simple_statements"
-    },
-    "function_definition.body": {
-      "simple_statements": "_simple_statements"
-    },
-    "class_definition.body": {
-      "simple_statements": "_simple_statements"
-    },
     "parenthesized_list_splat.content": {
       "parenthesized_expression": "parenthesized_list_splat"
-    },
-    "_suite.content": {
-      "simple_statements": "_simple_statements"
-    },
-    "block.statements": {
-      "statement_group1": "_simple_statements"
     },
     "as_pattern.alias": {
       "as_pattern_target": "expression"
@@ -149,7 +103,7 @@
     "format_specifier.content": {
       "format_expression": "interpolation"
     },
-    "_future_import_statement_group2.import_list": {
+    "_future_import_statement_group1.import_list": {
       "names": "_import_list"
     }
   },
@@ -1751,7 +1705,7 @@
         "nonEmpty": true
       }
     },
-    "_future_import_statement_group2": {
+    "_future_import_statement_group1": {
       "import_list": {
         "unnamed": false,
         "slotCount": 1,
@@ -2544,7 +2498,7 @@
       "leadingMode": "none",
       "trailingMode": "optional",
       "elementKinds": [
-        "dict_pattern_group1",
+        "key_value_pattern",
         "splat_pattern"
       ],
       "factoryShape": "elements",
@@ -2918,11 +2872,11 @@
       "children": []
     },
     {
-      "kind": "_future_import_statement_group2",
+      "kind": "_future_import_statement_group1",
       "modelType": "branch",
-      "typeName": "FutureImportStatementGroup2",
-      "factoryName": "futureImportStatementGroup2",
-      "irKey": "futureImportStatementGroup2",
+      "typeName": "FutureImportStatementGroup1",
+      "factoryName": "futureImportStatementGroup1",
+      "irKey": "futureImportStatementGroup1",
       "hidden": false,
       "fields": [
         {
@@ -7572,14 +7526,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_import_list",
-              "parseKind": "future_import_statement_group1",
+              "parseKind": "import_list",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_future_import_statement_group2",
-              "parseKind": "future_import_statement_group2",
+              "name": "_future_import_statement_group1",
+              "parseKind": "future_import_statement_group1",
               "unresolved": true
             }
           ],
@@ -7587,7 +7541,7 @@
             "typeName": "",
             "kinds": [
               "_import_list",
-              "_future_import_statement_group2"
+              "_future_import_statement_group1"
             ]
           }
         }
@@ -8012,14 +7966,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_import_list",
-              "parseKind": "future_import_statement_group1",
+              "parseKind": "import_list",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_future_import_statement_group2",
-              "parseKind": "future_import_statement_group2",
+              "name": "_future_import_statement_group1",
+              "parseKind": "future_import_statement_group1",
               "unresolved": true
             },
             {
@@ -8034,7 +7988,7 @@
             "typeName": "",
             "kinds": [
               "_import_list",
-              "_future_import_statement_group2",
+              "_future_import_statement_group1",
               "wildcard_import"
             ]
           }

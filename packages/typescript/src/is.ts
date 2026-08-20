@@ -11,14 +11,12 @@ import type {
 	DestructuringPattern,
 	Expression,
 	Expressions,
-	ForHeaderGroup1,
 	FormalParameter,
 	ImportIdentifier,
 	JsxAttributeName,
 	JsxAttributeValue,
 	JsxChild,
 	JsxElementName,
-	LhsExpression,
 	ModuleExportName,
 	Pattern,
 	PrimaryExpression,
@@ -34,6 +32,7 @@ import type {
 	_JsxAttribute,
 	_JsxElement,
 	_JsxIdentifier,
+	_LhsExpression,
 	_PropertyIdentifier
 } from './types.js';
 
@@ -345,7 +344,7 @@ export interface IsGuards {
 	jsxAttributeName(v: { readonly $type: string | number }): v is JsxAttributeName;
 	jsxAttributeValue(v: { readonly $type: string | number }): v is JsxAttributeValue;
 	formalParameter(v: { readonly $type: string | number }): v is FormalParameter;
-	lhsExpression(v: { readonly $type: string | number }): v is LhsExpression;
+	lhsExpression(v: { readonly $type: string | number }): v is _LhsExpression;
 	augmentedAssignmentLhs(v: { readonly $type: string | number }): v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number }): v is DestructuringPattern;
 	identifier(v: { readonly $type: string | number }): v is _Identifier;
@@ -359,7 +358,6 @@ export interface IsGuards {
 	type(v: { readonly $type: string | number }): v is Type;
 	tupleTypeMember(v: { readonly $type: string | number }): v is TupleTypeMember;
 	primaryType(v: { readonly $type: string | number }): v is PrimaryType;
-	forHeaderGroup1(v: { readonly $type: string | number }): v is ForHeaderGroup1;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -594,7 +592,7 @@ export interface AssertGuards {
 	jsxAttributeName(v: { readonly $type: string | number }): asserts v is JsxAttributeName;
 	jsxAttributeValue(v: { readonly $type: string | number }): asserts v is JsxAttributeValue;
 	formalParameter(v: { readonly $type: string | number }): asserts v is FormalParameter;
-	lhsExpression(v: { readonly $type: string | number }): asserts v is LhsExpression;
+	lhsExpression(v: { readonly $type: string | number }): asserts v is _LhsExpression;
 	augmentedAssignmentLhs(v: { readonly $type: string | number }): asserts v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number }): asserts v is DestructuringPattern;
 	identifier(v: { readonly $type: string | number }): asserts v is _Identifier;
@@ -610,7 +608,6 @@ export interface AssertGuards {
 	type(v: { readonly $type: string | number }): asserts v is Type;
 	tupleTypeMember(v: { readonly $type: string | number }): asserts v is TupleTypeMember;
 	primaryType(v: { readonly $type: string | number }): asserts v is PrimaryType;
-	forHeaderGroup1(v: { readonly $type: string | number }): asserts v is ForHeaderGroup1;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -656,7 +653,6 @@ const _supertype_tupleTypeMember_ids = new Set<number>([309, 310, 311, 312]);
 const _supertype_primaryType_ids = new Set<number>([
 	335, 336, 450, 288, 320, 338, 347, 348, 334, 327, 328, 100, 331, 329, 319, 317, 351, 350
 ]);
-const _supertype_forHeaderGroup1_ids = new Set<number>([234, 235, 105, 1, 444, 214, 218, 269]);
 
 const _kindIdByKind = new Map<string, number>([
 	['identifier', TSKindId.Identifier],
@@ -1168,8 +1164,7 @@ export const is = {
 	importIdentifier: _sg(_supertype_importIdentifier_ids),
 	type: _sg(_supertype_type_ids),
 	tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
-	primaryType: _sg(_supertype_primaryType_ids),
-	forHeaderGroup1: _sg(_supertype_forHeaderGroup1_ids)
+	primaryType: _sg(_supertype_primaryType_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -1419,8 +1414,7 @@ export const assert = {
 	importIdentifier: _makeAssert('importIdentifier', is.importIdentifier as _AnyGuard),
 	type: _makeAssert('type', is.type as _AnyGuard),
 	tupleTypeMember: _makeAssert('tupleTypeMember', is.tupleTypeMember as _AnyGuard),
-	primaryType: _makeAssert('primaryType', is.primaryType as _AnyGuard),
-	forHeaderGroup1: _makeAssert('forHeaderGroup1', is.forHeaderGroup1 as _AnyGuard)
+	primaryType: _makeAssert('primaryType', is.primaryType as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

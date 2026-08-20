@@ -777,9 +777,7 @@ export function wrapModule(data: T.Module, tree: TreeHandle) {
 			}),
 
 			statements() {
-				return drillAsAll<T.Statement>(this._statements, tree, [
-					{ from: 'statement_group1', to: '_simple_statements' }
-				]);
+				return drillInAll<T.Statement>(this._statements as readonly T.Statement[] | undefined, tree);
 			},
 			$with: {
 				statements: (...v: NonNullable<T.Module['_statements']>[number][]) =>
@@ -946,17 +944,17 @@ export function wrapRelativeImport(data: T.RelativeImport, tree: TreeHandle) {
 
 export function wrapFutureImportStatement(
 	data: T.FutureImportStatement & {
-		readonly _future_import_statement_group1?: T.ImportList | T.FutureImportStatementGroup2;
-		readonly _future_import_statement_group2?: T.ImportList | T.FutureImportStatementGroup2;
+		readonly _import_list?: T.ImportList | T.FutureImportStatementGroup1;
+		readonly _future_import_statement_group1?: T.ImportList | T.FutureImportStatementGroup1;
 	},
 	tree: TreeHandle
 ) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_future_import_statement_group1', '_future_import_statement_group2']),
+			..._omitWrapKeys(data, ['_future_import_statement_group1', '_import_list']),
 			$type: TSKindId.FutureImportStatement as const,
 			_content: normalizeSingularWrapSlot(
-				data._content ?? data._future_import_statement_group1 ?? data._future_import_statement_group2,
+				data._content ?? data._import_list ?? data._future_import_statement_group1,
 				'content',
 				true,
 				data.$type,
@@ -964,7 +962,7 @@ export function wrapFutureImportStatement(
 			),
 
 			content() {
-				return drillIn<T.ImportList | T.FutureImportStatementGroup2>(this._content, tree);
+				return drillIn<T.ImportList | T.FutureImportStatementGroup1>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.FutureImportStatement['_content']>) =>
@@ -978,19 +976,15 @@ export function wrapFutureImportStatement(
 
 export function wrapImportFromStatement(
 	data: T.ImportFromStatement & {
-		readonly _wildcard_import?: T.ImportList | T.FutureImportStatementGroup2 | T.WildcardImport;
-		readonly _future_import_statement_group1?: T.ImportList | T.FutureImportStatementGroup2 | T.WildcardImport;
-		readonly _future_import_statement_group2?: T.ImportList | T.FutureImportStatementGroup2 | T.WildcardImport;
+		readonly _wildcard_import?: T.ImportList | T.FutureImportStatementGroup1 | T.WildcardImport;
+		readonly _import_list?: T.ImportList | T.FutureImportStatementGroup1 | T.WildcardImport;
+		readonly _future_import_statement_group1?: T.ImportList | T.FutureImportStatementGroup1 | T.WildcardImport;
 	},
 	tree: TreeHandle
 ) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_future_import_statement_group1',
-				'_future_import_statement_group2',
-				'_wildcard_import'
-			]),
+			..._omitWrapKeys(data, ['_future_import_statement_group1', '_import_list', '_wildcard_import']),
 			$type: TSKindId.ImportFromStatement as const,
 			_module_name: normalizeSingularWrapSlot(data._module_name, 'module_name', true, data.$type, {
 				tree,
@@ -999,10 +993,7 @@ export function wrapImportFromStatement(
 				span: (data as _NodeData).$span
 			}),
 			_content: normalizeSingularWrapSlot(
-				data._content ??
-					data._wildcard_import ??
-					data._future_import_statement_group1 ??
-					data._future_import_statement_group2,
+				data._content ?? data._wildcard_import ?? data._import_list ?? data._future_import_statement_group1,
 				'content',
 				true,
 				data.$type,
@@ -1013,7 +1004,7 @@ export function wrapImportFromStatement(
 				return drillIn<T.RelativeImport | T.DottedName>(this._module_name, tree);
 			},
 			content() {
-				return drillIn<T.ImportList | T.FutureImportStatementGroup2 | T.WildcardImport>(this._content, tree);
+				return drillIn<T.ImportList | T.FutureImportStatementGroup1 | T.WildcardImport>(this._content, tree);
 			},
 			$with: {
 				moduleName: (v: NonNullable<T.ImportFromStatement['_module_name']>) =>
@@ -1909,9 +1900,7 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._condition, tree);
 			},
 			consequence() {
-				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._consequence, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' }
-				]);
+				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._consequence, tree);
 			},
 			alternatives() {
 				return drillInAll<T.ElifClause | T.ElseClause>(
@@ -1955,9 +1944,7 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._condition, tree);
 			},
 			consequence() {
-				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._consequence, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' }
-				]);
+				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._consequence, tree);
 			},
 			$with: {
 				condition: (v: NonNullable<T.ElifClause['_condition']>) => wrapElifClause({ ...data, _condition: v }, tree),
@@ -1984,9 +1971,7 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
 			}),
 
 			body() {
-				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' }
-				]);
+				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
 			},
 			$with: {
 				body: (v: NonNullable<T.ElseClause['_body']>) => wrapElseClause({ ...data, _body: v }, tree)
@@ -2096,9 +2081,7 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {
 				return drillIn<T.IfClause | undefined>(this._guard, tree);
 			},
 			consequence() {
-				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._consequence, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' }
-				]);
+				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._consequence, tree);
 			},
 			$with: {
 				casePatterns: (v: NonNullable<T.CaseClause['_case_patterns']>) =>
@@ -2162,9 +2145,7 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 				return drillIn<T.Expressions>(this._right, tree);
 			},
 			body() {
-				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' }
-				]);
+				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
 			},
 			alternative() {
 				return drillIn<T.ElseClause | undefined>(this._alternative, tree);
@@ -2213,9 +2194,7 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._condition, tree);
 			},
 			body() {
-				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' }
-				]);
+				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
 			},
 			alternative() {
 				return drillIn<T.ElseClause | undefined>(this._alternative, tree);
@@ -2265,9 +2244,7 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
 			}),
 
 			body() {
-				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' }
-				]);
+				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
 			},
 			exceptClauses() {
 				return drillInAll<T.ExceptClause>(this._except_clauses as readonly T.ExceptClause[] | undefined, tree);
@@ -2336,9 +2313,7 @@ export function wrapExceptClause(
 				return drillIn<T.ExceptClauseGroup1 | undefined>(this._except_clause_group1, tree);
 			},
 			content() {
-				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._content, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' }
-				]);
+				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._content, tree);
 			},
 			$with: {
 				starMarker: (v: NonNullable<T.ExceptClause['_star_marker']>) =>
@@ -2367,9 +2342,7 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle) {
 			}),
 
 			block() {
-				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._block, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' }
-				]);
+				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._block, tree);
 			},
 			$with: {
 				block: (v: NonNullable<T.FinallyClause['_block']>) => wrapFinallyClause({ ...data, _block: v }, tree)
@@ -2414,9 +2387,7 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle) {
 				return drillIn<T.WithClause>(this._with_clause, tree);
 			},
 			body() {
-				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' }
-				]);
+				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
 			},
 			$with: {
 				asyncMarker: (v: NonNullable<T.WithStatement['_async_marker']>) =>
@@ -2548,9 +2519,7 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 				return drillIn<T.Type | undefined>(this._return_type, tree);
 			},
 			body() {
-				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' }
-				]);
+				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
 			},
 			$with: {
 				asyncMarker: (v: NonNullable<T.FunctionDefinition['_async_marker']>) =>
@@ -2884,9 +2853,7 @@ export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle) {
 				return drillIn<T.ArgumentList | undefined>(this._superclasses, tree);
 			},
 			body() {
-				return drillAs<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree, [
-					{ from: 'simple_statements', to: '_simple_statements' }
-				]);
+				return drillIn<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(this._body, tree);
 			},
 			$with: {
 				name: (v: NonNullable<T.ClassDefinition['_name']>) => wrapClassDefinition({ ...data, _name: v }, tree),
@@ -3072,9 +3039,7 @@ export function wrapBlock(data: T.Block, tree: TreeHandle) {
 			}),
 
 			statements() {
-				return drillAsAll<T.Statement>(this._statements, tree, [
-					{ from: 'statement_group1', to: '_simple_statements' }
-				]);
+				return drillInAll<T.Statement>(this._statements as readonly T.Statement[] | undefined, tree);
 			},
 			$with: {
 				statements: (...v: NonNullable<T.Block['_statements']>[number][]) =>
@@ -6370,14 +6335,14 @@ export function wrapSimpleStatementsElements(
 	);
 }
 
-export function wrapFutureImportStatementGroup2(
-	data: T.FutureImportStatementGroup2 & { readonly _names?: T.ImportList },
+export function wrapFutureImportStatementGroup1(
+	data: T.FutureImportStatementGroup1 & { readonly _names?: T.ImportList },
 	tree: TreeHandle
 ) {
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, ['_names']),
-			$type: TSKindId.FutureImportStatementGroup2 as const,
+			$type: TSKindId.FutureImportStatementGroup1 as const,
 			_import_list: normalizeSingularWrapSlot(data._import_list ?? data._names, 'import_list', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -6389,8 +6354,8 @@ export function wrapFutureImportStatementGroup2(
 				return drillAs<T.ImportList>(this._import_list, tree, [{ from: 'names', to: '_import_list' }]);
 			},
 			$with: {
-				importList: (v: NonNullable<T.FutureImportStatementGroup2['_import_list']>) =>
-					wrapFutureImportStatementGroup2({ ...data, _import_list: v }, tree)
+				importList: (v: NonNullable<T.FutureImportStatementGroup1['_import_list']>) =>
+					wrapFutureImportStatementGroup1({ ...data, _import_list: v }, tree)
 			}
 		},
 		methodsEngine
@@ -8076,8 +8041,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	line_continuation: (d) => ({ ...d, $type: TSKindId.LineContinuation as const }),
 	_kw_async_marker: (d) => ({ ...d, $type: TSKindId.KwAsyncMarker as const }),
 	_simple_statements_elements: (d, t) => wrapSimpleStatementsElements(d as unknown as T.SimpleStatementsElements, t),
-	_future_import_statement_group2: (d, t) =>
-		wrapFutureImportStatementGroup2(d as unknown as T.FutureImportStatementGroup2, t),
+	_future_import_statement_group1: (d, t) =>
+		wrapFutureImportStatementGroup1(d as unknown as T.FutureImportStatementGroup1, t),
 	_subjects: (d, t) => wrapSubjects(d as unknown as T.Subjects, t),
 	_case_patterns: (d, t) => wrapCasePatterns(d as unknown as T.CasePatterns, t),
 	_except_clause_group1: (d, t) => wrapExceptClauseGroup1(d as unknown as T.ExceptClauseGroup1, t),
@@ -8125,10 +8090,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	except: (d) => ({ ...d, $type: TSKindId.Except as const })
 };
 
-const _aliasTargetToSource: Record<string, string> = {
-	_statement_group1: '_simple_statements',
-	statement_group1: '_simple_statements'
-};
+const _aliasTargetToSource: Record<string, string> = {};
 
 function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {
 	const out: Record<string, unknown> = { ...(data as unknown as Record<string, unknown>) };

@@ -2916,6 +2916,11 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
 function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedupeMap, counter, rulesBag) {
   const existing = groupDedupeMap[existingHiddenName];
   if (existing !== void 0) return { visibleName: existing };
+  const natural = existingHiddenName.replace(/^_+/, "");
+  if (natural.length > 0 && !(natural in rulesBag)) {
+    groupDedupeMap[existingHiddenName] = natural;
+    return { visibleName: natural };
+  }
   counter.grp += 1;
   const visibleName = `${parentKind.replace(/^_+/, "")}_group${counter.grp}`;
   if (visibleName in rulesBag) {

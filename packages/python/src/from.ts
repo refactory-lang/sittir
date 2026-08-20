@@ -298,7 +298,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	string_content: TSKindId.StringContent,
 	format_specifier: TSKindId.FormatSpecifier,
 	_simple_statements_elements: TSKindId.SimpleStatementsElements,
-	_future_import_statement_group2: TSKindId.FutureImportStatementGroup2,
+	_future_import_statement_group1: TSKindId.FutureImportStatementGroup1,
 	_subjects: TSKindId.Subjects,
 	_case_patterns: TSKindId.CasePatterns,
 	_except_clause_group1: TSKindId.ExceptClauseGroup1,
@@ -388,9 +388,9 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildFormatSpecifier(...(children as Parameters<typeof F.buildFormatSpecifier>));
 		case '_simple_statements_elements':
 			return (F.buildSimpleStatementsElements as (...args: unknown[]) => unknown)(...children);
-		case '_future_import_statement_group2':
-			return F.buildFutureImportStatementGroup2(
-				children[0] as Parameters<typeof F.buildFutureImportStatementGroup2>[0]
+		case '_future_import_statement_group1':
+			return F.buildFutureImportStatementGroup1(
+				children[0] as Parameters<typeof F.buildFutureImportStatementGroup1>[0]
 			);
 		case '_subjects':
 			return (F.buildSubjects as (...args: unknown[]) => unknown)(...children);
@@ -538,7 +538,7 @@ const _K1: readonly string[] = [
 	'match_statement'
 ];
 const _K2: readonly string[] = ['relative_import', 'dotted_name'];
-const _K3: readonly string[] = ['_import_list', '_future_import_statement_group2'];
+const _K3: readonly string[] = ['_import_list', '_future_import_statement_group1'];
 const _K4: readonly string[] = ['identifier', 'integer', 'float', 'true', 'false', 'none'];
 const _K5: readonly string[] = [
 	'comparison_operator',
@@ -776,7 +776,7 @@ export function coerceToRelativeImport(input: T.RelativeImport.Loose): ReturnTyp
 }
 
 export function coerceToFutureImportStatement(
-	input?: (T.ImportList | T.FutureImportStatementGroup2) | T.FutureImportStatement
+	input?: (T.ImportList | T.FutureImportStatementGroup1) | T.FutureImportStatement
 ): ReturnType<typeof F.buildFutureImportStatement> {
 	if (isNodeData(input) && input.$type === TSKindId.FutureImportStatement) {
 		const data = input;
@@ -799,7 +799,7 @@ export function coerceToImportFromStatement(
 		content: _requireField(
 			'import_from_statement',
 			'content',
-			_resolveOne<T.ImportList | T.FutureImportStatementGroup2 | T.WildcardImport>(input.content, _K0, _K3)
+			_resolveOne<T.ImportList | T.FutureImportStatementGroup1 | T.WildcardImport>(input.content, _K0, _K3)
 		)
 	});
 }
