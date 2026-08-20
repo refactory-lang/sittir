@@ -1,5 +1,5 @@
 {
-	"python": { "S1": 3, "S8": 0 },
-	"rust": { "S1": 3, "S6": 0 },
-	"typescript": { "S1": 9, "S4": 2, "S7": 0 }
+	"python": { "S8": 0 },
+	"rust": { "S1": 1, "S6": 0 },
+	"typescript": { "S4": 2, "S7": 0 }
 }

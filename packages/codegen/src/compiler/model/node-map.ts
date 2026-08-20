@@ -968,15 +968,25 @@ function resolveParseKindCollisions(
 function resolveParseKindCollisionsInSlot(slot: AssembledNonterminal, ctx: KindedDeriveCtx): AssembledNonterminal {
 	const describedValues: ParseKindCollisionValue<NodeOrTerminal>[] = slot.values.map((value) => {
 		const storageKind = storageKindOfValue(value);
+		// Mint stamps as collision-free identities — terminals carry theirs on
+		// resolvedKindId (the literal-chain stamp), node refs on storageKindId.
+		// Unstamped values resolve through the catalog: the collision check
+		// decides WIRE-identity injectivity (the grammar symbol the read stamps
+		// as `$type`), so an id must be recovered wherever one exists — a
+		// name-only fallback would conservatively re-flag arms the wire
+		// actually tells apart.
+		const stampedStorageKindId = isNodeRef(value) ? value.storageKindId : value.resolvedKindId;
+		const storageKindId =
+			stampedStorageKindId ??
+			(storageKind !== undefined && ctx.kindEntries !== undefined
+				? findEntryForKindName(ctx.kindEntries, storageKind)?.id
+				: undefined);
 		return {
 			original: value,
 			parseKind: value.parseKind?.name,
 			storageKind,
-			// PR-K3e: mint stamps as collision-free identities — terminals carry
-			// theirs on resolvedKindId (the literal-chain stamp), node refs on
-			// storageKindId. Absent stamps fall back to name keying in the core.
 			parseKindId: value.parseKindId,
-			storageKindId: isNodeRef(value) ? value.storageKindId : value.resolvedKindId,
+			storageKindId,
 			structuralSignature: structuralSignatureOfValue(value, ctx, storageKind),
 			preferRepresentative: storageKind !== undefined && storageKind === value.parseKind?.name
 		};

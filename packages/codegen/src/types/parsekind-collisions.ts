@@ -53,7 +53,6 @@ export function diagnoseParseKindCollisions<T>(input: ParseKindCollisionInput<T>
 
 	for (const [parseKey, bucket] of byParseKind) {
 		const parseKind = bucket[0]!.parseKind!;
-		const storageKinds = distinct(bucket.map((value) => value.storageKind!));
 		// Distinctness by stamped id where available: same-id values are the
 		// same runtime identity even under different names (hidden/visible
 		// twins); the name is only the fallback key for id-less values.
@@ -64,24 +63,44 @@ export function diagnoseParseKindCollisions<T>(input: ParseKindCollisionInput<T>
 			mergedByParseKind.set(parseKey, pickRepresentative(bucket, parseKind));
 			continue;
 		}
-		diagnostics.push({
-			code: 'parsekind-noninjective',
-			severity: 'error',
-			message:
-				`Slot '${input.slotName}' of kind '${input.ownerKind}' ` +
-				`collapses [${storageKinds.join(', ')}] onto parse kind '${parseKind}'.`,
-			canProceed: true,
-			ownerKind: input.ownerKind,
-			slotName: input.slotName,
-			shape: 'propose-distinct-alias',
-			parseKind,
-			storageKinds,
-			proposal:
-				`Slot '${input.slotName}' of kind '${input.ownerKind}' collapses distinct storage kinds ` +
-				`[${storageKinds.join(', ')}] onto parse kind '${parseKind}'. ` +
-				`Give each colliding arm a distinct alias (for example via variant()/alias()) ` +
-				`so read-time dispatch stays injective.`
-		});
+		// Read-time dispatch keys on the WIRE identity — the grammar symbol
+		// the read stamps as `$type` (the storage-side id for aliased
+		// occurrences). Distinct storage kinds sharing only a DISPLAY name
+		// are injective on the wire and need no diagnostic; the defect is
+		// distinct storage kinds whose WIRE ids coincide. Values without a
+		// stamped storage id cannot prove the wire distinguishes them, so
+		// they conservatively share one collision group.
+		const byWireIdentity = new Map<string, ParseKindCollisionValue<T>[]>();
+		for (const value of bucket) {
+			const wireKey = value.storageKindId !== undefined ? `#${value.storageKindId}` : `?${parseKey}`;
+			const group = byWireIdentity.get(wireKey) ?? [];
+			group.push(value);
+			byWireIdentity.set(wireKey, group);
+		}
+		for (const group of byWireIdentity.values()) {
+			const groupStorageIdentities = distinct(group.map((value) => kindKey(value.storageKindId, value.storageKind!)));
+			if (groupStorageIdentities.length <= 1) continue;
+			if (distinct(group.map((value) => value.structuralSignature)).length === 1) continue;
+			const storageKinds = distinct(group.map((value) => value.storageKind!));
+			diagnostics.push({
+				code: 'parsekind-noninjective',
+				severity: 'error',
+				message:
+					`Slot '${input.slotName}' of kind '${input.ownerKind}' ` +
+					`collapses [${storageKinds.join(', ')}] onto parse kind '${parseKind}'.`,
+				canProceed: true,
+				ownerKind: input.ownerKind,
+				slotName: input.slotName,
+				shape: 'propose-distinct-alias',
+				parseKind,
+				storageKinds,
+				proposal:
+					`Slot '${input.slotName}' of kind '${input.ownerKind}' collapses distinct storage kinds ` +
+					`[${storageKinds.join(', ')}] onto parse kind '${parseKind}'. ` +
+					`Give each colliding arm a distinct alias (for example via variant()/alias()) ` +
+					`so read-time dispatch stays injective.`
+			});
+		}
 	}
 
 	if (mergedByParseKind.size === 0) {
