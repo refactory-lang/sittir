@@ -71220,6 +71220,622 @@
       "$named": true,
       "_statements": [
         {
+          "$type": 184,
+          "$source": 0,
+          "$named": true,
+          "_kind": 129,
+          "_declarators": [
+            {
+              "$type": 185,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 6,
+                "end": 19
+              },
+              "$nodeHandle": 13,
+              "_content": {
+                "$type": 365,
+                "$source": 0,
+                "$named": true,
+                "_name": "x",
+                "_value": {
+                  "$type": 248,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 10,
+                    "end": 19
+                  },
+                  "$nodeHandle": 15,
+                  "_content": {
+                    "$type": 413,
+                    "$source": 0,
+                    "$named": true,
+                    "_elements": [
+                      "a",
+                      "\\n",
+                      "b",
+                      "\\t",
+                      "c"
+                    ],
+                    "$other": [
+                      155,
+                      155
+                    ],
+                    "$span": {
+                      "start": 10,
+                      "end": 19
+                    },
+                    "$nodeHandle": 16
+                  }
+                },
+                "$other": [
+                  36
+                ],
+                "$span": {
+                  "start": 6,
+                  "end": 19
+                },
+                "$nodeHandle": 14,
+                "$slotOrder": [
+                  "name",
+                  "value"
+                ]
+              }
+            }
+          ],
+          "_semicolon": 20,
+          "$span": {
+            "start": 0,
+            "end": 20
+          },
+          "$nodeHandle": 11,
+          "$slotOrder": [
+            "kind",
+            "declarators",
+            "semicolon"
+          ]
+        },
+        {
+          "$type": 184,
+          "$source": 0,
+          "$named": true,
+          "_kind": 129,
+          "_declarators": [
+            {
+              "$type": 185,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 27,
+                "end": 46
+              },
+              "$nodeHandle": 17,
+              "_content": {
+                "$type": 365,
+                "$source": 0,
+                "$named": true,
+                "_name": "y",
+                "_value": {
+                  "$type": 248,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 31,
+                    "end": 46
+                  },
+                  "$nodeHandle": 19,
+                  "_content": {
+                    "$type": 414,
+                    "$source": 0,
+                    "$named": true,
+                    "_elements_2": [
+                      "It",
+                      "\\'",
+                      "s",
+                      "\\t",
+                      "tabbed"
+                    ],
+                    "$other": [
+                      156,
+                      156
+                    ],
+                    "$span": {
+                      "start": 31,
+                      "end": 46
+                    },
+                    "$nodeHandle": 20
+                  }
+                },
+                "$other": [
+                  36
+                ],
+                "$span": {
+                  "start": 27,
+                  "end": 46
+                },
+                "$nodeHandle": 18,
+                "$slotOrder": [
+                  "name",
+                  "value"
+                ]
+              }
+            }
+          ],
+          "_semicolon": 20,
+          "$span": {
+            "start": 21,
+            "end": 47
+          },
+          "$nodeHandle": 12,
+          "$slotOrder": [
+            "kind",
+            "declarators",
+            "semicolon"
+          ]
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 47
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "const x=\"a\\nb\\tc\";const y='It\\'s\\ttabbed';"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "const x = \"a\\nb\\tc\";\nconst y = 'It\\'s\\ttabbed';",
+    "pattern": "program",
+    "edits": [],
+    "expectedSourceOut": "const x=\"a\\nb\\tc\";const y='It\\'s\\ttabbed';",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment)))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment)))))))",
+    "wrappedText": "const x=\"a\\nb\\tc\";const y='It\\'s\\ttabbed';",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 184,
+      "$source": 0,
+      "$named": true,
+      "_kind": 129,
+      "_declarators": [
+        {
+          "$type": 185,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 6,
+            "end": 19
+          },
+          "$nodeHandle": 21,
+          "_content": {
+            "$type": 365,
+            "$source": 0,
+            "$named": true,
+            "_name": "x",
+            "_value": {
+              "$type": 248,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 10,
+                "end": 19
+              },
+              "$nodeHandle": 23,
+              "_content": {
+                "$type": 413,
+                "$source": 0,
+                "$named": true,
+                "_elements": [
+                  "a",
+                  "\\n",
+                  "b",
+                  "\\t",
+                  "c"
+                ],
+                "$other": [
+                  155,
+                  155
+                ],
+                "$span": {
+                  "start": 10,
+                  "end": 19
+                },
+                "$nodeHandle": 24
+              }
+            },
+            "$other": [
+              36
+            ],
+            "$span": {
+              "start": 6,
+              "end": 19
+            },
+            "$nodeHandle": 22,
+            "$slotOrder": [
+              "name",
+              "value"
+            ]
+          }
+        }
+      ],
+      "_semicolon": 20,
+      "$span": {
+        "start": 0,
+        "end": 20
+      },
+      "$nodeHandle": 1,
+      "$slotOrder": [
+        "kind",
+        "declarators",
+        "semicolon"
+      ]
+    },
+    "expectedOutput": "const x=\"a\\nb\\tc\";"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "const x = \"a\\nb\\tc\";",
+    "pattern": "lexical_declaration",
+    "edits": [],
+    "expectedSourceOut": "const x=\"a\\nb\\tc\";",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment))))))",
+    "wrappedText": "const x=\"a\\nb\\tc\";",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 184,
+      "$source": 0,
+      "$named": true,
+      "_kind": 129,
+      "_declarators": [
+        {
+          "$type": 185,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 27,
+            "end": 46
+          },
+          "$nodeHandle": 25,
+          "_content": {
+            "$type": 365,
+            "$source": 0,
+            "$named": true,
+            "_name": "y",
+            "_value": {
+              "$type": 248,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 31,
+                "end": 46
+              },
+              "$nodeHandle": 27,
+              "_content": {
+                "$type": 414,
+                "$source": 0,
+                "$named": true,
+                "_elements_2": [
+                  "It",
+                  "\\'",
+                  "s",
+                  "\\t",
+                  "tabbed"
+                ],
+                "$other": [
+                  156,
+                  156
+                ],
+                "$span": {
+                  "start": 31,
+                  "end": 46
+                },
+                "$nodeHandle": 28
+              }
+            },
+            "$other": [
+              36
+            ],
+            "$span": {
+              "start": 27,
+              "end": 46
+            },
+            "$nodeHandle": 26,
+            "$slotOrder": [
+              "name",
+              "value"
+            ]
+          }
+        }
+      ],
+      "_semicolon": 20,
+      "$span": {
+        "start": 21,
+        "end": 47
+      },
+      "$nodeHandle": 2,
+      "$slotOrder": [
+        "kind",
+        "declarators",
+        "semicolon"
+      ]
+    },
+    "expectedOutput": "const y='It\\'s\\ttabbed';"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "const y = 'It\\'s\\ttabbed';",
+    "pattern": "lexical_declaration",
+    "edits": [],
+    "expectedSourceOut": "const y='It\\'s\\ttabbed';",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment))))))",
+    "wrappedText": "const y='It\\'s\\ttabbed';",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 185,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 6,
+        "end": 19
+      },
+      "$nodeHandle": 3,
+      "_content": {
+        "$type": 365,
+        "$source": 0,
+        "$named": true,
+        "_name": "x",
+        "_value": {
+          "$type": 248,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 10,
+            "end": 19
+          },
+          "$nodeHandle": 30,
+          "_content": {
+            "$type": 413,
+            "$source": 0,
+            "$named": true,
+            "_elements": [
+              "a",
+              "\\n",
+              "b",
+              "\\t",
+              "c"
+            ],
+            "$other": [
+              155,
+              155
+            ],
+            "$span": {
+              "start": 10,
+              "end": 19
+            },
+            "$nodeHandle": 31
+          }
+        },
+        "$other": [
+          36
+        ],
+        "$span": {
+          "start": 6,
+          "end": 19
+        },
+        "$nodeHandle": 29,
+        "$slotOrder": [
+          "name",
+          "value"
+        ]
+      }
+    },
+    "expectedOutput": "x=\"a\\nb\\tc\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "x = \"a\\nb\\tc\"",
+    "pattern": "variable_declarator",
+    "edits": [],
+    "expectedSourceOut": "x=\"a\\nb\\tc\"",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment)))))",
+    "wrappedText": "let x=\"a\\nb\\tc\";",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 185,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 27,
+        "end": 46
+      },
+      "$nodeHandle": 7,
+      "_content": {
+        "$type": 365,
+        "$source": 0,
+        "$named": true,
+        "_name": "y",
+        "_value": {
+          "$type": 248,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 31,
+            "end": 46
+          },
+          "$nodeHandle": 33,
+          "_content": {
+            "$type": 414,
+            "$source": 0,
+            "$named": true,
+            "_elements_2": [
+              "It",
+              "\\'",
+              "s",
+              "\\t",
+              "tabbed"
+            ],
+            "$other": [
+              156,
+              156
+            ],
+            "$span": {
+              "start": 31,
+              "end": 46
+            },
+            "$nodeHandle": 34
+          }
+        },
+        "$other": [
+          36
+        ],
+        "$span": {
+          "start": 27,
+          "end": 46
+        },
+        "$nodeHandle": 32,
+        "$slotOrder": [
+          "name",
+          "value"
+        ]
+      }
+    },
+    "expectedOutput": "y='It\\'s\\ttabbed'"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "y = 'It\\'s\\ttabbed'",
+    "pattern": "variable_declarator",
+    "edits": [],
+    "expectedSourceOut": "y='It\\'s\\ttabbed'",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment)))))",
+    "wrappedText": "let y='It\\'s\\ttabbed';",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 248,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 10,
+        "end": 19
+      },
+      "$nodeHandle": 5,
+      "_content": {
+        "$type": 413,
+        "$source": 0,
+        "$named": true,
+        "_elements": [
+          "a",
+          "\\n",
+          "b",
+          "\\t",
+          "c"
+        ],
+        "$other": [
+          155,
+          155
+        ],
+        "$span": {
+          "start": 10,
+          "end": 19
+        },
+        "$nodeHandle": 39
+      }
+    },
+    "expectedOutput": "\"a\\nb\\tc\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "\"a\\nb\\tc\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "\"a\\nb\\tc\"",
+    "expectedReparseTree": "(string (string_double elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment)))",
+    "wrappedText": "let _ = \"a\\nb\\tc\";",
+    "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 248,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 31,
+        "end": 46
+      },
+      "$nodeHandle": 9,
+      "_content": {
+        "$type": 414,
+        "$source": 0,
+        "$named": true,
+        "_elements_2": [
+          "It",
+          "\\'",
+          "s",
+          "\\t",
+          "tabbed"
+        ],
+        "$other": [
+          156,
+          156
+        ],
+        "$span": {
+          "start": 31,
+          "end": 46
+        },
+        "$nodeHandle": 40
+      }
+    },
+    "expectedOutput": "'It\\'s\\ttabbed'"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "'It\\'s\\ttabbed'",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "'It\\'s\\ttabbed'",
+    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment)))",
+    "wrappedText": "let _ = 'It\\'s\\ttabbed';",
+    "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 166,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
           "$type": 224,
           "$source": 0,
           "$named": true,
