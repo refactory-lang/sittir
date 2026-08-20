@@ -1803,8 +1803,17 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		];
 		lines.push(bodySource);
 
-		// _wrapTable — runtime dispatch by kind
-		lines.push('const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {');
+		// _wrapTable — runtime dispatch by kind. With a catalog, keys are the
+		// numeric TSKindId members (the wire `$type` IS the grammar-symbol id,
+		// so dispatch needs no id→name resolution); the catalog-less path
+		// (synthetic test grammars) keeps name keys and string dispatch.
+		const wrapTableKey = (kind: string, memberName: string): string =>
+			this.#kindEntries ? `[TSKindId.${memberName}]` : `'${kind}'`;
+		lines.push(
+			this.#kindEntries
+				? 'const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown> = {'
+				: 'const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {'
+		);
 		for (const [kind, node] of this.#nodeMap.nodes) {
 			if (
 				node.modelType === 'branch' ||
@@ -1815,19 +1824,15 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				node.modelType === 'separatedList'
 			) {
 				if (!this.#emittedStructuralKinds.has(kind)) continue;
-				lines.push(`  '${kind}': (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`);
+				lines.push(
+					`  ${wrapTableKey(kind, node.typeName)}: (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`
+				);
 			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || node.modelType === 'keyword') {
 				if (!node.factoryName) continue;
 				if (this.#kindEntries && !hasCatalogEntry(this.#kindEntries, kind)) continue;
 				if (this.#kindEntries) {
-					const entry = this.#kindEntries.find((e) => e.kind === kind);
-					if (entry) {
-						lines.push(
-							`  '${kind}': (d) => ({ ...d, $type: TSKindId.${kindIdMemberName(this.#nodeMap, kind)} as const }),`
-						);
-					} else {
-						lines.push(`  '${kind}': (d) => d,`);
-					}
+					const memberName = kindIdMemberName(this.#nodeMap, kind);
+					lines.push(`  [TSKindId.${memberName}]: (d) => ({ ...d, $type: TSKindId.${memberName} as const }),`);
 				} else {
 					lines.push(`  '${kind}': (d) => d,`);
 				}
@@ -1872,18 +1877,16 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		// Public entry points
 		lines.push('/** Wrap a NodeData into its lazy read-only view. */');
 		lines.push('export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {');
-		lines.push('  // The native path now returns numeric $type');
-		lines.push('  // (KindId) from Rust; the JS wasm path still returns string $type.');
-		lines.push('  // Resolve to a kind-name string for the string-keyed dispatch tables,');
-		lines.push('  // then per-kind wrap functions stamp the numeric TSKindId.$type on output.');
 		if (this.#kindEntries) {
-			lines.push('  const rawType = typeof data.$type === "number"');
-			lines.push('    ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)');
-			lines.push('    : (data.$type as unknown as string);');
+			lines.push('  // The wire `$type` is the numeric grammar-symbol KindId — dispatch');
+			lines.push('  // is a direct id-keyed lookup. A non-numeric `$type` can only be a');
+			lines.push('  // catalog-less kind (the deprecated JS diagnostic lane stamps those');
+			lines.push('  // as strings), which never had a table entry to reach.');
+			lines.push('  const fn = typeof data.$type === "number" ? _wrapTable[data.$type] : undefined;');
 		} else {
 			lines.push('  const rawType = data.$type as unknown as string;');
+			lines.push('  const fn = _wrapTable[rawType];');
 		}
-		lines.push('  const fn = _wrapTable[rawType];');
 		lines.push(
 			'  if (!fn) return _drillUnknownKindChildren(data, tree); // unknown kind — still drill in its kind-named-slot children'
 		);

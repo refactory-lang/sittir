@@ -163,7 +163,9 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		});
 
 		expect(wrapSrc).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {');
-		expect(wrapSrc).toContain("'_assignment_eq': (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),");
+		// With a catalog present the dispatch table is numeric-keyed; the
+		// rescue-emitted kind keys by its TSKindId member like every other.
+		expect(wrapSrc).toContain('[TSKindId.AssignmentEq]: (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),');
 	});
 
 	it('emits hidden helper wraps even when no factory surface exists', () => {
