@@ -282,8 +282,8 @@ export function nativeTreeHandle(engine: NativeEngineLike, source: string): Tree
  * Build the read-side TreeHandle for the corpus validators. Selects
  * between the wasm/JS handle (default) and a native-engine handle
  * (when `SITTIR_BACKEND=native` is set AND the grammar-owned native
- * module loads). Native handles route every read — root + drill-in +
- * drillAs — through `engine.readNode(id)` so the suite exercises the
+ * module loads). Native handles route every read — root and drill-in
+ * alike — through `engine.readNode(id)` so the suite exercises the
  * full native pipeline end-to-end.
  *
  * The wasm `tree` is still required: validators use it for kind
@@ -813,6 +813,11 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		assignment: (r) => r,
 		function_definition: (r) => r,
 		parameters: (r) => `def _f${r}:\n    pass`,
+		// Kind-specific: `_parameters` is the paren-LESS parameter interior
+		// (aliased as `parameter_list` in lambda contexts) — the visible
+		// `parameters` wrapper above expects the rendering to carry its own
+		// parens, so the interior needs them supplied here.
+		_parameters: (r) => `def _f(${r}):\n    pass`,
 		argument_list: (r) => `_f${r}`,
 		dotted_name: (r) => `import ${r}`,
 		// Kind-specific: `list_splat` (`*args`) only appears inside
@@ -1160,8 +1165,9 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
  * Walk a wrapped tree via declared getters, calling `visit` on each
  * encountered wrapped node. Enumeration uses `Object.keys` + accessor
  * invocation — accessors defined via `{get foo() {}}` appear as
- * enumerable keys and fire on read, so drillAs() along the way rewrites
- * $type from alias target to source at declared-field sites.
+ * enumerable keys and fire on read, so each child materializes through
+ * the wrap layer's drill-in ($type on every node is the grammar-symbol
+ * wire identity stamped by the read).
  *
  * `$`-prefixed keys are spread NodeData metadata (not child getters)
  * and get skipped. Leaves short-circuit when accessing a getter that
@@ -1175,7 +1181,8 @@ export function walkWrappedTree(
 	const seen = new Set<string>();
 	const recurse = (w: unknown): void => {
 		if (!isWrappedNodeData(w)) return;
-		// ADR-0017: use $nodeHandle + $childIndex as a composite dedup key.
+		// $nodeHandle + $childIndex form the composite dedup key: a handle can
+		// repeat across child positions, so neither part suffices alone.
 		const handle = w.$nodeHandle;
 		const childIdx = w.$childIndex;
 		if (handle != null && childIdx != null) {

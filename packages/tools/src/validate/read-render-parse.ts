@@ -633,11 +633,11 @@ export async function validateReadRenderParse(
 					if (w.$named === false) return;
 					const displayKind = kindNameFromId?.(w.$type);
 					const sourceKind = canonicalKindNameFromId?.(w.$type);
-					// Testable-surface filter stays DISPLAY-keyed (the surface the
-					// template listing has always admitted — hidden-canonical kinds
-					// whose display differs stay untested here); bucketing is
-					// canonical so kinds sharing a display name stay distinct.
-					if (displayKind === undefined || sourceKind === undefined || !ruleKinds.has(displayKind)) return;
+					// Testable-surface filter is CANONICAL-keyed, like the bucketing:
+					// template filenames carry canonical spellings, so hidden minted
+					// kinds (whose display name differs) are admitted and probed
+					// against their own templates rather than silently skipped.
+					if (displayKind === undefined || sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
 					const span = (w as { $span?: { start: number; end: number } }).$span;
 					if (span == null) return;
 					const dedup = `${sourceKind}@${span.start}:${span.end}`;
