@@ -312,14 +312,17 @@ export type TypeComponent =
 	// `_newline`) so id resolution can still join on the KIND when the
 	// literal's TEXT collides with an unrelated kind's text elsewhere in the
 	// same catalog (two different kinds can render identical text).
-	| { kind: 'literal'; value: string; resolvedKindId?: number; rawKind?: string }
+	| { kind: 'literal'; value: string; resolvedKindId?: number; rawKind?: string; immediate?: boolean }
 	| { kind: 'missing'; value: string; rawKind: string };
 
 export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMap): TypeComponent[] {
 	const out: TypeComponent[] = [];
 	for (const v of field.values) {
 		if (isTerminalValue(v)) {
-			out.push({ kind: 'literal', value: v.value, resolvedKindId: v.resolvedKindId });
+			// Carry the value's grammar-immediacy stamp — consumers gate seam
+			// marks on it; re-deriving it later from nodeMap is impossible for
+			// inline terminals (they have no kind of their own to look up).
+			out.push({ kind: 'literal', value: v.value, resolvedKindId: v.resolvedKindId, immediate: v.immediate });
 			continue;
 		}
 		if (!isNodeRef(v)) continue;

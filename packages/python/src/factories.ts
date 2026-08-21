@@ -20,6 +20,10 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 
 const _leafRe_buildTypeConversion = /^(?:![a-z])/u;
 const _leafRe_buildIdentifier = /^(?:[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
+const _leafRe_buildStringStart = /^(?:[a-zA-Z]*["']+)/u;
+const _leafRe_build_StringContent = /^(?:[^"'\\{}\n]+)/u;
+const _leafRe_buildEscapeInterpolation = /^(?:\{\{|\}\})/u;
+const _leafRe_buildStringEnd = /^(?:["']+)/u;
 
 export function buildModule(config: Partial<T.Module.Config> = {}) {
 	const _statements = config.statements ?? [];
@@ -4284,6 +4288,70 @@ export function buildYieldFromClause(child: T.Expression) {
 	);
 }
 
+export function buildStringStart(text: string) {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`string_start: text must be non-empty`);
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildStringStart.test(text))
+		throw new Error(`string_start: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.StringStart as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function build_StringContent(text: string) {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_string_content: text must be non-empty`);
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_build_StringContent.test(text))
+		throw new Error(`_string_content: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId._StringContent as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildEscapeInterpolation(text: string) {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`escape_interpolation: text must be non-empty`);
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildEscapeInterpolation.test(text))
+		throw new Error(`escape_interpolation: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.EscapeInterpolation as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildStringEnd(text: string) {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`string_end: text must be non-empty`);
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildStringEnd.test(text))
+		throw new Error(`string_end: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.StringEnd as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export function buildIndent(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_indent: text must be non-empty`);
@@ -4304,62 +4372,6 @@ export function buildDedent(text: string) {
 	return withMethods(
 		{
 			$type: TSKindId.Dedent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildStringStart(text: string) {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`string_start: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.StringStart as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function build_StringContent(text: string) {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_string_content: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId._StringContent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildEscapeInterpolation(text: string) {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`escape_interpolation: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.EscapeInterpolation as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildStringEnd(text: string) {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`string_end: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.StringEnd as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -4584,12 +4596,12 @@ export type FluentKindMap = {
 	_except_clause_list: FluentNode<'_except_clause_list', T.ExceptClauseList.Config>;
 	_comparison_operator_comparator: T.ComparisonOperatorComparator;
 	_yield_from_clause: FluentNode<'_yield_from_clause', T.YieldFromClause.Config>;
-	_indent: T.Indent;
-	_dedent: T.Dedent;
 	string_start: T.StringStart;
 	_string_content: T._StringContent;
 	escape_interpolation: T.EscapeInterpolation;
 	string_end: T.StringEnd;
+	_indent: T.Indent;
+	_dedent: T.Dedent;
 	']': T.CloseBracket;
 	')': T.CloseParen;
 	'}': T.CloseBrace;
@@ -4756,12 +4768,12 @@ export const _factoryMap = {
 	_except_clause_list: buildExceptClauseList,
 	_comparison_operator_comparator: buildComparisonOperatorComparator,
 	_yield_from_clause: buildYieldFromClause,
-	_indent: buildIndent,
-	_dedent: buildDedent,
 	string_start: buildStringStart,
 	_string_content: build_StringContent,
 	escape_interpolation: buildEscapeInterpolation,
 	string_end: buildStringEnd,
+	_indent: buildIndent,
+	_dedent: buildDedent,
 	']': buildCloseBracket,
 	')': buildCloseParen,
 	'}': buildCloseBrace,

@@ -424,3 +424,59 @@ a ? function(){ return true } : b;
           (return_statement
             (true))))
       (identifier))))
+
+==================================
+Strings mixing text with escapes
+==================================
+
+const x = "a\nb\tc";
+const y = 'It\'s\ttabbed';
+
+---
+
+(program
+  (lexical_declaration
+    (variable_declarator
+      (variable_declarator_group1
+        (identifier)
+        (string
+          (string_double
+            (unescaped_double_string_fragment)
+            (escape_sequence)
+            (unescaped_double_string_fragment)
+            (escape_sequence)
+            (unescaped_double_string_fragment))))))
+  (lexical_declaration
+    (variable_declarator
+      (variable_declarator_group1
+        (identifier)
+        (string
+          (string_single
+            (unescaped_single_string_fragment)
+            (escape_sequence)
+            (unescaped_single_string_fragment)
+            (escape_sequence)
+            (unescaped_single_string_fragment)))))))
+
+==================================
+Template strings mixing fragments, escapes, and substitutions
+==================================
+
+const z = `pre${x}mid\n${y}post`;
+
+---
+
+(program
+  (lexical_declaration
+    (variable_declarator
+      (variable_declarator_group1
+        (identifier)
+        (template_string
+          (string_fragment)
+          (template_substitution
+            (identifier))
+          (string_fragment)
+          (escape_sequence)
+          (template_substitution
+            (identifier))
+          (string_fragment))))))

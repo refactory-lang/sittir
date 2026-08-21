@@ -8,6 +8,11 @@ export interface TransportLiteral {
 	readonly kind: string;
 	readonly text: string;
 	readonly resolvedKindId?: number;
+	/** Grammar-immediacy stamp of an INLINE terminal value (`token.immediate`
+	 *  threading) — kind-named literals resolve immediacy via their kind
+	 *  instead (`isImmediateLeafKind`); inline terminals have no kind to
+	 *  look up, so the stamp must ride the literal itself. */
+	readonly immediate?: boolean;
 }
 
 export interface TransportProjection {
@@ -100,7 +105,8 @@ function fieldTransportLiterals(
 						literal: {
 							kind: component.rawKind ?? component.value,
 							text: component.value,
-							resolvedKindId: component.resolvedKindId
+							resolvedKindId: component.resolvedKindId,
+							immediate: component.immediate
 						},
 						fromKind: false
 					}

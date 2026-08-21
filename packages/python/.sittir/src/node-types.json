@@ -3170,6 +3170,11 @@
     "fields": {}
   },
   {
+    "type": "not_escape_sequence",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "not_operator",
     "named": true,
     "fields": {
@@ -3756,7 +3761,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "escape_interpolation",
@@ -3764,6 +3769,14 @@
         },
         {
           "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "not_escape_sequence",
+          "named": true
+        },
+        {
+          "type": "string_fragment",
           "named": true
         }
       ]
@@ -4808,6 +4821,10 @@
   },
   {
     "type": "string_end",
+    "named": true
+  },
+  {
+    "type": "string_fragment",
     "named": true
   },
   {

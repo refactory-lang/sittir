@@ -517,7 +517,19 @@ export function fanOutSeqChoices(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 			// `{ type: 'CHOICE', ... }` here drops both the id and the separator
 			// (the source of the UNRESOLVED slotByRuleId misses AND the
 			// space-join regression on type_arguments / future_import_statement).
-			return { ...choice, type: CHOICE, members: branches, ...(rule.id !== undefined ? { id: rule.id } : {}) };
+			return {
+				...choice,
+				type: CHOICE,
+				members: branches,
+				...(rule.id !== undefined ? { id: rule.id } : {}),
+				// The fanned choice also replaces the seq as the rule ROOT, so the
+				// seq's pushed-down lexical facts (a flattened `token(...)` /
+				// `token.immediate(...)` wrapper around the whole body) must ride
+				// along or the immediacy of token-rule kinds like
+				// `escape_sequence` dies in this rebuild.
+				...(rule.tokenized !== undefined ? { tokenized: rule.tokenized } : {}),
+				...(rule.immediate !== undefined ? { immediate: rule.immediate } : {})
+			};
 		}
 		case CHOICE: {
 			const members = rule.members.map((m) => fanOutSeqChoices(m));
@@ -590,8 +602,12 @@ export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): R
 			if (prefixLen === 0 && suffixLen === 0) return { ...rule, members };
 			const { prefix, suffix, nonEmpty, hasEmpty } = extractFactoredChoiceBody(members, seqs, prefixLen, suffixLen);
 			if (nonEmpty.length === 0) {
-				// Every branch was empty → prefix/suffix already cover it.
-				return outerFromParts(prefix, suffix);
+				// Every branch was empty → prefix/suffix already cover it. The
+				// factored result replaces this choice as the rule root, so the
+				// choice's stamped attrs (id, separator, pushed-down lexical
+				// facts like a flattened `token.immediate` wrapper's stamp)
+				// must ride along — same carry as fanOutSeqChoices.
+				return withAttrsFrom(rule, outerFromParts(prefix, suffix));
 			}
 			// Spread `rule` (the factored choice) to preserve separator/multiplicity/
 			// etc., then override only `members`. When there's exactly one branch,
@@ -599,7 +615,9 @@ export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): R
 			const core: Rule<'link'> = nonEmpty.length === 1 ? nonEmpty[0]! : { ...rule, type: CHOICE, members: nonEmpty };
 			const inner: Rule<'link'> = hasEmpty ? { type: OPTIONAL, content: core } : core;
 			const outerMembers: Rule<'link'>[] = [...prefix, inner, ...suffix];
-			return outerMembers.length === 1 ? outerMembers[0]! : { type: SEQ, members: outerMembers };
+			return outerMembers.length === 1
+				? withAttrsFrom(rule, outerMembers[0]!)
+				: withAttrsFrom(rule, { type: SEQ, members: outerMembers });
 		}
 		case SEQ: {
 			const members = rule.members.map((m) => factorChoiceBranches(m));

@@ -1187,6 +1187,7 @@ export type PythonGrammar = {
 		fields: { identifier: { multiple: true; required: true; types: [{ type: 'identifier'; named: true }] } };
 	};
 	readonly '_anonymous_not in': { type: 'not in'; named: false; fields: {} };
+	readonly not_escape_sequence: { type: 'not_escape_sequence'; named: true; fields: {} };
 	readonly not_operator: {
 		type: 'not_operator';
 		named: true;
@@ -1406,8 +1407,13 @@ export type PythonGrammar = {
 		fields: {};
 		children: {
 			multiple: true;
-			required: false;
-			types: [{ type: 'escape_interpolation'; named: true }, { type: 'escape_sequence'; named: true }];
+			required: true;
+			types: [
+				{ type: 'escape_interpolation'; named: true },
+				{ type: 'escape_sequence'; named: true },
+				{ type: 'not_escape_sequence'; named: true },
+				{ type: 'string_fragment'; named: true }
+			];
 		};
 	};
 	readonly subjects: {
@@ -1751,6 +1757,7 @@ export type PythonGrammar = {
 	readonly _anonymous_raise: { type: 'raise'; named: false };
 	readonly _anonymous_return: { type: 'return'; named: false };
 	readonly string_end: { type: 'string_end'; named: true };
+	readonly string_fragment: { type: 'string_fragment'; named: true };
 	readonly string_start: { type: 'string_start'; named: true };
 	readonly true: { type: 'true'; named: true };
 	readonly _anonymous_try: { type: 'try'; named: false };

@@ -1327,7 +1327,7 @@
     "backend": "native",
     "kind": "member_expression",
     "severity": "error",
-    "message": "from() diverges: $type: 255 vs 234",
+    "message": "from() diverges: $type: 256 vs 235",
     "stage": "from",
     "code": "from-error",
     "label": "member_expression"

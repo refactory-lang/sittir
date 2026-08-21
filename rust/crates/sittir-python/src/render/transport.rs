@@ -195,13 +195,13 @@ pub enum AnyTransport {
     ExceptClauseList(ExceptClauseListTransport),
     ComparisonOperatorComparator(ComparisonOperatorComparatorTransport),
     YieldFromClause(YieldFromClauseTransport),
-    Newline(NewlineTransport),
-    Indent(IndentTransport),
-    Dedent(DedentTransport),
     StringStart(StringStartTransport),
     _StringContent(_StringContentTransport),
     EscapeInterpolation(EscapeInterpolationTransport),
     StringEnd(StringEndTransport),
+    Newline(NewlineTransport),
+    Indent(IndentTransport),
+    Dedent(DedentTransport),
     CloseBracket(CloseBracketTransport),
     CloseParen(CloseParenTransport),
     CloseBrace(CloseBraceTransport),
@@ -989,18 +989,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 272 => Ok(AnyTransport::YieldFromClause(
                     YieldFromClauseTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _newline (_NEWLINE)
-                101 => Ok(AnyTransport::Newline(
-                    NewlineTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _indent (_INDENT)
-                102 => Ok(AnyTransport::Indent(
-                    IndentTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _dedent (_DEDENT)
-                103 => Ok(AnyTransport::Dedent(
-                    DedentTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: string_start (STRING_START)
                 104 => Ok(AnyTransport::StringStart(
                     StringStartTransport::from_napi_value(env, napi_val)?
@@ -1016,6 +1004,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: string_end (STRING_END)
                 107 => Ok(AnyTransport::StringEnd(
                     StringEndTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _newline (_NEWLINE)
+                101 => Ok(AnyTransport::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _indent (_INDENT)
+                102 => Ok(AnyTransport::Indent(
+                    IndentTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _dedent (_DEDENT)
+                103 => Ok(AnyTransport::Dedent(
+                    DedentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: ] (CLOSE_BRACKET)
                 42 => Ok(AnyTransport::CloseBracket(
@@ -6330,8 +6330,8 @@ impl RenderableTransport for ExpressionStatementContentTransportSlot {
             ExpressionStatementContentTransportSlot::Await(inner) => inner.render_into(dest),
             ExpressionStatementContentTransportSlot::BinaryOperator(inner) => inner.render_into(dest),
             ExpressionStatementContentTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ExpressionStatementContentTransportSlot::String(inner) => inner.render_into(dest),
-            ExpressionStatementContentTransportSlot::ConcatenatedString(inner) => inner.render_into(dest),
+            ExpressionStatementContentTransportSlot::String(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
+            ExpressionStatementContentTransportSlot::ConcatenatedString(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
             ExpressionStatementContentTransportSlot::Integer(inner) => inner.render_into(dest),
             ExpressionStatementContentTransportSlot::Float(inner) => inner.render_into(dest),
             ExpressionStatementContentTransportSlot::True(inner) => inner.render_into(dest),
@@ -8242,7 +8242,7 @@ impl RenderableTransport for ExecStatementCodeTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ExecStatementCodeTransportSlot::String(inner) => inner.render_into(dest),
+            ExecStatementCodeTransportSlot::String(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
             ExecStatementCodeTransportSlot::Identifier(inner) => inner.render_into(dest),
             ExecStatementCodeTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
@@ -9139,8 +9139,8 @@ impl RenderableTransport for CasePatternContentTransportSlot {
             CasePatternContentTransportSlot::CaseListPattern(inner) => inner.render_into(dest),
             CasePatternContentTransportSlot::CaseTuplePattern(inner) => inner.render_into(dest),
             CasePatternContentTransportSlot::DictPattern(inner) => inner.render_into(dest),
-            CasePatternContentTransportSlot::String(inner) => inner.render_into(dest),
-            CasePatternContentTransportSlot::ConcatenatedString(inner) => inner.render_into(dest),
+            CasePatternContentTransportSlot::String(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
+            CasePatternContentTransportSlot::ConcatenatedString(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
             CasePatternContentTransportSlot::True(inner) => inner.render_into(dest),
             CasePatternContentTransportSlot::False(inner) => inner.render_into(dest),
             CasePatternContentTransportSlot::None(inner) => inner.render_into(dest),
@@ -11026,8 +11026,8 @@ impl RenderableTransport for YieldContentTransportSlot {
             YieldContentTransportSlot::Await(inner) => inner.render_into(dest),
             YieldContentTransportSlot::BinaryOperator(inner) => inner.render_into(dest),
             YieldContentTransportSlot::Identifier(inner) => inner.render_into(dest),
-            YieldContentTransportSlot::String(inner) => inner.render_into(dest),
-            YieldContentTransportSlot::ConcatenatedString(inner) => inner.render_into(dest),
+            YieldContentTransportSlot::String(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
+            YieldContentTransportSlot::ConcatenatedString(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
             YieldContentTransportSlot::Integer(inner) => inner.render_into(dest),
             YieldContentTransportSlot::Float(inner) => inner.render_into(dest),
             YieldContentTransportSlot::True(inner) => inner.render_into(dest),
@@ -11723,8 +11723,8 @@ impl RenderableTransport for TypeContentTransportSlot {
             TypeContentTransportSlot::Await(inner) => inner.render_into(dest),
             TypeContentTransportSlot::BinaryOperator(inner) => inner.render_into(dest),
             TypeContentTransportSlot::Identifier(inner) => inner.render_into(dest),
-            TypeContentTransportSlot::String(inner) => inner.render_into(dest),
-            TypeContentTransportSlot::ConcatenatedString(inner) => inner.render_into(dest),
+            TypeContentTransportSlot::String(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
+            TypeContentTransportSlot::ConcatenatedString(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
             TypeContentTransportSlot::Integer(inner) => inner.render_into(dest),
             TypeContentTransportSlot::Float(inner) => inner.render_into(dest),
             TypeContentTransportSlot::True(inner) => inner.render_into(dest),
@@ -12295,8 +12295,8 @@ impl RenderableTransport for ParenthesizedExpressionContentTransportSlot {
             ParenthesizedExpressionContentTransportSlot::Await(inner) => inner.render_into(dest),
             ParenthesizedExpressionContentTransportSlot::BinaryOperator(inner) => inner.render_into(dest),
             ParenthesizedExpressionContentTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ParenthesizedExpressionContentTransportSlot::String(inner) => inner.render_into(dest),
-            ParenthesizedExpressionContentTransportSlot::ConcatenatedString(inner) => inner.render_into(dest),
+            ParenthesizedExpressionContentTransportSlot::String(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
+            ParenthesizedExpressionContentTransportSlot::ConcatenatedString(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
             ParenthesizedExpressionContentTransportSlot::Integer(inner) => inner.render_into(dest),
             ParenthesizedExpressionContentTransportSlot::Float(inner) => inner.render_into(dest),
             ParenthesizedExpressionContentTransportSlot::True(inner) => inner.render_into(dest),
@@ -12731,8 +12731,8 @@ impl RenderableTransport for CollectionElementsElementTransportSlot {
             CollectionElementsElementTransportSlot::Await(inner) => inner.render_into(dest),
             CollectionElementsElementTransportSlot::BinaryOperator(inner) => inner.render_into(dest),
             CollectionElementsElementTransportSlot::Identifier(inner) => inner.render_into(dest),
-            CollectionElementsElementTransportSlot::String(inner) => inner.render_into(dest),
-            CollectionElementsElementTransportSlot::ConcatenatedString(inner) => inner.render_into(dest),
+            CollectionElementsElementTransportSlot::String(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
+            CollectionElementsElementTransportSlot::ConcatenatedString(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
             CollectionElementsElementTransportSlot::Integer(inner) => inner.render_into(dest),
             CollectionElementsElementTransportSlot::Float(inner) => inner.render_into(dest),
             CollectionElementsElementTransportSlot::True(inner) => inner.render_into(dest),
@@ -13148,8 +13148,8 @@ impl RenderableTransport for StringContentContentTransportSlot {
             StringContentContentTransportSlot::EscapeInterpolation(inner) => inner.render_into(dest),
             StringContentContentTransportSlot::EscapeSequence(inner) => inner.render_into(dest),
             StringContentContentTransportSlot::_StringContent(inner) => inner.render_into(dest),
-            StringContentContentTransportSlot::Literal20_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => dest.write_str("\\").map_err(::askama::Error::from),
-            StringContentContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            StringContentContentTransportSlot::Literal20_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => { ::sittir_core::spacing::mark_adjacent(); dest.write_str("\\").map_err(::askama::Error::from) },
+            StringContentContentTransportSlot::Verbatim(inner) => { ::sittir_core::spacing::mark_adjacent(); dest.write_str(&inner.text).map_err(::askama::Error::from) },
         }
     }
 }
@@ -13844,8 +13844,8 @@ impl RenderableTransport for ArgumentListElementsElementTransportSlot {
             ArgumentListElementsElementTransportSlot::Await(inner) => inner.render_into(dest),
             ArgumentListElementsElementTransportSlot::BinaryOperator(inner) => inner.render_into(dest),
             ArgumentListElementsElementTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ArgumentListElementsElementTransportSlot::String(inner) => inner.render_into(dest),
-            ArgumentListElementsElementTransportSlot::ConcatenatedString(inner) => inner.render_into(dest),
+            ArgumentListElementsElementTransportSlot::String(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
+            ArgumentListElementsElementTransportSlot::ConcatenatedString(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
             ArgumentListElementsElementTransportSlot::Integer(inner) => inner.render_into(dest),
             ArgumentListElementsElementTransportSlot::Float(inner) => inner.render_into(dest),
             ArgumentListElementsElementTransportSlot::True(inner) => inner.render_into(dest),
@@ -14363,8 +14363,8 @@ impl RenderableTransport for SubscriptsSubscriptTransportSlot {
             SubscriptsSubscriptTransportSlot::Await(inner) => inner.render_into(dest),
             SubscriptsSubscriptTransportSlot::BinaryOperator(inner) => inner.render_into(dest),
             SubscriptsSubscriptTransportSlot::Identifier(inner) => inner.render_into(dest),
-            SubscriptsSubscriptTransportSlot::String(inner) => inner.render_into(dest),
-            SubscriptsSubscriptTransportSlot::ConcatenatedString(inner) => inner.render_into(dest),
+            SubscriptsSubscriptTransportSlot::String(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
+            SubscriptsSubscriptTransportSlot::ConcatenatedString(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
             SubscriptsSubscriptTransportSlot::Integer(inner) => inner.render_into(dest),
             SubscriptsSubscriptTransportSlot::Float(inner) => inner.render_into(dest),
             SubscriptsSubscriptTransportSlot::True(inner) => inner.render_into(dest),
@@ -25260,317 +25260,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<YieldFromClauseTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct NewlineTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for NewlineTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "\n".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
-                obj.get("$text")?.unwrap_or_else(|| "\n".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(false),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "\n".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NewlineTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NewlineTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        NewlineTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NewlineTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        NewlineTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct IndentTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for IndentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for IndentTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<IndentTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        IndentTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<IndentTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        IndentTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct DedentTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for DedentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DedentTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DedentTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        DedentTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DedentTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        DedentTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct StringStartTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -25979,6 +25668,317 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StringEndTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         StringEndTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct NewlineTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for NewlineTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "\n".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_else(|| "\n".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "\n".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for NewlineTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NewlineTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        NewlineTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NewlineTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        NewlineTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct IndentTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for IndentTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_default()
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for IndentTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<IndentTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        IndentTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<IndentTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        IndentTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct DedentTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for DedentTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_default()
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for DedentTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DedentTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        DedentTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DedentTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        DedentTransport::to_napi_value(env, *val)
     }
 }
 
@@ -34739,10 +34739,12 @@ fn render_interpolation(node: &InterpolationTransport, dest: &mut dyn ::std::fmt
 }
 
 fn render_escape_sequence(t: &EscapeSequenceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
 fn render_not_escape_sequence(t: &NotEscapeSequenceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -35377,6 +35379,26 @@ fn render_yield_from_clause(node: &YieldFromClauseTransport, dest: &mut dyn ::st
     template.render_into(dest)
 }
 
+fn render_string_start(t: &StringStartTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render__string_content(t: &_StringContentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_escape_interpolation(t: &EscapeInterpolationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_string_end(t: &StringEndTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
 fn render_newline(t: &NewlineTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -35386,22 +35408,6 @@ fn render_indent(t: &IndentTransport, dest: &mut dyn ::std::fmt::Write) -> Resul
 }
 
 fn render_dedent(t: &DedentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_string_start(t: &StringStartTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render__string_content(t: &_StringContentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_escape_interpolation(t: &EscapeInterpolationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_string_end(t: &StringEndTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -36093,13 +36099,13 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::ExceptClauseList(t) => t.render_into(dest),
             AnyTransport::ComparisonOperatorComparator(t) => t.render_into(dest),
             AnyTransport::YieldFromClause(t) => t.render_into(dest),
-            AnyTransport::Newline(t) => t.render_into(dest),
-            AnyTransport::Indent(t) => t.render_into(dest),
-            AnyTransport::Dedent(t) => t.render_into(dest),
             AnyTransport::StringStart(t) => t.render_into(dest),
             AnyTransport::_StringContent(t) => t.render_into(dest),
             AnyTransport::EscapeInterpolation(t) => t.render_into(dest),
             AnyTransport::StringEnd(t) => t.render_into(dest),
+            AnyTransport::Newline(t) => t.render_into(dest),
+            AnyTransport::Indent(t) => t.render_into(dest),
+            AnyTransport::Dedent(t) => t.render_into(dest),
             AnyTransport::CloseBracket(t) => t.render_into(dest),
             AnyTransport::CloseParen(t) => t.render_into(dest),
             AnyTransport::CloseBrace(t) => t.render_into(dest),
@@ -36384,13 +36390,13 @@ impl AnyTransport {
             Self::ExceptClauseList(t) => t.transport_named,
             Self::ComparisonOperatorComparator(t) => t.transport_named,
             Self::YieldFromClause(t) => t.transport_named,
-            Self::Newline(t) => t.transport_named,
-            Self::Indent(t) => t.transport_named,
-            Self::Dedent(t) => t.transport_named,
             Self::StringStart(t) => t.transport_named,
             Self::_StringContent(t) => t.transport_named,
             Self::EscapeInterpolation(t) => t.transport_named,
             Self::StringEnd(t) => t.transport_named,
+            Self::Newline(t) => t.transport_named,
+            Self::Indent(t) => t.transport_named,
+            Self::Dedent(t) => t.transport_named,
             Self::CloseBracket(t) => t.transport_named,
             Self::CloseParen(t) => t.transport_named,
             Self::CloseBrace(t) => t.transport_named,

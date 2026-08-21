@@ -30992,7 +30992,7 @@ impl RenderableTransport for LineCommentDocOuterTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            LineCommentDocOuterTransportSlot::Literal45_5f_6f_75_74_65_72_5f_6c_69_6e_65_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72 => dest.write_str("/").map_err(::askama::Error::from),
+            LineCommentDocOuterTransportSlot::Literal45_5f_6f_75_74_65_72_5f_6c_69_6e_65_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72 => { ::sittir_core::spacing::mark_adjacent(); dest.write_str("/").map_err(::askama::Error::from) },
         }
     }
 }
@@ -59598,6 +59598,7 @@ fn render_char_literal(t: &CharLiteralTransport, dest: &mut dyn ::std::fmt::Writ
 }
 
 fn render_escape_sequence(t: &EscapeSequenceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -59624,6 +59625,7 @@ fn render_inner_line_doc_comment_marker(t: &InnerLineDocCommentMarkerTransport, 
 }
 
 fn render_outer_line_doc_comment_marker(t: &OuterLineDocCommentMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -60489,6 +60491,7 @@ fn render_line_comment_doc(node: &LineCommentDocTransport, dest: &mut dyn ::std:
 }
 
 fn render_line_comment_content(t: &LineCommentContentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    ::sittir_core::spacing::mark_adjacent();
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 

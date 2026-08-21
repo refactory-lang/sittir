@@ -22,7 +22,7 @@ export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): 
 	// structurally rather than narrowing the param type, matching the
 	// established pattern (see `findRepeatFlag` in dsl/rule-transforms.ts).
 	const src = original as StampedAttrs & { id?: string };
-	const { fieldName, multiplicity, separator, optionalElement, id } = src;
+	const { fieldName, multiplicity, separator, optionalElement, id, tokenized, immediate } = src;
 	const patch: Record<string, unknown> = {};
 	if (fieldName !== undefined && !Object.prototype.hasOwnProperty.call(result, 'fieldName'))
 		patch['fieldName'] = fieldName;
@@ -36,6 +36,13 @@ export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): 
 	// deleted-wrapper fact would die with the discarded node.
 	if (optionalElement !== undefined && !Object.prototype.hasOwnProperty.call(result, 'optionalElement'))
 		patch['optionalElement'] = optionalElement;
+	// Lexical token facts (Link's flattened `token(...)` wrappers) have no
+	// structural fallback either — a collapse survivor must keep them or an
+	// immediate token kind loses its seam-free rendering.
+	if (tokenized !== undefined && !Object.prototype.hasOwnProperty.call(result, 'tokenized'))
+		patch['tokenized'] = tokenized;
+	if (immediate !== undefined && !Object.prototype.hasOwnProperty.call(result, 'immediate'))
+		patch['immediate'] = immediate;
 	// Preserve the rule's identity through collapse: renderRule.id === collapsedRule.id
 	// so the emitter (walks renderRule) and collectSlots (reads simplifiedRule) still
 	// share one of the slot's `sourceRuleIds`, making `slotByRuleId` (the canonical,
@@ -55,7 +62,10 @@ export interface SharedArmAttrs {
 
 const MULTIPLICITY_RANK: Record<Multiplicity, number> = { single: 0, optional: 1, array: 2, nonEmptyArray: 3 };
 
-type StampedAttrs = Pick<RuleBase<'normalize'>, 'fieldName' | 'multiplicity' | 'nonterminal' | 'separator' | 'optionalElement'>;
+type StampedAttrs = Pick<
+	RuleBase<'normalize'>,
+	'fieldName' | 'multiplicity' | 'nonterminal' | 'separator' | 'optionalElement' | 'tokenized' | 'immediate'
+>;
 
 function armsOf(rule: AnyRule): readonly AnyRule[] {
 	if (rule.type === CHOICE) return rule.members;
