@@ -361,6 +361,7 @@ export const enum SyntaxKind {
 	RangePatternGroup2 = '_range_pattern_group2',
 	BlockCommentGroup1 = '_block_comment_group1',
 	TupleTypeElements = '_tuple_type_elements',
+	TupleExpressionElements = '_tuple_expression_elements',
 	UseWildcardClause = '_use_wildcard_clause',
 	ReferenceExpressionRawMut = '_reference_expression_raw_mut',
 	ImplItemBody = '_impl_item_body',
@@ -589,39 +590,39 @@ export const enum TSKindId {
 	GtGtEq = 102,
 	Return = 103,
 	Yield = 104,
-	Comma = 105,
-	DotDot = 106,
-	If = 107,
-	Else = 108,
-	Match = 109,
-	While = 110,
-	Loop = 111,
-	In = 112,
-	Break = 113,
-	Continue = 114,
-	Dot = 115,
-	Await = 116,
-	Gen = 117,
-	Try = 118,
-	Ref = 119,
-	At = 120,
-	IntegerLiteral = 121,
-	Dquote = 122,
-	CharLiteral = 123,
-	EscapeSequence = 124,
-	True = 125,
-	False = 126,
-	SlashSlash = 127,
-	Bang2 = 128,
-	Slash2 = 129,
-	SlashStar = 130,
-	StarSlash = 131,
-	Shebang = 132,
-	Self = 133,
-	Super = 134,
-	Crate = 135,
-	Metavariable = 136,
-	Move = 137,
+	DotDot = 105,
+	If = 106,
+	Else = 107,
+	Match = 108,
+	While = 109,
+	Loop = 110,
+	In = 111,
+	Break = 112,
+	Continue = 113,
+	Dot = 114,
+	Await = 115,
+	Gen = 116,
+	Try = 117,
+	Ref = 118,
+	At = 119,
+	IntegerLiteral = 120,
+	Dquote = 121,
+	CharLiteral = 122,
+	EscapeSequence = 123,
+	True = 124,
+	False = 125,
+	SlashSlash = 126,
+	Bang2 = 127,
+	Slash2 = 128,
+	SlashStar = 129,
+	StarSlash = 130,
+	Shebang = 131,
+	Self = 132,
+	Super = 133,
+	Crate = 134,
+	Metavariable = 135,
+	Move = 136,
+	Comma = 137,
 	DashGt = 138,
 	Anonymous = 139,
 	DotDotEq = 140,
@@ -832,73 +833,73 @@ export const enum TSKindId {
 	RangePatternGroup2 = 345,
 	BlockCommentGroup1 = 346,
 	TupleTypeElements = 347,
-	TokenTreePunctuation = 348,
-	TokenKeywords = 349,
-	UseWildcardClause = 350,
-	WildcardPattern = 351,
-	RangeExpressionBare = 352,
-	ReferenceExpressionRawConst = 353,
-	ReferenceExpressionRawMut = 354,
-	_ImplItemUnsafeMarker = 355,
-	ImplItemBody = 356,
-	ImplItemSemi = 357,
-	ImplItemPositiveClause = 358,
-	ImplItemNegativeClause = 359,
-	ArrayExpressionSemi = 360,
-	ArrayExpressionList = 361,
-	ClosureExpressionBlock = 362,
-	ClosureExpressionExpr = 363,
-	FieldPatternNamed = 364,
-	FunctionTypeTraitForm = 365,
-	FunctionTypeFnForm = 366,
-	MacroDefinitionParen = 367,
-	MacroDefinitionBracket = 368,
-	MacroDefinitionBrace = 369,
-	ModItemExternal = 370,
-	OrPatternBinary = 371,
-	OrPatternPrefix = 372,
-	RangeExpressionBinary = 373,
-	RangeExpressionPostfix = 374,
-	RangeExpressionPrefix = 375,
-	RangePatternPrefix = 376,
-	RangePatternLeftWithRight = 377,
-	RangePatternLeftBare = 378,
-	StructItemBrace = 379,
-	StructItemTuple = 380,
-	StructItemUnit = 381,
-	VisibilityModifierPub = 382,
-	VisibilityModifierInPath = 383,
-	PointerTypeConst = 384,
-	ExpressionStatementWithSemi = 385,
-	ForeignModItemSemi = 386,
-	MatchArmWithComma = 387,
-	LineCommentRegularDslash = 388,
-	LineCommentDoc = 389,
-	TokenTreePatternParen = 390,
-	TokenTreePatternBracket = 391,
-	TokenTreePatternBrace = 392,
-	TokenTreeParen = 393,
-	TokenTreeBracket = 394,
-	TokenTreeBrace = 395,
-	DelimTokenTreeParen = 396,
-	DelimTokenTreeBracket = 397,
-	DelimTokenTreeBrace = 398,
-	AttributedFieldDeclaration = 399,
-	AttributedEnumVariant = 400,
-	AttributedParameter = 401,
-	AttributedTypeParameter = 402,
-	AttributedArgument = 403,
-	AttributedOrderedField = 404,
-	TypeArgument = 405,
-	MatchBlockArms = 406,
-	SourceFileRepeat1 = 407,
-	TokenRepetitionPatternRepeat1 = 408,
-	TokenRepetitionRepeat1 = 409,
-	DeclarationListRepeat1 = 410,
-	FunctionModifiersRepeat1 = 411,
-	TraitBoundsRepeat1 = 412,
-	TupleExpressionRepeat1 = 413,
-	TupleExpressionRepeat2 = 414,
+	TupleExpressionElements = 348,
+	TokenTreePunctuation = 349,
+	TokenKeywords = 350,
+	UseWildcardClause = 351,
+	WildcardPattern = 352,
+	RangeExpressionBare = 353,
+	ReferenceExpressionRawConst = 354,
+	ReferenceExpressionRawMut = 355,
+	_ImplItemUnsafeMarker = 356,
+	ImplItemBody = 357,
+	ImplItemSemi = 358,
+	ImplItemPositiveClause = 359,
+	ImplItemNegativeClause = 360,
+	ArrayExpressionSemi = 361,
+	ArrayExpressionList = 362,
+	ClosureExpressionBlock = 363,
+	ClosureExpressionExpr = 364,
+	FieldPatternNamed = 365,
+	FunctionTypeTraitForm = 366,
+	FunctionTypeFnForm = 367,
+	MacroDefinitionParen = 368,
+	MacroDefinitionBracket = 369,
+	MacroDefinitionBrace = 370,
+	ModItemExternal = 371,
+	OrPatternBinary = 372,
+	OrPatternPrefix = 373,
+	RangeExpressionBinary = 374,
+	RangeExpressionPostfix = 375,
+	RangeExpressionPrefix = 376,
+	RangePatternPrefix = 377,
+	RangePatternLeftWithRight = 378,
+	RangePatternLeftBare = 379,
+	StructItemBrace = 380,
+	StructItemTuple = 381,
+	StructItemUnit = 382,
+	VisibilityModifierPub = 383,
+	VisibilityModifierInPath = 384,
+	PointerTypeConst = 385,
+	ExpressionStatementWithSemi = 386,
+	ForeignModItemSemi = 387,
+	MatchArmWithComma = 388,
+	LineCommentRegularDslash = 389,
+	LineCommentDoc = 390,
+	TokenTreePatternParen = 391,
+	TokenTreePatternBracket = 392,
+	TokenTreePatternBrace = 393,
+	TokenTreeParen = 394,
+	TokenTreeBracket = 395,
+	TokenTreeBrace = 396,
+	DelimTokenTreeParen = 397,
+	DelimTokenTreeBracket = 398,
+	DelimTokenTreeBrace = 399,
+	AttributedFieldDeclaration = 400,
+	AttributedEnumVariant = 401,
+	AttributedParameter = 402,
+	AttributedTypeParameter = 403,
+	AttributedArgument = 404,
+	AttributedOrderedField = 405,
+	TypeArgument = 406,
+	MatchBlockArms = 407,
+	SourceFileRepeat1 = 408,
+	TokenRepetitionPatternRepeat1 = 409,
+	TokenRepetitionRepeat1 = 410,
+	DeclarationListRepeat1 = 411,
+	FunctionModifiersRepeat1 = 412,
+	TraitBoundsRepeat1 = 413,
+	TupleExpressionRepeat1 = 414,
 	MatchArmRepeat1 = 415,
 	StringLiteralRepeat1 = 416,
 	_MacroRulesRepeat1 = 417,
@@ -919,11 +920,12 @@ export const enum TSKindId {
 	_PatternsRepeat1 = 432,
 	_StructPatternElementsRepeat1 = 433,
 	_TupleTypeElementsRepeat1 = 434,
-	_DelimTokenTreeParenRepeat1 = 435,
-	_MatchBlockArmsRepeat1 = 436,
-	FieldIdentifier = 437,
-	_ShorthandFieldIdentifier = 439,
-	TypeIdentifier = 440
+	_TupleExpressionElementsRepeat1 = 435,
+	_DelimTokenTreeParenRepeat1 = 436,
+	_MatchBlockArmsRepeat1 = 437,
+	FieldIdentifier = 438,
+	_ShorthandFieldIdentifier = 440,
+	TypeIdentifier = 441
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -1031,39 +1033,39 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[102, 'gt_gt_eq'],
 	[103, 'return'],
 	[104, 'yield'],
-	[105, 'comma'],
-	[106, 'dot_dot'],
-	[107, 'if'],
-	[108, 'else'],
-	[109, 'match'],
-	[110, 'while'],
-	[111, 'loop'],
-	[112, 'in'],
-	[113, 'break'],
-	[114, 'continue'],
-	[115, 'dot'],
-	[116, 'await'],
-	[117, 'gen'],
-	[118, 'try'],
-	[119, 'ref'],
-	[120, 'at'],
-	[121, 'integer_literal'],
-	[122, 'dquote'],
-	[123, 'char_literal'],
-	[124, 'escape_sequence'],
-	[125, 'true'],
-	[126, 'false'],
-	[127, 'slash_slash'],
-	[128, 'bang2'],
-	[129, 'slash2'],
-	[130, 'slash_star'],
-	[131, 'star_slash'],
-	[132, 'shebang'],
-	[133, 'self'],
-	[134, 'super'],
-	[135, 'crate'],
-	[136, 'metavariable'],
-	[137, 'move'],
+	[105, 'dot_dot'],
+	[106, 'if'],
+	[107, 'else'],
+	[108, 'match'],
+	[109, 'while'],
+	[110, 'loop'],
+	[111, 'in'],
+	[112, 'break'],
+	[113, 'continue'],
+	[114, 'dot'],
+	[115, 'await'],
+	[116, 'gen'],
+	[117, 'try'],
+	[118, 'ref'],
+	[119, 'at'],
+	[120, 'integer_literal'],
+	[121, 'dquote'],
+	[122, 'char_literal'],
+	[123, 'escape_sequence'],
+	[124, 'true'],
+	[125, 'false'],
+	[126, 'slash_slash'],
+	[127, 'bang2'],
+	[128, 'slash2'],
+	[129, 'slash_star'],
+	[130, 'star_slash'],
+	[131, 'shebang'],
+	[132, 'self'],
+	[133, 'super'],
+	[134, 'crate'],
+	[135, 'metavariable'],
+	[136, 'move'],
+	[137, 'comma'],
 	[138, 'dash_gt'],
 	[139, '_'],
 	[140, 'dot_dot_eq'],
@@ -1197,7 +1199,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[268, 'if_expression'],
 	[269, 'let_condition'],
 	[270, '_let_chain'],
-	[438, '_let_chain'],
+	[439, '_let_chain'],
 	[271, '_condition'],
 	[272, 'else_clause'],
 	[273, 'match_expression'],
@@ -1275,73 +1277,73 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[345, '_range_pattern_group2'],
 	[346, '_block_comment_group1'],
 	[347, '_tuple_type_elements'],
-	[348, '_token_tree_punctuation'],
-	[349, '_token_keywords'],
-	[350, '_use_wildcard_clause'],
-	[351, '_wildcard_pattern'],
-	[352, '_range_expression_bare'],
-	[353, '_reference_expression_raw_const'],
-	[354, '_reference_expression_raw_mut'],
-	[355, '_impl_item_unsafe_marker'],
-	[356, '_impl_item_body'],
-	[357, '_impl_item_semi'],
-	[358, '_impl_item_positive_clause'],
-	[359, '_impl_item_negative_clause'],
-	[360, '_array_expression_semi'],
-	[361, '_array_expression_list'],
-	[362, '_closure_expression_block'],
-	[363, '_closure_expression_expr'],
-	[364, '_field_pattern_named'],
-	[365, '_function_type_trait_form'],
-	[366, '_function_type_fn_form'],
-	[367, '_macro_definition_paren'],
-	[368, '_macro_definition_bracket'],
-	[369, '_macro_definition_brace'],
-	[370, '_mod_item_external'],
-	[371, '_or_pattern_binary'],
-	[372, '_or_pattern_prefix'],
-	[373, '_range_expression_binary'],
-	[374, '_range_expression_postfix'],
-	[375, '_range_expression_prefix'],
-	[376, '_range_pattern_prefix'],
-	[377, '_range_pattern_left_with_right'],
-	[378, '_range_pattern_left_bare'],
-	[379, '_struct_item_brace'],
-	[380, '_struct_item_tuple'],
-	[381, '_struct_item_unit'],
-	[382, '_visibility_modifier_pub'],
-	[383, '_visibility_modifier_in_path'],
-	[384, '_pointer_type_const'],
-	[385, '_expression_statement_with_semi'],
-	[386, '_foreign_mod_item_semi'],
-	[387, '_match_arm_with_comma'],
-	[388, '_line_comment_regular_dslash'],
-	[389, '_line_comment_doc'],
-	[390, '_token_tree_pattern_paren'],
-	[391, '_token_tree_pattern_bracket'],
-	[392, '_token_tree_pattern_brace'],
-	[393, '_token_tree_paren'],
-	[394, '_token_tree_bracket'],
-	[395, '_token_tree_brace'],
-	[396, '_delim_token_tree_paren'],
-	[397, '_delim_token_tree_bracket'],
-	[398, '_delim_token_tree_brace'],
-	[399, '_attributed_field_declaration'],
-	[400, '_attributed_enum_variant'],
-	[401, '_attributed_parameter'],
-	[402, '_attributed_type_parameter'],
-	[403, '_attributed_argument'],
-	[404, '_attributed_ordered_field'],
-	[405, '_type_argument'],
-	[406, '_match_block_arms'],
-	[407, 'source_file_repeat1'],
-	[408, 'token_repetition_pattern_repeat1'],
-	[409, 'token_repetition_repeat1'],
-	[410, 'declaration_list_repeat1'],
-	[411, 'function_modifiers_repeat1'],
-	[412, 'trait_bounds_repeat1'],
-	[413, 'tuple_expression_repeat1'],
-	[414, 'tuple_expression_repeat2'],
+	[348, '_tuple_expression_elements'],
+	[349, '_token_tree_punctuation'],
+	[350, '_token_keywords'],
+	[351, '_use_wildcard_clause'],
+	[352, '_wildcard_pattern'],
+	[353, '_range_expression_bare'],
+	[354, '_reference_expression_raw_const'],
+	[355, '_reference_expression_raw_mut'],
+	[356, '_impl_item_unsafe_marker'],
+	[357, '_impl_item_body'],
+	[358, '_impl_item_semi'],
+	[359, '_impl_item_positive_clause'],
+	[360, '_impl_item_negative_clause'],
+	[361, '_array_expression_semi'],
+	[362, '_array_expression_list'],
+	[363, '_closure_expression_block'],
+	[364, '_closure_expression_expr'],
+	[365, '_field_pattern_named'],
+	[366, '_function_type_trait_form'],
+	[367, '_function_type_fn_form'],
+	[368, '_macro_definition_paren'],
+	[369, '_macro_definition_bracket'],
+	[370, '_macro_definition_brace'],
+	[371, '_mod_item_external'],
+	[372, '_or_pattern_binary'],
+	[373, '_or_pattern_prefix'],
+	[374, '_range_expression_binary'],
+	[375, '_range_expression_postfix'],
+	[376, '_range_expression_prefix'],
+	[377, '_range_pattern_prefix'],
+	[378, '_range_pattern_left_with_right'],
+	[379, '_range_pattern_left_bare'],
+	[380, '_struct_item_brace'],
+	[381, '_struct_item_tuple'],
+	[382, '_struct_item_unit'],
+	[383, '_visibility_modifier_pub'],
+	[384, '_visibility_modifier_in_path'],
+	[385, '_pointer_type_const'],
+	[386, '_expression_statement_with_semi'],
+	[387, '_foreign_mod_item_semi'],
+	[388, '_match_arm_with_comma'],
+	[389, '_line_comment_regular_dslash'],
+	[390, '_line_comment_doc'],
+	[391, '_token_tree_pattern_paren'],
+	[392, '_token_tree_pattern_bracket'],
+	[393, '_token_tree_pattern_brace'],
+	[394, '_token_tree_paren'],
+	[395, '_token_tree_bracket'],
+	[396, '_token_tree_brace'],
+	[397, '_delim_token_tree_paren'],
+	[398, '_delim_token_tree_bracket'],
+	[399, '_delim_token_tree_brace'],
+	[400, '_attributed_field_declaration'],
+	[401, '_attributed_enum_variant'],
+	[402, '_attributed_parameter'],
+	[403, '_attributed_type_parameter'],
+	[404, '_attributed_argument'],
+	[405, '_attributed_ordered_field'],
+	[406, '_type_argument'],
+	[407, '_match_block_arms'],
+	[408, 'source_file_repeat1'],
+	[409, 'token_repetition_pattern_repeat1'],
+	[410, 'token_repetition_repeat1'],
+	[411, 'declaration_list_repeat1'],
+	[412, 'function_modifiers_repeat1'],
+	[413, 'trait_bounds_repeat1'],
+	[414, 'tuple_expression_repeat1'],
 	[415, 'match_arm_repeat1'],
 	[416, 'string_literal_repeat1'],
 	[417, '_macro_rules_repeat1'],
@@ -1362,11 +1364,12 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[432, '_patterns_repeat1'],
 	[433, '_struct_pattern_elements_repeat1'],
 	[434, '_tuple_type_elements_repeat1'],
-	[435, '_delim_token_tree_paren_repeat1'],
-	[436, '_match_block_arms_repeat1'],
-	[437, '_field_identifier'],
-	[439, '_shorthand_field_identifier'],
-	[440, '_type_identifier']
+	[435, '_tuple_expression_elements_repeat1'],
+	[436, '_delim_token_tree_paren_repeat1'],
+	[437, '_match_block_arms_repeat1'],
+	[438, '_field_identifier'],
+	[440, '_shorthand_field_identifier'],
+	[441, '_type_identifier']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1475,39 +1478,39 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[102, 'gt_gt_eq'],
 	[103, 'return'],
 	[104, 'yield'],
-	[105, 'comma'],
-	[106, 'dot_dot'],
-	[107, 'if'],
-	[108, 'else'],
-	[109, 'match'],
-	[110, 'while'],
-	[111, 'loop'],
-	[112, 'in'],
-	[113, 'break'],
-	[114, 'continue'],
-	[115, 'dot'],
-	[116, 'await'],
-	[117, 'gen'],
-	[118, 'try'],
-	[119, 'ref'],
-	[120, 'at'],
-	[121, 'integer_literal'],
-	[122, 'dquote'],
-	[123, 'char_literal'],
-	[124, 'escape_sequence'],
-	[125, 'true'],
-	[126, 'false'],
-	[127, 'slash_slash'],
-	[128, 'bang2'],
-	[129, 'slash2'],
-	[130, 'slash_star'],
-	[131, 'star_slash'],
-	[132, 'shebang'],
-	[133, 'self'],
-	[134, 'super'],
-	[135, 'crate'],
-	[136, 'metavariable'],
-	[137, 'move'],
+	[105, 'dot_dot'],
+	[106, 'if'],
+	[107, 'else'],
+	[108, 'match'],
+	[109, 'while'],
+	[110, 'loop'],
+	[111, 'in'],
+	[112, 'break'],
+	[113, 'continue'],
+	[114, 'dot'],
+	[115, 'await'],
+	[116, 'gen'],
+	[117, 'try'],
+	[118, 'ref'],
+	[119, 'at'],
+	[120, 'integer_literal'],
+	[121, 'dquote'],
+	[122, 'char_literal'],
+	[123, 'escape_sequence'],
+	[124, 'true'],
+	[125, 'false'],
+	[126, 'slash_slash'],
+	[127, 'bang2'],
+	[128, 'slash2'],
+	[129, 'slash_star'],
+	[130, 'star_slash'],
+	[131, 'shebang'],
+	[132, 'self'],
+	[133, 'super'],
+	[134, 'crate'],
+	[135, 'metavariable'],
+	[136, 'move'],
+	[137, 'comma'],
 	[138, 'dash_gt'],
 	[139, '_'],
 	[140, 'dot_dot_eq'],
@@ -1641,7 +1644,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[268, 'if_expression'],
 	[269, 'let_condition'],
 	[270, 'let_chain'],
-	[438, 'let_chain'],
+	[439, 'let_chain'],
 	[271, '_condition'],
 	[272, 'else_clause'],
 	[273, 'match_expression'],
@@ -1719,73 +1722,73 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[345, 'range_pattern_group2'],
 	[346, 'block_comment_group1'],
 	[347, 'tuple_type_elements'],
-	[348, 'token_tree_punctuation'],
-	[349, '_token_keywords'],
-	[350, '_use_wildcard_clause'],
-	[351, 'wildcard_pattern'],
-	[352, 'range_expression_bare'],
-	[353, 'reference_expression_raw_const'],
-	[354, 'reference_expression_raw_mut'],
-	[355, '_impl_item_unsafe_marker'],
-	[356, 'impl_item_body'],
-	[357, 'impl_item_semi'],
-	[358, 'impl_item_positive_clause'],
-	[359, 'impl_item_negative_clause'],
-	[360, 'array_expression_semi'],
-	[361, 'array_expression_list'],
-	[362, 'closure_expression_block'],
-	[363, 'closure_expression_expr'],
-	[364, 'field_pattern_named'],
-	[365, 'function_type_trait_form'],
-	[366, 'function_type_fn_form'],
-	[367, 'macro_definition_paren'],
-	[368, 'macro_definition_bracket'],
-	[369, 'macro_definition_brace'],
-	[370, 'mod_item_external'],
-	[371, 'or_pattern_binary'],
-	[372, 'or_pattern_prefix'],
-	[373, 'range_expression_binary'],
-	[374, 'range_expression_postfix'],
-	[375, 'range_expression_prefix'],
-	[376, 'range_pattern_prefix'],
-	[377, 'range_pattern_left_with_right'],
-	[378, 'range_pattern_left_bare'],
-	[379, 'struct_item_brace'],
-	[380, 'struct_item_tuple'],
-	[381, 'struct_item_unit'],
-	[382, 'visibility_modifier_pub'],
-	[383, 'visibility_modifier_in_path'],
-	[384, 'pointer_type_const'],
-	[385, 'expression_statement_with_semi'],
-	[386, 'foreign_mod_item_semi'],
-	[387, 'match_arm_with_comma'],
-	[388, 'line_comment_regular_dslash'],
-	[389, 'line_comment_doc'],
-	[390, 'token_tree_pattern_paren'],
-	[391, 'token_tree_pattern_bracket'],
-	[392, 'token_tree_pattern_brace'],
-	[393, 'token_tree_paren'],
-	[394, 'token_tree_bracket'],
-	[395, 'token_tree_brace'],
-	[396, 'delim_token_tree_paren'],
-	[397, 'delim_token_tree_bracket'],
-	[398, 'delim_token_tree_brace'],
-	[399, 'attributed_field_declaration'],
-	[400, 'attributed_enum_variant'],
-	[401, 'attributed_parameter'],
-	[402, 'attributed_type_parameter'],
-	[403, 'attributed_argument'],
-	[404, 'attributed_ordered_field'],
-	[405, 'type_argument'],
-	[406, 'match_block_arms'],
-	[407, 'source_file_repeat1'],
-	[408, 'token_repetition_pattern_repeat1'],
-	[409, 'token_repetition_repeat1'],
-	[410, 'declaration_list_repeat1'],
-	[411, 'function_modifiers_repeat1'],
-	[412, 'trait_bounds_repeat1'],
-	[413, 'tuple_expression_repeat1'],
-	[414, 'tuple_expression_repeat2'],
+	[348, 'tuple_expression_elements'],
+	[349, 'token_tree_punctuation'],
+	[350, '_token_keywords'],
+	[351, '_use_wildcard_clause'],
+	[352, 'wildcard_pattern'],
+	[353, 'range_expression_bare'],
+	[354, 'reference_expression_raw_const'],
+	[355, 'reference_expression_raw_mut'],
+	[356, '_impl_item_unsafe_marker'],
+	[357, 'impl_item_body'],
+	[358, 'impl_item_semi'],
+	[359, 'impl_item_positive_clause'],
+	[360, 'impl_item_negative_clause'],
+	[361, 'array_expression_semi'],
+	[362, 'array_expression_list'],
+	[363, 'closure_expression_block'],
+	[364, 'closure_expression_expr'],
+	[365, 'field_pattern_named'],
+	[366, 'function_type_trait_form'],
+	[367, 'function_type_fn_form'],
+	[368, 'macro_definition_paren'],
+	[369, 'macro_definition_bracket'],
+	[370, 'macro_definition_brace'],
+	[371, 'mod_item_external'],
+	[372, 'or_pattern_binary'],
+	[373, 'or_pattern_prefix'],
+	[374, 'range_expression_binary'],
+	[375, 'range_expression_postfix'],
+	[376, 'range_expression_prefix'],
+	[377, 'range_pattern_prefix'],
+	[378, 'range_pattern_left_with_right'],
+	[379, 'range_pattern_left_bare'],
+	[380, 'struct_item_brace'],
+	[381, 'struct_item_tuple'],
+	[382, 'struct_item_unit'],
+	[383, 'visibility_modifier_pub'],
+	[384, 'visibility_modifier_in_path'],
+	[385, 'pointer_type_const'],
+	[386, 'expression_statement_with_semi'],
+	[387, 'foreign_mod_item_semi'],
+	[388, 'match_arm_with_comma'],
+	[389, 'line_comment_regular_dslash'],
+	[390, 'line_comment_doc'],
+	[391, 'token_tree_pattern_paren'],
+	[392, 'token_tree_pattern_bracket'],
+	[393, 'token_tree_pattern_brace'],
+	[394, 'token_tree_paren'],
+	[395, 'token_tree_bracket'],
+	[396, 'token_tree_brace'],
+	[397, 'delim_token_tree_paren'],
+	[398, 'delim_token_tree_bracket'],
+	[399, 'delim_token_tree_brace'],
+	[400, 'attributed_field_declaration'],
+	[401, 'attributed_enum_variant'],
+	[402, 'attributed_parameter'],
+	[403, 'attributed_type_parameter'],
+	[404, 'attributed_argument'],
+	[405, 'attributed_ordered_field'],
+	[406, 'type_argument'],
+	[407, 'match_block_arms'],
+	[408, 'source_file_repeat1'],
+	[409, 'token_repetition_pattern_repeat1'],
+	[410, 'token_repetition_repeat1'],
+	[411, 'declaration_list_repeat1'],
+	[412, 'function_modifiers_repeat1'],
+	[413, 'trait_bounds_repeat1'],
+	[414, 'tuple_expression_repeat1'],
 	[415, 'match_arm_repeat1'],
 	[416, 'string_literal_repeat1'],
 	[417, '_macro_rules_repeat1'],
@@ -1806,11 +1809,12 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[432, '_patterns_repeat1'],
 	[433, '_struct_pattern_elements_repeat1'],
 	[434, '_tuple_type_elements_repeat1'],
-	[435, '_delim_token_tree_paren_repeat1'],
-	[436, '_match_block_arms_repeat1'],
-	[437, 'field_identifier'],
-	[439, 'shorthand_field_identifier'],
-	[440, 'type_identifier']
+	[435, '_tuple_expression_elements_repeat1'],
+	[436, '_delim_token_tree_paren_repeat1'],
+	[437, '_match_block_arms_repeat1'],
+	[438, 'field_identifier'],
+	[440, 'shorthand_field_identifier'],
+	[441, 'type_identifier']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -2026,8 +2030,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Return;
 		case 'yield':
 			return TSKindId.Yield;
-		case 'comma':
-			return TSKindId.Comma;
 		case 'dot_dot':
 			return TSKindId.DotDot;
 		case 'if':
@@ -2092,6 +2094,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Metavariable;
 		case 'move':
 			return TSKindId.Move;
+		case 'comma':
+			return TSKindId.Comma;
 		case 'dash_gt':
 			return TSKindId.DashGt;
 		case '_':
@@ -2512,6 +2516,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.BlockCommentGroup1;
 		case '_tuple_type_elements':
 			return TSKindId.TupleTypeElements;
+		case '_tuple_expression_elements':
+			return TSKindId.TupleExpressionElements;
 		case '_token_tree_punctuation':
 			return TSKindId.TokenTreePunctuation;
 		case '_token_keywords':
@@ -2644,8 +2650,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TraitBoundsRepeat1;
 		case 'tuple_expression_repeat1':
 			return TSKindId.TupleExpressionRepeat1;
-		case 'tuple_expression_repeat2':
-			return TSKindId.TupleExpressionRepeat2;
 		case 'match_arm_repeat1':
 			return TSKindId.MatchArmRepeat1;
 		case 'string_literal_repeat1':
@@ -2686,6 +2690,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._StructPatternElementsRepeat1;
 		case '_tuple_type_elements_repeat1':
 			return TSKindId._TupleTypeElementsRepeat1;
+		case '_tuple_expression_elements_repeat1':
+			return TSKindId._TupleExpressionElementsRepeat1;
 		case '_delim_token_tree_paren_repeat1':
 			return TSKindId._DelimTokenTreeParenRepeat1;
 		case '_match_block_arms_repeat1':
@@ -2790,8 +2796,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LtLtEq;
 		case '>>=':
 			return TSKindId.GtGtEq;
-		case ',':
-			return TSKindId.Comma;
 		case '..':
 			return TSKindId.DotDot;
 		case '.':
@@ -2806,6 +2810,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.SlashStar;
 		case '*/':
 			return TSKindId.StarSlash;
+		case ',':
+			return TSKindId.Comma;
 		case '->':
 			return TSKindId.DashGt;
 		case '..=':
@@ -2872,6 +2878,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.BlockCommentGroup1;
 		case 'tuple_type_elements':
 			return TSKindId.TupleTypeElements;
+		case 'tuple_expression_elements':
+			return TSKindId.TupleExpressionElements;
 		case 'token_tree_punctuation':
 			return TSKindId.TokenTreePunctuation;
 		case 'wildcard_pattern':
@@ -4369,9 +4377,9 @@ export interface ParenthesizedExpression {
 export interface TupleExpression {
 	readonly $type: TSKindId.TupleExpression;
 	readonly _attributes?: readonly AttributeItem[];
-	readonly _elements: NonEmptyArray<Expression>;
+	readonly _tuple_expression_elements: TupleExpressionElements;
 	attributes(): readonly AttributeItem[];
-	elements(): NonEmptyArray<Expression>;
+	tupleExpressionElements(): TupleExpressionElements;
 }
 
 export interface StructExpression {
@@ -4994,6 +5002,12 @@ export interface TupleTypeElements {
 	readonly $type: TSKindId.TupleTypeElements;
 	readonly _type: NonEmptyArray<_Type>;
 	types(): NonEmptyArray<_Type>;
+}
+
+export interface TupleExpressionElements {
+	readonly $type: TSKindId.TupleExpressionElements;
+	readonly _element: NonEmptyArray<Expression>;
+	elements(): NonEmptyArray<Expression>;
 }
 
 export interface UseWildcardClause {
@@ -5871,6 +5885,9 @@ export interface BlockCommentGroup1Tree extends AnyTreeNode {
 }
 export interface TupleTypeElementsTree extends AnyTreeNode {
 	readonly type: '_tuple_type_elements';
+}
+export interface TupleExpressionElementsTree extends AnyTreeNode {
+	readonly type: '_tuple_expression_elements';
 }
 export interface UseWildcardClauseTree extends AnyTreeNode {
 	readonly type: '_use_wildcard_clause';
@@ -7137,6 +7154,7 @@ export type RustNode =
 	| RangePatternGroup2
 	| BlockCommentGroup1
 	| TupleTypeElements
+	| TupleExpressionElements
 	| UseWildcardClause
 	| ReferenceExpressionRawMut
 	| ImplItemBody
@@ -7361,6 +7379,7 @@ export interface KindMap {
 	_range_pattern_group2: RangePatternGroup2;
 	_block_comment_group1: BlockCommentGroup1;
 	_tuple_type_elements: TupleTypeElements;
+	_tuple_expression_elements: TupleExpressionElements;
 	_use_wildcard_clause: UseWildcardClause;
 	_reference_expression_raw_mut: ReferenceExpressionRawMut;
 	_impl_item_body: ImplItemBody;
@@ -7813,6 +7832,12 @@ export interface StructPatternElementsNs extends NodeNs<
 export interface RangePatternGroup2Ns extends NodeNs<RangePatternGroup2, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface BlockCommentGroup1Ns extends NodeNs<BlockCommentGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TupleTypeElementsNs extends NodeNs<TupleTypeElements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TupleExpressionElementsNs extends NodeNs<
+	TupleExpressionElements,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
 export interface UseWildcardClauseNs extends NodeNs<UseWildcardClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ReferenceExpressionRawMutNs extends NodeNs<
 	ReferenceExpressionRawMut,
@@ -8187,6 +8212,7 @@ export interface NamespaceMap {
 	_range_pattern_group2: RangePatternGroup2Ns;
 	_block_comment_group1: BlockCommentGroup1Ns;
 	_tuple_type_elements: TupleTypeElementsNs;
+	_tuple_expression_elements: TupleExpressionElementsNs;
 	_use_wildcard_clause: UseWildcardClauseNs;
 	_reference_expression_raw_mut: ReferenceExpressionRawMutNs;
 	_impl_item_body: ImplItemBodyNs;
@@ -9467,6 +9493,13 @@ export namespace TupleTypeElements {
 	export type Loose = LooseFor<'_tuple_type_elements'>;
 	export type Tree = TreeFor<'_tuple_type_elements'>;
 	export type Kind = '_tuple_type_elements';
+}
+export namespace TupleExpressionElements {
+	export type Config = ConfigFor<'_tuple_expression_elements'>;
+	export type Fluent = FluentFor<'_tuple_expression_elements'>;
+	export type Loose = LooseFor<'_tuple_expression_elements'>;
+	export type Tree = TreeFor<'_tuple_expression_elements'>;
+	export type Kind = '_tuple_expression_elements';
 }
 export namespace UseWildcardClause {
 	export type Config = ConfigFor<'_use_wildcard_clause'>;

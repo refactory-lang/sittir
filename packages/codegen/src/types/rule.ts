@@ -95,6 +95,10 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 				readonly value: Rule<Phase>;
 				readonly trailing?: DelimiterMode;
 				readonly leading?: DelimiterMode;
+				// Comma-TERMINATED list family (`(x sep)+ x?`): every element
+				// trails its own separator, so a single element REQUIRES the
+				// trailing delimiter (rust `(1,)` vs parenthesized `(1)`).
+				readonly terminated?: true;
 			};
 
 			// The deleted wrapper was an optional at the ELEMENT POSITION of a
@@ -191,6 +195,8 @@ export type RepeatRule<T extends PhaseName = 'link'> = T extends 'link'
 				readonly value: Rule<T>;
 				readonly trailing?: DelimiterMode;
 				readonly leading?: DelimiterMode;
+				/** See RuleBase.separator — comma-terminated list family. */
+				readonly terminated?: true;
 			};
 		}
 	: T extends 'evaluate'
@@ -211,6 +217,8 @@ export type Repeat1Rule<T extends PhaseName = 'link'> = T extends 'link'
 				readonly value: Rule<T>;
 				readonly trailing?: DelimiterMode;
 				readonly leading?: DelimiterMode;
+				/** See RuleBase.separator — comma-terminated list family. */
+				readonly terminated?: true;
 			};
 		}
 	: T extends 'evaluate'

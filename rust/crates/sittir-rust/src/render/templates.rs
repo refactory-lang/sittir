@@ -462,6 +462,12 @@ pub struct TokenTreePatternParenTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_tuple_expression_elements.jinja", escape = "none")]
+pub struct TupleExpressionElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_tuple_pattern_elements.jinja", escape = "none")]
 pub struct TuplePatternElementsTemplate<'a> {
     pub element: ListNonterminalView<'a>,
@@ -1371,7 +1377,7 @@ pub struct TryExpressionTemplate<'a> {
 #[template(path = "tuple_expression.jinja", escape = "none")]
 pub struct TupleExpressionTemplate<'a> {
     pub attributes: ListNonterminalView<'a>,
-    pub elements: ListNonterminalView<'a>,
+    pub tuple_expression_elements: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

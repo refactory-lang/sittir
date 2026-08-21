@@ -3083,6 +3083,17 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 		return this.rule.type === REPEAT1;
 	}
 
+	/**
+	 * Comma-TERMINATED list family (the lift's mandatory-head suffix window,
+	 * `x sep (x sep)* x?`): every element trails its own separator, so a
+	 * SINGLE element requires the trailing delimiter — the undelimited
+	 * one-element form belongs to a different construct (rust `(1,)` vs
+	 * parenthesized `(1)`). The factory asserts this validity invariant.
+	 */
+	get terminatedSeparator(): boolean {
+		return (this.rule.separator as { terminated?: true } | undefined)?.terminated === true;
+	}
+
 	get separator(): string | undefined {
 		return extractSeparatorString(this.rule.separator as RuleBase<'normalize'>['separator']);
 	}

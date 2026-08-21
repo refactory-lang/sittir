@@ -2263,6 +2263,19 @@ export interface TryExpressionTransport {
   _value: Box<ExpressionTransport>
 }
 
+export interface TupleExpressionElementsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _element: Array<ExpressionTransport>
+  _element_delimiter?: number
+  _delimiter?: number
+}
+
 export interface TupleExpressionTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2272,8 +2285,8 @@ export interface TupleExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributes?: Array<AttributeItemTransport>
-  _elements: Array<ExpressionTransport>
-  _elements_delimiter?: number
+  _tuple_expression_elements: TupleExpressionElementsTransport
+  _element?: Array<ExpressionTransport>
 }
 
 export interface TuplePatternElementsTransport {

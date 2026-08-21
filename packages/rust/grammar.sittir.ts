@@ -294,11 +294,6 @@ export default grammar(
 					0: field('value')
 				},
 
-				tuple_expression: {
-					1: field('attributes'),
-					'(_expression)': field('elements')
-				},
-
 				type_item: {
 					4: field('where_clause'),
 					7: field('trailing_where_clause')
@@ -357,6 +352,26 @@ export default grammar(
 				_tuple_type_elements: ($) =>
 					seq(field('type', $._type), repeat(seq(',', field('type', $._type))), optional(',')),
 				tuple_type: ($) => seq('(', alias($._tuple_type_elements, $.tuple_type_elements), ')'),
+
+				// tuple_expression's list is comma-TERMINATED with an optional
+				// bare final element (`(e ',')+ e?`) — the shape that makes
+				// `(1,)` a tuple and `(1)` a parenthesized expression. The
+				// structure is mirrored verbatim from the base rule inside the
+				// extracted kind; the separator lift's suffix windows merge it
+				// to one repeat with an optional trailing delimiter.
+				_tuple_expression_elements: ($) =>
+					seq(
+						seq(field('element', $._expression), ','),
+						repeat(seq(field('element', $._expression), ',')),
+						optional(field('element', $._expression))
+					),
+				tuple_expression: ($) =>
+					seq(
+						'(',
+						field('attributes', repeat($.attribute_item)),
+						alias($._tuple_expression_elements, $.tuple_expression_elements),
+						')'
+					),
 
 				_token_tree_punctuation: ($) =>
 					choice(

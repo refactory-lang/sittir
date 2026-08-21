@@ -2895,9 +2895,9 @@ export function buildParenthesizedExpression(expression: T.ParenthesizedExpressi
 	);
 }
 
-export function buildTupleExpression(config: T.TupleExpression.Config, options: { delimiter?: 2 } = {}) {
+export function buildTupleExpression(config: T.TupleExpression.Config) {
 	const _attributes = config.attributes ?? [];
-	const _elements = config.elements ?? [];
+	const _tuple_expression_elements = config.tupleExpressionElements;
 	return withMethods(
 		withAccessors(
 			{
@@ -2905,19 +2905,16 @@ export function buildTupleExpression(config: T.TupleExpression.Config, options: 
 				$source: 2 as const,
 				$named: true as const,
 				_attributes,
-				_elements,
-				_elements_delimiter: options.delimiter ?? 0,
+				_tuple_expression_elements,
 				$with: {
-					attributes: (...values: T.AttributeItem[]) =>
-						buildTupleExpression({ ...config, attributes: values }, options),
-					elements: (...values: NonEmptyArray<T.Expression>) =>
-						buildTupleExpression({ ...config, elements: values }, options),
-					delimiter: (v: 2) => buildTupleExpression(config, { ...options, delimiter: v })
+					attributes: (...values: T.AttributeItem[]) => buildTupleExpression({ ...config, attributes: values }),
+					tupleExpressionElements: (value: T.TupleExpressionElements) =>
+						buildTupleExpression({ ...config, tupleExpressionElements: value })
 				}
 			},
 			{
 				attributes: () => _attributes,
-				elements: () => _elements
+				tupleExpressionElements: () => _tuple_expression_elements
 			}
 		),
 		methodsEngine
@@ -5246,6 +5243,47 @@ function _buildTupleTypeElements(elements: NonEmptyArray<T._Type>, options: { de
 	);
 }
 
+export function buildTupleExpressionElements(
+	...elements: NonEmptyArray<T.Expression>
+): ReturnType<typeof _buildTupleExpressionElements>;
+export function buildTupleExpressionElements(
+	options: { delimiter?: 2 },
+	...elements: NonEmptyArray<T.Expression>
+): ReturnType<typeof _buildTupleExpressionElements>;
+export function buildTupleExpressionElements(...args: ({ delimiter?: 2 } | T.Expression)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Expression>;
+	return _buildTupleExpressionElements(elements, options);
+}
+function _buildTupleExpressionElements(elements: NonEmptyArray<T.Expression>, options: { delimiter?: 2 }) {
+	_assertNonEmpty(elements, '_tuple_expression_elements.elements');
+	if (elements.length === 1 && ((options.delimiter ?? 0) & 2) === 0) {
+		throw new Error('_tuple_expression_elements: a single element requires a trailing delimiter (delimiter: 2)');
+	}
+	const _element = elements;
+	const _delimiter = options.delimiter ?? 0;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.TupleExpressionElements as const,
+				$source: 2 as const,
+				$named: true as const,
+				_element,
+				_delimiter,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.Expression>) => buildTupleExpressionElements(options, ...vs),
+					delimiter: (v: 2) => buildTupleExpressionElements({ ...options, delimiter: v }, ...elements)
+				}
+			},
+			{
+				elements: () => _element
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildTokenTreePunctuation(
 	text:
 		| '+'
@@ -6868,6 +6906,7 @@ export type FluentKindMap = {
 	_range_pattern_group2: T.RangePatternGroup2;
 	_block_comment_group1: T.BlockCommentGroup1;
 	_tuple_type_elements: FluentNode<'_tuple_type_elements', T.TupleTypeElements.Config>;
+	_tuple_expression_elements: FluentNode<'_tuple_expression_elements', T.TupleExpressionElements.Config>;
 	_token_tree_punctuation: T.TokenTreePunctuation;
 	_token_keywords: T.TokenKeywords;
 	_use_wildcard_clause: T.UseWildcardClause;
@@ -7108,6 +7147,7 @@ export const _factoryMap = {
 	_range_pattern_group2: buildRangePatternGroup2,
 	_block_comment_group1: buildBlockCommentGroup1,
 	_tuple_type_elements: buildTupleTypeElements,
+	_tuple_expression_elements: buildTupleExpressionElements,
 	_token_tree_punctuation: buildTokenTreePunctuation,
 	_token_keywords: buildTokenKeywords,
 	_use_wildcard_clause: buildUseWildcardClause,

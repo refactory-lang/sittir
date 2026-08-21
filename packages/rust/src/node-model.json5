@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 366,
+  "nodeCount": 367,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -2136,12 +2136,12 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "elements": {
+      "tuple_expression_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "struct_expression": {
@@ -3112,6 +3112,15 @@
     },
     "_tuple_type_elements": {
       "type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_tuple_expression_elements": {
+      "element": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -7774,6 +7783,25 @@
         "super",
         "token_repetition",
         "token_tree"
+      ]
+    },
+    {
+      "kind": "_tuple_expression_elements",
+      "modelType": "separatedList",
+      "typeName": "TupleExpressionElements",
+      "factoryName": "tupleExpressionElements",
+      "irKey": "tupleExpressionElements",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
+      "elementKinds": [
+        "_expression"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "element"
       ]
     },
     {
@@ -17962,25 +17990,25 @@
           }
         },
         {
-          "name": "elements",
-          "propertyName": "elements",
-          "paramName": "elements",
+          "name": "tuple_expression_elements",
+          "propertyName": "tupleExpressionElements",
+          "paramName": "tupleExpressionElements",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_expression",
-              "parseKind": "_expression",
+              "multiplicity": "single",
+              "name": "_tuple_expression_elements",
+              "parseKind": "tuple_expression_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expression"
+              "_tuple_expression_elements"
             ]
           }
         }
@@ -17989,7 +18017,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "attributes",
-        "elements"
+        "tuple_expression_elements"
       ]
     },
     {

@@ -2770,7 +2770,7 @@ export function wrapExternCrateDeclaration(data: T.ExternCrateDeclaration, tree:
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'crate', span: (data as _NodeData).$span }
 				),
-				{ crate: 135 }
+				{ crate: 134 }
 			),
 			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 				tree,
@@ -4150,7 +4150,7 @@ export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'self', span: (data as _NodeData).$span }
 				),
-				{ self: 133 }
+				{ self: 132 }
 			),
 
 			reference() {
@@ -5001,7 +5001,7 @@ export function wrapPointerType(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ const: 384, mut: 79 }
+				{ const: 385, mut: 79 }
 			),
 			_type: normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 				tree,
@@ -6219,87 +6219,25 @@ export function wrapTupleExpression(data: T.TupleExpression, tree: TreeHandle) {
 				slotName: 'attributes',
 				span: (data as _NodeData).$span
 			}),
-			_elements: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._elements, [
-					'_expression',
-					'_expression_except_range',
-					'unary_expression',
-					'reference_expression',
-					'try_expression',
-					'binary_expression',
-					'assignment_expression',
-					'compound_assignment_expr',
-					'type_cast_expression',
-					'call_expression',
-					'return_expression',
-					'yield_expression',
-					'_literal',
-					'string_literal',
-					'raw_string_literal',
-					'char_literal',
-					'boolean_literal',
-					'integer_literal',
-					'float_literal',
-					'identifier',
-					'_reserved_identifier',
-					'self',
-					'scoped_identifier',
-					'generic_function',
-					'await_expression',
-					'field_expression',
-					'array_expression',
-					'tuple_expression',
-					'macro_invocation',
-					'unit_expression',
-					'break_expression',
-					'continue_expression',
-					'index_expression',
-					'metavariable',
-					'closure_expression',
-					'parenthesized_expression',
-					'struct_expression',
-					'_expression_ending_with_block',
-					'unsafe_block',
-					'async_block',
-					'gen_block',
-					'try_block',
-					'block',
-					'if_expression',
-					'match_expression',
-					'while_expression',
-					'loop_expression',
-					'for_expression',
-					'const_block',
-					'range_expression'
-				]),
+			_tuple_expression_elements: normalizeSingularWrapSlot(
+				data._tuple_expression_elements,
+				'tuple_expression_elements',
 				true,
-				'elements',
-				{ tree, nodeType: data.$type, slotName: 'elements', span: (data as _NodeData).$span }
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'tuple_expression_elements', span: (data as _NodeData).$span }
 			),
-			_elements_delimiter: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._elements) ? data._elements : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			)
-				? 2
-				: 0,
 
 			attributes() {
 				return drillInAll<T.AttributeItem>(this._attributes as readonly T.AttributeItem[] | undefined, tree);
 			},
-			elements() {
-				return drillInAll<T.Expression>(this._elements as readonly T.Expression[] | undefined, tree);
+			tupleExpressionElements() {
+				return drillIn<T.TupleExpressionElements>(this._tuple_expression_elements, tree);
 			},
 			$with: {
 				attributes: (...v: NonNullable<T.TupleExpression['_attributes']>[number][]) =>
 					wrapTupleExpression({ ...data, _attributes: v }, tree),
-				elements: (...v: NonEmptyArray<NonNullable<T.TupleExpression['_elements']>[number]>) =>
-					wrapTupleExpression({ ...data, _elements: v }, tree)
+				tupleExpressionElements: (v: NonNullable<T.TupleExpression['_tuple_expression_elements']>) =>
+					wrapTupleExpression({ ...data, _tuple_expression_elements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -9434,6 +9372,35 @@ export function wrapTupleTypeElements(
 	);
 }
 
+export function wrapTupleExpressionElements(
+	data: T.TupleExpressionElements & {
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._element, true, 'element', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'element',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
+		{
+			...data,
+			$type: TSKindId.TupleExpressionElements as const,
+			_element: _content,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+
+			elements() {
+				return drillInAll<T.Expression>(this._element as readonly T.Expression[] | undefined, tree);
+			},
+			$with: {}
+		},
+		methodsEngine
+	);
+}
+
 export function wrapUseWildcardClause(data: T.UseWildcardClause, tree: TreeHandle) {
 	const _node = withMethods(
 		{
@@ -9939,7 +9906,7 @@ export function wrapRangeExpressionBinary(data: T.RangeExpressionBinary, tree: T
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '..': 106, '...': 74, '..=': 140 }
+				{ '..': 105, '...': 74, '..=': 140 }
 			),
 			_end: normalizeSingularWrapSlot(data._end, 'end', true, data.$type, {
 				tree,
@@ -9991,7 +9958,7 @@ export function wrapRangeExpressionPostfix(data: T.RangeExpressionPostfix, tree:
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '..': 106 }
+				{ '..': 105 }
 			),
 
 			start() {
@@ -10027,7 +9994,7 @@ export function wrapRangeExpressionPrefix(data: T.RangeExpressionPrefix, tree: T
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '..': 106 }
+				{ '..': 105 }
 			),
 			_end: normalizeSingularWrapSlot(data._end, 'end', true, data.$type, {
 				tree,
@@ -10074,7 +10041,7 @@ export function wrapRangePatternPrefix(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '..=': 140, '..': 106 }
+				{ '..=': 140, '..': 105 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -10126,7 +10093,7 @@ export function wrapRangePatternLeftWithRight(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '...': 74, '..=': 140, '..': 106 }
+				{ '...': 74, '..=': 140, '..': 105 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -11521,6 +11488,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.RangePatternGroup2]: (d, t) => wrapRangePatternGroup2(d as unknown as T.RangePatternGroup2, t),
 	[TSKindId.BlockCommentGroup1]: (d, t) => wrapBlockCommentGroup1(d as unknown as T.BlockCommentGroup1, t),
 	[TSKindId.TupleTypeElements]: (d, t) => wrapTupleTypeElements(d as unknown as T.TupleTypeElements, t),
+	[TSKindId.TupleExpressionElements]: (d, t) =>
+		wrapTupleExpressionElements(d as unknown as T.TupleExpressionElements, t),
 	[TSKindId.TokenTreePunctuation]: (d) => ({ ...d, $type: TSKindId.TokenTreePunctuation as const }),
 	[TSKindId.TokenKeywords]: (d) => ({ ...d, $type: TSKindId.TokenKeywords as const }),
 	[TSKindId.UseWildcardClause]: (d, t) => wrapUseWildcardClause(d as unknown as T.UseWildcardClause, t),

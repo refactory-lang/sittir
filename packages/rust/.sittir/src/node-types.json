@@ -6022,8 +6022,24 @@
             "named": true
           }
         ]
-      },
-      "elements": {
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "tuple_expression_elements",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "tuple_expression_elements",
+    "named": true,
+    "fields": {
+      "element": {
         "multiple": true,
         "required": true,
         "types": [

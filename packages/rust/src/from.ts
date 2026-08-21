@@ -359,6 +359,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_patterns: TSKindId.Patterns,
 	_struct_pattern_elements: TSKindId.StructPatternElements,
 	_tuple_type_elements: TSKindId.TupleTypeElements,
+	_tuple_expression_elements: TSKindId.TupleExpressionElements,
 	_impl_item_body: TSKindId.ImplItemBody,
 	_function_type_fn_form: TSKindId.FunctionTypeFnForm,
 	_macro_definition_paren: TSKindId.MacroDefinitionParen,
@@ -457,6 +458,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildStructPatternElements as (...args: unknown[]) => unknown)(...children);
 		case '_tuple_type_elements':
 			return (F.buildTupleTypeElements as (...args: unknown[]) => unknown)(...children);
+		case '_tuple_expression_elements':
+			return (F.buildTupleExpressionElements as (...args: unknown[]) => unknown)(...children);
 		case '_impl_item_body':
 			return F.buildImplItemBody(children[0] as Parameters<typeof F.buildImplItemBody>[0]);
 		case '_function_type_fn_form':
@@ -2166,11 +2169,13 @@ export function coerceToParenthesizedExpression(
 
 export function coerceToTupleExpression(input: T.TupleExpression.Loose): ReturnType<typeof F.buildTupleExpression> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTupleExpression>;
-	const _ne_elements = _resolveMany<T.Expression>(input.elements, _K11, _K12);
-	_assertNonEmpty(_ne_elements, 'tuple_expression.elements');
 	return F.buildTupleExpression({
 		attributes: _resolveManyBranch<T.AttributeItem>(input.attributes, 'attribute_item'),
-		elements: _ne_elements
+		tupleExpressionElements: _requireField(
+			'tuple_expression',
+			'tupleExpressionElements',
+			_resolveOneBranch<T.TupleExpressionElements>(input.tupleExpressionElements, '_tuple_expression_elements')
+		)
 	});
 }
 

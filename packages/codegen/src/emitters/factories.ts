@@ -1109,6 +1109,17 @@ function emitSeparatedListFactory(
 	if (node.nonEmpty) {
 		lines.push(`  _assertNonEmpty(elements, '${node.kind}.elements');`);
 	}
+	// Terminated-list validity invariant (see AssembledSeparatedList.
+	// terminatedSeparator): a single element must carry the trailing
+	// delimiter — the undelimited one-element rendering parses as a
+	// different construct.
+	if (node.terminatedSeparator && hasTrailingOption) {
+		lines.push(`  if (elements.length === 1 && ((options.delimiter ?? 0) & 2) === 0) {`);
+		lines.push(
+			`    throw new Error('${node.kind}: a single element requires a trailing delimiter (delimiter: 2)');`
+		);
+		lines.push('  }');
+	}
 	lines.push(`  const ${contentStorageKey} = elements;`);
 	if (hasSeparatorKindOption) {
 		if (candidateKindNames.length > 0) {

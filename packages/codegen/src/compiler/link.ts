@@ -2268,14 +2268,17 @@ export function absorbSuffixSeparatedList(members: Rule<'link'>[]): Rule<'link'>
 				out.push({
 					type: REPEAT1,
 					content: repeat.content,
-					separator: { ...repeat.separator!, trailing: 'optional' }
+					separator: { ...repeat.separator!, trailing: 'optional', terminated: true }
 				});
 				i += 3;
 				changed = true;
 				continue;
 			}
 		}
-		// 2-window: repeat + optional tail, no standalone head.
+		// 2-window: repeat + optional tail, no standalone head. NOT stamped
+		// `terminated` — with no mandatory head, a lone element can be the
+		// optional (unterminated) tail itself, so a single element does not
+		// require its separator the way the 3-window's mandatory head does.
 		const repeat = repeatAt(i);
 		if (repeat && tailMatches(repeat, i + 1)) {
 			out.push({ ...repeat, separator: { ...repeat.separator!, trailing: 'optional' } });

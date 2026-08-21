@@ -4691,10 +4691,6 @@ var grammar_sittir_default = grammar(
         try_expression: {
           0: field2("value")
         },
-        tuple_expression: {
-          1: field2("attributes"),
-          "(_expression)": field2("elements")
-        },
         type_item: {
           4: field2("where_clause"),
           7: field2("trailing_where_clause")
@@ -4746,6 +4742,23 @@ var grammar_sittir_default = grammar(
         // separated-list field wrap has nothing left to target.
         _tuple_type_elements: ($) => seq(field2("type", $._type), repeat(seq(",", field2("type", $._type))), optional(",")),
         tuple_type: ($) => seq("(", alias2($._tuple_type_elements, $.tuple_type_elements), ")"),
+        // tuple_expression's list is comma-TERMINATED with an optional
+        // bare final element (`(e ',')+ e?`) — the shape that makes
+        // `(1,)` a tuple and `(1)` a parenthesized expression. The
+        // structure is mirrored verbatim from the base rule inside the
+        // extracted kind; the separator lift's suffix windows merge it
+        // to one repeat with an optional trailing delimiter.
+        _tuple_expression_elements: ($) => seq(
+          seq(field2("element", $._expression), ","),
+          repeat(seq(field2("element", $._expression), ",")),
+          optional(field2("element", $._expression))
+        ),
+        tuple_expression: ($) => seq(
+          "(",
+          field2("attributes", repeat($.attribute_item)),
+          alias2($._tuple_expression_elements, $.tuple_expression_elements),
+          ")"
+        ),
         _token_tree_punctuation: ($) => choice(
           "+",
           "-",
