@@ -899,6 +899,24 @@ function emitFieldStorageLines(
 }
 
 /**
+ * Content-list expression for the count-based flank check. For a merged
+ * union slot (concrete candidate storage keys exist), a fresh read never
+ * populates the canonical key — the members sit in per-route candidate
+ * buckets — so counting the raw canonical key would read an empty list
+ * against a full separator count and stick the flank at `true`. Spread
+ * the candidate buckets instead (order is irrelevant: only the member
+ * COUNT feeds the fallback); the canonical key wins outright once a
+ * `$with` setter populates it, mirroring `resolveSlotStoreExpr`.
+ */
+function flankContentExprOf(f: AssembledNonterminal, dataExpr: string, nodeMap: NodeMap): string {
+	const candidateKeys = (collectConcreteStorageKeys(f, nodeMap) ?? []).filter((k) => k !== f.storageKey);
+	const rawExpr = dataAccessExpr(dataExpr, f.storageKey);
+	return candidateKeys.length > 0
+		? `(${rawExpr} !== undefined ? _toArr(${rawExpr}) : [${candidateKeys.map((k) => `..._toArr(${dataAccessExpr(dataExpr, k)})`).join(', ')}])`
+		: `(Array.isArray(${rawExpr}) ? ${rawExpr} : [])`;
+}
+
+/**
  * Emit `_<field>_leading_sep`/`_<field>_trailing_sep` sibling wire keys for
  * array fields whose OWN separator flank is genuinely `'optional'` — the
  * per-*field* counterpart to `emitSeparatedListWrap`'s per-*kind* capture
@@ -944,18 +962,18 @@ function emitFieldFlankCaptureLines(
 		const sepText = f.values.map((v) => v.separator).find((s): s is string => s !== undefined);
 		if (sepText === undefined || !hasCatalogEntry(kindEntries, sepText)) continue;
 		const kindExpr = kindDiscriminantExpr(sepText, nodeMap, kindEntries);
-		const contentExpr = `${dataExpr}.${f.storageKey}`;
+		const contentExpr = flankContentExprOf(f, dataExpr, nodeMap);
 		const otherExpr =
 			`(Array.isArray(${dataExpr}.$other) ? ${dataExpr}.$other : ${dataExpr}.$other !== undefined ? [${dataExpr}.$other] : [])` +
 			`.filter((e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === ${kindExpr})`;
 		if (f.trailingMode === 'optional') {
 			lines.push(
-				`    ${f.storageKey}_trailing_sep: _hasSeparatorFlank({}, Array.isArray(${contentExpr}) ? ${contentExpr} : [], ${otherExpr}, "trailing", false, 0),`
+				`    ${f.storageKey}_trailing_sep: _hasSeparatorFlank({}, ${contentExpr}, ${otherExpr}, "trailing", false, 0),`
 			);
 		}
 		if (f.leadingMode === 'optional') {
 			lines.push(
-				`    ${f.storageKey}_leading_sep: _hasSeparatorFlank({}, Array.isArray(${contentExpr}) ? ${contentExpr} : [], ${otherExpr}, "leading", false, 0),`
+				`    ${f.storageKey}_leading_sep: _hasSeparatorFlank({}, ${contentExpr}, ${otherExpr}, "leading", false, 0),`
 			);
 		}
 	}

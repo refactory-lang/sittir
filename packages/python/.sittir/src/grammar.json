@@ -5074,12 +5074,22 @@
               "name": "escape_sequence"
             },
             {
-              "type": "SYMBOL",
-              "name": "_not_escape_sequence"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_not_escape_sequence"
+              },
+              "named": true,
+              "value": "not_escape_sequence"
             },
             {
-              "type": "SYMBOL",
-              "name": "_string_content"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_string_content"
+              },
+              "named": true,
+              "value": "string_fragment"
             }
           ]
         }
@@ -5247,7 +5257,7 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "TOKEN",
+                "type": "IMMEDIATE_TOKEN",
                 "content": {
                   "type": "PREC",
                   "value": 1,

@@ -257,12 +257,12 @@ export const enum SyntaxKind {
 	UnaryOperatorOperator = '_unary_operator_operator',
 	AugmentedAssignmentOperator = '_augmented_assignment_operator',
 	WildcardPattern = '_wildcard_pattern',
-	Indent = '_indent',
-	Dedent = '_dedent',
 	StringStart = 'string_start',
 	_StringContent = '_string_content',
 	EscapeInterpolation = 'escape_interpolation',
 	StringEnd = 'string_end',
+	Indent = '_indent',
+	Dedent = '_dedent',
 	CloseBracket = ']',
 	CloseParen = ')',
 	CloseBrace = '}',
@@ -1041,7 +1041,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[102, '_indent'],
 	[103, '_dedent'],
 	[104, 'string_start'],
-	[105, '_string_content'],
+	[105, 'string_fragment'],
 	[106, 'escape_interpolation'],
 	[107, 'string_end'],
 	[108, 'module'],
@@ -1167,7 +1167,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[228, 'string_content'],
 	[229, 'interpolation'],
 	[230, '_f_expression'],
-	[231, '_not_escape_sequence'],
+	[231, 'not_escape_sequence'],
 	[232, 'format_specifier'],
 	[233, 'await'],
 	[234, 'positional_separator'],
@@ -1972,6 +1972,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LtGt;
 		case 'newline':
 			return TSKindId.Newline;
+		case 'string_fragment':
+			return TSKindId._StringContent;
 		case 'simple_statements':
 			return TSKindId.SimpleStatements;
 		case 'import_list':
@@ -1988,6 +1990,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.IsNot;
 		case 'element_list':
 			return TSKindId.CollectionElements;
+		case 'not_escape_sequence':
+			return TSKindId.NotEscapeSequence;
 		case 'simple_statements_elements':
 			return TSKindId.SimpleStatementsElements;
 		case 'future_import_statement_group1':
@@ -3424,12 +3428,12 @@ export type AugmentedAssignmentOperator = Terminal<
 	| TSKindId.PipeEq,
 	'+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='
 >;
-export type Indent = Terminal<TSKindId.Indent, string>;
-export type Dedent = Terminal<TSKindId.Dedent, string>;
 export type StringStart = Terminal<TSKindId.StringStart, string>;
 export type _StringContent = Terminal<TSKindId._StringContent, string>;
 export type EscapeInterpolation = Terminal<TSKindId.EscapeInterpolation, string>;
 export type StringEnd = Terminal<TSKindId.StringEnd, string>;
+export type Indent = Terminal<TSKindId.Indent, string>;
+export type Dedent = Terminal<TSKindId.Dedent, string>;
 export type CloseBracket = Terminal<']', string>;
 export type CloseParen = Terminal<')', string>;
 export type CloseBrace = Terminal<'}', string>;
@@ -3701,18 +3705,18 @@ export interface UnaryOperatorOperatorTree extends AnyTreeNode {
 export interface AugmentedAssignmentOperatorTree extends AnyTreeNode {
 	readonly type: '_augmented_assignment_operator';
 }
-export interface IndentTree extends AnyTreeNode {
-	readonly type: '_indent';
-}
-export interface DedentTree extends AnyTreeNode {
-	readonly type: '_dedent';
-}
 export interface StringStartTree extends TreeNode<'string_start'> {}
 export interface _StringContentTree extends AnyTreeNode {
 	readonly type: '_string_content';
 }
 export interface EscapeInterpolationTree extends TreeNode<'escape_interpolation'> {}
 export interface StringEndTree extends TreeNode<'string_end'> {}
+export interface IndentTree extends AnyTreeNode {
+	readonly type: '_indent';
+}
+export interface DedentTree extends AnyTreeNode {
+	readonly type: '_dedent';
+}
 export interface CloseBracketTree extends AnyTreeNode {
 	readonly type: ']';
 }
@@ -4420,12 +4424,12 @@ export interface KindMap {
 	line_continuation: LineContinuation;
 	_unary_operator_operator: UnaryOperatorOperator;
 	_augmented_assignment_operator: AugmentedAssignmentOperator;
-	_indent: Indent;
-	_dedent: Dedent;
 	string_start: StringStart;
 	_string_content: _StringContent;
 	escape_interpolation: EscapeInterpolation;
 	string_end: StringEnd;
+	_indent: Indent;
+	_dedent: Dedent;
 	']': CloseBracket;
 	')': CloseParen;
 	'}': CloseBrace;

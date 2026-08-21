@@ -49,6 +49,22 @@ import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type
 // RenderAsConfig — sittir-side rule bodies for external scanner symbols
 // ---------------------------------------------------------------------------
 
+/**
+ * External-scanner symbol → nominal render body, sittir-side ONLY. The parser
+ * is untouched: the symbol keeps its CST visibility exactly as the base
+ * grammar declares it. Bodies are nominal shapes — read-produced leaves render
+ * verbatim from wire text; the body's job is to give factory-built nodes a
+ * render rule and to carry declared token facts. `token.immediate(...)` is the
+ * one wrapper a body may use (the drain folds it into the rule's
+ * `immediate`/`tokenized` attrs); `prec()` and other wrappers leak past the
+ * drain folds and must not appear.
+ *
+ * Deliberately separate from {@link VisibleExternalsConfig}: a render body and
+ * CST visibility are independent facts. A hidden external may carry a
+ * `renderAs:` body while its visible name comes from a rules-block alias
+ * (python's `_string_content` → `string_fragment`) — deriving visibility from
+ * body presence would mint a second, competing alias for such symbols.
+ */
 export type RenderAsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
 
 // ---------------------------------------------------------------------------
@@ -56,6 +72,16 @@ export type RenderAsConfig = ($: Record<string, unknown>) => Record<string, unkn
 // named CST-visible aliases
 // ---------------------------------------------------------------------------
 
+/**
+ * Hidden (`_`-prefixed) external-scanner symbol → render body, PLUS a parser
+ * rewrite: every `SYMBOL` reference to the key is wrapped in a named `ALIAS`
+ * of the underscore-stripped name, in both grammar pipelines (tree-sitter CLI
+ * via {@link applyWireVisibleExternalsRewrite}, sittir evaluate via its
+ * `rewriteVisibleExternalRefs`). The parser then materializes real CST nodes
+ * for the symbol (python `_newline` → visible `newline`). Use this when the
+ * external must be visible; use {@link RenderAsConfig} when it only needs a
+ * sittir-side body — the two keys carry independent facts and both stay.
+ */
 export type VisibleExternalsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
 
 // ---------------------------------------------------------------------------

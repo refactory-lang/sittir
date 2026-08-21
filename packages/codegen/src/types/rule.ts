@@ -63,6 +63,20 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 	readonly splicedBody?: boolean;
 
 	readonly variantArms?: readonly string[];
+
+	/**
+	 * Lexical token facts, pushed down onto the content when a
+	 * `token(...)` / `token.immediate(...)` wrapper is flattened (Link's
+	 * TOKEN case) or stamped on synthetic external-scanner rules at
+	 * creation — same push-down discipline as the wrapper-deletion attrs
+	 * below: the fact is stamped where the wrapper dies so it survives it.
+	 * `tokenized` — this subtree lexes as ONE token. `immediate` — the
+	 * grammar forbids whitespace before this token (`token.immediate`, or
+	 * a declared-immediate external): its rendered text must never receive
+	 * a seam space.
+	 */
+	readonly tokenized?: boolean;
+	readonly immediate?: boolean;
 } & (Phase extends NormalizedPhase
 	? {
 			// All stamped attributes below are populated by

@@ -269,8 +269,11 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		// SpacingWriter first consumer: the default list separator is empty —
-		// the render-time writer supplies word-word seam spaces.
+		// The default list separator is empty — the render-time writer
+		// supplies word-word seam spaces. staticListInterior classifies this
+		// interior for the census (the 'x' value's edges are word-class both
+		// sides) but never changes emission: baking the owed space is
+		// blocked until trailing-trivia edges are modeled (see its doc).
 		expect(emitRule(rule, ctx)).toBe('{{ args | join("") }}');
 	});
 
@@ -420,8 +423,34 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		// isMultiple(slot) is false (values=[]), multiplicity=array → list form
-		// SpacingWriter first consumer: default separator is empty (see above).
+		// isMultiple(slot) is false (one 'single' value), multiplicity=array
+		// → list form. Census-classified, emission unchanged (see the
+		// fieldName suite's comment).
+		expect(emitRule(rule, ctx)).toBe('{{ item | join("") }}');
+	});
+
+	it('keeps the empty separator and the runtime writer when edges are unknown', () => {
+		const rule: SymbolRule = {
+			type: SYMBOL,
+			name: 'item',
+			id: 'r11',
+			multiplicity: 'array'
+		};
+		// A node-ref to an UNRESOLVED target: edge chars underivable, so the
+		// interior stays with the runtime SpacingWriter.
+		const slot = makeSlot({
+			name: 'item',
+			propertyName: 'item',
+			storageName: 'item',
+			values: [{ node: { kind: 'unresolved-ref', name: 'mystery' }, multiplicity: 'single' } as NodeOrTerminal]
+		});
+		const ctx = makeCtx({
+			nodeMap: {
+				slotByRuleId: new Map([['r11', slot]]),
+				nodeByRuleId: new Map(),
+				nodes: new Map()
+			} as unknown as EmitCtx['nodeMap']
+		});
 		expect(emitRule(rule, ctx)).toBe('{{ item | join("") }}');
 	});
 

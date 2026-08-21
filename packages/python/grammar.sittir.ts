@@ -44,6 +44,22 @@ export default grammar(
 			visibleExternals: (_$) => ({
 				_newline: string('\n')
 			}),
+			// String-interior scanner tokens: the external scanner claims their
+			// characters directly, so no whitespace can ever precede them — a
+			// string's plain-text run abutting an escape is one lexical region,
+			// not a token seam, and the rendered text must never receive a seam
+			// space. `token.immediate` cannot be written on an externals entry,
+			// so each token's sittir-side `renderAs` body carries the wrapper:
+			// the TOKEN flatten at link pushes `immediate` onto the rule the
+			// render pipeline sees. The pattern bodies are nominal text shapes
+			// (these leaves render verbatim from wire text, never from the
+			// pattern).
+			renderAs: (_$) => ({
+				string_start: token.immediate(/[a-zA-Z]*["']+/),
+				_string_content: token.immediate(/[^"'\\{}\n]+/),
+				escape_interpolation: token.immediate(/\{\{|\}\}/),
+				string_end: token.immediate(/["']+/)
+			}),
 			polymorphs: {
 				assignment: { '1/0': 'eq', '1/1': 'type', '1/2': 'typed' },
 
@@ -252,6 +268,52 @@ export default grammar(
 				},
 				_except_clause_as: ($) => seq(field('value', $.expression), optional($._except_clause_as_optional1)),
 				_except_clause_as_optional1: ($) => seq('as', field('alias', $.expression)),
+
+				// `string_content`'s plain-text runs (`_string_content`) and
+				// invalid-escape runs (`_not_escape_sequence`) are hidden
+				// tokens — absent from the CST, so a read can only see the
+				// escape children and any string mixing text with escapes
+				// loses its text through the slot-based render (the verbatim
+				// $text fallback fires only when ALL slots are empty).
+				// Alias both visible so fragments surface as leaf nodes the
+				// read captures; the reader's `$slotOrder` stamp then merges
+				// the per-kind buckets back into document order. Mirrors
+				// tree-sitter-typescript, whose string fragments are visible
+				// named tokens (`unescaped_double_string_fragment`).
+				string_content: ($) =>
+					prec.right(
+						repeat1(
+							choice(
+								$.escape_interpolation,
+								$.escape_sequence,
+								alias($._not_escape_sequence, $.not_escape_sequence),
+								alias($._string_content, $.string_fragment)
+							)
+						)
+					),
+
+				// `format_specifier`'s text run behaves immediate — its regex
+				// absorbs any whitespace as content, so inter-token extras can
+				// never materialize before it — but upstream writes plain
+				// `token(...)`. Declaring `token.immediate` matters beyond the
+				// parse: the text|text seam is load-bearing for RENDERING and
+				// not subsumed by static char-class analysis. At parse time two
+				// adjacent text runs can't occur (greedy lexing), but
+				// config-built nodes ($with setters, untyped construction
+				// through the Verbatim scalar arm) CAN pass '10' and 'd' as
+				// separate items;
+				// a seam check would inject '10 d' — corrupting the format
+				// spec, where raw '10d' is the only correct output (verbatim
+				// content: a space is semantics). Both sides are
+				// class-indeterminate, so only the declared-immediacy fact can
+				// clear that seam. (The text↔format_expression seams, by
+				// contrast, are statically safe via the interpolation's fixed
+				// non-word '{'/'}' flanks.)
+				format_specifier: ($) =>
+					seq(
+						':',
+						repeat(choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression)))
+					),
 
 				parameters: ($) => seq('(', optional(alias($._parameters, $.parameter_list)), ')'),
 				lambda_parameters: ($) => alias($._parameters, $.parameter_list),

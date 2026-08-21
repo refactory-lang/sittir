@@ -86,6 +86,39 @@ const fn default_ascii_table() -> [bool; 128] {
 
 /// Streaming writer inserting lexically-required spaces at write seams.
 /// See the module doc. Inert under templates that carry their own spaces:
+std::thread_local! {
+    /// Adjacent-write mark for the render thread's root `SpacingWriter`.
+    ///
+    /// `token.immediate` is a per-token grammar fact — "no whitespace may
+    /// precede THIS token" — but the render stream reaches the root writer
+    /// through `fmt::Write`/`Formatter` chokepoints (askama templates,
+    /// `Display` bridges) that erase the sink's identity, so the fact
+    /// cannot travel in-band as a method call on the destination. It rides
+    /// beside the stream instead: generated render code for an
+    /// immediate-stamped token calls [`mark_adjacent`] directly before
+    /// writing the token's text, and the next chunk that reaches
+    /// [`SpacingWriter::write_str`] skips the seam check (while still
+    /// updating the last-char state, so the first NORMAL seam after an
+    /// adjacent run is computed against the true preceding character).
+    ///
+    /// The mark is consumed by exactly one non-empty chunk. Rendering is
+    /// synchronous and single-threaded per call, and only generated
+    /// immediate-token sites set the mark, immediately before their write —
+    /// no fallible operation may sit between the mark and the write.
+    static ADJACENT_NEXT: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
+
+/// Declare that the next chunk written to the render thread's
+/// `SpacingWriter` begins an immediate token: no seam space may be
+/// inserted before it. See `ADJACENT_NEXT` for the full contract.
+pub fn mark_adjacent() {
+    ADJACENT_NEXT.with(|c| c.set(true));
+}
+
+fn take_adjacent() -> bool {
+    ADJACENT_NEXT.with(|c| c.replace(false))
+}
+
 /// a seam following `"fn "` has `last = ' '` (not word-class) → no insert.
 pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     inner: &'a mut W,
@@ -106,9 +139,10 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
     fn write_str(&mut self, s: &str) -> std::fmt::Result {
         let Some(first) = s.chars().next() else {
-            return Ok(()); // empty write: context untouched
+            return Ok(()); // empty write: context untouched (mark survives too)
         };
-        if let Some(last) = self.last {
+        let adjacent = take_adjacent();
+        if let Some(last) = self.last.filter(|_| !adjacent) {
             let word_seam = self.word.is_word(last) && self.word.is_word(first);
             // Identical-char seams (e.g. `>` closing nested generics in
             // `Vec<Vec<T>>`) are excluded (never in `literal_merge_pairs`): a real
@@ -235,5 +269,60 @@ mod tests {
         // WordMatcher::default_ident() carries an empty pair set —
         // grammars opt in via with_literal_merge_pairs at emit time.
         assert_eq!(spaced(&["..", "=>"]), "..=>");
+    }
+}
+
+#[cfg(test)]
+mod adjacent_tests {
+    use super::*;
+    use std::fmt::Write;
+
+    #[test]
+    fn marked_chunk_suppresses_word_word_seam() {
+        // A string fragment following an escape: `\n` then `b` — both
+        // word-class flanks, but the boundary is grammar-immediate.
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
+        w.write_str("a").unwrap();
+        mark_adjacent();
+        w.write_str("\\n").unwrap();
+        mark_adjacent();
+        w.write_str("b").unwrap();
+        assert_eq!(out, "a\\nb");
+    }
+
+    #[test]
+    fn mark_is_consumed_by_one_chunk_only() {
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
+        w.write_str("pub").unwrap();
+        mark_adjacent();
+        w.write_str("x").unwrap();
+        w.write_str("fn").unwrap();
+        assert_eq!(out, "pubx fn");
+    }
+
+    #[test]
+    fn mark_updates_last_char_state() {
+        // The first NORMAL seam after an adjacent run must be computed
+        // against the run's true final character, not stale state.
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
+        w.write_str("(").unwrap();
+        mark_adjacent();
+        w.write_str("d").unwrap();
+        w.write_str("if").unwrap();
+        assert_eq!(out, "(d if");
+    }
+
+    #[test]
+    fn mark_before_empty_write_survives_for_next_chunk() {
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
+        w.write_str("a").unwrap();
+        mark_adjacent();
+        w.write_str("").unwrap();
+        w.write_str("b").unwrap();
+        assert_eq!(out, "ab");
     }
 }

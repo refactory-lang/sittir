@@ -301,6 +301,41 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	// whose rule kind is no longer in the grammar.
 	writeJinjaTemplates(result.jinjaTemplates, join(dirname(outDir), 'templates'));
 
+	// Static-seam-resolution residue report: how many template boundaries
+	// the SEQ join resolved statically, how many runtime checks have a
+	// statically-knowable outcome (derivable — the static-resolution
+	// candidate pool), and how many genuinely vary per instance (the true
+	// residue the spec ratchets on). The full per-boundary record list is
+	// persisted beside the other generated grammar artifacts so a ratchet
+	// (and a reviewer) can see WHICH sites changed, not just the counts.
+	{
+		const census = result.jinjaTemplates.seamCensus;
+		const total = census.boundaries.length;
+		console.log(
+			`  seam census: ${total} template boundaries — ` +
+				`${census.staticGlued + census.staticSpaced} static ` +
+				`(${census.staticGlued} glued, ${census.staticSpaced} spaced), ` +
+				`${census.runtimeDerivable} runtime-derivable, ` +
+				`${census.runtimeVarying} runtime-varying (residue)`
+		);
+		writeFileSync(
+			join(dirname(outDir), '.sittir', 'seam-census.json'),
+			JSON.stringify(
+				{
+					total,
+					staticGlued: census.staticGlued,
+					staticSpaced: census.staticSpaced,
+					runtimeDerivable: census.runtimeDerivable,
+					runtimeVarying: census.runtimeVarying,
+					boundaries: census.boundaries
+				},
+				null,
+				'\t'
+			) + '\n',
+			'utf8'
+		);
+	}
+
 	// --- grammar-owned Rust render-module emission (spec 012 T017) ---
 	// When `--all` is set for a supported grammar, also emit hash.rs / hash.ts
 	// so the native backend and the TS backend can detect template-bundle drift

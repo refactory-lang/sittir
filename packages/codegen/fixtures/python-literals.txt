@@ -997,3 +997,93 @@ dict((a, b) for a, b in d)
         (argument_list
           (integer)
           (integer))))))
+
+================================================================================
+Strings mixing text with escapes
+================================================================================
+
+x = "a\nb\tc"
+y = 'It\'s\ttabbed'
+z = "bad \q escape"
+a = f"{x:>10}"
+b = f"pre{val:.2f}post"
+
+--------------------------------------------------------------------------------
+
+(module
+  (simple_statements
+    (simple_statements_elements
+      (expression_statement
+        (assignment
+          (identifier)
+          (assignment_eq
+            (string
+              (string_start)
+              (string_content
+                (string_fragment)
+                (escape_sequence)
+                (string_fragment)
+                (escape_sequence)
+                (string_fragment))
+              (string_end))))))
+    (newline))
+  (simple_statements
+    (simple_statements_elements
+      (expression_statement
+        (assignment
+          (identifier)
+          (assignment_eq
+            (string
+              (string_start)
+              (string_content
+                (string_fragment)
+                (escape_sequence)
+                (string_fragment)
+                (escape_sequence)
+                (string_fragment))
+              (string_end))))))
+    (newline))
+  (simple_statements
+    (simple_statements_elements
+      (expression_statement
+        (assignment
+          (identifier)
+          (assignment_eq
+            (string
+              (string_start)
+              (string_content
+                (string_fragment)
+                (not_escape_sequence)
+                (string_fragment))
+              (string_end))))))
+    (newline))
+  (simple_statements
+    (simple_statements_elements
+      (expression_statement
+        (assignment
+          (identifier)
+          (assignment_eq
+            (string
+              (string_start)
+              (interpolation
+                (identifier)
+                (format_specifier))
+              (string_end))))))
+    (newline))
+  (simple_statements
+    (simple_statements_elements
+      (expression_statement
+        (assignment
+          (identifier)
+          (assignment_eq
+            (string
+              (string_start)
+              (string_content
+                (string_fragment))
+              (interpolation
+                (identifier)
+                (format_specifier))
+              (string_content
+                (string_fragment))
+              (string_end))))))
+    (newline)))

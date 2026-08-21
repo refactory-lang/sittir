@@ -1469,7 +1469,7 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			importClause() {
@@ -1899,7 +1899,7 @@ export function wrapExpressionStatement(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			expressions() {
@@ -1939,7 +1939,7 @@ export function wrapVariableDeclaration(data: T.VariableDeclaration, tree: TreeH
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			declarators() {
@@ -1989,7 +1989,7 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			kind() {
@@ -2283,7 +2283,7 @@ export function wrapForInStatement(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ in: 143, of: 153 }
+				{ in: 144, of: 154 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -2355,7 +2355,7 @@ export function wrapForHeader(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ in: 143, of: 153 }
+				{ in: 144, of: 154 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -2444,7 +2444,7 @@ export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			body() {
@@ -2564,7 +2564,7 @@ export function wrapBreakStatement(data: T.BreakStatement, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			label() {
@@ -2603,7 +2603,7 @@ export function wrapContinueStatement(data: T.ContinueStatement, tree: TreeHandl
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			label() {
@@ -2636,7 +2636,7 @@ export function wrapDebuggerStatement(data: T.DebuggerStatement, tree: TreeHandl
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			semicolon() {
@@ -2794,7 +2794,7 @@ export function wrapReturnStatement(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			expressions() {
@@ -2957,7 +2957,7 @@ export function wrapThrowStatement(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			expressions() {
@@ -4493,7 +4493,7 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'separator', span: (data as _NodeData).$span }
 				),
-				{ '.': 39, '?.': 230 }
+				{ '.': 39, '?.': 231 }
 			),
 			_property: normalizeSingularWrapSlot(data._property, 'property', true, data.$type, {
 				tree,
@@ -6783,7 +6783,7 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			asyncMarker() {
@@ -7432,7 +7432,7 @@ export function wrapImportAlias(data: T.ImportAlias, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			name() {
@@ -7720,7 +7720,7 @@ export function wrapTypeAliasDeclaration(data: T.TypeAliasDeclaration, tree: Tre
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			name() {
@@ -9431,7 +9431,7 @@ export function wrapObjectType(data: T.ObjectType, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'opening', span: (data as _NodeData).$span }
 				),
-				{ '{': 5, '{|': 147 }
+				{ '{': 5, '{|': 148 }
 			),
 			_members: normalizeSingularWrapSlot(data._members, 'members', false, data.$type, {
 				tree,
@@ -9447,7 +9447,7 @@ export function wrapObjectType(data: T.ObjectType, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'closing', span: (data as _NodeData).$span }
 				),
-				{ '}': 6, '|}': 148 }
+				{ '}': 6, '|}': 149 }
 			),
 
 			opening() {
@@ -10359,7 +10359,7 @@ export function wrapBinaryExpressionGroup1(data: T.BinaryExpressionGroup1, tree:
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ in: 143 }
+				{ in: 144 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -10487,7 +10487,19 @@ export function wrapEnumBodyElements(
 			),
 			_content_trailing_sep: _hasSeparatorFlank(
 				{},
-				Array.isArray(data._content) ? data._content : [],
+				data._content !== undefined
+					? _toArr(data._content)
+					: [
+							..._toArr(data._name),
+							..._toArr(data._enum_assignment),
+							..._toArr(data._property_identifier),
+							..._toArr(data._identifier),
+							..._toArr(data._reserved_identifier),
+							..._toArr(data._private_property_identifier),
+							..._toArr(data._string),
+							..._toArr(data._number),
+							..._toArr(data._computed_property_name)
+						],
 				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
 					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
 				),
@@ -10643,7 +10655,7 @@ export function wrapAmbientDeclarationModule(data: T.AmbientDeclarationModule, t
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			name() {
@@ -11084,7 +11096,7 @@ export function wrapExportStatementDefaultFromArm(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			content() {
@@ -11301,7 +11313,7 @@ export function wrapExportStatementDefaultValue(data: T.ExportStatementDefaultVa
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			value() {
@@ -11347,7 +11359,7 @@ export function wrapClassBodyMethod(data: T.ClassBodyMethod, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			decorators() {
@@ -11395,7 +11407,7 @@ export function wrapClassBodyMethodSig(data: T.ClassBodyMethodSig, tree: TreeHan
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
 				),
-				{ '\n': 164, ',': 14 }
+				{ '\n': 165, ',': 14 }
 			),
 
 			methodSignature() {
@@ -11470,7 +11482,7 @@ export function wrapClassBodyMember(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20, ',': 14 }
+				{ '\n': 160, ';': 20, ',': 14 }
 			),
 
 			content() {
@@ -12021,7 +12033,7 @@ export function wrapExportStatementTypeExport(data: T.ExportStatementTypeExport,
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			exportClause() {
@@ -12066,7 +12078,7 @@ export function wrapExportStatementEqualsExport(data: T.ExportStatementEqualsExp
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			expression() {
@@ -12106,7 +12118,7 @@ export function wrapExportStatementNamespaceExport(data: T.ExportStatementNamesp
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 159, ';': 20 }
+				{ '\n': 160, ';': 20 }
 			),
 
 			identifier() {
@@ -12332,7 +12344,7 @@ export function wrapUpdateExpressionPostfix(data: T.UpdateExpressionPostfix, tre
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '++': 157, '--': 158 }
+				{ '++': 158, '--': 159 }
 			),
 
 			argument() {
@@ -12366,7 +12378,7 @@ export function wrapUpdateExpressionPrefix(data: T.UpdateExpressionPrefix, tree:
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '++': 157, '--': 158 }
+				{ '++': 158, '--': 159 }
 			),
 			_argument: normalizeSingularWrapSlot(data._argument, 'argument', true, data.$type, {
 				tree,
