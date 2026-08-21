@@ -1262,6 +1262,16 @@ export type PythonGrammar = {
 		children: { multiple: true; required: true; types: [{ type: 'pattern'; named: true }] };
 	};
 	readonly positional_separator: { type: 'positional_separator'; named: true; fields: {} };
+	readonly print_arguments: {
+		type: 'print_arguments';
+		named: true;
+		fields: { argument: { multiple: true; required: true; types: [{ type: 'expression'; named: true }] } };
+	};
+	readonly print_chevron_arguments: {
+		type: 'print_chevron_arguments';
+		named: true;
+		fields: { argument: { multiple: true; required: true; types: [{ type: 'expression'; named: true }] } };
+	};
 	readonly print_statement: {
 		type: 'print_statement';
 		named: true;
@@ -1275,13 +1285,18 @@ export type PythonGrammar = {
 	readonly print_statement_group1: {
 		type: 'print_statement_group1';
 		named: true;
-		fields: { argument: { multiple: true; required: false; types: [{ type: 'expression'; named: true }] } };
-		children: { multiple: false; required: true; types: [{ type: 'chevron'; named: true }] };
+		fields: {};
+		children: {
+			multiple: true;
+			required: true;
+			types: [{ type: 'chevron'; named: true }, { type: 'print_chevron_arguments'; named: true }];
+		};
 	};
 	readonly print_statement_group2: {
 		type: 'print_statement_group2';
 		named: true;
-		fields: { argument: { multiple: true; required: true; types: [{ type: 'expression'; named: true }] } };
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'print_arguments'; named: true }] };
 	};
 	readonly raise_statement: {
 		type: 'raise_statement';

@@ -7106,17 +7106,37 @@ export function wrapComprehensionClauses(data: T.ComprehensionClauses, tree: Tre
 	return _node;
 }
 
-export function wrapPrintStatementGroup1(data: T.PrintStatementGroup1, tree: TreeHandle) {
+export function wrapPrintArguments(
+	data: T.PrintArguments & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._argument, true, 'argument', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'argument',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
+		{
+			...data,
+			$type: TSKindId.PrintArguments as const,
+			_argument: _content,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+
+			arguments() {
+				return drillInAll<T.Expression>(this._argument as readonly T.Expression[] | undefined, tree);
+			},
+			$with: {}
+		},
+		methodsEngine
+	);
+}
+
+export function wrapPrintChevronArguments(data: T.PrintChevronArguments, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId.PrintStatementGroup1 as const,
-			_chevron: normalizeSingularWrapSlot(data._chevron, 'chevron', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'chevron',
-				span: (data as _NodeData).$span
-			}),
+			$type: TSKindId.PrintChevronArguments as const,
 			_argument: normalizeRepeatedWrapSlot(
 				_filterWrapChildrenByKind(data._argument, [
 					'expression',
@@ -7155,7 +7175,7 @@ export function wrapPrintStatementGroup1(data: T.PrintStatementGroup1, tree: Tre
 					'named_expression',
 					'as_pattern'
 				]),
-				false,
+				true,
 				'argument',
 				{ tree, nodeType: data.$type, slotName: 'argument', span: (data as _NodeData).$span }
 			),
@@ -7172,17 +7192,54 @@ export function wrapPrintStatementGroup1(data: T.PrintStatementGroup1, tree: Tre
 				? 2
 				: 0,
 
-			chevron() {
-				return drillIn<T.Chevron>(this._chevron, tree);
-			},
 			arguments() {
 				return drillInAll<T.Expression>(this._argument as readonly T.Expression[] | undefined, tree);
 			},
 			$with: {
+				arguments: (...v: NonEmptyArray<NonNullable<T.PrintChevronArguments['_argument']>[number]>) =>
+					wrapPrintChevronArguments({ ...data, _argument: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
+export function wrapPrintStatementGroup1(
+	data: T.PrintStatementGroup1 & { readonly _comma?: T.PrintChevronArguments | ',' },
+	tree: TreeHandle
+) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.PrintStatementGroup1 as const }, methodsEngine);
+	const _node = withMethods(
+		{
+			..._omitWrapKeys(data, ['_comma']),
+			$type: TSKindId.PrintStatementGroup1 as const,
+			_chevron: normalizeSingularWrapSlot(data._chevron, 'chevron', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'chevron',
+				span: (data as _NodeData).$span
+			}),
+			_print_chevron_arguments: normalizeSingularWrapSlot(
+				data._print_chevron_arguments ?? data._comma,
+				'print_chevron_arguments',
+				false,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'print_chevron_arguments', span: (data as _NodeData).$span }
+			),
+
+			chevron() {
+				return drillIn<T.Chevron>(this._chevron, tree);
+			},
+			printChevronArguments() {
+				return drillIn<T.PrintChevronArguments | ',' | undefined>(this._print_chevron_arguments, tree);
+			},
+			$with: {
 				chevron: (v: NonNullable<T.PrintStatementGroup1['_chevron']>) =>
 					wrapPrintStatementGroup1({ ...data, _chevron: v }, tree),
-				arguments: (...v: NonNullable<T.PrintStatementGroup1['_argument']>[number][]) =>
-					wrapPrintStatementGroup1({ ...data, _argument: v }, tree)
+				printChevronArguments: (v: NonNullable<T.PrintStatementGroup1['_print_chevron_arguments']>) =>
+					wrapPrintStatementGroup1({ ...data, _print_chevron_arguments: v }, tree)
 			}
 		},
 		methodsEngine
@@ -7195,67 +7252,19 @@ export function wrapPrintStatementGroup2(data: T.PrintStatementGroup2, tree: Tre
 		{
 			...data,
 			$type: TSKindId.PrintStatementGroup2 as const,
-			_argument: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._argument, [
-					'expression',
-					'comparison_operator',
-					'not_operator',
-					'boolean_operator',
-					'lambda',
-					'primary_expression',
-					'await',
-					'binary_operator',
-					'identifier',
-					'keyword_identifier',
-					'string',
-					'concatenated_string',
-					'integer',
-					'float',
-					'true',
-					'false',
-					'none',
-					'unary_operator',
-					'attribute',
-					'subscript',
-					'call',
-					'list',
-					'list_comprehension',
-					'dictionary',
-					'dictionary_comprehension',
-					'set',
-					'set_comprehension',
-					'tuple',
-					'parenthesized_expression',
-					'generator_expression',
-					'ellipsis',
-					'list_splat_pattern',
-					'conditional_expression',
-					'named_expression',
-					'as_pattern'
-				]),
-				false,
-				'argument',
-				{ tree, nodeType: data.$type, slotName: 'argument', span: (data as _NodeData).$span }
-			),
-			_argument_delimiter: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._argument) ? data._argument : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			)
-				? 2
-				: 0,
+			_print_arguments: normalizeSingularWrapSlot(data._print_arguments, 'print_arguments', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'print_arguments',
+				span: (data as _NodeData).$span
+			}),
 
-			arguments() {
-				return drillInAll<T.Expression>(this._argument as readonly T.Expression[] | undefined, tree);
+			printArguments() {
+				return drillIn<T.PrintArguments>(this._print_arguments, tree);
 			},
 			$with: {
-				arguments: (...v: NonNullable<T.PrintStatementGroup2['_argument']>[number][]) =>
-					wrapPrintStatementGroup2({ ...data, _argument: v }, tree)
+				printArguments: (v: NonNullable<T.PrintStatementGroup2['_print_arguments']>) =>
+					wrapPrintStatementGroup2({ ...data, _print_arguments: v }, tree)
 			}
 		},
 		methodsEngine
@@ -8064,6 +8073,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.CaseListPattern]: (d, t) => wrapCaseListPattern(d as unknown as T.CaseListPattern, t),
 	[TSKindId.CaseAsPattern]: (d, t) => wrapCaseAsPattern(d as unknown as T.CaseAsPattern, t),
 	[TSKindId.ComprehensionClauses]: (d, t) => wrapComprehensionClauses(d as unknown as T.ComprehensionClauses, t),
+	[TSKindId.PrintArguments]: (d, t) => wrapPrintArguments(d as unknown as T.PrintArguments, t),
+	[TSKindId.PrintChevronArguments]: (d, t) => wrapPrintChevronArguments(d as unknown as T.PrintChevronArguments, t),
 	[TSKindId.PrintStatementGroup1]: (d, t) => wrapPrintStatementGroup1(d as unknown as T.PrintStatementGroup1, t),
 	[TSKindId.PrintStatementGroup2]: (d, t) => wrapPrintStatementGroup2(d as unknown as T.PrintStatementGroup2, t),
 	[TSKindId.WildcardPattern]: (d) => ({ ...d, $type: TSKindId.WildcardPattern as const }),

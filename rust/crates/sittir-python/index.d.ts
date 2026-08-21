@@ -1287,6 +1287,31 @@ export interface PatternsTransport {
   _delimiter?: number
 }
 
+export interface PrintArgumentsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _argument: Array<ExpressionTransport>
+  _argument_delimiter?: number
+  _delimiter?: number
+}
+
+export interface PrintChevronArgumentsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _argument: Array<ExpressionTransport>
+  _argument_delimiter?: number
+}
+
 export interface PrintStatementGroup1Transport {
   '$source'?: Source
   '$named'?: boolean
@@ -1295,9 +1320,9 @@ export interface PrintStatementGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _argument?: Array<ExpressionTransport>
-  _argument_delimiter?: number
   _chevron: ChevronTransport
+  _print_chevron_arguments?: PrintStatementGroup1PrintChevronArgumentsTransportSlot
+  _argument?: Array<ExpressionTransport>
 }
 
 export interface PrintStatementGroup2Transport {
@@ -1308,8 +1333,8 @@ export interface PrintStatementGroup2Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _print_arguments: PrintArgumentsTransport
   _argument?: Array<ExpressionTransport>
-  _argument_delimiter?: number
 }
 
 export interface PrintStatementTransport {

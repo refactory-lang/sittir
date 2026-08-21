@@ -3902,26 +3902,35 @@ export function buildComprehensionClauses(config: Partial<T.ComprehensionClauses
 	);
 }
 
-export function buildPrintStatementGroup1(config: T.PrintStatementGroup1.Config, options: { delimiter?: 2 } = {}) {
-	const _chevron = config.chevron;
-	const _argument = config.argument ?? [];
+export function buildPrintArguments(...elements: NonEmptyArray<T.Expression>): ReturnType<typeof _buildPrintArguments>;
+export function buildPrintArguments(
+	options: { delimiter?: 2 },
+	...elements: NonEmptyArray<T.Expression>
+): ReturnType<typeof _buildPrintArguments>;
+export function buildPrintArguments(...args: ({ delimiter?: 2 } | T.Expression)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Expression>;
+	return _buildPrintArguments(elements, options);
+}
+function _buildPrintArguments(elements: NonEmptyArray<T.Expression>, options: { delimiter?: 2 }) {
+	_assertNonEmpty(elements, '_print_arguments.elements');
+	const _argument = elements;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.PrintStatementGroup1 as const,
+				$type: TSKindId.PrintArguments as const,
 				$source: 2 as const,
 				$named: true as const,
-				_chevron,
 				_argument,
-				_argument_delimiter: options.delimiter ?? 0,
+				_delimiter,
 				$with: {
-					chevron: (value: T.Chevron) => buildPrintStatementGroup1({ ...config, chevron: value }, options),
-					arguments: (...values: T.Expression[]) => buildPrintStatementGroup1({ ...config, argument: values }, options),
-					delimiter: (v: 2) => buildPrintStatementGroup1(config, { ...options, delimiter: v })
+					$children: (...vs: NonEmptyArray<T.Expression>) => buildPrintArguments(options, ...vs),
+					delimiter: (v: 2) => buildPrintArguments({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
-				chevron: () => _chevron,
 				arguments: () => _argument
 			}
 		),
@@ -3929,26 +3938,86 @@ export function buildPrintStatementGroup1(config: T.PrintStatementGroup1.Config,
 	);
 }
 
-export function buildPrintStatementGroup2(
-	config: Partial<T.PrintStatementGroup2.Config> = {},
-	options: { delimiter?: 2 } = {}
-) {
+export function buildPrintChevronArguments(config: T.PrintChevronArguments.Config, options: { delimiter?: 2 } = {}) {
 	const _argument = config.argument ?? [];
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.PrintChevronArguments as const,
+				$source: 2 as const,
+				$named: true as const,
+				_argument,
+				_argument_delimiter: options.delimiter ?? 0,
+				$with: {
+					arguments: (...values: NonEmptyArray<T.Expression>) =>
+						buildPrintChevronArguments({ ...config, argument: values }, options),
+					delimiter: (v: 2) => buildPrintChevronArguments(config, { ...options, delimiter: v })
+				}
+			},
+			{
+				arguments: () => _argument
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildPrintStatementGroup1(config: T.PrintStatementGroup1.Config) {
+	const _chevron = config.chevron;
+	const _print_chevron_arguments = config.printChevronArguments;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.PrintStatementGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_chevron,
+				_print_chevron_arguments,
+				$with: {
+					chevron: (value: T.Chevron) => buildPrintStatementGroup1({ ...config, chevron: value }),
+					printChevronArguments: (value?: T.PrintChevronArguments | ',') =>
+						buildPrintStatementGroup1({ ...config, printChevronArguments: value })
+				}
+			},
+			{
+				chevron: () => _chevron,
+				printChevronArguments: () => _print_chevron_arguments
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildPrintStatementGroup2(child: T.PrintArguments): ReturnType<typeof _buildPrintStatementGroup2>;
+export function buildPrintStatementGroup2(
+	...args: Parameters<typeof buildPrintArguments>
+): ReturnType<typeof _buildPrintStatementGroup2>;
+export function buildPrintStatementGroup2(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildPrintStatementGroup2(args[0] as T.PrintArguments);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.PrintArguments as const);
+	return prebuilt
+		? _buildPrintStatementGroup2(args[0] as T.PrintArguments)
+		: _buildPrintStatementGroup2((buildPrintArguments as (...a: unknown[]) => unknown)(...args) as T.PrintArguments);
+}
+function _buildPrintStatementGroup2(child: T.PrintArguments) {
+	const _print_arguments = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.PrintStatementGroup2 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_argument,
-				_argument_delimiter: options.delimiter ?? 0,
-				$with: {
-					arguments: (...values: T.Expression[]) => buildPrintStatementGroup2({ ...config, argument: values }, options),
-					delimiter: (v: 2) => buildPrintStatementGroup2(config, { ...options, delimiter: v })
-				}
+				_print_arguments,
+				$with: { $child: (v: T.PrintArguments) => buildPrintStatementGroup2(v) }
 			},
 			{
-				arguments: () => _argument
+				printArguments: () => _print_arguments
 			}
 		),
 		methodsEngine
@@ -4579,6 +4648,8 @@ export type FluentKindMap = {
 	case_list_pattern: FluentNode<'case_list_pattern', T.CaseListPattern.Config>;
 	case_as_pattern: FluentNode<'case_as_pattern', T.CaseAsPattern.Config>;
 	comprehension_clauses: FluentNode<'comprehension_clauses', T.ComprehensionClauses.Config>;
+	_print_arguments: FluentNode<'_print_arguments', T.PrintArguments.Config>;
+	_print_chevron_arguments: T.PrintChevronArguments;
 	print_statement_group1: FluentNode<'print_statement_group1', T.PrintStatementGroup1.Config>;
 	print_statement_group2: FluentNode<'print_statement_group2', T.PrintStatementGroup2.Config>;
 	_assignment_eq: T.AssignmentEq;
@@ -4751,6 +4822,8 @@ export const _factoryMap = {
 	case_list_pattern: buildCaseListPattern,
 	case_as_pattern: buildCaseAsPattern,
 	comprehension_clauses: buildComprehensionClauses,
+	_print_arguments: buildPrintArguments,
+	_print_chevron_arguments: buildPrintChevronArguments,
 	print_statement_group1: buildPrintStatementGroup1,
 	print_statement_group2: buildPrintStatementGroup2,
 	_assignment_eq: buildAssignmentEq,

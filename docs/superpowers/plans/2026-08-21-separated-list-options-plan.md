@@ -219,14 +219,18 @@ print_statement_group1: ($) =>
 	),
 ```
 
-- [ ] **Step 3: Regenerate python, rebuild sittir-python, check
+- [x] **Step 3: Regenerate python, rebuild sittir-python, check
   classification.** `buildPrintArguments` must be spread-shaped with
   kind-level `_delimiter`; `rg '_argument_delimiter'
-  packages/python/src` must return zero for group2. If
-  `_print_chevron_arguments` (leading-mandatory + trailing-optional) does
-  NOT classify separatedList, revert ONLY the group1 rewrite (keep group2)
-  and move group1 to Task 3e alongside `tuple_expression` — record which
-  branch was taken in the commit message.
+  packages/python/src` must return zero for group2.
+  OUTCOME: `_print_chevron_arguments` (leading-mandatory) did NOT
+  classify — it emitted field-carrying with interim
+  `_argument_delimiter`. Contingency resolved by KEEPING the extraction
+  (not reverting): gates held (floors additive-only, chevron corpus row
+  was already red pre-change — the old wrap captured only 'trailing' and
+  dropped the leading comma), and the extracted kind is the structure
+  Task 3d's widening converts in place. Task 3e no longer includes
+  group1.
 - [ ] **Step 4: Targeted probes.** `print 1, 2`, `print 1, 2,`, `print >>f`,
   `print >>f, 1`, `print >>f,` through render-parse
   (`tool probe-kind -g python -t print_statement`).

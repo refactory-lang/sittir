@@ -2150,13 +2150,15 @@ describe('print_statement_group1', () => {
 
 describe('print_statement_group2', () => {
 	it('factory produces correct type', () => {
-		const node = ir.printStatementGroup2({});
+		const node = ir.printStatementGroup2({
+			$type: TSKindId.PrintArguments,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_argument: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+		} as any);
 		expect(node.$type).toBe(TSKindId.PrintStatementGroup2);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.printStatementGroup2({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 

@@ -314,6 +314,8 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_dictionary_elements: TSKindId.DictionaryElements,
 	case_tuple_pattern: TSKindId.CaseTuplePattern,
 	case_list_pattern: TSKindId.CaseListPattern,
+	_print_arguments: TSKindId.PrintArguments,
+	print_statement_group2: TSKindId.PrintStatementGroup2,
 	_with_clause_bare: TSKindId.WithClauseBare,
 	_with_clause_paren: TSKindId.WithClauseParen,
 	_suite_block_with_indent: TSKindId.SuiteBlockWithIndent,
@@ -422,6 +424,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildCaseTuplePattern(children[0] as Parameters<typeof F.buildCaseTuplePattern>[0]);
 		case 'case_list_pattern':
 			return F.buildCaseListPattern(children[0] as Parameters<typeof F.buildCaseListPattern>[0]);
+		case '_print_arguments':
+			return (F.buildPrintArguments as (...args: unknown[]) => unknown)(...children);
+		case 'print_statement_group2':
+			return F.buildPrintStatementGroup2(children[0] as Parameters<typeof F.buildPrintStatementGroup2>[0]);
 		case '_with_clause_bare':
 			return (F.buildWithClauseBare as (...args: unknown[]) => unknown)(...children);
 		case '_with_clause_paren':
@@ -2170,18 +2176,22 @@ export function coerceToPrintStatementGroup1(
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildPrintStatementGroup1>;
 	return F.buildPrintStatementGroup1({
 		chevron: _requireField('print_statement_group1', 'chevron', _resolveOneBranch<T.Chevron>(input.chevron, 'chevron')),
-		argument: _resolveMany<T.Expression>(input.argument, _K4, _K5)
+		printChevronArguments: _resolveOneBranch<T.PrintChevronArguments | ','>(
+			input.printChevronArguments,
+			'_print_chevron_arguments'
+		)
 	});
 }
 
 export function coerceToPrintStatementGroup2(
-	input?: T.PrintStatementGroup2.Loose
+	input?: T.PrintArguments | T.PrintStatementGroup2
 ): ReturnType<typeof F.buildPrintStatementGroup2> {
-	if (input !== undefined && isNodeData(input))
-		return input as unknown as ReturnType<typeof F.buildPrintStatementGroup2>;
-	return F.buildPrintStatementGroup2({
-		argument: _resolveMany<T.Expression>(input?.argument, _K4, _K5)
-	});
+	if (isNodeData(input) && input.$type === TSKindId.PrintStatementGroup2) {
+		const data = input;
+		const child = (data as unknown as { _print_arguments?: unknown })._print_arguments;
+		return F.buildPrintStatementGroup2(child as Parameters<typeof F.buildPrintStatementGroup2>[0]);
+	}
+	return F.buildPrintStatementGroup2(input as Parameters<typeof F.buildPrintStatementGroup2>[0]);
 }
 
 export function coerceToStringStart(input: string | T.StringStart): ReturnType<typeof F.buildStringStart> {

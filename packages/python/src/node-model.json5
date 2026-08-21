@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 265,
+  "nodeCount": 267,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -1890,6 +1890,24 @@
         "nonEmpty": false
       }
     },
+    "_print_arguments": {
+      "argument": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_print_chevron_arguments": {
+      "argument": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
     "print_statement_group1": {
       "chevron": {
         "unnamed": false,
@@ -1898,20 +1916,20 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "argument": {
+      "print_chevron_arguments": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
     "print_statement_group2": {
-      "argument": {
+      "print_arguments": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": true,
+        "required": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -3232,6 +3250,64 @@
       "factoryShape": "elements",
       "factoryFields": [
         "pattern"
+      ]
+    },
+    {
+      "kind": "_print_arguments",
+      "modelType": "separatedList",
+      "typeName": "PrintArguments",
+      "factoryName": "printArguments",
+      "irKey": "printArguments",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
+      "elementKinds": [
+        "expression"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "argument"
+      ]
+    },
+    {
+      "kind": "_print_chevron_arguments",
+      "modelType": "group",
+      "typeName": "PrintChevronArguments",
+      "factoryName": "_printChevronArguments",
+      "irKey": "printChevronArguments",
+      "hidden": false,
+      "name": "_print_chevron_arguments",
+      "fields": [
+        {
+          "name": "argument",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "argument"
       ]
     },
     {
@@ -9627,25 +9703,31 @@
           }
         },
         {
-          "name": "argument",
-          "propertyName": "arguments",
-          "paramName": "arguments_",
+          "name": "print_chevron_arguments",
+          "propertyName": "printChevronArguments",
+          "paramName": "printChevronArguments",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "expression",
-              "parseKind": "expression",
+              "multiplicity": "optional",
+              "name": "_print_chevron_arguments",
+              "parseKind": "print_chevron_arguments",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": ",",
+              "parseKind": "comma"
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "expression"
+              "_print_chevron_arguments"
             ]
           }
         }
@@ -9654,7 +9736,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "chevron",
-        "argument"
+        "print_chevron_arguments"
       ]
     },
     {
@@ -9666,33 +9748,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "argument",
-          "propertyName": "arguments",
-          "paramName": "arguments_",
-          "required": false,
-          "multiple": true,
+          "name": "print_arguments",
+          "propertyName": "printArguments",
+          "paramName": "printArguments",
+          "required": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "expression",
-              "parseKind": "expression",
+              "multiplicity": "single",
+              "name": "_print_arguments",
+              "parseKind": "print_arguments",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "expression"
+              "_print_arguments"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_print_arguments",
       "factoryFields": [
-        "argument"
+        "print_arguments"
       ]
     },
     {

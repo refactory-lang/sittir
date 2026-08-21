@@ -420,15 +420,29 @@ export default grammar(
 				// names — already what the generated types/wrap model
 				// expects) and reference them directly by symbol, matching
 				// the base grammar's arms verbatim (including precedence).
-				print_statement_group1: ($) =>
-					seq('print', $.chevron, repeat(seq(',', field('argument', $.expression))), optional(',')),
-				print_statement_group2: ($) =>
+				// Each group's argument list is realized as its own kind — the
+				// delimiter is a fact of the list, so the list is a top-level
+				// rule carrying it (hidden rule + visible alias, matching the
+				// `*_elements` family). Group1's post-chevron language is
+				// `{ε, ',', (',' arg)+, (',' arg)+ ','}`: the comma-leading
+				// list extracts as `(',' arg)+ ','?` and the bare-`','` arm
+				// stays behind in the optional choice so the language is
+				// unchanged.
+				_print_arguments: ($) =>
 					seq(
-						'print',
 						field('argument', $.expression),
 						repeat(seq(',', field('argument', $.expression))),
 						optional(',')
 					),
+				_print_chevron_arguments: ($) =>
+					seq(repeat1(seq(',', field('argument', $.expression))), optional(',')),
+				print_statement_group1: ($) =>
+					seq(
+						'print',
+						$.chevron,
+						optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ','))
+					),
+				print_statement_group2: ($) => seq('print', alias($._print_arguments, $.print_arguments)),
 				print_statement: ($) =>
 					choice(prec(1, $.print_statement_group1), prec(-3, prec.dynamic(-1, $.print_statement_group2))),
 				// Base `_simple_pattern`'s last arm is the bare literal `'_'`

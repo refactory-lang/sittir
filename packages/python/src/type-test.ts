@@ -228,6 +228,8 @@ import type {
 	PatternListTree,
 	Patterns,
 	PatternsTree,
+	PrintArguments,
+	PrintArgumentsTree,
 	PrintStatement,
 	PrintStatementGroup1,
 	PrintStatementGroup1Tree,
@@ -518,6 +520,7 @@ export type _Type_CaseAsPattern = _TypeAssert<_TypeExtends<CaseAsPattern['$type'
 export type _Type_ComprehensionClauses = _TypeAssert<
 	_TypeExtends<ComprehensionClauses['$type'], TSKindId.ComprehensionClauses>
 >;
+export type _Type_PrintArguments = _TypeAssert<_TypeExtends<PrintArguments['$type'], TSKindId.PrintArguments>>;
 export type _Type_PrintStatementGroup1 = _TypeAssert<
 	_TypeExtends<PrintStatementGroup1['$type'], TSKindId.PrintStatementGroup1>
 >;
@@ -761,6 +764,7 @@ export type _Tree_CaseAsPattern = _TypeAssert<_TypeExtends<CaseAsPatternTree['ty
 export type _Tree_ComprehensionClauses = _TypeAssert<
 	_TypeExtends<ComprehensionClausesTree['type'], 'comprehension_clauses'>
 >;
+export type _Tree_PrintArguments = _TypeAssert<_TypeExtends<PrintArgumentsTree['type'], '_print_arguments'>>;
 export type _Tree_PrintStatementGroup1 = _TypeAssert<
 	_TypeExtends<PrintStatementGroup1Tree['type'], 'print_statement_group1'>
 >;
