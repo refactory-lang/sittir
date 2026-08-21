@@ -49,7 +49,13 @@ The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the
 
 The validator's suffix-discovery options helper (`separatedListFactoryOptions`, `packages/tools/src/validate/common.ts`) is retained for exactly these config-shaped factories — do not delete it while any generated wrap still emits a field-prefixed flank key (auditable via `rg '_\w+_(trailing|leading)_sep' packages/*/src/wrap.ts`).
 
-**Fix, if/when prioritized:** per family — the tuple design retires the rust pair; rewriting the print/expression-tuple overrides to reference visible list kinds (the `case_tuple_pattern` precedent) retires the python trio.
+**Fix, if/when prioritized:** the separated-list options struct
+(`docs/superpowers/specs/2026-08-21-separated-list-options-struct.md`)
+retires the per-field representation wholesale — one
+`{ separator?, delimiter? }` struct per list slot replaces both key
+spellings; the rust tuple family becomes `delimiter: trailing` with a
+length invariant, and the python trio stores the same struct once their
+override bodies reference it.
 
 ## `ki-interp-brace-padding` — interpolation braces render with template-authored padding (`f"{ x }"`, `` `${ x }` ``)
 
