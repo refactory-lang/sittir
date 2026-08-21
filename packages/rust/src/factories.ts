@@ -408,7 +408,7 @@ function _buildInnerAttributeItem(attribute: T.InnerAttributeItem.Config['attrib
 
 export function buildAttribute(config: T.Attribute.Config) {
 	const _path = config.path;
-	const _attribute_group1 = config.attributeGroup1;
+	const _attribute_arm1 = config.attributeArm1;
 	return withMethods(
 		withAccessors(
 			{
@@ -416,15 +416,15 @@ export function buildAttribute(config: T.Attribute.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_path,
-				_attribute_group1,
+				_attribute_arm1,
 				$with: {
 					path: (value: T.Path) => buildAttribute({ ...config, path: value }),
-					attributeGroup1: (value?: T.AttributeGroup1) => buildAttribute({ ...config, attributeGroup1: value })
+					attributeArm1: (value?: T.AttributeArm1) => buildAttribute({ ...config, attributeArm1: value })
 				}
 			},
 			{
 				path: () => _path,
-				attributeGroup1: () => _attribute_group1
+				attributeArm1: () => _attribute_arm1
 			}
 		),
 		methodsEngine
@@ -4035,7 +4035,7 @@ export function buildMutPattern(pattern: T.MutPattern.Config['pattern']) {
 	);
 }
 
-export function buildRangePattern(child: T.RangePatternGroup2 | T.RangePatternPrefix) {
+export function buildRangePattern(child: T.RangePatternArm2 | T.RangePatternPrefix) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -4044,7 +4044,7 @@ export function buildRangePattern(child: T.RangePatternGroup2 | T.RangePatternPr
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.RangePatternGroup2 | T.RangePatternPrefix) => buildRangePattern(v) }
+				$with: { $child: (v: T.RangePatternArm2 | T.RangePatternPrefix) => buildRangePattern(v) }
 			},
 			{
 				content: () => _content
@@ -4299,36 +4299,36 @@ export function buildLineComment(child: T.LineCommentRegularDslash | T.LineComme
 	);
 }
 
-export function buildBlockComment(child?: T.BlockCommentGroup1): ReturnType<typeof _buildBlockComment>;
+export function buildBlockComment(child?: T.BlockCommentArm1): ReturnType<typeof _buildBlockComment>;
 export function buildBlockComment(
-	...args: Parameters<typeof buildBlockCommentGroup1>
+	...args: Parameters<typeof buildBlockCommentArm1>
 ): ReturnType<typeof _buildBlockComment>;
 export function buildBlockComment(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildBlockComment(args[0] as T.BlockCommentGroup1);
+		return _buildBlockComment(args[0] as T.BlockCommentArm1);
 	}
 	const prebuilt =
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.BlockCommentGroup1 as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.BlockCommentArm1 as const);
 	return prebuilt
-		? _buildBlockComment(args[0] as T.BlockCommentGroup1)
-		: _buildBlockComment((buildBlockCommentGroup1 as (...a: unknown[]) => unknown)(...args) as T.BlockCommentGroup1);
+		? _buildBlockComment(args[0] as T.BlockCommentArm1)
+		: _buildBlockComment((buildBlockCommentArm1 as (...a: unknown[]) => unknown)(...args) as T.BlockCommentArm1);
 }
-function _buildBlockComment(child?: T.BlockCommentGroup1) {
-	const _block_comment_group1 = child;
+function _buildBlockComment(child?: T.BlockCommentArm1) {
+	const _block_comment_arm1 = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.BlockComment as const,
 				$source: 2 as const,
 				$named: true as const,
-				_block_comment_group1,
-				$with: { $child: (v: T.BlockCommentGroup1) => buildBlockComment(v) }
+				_block_comment_arm1,
+				$with: { $child: (v: T.BlockCommentArm1) => buildBlockComment(v) }
 			},
 			{
-				blockCommentGroup1: () => _block_comment_group1
+				blockCommentArm1: () => _block_comment_arm1
 			}
 		),
 		methodsEngine
@@ -4487,20 +4487,20 @@ function _buildMacroRules(elements: NonEmptyArray<T.MacroRule>, options: { delim
 	);
 }
 
-export function buildAttributeGroup1(config: Partial<T.AttributeGroup1.Config> = {}) {
+export function buildAttributeArm1(config: Partial<T.AttributeArm1.Config> = {}) {
 	const _value = config.value;
 	const _arguments = config.arguments;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.AttributeGroup1 as const,
+				$type: TSKindId.AttributeArm1 as const,
 				$source: 2 as const,
 				$named: true as const,
 				_value,
 				_arguments,
 				$with: {
-					value: (value?: T.Expression) => buildAttributeGroup1({ ...config, value: value }),
-					arguments: (value?: T.DelimTokenTree) => buildAttributeGroup1({ ...config, arguments: value })
+					value: (value?: T.Expression) => buildAttributeArm1({ ...config, value: value }),
+					arguments: (value?: T.DelimTokenTree) => buildAttributeArm1({ ...config, arguments: value })
 				}
 			},
 			{
@@ -4955,20 +4955,20 @@ function _buildArgumentsElements(elements: NonEmptyArray<T.AttributedArgument>, 
 	);
 }
 
-export function buildArrayExpressionGroup1(config: T.ArrayExpressionGroup1.Config) {
+export function buildArrayExpressionArm1(config: T.ArrayExpressionArm1.Config) {
 	const _expression = config.expression;
 	const _length = config.length;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ArrayExpressionGroup1 as const,
+				$type: TSKindId.ArrayExpressionArm1 as const,
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
 				_length,
 				$with: {
-					expression: (value: T.Expression) => buildArrayExpressionGroup1({ ...config, expression: value }),
-					length: (value: T.Expression) => buildArrayExpressionGroup1({ ...config, length: value })
+					expression: (value: T.Expression) => buildArrayExpressionArm1({ ...config, expression: value }),
+					length: (value: T.Expression) => buildArrayExpressionArm1({ ...config, length: value })
 				}
 			},
 			{
@@ -5151,20 +5151,20 @@ function _buildStructPatternElements(
 	);
 }
 
-export function buildRangePatternGroup2(config: T.RangePatternGroup2.Config) {
+export function buildRangePatternArm2(config: T.RangePatternArm2.Config) {
 	const _left = config.left;
 	const _content = config.content;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.RangePatternGroup2 as const,
+				$type: TSKindId.RangePatternArm2 as const,
 				$source: 2 as const,
 				$named: true as const,
 				_left,
 				_content,
 				$with: {
-					left: (value: T.LiteralPattern | T.Path) => buildRangePatternGroup2({ ...config, left: value }),
-					content: (value: T.RangePatternLeftWithRight | '..') => buildRangePatternGroup2({ ...config, content: value })
+					left: (value: T.LiteralPattern | T.Path) => buildRangePatternArm2({ ...config, left: value }),
+					content: (value: T.RangePatternLeftWithRight | '..') => buildRangePatternArm2({ ...config, content: value })
 				}
 			},
 			{
@@ -5176,25 +5176,25 @@ export function buildRangePatternGroup2(config: T.RangePatternGroup2.Config) {
 	);
 }
 
-export function buildBlockCommentGroup1(config: Partial<T.BlockCommentGroup1.Config> = {}) {
+export function buildBlockCommentArm1(config: Partial<T.BlockCommentArm1.Config> = {}) {
 	const _outer = coerceBooleanKeywordStorage(config.outer);
 	const _inner = coerceBooleanKeywordStorage(config.inner);
 	const _doc = config.doc;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.BlockCommentGroup1 as const,
+				$type: TSKindId.BlockCommentArm1 as const,
 				$source: 2 as const,
 				$named: true as const,
 				_outer,
 				_inner,
 				_doc,
 				$with: {
-					outer: (value?: NonNullable<Parameters<typeof buildBlockCommentGroup1>[0]>['outer']) =>
-						buildBlockCommentGroup1({ ...config, outer: value }),
-					inner: (value?: NonNullable<Parameters<typeof buildBlockCommentGroup1>[0]>['inner']) =>
-						buildBlockCommentGroup1({ ...config, inner: value }),
-					doc: (value?: T.BlockCommentContent) => buildBlockCommentGroup1({ ...config, doc: value })
+					outer: (value?: NonNullable<Parameters<typeof buildBlockCommentArm1>[0]>['outer']) =>
+						buildBlockCommentArm1({ ...config, outer: value }),
+					inner: (value?: NonNullable<Parameters<typeof buildBlockCommentArm1>[0]>['inner']) =>
+						buildBlockCommentArm1({ ...config, inner: value }),
+					doc: (value?: T.BlockCommentContent) => buildBlockCommentArm1({ ...config, doc: value })
 				}
 			},
 			{
@@ -5538,7 +5538,7 @@ export function buildImplItemNegativeClause(config: T.ImplItemNegativeClause.Con
 
 export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
 	const _attributes = config.attributes ?? [];
-	const _array_expression_group1 = config.arrayExpressionGroup1;
+	const _array_expression_arm1 = config.arrayExpressionArm1;
 	return withMethods(
 		withAccessors(
 			{
@@ -5546,16 +5546,16 @@ export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_attributes,
-				_array_expression_group1,
+				_array_expression_arm1,
 				$with: {
 					attributes: (...values: T.AttributeItem[]) => buildArrayExpressionSemi({ ...config, attributes: values }),
-					arrayExpressionGroup1: (value: T.ArrayExpressionGroup1) =>
-						buildArrayExpressionSemi({ ...config, arrayExpressionGroup1: value })
+					arrayExpressionArm1: (value: T.ArrayExpressionArm1) =>
+						buildArrayExpressionSemi({ ...config, arrayExpressionArm1: value })
 				}
 			},
 			{
 				attributes: () => _attributes,
-				arrayExpressionGroup1: () => _array_expression_group1
+				arrayExpressionArm1: () => _array_expression_arm1
 			}
 		),
 		methodsEngine
@@ -6876,7 +6876,7 @@ export type FluentKindMap = {
 	crate: T.Crate;
 	metavariable: T.Metavariable;
 	_macro_rules: FluentNode<'_macro_rules', T.MacroRules.Config>;
-	_attribute_group1: FluentNode<'_attribute_group1', T.AttributeGroup1.Config>;
+	_attribute_arm1: FluentNode<'_attribute_arm1', T.AttributeArm1.Config>;
 	_enum_variant_list_elements: FluentNode<'_enum_variant_list_elements', T.EnumVariantListElements.Config>;
 	_field_declaration_list_elements: FluentNode<
 		'_field_declaration_list_elements',
@@ -6895,7 +6895,7 @@ export type FluentKindMap = {
 	_use_bounds_elements: FluentNode<'_use_bounds_elements', T.UseBoundsElements.Config>;
 	_type_arguments_elements: FluentNode<'_type_arguments_elements', T.TypeArgumentsElements.Config>;
 	_arguments_elements: FluentNode<'_arguments_elements', T.ArgumentsElements.Config>;
-	_array_expression_group1: T.ArrayExpressionGroup1;
+	_array_expression_arm1: T.ArrayExpressionArm1;
 	_field_initializer_list_elements: FluentNode<
 		'_field_initializer_list_elements',
 		T.FieldInitializerListElements.Config
@@ -6903,8 +6903,8 @@ export type FluentKindMap = {
 	_tuple_pattern_elements: FluentNode<'_tuple_pattern_elements', T.TuplePatternElements.Config>;
 	_patterns: FluentNode<'_patterns', T.Patterns.Config>;
 	_struct_pattern_elements: FluentNode<'_struct_pattern_elements', T.StructPatternElements.Config>;
-	_range_pattern_group2: T.RangePatternGroup2;
-	_block_comment_group1: T.BlockCommentGroup1;
+	_range_pattern_arm2: T.RangePatternArm2;
+	_block_comment_arm1: T.BlockCommentArm1;
 	_tuple_type_elements: FluentNode<'_tuple_type_elements', T.TupleTypeElements.Config>;
 	_tuple_expression_elements: FluentNode<'_tuple_expression_elements', T.TupleExpressionElements.Config>;
 	_token_tree_punctuation: T.TokenTreePunctuation;
@@ -7126,7 +7126,7 @@ export const _factoryMap = {
 	crate: buildCrate,
 	metavariable: buildMetavariable,
 	_macro_rules: buildMacroRules,
-	_attribute_group1: buildAttributeGroup1,
+	_attribute_arm1: buildAttributeArm1,
 	_enum_variant_list_elements: buildEnumVariantListElements,
 	_field_declaration_list_elements: buildFieldDeclarationListElements,
 	_ordered_field_declaration_list_elements: buildOrderedFieldDeclarationListElements,
@@ -7139,13 +7139,13 @@ export const _factoryMap = {
 	_use_bounds_elements: buildUseBoundsElements,
 	_type_arguments_elements: buildTypeArgumentsElements,
 	_arguments_elements: buildArgumentsElements,
-	_array_expression_group1: buildArrayExpressionGroup1,
+	_array_expression_arm1: buildArrayExpressionArm1,
 	_field_initializer_list_elements: buildFieldInitializerListElements,
 	_tuple_pattern_elements: buildTuplePatternElements,
 	_patterns: buildPatterns,
 	_struct_pattern_elements: buildStructPatternElements,
-	_range_pattern_group2: buildRangePatternGroup2,
-	_block_comment_group1: buildBlockCommentGroup1,
+	_range_pattern_arm2: buildRangePatternArm2,
+	_block_comment_arm1: buildBlockCommentArm1,
 	_tuple_type_elements: buildTupleTypeElements,
 	_tuple_expression_elements: buildTupleExpressionElements,
 	_token_tree_punctuation: buildTokenTreePunctuation,

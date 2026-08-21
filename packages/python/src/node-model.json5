@@ -38,7 +38,7 @@
     "future_import_statement": {
       "definedBy": "override",
       "childKind": {
-        "future_import_statement_group1": "group1"
+        "future_import_statement_arm1": "arm1"
       }
     },
     "expression_statement": {
@@ -103,7 +103,7 @@
     "format_specifier.content": {
       "format_expression": "interpolation"
     },
-    "_future_import_statement_group1.import_list": {
+    "_future_import_statement_arm1.import_list": {
       "names": "_import_list"
     }
   },
@@ -488,7 +488,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "except_clause_group1": {
+      "except_clause_arm1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1705,7 +1705,7 @@
         "nonEmpty": true
       }
     },
-    "_future_import_statement_group1": {
+    "_future_import_statement_arm1": {
       "import_list": {
         "unnamed": false,
         "slotCount": 1,
@@ -1732,7 +1732,7 @@
         "nonEmpty": true
       }
     },
-    "_except_clause_group1": {
+    "_except_clause_arm1": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -1908,7 +1908,7 @@
         "nonEmpty": true
       }
     },
-    "print_statement_group1": {
+    "print_statement_arm1": {
       "chevron": {
         "unnamed": false,
         "slotCount": 1,
@@ -1924,7 +1924,7 @@
         "nonEmpty": false
       }
     },
-    "print_statement_group2": {
+    "print_statement_arm2": {
       "print_arguments": {
         "unnamed": false,
         "slotCount": 1,
@@ -2545,6 +2545,52 @@
       ]
     },
     {
+      "kind": "_except_clause_arm1",
+      "modelType": "branch",
+      "typeName": "ExceptClauseArm1",
+      "factoryName": "exceptClauseArm1",
+      "irKey": "exceptClauseArm1",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_except_clause_as",
+              "parseKind": "except_clause_as",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_except_clause_list",
+              "parseKind": "except_clause_list",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_except_clause_as",
+              "_except_clause_list"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
       "kind": "_except_clause_as",
       "modelType": "group",
       "typeName": "ExceptClauseAs",
@@ -2641,52 +2687,6 @@
         }
       ],
       "children": []
-    },
-    {
-      "kind": "_except_clause_group1",
-      "modelType": "branch",
-      "typeName": "ExceptClauseGroup1",
-      "factoryName": "exceptClauseGroup1",
-      "irKey": "exceptClauseGroup1",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_except_clause_as",
-              "parseKind": "except_clause_as",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_except_clause_list",
-              "parseKind": "except_clause_list",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_except_clause_as",
-              "_except_clause_list"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "content"
-      ]
     },
     {
       "kind": "_except_clause_list",
@@ -2870,11 +2870,11 @@
       "children": []
     },
     {
-      "kind": "_future_import_statement_group1",
+      "kind": "_future_import_statement_arm1",
       "modelType": "branch",
-      "typeName": "FutureImportStatementGroup1",
-      "factoryName": "futureImportStatementGroup1",
-      "irKey": "futureImportStatementGroup1",
+      "typeName": "FutureImportStatementArm1",
+      "factoryName": "futureImportStatementArm1",
+      "irKey": "futureImportStatementArm1",
       "hidden": false,
       "fields": [
         {
@@ -6661,9 +6661,9 @@
           }
         },
         {
-          "name": "except_clause_group1",
-          "propertyName": "exceptClauseGroup1",
-          "paramName": "exceptClauseGroup1",
+          "name": "except_clause_arm1",
+          "propertyName": "exceptClauseArm1",
+          "paramName": "exceptClauseArm1",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6671,15 +6671,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_except_clause_group1",
-              "parseKind": "except_clause_group1",
+              "name": "_except_clause_arm1",
+              "parseKind": "except_clause_arm1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_except_clause_group1"
+              "_except_clause_arm1"
             ]
           }
         },
@@ -6726,7 +6726,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "except_clause_group1",
+        "except_clause_arm1",
         "content"
       ]
     },
@@ -7570,8 +7570,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_future_import_statement_group1",
-              "parseKind": "future_import_statement_group1",
+              "name": "_future_import_statement_arm1",
+              "parseKind": "future_import_statement_arm1",
               "unresolved": true
             }
           ],
@@ -7579,7 +7579,7 @@
             "typeName": "",
             "kinds": [
               "_import_list",
-              "_future_import_statement_group1"
+              "_future_import_statement_arm1"
             ]
           }
         }
@@ -8010,8 +8010,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_future_import_statement_group1",
-              "parseKind": "future_import_statement_group1",
+              "name": "_future_import_statement_arm1",
+              "parseKind": "future_import_statement_arm1",
               "unresolved": true
             },
             {
@@ -8026,7 +8026,7 @@
             "typeName": "",
             "kinds": [
               "_import_list",
-              "_future_import_statement_group1",
+              "_future_import_statement_arm1",
               "wildcard_import"
             ]
           }
@@ -9604,23 +9604,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "print_statement_group1",
-              "parseKind": "print_statement_group1",
+              "name": "print_statement_arm1",
+              "parseKind": "print_statement_arm1",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "print_statement_group2",
-              "parseKind": "print_statement_group2",
+              "name": "print_statement_arm2",
+              "parseKind": "print_statement_arm2",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "print_statement_group1",
-              "print_statement_group2"
+              "print_statement_arm1",
+              "print_statement_arm2"
             ]
           }
         }
@@ -9632,11 +9632,11 @@
       ]
     },
     {
-      "kind": "print_statement_group1",
+      "kind": "print_statement_arm1",
       "modelType": "branch",
-      "typeName": "PrintStatementGroup1",
-      "factoryName": "printStatementGroup1",
-      "irKey": "printStatementGroup1",
+      "typeName": "PrintStatementArm1",
+      "factoryName": "printStatementArm1",
+      "irKey": "printStatementArm1",
       "hidden": false,
       "fields": [
         {
@@ -9700,11 +9700,11 @@
       ]
     },
     {
-      "kind": "print_statement_group2",
+      "kind": "print_statement_arm2",
       "modelType": "branch",
-      "typeName": "PrintStatementGroup2",
-      "factoryName": "printStatementGroup2",
-      "irKey": "printStatementGroup2",
+      "typeName": "PrintStatementArm2",
+      "factoryName": "printStatementArm2",
+      "irKey": "printStatementArm2",
       "hidden": false,
       "fields": [
         {

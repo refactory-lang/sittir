@@ -1668,8 +1668,8 @@ describe('array_expression', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_array_expression_group1: {
-				$type: TSKindId.ArrayExpressionGroup1,
+			_array_expression_arm1: {
+				$type: TSKindId.ArrayExpressionArm1,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -2397,7 +2397,7 @@ describe('mut_pattern', () => {
 describe('range_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.rangePattern({
-			$type: TSKindId.RangePatternGroup2,
+			$type: TSKindId.RangePatternArm2,
 			$text: 'test',
 			$source: 2,
 			$named: true,

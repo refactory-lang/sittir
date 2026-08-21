@@ -162,7 +162,7 @@ export function buildRelativeImport(config: T.RelativeImport.Config) {
 	);
 }
 
-export function buildFutureImportStatement(child: T.ImportList | T.FutureImportStatementGroup1) {
+export function buildFutureImportStatement(child: T.ImportList | T.FutureImportStatementArm1) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -171,7 +171,7 @@ export function buildFutureImportStatement(child: T.ImportList | T.FutureImportS
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.ImportList | T.FutureImportStatementGroup1) => buildFutureImportStatement(v) }
+				$with: { $child: (v: T.ImportList | T.FutureImportStatementArm1) => buildFutureImportStatement(v) }
 			},
 			{
 				content: () => _content
@@ -195,7 +195,7 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config) {
 				$with: {
 					moduleName: (value: T.RelativeImport | T.DottedName) =>
 						buildImportFromStatement({ ...config, moduleName: value }),
-					content: (value: T.ImportList | T.FutureImportStatementGroup1 | T.WildcardImport) =>
+					content: (value: T.ImportList | T.FutureImportStatementArm1 | T.WildcardImport) =>
 						buildImportFromStatement({ ...config, content: value })
 				}
 			},
@@ -271,7 +271,7 @@ export function buildAliasedImport(config: T.AliasedImport.Config) {
 	);
 }
 
-export function buildPrintStatement(child: T.PrintStatementGroup1 | T.PrintStatementGroup2) {
+export function buildPrintStatement(child: T.PrintStatementArm1 | T.PrintStatementArm2) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -280,7 +280,7 @@ export function buildPrintStatement(child: T.PrintStatementGroup1 | T.PrintState
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.PrintStatementGroup1 | T.PrintStatementGroup2) => buildPrintStatement(v) }
+				$with: { $child: (v: T.PrintStatementArm1 | T.PrintStatementArm2) => buildPrintStatement(v) }
 			},
 			{
 				content: () => _content
@@ -738,7 +738,7 @@ export function buildTryStatement(config: T.TryStatement.Config) {
 
 export function buildExceptClause(config: T.ExceptClause.Config) {
 	const _star_marker = coerceBooleanKeywordStorage(config.starMarker);
-	const _except_clause_group1 = config.exceptClauseGroup1;
+	const _except_clause_arm1 = config.exceptClauseArm1;
 	const _content = config.content;
 	return withMethods(
 		withAccessors(
@@ -747,20 +747,19 @@ export function buildExceptClause(config: T.ExceptClause.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_star_marker,
-				_except_clause_group1,
+				_except_clause_arm1,
 				_content,
 				$with: {
 					starMarker: (value?: NonNullable<Parameters<typeof buildExceptClause>[0]>['starMarker']) =>
 						buildExceptClause({ ...config, starMarker: value }),
-					exceptClauseGroup1: (value?: T.ExceptClauseGroup1) =>
-						buildExceptClause({ ...config, exceptClauseGroup1: value }),
+					exceptClauseArm1: (value?: T.ExceptClauseArm1) => buildExceptClause({ ...config, exceptClauseArm1: value }),
 					content: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
 						buildExceptClause({ ...config, content: value })
 				}
 			},
 			{
 				starMarker: () => _star_marker,
-				exceptClauseGroup1: () => _except_clause_group1,
+				exceptClauseArm1: () => _except_clause_arm1,
 				content: () => _content
 			}
 		),
@@ -3228,15 +3227,13 @@ function _buildSimpleStatementsElements(elements: NonEmptyArray<T.SimpleStatemen
 	);
 }
 
-export function buildFutureImportStatementGroup1(
-	child: T.ImportList
-): ReturnType<typeof _buildFutureImportStatementGroup1>;
-export function buildFutureImportStatementGroup1(
+export function buildFutureImportStatementArm1(child: T.ImportList): ReturnType<typeof _buildFutureImportStatementArm1>;
+export function buildFutureImportStatementArm1(
 	...args: Parameters<typeof buildImportList>
-): ReturnType<typeof _buildFutureImportStatementGroup1>;
-export function buildFutureImportStatementGroup1(...args: unknown[]) {
+): ReturnType<typeof _buildFutureImportStatementArm1>;
+export function buildFutureImportStatementArm1(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildFutureImportStatementGroup1(args[0] as T.ImportList);
+		return _buildFutureImportStatementArm1(args[0] as T.ImportList);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -3244,19 +3241,19 @@ export function buildFutureImportStatementGroup1(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportList as const);
 	return prebuilt
-		? _buildFutureImportStatementGroup1(args[0] as T.ImportList)
-		: _buildFutureImportStatementGroup1((buildImportList as (...a: unknown[]) => unknown)(...args) as T.ImportList);
+		? _buildFutureImportStatementArm1(args[0] as T.ImportList)
+		: _buildFutureImportStatementArm1((buildImportList as (...a: unknown[]) => unknown)(...args) as T.ImportList);
 }
-function _buildFutureImportStatementGroup1(child: T.ImportList) {
+function _buildFutureImportStatementArm1(child: T.ImportList) {
 	const _import_list = child;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.FutureImportStatementGroup1 as const,
+				$type: TSKindId.FutureImportStatementArm1 as const,
 				$source: 2 as const,
 				$named: true as const,
 				_import_list,
-				$with: { $child: (v: T.ImportList) => buildFutureImportStatementGroup1(v) }
+				$with: { $child: (v: T.ImportList) => buildFutureImportStatementArm1(v) }
 			},
 			{
 				importList: () => _import_list
@@ -3338,16 +3335,16 @@ function _buildCasePatterns(elements: NonEmptyArray<T.CasePattern>, options: { d
 	);
 }
 
-export function buildExceptClauseGroup1(child: T.ExceptClauseAs | T.ExceptClauseList) {
+export function buildExceptClauseArm1(child: T.ExceptClauseAs | T.ExceptClauseList) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ExceptClauseGroup1 as const,
+				$type: TSKindId.ExceptClauseArm1 as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.ExceptClauseAs | T.ExceptClauseList) => buildExceptClauseGroup1(v) }
+				$with: { $child: (v: T.ExceptClauseAs | T.ExceptClauseList) => buildExceptClauseArm1(v) }
 			},
 			{
 				content: () => _content
@@ -3976,21 +3973,21 @@ function _buildPrintChevronArguments(elements: NonEmptyArray<T.Expression>, opti
 	);
 }
 
-export function buildPrintStatementGroup1(config: T.PrintStatementGroup1.Config) {
+export function buildPrintStatementArm1(config: T.PrintStatementArm1.Config) {
 	const _chevron = config.chevron;
 	const _print_chevron_arguments = config.printChevronArguments;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.PrintStatementGroup1 as const,
+				$type: TSKindId.PrintStatementArm1 as const,
 				$source: 2 as const,
 				$named: true as const,
 				_chevron,
 				_print_chevron_arguments,
 				$with: {
-					chevron: (value: T.Chevron) => buildPrintStatementGroup1({ ...config, chevron: value }),
+					chevron: (value: T.Chevron) => buildPrintStatementArm1({ ...config, chevron: value }),
 					printChevronArguments: (value?: T.PrintChevronArguments | ',') =>
-						buildPrintStatementGroup1({ ...config, printChevronArguments: value })
+						buildPrintStatementArm1({ ...config, printChevronArguments: value })
 				}
 			},
 			{
@@ -4002,13 +3999,13 @@ export function buildPrintStatementGroup1(config: T.PrintStatementGroup1.Config)
 	);
 }
 
-export function buildPrintStatementGroup2(child: T.PrintArguments): ReturnType<typeof _buildPrintStatementGroup2>;
-export function buildPrintStatementGroup2(
+export function buildPrintStatementArm2(child: T.PrintArguments): ReturnType<typeof _buildPrintStatementArm2>;
+export function buildPrintStatementArm2(
 	...args: Parameters<typeof buildPrintArguments>
-): ReturnType<typeof _buildPrintStatementGroup2>;
-export function buildPrintStatementGroup2(...args: unknown[]) {
+): ReturnType<typeof _buildPrintStatementArm2>;
+export function buildPrintStatementArm2(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildPrintStatementGroup2(args[0] as T.PrintArguments);
+		return _buildPrintStatementArm2(args[0] as T.PrintArguments);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -4016,19 +4013,19 @@ export function buildPrintStatementGroup2(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.PrintArguments as const);
 	return prebuilt
-		? _buildPrintStatementGroup2(args[0] as T.PrintArguments)
-		: _buildPrintStatementGroup2((buildPrintArguments as (...a: unknown[]) => unknown)(...args) as T.PrintArguments);
+		? _buildPrintStatementArm2(args[0] as T.PrintArguments)
+		: _buildPrintStatementArm2((buildPrintArguments as (...a: unknown[]) => unknown)(...args) as T.PrintArguments);
 }
-function _buildPrintStatementGroup2(child: T.PrintArguments) {
+function _buildPrintStatementArm2(child: T.PrintArguments) {
 	const _print_arguments = child;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.PrintStatementGroup2 as const,
+				$type: TSKindId.PrintStatementArm2 as const,
 				$source: 2 as const,
 				$named: true as const,
 				_print_arguments,
-				$with: { $child: (v: T.PrintArguments) => buildPrintStatementGroup2(v) }
+				$with: { $child: (v: T.PrintArguments) => buildPrintStatementArm2(v) }
 			},
 			{
 				printArguments: () => _print_arguments
@@ -4653,10 +4650,10 @@ export type FluentKindMap = {
 	comment: T.Comment;
 	line_continuation: T.LineContinuation;
 	_simple_statements_elements: FluentNode<'_simple_statements_elements', T.SimpleStatementsElements.Config>;
-	_future_import_statement_group1: FluentNode<'_future_import_statement_group1', T.FutureImportStatementGroup1.Config>;
+	_future_import_statement_arm1: FluentNode<'_future_import_statement_arm1', T.FutureImportStatementArm1.Config>;
 	_subjects: FluentNode<'_subjects', T.Subjects.Config>;
 	_case_patterns: FluentNode<'_case_patterns', T.CasePatterns.Config>;
-	_except_clause_group1: FluentNode<'_except_clause_group1', T.ExceptClauseGroup1.Config>;
+	_except_clause_arm1: FluentNode<'_except_clause_arm1', T.ExceptClauseArm1.Config>;
 	_with_clause_with_items: FluentNode<'_with_clause_with_items', T.WithClauseWithItems.Config>;
 	_types: FluentNode<'_types', T.Types.Config>;
 	_argument_list_elements: FluentNode<'_argument_list_elements', T.ArgumentListElements.Config>;
@@ -4675,8 +4672,8 @@ export type FluentKindMap = {
 	comprehension_clauses: FluentNode<'comprehension_clauses', T.ComprehensionClauses.Config>;
 	_print_arguments: FluentNode<'_print_arguments', T.PrintArguments.Config>;
 	_print_chevron_arguments: FluentNode<'_print_chevron_arguments', T.PrintChevronArguments.Config>;
-	print_statement_group1: FluentNode<'print_statement_group1', T.PrintStatementGroup1.Config>;
-	print_statement_group2: FluentNode<'print_statement_group2', T.PrintStatementGroup2.Config>;
+	print_statement_arm1: FluentNode<'print_statement_arm1', T.PrintStatementArm1.Config>;
+	print_statement_arm2: FluentNode<'print_statement_arm2', T.PrintStatementArm2.Config>;
 	_assignment_eq: T.AssignmentEq;
 	_assignment_type: T.AssignmentType;
 	_assignment_typed: T.AssignmentTyped;
@@ -4827,10 +4824,10 @@ export const _factoryMap = {
 	comment: buildComment,
 	line_continuation: buildLineContinuation,
 	_simple_statements_elements: buildSimpleStatementsElements,
-	_future_import_statement_group1: buildFutureImportStatementGroup1,
+	_future_import_statement_arm1: buildFutureImportStatementArm1,
 	_subjects: buildSubjects,
 	_case_patterns: buildCasePatterns,
-	_except_clause_group1: buildExceptClauseGroup1,
+	_except_clause_arm1: buildExceptClauseArm1,
 	_with_clause_with_items: buildWithClauseWithItems,
 	_types: buildTypes,
 	_argument_list_elements: buildArgumentListElements,
@@ -4849,8 +4846,8 @@ export const _factoryMap = {
 	comprehension_clauses: buildComprehensionClauses,
 	_print_arguments: buildPrintArguments,
 	_print_chevron_arguments: buildPrintChevronArguments,
-	print_statement_group1: buildPrintStatementGroup1,
-	print_statement_group2: buildPrintStatementGroup2,
+	print_statement_arm1: buildPrintStatementArm1,
+	print_statement_arm2: buildPrintStatementArm2,
 	_assignment_eq: buildAssignmentEq,
 	_assignment_type: buildAssignmentType,
 	_assignment_typed: buildAssignmentTyped,

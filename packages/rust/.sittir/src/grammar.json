@@ -850,14 +850,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_attribute_group1",
+                "name": "_attribute_arm1",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "attribute_group1",
+              "value": "attribute_arm1",
               "metadata": {
                 "author": "enrich"
               }
@@ -7695,14 +7695,14 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_range_pattern_group2",
+            "name": "_range_pattern_arm2",
             "metadata": {
               "author": "enrich",
               "symbolSource": "group-lift"
             }
           },
           "named": true,
-          "value": "range_pattern_group2",
+          "value": "range_pattern_arm2",
           "metadata": {
             "author": "enrich"
           }
@@ -8401,14 +8401,14 @@
                   "type": "ALIAS",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "_block_comment_group1",
+                    "name": "_block_comment_arm1",
                     "metadata": {
                       "author": "enrich",
                       "symbolSource": "group-lift"
                     }
                   },
                   "named": true,
-                  "value": "block_comment_group1",
+                  "value": "block_comment_arm1",
                   "metadata": {
                     "author": "enrich"
                   }
@@ -8707,7 +8707,7 @@
         }
       ]
     },
-    "_attribute_group1": {
+    "_attribute_arm1": {
       "type": "CHOICE",
       "members": [
         {
@@ -9642,7 +9642,7 @@
         }
       ]
     },
-    "_array_expression_group1": {
+    "_array_expression_arm1": {
       "type": "SEQ",
       "members": [
         {
@@ -10032,7 +10032,7 @@
         }
       ]
     },
-    "_range_pattern_group2": {
+    "_range_pattern_arm2": {
       "type": "SEQ",
       "members": [
         {
@@ -10084,7 +10084,7 @@
         }
       ]
     },
-    "_block_comment_group1": {
+    "_block_comment_arm1": {
       "type": "SEQ",
       "members": [
         {
@@ -10699,14 +10699,14 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_array_expression_group1",
+            "name": "_array_expression_arm1",
             "metadata": {
               "author": "enrich",
               "symbolSource": "group-lift"
             }
           },
           "named": true,
-          "value": "array_expression_group1",
+          "value": "array_expression_arm1",
           "metadata": {
             "author": "enrich"
           }
@@ -12068,10 +12068,10 @@
     ],
     [
       "attribute",
-      "_attribute_group1"
+      "_attribute_arm1"
     ],
     [
-      "_attribute_group1"
+      "_attribute_arm1"
     ],
     [
       "enum_variant_list",
@@ -12159,10 +12159,10 @@
     ],
     [
       "array_expression",
-      "_array_expression_group1"
+      "_array_expression_arm1"
     ],
     [
-      "_array_expression_group1"
+      "_array_expression_arm1"
     ],
     [
       "field_initializer_list",
@@ -12194,17 +12194,17 @@
     ],
     [
       "range_pattern",
-      "_range_pattern_group2"
+      "_range_pattern_arm2"
     ],
     [
-      "_range_pattern_group2"
+      "_range_pattern_arm2"
     ],
     [
       "block_comment",
-      "_block_comment_group1"
+      "_block_comment_arm1"
     ],
     [
-      "_block_comment_group1"
+      "_block_comment_arm1"
     ],
     [
       "_array_expression_semi",

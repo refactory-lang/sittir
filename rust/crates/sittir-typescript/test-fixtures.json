@@ -1995,7 +1995,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "declare class Error{ constructor:Function\n }\ndeclare var foo:number;declare const bar=\"baz\";declare function greet(greeting:string):void;declare namespace myLib{ function makeGreeting(s:string):string;let numberOfGreetings:number;interface LogOptions{verbose?:boolean;}interface AlertOptions{modal:boolean;title?:string;color?:string;} }\ndeclare class Greeter{ constructor(greeting:string);greeting:string;showGreeting():void; }\ndeclare module Foo.Bar{ export var foo; };declare module Foo{ break;continue;debugger;do{ }while(true);for(x in null){  }\nfor(;;){  }\nif(true){ }else{  }\n1;return;switch(x){ case 1:break;default:break; }throw\"hello\";try{  }\ncatch(e){  }\nfinally{  }\n }\n",
-    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment))))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier)))))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause statement: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group1 parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment))))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier)))))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause statement: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group1 parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))))",
     "wrappedText": "declare class Error{ constructor:Function\n }\ndeclare var foo:number;declare const bar=\"baz\";declare function greet(greeting:string):void;declare namespace myLib{ function makeGreeting(s:string):string;let numberOfGreetings:number;interface LogOptions{verbose?:boolean;}interface AlertOptions{modal:boolean;title?:string;color?:string;} }\ndeclare class Greeter{ constructor(greeting:string);greeting:string;showGreeting():void; }\ndeclare module Foo.Bar{ export var foo; };declare module Foo{ break;continue;debugger;do{ }while(true);for(x in null){  }\nfor(;;){  }\nif(true){ }else{  }\n1;return;switch(x){ case 1:break;default:break; }throw\"hello\";try{  }\ncatch(e){  }\nfinally{  }\n }\n",
     "wrappedOffset": 0
   },
@@ -2204,7 +2204,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare var foo:number;",
-    "expectedReparseTree": "(ambient_declaration (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type))))))",
+    "expectedReparseTree": "(ambient_declaration (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type))))))",
     "wrappedText": "declare var foo:number;",
     "wrappedOffset": 0
   },
@@ -2307,7 +2307,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare const bar=\"baz\";",
-    "expectedReparseTree": "(ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment)))))))",
+    "expectedReparseTree": "(ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment)))))))",
     "wrappedText": "declare const bar=\"baz\";",
     "wrappedOffset": 0
   },
@@ -2967,7 +2967,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare namespace myLib{ function makeGreeting(s:string):string;let numberOfGreetings:number;interface LogOptions{verbose?:boolean;}interface AlertOptions{modal:boolean;title?:string;color?:string;} }\n",
-    "expectedReparseTree": "(ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "declare namespace myLib{ function makeGreeting(s:string):string;let numberOfGreetings:number;interface LogOptions{verbose?:boolean;}interface AlertOptions{modal:boolean;title?:string;color?:string;} }\n",
     "wrappedOffset": 0
   },
@@ -3407,7 +3407,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare module Foo.Bar{ export var foo; }",
-    "expectedReparseTree": "(ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier))))))) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier))))))) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "declare module Foo.Bar{ export var foo; }",
     "wrappedOffset": 0
   },
@@ -5415,7 +5415,7 @@
     "pattern": "variable_declaration",
     "edits": [],
     "expectedSourceOut": "var foo:number;",
-    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)))))",
     "wrappedText": "var foo:number;",
     "wrappedOffset": 0
   },
@@ -5472,7 +5472,7 @@
     "pattern": "variable_declaration",
     "edits": [],
     "expectedSourceOut": "var foo;",
-    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier))))",
     "wrappedText": "var foo;",
     "wrappedOffset": 0
   },
@@ -5537,7 +5537,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "foo:number",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type))))",
     "wrappedText": "let foo:number;",
     "wrappedOffset": 4
   },
@@ -5608,7 +5608,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "bar=\"baz\"",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment)))))",
     "wrappedText": "let bar=\"baz\";",
     "wrappedOffset": 4
   },
@@ -5673,7 +5673,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "numberOfGreetings:number",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type))))",
     "wrappedText": "let numberOfGreetings:number;",
     "wrappedOffset": 4
   },
@@ -5710,7 +5710,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "foo",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier)))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier)))",
     "wrappedText": "let foo;",
     "wrappedOffset": 4
   },
@@ -5800,7 +5800,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const bar=\"baz\";",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment))))))",
     "wrappedText": "const bar=\"baz\";",
     "wrappedOffset": 0
   },
@@ -5884,7 +5884,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let numberOfGreetings:number;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)))))",
     "wrappedText": "let numberOfGreetings:number;",
     "wrappedOffset": 0
   },
@@ -7176,7 +7176,7 @@
     "pattern": "internal_module",
     "edits": [],
     "expectedSourceOut": "namespace myLib{ function makeGreeting(s:string):string;let numberOfGreetings:number;interface LogOptions{verbose?:boolean;}interface AlertOptions{modal:boolean;title?:string;color?:string;} }\n",
-    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "namespace myLib{ function makeGreeting(s:string):string;let numberOfGreetings:number;interface LogOptions{verbose?:boolean;}interface AlertOptions{modal:boolean;title?:string;color?:string;} }\n",
     "wrappedOffset": 0
   },
@@ -7664,7 +7664,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{ function makeGreeting(s:string):string;let numberOfGreetings:number;interface LogOptions{verbose?:boolean;}interface AlertOptions{modal:boolean;title?:string;color?:string;} }\n",
-    "expectedReparseTree": "(statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{ function makeGreeting(s:string):string;let numberOfGreetings:number;interface LogOptions{verbose?:boolean;}interface AlertOptions{modal:boolean;title?:string;color?:string;} }\n",
     "wrappedOffset": 0
   },
@@ -7771,7 +7771,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{ export var foo; }",
-    "expectedReparseTree": "(statement_block statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier))))))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier))))))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{ export var foo; }",
     "wrappedOffset": 0
   },
@@ -9596,7 +9596,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "module Foo.Bar{ export var foo; }",
-    "expectedReparseTree": "(module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier))))))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier))))))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "module Foo.Bar{ export var foo; }",
     "wrappedOffset": 0
   },
@@ -10351,7 +10351,7 @@
     "pattern": "export_statement",
     "edits": [],
     "expectedSourceOut": "export var foo;",
-    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier)))))))",
+    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier)))))))",
     "wrappedText": "export var foo;",
     "wrappedOffset": 0
   },
@@ -21434,7 +21434,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "module Promise{ var on:{}\nexport function resolve<R>(value?:Thenable<R>):Promise<R>; }\ndeclare module\"example\"declare module\"example\"{  }\n",
-    "expectedReparseTree": "(program statements: (module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type)))) semicolon: (automatic_semicolon)) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (ambient_declaration (module name: (string (string_double elements: (unescaped_double_string_fragment))) body: (statement_block automatic_semicolon: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (object_type)))) semicolon: (automatic_semicolon)) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (ambient_declaration (module name: (string (string_double elements: (unescaped_double_string_fragment))) body: (statement_block automatic_semicolon: (automatic_semicolon)))))",
     "wrappedText": "module Promise{ var on:{}\nexport function resolve<R>(value?:Thenable<R>):Promise<R>; }\ndeclare module\"example\"declare module\"example\"{  }\n",
     "wrappedOffset": 0
   },
@@ -21816,7 +21816,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "module Promise{ var on:{}\nexport function resolve<R>(value?:Thenable<R>):Promise<R>; }\n",
-    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type)))) semicolon: (automatic_semicolon)) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))))))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (object_type)))) semicolon: (automatic_semicolon)) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))))))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "module Promise{ var on:{}\nexport function resolve<R>(value?:Thenable<R>):Promise<R>; }\n",
     "wrappedOffset": 0
   },
@@ -22312,7 +22312,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{ var on:{}\nexport function resolve<R>(value?:Thenable<R>):Promise<R>; }\n",
-    "expectedReparseTree": "(statement_block statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type)))) semicolon: (automatic_semicolon)) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))))))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (object_type)))) semicolon: (automatic_semicolon)) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))))))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{ var on:{}\nexport function resolve<R>(value?:Thenable<R>):Promise<R>; }\n",
     "wrappedOffset": 0
   },
@@ -22434,7 +22434,7 @@
     "pattern": "variable_declaration",
     "edits": [],
     "expectedSourceOut": "var on:{}\n",
-    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type)))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (object_type)))) semicolon: (automatic_semicolon))",
     "wrappedText": "var on:{}\n",
     "wrappedOffset": 0
   },
@@ -22504,7 +22504,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "on:{}",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (object_type))))",
     "wrappedText": "let on:{};",
     "wrappedOffset": 4
   },
@@ -28237,7 +28237,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "declare namespace moment{ type formatFunction=()=>string;export var x:string;export class foo{\n\n  }\nexport function utc():Moment;export const enum Blah{ Blaz,Bloz,Bleez } }\n",
-    "expectedReparseTree": "(program statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)))))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier) name: (property_identifier))))))) automatic_semicolon: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)))))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier) name: (property_identifier))))))) automatic_semicolon: (automatic_semicolon)))))",
     "wrappedText": "declare namespace moment{ type formatFunction=()=>string;export var x:string;export class foo{\n\n  }\nexport function utc():Moment;export const enum Blah{ Blaz,Bloz,Bleez } }\n",
     "wrappedOffset": 0
   },
@@ -28706,7 +28706,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare namespace moment{ type formatFunction=()=>string;export var x:string;export class foo{\n\n  }\nexport function utc():Moment;export const enum Blah{ Blaz,Bloz,Bleez } }\n",
-    "expectedReparseTree": "(ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)))))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier) name: (property_identifier))))))) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)))))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier) name: (property_identifier))))))) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "declare namespace moment{ type formatFunction=()=>string;export var x:string;export class foo{\n\n  }\nexport function utc():Moment;export const enum Blah{ Blaz,Bloz,Bleez } }\n",
     "wrappedOffset": 0
   },
@@ -29162,7 +29162,7 @@
     "pattern": "internal_module",
     "edits": [],
     "expectedSourceOut": "namespace moment{ type formatFunction=()=>string;export var x:string;export class foo{\n\n  }\nexport function utc():Moment;export const enum Blah{ Blaz,Bloz,Bleez } }\n",
-    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)))))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier) name: (property_identifier))))))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)))))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier) name: (property_identifier))))))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "namespace moment{ type formatFunction=()=>string;export var x:string;export class foo{\n\n  }\nexport function utc():Moment;export const enum Blah{ Blaz,Bloz,Bleez } }\n",
     "wrappedOffset": 0
   },
@@ -29600,7 +29600,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{ type formatFunction=()=>string;export var x:string;export class foo{\n\n  }\nexport function utc():Moment;export const enum Blah{ Blaz,Bloz,Bleez } }\n",
-    "expectedReparseTree": "(statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)))))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier) name: (property_identifier))))))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)))))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier) name: (property_identifier))))))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{ type formatFunction=()=>string;export var x:string;export class foo{\n\n  }\nexport function utc():Moment;export const enum Blah{ Blaz,Bloz,Bleez } }\n",
     "wrappedOffset": 0
   },
@@ -29904,7 +29904,7 @@
     "pattern": "export_statement",
     "edits": [],
     "expectedSourceOut": "export var x:string;",
-    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type))))))))",
+    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type))))))))",
     "wrappedText": "export var x:string;",
     "wrappedOffset": 0
   },
@@ -30271,7 +30271,7 @@
     "pattern": "variable_declaration",
     "edits": [],
     "expectedSourceOut": "var x:string;",
-    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)))))",
     "wrappedText": "var x:string;",
     "wrappedOffset": 0
   },
@@ -30336,7 +30336,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x:string",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type))))",
     "wrappedText": "let x:string;",
     "wrappedOffset": 4
   },
@@ -31463,7 +31463,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "namespace Foo{  }\n\nnamespace Bar{ var x; }\n\n",
-    "expectedReparseTree": "(program statements: (expression_statement (internal_module name: (identifier) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)) statements: (expression_statement (internal_module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier)))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (expression_statement (internal_module name: (identifier) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)) statements: (expression_statement (internal_module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier)))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
     "wrappedText": "namespace Foo{  }\n\nnamespace Bar{ var x; }\n\n",
     "wrappedOffset": 0
   },
@@ -31639,7 +31639,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "namespace Bar{ var x; }\n\n",
-    "expectedReparseTree": "(expression_statement (internal_module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier)))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(expression_statement (internal_module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier)))) automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))",
     "wrappedText": "namespace Bar{ var x; }\n\n",
     "wrappedOffset": 0
   },
@@ -31785,7 +31785,7 @@
     "pattern": "internal_module",
     "edits": [],
     "expectedSourceOut": "namespace Bar{ var x; }\n",
-    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier)))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier)))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "namespace Bar{ var x; }\n",
     "wrappedOffset": 0
   },
@@ -31895,7 +31895,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{ var x; }\n",
-    "expectedReparseTree": "(statement_block statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier)))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier)))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{ var x; }\n",
     "wrappedOffset": 0
   },
@@ -31952,7 +31952,7 @@
     "pattern": "variable_declaration",
     "edits": [],
     "expectedSourceOut": "var x;",
-    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier))))",
     "wrappedText": "var x;",
     "wrappedOffset": 0
   },
@@ -31989,7 +31989,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier)))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier)))",
     "wrappedText": "let x;",
     "wrappedOffset": 4
   },
@@ -51387,7 +51387,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "var a!:b;let a!:b;",
-    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group2 name: (identifier) type: (type_annotation type: (type_identifier))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group2 name: (identifier) type: (type_annotation type: (type_identifier))))))",
+    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator (variable_declarator_arm2 name: (identifier) type: (type_annotation type: (type_identifier))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm2 name: (identifier) type: (type_annotation type: (type_identifier))))))",
     "wrappedText": "var a!:b;let a!:b;",
     "wrappedOffset": 0
   },
@@ -51465,7 +51465,7 @@
     "pattern": "variable_declaration",
     "edits": [],
     "expectedSourceOut": "var a!:b;",
-    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_group2 name: (identifier) type: (type_annotation type: (type_identifier)))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_arm2 name: (identifier) type: (type_annotation type: (type_identifier)))))",
     "wrappedText": "var a!:b;",
     "wrappedOffset": 0
   },
@@ -51523,7 +51523,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "a!:b",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group2 name: (identifier) type: (type_annotation type: (type_identifier))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm2 name: (identifier) type: (type_annotation type: (type_identifier))))",
     "wrappedText": "let a!:b;",
     "wrappedOffset": 4
   },
@@ -51581,7 +51581,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "a!:b",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group2 name: (identifier) type: (type_annotation type: (type_identifier))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm2 name: (identifier) type: (type_annotation type: (type_identifier))))",
     "wrappedText": "let a!:b;",
     "wrappedOffset": 4
   },
@@ -51718,7 +51718,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let a!:b;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group2 name: (identifier) type: (type_annotation type: (type_identifier)))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm2 name: (identifier) type: (type_annotation type: (type_identifier)))))",
     "wrappedText": "let a!:b;",
     "wrappedOffset": 0
   },
@@ -64982,7 +64982,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "var module;module;",
-    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier)))) statements: (expression_statement (reserved_identifier)))",
+    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier)))) statements: (expression_statement (reserved_identifier)))",
     "wrappedText": "var module;module;",
     "wrappedOffset": 0
   },
@@ -65039,7 +65039,7 @@
     "pattern": "variable_declaration",
     "edits": [],
     "expectedSourceOut": "var module;",
-    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier))))",
     "wrappedText": "var module;",
     "wrappedOffset": 0
   },
@@ -65076,7 +65076,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "module",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier)))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier)))",
     "wrappedText": "let module;",
     "wrappedOffset": 4
   },
@@ -65247,7 +65247,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "var a=b,c=d,e=f\n",
-    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (identifier))) declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (identifier))) declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (identifier))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (identifier))) declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (identifier))) declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (identifier))) semicolon: (automatic_semicolon)))",
     "wrappedText": "var a=b,c=d,e=f\n",
     "wrappedOffset": 0
   },
@@ -65374,7 +65374,7 @@
     "pattern": "variable_declaration",
     "edits": [],
     "expectedSourceOut": "var a=b,c=d,e=f\n",
-    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (identifier))) declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (identifier))) declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (identifier))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (identifier))) declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (identifier))) declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (identifier))) semicolon: (automatic_semicolon))",
     "wrappedText": "var a=b,c=d,e=f\n",
     "wrappedOffset": 0
   },
@@ -65419,7 +65419,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "a=b",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (identifier)))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) value: (identifier)))",
     "wrappedText": "let a=b;",
     "wrappedOffset": 4
   },
@@ -65464,7 +65464,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "c=d",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (identifier)))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) value: (identifier)))",
     "wrappedText": "let c=d;",
     "wrappedOffset": 4
   },
@@ -65509,7 +65509,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "e=f",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (identifier)))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) value: (identifier)))",
     "wrappedText": "let e=f;",
     "wrappedOffset": 4
   },
@@ -69252,7 +69252,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "const makeHammerBox=makeBox<Hammer>;const makeStringBox=makeBox<string>;const ErrorMap=Map<string,Error>;",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (type_identifier))))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (predefined_type))))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (predefined_type) type: (type_identifier))))))))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (type_identifier))))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (predefined_type))))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (predefined_type) type: (type_identifier))))))))",
     "wrappedText": "const makeHammerBox=makeBox<Hammer>;const makeStringBox=makeBox<string>;const ErrorMap=Map<string,Error>;",
     "wrappedOffset": 0
   },
@@ -69358,7 +69358,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const makeHammerBox=makeBox<Hammer>;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (type_identifier)))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (type_identifier)))))))",
     "wrappedText": "const makeHammerBox=makeBox<Hammer>;",
     "wrappedOffset": 0
   },
@@ -69474,7 +69474,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const makeStringBox=makeBox<string>;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (predefined_type)))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (predefined_type)))))))",
     "wrappedText": "const makeStringBox=makeBox<string>;",
     "wrappedOffset": 0
   },
@@ -69594,7 +69594,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const ErrorMap=Map<string,Error>;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (predefined_type) type: (type_identifier)))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (predefined_type) type: (type_identifier)))))))",
     "wrappedText": "const ErrorMap=Map<string,Error>;",
     "wrappedOffset": 0
   },
@@ -69681,7 +69681,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "makeHammerBox=makeBox<Hammer>",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (type_identifier))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (type_identifier))))))",
     "wrappedText": "let makeHammerBox=makeBox<Hammer>;",
     "wrappedOffset": 4
   },
@@ -69778,7 +69778,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "makeStringBox=makeBox<string>",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (predefined_type))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (predefined_type))))))",
     "wrappedText": "let makeStringBox=makeBox<string>;",
     "wrappedOffset": 4
   },
@@ -69879,7 +69879,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "ErrorMap=Map<string,Error>",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (predefined_type) type: (type_identifier))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types type: (predefined_type) type: (type_identifier))))))",
     "wrappedText": "let ErrorMap=Map<string,Error>;",
     "wrappedOffset": 4
   },
@@ -71478,7 +71478,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "const x=\"a\\nb\\tc\";const y='It\\'s\\ttabbed';",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment)))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment)))))))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment)))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment)))))))",
     "wrappedText": "const x=\"a\\nb\\tc\";const y='It\\'s\\ttabbed';",
     "wrappedOffset": 0
   },
@@ -71572,7 +71572,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const x=\"a\\nb\\tc\";",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment))))))",
     "wrappedText": "const x=\"a\\nb\\tc\";",
     "wrappedOffset": 0
   },
@@ -71666,7 +71666,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const y='It\\'s\\ttabbed';",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment))))))",
     "wrappedText": "const y='It\\'s\\ttabbed';",
     "wrappedOffset": 0
   },
@@ -71741,7 +71741,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x=\"a\\nb\\tc\"",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment)))))",
     "wrappedText": "let x=\"a\\nb\\tc\";",
     "wrappedOffset": 4
   },
@@ -71816,7 +71816,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "y='It\\'s\\ttabbed'",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment)))))",
     "wrappedText": "let y='It\\'s\\ttabbed';",
     "wrappedOffset": 4
   },
@@ -72035,7 +72035,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "const z=`pre${ x }mid\\n${ y }post`;",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (template_string elements: (string_fragment) elements: (template_substitution (identifier)) elements: (string_fragment) elements: (escape_sequence) elements: (template_substitution (identifier)) elements: (string_fragment))))))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (template_string elements: (string_fragment) elements: (template_substitution (identifier)) elements: (string_fragment) elements: (escape_sequence) elements: (template_substitution (identifier)) elements: (string_fragment))))))",
     "wrappedText": "const z=`pre${ x }mid\\n${ y }post`;",
     "wrappedOffset": 0
   },
@@ -72148,7 +72148,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const z=`pre${ x }mid\\n${ y }post`;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (template_string elements: (string_fragment) elements: (template_substitution (identifier)) elements: (string_fragment) elements: (escape_sequence) elements: (template_substitution (identifier)) elements: (string_fragment)))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (template_string elements: (string_fragment) elements: (template_substitution (identifier)) elements: (string_fragment) elements: (escape_sequence) elements: (template_substitution (identifier)) elements: (string_fragment)))))",
     "wrappedText": "const z=`pre${ x }mid\\n${ y }post`;",
     "wrappedOffset": 0
   },
@@ -72242,7 +72242,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "z=`pre${ x }mid\\n${ y }post`",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (template_string elements: (string_fragment) elements: (template_substitution (identifier)) elements: (string_fragment) elements: (escape_sequence) elements: (template_substitution (identifier)) elements: (string_fragment))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) value: (template_string elements: (string_fragment) elements: (template_substitution (identifier)) elements: (string_fragment) elements: (escape_sequence) elements: (template_substitution (identifier)) elements: (string_fragment))))",
     "wrappedText": "let z=`pre${ x }mid\\n${ y }post`;",
     "wrappedOffset": 4
   },
@@ -77250,7 +77250,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "const lines=new Array<DiffLine>()\n",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (new_expression constructor: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments)))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (new_expression constructor: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments)))) semicolon: (automatic_semicolon)))",
     "wrappedText": "const lines=new Array<DiffLine>()\n",
     "wrappedOffset": 0
   },
@@ -77371,7 +77371,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const lines=new Array<DiffLine>()\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (new_expression constructor: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments)))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (new_expression constructor: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments)))) semicolon: (automatic_semicolon))",
     "wrappedText": "const lines=new Array<DiffLine>()\n",
     "wrappedOffset": 0
   },
@@ -77473,7 +77473,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "lines=new Array<DiffLine>()",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (new_expression constructor: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) value: (new_expression constructor: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments))))",
     "wrappedText": "let lines=new Array<DiffLine>();",
     "wrappedOffset": 4
   },
@@ -81685,7 +81685,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "const x=async=>async;",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (arrow_function (arrow_function_parameter parameter: (reserved_identifier)) body: (reserved_identifier))))))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (arrow_function (arrow_function_parameter parameter: (reserved_identifier)) body: (reserved_identifier))))))",
     "wrappedText": "const x=async=>async;",
     "wrappedOffset": 0
   },
@@ -81777,7 +81777,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const x=async=>async;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (arrow_function (arrow_function_parameter parameter: (reserved_identifier)) body: (reserved_identifier)))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (arrow_function (arrow_function_parameter parameter: (reserved_identifier)) body: (reserved_identifier)))))",
     "wrappedText": "const x=async=>async;",
     "wrappedOffset": 0
   },
@@ -81850,7 +81850,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x=async=>async",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (arrow_function (arrow_function_parameter parameter: (reserved_identifier)) body: (reserved_identifier))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) value: (arrow_function (arrow_function_parameter parameter: (reserved_identifier)) body: (reserved_identifier))))",
     "wrappedText": "let x=async=>async;",
     "wrappedOffset": 4
   },
@@ -88816,7 +88816,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "var x:string='hi';var y:number;",
-    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))) statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type))))))",
+    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))) statements: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type))))))",
     "wrappedText": "var x:string='hi';var y:number;",
     "wrappedOffset": 0
   },
@@ -88932,7 +88932,7 @@
     "pattern": "variable_declaration",
     "edits": [],
     "expectedSourceOut": "var x:string='hi';",
-    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))))",
     "wrappedText": "var x:string='hi';",
     "wrappedOffset": 0
   },
@@ -89017,7 +89017,7 @@
     "pattern": "variable_declaration",
     "edits": [],
     "expectedSourceOut": "var y:number;",
-    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)))))",
     "wrappedText": "var y:number;",
     "wrappedOffset": 0
   },
@@ -89113,7 +89113,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x:string='hi'",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
     "wrappedText": "let x:string='hi';",
     "wrappedOffset": 4
   },
@@ -89178,7 +89178,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "y:number",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type))))",
     "wrappedText": "let y:number;",
     "wrappedOffset": 4
   },
@@ -89553,7 +89553,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "var x:(string);var x:({a:any});",
-    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (parenthesized_type type: (predefined_type)))))) statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (parenthesized_type type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))))))",
+    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (parenthesized_type type: (predefined_type)))))) statements: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (parenthesized_type type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))))))",
     "wrappedText": "var x:(string);var x:({a:any});",
     "wrappedOffset": 0
   },
@@ -89652,7 +89652,7 @@
     "pattern": "variable_declaration",
     "edits": [],
     "expectedSourceOut": "var x:(string);",
-    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (parenthesized_type type: (predefined_type))))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (parenthesized_type type: (predefined_type))))))",
     "wrappedText": "var x:(string);",
     "wrappedOffset": 0
   },
@@ -89809,7 +89809,7 @@
     "pattern": "variable_declaration",
     "edits": [],
     "expectedSourceOut": "var x:({a:any});",
-    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (parenthesized_type type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (parenthesized_type type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))))",
     "wrappedText": "var x:({a:any});",
     "wrappedOffset": 0
   },
@@ -89888,7 +89888,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x:(string)",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (parenthesized_type type: (predefined_type)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (parenthesized_type type: (predefined_type)))))",
     "wrappedText": "let x:(string);",
     "wrappedOffset": 4
   },
@@ -90025,7 +90025,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x:({a:any})",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (parenthesized_type type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (parenthesized_type type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))))",
     "wrappedText": "let x:({a:any});",
     "wrappedOffset": 4
   },
@@ -91245,7 +91245,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "let person:{name:string,age:number};let thing:{[type:string]:string};type T={[K in keyof T]-?:any}\ntype T={[K in keyof T]?:any}\ntype T={-readonly[K in keyof T]:any}\n",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (reserved_identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type))))))))) statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query primary_type: (type_identifier))) type: (omitting_type_annotation type: (predefined_type))))) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query primary_type: (type_identifier))) type: (opting_type_annotation type: (predefined_type))))) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query primary_type: (type_identifier))) type: (type_annotation type: (predefined_type))))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (reserved_identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type))))))))) statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query primary_type: (type_identifier))) type: (omitting_type_annotation type: (predefined_type))))) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query primary_type: (type_identifier))) type: (opting_type_annotation type: (predefined_type))))) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query primary_type: (type_identifier))) type: (type_annotation type: (predefined_type))))) semicolon: (automatic_semicolon)))",
     "wrappedText": "let person:{name:string,age:number};let thing:{[type:string]:string};type T={[K in keyof T]-?:any}\ntype T={[K in keyof T]?:any}\ntype T={-readonly[K in keyof T]:any}\n",
     "wrappedOffset": 0
   },
@@ -91430,7 +91430,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let person:{name:string,age:number};",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))))",
     "wrappedText": "let person:{name:string,age:number};",
     "wrappedOffset": 0
   },
@@ -91604,7 +91604,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let thing:{[type:string]:string};",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (reserved_identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type)))))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (reserved_identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type)))))))))",
     "wrappedText": "let thing:{[type:string]:string};",
     "wrappedOffset": 0
   },
@@ -91770,7 +91770,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "person:{name:string,age:number}",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))",
     "wrappedText": "let person:{name:string,age:number};",
     "wrappedOffset": 4
   },
@@ -91925,7 +91925,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "thing:{[type:string]:string}",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (reserved_identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type))))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (reserved_identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type))))))))",
     "wrappedText": "let thing:{[type:string]:string};",
     "wrappedOffset": 4
   },
@@ -94192,7 +94192,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "let MyFunction:{(string):string,length:number};",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))))",
     "wrappedText": "let MyFunction:{(string):string,length:number};",
     "wrappedOffset": 0
   },
@@ -94419,7 +94419,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let MyFunction:{(string):string,length:number};",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))))",
     "wrappedText": "let MyFunction:{(string):string,length:number};",
     "wrappedOffset": 0
   },
@@ -94627,7 +94627,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "MyFunction:{(string):string,length:number}",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))",
     "wrappedText": "let MyFunction:{(string):string,length:number};",
     "wrappedOffset": 4
   },
@@ -97687,7 +97687,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "let x:X[];",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (array_type primary_type: (type_identifier)))))))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (array_type primary_type: (type_identifier)))))))",
     "wrappedText": "let x:X[];",
     "wrappedOffset": 0
   },
@@ -97775,7 +97775,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let x:X[];",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (array_type primary_type: (type_identifier))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (array_type primary_type: (type_identifier))))))",
     "wrappedText": "let x:X[];",
     "wrappedOffset": 0
   },
@@ -97844,7 +97844,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x:X[]",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (array_type primary_type: (type_identifier)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (array_type primary_type: (type_identifier)))))",
     "wrappedText": "let x:X[];",
     "wrappedOffset": 4
   },
@@ -98287,7 +98287,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "let x:(result:string)=>any;const foo:(this:Readable,size?:number)=>any;",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier))) formal_parameter: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))))))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier))) formal_parameter: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))))))",
     "wrappedText": "let x:(result:string)=>any;const foo:(this:Readable,size?:number)=>any;",
     "wrappedOffset": 0
   },
@@ -98455,7 +98455,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let x:(result:string)=>any;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))))))",
     "wrappedText": "let x:(result:string)=>any;",
     "wrappedOffset": 0
   },
@@ -98659,7 +98659,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const foo:(this:Readable,size?:number)=>any;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier))) formal_parameter: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier))) formal_parameter: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))))))",
     "wrappedText": "const foo:(this:Readable,size?:number)=>any;",
     "wrappedOffset": 0
   },
@@ -98808,7 +98808,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x:(result:string)=>any",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))))",
     "wrappedText": "let x:(result:string)=>any;",
     "wrappedOffset": 4
   },
@@ -98993,7 +98993,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "foo:(this:Readable,size?:number)=>any",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier))) formal_parameter: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier))) formal_parameter: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))))",
     "wrappedText": "let foo:(this:Readable,size?:number)=>any;",
     "wrappedOffset": 4
   },
@@ -100135,7 +100135,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "let foo:({ a }:Foo)=>number\n",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (object_pattern properties: (shorthand_property_identifier_pattern))) type: (type_annotation type: (type_identifier))))) return_type: (predefined_type))))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (object_pattern properties: (shorthand_property_identifier_pattern))) type: (type_annotation type: (type_identifier))))) return_type: (predefined_type))))) semicolon: (automatic_semicolon)))",
     "wrappedText": "let foo:({ a }:Foo)=>number\n",
     "wrappedOffset": 0
   },
@@ -100309,7 +100309,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let foo:({ a }:Foo)=>number\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (object_pattern properties: (shorthand_property_identifier_pattern))) type: (type_annotation type: (type_identifier))))) return_type: (predefined_type))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (object_pattern properties: (shorthand_property_identifier_pattern))) type: (type_annotation type: (type_identifier))))) return_type: (predefined_type))))) semicolon: (automatic_semicolon))",
     "wrappedText": "let foo:({ a }:Foo)=>number\n",
     "wrappedOffset": 0
   },
@@ -100464,7 +100464,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "foo:({ a }:Foo)=>number",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (object_pattern properties: (shorthand_property_identifier_pattern))) type: (type_annotation type: (type_identifier))))) return_type: (predefined_type)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (object_pattern properties: (shorthand_property_identifier_pattern))) type: (type_annotation type: (type_identifier))))) return_type: (predefined_type)))))",
     "wrappedText": "let foo:({ a }:Foo)=>number;",
     "wrappedOffset": 4
   },
@@ -101103,7 +101103,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "let x:new<T1,T2>(p1,p2)=>R;",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (constructor_type type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier))))) type: (type_identifier)))))))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (constructor_type type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier))))) type: (type_identifier)))))))",
     "wrappedText": "let x:new<T1,T2>(p1,p2)=>R;",
     "wrappedOffset": 0
   },
@@ -101302,7 +101302,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let x:new<T1,T2>(p1,p2)=>R;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (constructor_type type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier))))) type: (type_identifier))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (constructor_type type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier))))) type: (type_identifier))))))",
     "wrappedText": "let x:new<T1,T2>(p1,p2)=>R;",
     "wrappedOffset": 0
   },
@@ -101482,7 +101482,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x:new<T1,T2>(p1,p2)=>R",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (constructor_type type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier))))) type: (type_identifier)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (constructor_type type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier))))) type: (type_identifier)))))",
     "wrappedText": "let x:new<T1,T2>(p1,p2)=>R;",
     "wrappedOffset": 4
   },
@@ -102298,7 +102298,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "const symFoo:unique symbol=Symbol(\"foo\");const symBar:symbol=Symbol.for(\"bar\");",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (identifier) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))))))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (identifier) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))))))",
     "wrappedText": "const symFoo:unique symbol=Symbol(\"foo\");const symBar:symbol=Symbol.for(\"bar\");",
     "wrappedOffset": 0
   },
@@ -102454,7 +102454,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const symFoo:unique symbol=Symbol(\"foo\");",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (identifier) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment)))))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (identifier) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment)))))))))",
     "wrappedText": "const symFoo:unique symbol=Symbol(\"foo\");",
     "wrappedOffset": 0
   },
@@ -102627,7 +102627,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const symBar:symbol=Symbol.for(\"bar\");",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment)))))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment)))))))))",
     "wrappedText": "const symBar:symbol=Symbol.for(\"bar\");",
     "wrappedOffset": 0
   },
@@ -102764,7 +102764,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "symFoo:unique symbol=Symbol(\"foo\")",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (identifier) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (identifier) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))))",
     "wrappedText": "let symFoo:unique symbol=Symbol(\"foo\");",
     "wrappedOffset": 4
   },
@@ -102918,7 +102918,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "symBar:symbol=Symbol.for(\"bar\")",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))))",
     "wrappedText": "let symBar:symbol=Symbol.for(\"bar\");",
     "wrappedOffset": 4
   },
@@ -103618,7 +103618,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "const range=(document:any).selection.createRange()\n",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (call_expression (call_expression_call function: (member_expression object: (member_expression object: (parenthesized_expression (parenthesized_expression_typed (identifier) type: (type_annotation type: (predefined_type)))) property: (property_identifier)) property: (property_identifier)) arguments: (arguments))))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (call_expression (call_expression_call function: (member_expression object: (member_expression object: (parenthesized_expression (parenthesized_expression_typed (identifier) type: (type_annotation type: (predefined_type)))) property: (property_identifier)) property: (property_identifier)) arguments: (arguments))))) semicolon: (automatic_semicolon)))",
     "wrappedText": "const range=(document:any).selection.createRange()\n",
     "wrappedOffset": 0
   },
@@ -103803,7 +103803,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const range=(document:any).selection.createRange()\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (call_expression (call_expression_call function: (member_expression object: (member_expression object: (parenthesized_expression (parenthesized_expression_typed (identifier) type: (type_annotation type: (predefined_type)))) property: (property_identifier)) property: (property_identifier)) arguments: (arguments))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (call_expression (call_expression_call function: (member_expression object: (member_expression object: (parenthesized_expression (parenthesized_expression_typed (identifier) type: (type_annotation type: (predefined_type)))) property: (property_identifier)) property: (property_identifier)) arguments: (arguments))))) semicolon: (automatic_semicolon))",
     "wrappedText": "const range=(document:any).selection.createRange()\n",
     "wrappedOffset": 0
   },
@@ -103969,7 +103969,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "range=(document:any).selection.createRange()",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (call_expression (call_expression_call function: (member_expression object: (member_expression object: (parenthesized_expression (parenthesized_expression_typed (identifier) type: (type_annotation type: (predefined_type)))) property: (property_identifier)) property: (property_identifier)) arguments: (arguments)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) value: (call_expression (call_expression_call function: (member_expression object: (member_expression object: (parenthesized_expression (parenthesized_expression_typed (identifier) type: (type_annotation type: (predefined_type)))) property: (property_identifier)) property: (property_identifier)) arguments: (arguments)))))",
     "wrappedText": "let range=(document:any).selection.createRange();",
     "wrappedOffset": 4
   },
@@ -104616,7 +104616,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "const editor:?CodeEditor\nconst miscArray:?T[]\n",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (flow_maybe_type primary_type: (type_identifier))))) semicolon: (automatic_semicolon)) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (flow_maybe_type primary_type: (array_type primary_type: (type_identifier)))))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (flow_maybe_type primary_type: (type_identifier))))) semicolon: (automatic_semicolon)) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (flow_maybe_type primary_type: (array_type primary_type: (type_identifier)))))) semicolon: (automatic_semicolon)))",
     "wrappedText": "const editor:?CodeEditor\nconst miscArray:?T[]\n",
     "wrappedOffset": 0
   },
@@ -104703,7 +104703,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const editor:?CodeEditor\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (flow_maybe_type primary_type: (type_identifier))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (flow_maybe_type primary_type: (type_identifier))))) semicolon: (automatic_semicolon))",
     "wrappedText": "const editor:?CodeEditor\n",
     "wrappedOffset": 0
   },
@@ -104804,7 +104804,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const miscArray:?T[]\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (flow_maybe_type primary_type: (array_type primary_type: (type_identifier)))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (flow_maybe_type primary_type: (array_type primary_type: (type_identifier)))))) semicolon: (automatic_semicolon))",
     "wrappedText": "const miscArray:?T[]\n",
     "wrappedOffset": 0
   },
@@ -104872,7 +104872,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "editor:?CodeEditor",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (flow_maybe_type primary_type: (type_identifier)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (flow_maybe_type primary_type: (type_identifier)))))",
     "wrappedText": "let editor:?CodeEditor;",
     "wrappedOffset": 4
   },
@@ -104954,7 +104954,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "miscArray:?T[]",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (flow_maybe_type primary_type: (array_type primary_type: (type_identifier))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (flow_maybe_type primary_type: (array_type primary_type: (type_identifier))))))",
     "wrappedText": "let miscArray:?T[];",
     "wrappedOffset": 4
   },
@@ -106723,7 +106723,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "import type{ UserID,User }from\"./User.js\";import{ type UserID,type User }from\"./User.js\";import typeof{ jimiguitar as GuitarT }from\"./User.js\";import type UserID,{ addUser,removeUser }from'./User.js';import type from'./User.js';import type,{ addUser }from'./User.js';import{ type }from'./User.js';import{ addUser as type }from'./User.js';import{ type as addUser }from'./User.js';import{ type,addUser }from'./User.js';import{ addUser,type }from'./User.js';import type,{ addUser,type User }from'./User.js';",
-    "expectedReparseTree": "(program statements: (import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (import_statement from_clause: (import_statement_group1 (import_clause (import_clause_default_import (identifier) (import_clause_group1 (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_group1 (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_group1 (import_clause (import_clause_default_import (identifier) (import_clause_group1 (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_group1 (import_clause (import_clause_default_import (identifier) (import_clause_group1 (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(program statements: (import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (import_statement from_clause: (import_statement_arm1 (import_clause (import_clause_default_import (identifier) (import_clause_group1 (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_arm1 (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_arm1 (import_clause (import_clause_default_import (identifier) (import_clause_group1 (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_arm1 (import_clause (import_clause_default_import (identifier) (import_clause_group1 (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))))",
     "wrappedText": "import type{ UserID,User }from\"./User.js\";import{ type UserID,type User }from\"./User.js\";import typeof{ jimiguitar as GuitarT }from\"./User.js\";import type UserID,{ addUser,removeUser }from'./User.js';import type from'./User.js';import type,{ addUser }from'./User.js';import{ type }from'./User.js';import{ addUser as type }from'./User.js';import{ type as addUser }from'./User.js';import{ type,addUser }from'./User.js';import{ addUser,type }from'./User.js';import type,{ addUser,type User }from'./User.js';",
     "wrappedOffset": 0
   },
@@ -106865,7 +106865,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import type{ UserID,User }from\"./User.js\";",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment)))))",
     "wrappedText": "import type{ UserID,User }from\"./User.js\";",
     "wrappedOffset": 0
   },
@@ -107015,7 +107015,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import{ type UserID,type User }from\"./User.js\";",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment)))))",
     "wrappedText": "import{ type UserID,type User }from\"./User.js\";",
     "wrappedOffset": 0
   },
@@ -107161,7 +107161,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import typeof{ jimiguitar as GuitarT }from\"./User.js\";",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_double elements: (unescaped_double_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_double elements: (unescaped_double_string_fragment)))))",
     "wrappedText": "import typeof{ jimiguitar as GuitarT }from\"./User.js\";",
     "wrappedOffset": 0
   },
@@ -107331,7 +107331,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import type UserID,{ addUser,removeUser }from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_group1 (import_clause (import_clause_default_import (identifier) (import_clause_group1 (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_arm1 (import_clause (import_clause_default_import (identifier) (import_clause_group1 (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
     "wrappedText": "import type UserID,{ addUser,removeUser }from'./User.js';",
     "wrappedOffset": 0
   },
@@ -107430,7 +107430,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import type from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_group1 (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_arm1 (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
     "wrappedText": "import type from'./User.js';",
     "wrappedOffset": 0
   },
@@ -107584,7 +107584,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import type,{ addUser }from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_group1 (import_clause (import_clause_default_import (identifier) (import_clause_group1 (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_arm1 (import_clause (import_clause_default_import (identifier) (import_clause_group1 (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
     "wrappedText": "import type,{ addUser }from'./User.js';",
     "wrappedOffset": 0
   },
@@ -107710,7 +107710,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import{ type }from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
     "wrappedText": "import{ type }from'./User.js';",
     "wrappedOffset": 0
   },
@@ -107854,7 +107854,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import{ addUser as type }from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
     "wrappedText": "import{ addUser as type }from'./User.js';",
     "wrappedOffset": 0
   },
@@ -107998,7 +107998,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import{ type as addUser }from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
     "wrappedText": "import{ type as addUser }from'./User.js';",
     "wrappedOffset": 0
   },
@@ -108138,7 +108138,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import{ type,addUser }from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
     "wrappedText": "import{ type,addUser }from'./User.js';",
     "wrappedOffset": 0
   },
@@ -108278,7 +108278,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import{ addUser,type }from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_group1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_arm1 (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
     "wrappedText": "import{ addUser,type }from'./User.js';",
     "wrappedOffset": 0
   },
@@ -108451,7 +108451,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import type,{ addUser,type User }from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_group1 (import_clause (import_clause_default_import (identifier) (import_clause_group1 (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_arm1 (import_clause (import_clause_default_import (identifier) (import_clause_group1 (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
     "wrappedText": "import type,{ addUser,type User }from'./User.js';",
     "wrappedOffset": 0
   },
@@ -114972,7 +114972,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "let x:Array<*>\n",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (existential_type))))))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (existential_type))))))) semicolon: (automatic_semicolon)))",
     "wrappedText": "let x:Array<*>\n",
     "wrappedOffset": 0
   },
@@ -115098,7 +115098,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let x:Array<*>\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (existential_type))))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (existential_type))))))) semicolon: (automatic_semicolon))",
     "wrappedText": "let x:Array<*>\n",
     "wrappedOffset": 0
   },
@@ -115205,7 +115205,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x:Array<*>",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (existential_type)))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (existential_type)))))))",
     "wrappedText": "let x:Array<*>;",
     "wrappedOffset": 4
   },
@@ -117798,7 +117798,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "let x:2\nlet x:2|-3|+4\nlet x:\"string\"\nlet x:false\n",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (literal_type (number))))) semicolon: (automatic_semicolon)) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (union_type left: (union_type left: (literal_type (number)) right: (literal_type (unary_expression argument: (number)))) right: (literal_type (unary_expression argument: (number))))))) semicolon: (automatic_semicolon)) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment))))))) semicolon: (automatic_semicolon)) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (literal_type (false))))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (literal_type (number))))) semicolon: (automatic_semicolon)) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (union_type left: (union_type left: (literal_type (number)) right: (literal_type (unary_expression argument: (number)))) right: (literal_type (unary_expression argument: (number))))))) semicolon: (automatic_semicolon)) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment))))))) semicolon: (automatic_semicolon)) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (literal_type (false))))) semicolon: (automatic_semicolon)))",
     "wrappedText": "let x:2\nlet x:2|-3|+4\nlet x:\"string\"\nlet x:false\n",
     "wrappedOffset": 0
   },
@@ -117882,7 +117882,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let x:2\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (literal_type (number))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (literal_type (number))))) semicolon: (automatic_semicolon))",
     "wrappedText": "let x:2\n",
     "wrappedOffset": 0
   },
@@ -118052,7 +118052,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let x:2|-3|+4\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (union_type left: (union_type left: (literal_type (number)) right: (literal_type (unary_expression argument: (number)))) right: (literal_type (unary_expression argument: (number))))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (union_type left: (union_type left: (literal_type (number)) right: (literal_type (unary_expression argument: (number)))) right: (literal_type (unary_expression argument: (number))))))) semicolon: (automatic_semicolon))",
     "wrappedText": "let x:2|-3|+4\n",
     "wrappedOffset": 0
   },
@@ -118162,7 +118162,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let x:\"string\"\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment))))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment))))))) semicolon: (automatic_semicolon))",
     "wrappedText": "let x:\"string\"\n",
     "wrappedOffset": 0
   },
@@ -118246,7 +118246,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let x:false\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (literal_type (false))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (literal_type (false))))) semicolon: (automatic_semicolon))",
     "wrappedText": "let x:false\n",
     "wrappedOffset": 0
   },
@@ -118311,7 +118311,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x:2",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (literal_type (number)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (literal_type (number)))))",
     "wrappedText": "let x:2;",
     "wrappedOffset": 4
   },
@@ -118462,7 +118462,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x:2|-3|+4",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (union_type left: (union_type left: (literal_type (number)) right: (literal_type (unary_expression argument: (number)))) right: (literal_type (unary_expression argument: (number)))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (union_type left: (union_type left: (literal_type (number)) right: (literal_type (unary_expression argument: (number)))) right: (literal_type (unary_expression argument: (number)))))))",
     "wrappedText": "let x:2|-3|+4;",
     "wrappedOffset": 4
   },
@@ -118553,7 +118553,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x:\"string\"",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))))",
     "wrappedText": "let x:\"string\";",
     "wrappedOffset": 4
   },
@@ -118618,7 +118618,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x:false",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (literal_type (false)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (literal_type (false)))))",
     "wrappedText": "let x:false;",
     "wrappedOffset": 4
   },
@@ -120149,7 +120149,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "interface X{x():Promise<Array<Foo>>;}var y:Map<number,Promise<Map<bool,Map<Foo,Bar>>>>\n",
-    "expectedReparseTree": "(program statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))))))))) statements: (variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (predefined_type) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier)))))))))))))))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))))))))) statements: (variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (predefined_type) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier)))))))))))))))) semicolon: (automatic_semicolon)))",
     "wrappedText": "interface X{x():Promise<Array<Foo>>;}var y:Map<number,Promise<Map<bool,Map<Foo,Bar>>>>\n",
     "wrappedOffset": 0
   },
@@ -121833,7 +121833,7 @@
     "pattern": "variable_declaration",
     "edits": [],
     "expectedSourceOut": "var y:Map<number,Promise<Map<bool,Map<Foo,Bar>>>>\n",
-    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (predefined_type) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier)))))))))))))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (predefined_type) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier)))))))))))))))) semicolon: (automatic_semicolon))",
     "wrappedText": "var y:Map<number,Promise<Map<bool,Map<Foo,Bar>>>>\n",
     "wrappedOffset": 0
   },
@@ -122078,7 +122078,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "y:Map<number,Promise<Map<bool,Map<Foo,Bar>>>>",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (predefined_type) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier))))))))))))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (predefined_type) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier))))))))))))))))",
     "wrappedText": "let y:Map<number,Promise<Map<bool,Map<Foo,Bar>>>>;",
     "wrappedOffset": 4
   },
@@ -122301,7 +122301,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "let score:(string:string,query:string)=>number\n",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))))) semicolon: (automatic_semicolon)))",
     "wrappedText": "let score:(string:string,query:string)=>number\n",
     "wrappedOffset": 0
   },
@@ -122512,7 +122512,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "let score:(string:string,query:string)=>number\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))))) semicolon: (automatic_semicolon))",
     "wrappedText": "let score:(string:string,query:string)=>number\n",
     "wrappedOffset": 0
   },
@@ -122704,7 +122704,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "score:(string:string,query:string)=>number",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))))",
     "wrappedText": "let score:(string:string,query:string)=>number;",
     "wrappedOffset": 4
   },
@@ -123457,7 +123457,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "const repository=foo++!\n",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (non_null_expression expression: (update_expression (update_expression_postfix argument: (identifier)))))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (non_null_expression expression: (update_expression (update_expression_postfix argument: (identifier)))))) semicolon: (automatic_semicolon)))",
     "wrappedText": "const repository=foo++!\n",
     "wrappedOffset": 0
   },
@@ -123559,7 +123559,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const repository=foo++!\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) value: (non_null_expression expression: (update_expression (update_expression_postfix argument: (identifier)))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) value: (non_null_expression expression: (update_expression (update_expression_postfix argument: (identifier)))))) semicolon: (automatic_semicolon))",
     "wrappedText": "const repository=foo++!\n",
     "wrappedOffset": 0
   },
@@ -123642,7 +123642,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "repository=foo++!",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) value: (non_null_expression expression: (update_expression (update_expression_postfix argument: (identifier))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) value: (non_null_expression expression: (update_expression (update_expression_postfix argument: (identifier))))))",
     "wrappedText": "let repository=foo++!;",
     "wrappedOffset": 4
   },
@@ -131016,7 +131016,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "declare const f:(x:any)=>asserts x;declare const g:(x:any)=>asserts x is number;",
-    "expectedReparseTree": "(program statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (identifier)))))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (type_predicate name: (identifier) type: (predefined_type))))))))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (identifier)))))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (type_predicate name: (identifier) type: (predefined_type))))))))))",
     "wrappedText": "declare const f:(x:any)=>asserts x;declare const g:(x:any)=>asserts x is number;",
     "wrappedOffset": 0
   },
@@ -131200,7 +131200,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare const f:(x:any)=>asserts x;",
-    "expectedReparseTree": "(ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (identifier))))))))",
+    "expectedReparseTree": "(ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (identifier))))))))",
     "wrappedText": "declare const f:(x:any)=>asserts x;",
     "wrappedOffset": 0
   },
@@ -131412,7 +131412,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare const g:(x:any)=>asserts x is number;",
-    "expectedReparseTree": "(ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (type_predicate name: (identifier) type: (predefined_type)))))))))",
+    "expectedReparseTree": "(ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (type_predicate name: (identifier) type: (predefined_type)))))))))",
     "wrappedText": "declare const g:(x:any)=>asserts x is number;",
     "wrappedOffset": 0
   },
@@ -131583,7 +131583,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const f:(x:any)=>asserts x;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (identifier)))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (identifier)))))))",
     "wrappedText": "const f:(x:any)=>asserts x;",
     "wrappedOffset": 0
   },
@@ -131782,7 +131782,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const g:(x:any)=>asserts x is number;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (type_predicate name: (identifier) type: (predefined_type))))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (type_predicate name: (identifier) type: (predefined_type))))))))",
     "wrappedText": "const g:(x:any)=>asserts x is number;",
     "wrappedOffset": 0
   },
@@ -131934,7 +131934,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "f:(x:any)=>asserts x",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (identifier))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (identifier))))))",
     "wrappedText": "let f:(x:any)=>asserts x;",
     "wrappedOffset": 4
   },
@@ -132114,7 +132114,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "g:(x:any)=>asserts x is number",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_group1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (type_predicate name: (identifier) type: (predefined_type)))))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_arm1 name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (asserts (type_predicate name: (identifier) type: (predefined_type)))))))",
     "wrappedText": "let g:(x:any)=>asserts x is number;",
     "wrappedOffset": 4
   },
@@ -163658,7 +163658,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "import something from'foo.css'assert{ type:'css' }\n",
-    "expectedReparseTree": "(program statements: (import_statement from_clause: (import_statement_group1 (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))) import_attribute: (import_attribute object: (object properties: (pair key: (property_identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (import_statement from_clause: (import_statement_arm1 (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))) import_attribute: (import_attribute object: (object properties: (pair key: (property_identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))) semicolon: (automatic_semicolon)))",
     "wrappedText": "import something from'foo.css'assert{ type:'css' }\n",
     "wrappedOffset": 0
   },
@@ -163834,7 +163834,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import something from'foo.css'assert{ type:'css' }\n",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_group1 (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))) import_attribute: (import_attribute object: (object properties: (pair key: (property_identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_arm1 (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))) import_attribute: (import_attribute object: (object properties: (pair key: (property_identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))) semicolon: (automatic_semicolon))",
     "wrappedText": "import something from'foo.css'assert{ type:'css' }\n",
     "wrappedOffset": 0
   },

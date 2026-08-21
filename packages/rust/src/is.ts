@@ -226,7 +226,7 @@ export interface IsGuards {
 	lineComment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LineComment };
 	blockComment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BlockComment };
 	MacroRules<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroRules };
-	AttributeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributeGroup1 };
+	AttributeArm1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributeArm1 };
 	EnumVariantListElements<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.EnumVariantListElements };
@@ -495,7 +495,7 @@ export interface AssertGuards {
 	lineComment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LineComment };
 	blockComment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BlockComment };
 	MacroRules(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroRules };
-	AttributeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributeGroup1 };
+	AttributeArm1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributeArm1 };
 	EnumVariantListElements(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.EnumVariantListElements };
@@ -824,7 +824,7 @@ const _kindIdByKind = new Map<string, number>([
 	['_kw_ref_marker', TSKindId.KwRefMarker],
 	['_kw_move_marker', TSKindId.KwMoveMarker],
 	['_macro_rules', TSKindId.MacroRules],
-	['_attribute_group1', TSKindId.AttributeGroup1],
+	['_attribute_arm1', TSKindId.AttributeArm1],
 	['_enum_variant_list_elements', TSKindId.EnumVariantListElements],
 	['_field_declaration_list_elements', TSKindId.FieldDeclarationListElements],
 	['_ordered_field_declaration_list_elements', TSKindId.OrderedFieldDeclarationListElements],
@@ -837,13 +837,13 @@ const _kindIdByKind = new Map<string, number>([
 	['_use_bounds_elements', TSKindId.UseBoundsElements],
 	['_type_arguments_elements', TSKindId.TypeArgumentsElements],
 	['_arguments_elements', TSKindId.ArgumentsElements],
-	['_array_expression_group1', TSKindId.ArrayExpressionGroup1],
+	['_array_expression_arm1', TSKindId.ArrayExpressionArm1],
 	['_field_initializer_list_elements', TSKindId.FieldInitializerListElements],
 	['_tuple_pattern_elements', TSKindId.TuplePatternElements],
 	['_patterns', TSKindId.Patterns],
 	['_struct_pattern_elements', TSKindId.StructPatternElements],
-	['_range_pattern_group2', TSKindId.RangePatternGroup2],
-	['_block_comment_group1', TSKindId.BlockCommentGroup1],
+	['_range_pattern_arm2', TSKindId.RangePatternArm2],
+	['_block_comment_arm1', TSKindId.BlockCommentArm1],
 	['_tuple_type_elements', TSKindId.TupleTypeElements],
 	['_tuple_expression_elements', TSKindId.TupleExpressionElements],
 	['_token_tree_punctuation', TSKindId.TokenTreePunctuation],
@@ -1044,7 +1044,7 @@ export const is = {
 	lineComment: _g(TSKindId.LineComment),
 	blockComment: _g(TSKindId.BlockComment),
 	MacroRules: _g(TSKindId.MacroRules),
-	AttributeGroup1: _g(TSKindId.AttributeGroup1),
+	AttributeArm1: _g(TSKindId.AttributeArm1),
 	EnumVariantListElements: _g(TSKindId.EnumVariantListElements),
 	FieldDeclarationListElements: _g(TSKindId.FieldDeclarationListElements),
 	OrderedFieldDeclarationListElements: _g(TSKindId.OrderedFieldDeclarationListElements),
@@ -1268,7 +1268,7 @@ export const assert = {
 	lineComment: _makeAssert('lineComment', is.lineComment as _AnyGuard),
 	blockComment: _makeAssert('blockComment', is.blockComment as _AnyGuard),
 	MacroRules: _makeAssert('MacroRules', is.MacroRules as _AnyGuard),
-	AttributeGroup1: _makeAssert('AttributeGroup1', is.AttributeGroup1 as _AnyGuard),
+	AttributeArm1: _makeAssert('AttributeArm1', is.AttributeArm1 as _AnyGuard),
 	EnumVariantListElements: _makeAssert('EnumVariantListElements', is.EnumVariantListElements as _AnyGuard),
 	FieldDeclarationListElements: _makeAssert(
 		'FieldDeclarationListElements',

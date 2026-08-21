@@ -119,8 +119,8 @@ pub struct ArrowFunctionParameterTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_binary_expression_group1.jinja", escape = "none")]
-pub struct BinaryExpressionGroup1Template<'a> {
+#[template(path = "_binary_expression_arm1.jinja", escape = "none")]
+pub struct BinaryExpressionArm1Template<'a> {
     pub left: SingleNonterminalView<'a>,
     pub operator: SingleNonterminalView<'a>,
     pub right: SingleNonterminalView<'a>,
@@ -332,8 +332,8 @@ pub struct ImportSpecifiersTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_import_statement_group1.jinja", escape = "none")]
-pub struct ImportStatementGroup1Template<'a> {
+#[template(path = "_import_statement_arm1.jinja", escape = "none")]
+pub struct ImportStatementArm1Template<'a> {
     pub import_clause: SingleNonterminalView<'a>,
     pub source: SingleNonterminalView<'a>,
 }
@@ -349,13 +349,13 @@ pub struct IndexSignatureColonTemplate<'a> {
 #[template(path = "_jsx_opening_element_content.jinja", escape = "none")]
 pub struct JsxOpeningElementContentTemplate<'a> {
     pub attribute: ListNonterminalView<'a>,
-    pub jsx_start_opening_element_group1: OptionalNonterminalView<'a>,
+    pub jsx_start_opening_element_arm1: OptionalNonterminalView<'a>,
     pub name: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_jsx_start_opening_element_group1.jinja", escape = "none")]
-pub struct JsxStartOpeningElementGroup1Template<'a> {
+#[template(path = "_jsx_start_opening_element_arm1.jinja", escape = "none")]
+pub struct JsxStartOpeningElementArm1Template<'a> {
     pub name: SingleNonterminalView<'a>,
     pub type_arguments: OptionalNonterminalView<'a>,
 }
@@ -497,16 +497,16 @@ pub struct UpdateExpressionPrefixTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_variable_declarator_group1.jinja", escape = "none")]
-pub struct VariableDeclaratorGroup1Template<'a> {
+#[template(path = "_variable_declarator_arm1.jinja", escape = "none")]
+pub struct VariableDeclaratorArm1Template<'a> {
     pub name: SingleNonterminalView<'a>,
     pub type_: OptionalNonterminalView<'a>,
     pub value: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_variable_declarator_group2.jinja", escape = "none")]
-pub struct VariableDeclaratorGroup2Template<'a> {
+#[template(path = "_variable_declarator_arm2.jinja", escape = "none")]
+pub struct VariableDeclaratorArm2Template<'a> {
     pub name: SingleNonterminalView<'a>,
     pub type_: SingleNonterminalView<'a>,
 }
@@ -629,7 +629,7 @@ pub struct AwaitExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "binary_expression.jinja", escape = "none")]
 pub struct BinaryExpressionTemplate<'a> {
-    pub binary_expression_group1: OptionalNonterminalView<'a>,
+    pub binary_expression_arm1: OptionalNonterminalView<'a>,
     pub left: OptionalNonterminalView<'a>,
     pub operator: OptionalNonterminalView<'a>,
     pub right: OptionalNonterminalView<'a>,

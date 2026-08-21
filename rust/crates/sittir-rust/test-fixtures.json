@@ -37521,7 +37521,7 @@
             "$source": 0,
             "$named": true,
             "_path": "derive",
-            "_attribute_group1": {
+            "_attribute_arm1": {
               "$type": 327,
               "$source": 0,
               "$named": true,
@@ -37565,7 +37565,7 @@
             "$nodeHandle": 66,
             "$slotOrder": [
               "path",
-              "attribute_group1"
+              "attribute_arm1"
             ]
           },
           "$other": [
@@ -37617,7 +37617,7 @@
             "$source": 0,
             "$named": true,
             "_path": "derive",
-            "_attribute_group1": {
+            "_attribute_arm1": {
               "$type": 327,
               "$source": 0,
               "$named": true,
@@ -37684,7 +37684,7 @@
             "$nodeHandle": 72,
             "$slotOrder": [
               "path",
-              "attribute_group1"
+              "attribute_arm1"
             ]
           },
           "$other": [
@@ -37736,7 +37736,7 @@
             "$source": 0,
             "$named": true,
             "_path": "cfg",
-            "_attribute_group1": {
+            "_attribute_arm1": {
               "$type": 327,
               "$source": 0,
               "$named": true,
@@ -37812,7 +37812,7 @@
             "$nodeHandle": 83,
             "$slotOrder": [
               "path",
-              "attribute_group1"
+              "attribute_arm1"
             ]
           },
           "$other": [
@@ -37864,7 +37864,7 @@
             "$source": 0,
             "$named": true,
             "_path": "allow",
-            "_attribute_group1": {
+            "_attribute_arm1": {
               "$type": 327,
               "$source": 0,
               "$named": true,
@@ -37920,7 +37920,7 @@
             "$nodeHandle": 93,
             "$slotOrder": [
               "path",
-              "attribute_group1"
+              "attribute_arm1"
             ]
           },
           "$other": [
@@ -37962,7 +37962,7 @@
                 "name"
               ]
             },
-            "_attribute_group1": {
+            "_attribute_arm1": {
               "$type": 327,
               "$source": 0,
               "$named": true,
@@ -38003,7 +38003,7 @@
             "$nodeHandle": 101,
             "$slotOrder": [
               "path",
-              "attribute_group1"
+              "attribute_arm1"
             ]
           },
           "$other": [
@@ -38033,7 +38033,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "#[test]fn test_foo(){  }#[derive(Debug)]struct Baz;#[derive(Debug,Eq,)]struct Foo;#[cfg(target_os=\"macos\")]mod macos_only{  }#![allow(clippy::useless_transmute)]#[clippy::cyclomatic_complexity=\"100\"]",
-    "expectedReparseTree": "(source_file statements: (attribute_item attribute: (attribute path: (identifier))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) statements: (struct_item name: (type_identifier) (struct_item_unit)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) statements: (struct_item name: (type_identifier) (struct_item_unit)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) statements: (mod_item name: (identifier) (declaration_list)) statements: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) statements: (attribute_item attribute: (attribute path: (scoped_identifier path: (identifier) name: (identifier)) (attribute_group1 value: (string_literal string_open: (string_open) elements: (string_content))))))",
+    "expectedReparseTree": "(source_file statements: (attribute_item attribute: (attribute path: (identifier))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) statements: (struct_item name: (type_identifier) (struct_item_unit)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) statements: (struct_item name: (type_identifier) (struct_item_unit)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) statements: (mod_item name: (identifier) (declaration_list)) statements: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) statements: (attribute_item attribute: (attribute path: (scoped_identifier path: (identifier) name: (identifier)) (attribute_arm1 value: (string_literal string_open: (string_open) elements: (string_content))))))",
     "wrappedText": "#[test]fn test_foo(){  }#[derive(Debug)]struct Baz;#[derive(Debug,Eq,)]struct Foo;#[cfg(target_os=\"macos\")]mod macos_only{  }#![allow(clippy::useless_transmute)]#[clippy::cyclomatic_complexity=\"100\"]",
     "wrappedOffset": 0
   },
@@ -38091,7 +38091,7 @@
         "$source": 0,
         "$named": true,
         "_path": "derive",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -38135,7 +38135,7 @@
         "$nodeHandle": 106,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -38158,7 +38158,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[derive(Debug)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))))",
     "wrappedText": "#[derive(Debug)]",
     "wrappedOffset": 0
   },
@@ -38174,7 +38174,7 @@
         "$source": 0,
         "$named": true,
         "_path": "derive",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -38241,7 +38241,7 @@
         "$nodeHandle": 111,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -38264,7 +38264,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[derive(Debug,Eq,)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))))",
     "wrappedText": "#[derive(Debug,Eq,)]",
     "wrappedOffset": 0
   },
@@ -38280,7 +38280,7 @@
         "$source": 0,
         "$named": true,
         "_path": "cfg",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -38356,7 +38356,7 @@
         "$nodeHandle": 121,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -38379,7 +38379,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[cfg(target_os=\"macos\")]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))",
     "wrappedText": "#[cfg(target_os=\"macos\")]",
     "wrappedOffset": 0
   },
@@ -38413,7 +38413,7 @@
             "name"
           ]
         },
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -38454,7 +38454,7 @@
         "$nodeHandle": 130,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -38477,7 +38477,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[clippy::cyclomatic_complexity=\"100\"]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (scoped_identifier path: (identifier) name: (identifier)) (attribute_group1 value: (string_literal string_open: (string_open) elements: (string_content)))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (scoped_identifier path: (identifier) name: (identifier)) (attribute_arm1 value: (string_literal string_open: (string_open) elements: (string_content)))))",
     "wrappedText": "#[clippy::cyclomatic_complexity=\"100\"]",
     "wrappedOffset": 0
   },
@@ -39052,7 +39052,7 @@
         "$source": 0,
         "$named": true,
         "_path": "allow",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -39108,7 +39108,7 @@
         "$nodeHandle": 231,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -39132,7 +39132,7 @@
     "pattern": "inner_attribute_item",
     "edits": [],
     "expectedSourceOut": "#![allow(clippy::useless_transmute)]",
-    "expectedReparseTree": "(inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))))",
+    "expectedReparseTree": "(inner_attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))))",
     "wrappedText": "#![allow(clippy::useless_transmute)]",
     "wrappedOffset": 0
   },
@@ -39210,7 +39210,7 @@
                   "$source": 0,
                   "$named": true,
                   "_path": "cfg",
-                  "_attribute_group1": {
+                  "_attribute_arm1": {
                     "$type": 327,
                     "$source": 0,
                     "$named": true,
@@ -39286,7 +39286,7 @@
                   "$nodeHandle": 52,
                   "$slotOrder": [
                     "path",
-                    "attribute_group1"
+                    "attribute_arm1"
                   ]
                 },
                 "$other": [
@@ -39349,7 +39349,7 @@
                         "$source": 0,
                         "$named": true,
                         "_path": "cfg_attr",
-                        "_attribute_group1": {
+                        "_attribute_arm1": {
                           "$type": 327,
                           "$source": 0,
                           "$named": true,
@@ -39471,7 +39471,7 @@
                         "$nodeHandle": 66,
                         "$slotOrder": [
                           "path",
-                          "attribute_group1"
+                          "attribute_arm1"
                         ]
                       },
                       "$other": [
@@ -39732,7 +39732,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "mod macos_only{ #![cfg(target_os=\"macos\")] }match ty{ #![cfg_attr(all(test,exhaustive),deny(non_exhaustive_omitted_patterns))]syn::Type::Array(ty)=>self.visit_type(&ty.elem), }",
-    "expectedReparseTree": "(source_file statements: (mod_item name: (identifier) (declaration_list declaration_statements: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm attributes: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))))) pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) (patterns pattern: (identifier)))) value: (call_expression function: (field_expression value: (self) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (reference_expression value: (field_expression value: (identifier) field: (field_identifier)))))))))))))",
+    "expectedReparseTree": "(source_file statements: (mod_item name: (identifier) (declaration_list declaration_statements: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm attributes: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))))) pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) (patterns pattern: (identifier)))) value: (call_expression function: (field_expression value: (self) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (reference_expression value: (field_expression value: (identifier) field: (field_identifier)))))))))))))",
     "wrappedText": "mod macos_only{ #![cfg(target_os=\"macos\")] }match ty{ #![cfg_attr(all(test,exhaustive),deny(non_exhaustive_omitted_patterns))]syn::Type::Array(ty)=>self.visit_type(&ty.elem), }",
     "wrappedOffset": 0
   },
@@ -39770,7 +39770,7 @@
               "$source": 0,
               "$named": true,
               "_path": "cfg",
-              "_attribute_group1": {
+              "_attribute_arm1": {
                 "$type": 327,
                 "$source": 0,
                 "$named": true,
@@ -39846,7 +39846,7 @@
               "$nodeHandle": 97,
               "$slotOrder": [
                 "path",
-                "attribute_group1"
+                "attribute_arm1"
               ]
             },
             "$other": [
@@ -39882,7 +39882,7 @@
     "pattern": "mod_item",
     "edits": [],
     "expectedSourceOut": "mod macos_only{ #![cfg(target_os=\"macos\")] }",
-    "expectedReparseTree": "(mod_item name: (identifier) (declaration_list declaration_statements: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))))",
+    "expectedReparseTree": "(mod_item name: (identifier) (declaration_list declaration_statements: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))))",
     "wrappedText": "mod macos_only{ #![cfg(target_os=\"macos\")] }",
     "wrappedOffset": 0
   },
@@ -39898,7 +39898,7 @@
         "$source": 0,
         "$named": true,
         "_path": "cfg",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -39974,7 +39974,7 @@
         "$nodeHandle": 116,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -39998,7 +39998,7 @@
     "pattern": "inner_attribute_item",
     "edits": [],
     "expectedSourceOut": "#![cfg(target_os=\"macos\")]",
-    "expectedReparseTree": "(inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))",
+    "expectedReparseTree": "(inner_attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))",
     "wrappedText": "#![cfg(target_os=\"macos\")]",
     "wrappedOffset": 0
   },
@@ -40014,7 +40014,7 @@
         "$source": 0,
         "$named": true,
         "_path": "cfg_attr",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -40136,7 +40136,7 @@
         "$nodeHandle": 125,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -40160,7 +40160,7 @@
     "pattern": "inner_attribute_item",
     "edits": [],
     "expectedSourceOut": "#![cfg_attr(all(test,exhaustive),deny(non_exhaustive_omitted_patterns))]",
-    "expectedReparseTree": "(inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))))))",
+    "expectedReparseTree": "(inner_attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))))))",
     "wrappedText": "#![cfg_attr(all(test,exhaustive),deny(non_exhaustive_omitted_patterns))]",
     "wrappedOffset": 0
   },
@@ -40525,7 +40525,7 @@
                   "$source": 0,
                   "$named": true,
                   "_path": "cfg_attr",
-                  "_attribute_group1": {
+                  "_attribute_arm1": {
                     "$type": 327,
                     "$source": 0,
                     "$named": true,
@@ -40647,7 +40647,7 @@
                   "$nodeHandle": 276,
                   "$slotOrder": [
                     "path",
-                    "attribute_group1"
+                    "attribute_arm1"
                   ]
                 },
                 "$other": [
@@ -40900,7 +40900,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match ty{ #![cfg_attr(all(test,exhaustive),deny(non_exhaustive_omitted_patterns))]syn::Type::Array(ty)=>self.visit_type(&ty.elem), }",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm attributes: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))))) pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) (patterns pattern: (identifier)))) value: (call_expression function: (field_expression value: (self) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (reference_expression value: (field_expression value: (identifier) field: (field_identifier)))))))))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm attributes: (inner_attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))))) pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) (patterns pattern: (identifier)))) value: (call_expression function: (field_expression value: (self) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (reference_expression value: (field_expression value: (identifier) field: (field_identifier)))))))))))",
     "wrappedText": "fn _f() { let _ = match ty{ #![cfg_attr(all(test,exhaustive),deny(non_exhaustive_omitted_patterns))]syn::Type::Array(ty)=>self.visit_type(&ty.elem), }; }",
     "wrappedOffset": 18
   },
@@ -41417,7 +41417,7 @@
             "$source": 0,
             "$named": true,
             "_path": "doc",
-            "_attribute_group1": {
+            "_attribute_arm1": {
               "$type": 327,
               "$source": 0,
               "$named": true,
@@ -41502,7 +41502,7 @@
             "$nodeHandle": 23,
             "$slotOrder": [
               "path",
-              "attribute_group1"
+              "attribute_arm1"
             ]
           },
           "$other": [
@@ -41566,7 +41566,7 @@
             "$source": 0,
             "$named": true,
             "_path": "namespace",
-            "_attribute_group1": {
+            "_attribute_arm1": {
               "$type": 327,
               "$source": 0,
               "$named": true,
@@ -41605,7 +41605,7 @@
             "$nodeHandle": 32,
             "$slotOrder": [
               "path",
-              "attribute_group1"
+              "attribute_arm1"
             ]
           },
           "$other": [
@@ -41676,7 +41676,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "#[doc=include_str!(\"foo-doc.md\")]fn foo(){  }#[namespace=foo::bar]fn baz(){  }",
-    "expectedReparseTree": "(source_file statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 value: (scoped_identifier path: (identifier) name: (identifier))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 value: (scoped_identifier path: (identifier) name: (identifier))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)))",
     "wrappedText": "#[doc=include_str!(\"foo-doc.md\")]fn foo(){  }#[namespace=foo::bar]fn baz(){  }",
     "wrappedOffset": 0
   },
@@ -41692,7 +41692,7 @@
         "$source": 0,
         "$named": true,
         "_path": "doc",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -41777,7 +41777,7 @@
         "$nodeHandle": 37,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -41800,7 +41800,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[doc=include_str!(\"foo-doc.md\")]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_arm1 value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))))",
     "wrappedText": "#[doc=include_str!(\"foo-doc.md\")]",
     "wrappedOffset": 0
   },
@@ -41816,7 +41816,7 @@
         "$source": 0,
         "$named": true,
         "_path": "namespace",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -41855,7 +41855,7 @@
         "$nodeHandle": 44,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -41878,7 +41878,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[namespace=foo::bar]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 value: (scoped_identifier path: (identifier) name: (identifier)))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_arm1 value: (scoped_identifier path: (identifier) name: (identifier)))))",
     "wrappedText": "#[namespace=foo::bar]",
     "wrappedOffset": 0
   },
@@ -42369,7 +42369,7 @@
                             "$source": 0,
                             "$named": true,
                             "_path": "attr",
-                            "_attribute_group1": {
+                            "_attribute_arm1": {
                               "$type": 327,
                               "$source": 0,
                               "$named": true,
@@ -42436,7 +42436,7 @@
                             "$nodeHandle": 63,
                             "$slotOrder": [
                               "path",
-                              "attribute_group1"
+                              "attribute_arm1"
                             ]
                           },
                           "$other": [
@@ -42556,7 +42556,7 @@
                             "$source": 0,
                             "$named": true,
                             "_path": "bar",
-                            "_attribute_group1": {
+                            "_attribute_arm1": {
                               "$type": 327,
                               "$source": 0,
                               "$named": true,
@@ -42726,7 +42726,7 @@
                             "$nodeHandle": 79,
                             "$slotOrder": [
                               "path",
-                              "attribute_group1"
+                              "attribute_arm1"
                             ]
                           },
                           "$other": [
@@ -42806,7 +42806,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "foo(#[attr(=>arbitrary tokens<=)]x,y);foo(#[bar(some tokens are special in other contexts:$/';()*()+.)]x);",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier)) element: (attributed_argument (identifier))))))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier))))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier)) element: (attributed_argument (identifier))))))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier))))))))",
     "wrappedText": "foo(#[attr(=>arbitrary tokens<=)]x,y);foo(#[bar(some tokens are special in other contexts:$/';()*()+.)]x);",
     "wrappedOffset": 0
   },
@@ -42841,7 +42841,7 @@
                     "$source": 0,
                     "$named": true,
                     "_path": "attr",
-                    "_attribute_group1": {
+                    "_attribute_arm1": {
                       "$type": 327,
                       "$source": 0,
                       "$named": true,
@@ -42908,7 +42908,7 @@
                     "$nodeHandle": 212,
                     "$slotOrder": [
                       "path",
-                      "attribute_group1"
+                      "attribute_arm1"
                     ]
                   },
                   "$other": [
@@ -42986,7 +42986,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "foo(#[attr(=>arbitrary tokens<=)]x,y)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier)) element: (attributed_argument (identifier)))))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier)) element: (attributed_argument (identifier)))))",
     "wrappedText": "fn _f() { let _ = foo(#[attr(=>arbitrary tokens<=)]x,y); }",
     "wrappedOffset": 18
   },
@@ -43021,7 +43021,7 @@
                     "$source": 0,
                     "$named": true,
                     "_path": "bar",
-                    "_attribute_group1": {
+                    "_attribute_arm1": {
                       "$type": 327,
                       "$source": 0,
                       "$named": true,
@@ -43191,7 +43191,7 @@
                     "$nodeHandle": 226,
                     "$slotOrder": [
                       "path",
-                      "attribute_group1"
+                      "attribute_arm1"
                     ]
                   },
                   "$other": [
@@ -43254,7 +43254,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "foo(#[bar(some tokens are special in other contexts:$/';()*()+.)]x)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier)))))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier)))))",
     "wrappedText": "fn _f() { let _ = foo(#[bar(some tokens are special in other contexts:$/';()*()+.)]x); }",
     "wrappedOffset": 18
   },
@@ -43284,7 +43284,7 @@
                   "$source": 0,
                   "$named": true,
                   "_path": "attr",
-                  "_attribute_group1": {
+                  "_attribute_arm1": {
                     "$type": 327,
                     "$source": 0,
                     "$named": true,
@@ -43351,7 +43351,7 @@
                   "$nodeHandle": 258,
                   "$slotOrder": [
                     "path",
-                    "attribute_group1"
+                    "attribute_arm1"
                   ]
                 },
                 "$other": [
@@ -43419,7 +43419,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(#[attr(=>arbitrary tokens<=)]x,y)",
-    "expectedReparseTree": "(arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier)) element: (attributed_argument (identifier))))",
+    "expectedReparseTree": "(arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier)) element: (attributed_argument (identifier))))",
     "wrappedText": "f(#[attr(=>arbitrary tokens<=)]x,y);",
     "wrappedOffset": 1
   },
@@ -43449,7 +43449,7 @@
                   "$source": 0,
                   "$named": true,
                   "_path": "bar",
-                  "_attribute_group1": {
+                  "_attribute_arm1": {
                     "$type": 327,
                     "$source": 0,
                     "$named": true,
@@ -43619,7 +43619,7 @@
                   "$nodeHandle": 271,
                   "$slotOrder": [
                     "path",
-                    "attribute_group1"
+                    "attribute_arm1"
                   ]
                 },
                 "$other": [
@@ -43672,7 +43672,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(#[bar(some tokens are special in other contexts:$/';()*()+.)]x)",
-    "expectedReparseTree": "(arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier))))",
+    "expectedReparseTree": "(arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier))))",
     "wrappedText": "f(#[bar(some tokens are special in other contexts:$/';()*()+.)]x);",
     "wrappedOffset": 1
   },
@@ -43688,7 +43688,7 @@
         "$source": 0,
         "$named": true,
         "_path": "attr",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -43755,7 +43755,7 @@
         "$nodeHandle": 382,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -43778,7 +43778,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[attr(=>arbitrary tokens<=)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))))",
     "wrappedText": "#[attr(=>arbitrary tokens<=)]",
     "wrappedOffset": 0
   },
@@ -43794,7 +43794,7 @@
         "$source": 0,
         "$named": true,
         "_path": "bar",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -43964,7 +43964,7 @@
         "$nodeHandle": 392,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -43987,7 +43987,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[bar(some tokens are special in other contexts:$/';()*()+.)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)))))))",
     "wrappedText": "#[bar(some tokens are special in other contexts:$/';()*()+.)]",
     "wrappedOffset": 0
   },
@@ -44368,7 +44368,7 @@
             "$source": 0,
             "$named": true,
             "_path": "derive",
-            "_attribute_group1": {
+            "_attribute_arm1": {
               "$type": 327,
               "$source": 0,
               "$named": true,
@@ -44424,7 +44424,7 @@
             "$nodeHandle": 72,
             "$slotOrder": [
               "path",
-              "attribute_group1"
+              "attribute_arm1"
             ]
           },
           "$other": [
@@ -44487,7 +44487,7 @@
                         "$source": 0,
                         "$named": true,
                         "_path": "error",
-                        "_attribute_group1": {
+                        "_attribute_arm1": {
                           "$type": 327,
                           "$source": 0,
                           "$named": true,
@@ -44601,7 +44601,7 @@
                         "$nodeHandle": 87,
                         "$slotOrder": [
                           "path",
-                          "attribute_group1"
+                          "attribute_arm1"
                         ]
                       },
                       "$other": [
@@ -44694,7 +44694,7 @@
                         "$source": 0,
                         "$named": true,
                         "_path": "error",
-                        "_attribute_group1": {
+                        "_attribute_arm1": {
                           "$type": 327,
                           "$source": 0,
                           "$named": true,
@@ -44828,7 +44828,7 @@
                         "$nodeHandle": 106,
                         "$slotOrder": [
                           "path",
-                          "attribute_group1"
+                          "attribute_arm1"
                         ]
                       },
                       "$other": [
@@ -45010,7 +45010,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;#[derive(Error,Debug)]pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }",
-    "expectedReparseTree": "(source_file (line_comment (line_comment_content)) statements: (use_declaration argument: (scoped_identifier path: (identifier) name: (identifier))) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal))))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
+    "expectedReparseTree": "(source_file (line_comment (line_comment_content)) statements: (use_declaration argument: (scoped_identifier path: (identifier) name: (identifier))) statements: (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal))))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
     "wrappedText": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;#[derive(Error,Debug)]pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }",
     "wrappedOffset": 0
   },
@@ -45128,7 +45128,7 @@
         "$source": 0,
         "$named": true,
         "_path": "derive",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -45184,7 +45184,7 @@
         "$nodeHandle": 136,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -45207,7 +45207,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[derive(Error,Debug)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))))",
     "wrappedText": "#[derive(Error,Debug)]",
     "wrappedOffset": 0
   },
@@ -45223,7 +45223,7 @@
         "$source": 0,
         "$named": true,
         "_path": "error",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -45337,7 +45337,7 @@
         "$nodeHandle": 144,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -45360,7 +45360,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal)))))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal)))))))))",
     "wrappedText": "#[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]",
     "wrappedOffset": 0
   },
@@ -45376,7 +45376,7 @@
         "$source": 0,
         "$named": true,
         "_path": "error",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -45510,7 +45510,7 @@
         "$nodeHandle": 158,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -45533,7 +45533,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))))",
     "wrappedText": "#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]",
     "wrappedOffset": 0
   },
@@ -45944,7 +45944,7 @@
                     "$source": 0,
                     "$named": true,
                     "_path": "error",
-                    "_attribute_group1": {
+                    "_attribute_arm1": {
                       "$type": 327,
                       "$source": 0,
                       "$named": true,
@@ -46058,7 +46058,7 @@
                     "$nodeHandle": 340,
                     "$slotOrder": [
                       "path",
-                      "attribute_group1"
+                      "attribute_arm1"
                     ]
                   },
                   "$other": [
@@ -46151,7 +46151,7 @@
                     "$source": 0,
                     "$named": true,
                     "_path": "error",
-                    "_attribute_group1": {
+                    "_attribute_arm1": {
                       "$type": 327,
                       "$source": 0,
                       "$named": true,
@@ -46285,7 +46285,7 @@
                     "$nodeHandle": 359,
                     "$slotOrder": [
                       "path",
-                      "attribute_group1"
+                      "attribute_arm1"
                     ]
                   },
                   "$other": [
@@ -46460,7 +46460,7 @@
     "pattern": "enum_item",
     "edits": [],
     "expectedSourceOut": "pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }",
-    "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal))))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier))))))))))",
+    "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal))))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier))))))))))",
     "wrappedText": "pub enum Error{ #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),#[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds{ idx:usize,limits:Limits }, }",
     "wrappedOffset": 0
   },
@@ -46657,7 +46657,7 @@
                                   "$source": 0,
                                   "$named": true,
                                   "_path": "cfg",
-                                  "_attribute_group1": {
+                                  "_attribute_arm1": {
                                     "$type": 327,
                                     "$source": 0,
                                     "$named": true,
@@ -46733,7 +46733,7 @@
                                   "$nodeHandle": 48,
                                   "$slotOrder": [
                                     "path",
-                                    "attribute_group1"
+                                    "attribute_arm1"
                                   ]
                                 },
                                 "$other": [
@@ -47056,7 +47056,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))) statements: (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) (tuple_expression_elements element: (integer_literal) element: (integer_literal) element: (integer_literal)))))))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))) statements: (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) (tuple_expression_elements element: (integer_literal) element: (integer_literal) element: (integer_literal)))))))",
     "wrappedText": "fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }",
     "wrappedOffset": 0
   },
@@ -47137,7 +47137,7 @@
                               "$source": 0,
                               "$named": true,
                               "_path": "cfg",
-                              "_attribute_group1": {
+                              "_attribute_arm1": {
                                 "$type": 327,
                                 "$source": 0,
                                 "$named": true,
@@ -47213,7 +47213,7 @@
                               "$nodeHandle": 81,
                               "$slotOrder": [
                                 "path",
-                                "attribute_group1"
+                                "attribute_arm1"
                               ]
                             },
                             "$other": [
@@ -47529,7 +47529,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))) statements: (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) (tuple_expression_elements element: (integer_literal) element: (integer_literal) element: (integer_literal))))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))) statements: (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) (tuple_expression_elements element: (integer_literal) element: (integer_literal) element: (integer_literal))))))",
     "wrappedText": "fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }",
     "wrappedOffset": 0
   },
@@ -47621,7 +47621,7 @@
                             "$source": 0,
                             "$named": true,
                             "_path": "cfg",
-                            "_attribute_group1": {
+                            "_attribute_arm1": {
                               "$type": 327,
                               "$source": 0,
                               "$named": true,
@@ -47697,7 +47697,7 @@
                             "$nodeHandle": 112,
                             "$slotOrder": [
                               "path",
-                              "attribute_group1"
+                              "attribute_arm1"
                             ]
                           },
                           "$other": [
@@ -47999,7 +47999,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }",
-    "expectedReparseTree": "(block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))) statements: (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) (tuple_expression_elements element: (integer_literal) element: (integer_literal) element: (integer_literal)))))",
+    "expectedReparseTree": "(block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))) statements: (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) (tuple_expression_elements element: (integer_literal) element: (integer_literal) element: (integer_literal)))))",
     "wrappedText": "fn _f() { let _ = { bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8); }; }",
     "wrappedOffset": 18
   },
@@ -48046,7 +48046,7 @@
                     "$source": 0,
                     "$named": true,
                     "_path": "cfg",
-                    "_attribute_group1": {
+                    "_attribute_arm1": {
                       "$type": 327,
                       "$source": 0,
                       "$named": true,
@@ -48122,7 +48122,7 @@
                     "$nodeHandle": 169,
                     "$slotOrder": [
                       "path",
-                      "attribute_group1"
+                      "attribute_arm1"
                     ]
                   },
                   "$other": [
@@ -48188,7 +48188,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "bar(x,#[cfg(foo=\"bar\")]y)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier)))))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier)))))",
     "wrappedText": "fn _f() { let _ = bar(x,#[cfg(foo=\"bar\")]y); }",
     "wrappedOffset": 18
   },
@@ -48230,7 +48230,7 @@
                   "$source": 0,
                   "$named": true,
                   "_path": "cfg",
-                  "_attribute_group1": {
+                  "_attribute_arm1": {
                     "$type": 327,
                     "$source": 0,
                     "$named": true,
@@ -48306,7 +48306,7 @@
                   "$nodeHandle": 182,
                   "$slotOrder": [
                     "path",
-                    "attribute_group1"
+                    "attribute_arm1"
                   ]
                 },
                 "$other": [
@@ -48362,7 +48362,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(x,#[cfg(foo=\"bar\")]y)",
-    "expectedReparseTree": "(arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))",
+    "expectedReparseTree": "(arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) (identifier))))",
     "wrappedText": "f(x,#[cfg(foo=\"bar\")]y);",
     "wrappedOffset": 1
   },
@@ -48378,7 +48378,7 @@
         "$source": 0,
         "$named": true,
         "_path": "cfg",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -48454,7 +48454,7 @@
         "$nodeHandle": 216,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -48477,7 +48477,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[cfg(foo=\"bar\")]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))",
     "wrappedText": "#[cfg(foo=\"bar\")]",
     "wrappedOffset": 0
   },
@@ -88842,7 +88842,7 @@
                 "$type": 361,
                 "$source": 0,
                 "$named": true,
-                "_array_expression_group1": {
+                "_array_expression_arm1": {
                   "$type": 340,
                   "$source": 0,
                   "$named": true,
@@ -88919,7 +88919,7 @@
                       "$source": 0,
                       "$named": true,
                       "_path": "cfg",
-                      "_attribute_group1": {
+                      "_attribute_arm1": {
                         "$type": 327,
                         "$source": 0,
                         "$named": true,
@@ -88963,7 +88963,7 @@
                       "$nodeHandle": 83,
                       "$slotOrder": [
                         "path",
-                        "attribute_group1"
+                        "attribute_arm1"
                       ]
                     },
                     "$other": [
@@ -89029,7 +89029,7 @@
                             "$source": 0,
                             "$named": true,
                             "_path": "cfg",
-                            "_attribute_group1": {
+                            "_attribute_arm1": {
                               "$type": 327,
                               "$source": 0,
                               "$named": true,
@@ -89073,7 +89073,7 @@
                             "$nodeHandle": 93,
                             "$slotOrder": [
                               "path",
-                              "attribute_group1"
+                              "attribute_arm1"
                             ]
                           },
                           "$other": [
@@ -89172,7 +89172,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "[];[1,2,3];[\"a\",\"b\",\"c\"];[0;128];[#[cfg(foo)]\"foo\",#[cfg(bar)]\"bar\",];",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list)))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal))))))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list (arguments_elements element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content)))))))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_semi (array_expression_group1 (integer_literal) length: (integer_literal)))))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) (arguments_elements element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) (string_literal string_open: (string_open) elements: (string_content)))))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list)))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal))))))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list (arguments_elements element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content)))))))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_semi (array_expression_arm1 (integer_literal) length: (integer_literal)))))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) (arguments_elements element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) (string_literal string_open: (string_open) elements: (string_content)))))))))",
     "wrappedText": "[];[1,2,3];[\"a\",\"b\",\"c\"];[0;128];[#[cfg(foo)]\"foo\",#[cfg(bar)]\"bar\",];",
     "wrappedOffset": 0
   },
@@ -89477,7 +89477,7 @@
         "$type": 361,
         "$source": 0,
         "$named": true,
-        "_array_expression_group1": {
+        "_array_expression_arm1": {
           "$type": 340,
           "$source": 0,
           "$named": true,
@@ -89517,7 +89517,7 @@
     "pattern": "array_expression",
     "edits": [],
     "expectedSourceOut": "[0;128]",
-    "expectedReparseTree": "(array_expression (array_expression_semi (array_expression_group1 (integer_literal) length: (integer_literal))))",
+    "expectedReparseTree": "(array_expression (array_expression_semi (array_expression_arm1 (integer_literal) length: (integer_literal))))",
     "wrappedText": "fn _f() { let _ = [0;128]; }",
     "wrappedOffset": 18
   },
@@ -89547,7 +89547,7 @@
               "$source": 0,
               "$named": true,
               "_path": "cfg",
-              "_attribute_group1": {
+              "_attribute_arm1": {
                 "$type": 327,
                 "$source": 0,
                 "$named": true,
@@ -89591,7 +89591,7 @@
               "$nodeHandle": 200,
               "$slotOrder": [
                 "path",
-                "attribute_group1"
+                "attribute_arm1"
               ]
             },
             "$other": [
@@ -89657,7 +89657,7 @@
                     "$source": 0,
                     "$named": true,
                     "_path": "cfg",
-                    "_attribute_group1": {
+                    "_attribute_arm1": {
                       "$type": 327,
                       "$source": 0,
                       "$named": true,
@@ -89701,7 +89701,7 @@
                     "$nodeHandle": 210,
                     "$slotOrder": [
                       "path",
-                      "attribute_group1"
+                      "attribute_arm1"
                     ]
                   },
                   "$other": [
@@ -89783,7 +89783,7 @@
     "pattern": "array_expression",
     "edits": [],
     "expectedSourceOut": "[#[cfg(foo)]\"foo\",#[cfg(bar)]\"bar\",]",
-    "expectedReparseTree": "(array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) (arguments_elements element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) (string_literal string_open: (string_open) elements: (string_content))))))",
+    "expectedReparseTree": "(array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) (arguments_elements element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) (string_literal string_open: (string_open) elements: (string_content))))))",
     "wrappedText": "fn _f() { let _ = [#[cfg(foo)]\"foo\",#[cfg(bar)]\"bar\",]; }",
     "wrappedOffset": 18
   },
@@ -89984,7 +89984,7 @@
         "$source": 0,
         "$named": true,
         "_path": "cfg",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -90028,7 +90028,7 @@
         "$nodeHandle": 275,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -90051,7 +90051,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[cfg(foo)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))))",
     "wrappedText": "#[cfg(foo)]",
     "wrappedOffset": 0
   },
@@ -90067,7 +90067,7 @@
         "$source": 0,
         "$named": true,
         "_path": "cfg",
-        "_attribute_group1": {
+        "_attribute_arm1": {
           "$type": 327,
           "$source": 0,
           "$named": true,
@@ -90111,7 +90111,7 @@
         "$nodeHandle": 280,
         "$slotOrder": [
           "path",
-          "attribute_group1"
+          "attribute_arm1"
         ]
       },
       "$other": [
@@ -90134,7 +90134,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[cfg(bar)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_arm1 arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))))",
     "wrappedText": "#[cfg(bar)]",
     "wrappedOffset": 0
   },
@@ -117825,7 +117825,7 @@
               "$type": 361,
               "$source": 0,
               "$named": true,
-              "_array_expression_group1": {
+              "_array_expression_arm1": {
                 "$type": 340,
                 "$source": 0,
                 "$named": true,
@@ -117999,7 +117999,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "const{ 1+3 };if*x<0{ const{ &4i32.pow(4) } }else{ x }let three_ranges=[const{ (0..=5).into_inner() };3];",
-    "expectedReparseTree": "(source_file statements: (expression_statement (const_block body: (block trailing_expression: (binary_expression left: (integer_literal) right: (integer_literal))))) statements: (empty_statement) statements: (expression_statement (if_expression condition: (binary_expression left: (unary_expression operand: (identifier)) right: (integer_literal)) consequence: (block statements: (expression_statement (const_block body: (block trailing_expression: (reference_expression value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))))))) alternative: (else_clause (block trailing_expression: (identifier))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_semi (array_expression_group1 (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression expression: (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (const_block body: (block trailing_expression: (binary_expression left: (integer_literal) right: (integer_literal))))) statements: (empty_statement) statements: (expression_statement (if_expression condition: (binary_expression left: (unary_expression operand: (identifier)) right: (integer_literal)) consequence: (block statements: (expression_statement (const_block body: (block trailing_expression: (reference_expression value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))))))) alternative: (else_clause (block trailing_expression: (identifier))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_semi (array_expression_arm1 (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression expression: (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal))))))",
     "wrappedText": "const{ 1+3 };if*x<0{ const{ &4i32.pow(4) } }else{ x }let three_ranges=[const{ (0..=5).into_inner() };3];",
     "wrappedOffset": 0
   },
@@ -119645,7 +119645,7 @@
           "$type": 361,
           "$source": 0,
           "$named": true,
-          "_array_expression_group1": {
+          "_array_expression_arm1": {
             "$type": 340,
             "$source": 0,
             "$named": true,
@@ -119812,7 +119812,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let three_ranges=[const{ (0..=5).into_inner() };3];",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (array_expression (array_expression_semi (array_expression_group1 (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression expression: (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal)))))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (array_expression (array_expression_semi (array_expression_arm1 (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression expression: (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal)))))",
     "wrappedText": "let three_ranges=[const{ (0..=5).into_inner() };3];",
     "wrappedOffset": 0
   },
@@ -119832,7 +119832,7 @@
         "$type": 361,
         "$source": 0,
         "$named": true,
-        "_array_expression_group1": {
+        "_array_expression_arm1": {
           "$type": 340,
           "$source": 0,
           "$named": true,
@@ -119984,7 +119984,7 @@
     "pattern": "array_expression",
     "edits": [],
     "expectedSourceOut": "[const{ (0..=5).into_inner() };3]",
-    "expectedReparseTree": "(array_expression (array_expression_semi (array_expression_group1 (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression expression: (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal))))",
+    "expectedReparseTree": "(array_expression (array_expression_semi (array_expression_arm1 (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression expression: (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal))))",
     "wrappedText": "fn _f() { let _ = [const{ (0..=5).into_inner() };3]; }",
     "wrappedOffset": 18
   },
@@ -137038,7 +137038,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "match x{ a@A(_)|b@B(..)=>a,a@1...5=>a,Some(1...5)=>a,a@b...c=>a,a@b..=c=>a,d.. =>a,..d=>d,a@..=5=>a }match name{ |\"IPV6_FLOWINFO\"|\"IPV6_FLOWLABEL_MGR\"|\"IPV6_FLOWINFO_SEND\"=>true,_=>false, }",
-    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (captured_pattern identifier: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (wildcard_pattern)))) right: (captured_pattern identifier: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (remaining_field_pattern))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_group2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (range_pattern (range_pattern_group2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_group2 left: (identifier) (range_pattern_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_group2 left: (identifier) (range_pattern_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_group2 left: (identifier) (range_pattern_left_bare)))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_prefix right: (identifier)))) (match_arm_with_comma value: (identifier))) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_prefix right: (integer_literal))))) value: (identifier)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content)))) right: (string_literal string_open: (string_open) elements: (string_content)))) right: (string_literal string_open: (string_open) elements: (string_content))))) (match_arm_with_comma value: (boolean_literal))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (boolean_literal)))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (captured_pattern identifier: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (wildcard_pattern)))) right: (captured_pattern identifier: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (remaining_field_pattern))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_arm2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (range_pattern (range_pattern_arm2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_arm2 left: (identifier) (range_pattern_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_arm2 left: (identifier) (range_pattern_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_arm2 left: (identifier) (range_pattern_left_bare)))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_prefix right: (identifier)))) (match_arm_with_comma value: (identifier))) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_prefix right: (integer_literal))))) value: (identifier)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content)))) right: (string_literal string_open: (string_open) elements: (string_content)))) right: (string_literal string_open: (string_open) elements: (string_content))))) (match_arm_with_comma value: (boolean_literal))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (boolean_literal)))))))",
     "wrappedText": "match x{ a@A(_)|b@B(..)=>a,a@1...5=>a,Some(1...5)=>a,a@b...c=>a,a@b..=c=>a,d.. =>a,..d=>d,a@..=5=>a }match name{ |\"IPV6_FLOWINFO\"|\"IPV6_FLOWLABEL_MGR\"|\"IPV6_FLOWINFO_SEND\"=>true,_=>false, }",
     "wrappedOffset": 0
   },
@@ -137930,7 +137930,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x{ a@A(_)|b@B(..)=>a,a@1...5=>a,Some(1...5)=>a,a@b...c=>a,a@b..=c=>a,d.. =>a,..d=>d,a@..=5=>a }",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (captured_pattern identifier: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (wildcard_pattern)))) right: (captured_pattern identifier: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (remaining_field_pattern))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_group2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (range_pattern (range_pattern_group2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_group2 left: (identifier) (range_pattern_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_group2 left: (identifier) (range_pattern_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_group2 left: (identifier) (range_pattern_left_bare)))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_prefix right: (identifier)))) (match_arm_with_comma value: (identifier))) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_prefix right: (integer_literal))))) value: (identifier)))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (captured_pattern identifier: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (wildcard_pattern)))) right: (captured_pattern identifier: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (remaining_field_pattern))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_arm2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (range_pattern (range_pattern_arm2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_arm2 left: (identifier) (range_pattern_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_arm2 left: (identifier) (range_pattern_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_arm2 left: (identifier) (range_pattern_left_bare)))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_prefix right: (identifier)))) (match_arm_with_comma value: (identifier))) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_prefix right: (integer_literal))))) value: (identifier)))))",
     "wrappedText": "fn _f() { let _ = match x{ a@A(_)|b@B(..)=>a,a@1...5=>a,Some(1...5)=>a,a@b...c=>a,a@b..=c=>a,d.. =>a,..d=>d,a@..=5=>a }; }",
     "wrappedOffset": 18
   },
@@ -138955,7 +138955,7 @@
     "pattern": "captured_pattern",
     "edits": [],
     "expectedSourceOut": "a@1...5",
-    "expectedReparseTree": "(captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_group2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal)))))",
+    "expectedReparseTree": "(captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_arm2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal)))))",
     "wrappedText": "fn _f() { let a@1...5 = (); }",
     "wrappedOffset": 14
   },
@@ -139029,7 +139029,7 @@
     "pattern": "captured_pattern",
     "edits": [],
     "expectedSourceOut": "a@b...c",
-    "expectedReparseTree": "(captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_group2 left: (identifier) (range_pattern_left_with_right right: (identifier)))))",
+    "expectedReparseTree": "(captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_arm2 left: (identifier) (range_pattern_left_with_right right: (identifier)))))",
     "wrappedText": "fn _f() { let a@b...c = (); }",
     "wrappedOffset": 14
   },
@@ -139103,7 +139103,7 @@
     "pattern": "captured_pattern",
     "edits": [],
     "expectedSourceOut": "a@b..=c",
-    "expectedReparseTree": "(captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_group2 left: (identifier) (range_pattern_left_with_right right: (identifier)))))",
+    "expectedReparseTree": "(captured_pattern identifier: (identifier) pattern: (range_pattern (range_pattern_arm2 left: (identifier) (range_pattern_left_with_right right: (identifier)))))",
     "wrappedText": "fn _f() { let a@b..=c = (); }",
     "wrappedOffset": 14
   },
@@ -139368,7 +139368,7 @@
     "pattern": "tuple_struct_pattern",
     "edits": [],
     "expectedSourceOut": "Some(1...5)",
-    "expectedReparseTree": "(tuple_struct_pattern type: (identifier) (patterns pattern: (range_pattern (range_pattern_group2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal))))))",
+    "expectedReparseTree": "(tuple_struct_pattern type: (identifier) (patterns pattern: (range_pattern (range_pattern_arm2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal))))))",
     "wrappedText": "fn _f() { let Some(1...5) = (); }",
     "wrappedOffset": 14
   },
@@ -139424,7 +139424,7 @@
     "pattern": "range_pattern",
     "edits": [],
     "expectedSourceOut": "1...5",
-    "expectedReparseTree": "(range_pattern (range_pattern_group2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal))))",
+    "expectedReparseTree": "(range_pattern (range_pattern_arm2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal))))",
     "wrappedText": "fn _f() { let 1...5 = (); }",
     "wrappedOffset": 14
   },
@@ -139480,7 +139480,7 @@
     "pattern": "range_pattern",
     "edits": [],
     "expectedSourceOut": "1...5",
-    "expectedReparseTree": "(range_pattern (range_pattern_group2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal))))",
+    "expectedReparseTree": "(range_pattern (range_pattern_arm2 left: (integer_literal) (range_pattern_left_with_right right: (integer_literal))))",
     "wrappedText": "fn _f() { let 1...5 = (); }",
     "wrappedOffset": 14
   },
@@ -139536,7 +139536,7 @@
     "pattern": "range_pattern",
     "edits": [],
     "expectedSourceOut": "b...c",
-    "expectedReparseTree": "(range_pattern (range_pattern_group2 left: (identifier) (range_pattern_left_with_right right: (identifier))))",
+    "expectedReparseTree": "(range_pattern (range_pattern_arm2 left: (identifier) (range_pattern_left_with_right right: (identifier))))",
     "wrappedText": "fn _f() { let b...c = (); }",
     "wrappedOffset": 14
   },
@@ -139592,7 +139592,7 @@
     "pattern": "range_pattern",
     "edits": [],
     "expectedSourceOut": "b..=c",
-    "expectedReparseTree": "(range_pattern (range_pattern_group2 left: (identifier) (range_pattern_left_with_right right: (identifier))))",
+    "expectedReparseTree": "(range_pattern (range_pattern_arm2 left: (identifier) (range_pattern_left_with_right right: (identifier))))",
     "wrappedText": "fn _f() { let b..=c = (); }",
     "wrappedOffset": 14
   },
@@ -139644,7 +139644,7 @@
     "pattern": "range_pattern",
     "edits": [],
     "expectedSourceOut": "d..",
-    "expectedReparseTree": "(range_pattern (range_pattern_group2 left: (identifier) (range_pattern_left_bare)))",
+    "expectedReparseTree": "(range_pattern (range_pattern_arm2 left: (identifier) (range_pattern_left_bare)))",
     "wrappedText": "fn _f() { let d.. = (); }",
     "wrappedOffset": 14
   },

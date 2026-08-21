@@ -1118,7 +1118,7 @@ export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildAttribute>;
 	return F.buildAttribute({
 		path: _requireField('attribute', 'path', _resolveOne<T.Path>(input.path, _K6, _K7)),
-		attributeGroup1: _resolveOneBranch<T.AttributeGroup1>(input.attributeGroup1, '_attribute_group1')
+		attributeArm1: _resolveOneBranch<T.AttributeArm1>(input.attributeArm1, '_attribute_arm1')
 	});
 }
 
@@ -2633,7 +2633,7 @@ export function coerceToMutPattern(input: T.MutPattern.Loose): ReturnType<typeof
 }
 
 export function coerceToRangePattern(
-	input?: (T.RangePatternGroup2 | T.RangePatternPrefix) | T.RangePattern
+	input?: (T.RangePatternArm2 | T.RangePatternPrefix) | T.RangePattern
 ): ReturnType<typeof F.buildRangePattern> {
 	if (isNodeData(input) && input.$type === TSKindId.RangePattern) {
 		const data = input;
@@ -2771,11 +2771,11 @@ export function coerceToLineComment(
 }
 
 export function coerceToBlockComment(
-	input?: T.BlockCommentGroup1 | T.BlockComment
+	input?: T.BlockCommentArm1 | T.BlockComment
 ): ReturnType<typeof F.buildBlockComment> {
 	if (isNodeData(input) && input.$type === TSKindId.BlockComment) {
 		const data = input;
-		const child = (data as unknown as { _block_comment_group1?: unknown })._block_comment_group1;
+		const child = (data as unknown as { _block_comment_arm1?: unknown })._block_comment_arm1;
 		return F.buildBlockComment(child as Parameters<typeof F.buildBlockComment>[0]);
 	}
 	return F.buildBlockComment(input as Parameters<typeof F.buildBlockComment>[0]);

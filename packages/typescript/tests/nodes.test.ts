@@ -102,7 +102,7 @@ describe('import_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.importStatement({
 			fromClause: {
-				$type: TSKindId.ImportStatementGroup1,
+				$type: TSKindId.ImportStatementArm1,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -135,7 +135,7 @@ describe('import_statement', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.importStatement({
 			fromClause: {
-				$type: TSKindId.ImportStatementGroup1,
+				$type: TSKindId.ImportStatementArm1,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -262,7 +262,7 @@ describe('variable_declaration', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorGroup1,
+						$type: TSKindId.VariableDeclaratorArm1,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -284,7 +284,7 @@ describe('variable_declaration', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorGroup1,
+						$type: TSKindId.VariableDeclaratorArm1,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -309,7 +309,7 @@ describe('lexical_declaration', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorGroup1,
+						$type: TSKindId.VariableDeclaratorArm1,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -332,7 +332,7 @@ describe('lexical_declaration', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorGroup1,
+						$type: TSKindId.VariableDeclaratorArm1,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -349,7 +349,7 @@ describe('lexical_declaration', () => {
 describe('variable_declarator', () => {
 	it('factory produces correct type', () => {
 		const node = ir.variableDeclarator({
-			$type: TSKindId.VariableDeclaratorGroup1,
+			$type: TSKindId.VariableDeclaratorArm1,
 			$text: 'test',
 			$source: 2,
 			$named: true,
@@ -1379,12 +1379,7 @@ describe('private_property_identifier', () => {
 
 describe('meta_property', () => {
 	it('factory produces correct type', () => {
-		const node = ir.metaProperty({
-			$type: TSKindId.MetaPropertyGroup1,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
+		const node = ir.metaProperty({ $type: TSKindId.MetaPropertyArm1, $text: 'test', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.MetaProperty);
 		expect(node.$source).toBe(2);
 	});

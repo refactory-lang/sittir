@@ -1821,7 +1821,7 @@
       "required": true,
       "types": [
         {
-          "type": "except_clause_group1",
+          "type": "except_clause_arm1",
           "named": true
         },
         {
@@ -1834,6 +1834,25 @@
         },
         {
           "type": "suite_block_with_indent",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "except_clause_arm1",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "except_clause_as",
+          "named": true
+        },
+        {
+          "type": "except_clause_list",
           "named": true
         }
       ]
@@ -1863,25 +1882,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "except_clause_group1",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "except_clause_as",
-          "named": true
-        },
-        {
-          "type": "except_clause_list",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -2332,7 +2332,7 @@
       "required": true,
       "types": [
         {
-          "type": "future_import_statement_group1",
+          "type": "future_import_statement_arm1",
           "named": true
         },
         {
@@ -2343,7 +2343,7 @@
     }
   },
   {
-    "type": "future_import_statement_group1",
+    "type": "future_import_statement_arm1",
     "named": true,
     "fields": {},
     "children": {
@@ -2523,7 +2523,7 @@
       "required": false,
       "types": [
         {
-          "type": "future_import_statement_group1",
+          "type": "future_import_statement_arm1",
           "named": true
         },
         {
@@ -3405,18 +3405,18 @@
       "required": true,
       "types": [
         {
-          "type": "print_statement_group1",
+          "type": "print_statement_arm1",
           "named": true
         },
         {
-          "type": "print_statement_group2",
+          "type": "print_statement_arm2",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "print_statement_group1",
+    "type": "print_statement_arm1",
     "named": true,
     "fields": {},
     "children": {
@@ -3435,7 +3435,7 @@
     }
   },
   {
-    "type": "print_statement_group2",
+    "type": "print_statement_arm2",
     "named": true,
     "fields": {},
     "children": {

@@ -94,7 +94,7 @@ export interface ArgumentsTransport {
   _arguments_elements?: ArgumentsElementsTransport
 }
 
-export interface ArrayExpressionGroup1Transport {
+export interface ArrayExpressionArm1Transport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -127,7 +127,7 @@ export interface ArrayExpressionSemiTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributes?: Array<AttributeItemTransport>
-  _array_expression_group1: Box<ArrayExpressionGroup1Transport>
+  _array_expression_arm1: Box<ArrayExpressionArm1Transport>
 }
 
 export interface ArrayExpressionTransport {
@@ -200,6 +200,18 @@ export interface AsyncBlockTransport {
   '$triviaData'?: TransportTrivia
   _move_marker?: KwMoveMarkerTransport
   _block: Box<BlockTransport>
+}
+
+export interface AttributeArm1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _value?: ExpressionTransport
+  _arguments?: DelimTokenTreeTransport
 }
 
 export interface AttributedArgumentTransport {
@@ -275,18 +287,6 @@ export interface AttributedTypeParameterTransport {
   _content: AttributedTypeParameterContentTransportSlot
 }
 
-export interface AttributeGroup1Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _value?: ExpressionTransport
-  _arguments?: DelimTokenTreeTransport
-}
-
 export interface AttributeItemTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -307,7 +307,7 @@ export interface AttributeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _path: PathTransport
-  _attribute_group1?: AttributeGroup1Transport
+  _attribute_arm1?: AttributeArm1Transport
 }
 
 export interface AwaitExpressionTransport {
@@ -345,7 +345,7 @@ export interface BinaryExpressionTransport {
   _right: Box<ExpressionTransport>
 }
 
-export interface BlockCommentGroup1Transport {
+export interface BlockCommentArm1Transport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -366,7 +366,7 @@ export interface BlockCommentTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _block_comment_group1?: BlockCommentGroup1Transport
+  _block_comment_arm1?: BlockCommentArm1Transport
 }
 
 export interface BlockTransport {
@@ -1719,7 +1719,7 @@ export interface RangeExpressionTransport {
   _content: Box<RangeExpressionContentTransportSlot>
 }
 
-export interface RangePatternGroup2Transport {
+export interface RangePatternArm2Transport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1727,8 +1727,8 @@ export interface RangePatternGroup2Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _left: Box<RangePatternGroup2LeftTransportSlot>
-  _content: Box<RangePatternGroup2ContentTransportSlot>
+  _left: Box<RangePatternArm2LeftTransportSlot>
+  _content: Box<RangePatternArm2ContentTransportSlot>
 }
 
 export interface RangePatternLeftWithRightTransport {

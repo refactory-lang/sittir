@@ -3,7 +3,7 @@
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
 	'_arguments_elements',
-	'_attribute_group1',
+	'_attribute_arm1',
 	'_attributed_argument',
 	'_attributed_enum_variant',
 	'_attributed_field_declaration',
@@ -703,7 +703,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	_kw_async_marker: 324,
 	_kw_move_marker: 325,
 	_macro_rules: 326,
-	_attribute_group1: 327,
+	_attribute_arm1: 327,
 	_enum_variant_list_elements: 328,
 	_field_declaration_list_elements: 329,
 	_ordered_field_declaration_list_elements: 330,
@@ -716,13 +716,13 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	_use_bounds_elements: 337,
 	_type_arguments_elements: 338,
 	_arguments_elements: 339,
-	_array_expression_group1: 340,
+	_array_expression_arm1: 340,
 	_field_initializer_list_elements: 341,
 	_tuple_pattern_elements: 342,
 	_patterns: 343,
 	_struct_pattern_elements: 344,
-	_range_pattern_group2: 345,
-	_block_comment_group1: 346,
+	_range_pattern_arm2: 345,
+	_block_comment_arm1: 346,
 	_tuple_type_elements: 347,
 	_tuple_expression_elements: 348,
 	_token_tree_punctuation: 349,
@@ -1146,7 +1146,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[324]: '_kw_async_marker',
 	[325]: '_kw_move_marker',
 	[326]: '_macro_rules',
-	[327]: '_attribute_group1',
+	[327]: '_attribute_arm1',
 	[328]: '_enum_variant_list_elements',
 	[329]: '_field_declaration_list_elements',
 	[330]: '_ordered_field_declaration_list_elements',
@@ -1159,13 +1159,13 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[337]: '_use_bounds_elements',
 	[338]: '_type_arguments_elements',
 	[339]: '_arguments_elements',
-	[340]: '_array_expression_group1',
+	[340]: '_array_expression_arm1',
 	[341]: '_field_initializer_list_elements',
 	[342]: '_tuple_pattern_elements',
 	[343]: '_patterns',
 	[344]: '_struct_pattern_elements',
-	[345]: '_range_pattern_group2',
-	[346]: '_block_comment_group1',
+	[345]: '_range_pattern_arm2',
+	[346]: '_block_comment_arm1',
 	[347]: '_tuple_type_elements',
 	[348]: '_tuple_expression_elements',
 	[349]: '_token_tree_punctuation',
@@ -1694,7 +1694,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: '_kw_async_marker', id: 324, enumName: 'KwAsyncMarker', cName: 'sym__kw_async_marker' },
 	{ name: '_kw_move_marker', id: 325, enumName: 'KwMoveMarker', cName: 'sym__kw_move_marker' },
 	{ name: '_macro_rules', id: 326, enumName: 'MacroRules', cName: 'sym__macro_rules' },
-	{ name: '_attribute_group1', id: 327, enumName: 'AttributeGroup1', cName: 'sym__attribute_group1' },
+	{ name: '_attribute_arm1', id: 327, enumName: 'AttributeArm1', cName: 'sym__attribute_arm1' },
 	{
 		name: '_enum_variant_list_elements',
 		id: 328,
@@ -1737,12 +1737,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'sym__type_arguments_elements'
 	},
 	{ name: '_arguments_elements', id: 339, enumName: 'ArgumentsElements', cName: 'sym__arguments_elements' },
-	{
-		name: '_array_expression_group1',
-		id: 340,
-		enumName: 'ArrayExpressionGroup1',
-		cName: 'sym__array_expression_group1'
-	},
+	{ name: '_array_expression_arm1', id: 340, enumName: 'ArrayExpressionArm1', cName: 'sym__array_expression_arm1' },
 	{
 		name: '_field_initializer_list_elements',
 		id: 341,
@@ -1757,8 +1752,8 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		enumName: 'StructPatternElements',
 		cName: 'sym__struct_pattern_elements'
 	},
-	{ name: '_range_pattern_group2', id: 345, enumName: 'RangePatternGroup2', cName: 'sym__range_pattern_group2' },
-	{ name: '_block_comment_group1', id: 346, enumName: 'BlockCommentGroup1', cName: 'sym__block_comment_group1' },
+	{ name: '_range_pattern_arm2', id: 345, enumName: 'RangePatternArm2', cName: 'sym__range_pattern_arm2' },
+	{ name: '_block_comment_arm1', id: 346, enumName: 'BlockCommentArm1', cName: 'sym__block_comment_arm1' },
 	{ name: '_tuple_type_elements', id: 347, enumName: 'TupleTypeElements', cName: 'sym__tuple_type_elements' },
 	{
 		name: '_tuple_expression_elements',
@@ -2483,7 +2478,7 @@ export const FIELD_MAP: Record<
 	}>
 > = {
 	_arguments_elements: [{ name: 'elements', required: true, multiple: true }],
-	_attribute_group1: [
+	_attribute_arm1: [
 		{ name: 'value', required: false, multiple: false },
 		{ name: 'arguments', required: false, multiple: false }
 	],
@@ -2568,7 +2563,7 @@ export const FIELD_MAP: Record<
 	],
 	attribute: [
 		{ name: 'path', required: true, multiple: false },
-		{ name: 'attributeGroup1', required: false, multiple: false }
+		{ name: 'attributeArm1', required: false, multiple: false }
 	],
 	attribute_item: [{ name: 'attribute', required: true, multiple: false }],
 	await_expression: [{ name: 'expression', required: true, multiple: false }],
@@ -2583,7 +2578,7 @@ export const FIELD_MAP: Record<
 		{ name: 'statements', required: false, multiple: true },
 		{ name: 'trailingExpression', required: false, multiple: false }
 	],
-	block_comment: [{ name: 'blockCommentGroup1', required: false, multiple: false }],
+	block_comment: [{ name: 'blockCommentArm1', required: false, multiple: false }],
 	bounded_type: [
 		{ name: 'left', required: true, multiple: false },
 		{ name: 'right', required: true, multiple: false }

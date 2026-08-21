@@ -527,7 +527,7 @@ function applyHoistAndUnalias(
 ): Rule {
 	let r = rule;
 	// Per-parent counter is local; dedupeMap + clauseGroupRules are shared across rules.
-	const clauseHoistCounter: ClauseHoistCounter = { opt: 0, grp: 0, supertypeNames };
+	const clauseHoistCounter: ClauseHoistCounter = { opt: 0, grp: 0, arm: 0, supertypeNames };
 	r = applyClauseHoist(
 		ruleName,
 		r,
@@ -2124,6 +2124,11 @@ interface ClauseHoistCounter {
 	// is disabled this chunk so there is no cross-pass numbering to keep in
 	// sync for the visible groups.
 	grp: number;
+	// Counts CHOICE-arm mints surfaced as visible content-aliases
+	// (`_<parent>_arm<N>`). Separate from `grp`: an arm of a choice and a
+	// nested sequence group are different constructs and carry different
+	// name suffixes (armN vs groupN).
+	arm: number;
 	// DECLARED supertype names (grammar's `supertypes:` array, base +
 	// overrides — never structurally inferred). mintStructuredChoiceArm
 	// declines symbol arms referencing these: a declared supertype is
@@ -3385,7 +3390,11 @@ function visibleGroupSynthName(
 	// Naming the group after the field it fills (`_<parent>_<field>`) is
 	// more legible than an opaque ordinal and reuses a name the grammar
 	// author already chose, rather than minting a fresh one.
-	enclosingFieldName?: string
+	enclosingFieldName?: string,
+	// Ordinal-fallback suffix: 'arm' when the minted content is a CHOICE
+	// arm (mintStructuredChoiceArm), 'group' for a nested sequence group —
+	// the two constructs carry distinct name suffixes.
+	flavor: 'group' | 'arm' = 'group'
 ): { visibleName: string; hiddenName: string } | null {
 	if (process.env.SITTIR_DEBUG_LISTNAME) {
 		const info = separatedListBodyInfo(content);
@@ -3460,8 +3469,8 @@ function visibleGroupSynthName(
 			return register(visibleName);
 		}
 	}
-	counter.grp += 1;
-	const visibleName = `${base}_group${counter.grp}`;
+	const ordinal = flavor === 'arm' ? ++counter.arm : ++counter.grp;
+	const visibleName = `${base}_${flavor}${ordinal}`;
 	const hiddenName = `_${visibleName}`;
 	if (visibleName in rulesBag || hiddenName in rulesBag) {
 		process.stderr.write(
@@ -3477,7 +3486,9 @@ function promoteExistingHiddenRuleName(
 	parentKind: string,
 	groupDedupeMap: Record<string, string>,
 	counter: ClauseHoistCounter,
-	rulesBag: Record<string, Rule>
+	rulesBag: Record<string, Rule>,
+	// See visibleGroupSynthName's `flavor` — armN for choice arms.
+	flavor: 'group' | 'arm' = 'group'
 ): { visibleName: string } | null {
 	const existing = groupDedupeMap[existingHiddenName];
 	if (existing !== undefined) return { visibleName: existing };
@@ -3494,8 +3505,8 @@ function promoteExistingHiddenRuleName(
 		groupDedupeMap[existingHiddenName] = natural;
 		return { visibleName: natural };
 	}
-	counter.grp += 1;
-	const visibleName = `${parentKind.replace(/^_+/, '')}_group${counter.grp}`;
+	const ordinal = flavor === 'arm' ? ++counter.arm : ++counter.grp;
+	const visibleName = `${parentKind.replace(/^_+/, '')}_${flavor}${ordinal}`;
 	if (visibleName in rulesBag) {
 		process.stderr.write(
 			`enrich: visible-group promotion skipped for '${parentKind}' — rule '${visibleName}' already exists in base.grammar.rules\n`
@@ -3668,7 +3679,7 @@ function mintStructuredChoiceArm(
 		// divergence (sittir minted this arm, the CLI never saw it as a
 		// SYMBOL) cannot recur for this class.
 		if (isSupertypeLike(body)) return null;
-		const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag);
+		const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag, 'arm');
 		if (!promoted) return null;
 		visibleGroupHiddenNames.add(name);
 		if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
@@ -3691,7 +3702,8 @@ function mintStructuredChoiceArm(
 			rulesBag,
 			clauseGroupRules,
 			ambientPrec,
-			enclosingFieldName
+			enclosingFieldName,
+			'arm'
 		);
 		if (!names) return null;
 		visibleGroupHiddenNames.add(names.hiddenName);

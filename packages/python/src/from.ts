@@ -129,8 +129,8 @@ export const _fromMap = {
 	case_list_pattern: coerceToCaseListPattern,
 	case_as_pattern: coerceToCaseAsPattern,
 	comprehension_clauses: coerceToComprehensionClauses,
-	print_statement_group1: coerceToPrintStatementGroup1,
-	print_statement_group2: coerceToPrintStatementGroup2,
+	print_statement_arm1: coerceToPrintStatementArm1,
+	print_statement_arm2: coerceToPrintStatementArm2,
 	string_start: coerceToStringStart,
 	escape_interpolation: coerceToEscapeInterpolation,
 	string_end: coerceToStringEnd,
@@ -298,10 +298,10 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	string_content: TSKindId.StringContent,
 	format_specifier: TSKindId.FormatSpecifier,
 	_simple_statements_elements: TSKindId.SimpleStatementsElements,
-	_future_import_statement_group1: TSKindId.FutureImportStatementGroup1,
+	_future_import_statement_arm1: TSKindId.FutureImportStatementArm1,
 	_subjects: TSKindId.Subjects,
 	_case_patterns: TSKindId.CasePatterns,
-	_except_clause_group1: TSKindId.ExceptClauseGroup1,
+	_except_clause_arm1: TSKindId.ExceptClauseArm1,
 	_with_clause_with_items: TSKindId.WithClauseWithItems,
 	_types: TSKindId.Types,
 	_argument_list_elements: TSKindId.ArgumentListElements,
@@ -316,7 +316,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	case_list_pattern: TSKindId.CaseListPattern,
 	_print_arguments: TSKindId.PrintArguments,
 	_print_chevron_arguments: TSKindId.PrintChevronArguments,
-	print_statement_group2: TSKindId.PrintStatementGroup2,
+	print_statement_arm2: TSKindId.PrintStatementArm2,
 	_expression_statement_tuple: TSKindId.ExpressionStatementTuple,
 	_with_clause_bare: TSKindId.WithClauseBare,
 	_with_clause_paren: TSKindId.WithClauseParen,
@@ -392,16 +392,14 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildFormatSpecifier(...(children as Parameters<typeof F.buildFormatSpecifier>));
 		case '_simple_statements_elements':
 			return (F.buildSimpleStatementsElements as (...args: unknown[]) => unknown)(...children);
-		case '_future_import_statement_group1':
-			return F.buildFutureImportStatementGroup1(
-				children[0] as Parameters<typeof F.buildFutureImportStatementGroup1>[0]
-			);
+		case '_future_import_statement_arm1':
+			return F.buildFutureImportStatementArm1(children[0] as Parameters<typeof F.buildFutureImportStatementArm1>[0]);
 		case '_subjects':
 			return (F.buildSubjects as (...args: unknown[]) => unknown)(...children);
 		case '_case_patterns':
 			return (F.buildCasePatterns as (...args: unknown[]) => unknown)(...children);
-		case '_except_clause_group1':
-			return F.buildExceptClauseGroup1(children[0] as Parameters<typeof F.buildExceptClauseGroup1>[0]);
+		case '_except_clause_arm1':
+			return F.buildExceptClauseArm1(children[0] as Parameters<typeof F.buildExceptClauseArm1>[0]);
 		case '_with_clause_with_items':
 			return (F.buildWithClauseWithItems as (...args: unknown[]) => unknown)(...children);
 		case '_types':
@@ -430,8 +428,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildPrintArguments as (...args: unknown[]) => unknown)(...children);
 		case '_print_chevron_arguments':
 			return (F.buildPrintChevronArguments as (...args: unknown[]) => unknown)(...children);
-		case 'print_statement_group2':
-			return F.buildPrintStatementGroup2(children[0] as Parameters<typeof F.buildPrintStatementGroup2>[0]);
+		case 'print_statement_arm2':
+			return F.buildPrintStatementArm2(children[0] as Parameters<typeof F.buildPrintStatementArm2>[0]);
 		case '_expression_statement_tuple':
 			return (F.buildExpressionStatementTuple as (...args: unknown[]) => unknown)(...children);
 		case '_with_clause_bare':
@@ -550,7 +548,7 @@ const _K1: readonly string[] = [
 	'match_statement'
 ];
 const _K2: readonly string[] = ['relative_import', 'dotted_name'];
-const _K3: readonly string[] = ['_import_list', '_future_import_statement_group1'];
+const _K3: readonly string[] = ['_import_list', '_future_import_statement_arm1'];
 const _K4: readonly string[] = ['identifier', 'integer', 'float', 'true', 'false', 'none'];
 const _K5: readonly string[] = [
 	'comparison_operator',
@@ -788,7 +786,7 @@ export function coerceToRelativeImport(input: T.RelativeImport.Loose): ReturnTyp
 }
 
 export function coerceToFutureImportStatement(
-	input?: (T.ImportList | T.FutureImportStatementGroup1) | T.FutureImportStatement
+	input?: (T.ImportList | T.FutureImportStatementArm1) | T.FutureImportStatement
 ): ReturnType<typeof F.buildFutureImportStatement> {
 	if (isNodeData(input) && input.$type === TSKindId.FutureImportStatement) {
 		const data = input;
@@ -811,7 +809,7 @@ export function coerceToImportFromStatement(
 		content: _requireField(
 			'import_from_statement',
 			'content',
-			_resolveOne<T.ImportList | T.FutureImportStatementGroup1 | T.WildcardImport>(input.content, _K0, _K3)
+			_resolveOne<T.ImportList | T.FutureImportStatementArm1 | T.WildcardImport>(input.content, _K0, _K3)
 		)
 	});
 }
@@ -825,7 +823,7 @@ export function coerceToAliasedImport(input: T.AliasedImport.Loose): ReturnType<
 }
 
 export function coerceToPrintStatement(
-	input?: (T.PrintStatementGroup1 | T.PrintStatementGroup2) | T.PrintStatement
+	input?: (T.PrintStatementArm1 | T.PrintStatementArm2) | T.PrintStatement
 ): ReturnType<typeof F.buildPrintStatement> {
 	if (isNodeData(input) && input.$type === TSKindId.PrintStatement) {
 		const data = input;
@@ -1044,7 +1042,7 @@ export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<ty
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExceptClause>;
 	return F.buildExceptClause({
 		starMarker: _resolveBooleanKeyword(input.starMarker),
-		exceptClauseGroup1: _resolveOneBranch<T.ExceptClauseGroup1>(input.exceptClauseGroup1, '_except_clause_group1'),
+		exceptClauseArm1: _resolveOneBranch<T.ExceptClauseArm1>(input.exceptClauseArm1, '_except_clause_arm1'),
 		content: _requireField(
 			'except_clause',
 			'content',
@@ -2176,12 +2174,12 @@ export function coerceToComprehensionClauses(
 	});
 }
 
-export function coerceToPrintStatementGroup1(
-	input: T.PrintStatementGroup1.Loose
-): ReturnType<typeof F.buildPrintStatementGroup1> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildPrintStatementGroup1>;
-	return F.buildPrintStatementGroup1({
-		chevron: _requireField('print_statement_group1', 'chevron', _resolveOneBranch<T.Chevron>(input.chevron, 'chevron')),
+export function coerceToPrintStatementArm1(
+	input: T.PrintStatementArm1.Loose
+): ReturnType<typeof F.buildPrintStatementArm1> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildPrintStatementArm1>;
+	return F.buildPrintStatementArm1({
+		chevron: _requireField('print_statement_arm1', 'chevron', _resolveOneBranch<T.Chevron>(input.chevron, 'chevron')),
 		printChevronArguments: _resolveOneBranch<T.PrintChevronArguments | ','>(
 			input.printChevronArguments,
 			'_print_chevron_arguments'
@@ -2189,15 +2187,15 @@ export function coerceToPrintStatementGroup1(
 	});
 }
 
-export function coerceToPrintStatementGroup2(
-	input?: T.PrintArguments | T.PrintStatementGroup2
-): ReturnType<typeof F.buildPrintStatementGroup2> {
-	if (isNodeData(input) && input.$type === TSKindId.PrintStatementGroup2) {
+export function coerceToPrintStatementArm2(
+	input?: T.PrintArguments | T.PrintStatementArm2
+): ReturnType<typeof F.buildPrintStatementArm2> {
+	if (isNodeData(input) && input.$type === TSKindId.PrintStatementArm2) {
 		const data = input;
 		const child = (data as unknown as { _print_arguments?: unknown })._print_arguments;
-		return F.buildPrintStatementGroup2(child as Parameters<typeof F.buildPrintStatementGroup2>[0]);
+		return F.buildPrintStatementArm2(child as Parameters<typeof F.buildPrintStatementArm2>[0]);
 	}
-	return F.buildPrintStatementGroup2(input as Parameters<typeof F.buildPrintStatementGroup2>[0]);
+	return F.buildPrintStatementArm2(input as Parameters<typeof F.buildPrintStatementArm2>[0]);
 }
 
 export function coerceToStringStart(input: string | T.StringStart): ReturnType<typeof F.buildStringStart> {

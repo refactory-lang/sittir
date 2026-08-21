@@ -1205,7 +1205,7 @@ function applyFieldWrapPasses(ruleName, rule, kwRules, supertypeNames, rulesBag,
 }
 function applyHoistAndUnalias(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, unaliasSink) {
   let r = rule;
-  const clauseHoistCounter = { opt: 0, grp: 0, supertypeNames };
+  const clauseHoistCounter = { opt: 0, grp: 0, arm: 0, supertypeNames };
   r = applyClauseHoist(
     ruleName,
     r,
@@ -2872,7 +2872,7 @@ function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag,
   clauseGroupRules[name] = seqBody;
   return name;
 }
-function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, ambientPrec, enclosingFieldName) {
+function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, ambientPrec, enclosingFieldName, flavor = "group") {
   if (process.env.SITTIR_DEBUG_LISTNAME) {
     const info = separatedListBodyInfo(content);
     process.stderr.write(
@@ -2917,8 +2917,8 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
       return register(visibleName2);
     }
   }
-  counter.grp += 1;
-  const visibleName = `${base2}_group${counter.grp}`;
+  const ordinal = flavor === "arm" ? ++counter.arm : ++counter.grp;
+  const visibleName = `${base2}_${flavor}${ordinal}`;
   const hiddenName = `_${visibleName}`;
   if (visibleName in rulesBag || hiddenName in rulesBag) {
     process.stderr.write(
@@ -2929,7 +2929,7 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
   }
   return register(visibleName);
 }
-function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedupeMap, counter, rulesBag) {
+function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedupeMap, counter, rulesBag, flavor = "group") {
   const existing = groupDedupeMap[existingHiddenName];
   if (existing !== void 0) return { visibleName: existing };
   const natural = existingHiddenName.replace(/^_+/, "");
@@ -2937,8 +2937,8 @@ function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedu
     groupDedupeMap[existingHiddenName] = natural;
     return { visibleName: natural };
   }
-  counter.grp += 1;
-  const visibleName = `${parentKind.replace(/^_+/, "")}_group${counter.grp}`;
+  const ordinal = flavor === "arm" ? ++counter.arm : ++counter.grp;
+  const visibleName = `${parentKind.replace(/^_+/, "")}_${flavor}${ordinal}`;
   if (visibleName in rulesBag) {
     process.stderr.write(
       `enrich: visible-group promotion skipped for '${parentKind}' \u2014 rule '${visibleName}' already exists in base.grammar.rules
@@ -3009,7 +3009,7 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
     const body = rulesBag[name];
     if (!body || ruleMatchesEmpty(body) || isInlineSafe(body, rulesBag)) return null;
     if (isSupertypeLike(body)) return null;
-    const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag);
+    const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag, "arm");
     if (!promoted) return null;
     visibleGroupHiddenNames.add(name);
     if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
@@ -3026,7 +3026,8 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
       rulesBag,
       clauseGroupRules,
       ambientPrec,
-      enclosingFieldName
+      enclosingFieldName,
+      "arm"
     );
     if (!names) return null;
     visibleGroupHiddenNames.add(names.hiddenName);
@@ -4506,7 +4507,7 @@ var grammar_sittir_default = grammar(
         [$.generic_type_with_turbofish, $.generic_pattern, $._path],
         [$.generic_type_with_turbofish, $._path],
         [$.visibility_modifier, $._path],
-        [$._expression_except_range, $._closure_expression_group1],
+        [$._expression_except_range, $._closure_expression_arm1],
         [$.async_block, $._kw_async_marker],
         [$.scoped_identifier, $.scoped_type_identifier, $._visibility_modifier_crate],
         [$._visibility_modifier_pub],

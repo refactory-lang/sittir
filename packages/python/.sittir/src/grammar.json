@@ -235,14 +235,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_future_import_statement_group1",
+                "name": "_future_import_statement_arm1",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "future_import_statement_group1",
+              "value": "future_import_statement_arm1",
               "metadata": {
                 "author": "enrich"
               }
@@ -309,14 +309,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_future_import_statement_group1",
+                "name": "_future_import_statement_arm1",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "future_import_statement_group1",
+              "value": "future_import_statement_arm1",
               "metadata": {
                 "author": "enrich"
               }
@@ -425,7 +425,7 @@
           "value": 1,
           "content": {
             "type": "SYMBOL",
-            "name": "print_statement_group1"
+            "name": "print_statement_arm1"
           }
         },
         {
@@ -436,7 +436,7 @@
             "value": -1,
             "content": {
               "type": "SYMBOL",
-              "name": "print_statement_group2"
+              "name": "print_statement_arm2"
             }
           }
         }
@@ -1185,14 +1185,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_except_clause_group1",
+                "name": "_except_clause_arm1",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "except_clause_group1",
+              "value": "except_clause_arm1",
               "metadata": {
                 "author": "enrich"
               }
@@ -5822,7 +5822,7 @@
         }
       ]
     },
-    "_future_import_statement_group1": {
+    "_future_import_statement_arm1": {
       "type": "SEQ",
       "members": [
         {
@@ -5960,7 +5960,7 @@
         }
       ]
     },
-    "_except_clause_group1": {
+    "_except_clause_arm1": {
       "type": "CHOICE",
       "members": [
         {
@@ -6909,7 +6909,7 @@
         }
       ]
     },
-    "print_statement_group1": {
+    "print_statement_arm1": {
       "type": "SEQ",
       "members": [
         {
@@ -6948,7 +6948,7 @@
         }
       ]
     },
-    "print_statement_group2": {
+    "print_statement_arm2": {
       "type": "SEQ",
       "members": [
         {
@@ -7487,10 +7487,10 @@
     ],
     [
       "future_import_statement",
-      "_future_import_statement_group1"
+      "_future_import_statement_arm1"
     ],
     [
-      "_future_import_statement_group1"
+      "_future_import_statement_arm1"
     ],
     [
       "match_statement",
@@ -7508,10 +7508,10 @@
     ],
     [
       "except_clause",
-      "_except_clause_group1"
+      "_except_clause_arm1"
     ],
     [
-      "_except_clause_group1"
+      "_except_clause_arm1"
     ],
     [
       "with_clause",

@@ -566,7 +566,7 @@ const _K1: readonly string[] = [
 	'labeled_statement'
 ];
 const _K2: readonly string[] = ['string'];
-const _K3: readonly string[] = ['_import_statement_group1', 'import_require_clause', 'string'];
+const _K3: readonly string[] = ['_import_statement_arm1', 'import_require_clause', 'string'];
 const _K4: readonly string[] = ['_import_specifier_as'];
 const _K5: readonly string[] = [
 	'undefined',
@@ -992,7 +992,7 @@ export function coerceToImportStatement(input: T.ImportStatement.Loose): ReturnT
 		fromClause: _requireField(
 			'import_statement',
 			'fromClause',
-			_resolveOne<T.ImportStatementGroup1 | T.ImportRequireClause | T.String>(input.fromClause, _K0, _K3)
+			_resolveOne<T.ImportStatementArm1 | T.ImportRequireClause | T.String>(input.fromClause, _K0, _K3)
 		),
 		importAttribute: _resolveOneBranch<T.ImportAttribute>(input.importAttribute, 'import_attribute'),
 		semicolon: _requireField(
@@ -1143,7 +1143,7 @@ export function coerceToLexicalDeclaration(
 }
 
 export function coerceToVariableDeclarator(
-	input?: (T.VariableDeclaratorGroup1 | T.VariableDeclaratorGroup2) | T.VariableDeclarator
+	input?: (T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2) | T.VariableDeclarator
 ): ReturnType<typeof F.buildVariableDeclarator> {
 	if (isNodeData(input) && input.$type === TSKindId.VariableDeclarator) {
 		const data = input;
@@ -1915,9 +1915,9 @@ export function coerceToBinaryExpression(input?: T.BinaryExpression.Loose): Retu
 			]
 		),
 		right: _resolveOne<T.Expression>(input?.right, _K5, _K10),
-		binaryExpressionGroup1: _resolveOneBranch<T.BinaryExpressionGroup1>(
-			input?.binaryExpressionGroup1,
-			'_binary_expression_group1'
+		binaryExpressionArm1: _resolveOneBranch<T.BinaryExpressionArm1>(
+			input?.binaryExpressionArm1,
+			'_binary_expression_arm1'
 		)
 	});
 }
@@ -2051,7 +2051,7 @@ export function coerceToPrivatePropertyIdentifier(
 }
 
 export function coerceToMetaProperty(
-	input?: (T.MetaPropertyGroup1 | T.MetaPropertyGroup2) | T.MetaProperty
+	input?: (T.MetaPropertyArm1 | T.MetaPropertyArm2) | T.MetaProperty
 ): ReturnType<typeof F.buildMetaProperty> {
 	if (isNodeData(input) && input.$type === TSKindId.MetaProperty) {
 		const data = input;

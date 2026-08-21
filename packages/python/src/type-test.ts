@@ -110,8 +110,8 @@ import type {
 	EscapeSequenceTree,
 	Except,
 	ExceptClause,
-	ExceptClauseGroup1,
-	ExceptClauseGroup1Tree,
+	ExceptClauseArm1,
+	ExceptClauseArm1Tree,
 	ExceptClauseList,
 	ExceptClauseListTree,
 	ExceptClauseTree,
@@ -141,8 +141,8 @@ import type {
 	FunctionDefinition,
 	FunctionDefinitionTree,
 	FutureImportStatement,
-	FutureImportStatementGroup1,
-	FutureImportStatementGroup1Tree,
+	FutureImportStatementArm1,
+	FutureImportStatementArm1Tree,
 	FutureImportStatementTree,
 	GeneratorExpression,
 	GeneratorExpressionTree,
@@ -235,10 +235,10 @@ import type {
 	PrintChevronArguments,
 	PrintChevronArgumentsTree,
 	PrintStatement,
-	PrintStatementGroup1,
-	PrintStatementGroup1Tree,
-	PrintStatementGroup2,
-	PrintStatementGroup2Tree,
+	PrintStatementArm1,
+	PrintStatementArm1Tree,
+	PrintStatementArm2,
+	PrintStatementArm2Tree,
 	PrintStatementTree,
 	RaiseStatement,
 	RaiseStatementTree,
@@ -486,14 +486,12 @@ export type _Type_Await = _TypeAssert<_TypeExtends<Await['$type'], TSKindId.Awai
 export type _Type_SimpleStatementsElements = _TypeAssert<
 	_TypeExtends<SimpleStatementsElements['$type'], TSKindId.SimpleStatementsElements>
 >;
-export type _Type_FutureImportStatementGroup1 = _TypeAssert<
-	_TypeExtends<FutureImportStatementGroup1['$type'], TSKindId.FutureImportStatementGroup1>
+export type _Type_FutureImportStatementArm1 = _TypeAssert<
+	_TypeExtends<FutureImportStatementArm1['$type'], TSKindId.FutureImportStatementArm1>
 >;
 export type _Type_Subjects = _TypeAssert<_TypeExtends<Subjects['$type'], TSKindId.Subjects>>;
 export type _Type_CasePatterns = _TypeAssert<_TypeExtends<CasePatterns['$type'], TSKindId.CasePatterns>>;
-export type _Type_ExceptClauseGroup1 = _TypeAssert<
-	_TypeExtends<ExceptClauseGroup1['$type'], TSKindId.ExceptClauseGroup1>
->;
+export type _Type_ExceptClauseArm1 = _TypeAssert<_TypeExtends<ExceptClauseArm1['$type'], TSKindId.ExceptClauseArm1>>;
 export type _Type_WithClauseWithItems = _TypeAssert<
 	_TypeExtends<WithClauseWithItems['$type'], TSKindId.WithClauseWithItems>
 >;
@@ -528,11 +526,11 @@ export type _Type_PrintArguments = _TypeAssert<_TypeExtends<PrintArguments['$typ
 export type _Type_PrintChevronArguments = _TypeAssert<
 	_TypeExtends<PrintChevronArguments['$type'], TSKindId.PrintChevronArguments>
 >;
-export type _Type_PrintStatementGroup1 = _TypeAssert<
-	_TypeExtends<PrintStatementGroup1['$type'], TSKindId.PrintStatementGroup1>
+export type _Type_PrintStatementArm1 = _TypeAssert<
+	_TypeExtends<PrintStatementArm1['$type'], TSKindId.PrintStatementArm1>
 >;
-export type _Type_PrintStatementGroup2 = _TypeAssert<
-	_TypeExtends<PrintStatementGroup2['$type'], TSKindId.PrintStatementGroup2>
+export type _Type_PrintStatementArm2 = _TypeAssert<
+	_TypeExtends<PrintStatementArm2['$type'], TSKindId.PrintStatementArm2>
 >;
 export type _Type_ExpressionStatementTuple = _TypeAssert<
 	_TypeExtends<ExpressionStatementTuple['$type'], TSKindId.ExpressionStatementTuple>
@@ -736,14 +734,12 @@ export type _Tree_Await = _TypeAssert<_TypeExtends<AwaitTree['type'], 'await'>>;
 export type _Tree_SimpleStatementsElements = _TypeAssert<
 	_TypeExtends<SimpleStatementsElementsTree['type'], '_simple_statements_elements'>
 >;
-export type _Tree_FutureImportStatementGroup1 = _TypeAssert<
-	_TypeExtends<FutureImportStatementGroup1Tree['type'], '_future_import_statement_group1'>
+export type _Tree_FutureImportStatementArm1 = _TypeAssert<
+	_TypeExtends<FutureImportStatementArm1Tree['type'], '_future_import_statement_arm1'>
 >;
 export type _Tree_Subjects = _TypeAssert<_TypeExtends<SubjectsTree['type'], '_subjects'>>;
 export type _Tree_CasePatterns = _TypeAssert<_TypeExtends<CasePatternsTree['type'], '_case_patterns'>>;
-export type _Tree_ExceptClauseGroup1 = _TypeAssert<
-	_TypeExtends<ExceptClauseGroup1Tree['type'], '_except_clause_group1'>
->;
+export type _Tree_ExceptClauseArm1 = _TypeAssert<_TypeExtends<ExceptClauseArm1Tree['type'], '_except_clause_arm1'>>;
 export type _Tree_WithClauseWithItems = _TypeAssert<
 	_TypeExtends<WithClauseWithItemsTree['type'], '_with_clause_with_items'>
 >;
@@ -778,11 +774,11 @@ export type _Tree_PrintArguments = _TypeAssert<_TypeExtends<PrintArgumentsTree['
 export type _Tree_PrintChevronArguments = _TypeAssert<
 	_TypeExtends<PrintChevronArgumentsTree['type'], '_print_chevron_arguments'>
 >;
-export type _Tree_PrintStatementGroup1 = _TypeAssert<
-	_TypeExtends<PrintStatementGroup1Tree['type'], 'print_statement_group1'>
+export type _Tree_PrintStatementArm1 = _TypeAssert<
+	_TypeExtends<PrintStatementArm1Tree['type'], 'print_statement_arm1'>
 >;
-export type _Tree_PrintStatementGroup2 = _TypeAssert<
-	_TypeExtends<PrintStatementGroup2Tree['type'], 'print_statement_group2'>
+export type _Tree_PrintStatementArm2 = _TypeAssert<
+	_TypeExtends<PrintStatementArm2Tree['type'], 'print_statement_arm2'>
 >;
 export type _Tree_ExpressionStatementTuple = _TypeAssert<
 	_TypeExtends<ExpressionStatementTupleTree['type'], '_expression_statement_tuple'>

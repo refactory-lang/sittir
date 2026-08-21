@@ -1476,7 +1476,7 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
 				return this._import_clause;
 			},
 			fromClause() {
-				return drillIn<T.ImportStatementGroup1 | T.ImportRequireClause | T.String>(this._from_clause, tree);
+				return drillIn<T.ImportStatementArm1 | T.ImportRequireClause | T.String>(this._from_clause, tree);
 			},
 			importAttribute() {
 				return drillIn<T.ImportAttribute | undefined>(this._import_attribute, tree);
@@ -2016,17 +2016,17 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
 
 export function wrapVariableDeclarator(
 	data: T.VariableDeclarator & {
-		readonly _variable_declarator_group1?: T.VariableDeclaratorGroup1 | T.VariableDeclaratorGroup2;
-		readonly _variable_declarator_group2?: T.VariableDeclaratorGroup1 | T.VariableDeclaratorGroup2;
+		readonly _variable_declarator_arm1?: T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2;
+		readonly _variable_declarator_arm2?: T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2;
 	},
 	tree: TreeHandle
 ) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_variable_declarator_group1', '_variable_declarator_group2']),
+			..._omitWrapKeys(data, ['_variable_declarator_arm1', '_variable_declarator_arm2']),
 			$type: TSKindId.VariableDeclarator as const,
 			_content: normalizeSingularWrapSlot(
-				data._content ?? data._variable_declarator_group1 ?? data._variable_declarator_group2,
+				data._content ?? data._variable_declarator_arm1 ?? data._variable_declarator_arm2,
 				'content',
 				true,
 				data.$type,
@@ -2034,7 +2034,7 @@ export function wrapVariableDeclarator(
 			),
 
 			content() {
-				return drillIn<T.VariableDeclaratorGroup1 | T.VariableDeclaratorGroup2>(this._content, tree);
+				return drillIn<T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.VariableDeclarator['_content']>) =>
@@ -4992,12 +4992,12 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 				slotName: 'right',
 				span: (data as _NodeData).$span
 			}),
-			_binary_expression_group1: normalizeSingularWrapSlot(
-				data._binary_expression_group1,
-				'binary_expression_group1',
+			_binary_expression_arm1: normalizeSingularWrapSlot(
+				data._binary_expression_arm1,
+				'binary_expression_arm1',
 				false,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'binary_expression_group1', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'binary_expression_arm1', span: (data as _NodeData).$span }
 			),
 
 			left() {
@@ -5009,16 +5009,16 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 			right() {
 				return drillIn<T.Expression | undefined>(this._right, tree);
 			},
-			binaryExpressionGroup1() {
-				return drillIn<T.BinaryExpressionGroup1 | undefined>(this._binary_expression_group1, tree);
+			binaryExpressionArm1() {
+				return drillIn<T.BinaryExpressionArm1 | undefined>(this._binary_expression_arm1, tree);
 			},
 			$with: {
 				left: (v: NonNullable<T.BinaryExpression['_left']>) => wrapBinaryExpression({ ...data, _left: v }, tree),
 				operator: (v: NonNullable<T.BinaryExpression['_operator']>) =>
 					wrapBinaryExpression({ ...data, _operator: v }, tree),
 				right: (v: NonNullable<T.BinaryExpression['_right']>) => wrapBinaryExpression({ ...data, _right: v }, tree),
-				binaryExpressionGroup1: (v: NonNullable<T.BinaryExpression['_binary_expression_group1']>) =>
-					wrapBinaryExpression({ ...data, _binary_expression_group1: v }, tree)
+				binaryExpressionArm1: (v: NonNullable<T.BinaryExpression['_binary_expression_arm1']>) =>
+					wrapBinaryExpression({ ...data, _binary_expression_arm1: v }, tree)
 			}
 		},
 		methodsEngine
@@ -5417,17 +5417,17 @@ export function wrapRegex(data: T.Regex, tree: TreeHandle) {
 
 export function wrapMetaProperty(
 	data: T.MetaProperty & {
-		readonly _meta_property_group1?: T.MetaPropertyGroup1 | T.MetaPropertyGroup2;
-		readonly _meta_property_group2?: T.MetaPropertyGroup1 | T.MetaPropertyGroup2;
+		readonly _meta_property_arm1?: T.MetaPropertyArm1 | T.MetaPropertyArm2;
+		readonly _meta_property_arm2?: T.MetaPropertyArm1 | T.MetaPropertyArm2;
 	},
 	tree: TreeHandle
 ) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_meta_property_group1', '_meta_property_group2']),
+			..._omitWrapKeys(data, ['_meta_property_arm1', '_meta_property_arm2']),
 			$type: TSKindId.MetaProperty as const,
 			_content: normalizeSingularWrapSlot(
-				data._content ?? data._meta_property_group1 ?? data._meta_property_group2,
+				data._content ?? data._meta_property_arm1 ?? data._meta_property_arm2,
 				'content',
 				true,
 				data.$type,
@@ -5435,7 +5435,7 @@ export function wrapMetaProperty(
 			),
 
 			content() {
-				return drillIn<T.MetaPropertyGroup1 | T.MetaPropertyGroup2>(this._content, tree);
+				return drillIn<T.MetaPropertyArm1 | T.MetaPropertyArm2>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.MetaProperty['_content']>) => wrapMetaProperty({ ...data, _content: v }, tree)
@@ -10126,11 +10126,11 @@ export function wrapExportSpecifiers(
 	);
 }
 
-export function wrapImportStatementGroup1(data: T.ImportStatementGroup1, tree: TreeHandle) {
+export function wrapImportStatementArm1(data: T.ImportStatementArm1, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId.ImportStatementGroup1 as const,
+			$type: TSKindId.ImportStatementArm1 as const,
 			_import_clause: normalizeSingularWrapSlot(data._import_clause, 'import_clause', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -10151,10 +10151,10 @@ export function wrapImportStatementGroup1(data: T.ImportStatementGroup1, tree: T
 				return drillIn<T.String>(this._source, tree);
 			},
 			$with: {
-				importClause: (v: NonNullable<T.ImportStatementGroup1['_import_clause']>) =>
-					wrapImportStatementGroup1({ ...data, _import_clause: v }, tree),
-				source: (v: NonNullable<T.ImportStatementGroup1['_source']>) =>
-					wrapImportStatementGroup1({ ...data, _source: v }, tree)
+				importClause: (v: NonNullable<T.ImportStatementArm1['_import_clause']>) =>
+					wrapImportStatementArm1({ ...data, _import_clause: v }, tree),
+				source: (v: NonNullable<T.ImportStatementArm1['_source']>) =>
+					wrapImportStatementArm1({ ...data, _source: v }, tree)
 			}
 		},
 		methodsEngine
@@ -10220,11 +10220,11 @@ export function wrapImportSpecifiers(
 	);
 }
 
-export function wrapVariableDeclaratorGroup1(data: T.VariableDeclaratorGroup1, tree: TreeHandle) {
+export function wrapVariableDeclaratorArm1(data: T.VariableDeclaratorArm1, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId.VariableDeclaratorGroup1 as const,
+			$type: TSKindId.VariableDeclaratorArm1 as const,
 			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -10254,12 +10254,12 @@ export function wrapVariableDeclaratorGroup1(data: T.VariableDeclaratorGroup1, t
 				return drillIn<T.Expression | undefined>(this._value, tree);
 			},
 			$with: {
-				name: (v: NonNullable<T.VariableDeclaratorGroup1['_name']>) =>
-					wrapVariableDeclaratorGroup1({ ...data, _name: v }, tree),
-				type: (v: NonNullable<T.VariableDeclaratorGroup1['_type']>) =>
-					wrapVariableDeclaratorGroup1({ ...data, _type: v }, tree),
-				value: (v: NonNullable<T.VariableDeclaratorGroup1['_value']>) =>
-					wrapVariableDeclaratorGroup1({ ...data, _value: v }, tree)
+				name: (v: NonNullable<T.VariableDeclaratorArm1['_name']>) =>
+					wrapVariableDeclaratorArm1({ ...data, _name: v }, tree),
+				type: (v: NonNullable<T.VariableDeclaratorArm1['_type']>) =>
+					wrapVariableDeclaratorArm1({ ...data, _type: v }, tree),
+				value: (v: NonNullable<T.VariableDeclaratorArm1['_value']>) =>
+					wrapVariableDeclaratorArm1({ ...data, _value: v }, tree)
 			}
 		},
 		methodsEngine
@@ -10267,11 +10267,11 @@ export function wrapVariableDeclaratorGroup1(data: T.VariableDeclaratorGroup1, t
 	return _node;
 }
 
-export function wrapVariableDeclaratorGroup2(data: T.VariableDeclaratorGroup2, tree: TreeHandle) {
+export function wrapVariableDeclaratorArm2(data: T.VariableDeclaratorArm2, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId.VariableDeclaratorGroup2 as const,
+			$type: TSKindId.VariableDeclaratorArm2 as const,
 			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -10292,10 +10292,10 @@ export function wrapVariableDeclaratorGroup2(data: T.VariableDeclaratorGroup2, t
 				return drillIn<T.TypeAnnotation>(this._type, tree);
 			},
 			$with: {
-				name: (v: NonNullable<T.VariableDeclaratorGroup2['_name']>) =>
-					wrapVariableDeclaratorGroup2({ ...data, _name: v }, tree),
-				type: (v: NonNullable<T.VariableDeclaratorGroup2['_type']>) =>
-					wrapVariableDeclaratorGroup2({ ...data, _type: v }, tree)
+				name: (v: NonNullable<T.VariableDeclaratorArm2['_name']>) =>
+					wrapVariableDeclaratorArm2({ ...data, _name: v }, tree),
+				type: (v: NonNullable<T.VariableDeclaratorArm2['_type']>) =>
+					wrapVariableDeclaratorArm2({ ...data, _type: v }, tree)
 			}
 		},
 		methodsEngine
@@ -10338,13 +10338,13 @@ export function wrapCatchClauseGroup1(data: T.CatchClauseGroup1, tree: TreeHandl
 	return _node;
 }
 
-export function wrapBinaryExpressionGroup1(data: T.BinaryExpressionGroup1, tree: TreeHandle) {
+export function wrapBinaryExpressionArm1(data: T.BinaryExpressionArm1, tree: TreeHandle) {
 	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.BinaryExpressionGroup1 as const }, methodsEngine);
+		return withMethods({ ...data, $type: TSKindId.BinaryExpressionArm1 as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId.BinaryExpressionGroup1 as const,
+			$type: TSKindId.BinaryExpressionArm1 as const,
 			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -10378,12 +10378,12 @@ export function wrapBinaryExpressionGroup1(data: T.BinaryExpressionGroup1, tree:
 				return drillIn<T.Expression>(this._right, tree);
 			},
 			$with: {
-				left: (v: NonNullable<T.BinaryExpressionGroup1['_left']>) =>
-					wrapBinaryExpressionGroup1({ ...data, _left: v }, tree),
-				operator: (v: NonNullable<T.BinaryExpressionGroup1['_operator']>) =>
-					wrapBinaryExpressionGroup1({ ...data, _operator: v }, tree),
-				right: (v: NonNullable<T.BinaryExpressionGroup1['_right']>) =>
-					wrapBinaryExpressionGroup1({ ...data, _right: v }, tree)
+				left: (v: NonNullable<T.BinaryExpressionArm1['_left']>) =>
+					wrapBinaryExpressionArm1({ ...data, _left: v }, tree),
+				operator: (v: NonNullable<T.BinaryExpressionArm1['_operator']>) =>
+					wrapBinaryExpressionArm1({ ...data, _operator: v }, tree),
+				right: (v: NonNullable<T.BinaryExpressionArm1['_right']>) =>
+					wrapBinaryExpressionArm1({ ...data, _right: v }, tree)
 			}
 		},
 		methodsEngine
@@ -12668,17 +12668,15 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.KwAbstractMarker]: (d) => ({ ...d, $type: TSKindId.KwAbstractMarker as const }),
 	[TSKindId.KwConstMarker]: (d) => ({ ...d, $type: TSKindId.KwConstMarker as const }),
 	[TSKindId.ExportSpecifiers]: (d, t) => wrapExportSpecifiers(d as unknown as T.ExportSpecifiers, t),
-	[TSKindId.ImportStatementGroup1]: (d, t) => wrapImportStatementGroup1(d as unknown as T.ImportStatementGroup1, t),
+	[TSKindId.ImportStatementArm1]: (d, t) => wrapImportStatementArm1(d as unknown as T.ImportStatementArm1, t),
 	[TSKindId.ImportClauseGroup1]: (d, t) => wrapImportClauseGroup1(d as unknown as T.ImportClauseGroup1, t),
 	[TSKindId.ImportSpecifiers]: (d, t) => wrapImportSpecifiers(d as unknown as T.ImportSpecifiers, t),
-	[TSKindId.VariableDeclaratorGroup1]: (d, t) =>
-		wrapVariableDeclaratorGroup1(d as unknown as T.VariableDeclaratorGroup1, t),
-	[TSKindId.VariableDeclaratorGroup2]: (d, t) =>
-		wrapVariableDeclaratorGroup2(d as unknown as T.VariableDeclaratorGroup2, t),
+	[TSKindId.VariableDeclaratorArm1]: (d, t) => wrapVariableDeclaratorArm1(d as unknown as T.VariableDeclaratorArm1, t),
+	[TSKindId.VariableDeclaratorArm2]: (d, t) => wrapVariableDeclaratorArm2(d as unknown as T.VariableDeclaratorArm2, t),
 	[TSKindId.CatchClauseGroup1]: (d, t) => wrapCatchClauseGroup1(d as unknown as T.CatchClauseGroup1, t),
-	[TSKindId.BinaryExpressionGroup1]: (d, t) => wrapBinaryExpressionGroup1(d as unknown as T.BinaryExpressionGroup1, t),
-	[TSKindId.MetaPropertyGroup1]: (d) => ({ ...d, $type: TSKindId.MetaPropertyGroup1 as const }),
-	[TSKindId.MetaPropertyGroup2]: (d) => ({ ...d, $type: TSKindId.MetaPropertyGroup2 as const }),
+	[TSKindId.BinaryExpressionArm1]: (d, t) => wrapBinaryExpressionArm1(d as unknown as T.BinaryExpressionArm1, t),
+	[TSKindId.MetaPropertyArm1]: (d) => ({ ...d, $type: TSKindId.MetaPropertyArm1 as const }),
+	[TSKindId.MetaPropertyArm2]: (d) => ({ ...d, $type: TSKindId.MetaPropertyArm2 as const }),
 	[TSKindId.FormalParametersElements]: (d, t) =>
 		wrapFormalParametersElements(d as unknown as T.FormalParametersElements, t),
 	[TSKindId.EnumBodyElements]: (d, t) => wrapEnumBodyElements(d as unknown as T.EnumBodyElements, t),

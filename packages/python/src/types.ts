@@ -200,11 +200,11 @@ export const enum SyntaxKind {
 	FormatSpecifier = 'format_specifier',
 	Await = 'await',
 	SimpleStatementsElements = '_simple_statements_elements',
-	FutureImportStatementGroup1 = '_future_import_statement_group1',
+	FutureImportStatementArm1 = '_future_import_statement_arm1',
 	RaiseStatementOptional1 = '_raise_statement_optional1',
 	Subjects = '_subjects',
 	CasePatterns = '_case_patterns',
-	ExceptClauseGroup1 = '_except_clause_group1',
+	ExceptClauseArm1 = '_except_clause_arm1',
 	WithClauseWithItems = '_with_clause_with_items',
 	FunctionDefinitionOptional1 = '_function_definition_optional1',
 	ExecStatementOptional1 = '_exec_statement_optional1',
@@ -225,8 +225,8 @@ export const enum SyntaxKind {
 	ComprehensionClauses = 'comprehension_clauses',
 	PrintArguments = '_print_arguments',
 	PrintChevronArguments = '_print_chevron_arguments',
-	PrintStatementGroup1 = 'print_statement_group1',
-	PrintStatementGroup2 = 'print_statement_group2',
+	PrintStatementArm1 = 'print_statement_arm1',
+	PrintStatementArm2 = 'print_statement_arm2',
 	AssignmentEq = '_assignment_eq',
 	AssignmentType = '_assignment_type',
 	AssignmentTyped = '_assignment_typed',
@@ -549,10 +549,10 @@ export const enum TSKindId {
 	KeywordSeparator = 235,
 	KwAsyncMarker = 236,
 	SimpleStatementsElements = 237,
-	FutureImportStatementGroup1 = 238,
+	FutureImportStatementArm1 = 238,
 	Subjects = 239,
 	CasePatterns = 240,
-	ExceptClauseGroup1 = 241,
+	ExceptClauseArm1 = 241,
 	WithClauseWithItems = 242,
 	Types = 243,
 	ArgumentListElements = 244,
@@ -571,8 +571,8 @@ export const enum TSKindId {
 	ComprehensionClauses = 257,
 	PrintArguments = 258,
 	PrintChevronArguments = 259,
-	PrintStatementGroup1 = 260,
-	PrintStatementGroup2 = 261,
+	PrintStatementArm1 = 260,
+	PrintStatementArm2 = 261,
 	WildcardPattern = 262,
 	AssignmentEq = 263,
 	AssignmentType = 264,
@@ -864,10 +864,10 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[235, 'keyword_separator'],
 	[236, '_kw_async_marker'],
 	[237, '_simple_statements_elements'],
-	[238, '_future_import_statement_group1'],
+	[238, '_future_import_statement_arm1'],
 	[239, '_subjects'],
 	[240, '_case_patterns'],
-	[241, '_except_clause_group1'],
+	[241, '_except_clause_arm1'],
 	[242, '_with_clause_with_items'],
 	[243, '_types'],
 	[244, '_argument_list_elements'],
@@ -886,8 +886,8 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[257, 'comprehension_clauses'],
 	[258, '_print_arguments'],
 	[259, '_print_chevron_arguments'],
-	[260, 'print_statement_group1'],
-	[261, 'print_statement_group2'],
+	[260, 'print_statement_arm1'],
+	[261, 'print_statement_arm2'],
 	[262, '_wildcard_pattern'],
 	[263, '_assignment_eq'],
 	[264, '_assignment_type'],
@@ -1180,10 +1180,10 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[235, 'keyword_separator'],
 	[236, '_kw_async_marker'],
 	[237, 'simple_statements_elements'],
-	[238, 'future_import_statement_group1'],
+	[238, 'future_import_statement_arm1'],
 	[239, 'subjects'],
 	[240, 'case_patterns'],
-	[241, 'except_clause_group1'],
+	[241, 'except_clause_arm1'],
 	[242, 'with_clause_with_items'],
 	[243, 'types'],
 	[244, 'argument_list_elements'],
@@ -1202,8 +1202,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[257, 'comprehension_clauses'],
 	[258, 'print_arguments'],
 	[259, 'print_chevron_arguments'],
-	[260, 'print_statement_group1'],
-	[261, 'print_statement_group2'],
+	[260, 'print_statement_arm1'],
+	[261, 'print_statement_arm2'],
 	[262, 'wildcard_pattern'],
 	[263, 'assignment_eq'],
 	[264, 'assignment_type'],
@@ -1736,14 +1736,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.KwAsyncMarker;
 		case '_simple_statements_elements':
 			return TSKindId.SimpleStatementsElements;
-		case '_future_import_statement_group1':
-			return TSKindId.FutureImportStatementGroup1;
+		case '_future_import_statement_arm1':
+			return TSKindId.FutureImportStatementArm1;
 		case '_subjects':
 			return TSKindId.Subjects;
 		case '_case_patterns':
 			return TSKindId.CasePatterns;
-		case '_except_clause_group1':
-			return TSKindId.ExceptClauseGroup1;
+		case '_except_clause_arm1':
+			return TSKindId.ExceptClauseArm1;
 		case '_with_clause_with_items':
 			return TSKindId.WithClauseWithItems;
 		case '_types':
@@ -1780,10 +1780,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PrintArguments;
 		case '_print_chevron_arguments':
 			return TSKindId.PrintChevronArguments;
-		case 'print_statement_group1':
-			return TSKindId.PrintStatementGroup1;
-		case 'print_statement_group2':
-			return TSKindId.PrintStatementGroup2;
+		case 'print_statement_arm1':
+			return TSKindId.PrintStatementArm1;
+		case 'print_statement_arm2':
+			return TSKindId.PrintStatementArm2;
 		case '_wildcard_pattern':
 			return TSKindId.WildcardPattern;
 		case '_assignment_eq':
@@ -2006,14 +2006,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.NotEscapeSequence;
 		case 'simple_statements_elements':
 			return TSKindId.SimpleStatementsElements;
-		case 'future_import_statement_group1':
-			return TSKindId.FutureImportStatementGroup1;
+		case 'future_import_statement_arm1':
+			return TSKindId.FutureImportStatementArm1;
 		case 'subjects':
 			return TSKindId.Subjects;
 		case 'case_patterns':
 			return TSKindId.CasePatterns;
-		case 'except_clause_group1':
-			return TSKindId.ExceptClauseGroup1;
+		case 'except_clause_arm1':
+			return TSKindId.ExceptClauseArm1;
 		case 'with_clause_with_items':
 			return TSKindId.WithClauseWithItems;
 		case 'types':
@@ -2277,16 +2277,16 @@ export interface RelativeImport {
 
 export interface FutureImportStatement {
 	readonly $type: TSKindId.FutureImportStatement;
-	readonly _content: ImportList | FutureImportStatementGroup1;
-	content(): ImportList | FutureImportStatementGroup1;
+	readonly _content: ImportList | FutureImportStatementArm1;
+	content(): ImportList | FutureImportStatementArm1;
 }
 
 export interface ImportFromStatement {
 	readonly $type: TSKindId.ImportFromStatement;
 	readonly _module_name: RelativeImport | DottedName;
-	readonly _content: ImportList | FutureImportStatementGroup1 | WildcardImport;
+	readonly _content: ImportList | FutureImportStatementArm1 | WildcardImport;
 	moduleName(): RelativeImport | DottedName;
-	content(): ImportList | FutureImportStatementGroup1 | WildcardImport;
+	content(): ImportList | FutureImportStatementArm1 | WildcardImport;
 }
 
 export interface ImportList {
@@ -2305,8 +2305,8 @@ export interface AliasedImport {
 
 export interface PrintStatement {
 	readonly $type: TSKindId.PrintStatement;
-	readonly _content: PrintStatementGroup1 | PrintStatementGroup2;
-	content(): PrintStatementGroup1 | PrintStatementGroup2;
+	readonly _content: PrintStatementArm1 | PrintStatementArm2;
+	content(): PrintStatementArm1 | PrintStatementArm2;
 }
 
 export interface Chevron {
@@ -2445,13 +2445,13 @@ export interface TryStatement {
 export interface ExceptClause {
 	readonly $type: TSKindId.ExceptClause;
 	readonly _star_marker?: boolean;
-	readonly _except_clause_group1?: ExceptClauseGroup1;
+	readonly _except_clause_arm1?: ExceptClauseArm1;
 	readonly _content: SimpleStatements | SuiteBlockWithIndent | '\n';
 	readonly __inputHints__?: {
 		readonly star_marker?: BooleanKeyword<'*'>;
 	};
 	starMarker(): boolean | undefined;
-	exceptClauseGroup1(): ExceptClauseGroup1 | undefined;
+	exceptClauseArm1(): ExceptClauseArm1 | undefined;
 	content(): SimpleStatements | SuiteBlockWithIndent | '\n';
 }
 
@@ -3157,8 +3157,8 @@ export interface SimpleStatementsElements {
 	simpleStatements(): NonEmptyArray<SimpleStatement>;
 }
 
-export interface FutureImportStatementGroup1 {
-	readonly $type: TSKindId.FutureImportStatementGroup1;
+export interface FutureImportStatementArm1 {
+	readonly $type: TSKindId.FutureImportStatementArm1;
 	readonly _import_list: ImportList;
 	importList(): ImportList;
 }
@@ -3181,8 +3181,8 @@ export interface CasePatterns {
 	casePatterns(): NonEmptyArray<CasePattern>;
 }
 
-export interface ExceptClauseGroup1 {
-	readonly $type: TSKindId.ExceptClauseGroup1;
+export interface ExceptClauseArm1 {
+	readonly $type: TSKindId.ExceptClauseArm1;
 	readonly _content: ExceptClauseAs | ExceptClauseList;
 	content(): ExceptClauseAs | ExceptClauseList;
 }
@@ -3311,16 +3311,16 @@ export interface PrintChevronArguments {
 	arguments(): NonEmptyArray<Expression>;
 }
 
-export interface PrintStatementGroup1 {
-	readonly $type: TSKindId.PrintStatementGroup1;
+export interface PrintStatementArm1 {
+	readonly $type: TSKindId.PrintStatementArm1;
 	readonly _chevron: Chevron;
 	readonly _print_chevron_arguments?: PrintChevronArguments | ',';
 	chevron(): Chevron;
 	printChevronArguments(): PrintChevronArguments | ',' | undefined;
 }
 
-export interface PrintStatementGroup2 {
-	readonly $type: TSKindId.PrintStatementGroup2;
+export interface PrintStatementArm2 {
+	readonly $type: TSKindId.PrintStatementArm2;
 	readonly _print_arguments: PrintArguments;
 	printArguments(): PrintArguments;
 }
@@ -3596,8 +3596,8 @@ export interface AwaitTree extends TreeNode<'await'> {}
 export interface SimpleStatementsElementsTree extends AnyTreeNode {
 	readonly type: '_simple_statements_elements';
 }
-export interface FutureImportStatementGroup1Tree extends AnyTreeNode {
-	readonly type: '_future_import_statement_group1';
+export interface FutureImportStatementArm1Tree extends AnyTreeNode {
+	readonly type: '_future_import_statement_arm1';
 }
 export interface RaiseStatementOptional1Tree extends AnyTreeNode {
 	readonly type: '_raise_statement_optional1';
@@ -3608,8 +3608,8 @@ export interface SubjectsTree extends AnyTreeNode {
 export interface CasePatternsTree extends AnyTreeNode {
 	readonly type: '_case_patterns';
 }
-export interface ExceptClauseGroup1Tree extends AnyTreeNode {
-	readonly type: '_except_clause_group1';
+export interface ExceptClauseArm1Tree extends AnyTreeNode {
+	readonly type: '_except_clause_arm1';
 }
 export interface WithClauseWithItemsTree extends AnyTreeNode {
 	readonly type: '_with_clause_with_items';
@@ -3663,8 +3663,8 @@ export interface PrintArgumentsTree extends AnyTreeNode {
 export interface PrintChevronArgumentsTree extends AnyTreeNode {
 	readonly type: '_print_chevron_arguments';
 }
-export interface PrintStatementGroup1Tree extends TreeNode<'print_statement_group1'> {}
-export interface PrintStatementGroup2Tree extends TreeNode<'print_statement_group2'> {}
+export interface PrintStatementArm1Tree extends TreeNode<'print_statement_arm1'> {}
+export interface PrintStatementArm2Tree extends TreeNode<'print_statement_arm2'> {}
 export interface AssignmentEqTree extends AnyTreeNode {
 	readonly type: '_assignment_eq';
 }
@@ -4254,11 +4254,11 @@ export type PythonNode =
 	| FormatSpecifier
 	| Await
 	| SimpleStatementsElements
-	| FutureImportStatementGroup1
+	| FutureImportStatementArm1
 	| RaiseStatementOptional1
 	| Subjects
 	| CasePatterns
-	| ExceptClauseGroup1
+	| ExceptClauseArm1
 	| WithClauseWithItems
 	| FunctionDefinitionOptional1
 	| ExecStatementOptional1
@@ -4279,8 +4279,8 @@ export type PythonNode =
 	| ComprehensionClauses
 	| PrintArguments
 	| PrintChevronArguments
-	| PrintStatementGroup1
-	| PrintStatementGroup2
+	| PrintStatementArm1
+	| PrintStatementArm2
 	| AssignmentEq
 	| AssignmentType
 	| AssignmentTyped
@@ -4405,11 +4405,11 @@ export interface KindMap {
 	format_specifier: FormatSpecifier;
 	await: Await;
 	_simple_statements_elements: SimpleStatementsElements;
-	_future_import_statement_group1: FutureImportStatementGroup1;
+	_future_import_statement_arm1: FutureImportStatementArm1;
 	_raise_statement_optional1: RaiseStatementOptional1;
 	_subjects: Subjects;
 	_case_patterns: CasePatterns;
-	_except_clause_group1: ExceptClauseGroup1;
+	_except_clause_arm1: ExceptClauseArm1;
 	_with_clause_with_items: WithClauseWithItems;
 	_function_definition_optional1: FunctionDefinitionOptional1;
 	_exec_statement_optional1: ExecStatementOptional1;
@@ -4430,8 +4430,8 @@ export interface KindMap {
 	comprehension_clauses: ComprehensionClauses;
 	_print_arguments: PrintArguments;
 	_print_chevron_arguments: PrintChevronArguments;
-	print_statement_group1: PrintStatementGroup1;
-	print_statement_group2: PrintStatementGroup2;
+	print_statement_arm1: PrintStatementArm1;
+	print_statement_arm2: PrintStatementArm2;
 	_assignment_eq: AssignmentEq;
 	_assignment_type: AssignmentType;
 	_assignment_typed: AssignmentTyped;
@@ -4655,8 +4655,8 @@ export interface SimpleStatementsElementsNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface FutureImportStatementGroup1Ns extends NodeNs<
-	FutureImportStatementGroup1,
+export interface FutureImportStatementArm1Ns extends NodeNs<
+	FutureImportStatementArm1,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
@@ -4669,7 +4669,7 @@ export interface RaiseStatementOptional1Ns extends NodeNs<
 > {}
 export interface SubjectsNs extends NodeNs<Subjects, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface CasePatternsNs extends NodeNs<CasePatterns, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExceptClauseGroup1Ns extends NodeNs<ExceptClauseGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExceptClauseArm1Ns extends NodeNs<ExceptClauseArm1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface WithClauseWithItemsNs extends NodeNs<
 	WithClauseWithItems,
 	LeafScalarMap,
@@ -4745,18 +4745,8 @@ export interface PrintChevronArgumentsNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface PrintStatementGroup1Ns extends NodeNs<
-	PrintStatementGroup1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface PrintStatementGroup2Ns extends NodeNs<
-	PrintStatementGroup2,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
+export interface PrintStatementArm1Ns extends NodeNs<PrintStatementArm1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PrintStatementArm2Ns extends NodeNs<PrintStatementArm2, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentEqNs extends NodeNs<AssignmentEq, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentTypeNs extends NodeNs<AssignmentType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentTypedNs extends NodeNs<AssignmentTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -4901,11 +4891,11 @@ export interface NamespaceMap {
 	format_specifier: FormatSpecifierNs;
 	await: AwaitNs;
 	_simple_statements_elements: SimpleStatementsElementsNs;
-	_future_import_statement_group1: FutureImportStatementGroup1Ns;
+	_future_import_statement_arm1: FutureImportStatementArm1Ns;
 	_raise_statement_optional1: RaiseStatementOptional1Ns;
 	_subjects: SubjectsNs;
 	_case_patterns: CasePatternsNs;
-	_except_clause_group1: ExceptClauseGroup1Ns;
+	_except_clause_arm1: ExceptClauseArm1Ns;
 	_with_clause_with_items: WithClauseWithItemsNs;
 	_function_definition_optional1: FunctionDefinitionOptional1Ns;
 	_exec_statement_optional1: ExecStatementOptional1Ns;
@@ -4926,8 +4916,8 @@ export interface NamespaceMap {
 	comprehension_clauses: ComprehensionClausesNs;
 	_print_arguments: PrintArgumentsNs;
 	_print_chevron_arguments: PrintChevronArgumentsNs;
-	print_statement_group1: PrintStatementGroup1Ns;
-	print_statement_group2: PrintStatementGroup2Ns;
+	print_statement_arm1: PrintStatementArm1Ns;
+	print_statement_arm2: PrintStatementArm2Ns;
 	_assignment_eq: AssignmentEqNs;
 	_assignment_type: AssignmentTypeNs;
 	_assignment_typed: AssignmentTypedNs;
@@ -5719,12 +5709,12 @@ export namespace SimpleStatementsElements {
 	export type Tree = TreeFor<'_simple_statements_elements'>;
 	export type Kind = '_simple_statements_elements';
 }
-export namespace FutureImportStatementGroup1 {
-	export type Config = ConfigFor<'_future_import_statement_group1'>;
-	export type Fluent = FluentFor<'_future_import_statement_group1'>;
-	export type Loose = LooseFor<'_future_import_statement_group1'>;
-	export type Tree = TreeFor<'_future_import_statement_group1'>;
-	export type Kind = '_future_import_statement_group1';
+export namespace FutureImportStatementArm1 {
+	export type Config = ConfigFor<'_future_import_statement_arm1'>;
+	export type Fluent = FluentFor<'_future_import_statement_arm1'>;
+	export type Loose = LooseFor<'_future_import_statement_arm1'>;
+	export type Tree = TreeFor<'_future_import_statement_arm1'>;
+	export type Kind = '_future_import_statement_arm1';
 }
 export namespace RaiseStatementOptional1 {
 	export type Config = ConfigFor<'_raise_statement_optional1'>;
@@ -5747,12 +5737,12 @@ export namespace CasePatterns {
 	export type Tree = TreeFor<'_case_patterns'>;
 	export type Kind = '_case_patterns';
 }
-export namespace ExceptClauseGroup1 {
-	export type Config = ConfigFor<'_except_clause_group1'>;
-	export type Fluent = FluentFor<'_except_clause_group1'>;
-	export type Loose = LooseFor<'_except_clause_group1'>;
-	export type Tree = TreeFor<'_except_clause_group1'>;
-	export type Kind = '_except_clause_group1';
+export namespace ExceptClauseArm1 {
+	export type Config = ConfigFor<'_except_clause_arm1'>;
+	export type Fluent = FluentFor<'_except_clause_arm1'>;
+	export type Loose = LooseFor<'_except_clause_arm1'>;
+	export type Tree = TreeFor<'_except_clause_arm1'>;
+	export type Kind = '_except_clause_arm1';
 }
 export namespace WithClauseWithItems {
 	export type Config = ConfigFor<'_with_clause_with_items'>;
@@ -5894,19 +5884,19 @@ export namespace PrintChevronArguments {
 	export type Tree = TreeFor<'_print_chevron_arguments'>;
 	export type Kind = '_print_chevron_arguments';
 }
-export namespace PrintStatementGroup1 {
-	export type Config = ConfigFor<'print_statement_group1'>;
-	export type Fluent = FluentFor<'print_statement_group1'>;
-	export type Loose = LooseFor<'print_statement_group1'>;
-	export type Tree = TreeFor<'print_statement_group1'>;
-	export type Kind = 'print_statement_group1';
+export namespace PrintStatementArm1 {
+	export type Config = ConfigFor<'print_statement_arm1'>;
+	export type Fluent = FluentFor<'print_statement_arm1'>;
+	export type Loose = LooseFor<'print_statement_arm1'>;
+	export type Tree = TreeFor<'print_statement_arm1'>;
+	export type Kind = 'print_statement_arm1';
 }
-export namespace PrintStatementGroup2 {
-	export type Config = ConfigFor<'print_statement_group2'>;
-	export type Fluent = FluentFor<'print_statement_group2'>;
-	export type Loose = LooseFor<'print_statement_group2'>;
-	export type Tree = TreeFor<'print_statement_group2'>;
-	export type Kind = 'print_statement_group2';
+export namespace PrintStatementArm2 {
+	export type Config = ConfigFor<'print_statement_arm2'>;
+	export type Fluent = FluentFor<'print_statement_arm2'>;
+	export type Loose = LooseFor<'print_statement_arm2'>;
+	export type Tree = TreeFor<'print_statement_arm2'>;
+	export type Kind = 'print_statement_arm2';
 }
 export namespace AssignmentEq {
 	export type Config = ConfigFor<'_assignment_eq'>;

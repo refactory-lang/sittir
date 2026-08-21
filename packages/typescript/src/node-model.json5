@@ -60,7 +60,7 @@
     "import_statement": {
       "definedBy": "override",
       "childKind": {
-        "import_statement_group1": "group1"
+        "import_statement_arm1": "arm1"
       }
     },
     "import_clause": {
@@ -78,8 +78,8 @@
     "variable_declarator": {
       "definedBy": "override",
       "childKind": {
-        "variable_declarator_group1": "group1",
-        "variable_declarator_group2": "group2"
+        "variable_declarator_arm1": "arm1",
+        "variable_declarator_arm2": "arm2"
       }
     },
     "parenthesized_expression": {
@@ -112,7 +112,7 @@
     "binary_expression": {
       "definedBy": "override",
       "childKind": {
-        "binary_expression_group1": "group1"
+        "binary_expression_arm1": "arm1"
       }
     },
     "update_expression": {
@@ -132,8 +132,8 @@
     "meta_property": {
       "definedBy": "override",
       "childKind": {
-        "meta_property_group1": "group1",
-        "meta_property_group2": "group2"
+        "meta_property_arm1": "arm1",
+        "meta_property_arm2": "arm2"
       }
     },
     "class_body": {
@@ -470,7 +470,7 @@
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
-    "_jsx_start_opening_element_group1.name": {
+    "_jsx_start_opening_element_arm1.name": {
       "member_expression": "nested_identifier"
     },
     "_infer_type_optional1.type": {
@@ -503,8 +503,8 @@
     "_for_header_lhs.left": {
       "lhs_expression": "_lhs_expression"
     },
-    "_jsx_opening_element_content.jsx_start_opening_element_group1": {
-      "jsx_start_opening_element_group1": "_jsx_start_opening_element_group1"
+    "_jsx_opening_element_content.jsx_start_opening_element_arm1": {
+      "jsx_start_opening_element_arm1": "_jsx_start_opening_element_arm1"
     }
   },
   "factorySlots": {
@@ -1767,7 +1767,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "binary_expression_group1": {
+      "binary_expression_arm1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3581,7 +3581,7 @@
         "nonEmpty": true
       }
     },
-    "_import_statement_group1": {
+    "_import_statement_arm1": {
       "import_clause": {
         "unnamed": false,
         "slotCount": 1,
@@ -3615,7 +3615,7 @@
         "nonEmpty": true
       }
     },
-    "_variable_declarator_group1": {
+    "_variable_declarator_arm1": {
       "name": {
         "unnamed": false,
         "slotCount": 1,
@@ -3638,7 +3638,7 @@
         "nonEmpty": false
       }
     },
-    "_variable_declarator_group2": {
+    "_variable_declarator_arm2": {
       "name": {
         "unnamed": false,
         "slotCount": 1,
@@ -3670,7 +3670,7 @@
         "nonEmpty": false
       }
     },
-    "_binary_expression_group1": {
+    "_binary_expression_arm1": {
       "left": {
         "unnamed": false,
         "slotCount": 1,
@@ -3702,7 +3702,7 @@
         "nonEmpty": true
       }
     },
-    "_jsx_start_opening_element_group1": {
+    "_jsx_start_opening_element_arm1": {
       "name": {
         "unnamed": false,
         "slotCount": 1,
@@ -4379,7 +4379,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "jsx_start_opening_element_group1": {
+      "jsx_start_opening_element_arm1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4777,13 +4777,13 @@
       "text": "\n"
     },
     {
-      "kind": "_binary_expression_group1",
+      "kind": "_binary_expression_arm1",
       "modelType": "group",
-      "typeName": "BinaryExpressionGroup1",
-      "factoryName": "_binaryExpressionGroup1",
-      "irKey": "binaryExpressionGroup1",
+      "typeName": "BinaryExpressionArm1",
+      "factoryName": "_binaryExpressionArm1",
+      "irKey": "binaryExpressionArm1",
       "hidden": false,
-      "name": "_binary_expression_group1",
+      "name": "_binary_expression_arm1",
       "fields": [
         {
           "name": "left",
@@ -7067,11 +7067,11 @@
       ]
     },
     {
-      "kind": "_import_statement_group1",
+      "kind": "_import_statement_arm1",
       "modelType": "branch",
-      "typeName": "ImportStatementGroup1",
-      "factoryName": "importStatementGroup1",
-      "irKey": "importStatementGroup1",
+      "typeName": "ImportStatementArm1",
+      "factoryName": "importStatementArm1",
+      "irKey": "importStatementArm1",
       "hidden": false,
       "fields": [
         {
@@ -7462,9 +7462,9 @@
           }
         },
         {
-          "name": "jsx_start_opening_element_group1",
-          "propertyName": "jsxStartOpeningElementGroup1",
-          "paramName": "jsxStartOpeningElementGroup1",
+          "name": "jsx_start_opening_element_arm1",
+          "propertyName": "jsxStartOpeningElementArm1",
+          "paramName": "jsxStartOpeningElementArm1",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7472,15 +7472,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_jsx_start_opening_element_group1",
-              "parseKind": "jsx_start_opening_element_group1",
+              "name": "_jsx_start_opening_element_arm1",
+              "parseKind": "jsx_start_opening_element_arm1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_jsx_start_opening_element_group1"
+              "_jsx_start_opening_element_arm1"
             ]
           }
         },
@@ -7512,7 +7512,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "name",
-        "jsx_start_opening_element_group1",
+        "jsx_start_opening_element_arm1",
         "attribute"
       ]
     },
@@ -7551,13 +7551,13 @@
       "children": []
     },
     {
-      "kind": "_jsx_start_opening_element_group1",
+      "kind": "_jsx_start_opening_element_arm1",
       "modelType": "group",
-      "typeName": "JsxStartOpeningElementGroup1",
-      "factoryName": "_jsxStartOpeningElementGroup1",
-      "irKey": "jsxStartOpeningElementGroup1",
+      "typeName": "JsxStartOpeningElementArm1",
+      "factoryName": "_jsxStartOpeningElementArm1",
+      "irKey": "jsxStartOpeningElementArm1",
       "hidden": false,
-      "name": "_jsx_start_opening_element_group1",
+      "name": "_jsx_start_opening_element_arm1",
       "fields": [
         {
           "name": "name",
@@ -7832,21 +7832,21 @@
       "children": []
     },
     {
-      "kind": "_meta_property_group1",
+      "kind": "_meta_property_arm1",
       "modelType": "pattern",
-      "typeName": "MetaPropertyGroup1",
-      "factoryName": "metaPropertyGroup1",
-      "irKey": "metaPropertyGroup1",
+      "typeName": "MetaPropertyArm1",
+      "factoryName": "metaPropertyArm1",
+      "irKey": "metaPropertyArm1",
       "hidden": false,
       "text": "new . target",
       "factoryShape": "text"
     },
     {
-      "kind": "_meta_property_group2",
+      "kind": "_meta_property_arm2",
       "modelType": "pattern",
-      "typeName": "MetaPropertyGroup2",
-      "factoryName": "metaPropertyGroup2",
-      "irKey": "metaPropertyGroup2",
+      "typeName": "MetaPropertyArm2",
+      "factoryName": "metaPropertyArm2",
+      "irKey": "metaPropertyArm2",
       "hidden": false,
       "text": "import . meta",
       "factoryShape": "text"
@@ -9528,13 +9528,13 @@
       ]
     },
     {
-      "kind": "_variable_declarator_group1",
+      "kind": "_variable_declarator_arm1",
       "modelType": "group",
-      "typeName": "VariableDeclaratorGroup1",
-      "factoryName": "_variableDeclaratorGroup1",
-      "irKey": "variableDeclaratorGroup1",
+      "typeName": "VariableDeclaratorArm1",
+      "factoryName": "_variableDeclaratorArm1",
+      "irKey": "variableDeclaratorArm1",
       "hidden": false,
-      "name": "_variable_declarator_group1",
+      "name": "_variable_declarator_arm1",
       "fields": [
         {
           "name": "name",
@@ -9623,13 +9623,13 @@
       ]
     },
     {
-      "kind": "_variable_declarator_group2",
+      "kind": "_variable_declarator_arm2",
       "modelType": "group",
-      "typeName": "VariableDeclaratorGroup2",
-      "factoryName": "_variableDeclaratorGroup2",
-      "irKey": "variableDeclaratorGroup2",
+      "typeName": "VariableDeclaratorArm2",
+      "factoryName": "_variableDeclaratorArm2",
+      "irKey": "variableDeclaratorArm2",
       "hidden": false,
-      "name": "_variable_declarator_group2",
+      "name": "_variable_declarator_arm2",
       "fields": [
         {
           "name": "name",
@@ -11251,9 +11251,9 @@
           }
         },
         {
-          "name": "binary_expression_group1",
-          "propertyName": "binaryExpressionGroup1",
-          "paramName": "binaryExpressionGroup1",
+          "name": "binary_expression_arm1",
+          "propertyName": "binaryExpressionArm1",
+          "paramName": "binaryExpressionArm1",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11261,15 +11261,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_binary_expression_group1",
-              "parseKind": "binary_expression_group1",
+              "name": "_binary_expression_arm1",
+              "parseKind": "binary_expression_arm1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_binary_expression_group1"
+              "_binary_expression_arm1"
             ]
           }
         }
@@ -11280,7 +11280,7 @@
         "left",
         "operator",
         "right",
-        "binary_expression_group1"
+        "binary_expression_arm1"
       ]
     },
     {
@@ -16201,8 +16201,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_import_statement_group1",
-              "parseKind": "import_statement_group1",
+              "name": "_import_statement_arm1",
+              "parseKind": "import_statement_arm1",
               "unresolved": true
             },
             {
@@ -16223,7 +16223,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_import_statement_group1",
+              "_import_statement_arm1",
               "import_require_clause",
               "string"
             ]
@@ -17902,23 +17902,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_meta_property_group1",
-              "parseKind": "meta_property_group1",
+              "name": "_meta_property_arm1",
+              "parseKind": "meta_property_arm1",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_meta_property_group2",
-              "parseKind": "meta_property_group2",
+              "name": "_meta_property_arm2",
+              "parseKind": "meta_property_arm2",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_meta_property_group1",
-              "_meta_property_group2"
+              "_meta_property_arm1",
+              "_meta_property_arm2"
             ]
           }
         }
@@ -23361,23 +23361,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_variable_declarator_group1",
-              "parseKind": "variable_declarator_group1",
+              "name": "_variable_declarator_arm1",
+              "parseKind": "variable_declarator_arm1",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_variable_declarator_group2",
-              "parseKind": "variable_declarator_group2",
+              "name": "_variable_declarator_arm2",
+              "parseKind": "variable_declarator_arm2",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_variable_declarator_group1",
-              "_variable_declarator_group2"
+              "_variable_declarator_arm1",
+              "_variable_declarator_arm2"
             ]
           }
         }

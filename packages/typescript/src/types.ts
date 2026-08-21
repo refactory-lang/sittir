@@ -327,15 +327,15 @@ export const enum SyntaxKind {
 	FunctionType = 'function_type',
 	ExportSpecifiers = '_export_specifiers',
 	ExportSpecifierOptional1 = '_export_specifier_optional1',
-	ImportStatementGroup1 = '_import_statement_group1',
+	ImportStatementArm1 = '_import_statement_arm1',
 	ImportClauseGroup1 = '_import_clause_group1',
 	ImportSpecifiers = '_import_specifiers',
-	VariableDeclaratorGroup1 = '_variable_declarator_group1',
-	VariableDeclaratorGroup2 = '_variable_declarator_group2',
+	VariableDeclaratorArm1 = '_variable_declarator_arm1',
+	VariableDeclaratorArm2 = '_variable_declarator_arm2',
 	CatchClauseGroup1 = '_catch_clause_group1',
-	BinaryExpressionGroup1 = '_binary_expression_group1',
+	BinaryExpressionArm1 = '_binary_expression_arm1',
 	FormalParametersElements = '_formal_parameters_elements',
-	JsxStartOpeningElementGroup1 = '_jsx_start_opening_element_group1',
+	JsxStartOpeningElementArm1 = '_jsx_start_opening_element_arm1',
 	EnumBodyElements = '_enum_body_elements',
 	InferTypeOptional1 = '_infer_type_optional1',
 	MappedTypeClauseOptional1 = '_mapped_type_clause_optional1',
@@ -415,8 +415,8 @@ export const enum SyntaxKind {
 	KwReadonlyMarker = '_kw_readonly_marker',
 	KwAbstractMarker = '_kw_abstract_marker',
 	KwConstMarker = '_kw_const_marker',
-	MetaPropertyGroup1 = '_meta_property_group1',
-	MetaPropertyGroup2 = '_meta_property_group2',
+	MetaPropertyArm1 = '_meta_property_arm1',
+	MetaPropertyArm2 = '_meta_property_arm2',
 	Kind = '_kind',
 	ForHeaderOperator = '__for_header_operator',
 	AugmentedAssignmentExpressionOperator = '_augmented_assignment_expression_operator',
@@ -847,15 +847,15 @@ export const enum TSKindId {
 	_KwAccessorMarker = 360,
 	KwConstMarker = 361,
 	ExportSpecifiers = 362,
-	ImportStatementGroup1 = 363,
+	ImportStatementArm1 = 363,
 	ImportClauseGroup1 = 364,
 	ImportSpecifiers = 365,
-	VariableDeclaratorGroup1 = 366,
-	VariableDeclaratorGroup2 = 367,
+	VariableDeclaratorArm1 = 366,
+	VariableDeclaratorArm2 = 367,
 	CatchClauseGroup1 = 368,
-	BinaryExpressionGroup1 = 369,
-	MetaPropertyGroup1 = 370,
-	MetaPropertyGroup2 = 371,
+	BinaryExpressionArm1 = 369,
+	MetaPropertyArm1 = 370,
+	MetaPropertyArm2 = 371,
 	FormalParametersElements = 372,
 	EnumBodyElements = 373,
 	Types = 374,
@@ -1301,15 +1301,15 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[360, '_kw_accessor_marker'],
 	[361, '_kw_const_marker'],
 	[362, '_export_specifiers'],
-	[363, '_import_statement_group1'],
+	[363, '_import_statement_arm1'],
 	[364, '_import_clause_group1'],
 	[365, '_import_specifiers'],
-	[366, '_variable_declarator_group1'],
-	[367, '_variable_declarator_group2'],
+	[366, '_variable_declarator_arm1'],
+	[367, '_variable_declarator_arm2'],
 	[368, '_catch_clause_group1'],
-	[369, '_binary_expression_group1'],
-	[370, '_meta_property_group1'],
-	[371, '_meta_property_group2'],
+	[369, '_binary_expression_arm1'],
+	[370, '_meta_property_arm1'],
+	[371, '_meta_property_arm2'],
 	[372, '_formal_parameters_elements'],
 	[373, '_enum_body_elements'],
 	[374, '_types'],
@@ -1756,15 +1756,15 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[360, '_kw_accessor_marker'],
 	[361, '_kw_const_marker'],
 	[362, 'export_specifiers'],
-	[363, 'import_statement_group1'],
+	[363, 'import_statement_arm1'],
 	[364, 'import_clause_group1'],
 	[365, 'import_specifiers'],
-	[366, 'variable_declarator_group1'],
-	[367, 'variable_declarator_group2'],
+	[366, 'variable_declarator_arm1'],
+	[367, 'variable_declarator_arm2'],
 	[368, 'catch_clause_group1'],
-	[369, 'binary_expression_group1'],
-	[370, 'meta_property_group1'],
-	[371, 'meta_property_group2'],
+	[369, 'binary_expression_arm1'],
+	[370, 'meta_property_arm1'],
+	[371, 'meta_property_arm2'],
 	[372, 'formal_parameters_elements'],
 	[373, 'enum_body_elements'],
 	[374, 'types'],
@@ -2578,24 +2578,24 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.KwConstMarker;
 		case '_export_specifiers':
 			return TSKindId.ExportSpecifiers;
-		case '_import_statement_group1':
-			return TSKindId.ImportStatementGroup1;
+		case '_import_statement_arm1':
+			return TSKindId.ImportStatementArm1;
 		case '_import_clause_group1':
 			return TSKindId.ImportClauseGroup1;
 		case '_import_specifiers':
 			return TSKindId.ImportSpecifiers;
-		case '_variable_declarator_group1':
-			return TSKindId.VariableDeclaratorGroup1;
-		case '_variable_declarator_group2':
-			return TSKindId.VariableDeclaratorGroup2;
+		case '_variable_declarator_arm1':
+			return TSKindId.VariableDeclaratorArm1;
+		case '_variable_declarator_arm2':
+			return TSKindId.VariableDeclaratorArm2;
 		case '_catch_clause_group1':
 			return TSKindId.CatchClauseGroup1;
-		case '_binary_expression_group1':
-			return TSKindId.BinaryExpressionGroup1;
-		case '_meta_property_group1':
-			return TSKindId.MetaPropertyGroup1;
-		case '_meta_property_group2':
-			return TSKindId.MetaPropertyGroup2;
+		case '_binary_expression_arm1':
+			return TSKindId.BinaryExpressionArm1;
+		case '_meta_property_arm1':
+			return TSKindId.MetaPropertyArm1;
+		case '_meta_property_arm2':
+			return TSKindId.MetaPropertyArm2;
 		case '_formal_parameters_elements':
 			return TSKindId.FormalParametersElements;
 		case '_enum_body_elements':
@@ -2902,24 +2902,24 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExtendsClauseSingle;
 		case 'export_specifiers':
 			return TSKindId.ExportSpecifiers;
-		case 'import_statement_group1':
-			return TSKindId.ImportStatementGroup1;
+		case 'import_statement_arm1':
+			return TSKindId.ImportStatementArm1;
 		case 'import_clause_group1':
 			return TSKindId.ImportClauseGroup1;
 		case 'import_specifiers':
 			return TSKindId.ImportSpecifiers;
-		case 'variable_declarator_group1':
-			return TSKindId.VariableDeclaratorGroup1;
-		case 'variable_declarator_group2':
-			return TSKindId.VariableDeclaratorGroup2;
+		case 'variable_declarator_arm1':
+			return TSKindId.VariableDeclaratorArm1;
+		case 'variable_declarator_arm2':
+			return TSKindId.VariableDeclaratorArm2;
 		case 'catch_clause_group1':
 			return TSKindId.CatchClauseGroup1;
-		case 'binary_expression_group1':
-			return TSKindId.BinaryExpressionGroup1;
-		case 'meta_property_group1':
-			return TSKindId.MetaPropertyGroup1;
-		case 'meta_property_group2':
-			return TSKindId.MetaPropertyGroup2;
+		case 'binary_expression_arm1':
+			return TSKindId.BinaryExpressionArm1;
+		case 'meta_property_arm1':
+			return TSKindId.MetaPropertyArm1;
+		case 'meta_property_arm2':
+			return TSKindId.MetaPropertyArm2;
 		case 'formal_parameters_elements':
 			return TSKindId.FormalParametersElements;
 		case 'enum_body_elements':
@@ -3368,7 +3368,7 @@ export interface ExportSpecifier {
 export interface ImportStatement {
 	readonly $type: TSKindId.ImportStatement;
 	readonly _import_clause?: number;
-	readonly _from_clause: ImportStatementGroup1 | ImportRequireClause | String;
+	readonly _from_clause: ImportStatementArm1 | ImportRequireClause | String;
 	readonly _import_attribute?: ImportAttribute;
 	readonly _semicolon: number;
 	readonly __inputHints__?: {
@@ -3376,7 +3376,7 @@ export interface ImportStatement {
 		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
 	importClause(): number | undefined;
-	fromClause(): ImportStatementGroup1 | ImportRequireClause | String;
+	fromClause(): ImportStatementArm1 | ImportRequireClause | String;
 	importAttribute(): ImportAttribute | undefined;
 	semicolon(): number;
 }
@@ -3465,8 +3465,8 @@ export interface LexicalDeclaration {
 
 export interface VariableDeclarator {
 	readonly $type: TSKindId.VariableDeclarator;
-	readonly _content: VariableDeclaratorGroup1 | VariableDeclaratorGroup2;
-	content(): VariableDeclaratorGroup1 | VariableDeclaratorGroup2;
+	readonly _content: VariableDeclaratorArm1 | VariableDeclaratorArm2;
+	content(): VariableDeclaratorArm1 | VariableDeclaratorArm2;
 }
 
 export interface StatementBlock {
@@ -4083,7 +4083,7 @@ export interface BinaryExpression {
 	readonly _left?: Expression;
 	readonly _operator?: number;
 	readonly _right?: Expression;
-	readonly _binary_expression_group1?: BinaryExpressionGroup1;
+	readonly _binary_expression_arm1?: BinaryExpressionArm1;
 	readonly __inputHints__?: {
 		readonly operator?: KindEnum<
 			| '&&'
@@ -4139,7 +4139,7 @@ export interface BinaryExpression {
 	left(): Expression | undefined;
 	operator(): number | undefined;
 	right(): Expression | undefined;
-	binaryExpressionGroup1(): BinaryExpressionGroup1 | undefined;
+	binaryExpressionArm1(): BinaryExpressionArm1 | undefined;
 }
 
 export interface UnaryExpression {
@@ -4196,8 +4196,8 @@ export interface Regex {
 
 export interface MetaProperty {
 	readonly $type: TSKindId.MetaProperty;
-	readonly _content: MetaPropertyGroup1 | MetaPropertyGroup2;
-	content(): MetaPropertyGroup1 | MetaPropertyGroup2;
+	readonly _content: MetaPropertyArm1 | MetaPropertyArm2;
+	content(): MetaPropertyArm1 | MetaPropertyArm2;
 }
 
 export interface Arguments {
@@ -5187,8 +5187,8 @@ export interface ExportSpecifierOptional1 {
 	alias(): ModuleExportName;
 }
 
-export interface ImportStatementGroup1 {
-	readonly $type: TSKindId.ImportStatementGroup1;
+export interface ImportStatementArm1 {
+	readonly $type: TSKindId.ImportStatementArm1;
 	readonly _import_clause: ImportClause;
 	readonly _source: String;
 	importClause(): ImportClause;
@@ -5207,8 +5207,8 @@ export interface ImportSpecifiers {
 	importSpecifiers(): NonEmptyArray<ImportSpecifier>;
 }
 
-export interface VariableDeclaratorGroup1 {
-	readonly $type: TSKindId.VariableDeclaratorGroup1;
+export interface VariableDeclaratorArm1 {
+	readonly $type: TSKindId.VariableDeclaratorArm1;
 	readonly _name: Identifier | DestructuringPattern;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
@@ -5217,8 +5217,8 @@ export interface VariableDeclaratorGroup1 {
 	value(): Expression | undefined;
 }
 
-export interface VariableDeclaratorGroup2 {
-	readonly $type: TSKindId.VariableDeclaratorGroup2;
+export interface VariableDeclaratorArm2 {
+	readonly $type: TSKindId.VariableDeclaratorArm2;
 	readonly _name: Identifier;
 	readonly _type: TypeAnnotation;
 	name(): Identifier;
@@ -5233,8 +5233,8 @@ export interface CatchClauseGroup1 {
 	type(): TypeAnnotation | undefined;
 }
 
-export interface BinaryExpressionGroup1 {
-	readonly $type: TSKindId.BinaryExpressionGroup1;
+export interface BinaryExpressionArm1 {
+	readonly $type: TSKindId.BinaryExpressionArm1;
 	readonly _left: Expression | PrivatePropertyIdentifier;
 	readonly _operator: AutoStamp<number>;
 	readonly _right: Expression;
@@ -5252,8 +5252,8 @@ export interface FormalParametersElements {
 	formalParameters(): NonEmptyArray<FormalParameter>;
 }
 
-export interface JsxStartOpeningElementGroup1 {
-	readonly $type: '_jsx_start_opening_element_group1';
+export interface JsxStartOpeningElementArm1 {
+	readonly $type: '_jsx_start_opening_element_arm1';
 	readonly _name: Identifier | NestedIdentifier;
 	readonly _type_arguments?: TypeArguments;
 	name(): Identifier | NestedIdentifier;
@@ -5709,10 +5709,10 @@ export interface UpdateExpressionPrefix {
 export interface JsxOpeningElementContent {
 	readonly $type: '_jsx_opening_element_content';
 	readonly _name?: _JsxIdentifier | JsxNamespaceName;
-	readonly _jsx_start_opening_element_group1?: JsxStartOpeningElementGroup1;
+	readonly _jsx_start_opening_element_arm1?: JsxStartOpeningElementArm1;
 	readonly _attribute?: readonly _JsxAttribute[];
 	name(): _JsxIdentifier | JsxNamespaceName | undefined;
-	jsxStartOpeningElementGroup1(): JsxStartOpeningElementGroup1 | undefined;
+	jsxStartOpeningElementArm1(): JsxStartOpeningElementArm1 | undefined;
 	attributes(): readonly _JsxAttribute[];
 }
 
@@ -5804,8 +5804,8 @@ export type PredefinedType = Terminal<
 	'any' | 'number' | 'boolean' | 'string' | 'symbol' | 'unique symbol' | 'void' | 'unknown' | 'never' | 'object'
 >;
 export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;
-export type MetaPropertyGroup1 = Terminal<TSKindId.MetaPropertyGroup1, string>;
-export type MetaPropertyGroup2 = Terminal<TSKindId.MetaPropertyGroup2, string>;
+export type MetaPropertyArm1 = Terminal<TSKindId.MetaPropertyArm1, string>;
+export type MetaPropertyArm2 = Terminal<TSKindId.MetaPropertyArm2, string>;
 export type Kind = Terminal<TSKindId.Let | TSKindId.Const, 'let' | 'const'>;
 export type ForHeaderOperator = Terminal<TSKindId.In | TSKindId.Of, 'in' | 'of'>;
 export type AugmentedAssignmentExpressionOperator = Terminal<
@@ -6079,8 +6079,8 @@ export interface ExportSpecifiersTree extends AnyTreeNode {
 export interface ExportSpecifierOptional1Tree extends AnyTreeNode {
 	readonly type: '_export_specifier_optional1';
 }
-export interface ImportStatementGroup1Tree extends AnyTreeNode {
-	readonly type: '_import_statement_group1';
+export interface ImportStatementArm1Tree extends AnyTreeNode {
+	readonly type: '_import_statement_arm1';
 }
 export interface ImportClauseGroup1Tree extends AnyTreeNode {
 	readonly type: '_import_clause_group1';
@@ -6088,23 +6088,23 @@ export interface ImportClauseGroup1Tree extends AnyTreeNode {
 export interface ImportSpecifiersTree extends AnyTreeNode {
 	readonly type: '_import_specifiers';
 }
-export interface VariableDeclaratorGroup1Tree extends AnyTreeNode {
-	readonly type: '_variable_declarator_group1';
+export interface VariableDeclaratorArm1Tree extends AnyTreeNode {
+	readonly type: '_variable_declarator_arm1';
 }
-export interface VariableDeclaratorGroup2Tree extends AnyTreeNode {
-	readonly type: '_variable_declarator_group2';
+export interface VariableDeclaratorArm2Tree extends AnyTreeNode {
+	readonly type: '_variable_declarator_arm2';
 }
 export interface CatchClauseGroup1Tree extends AnyTreeNode {
 	readonly type: '_catch_clause_group1';
 }
-export interface BinaryExpressionGroup1Tree extends AnyTreeNode {
-	readonly type: '_binary_expression_group1';
+export interface BinaryExpressionArm1Tree extends AnyTreeNode {
+	readonly type: '_binary_expression_arm1';
 }
 export interface FormalParametersElementsTree extends AnyTreeNode {
 	readonly type: '_formal_parameters_elements';
 }
-export interface JsxStartOpeningElementGroup1Tree extends AnyTreeNode {
-	readonly type: '_jsx_start_opening_element_group1';
+export interface JsxStartOpeningElementArm1Tree extends AnyTreeNode {
+	readonly type: '_jsx_start_opening_element_arm1';
 }
 export interface EnumBodyElementsTree extends AnyTreeNode {
 	readonly type: '_enum_body_elements';
@@ -6302,11 +6302,11 @@ export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
 export interface TypeIdentifierTree extends AnyTreeNode {
 	readonly type: '_type_identifier';
 }
-export interface MetaPropertyGroup1Tree extends AnyTreeNode {
-	readonly type: '_meta_property_group1';
+export interface MetaPropertyArm1Tree extends AnyTreeNode {
+	readonly type: '_meta_property_arm1';
 }
-export interface MetaPropertyGroup2Tree extends AnyTreeNode {
-	readonly type: '_meta_property_group2';
+export interface MetaPropertyArm2Tree extends AnyTreeNode {
+	readonly type: '_meta_property_arm2';
 }
 export interface KindTree extends AnyTreeNode {
 	readonly type: '_kind';
@@ -7120,15 +7120,15 @@ export type TypescriptNode =
 	| FunctionType
 	| ExportSpecifiers
 	| ExportSpecifierOptional1
-	| ImportStatementGroup1
+	| ImportStatementArm1
 	| ImportClauseGroup1
 	| ImportSpecifiers
-	| VariableDeclaratorGroup1
-	| VariableDeclaratorGroup2
+	| VariableDeclaratorArm1
+	| VariableDeclaratorArm2
 	| CatchClauseGroup1
-	| BinaryExpressionGroup1
+	| BinaryExpressionArm1
 	| FormalParametersElements
-	| JsxStartOpeningElementGroup1
+	| JsxStartOpeningElementArm1
 	| EnumBodyElements
 	| InferTypeOptional1
 	| MappedTypeClauseOptional1
@@ -7355,15 +7355,15 @@ export interface KindMap {
 	function_type: FunctionType;
 	_export_specifiers: ExportSpecifiers;
 	_export_specifier_optional1: ExportSpecifierOptional1;
-	_import_statement_group1: ImportStatementGroup1;
+	_import_statement_arm1: ImportStatementArm1;
 	_import_clause_group1: ImportClauseGroup1;
 	_import_specifiers: ImportSpecifiers;
-	_variable_declarator_group1: VariableDeclaratorGroup1;
-	_variable_declarator_group2: VariableDeclaratorGroup2;
+	_variable_declarator_arm1: VariableDeclaratorArm1;
+	_variable_declarator_arm2: VariableDeclaratorArm2;
 	_catch_clause_group1: CatchClauseGroup1;
-	_binary_expression_group1: BinaryExpressionGroup1;
+	_binary_expression_arm1: BinaryExpressionArm1;
 	_formal_parameters_elements: FormalParametersElements;
-	_jsx_start_opening_element_group1: JsxStartOpeningElementGroup1;
+	_jsx_start_opening_element_arm1: JsxStartOpeningElementArm1;
 	_enum_body_elements: EnumBodyElements;
 	_infer_type_optional1: InferTypeOptional1;
 	_mapped_type_clause_optional1: MappedTypeClauseOptional1;
@@ -7438,8 +7438,8 @@ export interface KindMap {
 	override_modifier: OverrideModifier;
 	predefined_type: PredefinedType;
 	_type_identifier: TypeIdentifier;
-	_meta_property_group1: MetaPropertyGroup1;
-	_meta_property_group2: MetaPropertyGroup2;
+	_meta_property_arm1: MetaPropertyArm1;
+	_meta_property_arm2: MetaPropertyArm2;
 	_kind: Kind;
 	__for_header_operator: ForHeaderOperator;
 	_augmented_assignment_expression_operator: AugmentedAssignmentExpressionOperator;
@@ -7827,29 +7827,29 @@ export interface ExportSpecifierOptional1Ns extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface ImportStatementGroup1Ns extends NodeNs<
-	ImportStatementGroup1,
+export interface ImportStatementArm1Ns extends NodeNs<
+	ImportStatementArm1,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
 export interface ImportClauseGroup1Ns extends NodeNs<ImportClauseGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImportSpecifiersNs extends NodeNs<ImportSpecifiers, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface VariableDeclaratorGroup1Ns extends NodeNs<
-	VariableDeclaratorGroup1,
+export interface VariableDeclaratorArm1Ns extends NodeNs<
+	VariableDeclaratorArm1,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface VariableDeclaratorGroup2Ns extends NodeNs<
-	VariableDeclaratorGroup2,
+export interface VariableDeclaratorArm2Ns extends NodeNs<
+	VariableDeclaratorArm2,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
 export interface CatchClauseGroup1Ns extends NodeNs<CatchClauseGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface BinaryExpressionGroup1Ns extends NodeNs<
-	BinaryExpressionGroup1,
+export interface BinaryExpressionArm1Ns extends NodeNs<
+	BinaryExpressionArm1,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
@@ -7860,8 +7860,8 @@ export interface FormalParametersElementsNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface JsxStartOpeningElementGroup1Ns extends NodeNs<
-	JsxStartOpeningElementGroup1,
+export interface JsxStartOpeningElementArm1Ns extends NodeNs<
+	JsxStartOpeningElementArm1,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
@@ -8257,15 +8257,15 @@ export interface NamespaceMap {
 	function_type: FunctionTypeNs;
 	_export_specifiers: ExportSpecifiersNs;
 	_export_specifier_optional1: ExportSpecifierOptional1Ns;
-	_import_statement_group1: ImportStatementGroup1Ns;
+	_import_statement_arm1: ImportStatementArm1Ns;
 	_import_clause_group1: ImportClauseGroup1Ns;
 	_import_specifiers: ImportSpecifiersNs;
-	_variable_declarator_group1: VariableDeclaratorGroup1Ns;
-	_variable_declarator_group2: VariableDeclaratorGroup2Ns;
+	_variable_declarator_arm1: VariableDeclaratorArm1Ns;
+	_variable_declarator_arm2: VariableDeclaratorArm2Ns;
 	_catch_clause_group1: CatchClauseGroup1Ns;
-	_binary_expression_group1: BinaryExpressionGroup1Ns;
+	_binary_expression_arm1: BinaryExpressionArm1Ns;
 	_formal_parameters_elements: FormalParametersElementsNs;
-	_jsx_start_opening_element_group1: JsxStartOpeningElementGroup1Ns;
+	_jsx_start_opening_element_arm1: JsxStartOpeningElementArm1Ns;
 	_enum_body_elements: EnumBodyElementsNs;
 	_infer_type_optional1: InferTypeOptional1Ns;
 	_mapped_type_clause_optional1: MappedTypeClauseOptional1Ns;
@@ -9570,12 +9570,12 @@ export namespace ExportSpecifierOptional1 {
 	export type Tree = TreeFor<'_export_specifier_optional1'>;
 	export type Kind = '_export_specifier_optional1';
 }
-export namespace ImportStatementGroup1 {
-	export type Config = ConfigFor<'_import_statement_group1'>;
-	export type Fluent = FluentFor<'_import_statement_group1'>;
-	export type Loose = LooseFor<'_import_statement_group1'>;
-	export type Tree = TreeFor<'_import_statement_group1'>;
-	export type Kind = '_import_statement_group1';
+export namespace ImportStatementArm1 {
+	export type Config = ConfigFor<'_import_statement_arm1'>;
+	export type Fluent = FluentFor<'_import_statement_arm1'>;
+	export type Loose = LooseFor<'_import_statement_arm1'>;
+	export type Tree = TreeFor<'_import_statement_arm1'>;
+	export type Kind = '_import_statement_arm1';
 }
 export namespace ImportClauseGroup1 {
 	export type Config = ConfigFor<'_import_clause_group1'>;
@@ -9591,19 +9591,19 @@ export namespace ImportSpecifiers {
 	export type Tree = TreeFor<'_import_specifiers'>;
 	export type Kind = '_import_specifiers';
 }
-export namespace VariableDeclaratorGroup1 {
-	export type Config = ConfigFor<'_variable_declarator_group1'>;
-	export type Fluent = FluentFor<'_variable_declarator_group1'>;
-	export type Loose = LooseFor<'_variable_declarator_group1'>;
-	export type Tree = TreeFor<'_variable_declarator_group1'>;
-	export type Kind = '_variable_declarator_group1';
+export namespace VariableDeclaratorArm1 {
+	export type Config = ConfigFor<'_variable_declarator_arm1'>;
+	export type Fluent = FluentFor<'_variable_declarator_arm1'>;
+	export type Loose = LooseFor<'_variable_declarator_arm1'>;
+	export type Tree = TreeFor<'_variable_declarator_arm1'>;
+	export type Kind = '_variable_declarator_arm1';
 }
-export namespace VariableDeclaratorGroup2 {
-	export type Config = ConfigFor<'_variable_declarator_group2'>;
-	export type Fluent = FluentFor<'_variable_declarator_group2'>;
-	export type Loose = LooseFor<'_variable_declarator_group2'>;
-	export type Tree = TreeFor<'_variable_declarator_group2'>;
-	export type Kind = '_variable_declarator_group2';
+export namespace VariableDeclaratorArm2 {
+	export type Config = ConfigFor<'_variable_declarator_arm2'>;
+	export type Fluent = FluentFor<'_variable_declarator_arm2'>;
+	export type Loose = LooseFor<'_variable_declarator_arm2'>;
+	export type Tree = TreeFor<'_variable_declarator_arm2'>;
+	export type Kind = '_variable_declarator_arm2';
 }
 export namespace CatchClauseGroup1 {
 	export type Config = ConfigFor<'_catch_clause_group1'>;
@@ -9612,12 +9612,12 @@ export namespace CatchClauseGroup1 {
 	export type Tree = TreeFor<'_catch_clause_group1'>;
 	export type Kind = '_catch_clause_group1';
 }
-export namespace BinaryExpressionGroup1 {
-	export type Config = ConfigFor<'_binary_expression_group1'>;
-	export type Fluent = FluentFor<'_binary_expression_group1'>;
-	export type Loose = LooseFor<'_binary_expression_group1'>;
-	export type Tree = TreeFor<'_binary_expression_group1'>;
-	export type Kind = '_binary_expression_group1';
+export namespace BinaryExpressionArm1 {
+	export type Config = ConfigFor<'_binary_expression_arm1'>;
+	export type Fluent = FluentFor<'_binary_expression_arm1'>;
+	export type Loose = LooseFor<'_binary_expression_arm1'>;
+	export type Tree = TreeFor<'_binary_expression_arm1'>;
+	export type Kind = '_binary_expression_arm1';
 }
 export namespace FormalParametersElements {
 	export type Config = ConfigFor<'_formal_parameters_elements'>;
@@ -9626,12 +9626,12 @@ export namespace FormalParametersElements {
 	export type Tree = TreeFor<'_formal_parameters_elements'>;
 	export type Kind = '_formal_parameters_elements';
 }
-export namespace JsxStartOpeningElementGroup1 {
-	export type Config = ConfigFor<'_jsx_start_opening_element_group1'>;
-	export type Fluent = FluentFor<'_jsx_start_opening_element_group1'>;
-	export type Loose = LooseFor<'_jsx_start_opening_element_group1'>;
-	export type Tree = TreeFor<'_jsx_start_opening_element_group1'>;
-	export type Kind = '_jsx_start_opening_element_group1';
+export namespace JsxStartOpeningElementArm1 {
+	export type Config = ConfigFor<'_jsx_start_opening_element_arm1'>;
+	export type Fluent = FluentFor<'_jsx_start_opening_element_arm1'>;
+	export type Loose = LooseFor<'_jsx_start_opening_element_arm1'>;
+	export type Tree = TreeFor<'_jsx_start_opening_element_arm1'>;
+	export type Kind = '_jsx_start_opening_element_arm1';
 }
 export namespace EnumBodyElements {
 	export type Config = ConfigFor<'_enum_body_elements'>;

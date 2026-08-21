@@ -286,9 +286,9 @@ export interface IsGuards {
 	intersectionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IntersectionType };
 	functionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionType };
 	ExportSpecifiers<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportSpecifiers };
-	ImportStatementGroup1<T extends { readonly $type: number }>(
+	ImportStatementArm1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.ImportStatementGroup1 };
+	): v is T & { readonly $type: TSKindId.ImportStatementArm1 };
 	ImportClauseGroup1<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ImportClauseGroup1 };
@@ -541,7 +541,7 @@ export interface AssertGuards {
 	intersectionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IntersectionType };
 	functionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionType };
 	ExportSpecifiers(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportSpecifiers };
-	ImportStatementGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportStatementGroup1 };
+	ImportStatementArm1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportStatementArm1 };
 	ImportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseGroup1 };
 	ImportSpecifiers(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportSpecifiers };
 	FormalParametersElements(v: {
@@ -905,15 +905,15 @@ const _kindIdByKind = new Map<string, number>([
 	['_kw_abstract_marker', TSKindId.KwAbstractMarker],
 	['_kw_const_marker', TSKindId.KwConstMarker],
 	['_export_specifiers', TSKindId.ExportSpecifiers],
-	['_import_statement_group1', TSKindId.ImportStatementGroup1],
+	['_import_statement_arm1', TSKindId.ImportStatementArm1],
 	['_import_clause_group1', TSKindId.ImportClauseGroup1],
 	['_import_specifiers', TSKindId.ImportSpecifiers],
-	['_variable_declarator_group1', TSKindId.VariableDeclaratorGroup1],
-	['_variable_declarator_group2', TSKindId.VariableDeclaratorGroup2],
+	['_variable_declarator_arm1', TSKindId.VariableDeclaratorArm1],
+	['_variable_declarator_arm2', TSKindId.VariableDeclaratorArm2],
 	['_catch_clause_group1', TSKindId.CatchClauseGroup1],
-	['_binary_expression_group1', TSKindId.BinaryExpressionGroup1],
-	['_meta_property_group1', TSKindId.MetaPropertyGroup1],
-	['_meta_property_group2', TSKindId.MetaPropertyGroup2],
+	['_binary_expression_arm1', TSKindId.BinaryExpressionArm1],
+	['_meta_property_arm1', TSKindId.MetaPropertyArm1],
+	['_meta_property_arm2', TSKindId.MetaPropertyArm2],
 	['_formal_parameters_elements', TSKindId.FormalParametersElements],
 	['_enum_body_elements', TSKindId.EnumBodyElements],
 	['_types', TSKindId.Types],
@@ -1118,7 +1118,7 @@ export const is = {
 	intersectionType: _g(TSKindId.IntersectionType),
 	functionType: _g(TSKindId.FunctionType),
 	ExportSpecifiers: _g(TSKindId.ExportSpecifiers),
-	ImportStatementGroup1: _g(TSKindId.ImportStatementGroup1),
+	ImportStatementArm1: _g(TSKindId.ImportStatementArm1),
 	ImportClauseGroup1: _g(TSKindId.ImportClauseGroup1),
 	ImportSpecifiers: _g(TSKindId.ImportSpecifiers),
 	FormalParametersElements: _g(TSKindId.FormalParametersElements),
@@ -1354,7 +1354,7 @@ export const assert = {
 	intersectionType: _makeAssert('intersectionType', is.intersectionType as _AnyGuard),
 	functionType: _makeAssert('functionType', is.functionType as _AnyGuard),
 	ExportSpecifiers: _makeAssert('ExportSpecifiers', is.ExportSpecifiers as _AnyGuard),
-	ImportStatementGroup1: _makeAssert('ImportStatementGroup1', is.ImportStatementGroup1 as _AnyGuard),
+	ImportStatementArm1: _makeAssert('ImportStatementArm1', is.ImportStatementArm1 as _AnyGuard),
 	ImportClauseGroup1: _makeAssert('ImportClauseGroup1', is.ImportClauseGroup1 as _AnyGuard),
 	ImportSpecifiers: _makeAssert('ImportSpecifiers', is.ImportSpecifiers as _AnyGuard),
 	FormalParametersElements: _makeAssert('FormalParametersElements', is.FormalParametersElements as _AnyGuard),

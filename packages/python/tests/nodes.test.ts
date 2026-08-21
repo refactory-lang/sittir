@@ -133,7 +133,7 @@ describe('aliased_import', () => {
 describe('print_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.printStatement({
-			$type: TSKindId.PrintStatementGroup1,
+			$type: TSKindId.PrintStatementArm1,
 			$text: 'test',
 			$source: 2,
 			$named: true,
@@ -2126,9 +2126,9 @@ describe('comprehension_clauses', () => {
 	});
 });
 
-describe('print_statement_group1', () => {
+describe('print_statement_arm1', () => {
 	it('factory produces correct type', () => {
-		const node = ir.printStatementGroup1({
+		const node = ir.printStatementArm1({
 			chevron: {
 				$type: TSKindId.Chevron,
 				$text: 'test',
@@ -2137,11 +2137,11 @@ describe('print_statement_group1', () => {
 				_expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any
 		});
-		expect(node.$type).toBe(TSKindId.PrintStatementGroup1);
+		expect(node.$type).toBe(TSKindId.PrintStatementArm1);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.printStatementGroup1({
+		const node = ir.printStatementArm1({
 			chevron: {
 				$type: TSKindId.Chevron,
 				$text: 'test',
@@ -2154,16 +2154,16 @@ describe('print_statement_group1', () => {
 	});
 });
 
-describe('print_statement_group2', () => {
+describe('print_statement_arm2', () => {
 	it('factory produces correct type', () => {
-		const node = ir.printStatementGroup2({
+		const node = ir.printStatementArm2({
 			$type: TSKindId.PrintArguments,
 			$text: 'test',
 			$source: 2,
 			$named: true,
 			_argument: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		} as any);
-		expect(node.$type).toBe(TSKindId.PrintStatementGroup2);
+		expect(node.$type).toBe(TSKindId.PrintStatementArm2);
 		expect(node.$source).toBe(2);
 	});
 });

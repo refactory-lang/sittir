@@ -291,7 +291,7 @@ export interface AwaitExpressionTransport {
   _expression: Box<ExpressionTransport>
 }
 
-export interface BinaryExpressionGroup1Transport {
+export interface BinaryExpressionArm1Transport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -299,7 +299,7 @@ export interface BinaryExpressionGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _left: Box<BinaryExpressionGroup1LeftTransportSlot>
+  _left: Box<BinaryExpressionArm1LeftTransportSlot>
   _operator: Box<AnyTransport>
   _right: Box<ExpressionTransport>
 }
@@ -315,7 +315,7 @@ export interface BinaryExpressionTransport {
   _left?: Box<ExpressionTransport>
   _operator?: Box<AnyTransport>
   _right?: Box<ExpressionTransport>
-  _binary_expression_group1?: Box<BinaryExpressionGroup1Transport>
+  _binary_expression_arm1?: Box<BinaryExpressionArm1Transport>
 }
 
 export interface BreakStatementTransport {
@@ -1386,7 +1386,7 @@ export interface ImportSpecifierTransport {
   _content: ImportSpecifierContentTransportSlot
 }
 
-export interface ImportStatementGroup1Transport {
+export interface ImportStatementArm1Transport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1614,7 +1614,7 @@ export interface JsxOpeningElementContentTransport {
   '$triviaData'?: TransportTrivia
   _name?: JsxOpeningElementContentNameTransportSlot
   _attribute?: Array<_JsxAttributeTransport>
-  _jsx_start_opening_element_group1?: JsxStartOpeningElementGroup1Transport
+  _jsx_start_opening_element_arm1?: JsxStartOpeningElementArm1Transport
 }
 
 export interface JsxOpeningElementTransport {
@@ -1639,7 +1639,7 @@ export interface JsxSelfClosingElementTransport {
   _jsx_opening_element_content?: JsxOpeningElementContentTransport
 }
 
-export interface JsxStartOpeningElementGroup1Transport {
+export interface JsxStartOpeningElementArm1Transport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1647,7 +1647,7 @@ export interface JsxStartOpeningElementGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: JsxStartOpeningElementGroup1NameTransportSlot
+  _name: JsxStartOpeningElementArm1NameTransportSlot
   _type_arguments?: TypeArgumentsTransport
 }
 
@@ -2835,7 +2835,7 @@ export interface VariableDeclarationTransport {
   _semicolon: SemicolonEnum
 }
 
-export interface VariableDeclaratorGroup1Transport {
+export interface VariableDeclaratorArm1Transport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -2843,12 +2843,12 @@ export interface VariableDeclaratorGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: VariableDeclaratorGroup1NameTransportSlot
+  _name: VariableDeclaratorArm1NameTransportSlot
   _type?: TypeAnnotationTransport
   _value?: ExpressionTransport
 }
 
-export interface VariableDeclaratorGroup2Transport {
+export interface VariableDeclaratorArm2Transport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string

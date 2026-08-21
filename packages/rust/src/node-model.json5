@@ -167,7 +167,7 @@
     "range_pattern": {
       "definedBy": "override",
       "childKind": {
-        "range_pattern_group2": "group2",
+        "range_pattern_arm2": "arm2",
         "range_pattern_prefix": "prefix"
       }
     },
@@ -189,7 +189,7 @@
     "block_comment": {
       "definedBy": "override",
       "childKind": {
-        "block_comment_group1": "group1"
+        "block_comment_arm1": "arm1"
       }
     }
   },
@@ -382,7 +382,7 @@
     "raw_string_literal.string_content": {
       "string_content": "raw_string_literal_content"
     },
-    "_attribute_group1.arguments": {
+    "_attribute_arm1.arguments": {
       "token_tree": "delim_token_tree"
     },
     "_function_item_optional1.return_type": {
@@ -403,7 +403,7 @@
     "_match_pattern_optional1.condition": {
       "let_chain": "_let_chain"
     },
-    "_block_comment_group1.doc": {
+    "_block_comment_arm1.doc": {
       "doc_comment": "_block_comment_content"
     },
     "_tuple_type_elements.type": {
@@ -618,7 +618,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "attribute_group1": {
+      "attribute_arm1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2878,7 +2878,7 @@
       }
     },
     "block_comment": {
-      "block_comment_group1": {
+      "block_comment_arm1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2895,7 +2895,7 @@
         "nonEmpty": true
       }
     },
-    "_attribute_group1": {
+    "_attribute_arm1": {
       "value": {
         "unnamed": false,
         "slotCount": 1,
@@ -3019,7 +3019,7 @@
         "nonEmpty": true
       }
     },
-    "_array_expression_group1": {
+    "_array_expression_arm1": {
       "expression": {
         "unnamed": false,
         "slotCount": 1,
@@ -3071,7 +3071,7 @@
         "nonEmpty": true
       }
     },
-    "_range_pattern_group2": {
+    "_range_pattern_arm2": {
       "left": {
         "unnamed": false,
         "slotCount": 1,
@@ -3087,7 +3087,7 @@
         "nonEmpty": false
       }
     },
-    "_block_comment_group1": {
+    "_block_comment_arm1": {
       "outer": {
         "unnamed": false,
         "slotCount": 1,
@@ -3172,7 +3172,7 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "array_expression_group1": {
+      "array_expression_arm1": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3775,13 +3775,13 @@
       ]
     },
     {
-      "kind": "_array_expression_group1",
+      "kind": "_array_expression_arm1",
       "modelType": "group",
-      "typeName": "ArrayExpressionGroup1",
-      "factoryName": "_arrayExpressionGroup1",
-      "irKey": "arrayExpressionGroup1",
+      "typeName": "ArrayExpressionArm1",
+      "factoryName": "_arrayExpressionArm1",
+      "irKey": "arrayExpressionArm1",
       "hidden": false,
-      "name": "_array_expression_group1",
+      "name": "_array_expression_arm1",
       "fields": [
         {
           "name": "expression",
@@ -3933,9 +3933,9 @@
           }
         },
         {
-          "name": "array_expression_group1",
-          "propertyName": "arrayExpressionGroup1",
-          "paramName": "arrayExpressionGroup1",
+          "name": "array_expression_arm1",
+          "propertyName": "arrayExpressionArm1",
+          "paramName": "arrayExpressionArm1",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3943,15 +3943,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_array_expression_group1",
-              "parseKind": "array_expression_group1",
+              "name": "_array_expression_arm1",
+              "parseKind": "array_expression_arm1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_array_expression_group1"
+              "_array_expression_arm1"
             ]
           }
         }
@@ -3960,7 +3960,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "attributes",
-        "array_expression_group1"
+        "array_expression_arm1"
       ]
     },
     {
@@ -3999,11 +3999,11 @@
       "children": []
     },
     {
-      "kind": "_attribute_group1",
+      "kind": "_attribute_arm1",
       "modelType": "branch",
-      "typeName": "AttributeGroup1",
-      "factoryName": "attributeGroup1",
-      "irKey": "attributeGroup1",
+      "typeName": "AttributeArm1",
+      "factoryName": "attributeArm1",
+      "irKey": "attributeArm1",
       "hidden": false,
       "fields": [
         {
@@ -4512,13 +4512,13 @@
       ]
     },
     {
-      "kind": "_block_comment_group1",
+      "kind": "_block_comment_arm1",
       "modelType": "group",
-      "typeName": "BlockCommentGroup1",
-      "factoryName": "_blockCommentGroup1",
-      "irKey": "blockCommentGroup1",
+      "typeName": "BlockCommentArm1",
+      "factoryName": "_blockCommentArm1",
+      "irKey": "blockCommentArm1",
       "hidden": false,
-      "name": "_block_comment_group1",
+      "name": "_block_comment_arm1",
       "fields": [
         {
           "name": "outer",
@@ -6882,13 +6882,13 @@
       ]
     },
     {
-      "kind": "_range_pattern_group2",
+      "kind": "_range_pattern_arm2",
       "modelType": "group",
-      "typeName": "RangePatternGroup2",
-      "factoryName": "_rangePatternGroup2",
-      "irKey": "rangePatternGroup2",
+      "typeName": "RangePatternArm2",
+      "factoryName": "_rangePatternArm2",
+      "irKey": "rangePatternArm2",
       "hidden": false,
-      "name": "_range_pattern_group2",
+      "name": "_range_pattern_arm2",
       "fields": [
         {
           "name": "left",
@@ -9010,9 +9010,9 @@
           }
         },
         {
-          "name": "attribute_group1",
-          "propertyName": "attributeGroup1",
-          "paramName": "attributeGroup1",
+          "name": "attribute_arm1",
+          "propertyName": "attributeArm1",
+          "paramName": "attributeArm1",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9020,15 +9020,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_attribute_group1",
-              "parseKind": "attribute_group1",
+              "name": "_attribute_arm1",
+              "parseKind": "attribute_arm1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_attribute_group1"
+              "_attribute_arm1"
             ]
           }
         }
@@ -9037,7 +9037,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "path",
-        "attribute_group1"
+        "attribute_arm1"
       ]
     },
     {
@@ -9456,9 +9456,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "block_comment_group1",
-          "propertyName": "blockCommentGroup1",
-          "paramName": "blockCommentGroup1",
+          "name": "block_comment_arm1",
+          "propertyName": "blockCommentArm1",
+          "paramName": "blockCommentArm1",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9466,24 +9466,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_block_comment_group1",
-              "parseKind": "block_comment_group1",
+              "name": "_block_comment_arm1",
+              "parseKind": "block_comment_arm1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_block_comment_group1"
+              "_block_comment_arm1"
             ]
           }
         }
       ],
       "children": [],
       "factoryShape": "forwarded",
-      "forwardsTo": "_block_comment_group1",
+      "forwardsTo": "_block_comment_arm1",
       "factoryFields": [
-        "block_comment_group1"
+        "block_comment_arm1"
       ]
     },
     {
@@ -15512,8 +15512,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_range_pattern_group2",
-              "parseKind": "range_pattern_group2",
+              "name": "_range_pattern_arm2",
+              "parseKind": "range_pattern_arm2",
               "unresolved": true
             },
             {
@@ -15527,7 +15527,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_range_pattern_group2",
+              "_range_pattern_arm2",
               "_range_pattern_prefix"
             ]
           }

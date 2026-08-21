@@ -465,10 +465,10 @@ export type TypescriptGrammar = {
 			};
 			right: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
 		};
-		children: { multiple: false; required: false; types: [{ type: 'binary_expression_group1'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'binary_expression_arm1'; named: true }] };
 	};
-	readonly binary_expression_group1: {
-		type: 'binary_expression_group1';
+	readonly binary_expression_arm1: {
+		type: 'binary_expression_arm1';
 		named: true;
 		fields: {
 			left: {
@@ -1461,7 +1461,7 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [
 					{ type: 'import_require_clause'; named: true },
-					{ type: 'import_statement_group1'; named: true },
+					{ type: 'import_statement_arm1'; named: true },
 					{ type: 'string'; named: true }
 				];
 			};
@@ -1478,8 +1478,8 @@ export type TypescriptGrammar = {
 			};
 		};
 	};
-	readonly import_statement_group1: {
-		type: 'import_statement_group1';
+	readonly import_statement_arm1: {
+		type: 'import_statement_arm1';
 		named: true;
 		fields: { source: { multiple: false; required: true; types: [{ type: 'string'; named: true }] } };
 		children: { multiple: false; required: true; types: [{ type: 'import_clause'; named: true }] };
@@ -1704,11 +1704,11 @@ export type TypescriptGrammar = {
 		children: {
 			multiple: false;
 			required: true;
-			types: [{ type: 'meta_property_group1'; named: true }, { type: 'meta_property_group2'; named: true }];
+			types: [{ type: 'meta_property_arm1'; named: true }, { type: 'meta_property_arm2'; named: true }];
 		};
 	};
-	readonly meta_property_group1: { type: 'meta_property_group1'; named: true; fields: {} };
-	readonly meta_property_group2: { type: 'meta_property_group2'; named: true; fields: {} };
+	readonly meta_property_arm1: { type: 'meta_property_arm1'; named: true; fields: {} };
+	readonly meta_property_arm2: { type: 'meta_property_arm2'; named: true; fields: {} };
 	readonly method_definition: {
 		type: 'method_definition';
 		named: true;
@@ -2650,11 +2650,11 @@ export type TypescriptGrammar = {
 		children: {
 			multiple: false;
 			required: true;
-			types: [{ type: 'variable_declarator_group1'; named: true }, { type: 'variable_declarator_group2'; named: true }];
+			types: [{ type: 'variable_declarator_arm1'; named: true }, { type: 'variable_declarator_arm2'; named: true }];
 		};
 	};
-	readonly variable_declarator_group1: {
-		type: 'variable_declarator_group1';
+	readonly variable_declarator_arm1: {
+		type: 'variable_declarator_arm1';
 		named: true;
 		fields: {
 			name: {
@@ -2670,8 +2670,8 @@ export type TypescriptGrammar = {
 			value: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
 		};
 	};
-	readonly variable_declarator_group2: {
-		type: 'variable_declarator_group2';
+	readonly variable_declarator_arm2: {
+		type: 'variable_declarator_arm2';
 		named: true;
 		fields: {
 			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };

@@ -1207,7 +1207,7 @@ function applyFieldWrapPasses(ruleName, rule, kwRules, supertypeNames, rulesBag,
 }
 function applyHoistAndUnalias(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, unaliasSink) {
   let r = rule;
-  const clauseHoistCounter = { opt: 0, grp: 0, supertypeNames };
+  const clauseHoistCounter = { opt: 0, grp: 0, arm: 0, supertypeNames };
   r = applyClauseHoist(
     ruleName,
     r,
@@ -2874,7 +2874,7 @@ function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag,
   clauseGroupRules[name] = seqBody;
   return name;
 }
-function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, ambientPrec, enclosingFieldName) {
+function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, ambientPrec, enclosingFieldName, flavor = "group") {
   if (process.env.SITTIR_DEBUG_LISTNAME) {
     const info = separatedListBodyInfo(content);
     process.stderr.write(
@@ -2919,8 +2919,8 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
       return register(visibleName2);
     }
   }
-  counter.grp += 1;
-  const visibleName = `${base2}_group${counter.grp}`;
+  const ordinal = flavor === "arm" ? ++counter.arm : ++counter.grp;
+  const visibleName = `${base2}_${flavor}${ordinal}`;
   const hiddenName = `_${visibleName}`;
   if (visibleName in rulesBag || hiddenName in rulesBag) {
     process.stderr.write(
@@ -2931,7 +2931,7 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
   }
   return register(visibleName);
 }
-function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedupeMap, counter, rulesBag) {
+function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedupeMap, counter, rulesBag, flavor = "group") {
   const existing = groupDedupeMap[existingHiddenName];
   if (existing !== void 0) return { visibleName: existing };
   const natural = existingHiddenName.replace(/^_+/, "");
@@ -2939,8 +2939,8 @@ function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedu
     groupDedupeMap[existingHiddenName] = natural;
     return { visibleName: natural };
   }
-  counter.grp += 1;
-  const visibleName = `${parentKind.replace(/^_+/, "")}_group${counter.grp}`;
+  const ordinal = flavor === "arm" ? ++counter.arm : ++counter.grp;
+  const visibleName = `${parentKind.replace(/^_+/, "")}_${flavor}${ordinal}`;
   if (visibleName in rulesBag) {
     process.stderr.write(
       `enrich: visible-group promotion skipped for '${parentKind}' \u2014 rule '${visibleName}' already exists in base.grammar.rules
@@ -3011,7 +3011,7 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
     const body = rulesBag[name];
     if (!body || ruleMatchesEmpty(body) || isInlineSafe(body, rulesBag)) return null;
     if (isSupertypeLike(body)) return null;
-    const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag);
+    const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag, "arm");
     if (!promoted) return null;
     visibleGroupHiddenNames.add(name);
     if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
@@ -3028,7 +3028,8 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
       rulesBag,
       clauseGroupRules,
       ambientPrec,
-      enclosingFieldName
+      enclosingFieldName,
+      "arm"
     );
     if (!names) return null;
     visibleGroupHiddenNames.add(names.hiddenName);
@@ -4795,7 +4796,7 @@ var grammar_sittir_default = grammar(
         // is mandatory (no `optional(...)` site to satisfy
         // `parentIsOptionalSeq`, see the `set`/`collection_elements` note above) —
         // so declare it as a REAL visible rule (natural stripped name, per
-        // the `print_statement_group1/2` precedent: it's what the generated
+        // the `print_statement_arm1/2` precedent: it's what the generated
         // model already expects) and reference it directly.
         // Body is `repeat1(choice(...))`, NOT the base's
         // `seq($.for_in_clause, repeat(choice(...)))`: the seq shape derives
@@ -4823,21 +4824,21 @@ var grammar_sittir_default = grammar(
         // chevron, ...)), prec(-3, prec.dynamic(-1, seq('print',
         // commaSep1(field('argument', expression)), ...))))` — TWO
         // anonymous seq arms, neither BLANK. Sittir's own IR auto-names
-        // these `_print_statement_group1`/`_print_statement_group2` and
+        // these `_print_statement_arm1`/`_print_statement_arm2` and
         // (per the multi-slot/single-slot visible-group rule) models
         // `content` as a union referencing both — but since neither
         // arm is authored as its own named rule OR wrapped in
         // `alias($._x, $.x)`, tree-sitter's native grammar compiler
         // just flattens both arms' fields (chevron / argument) directly
-        // onto `print_statement` itself. The `_print_statement_group1`/
-        // `_print_statement_group2` node-refs in the IR's `content`
+        // onto `print_statement` itself. The `_print_statement_arm1`/
+        // `_print_statement_arm2` node-refs in the IR's `content`
         // field never resolve against the real parser output —
         // `hydrateSlots` (assemble.ts) correctly detects this as its
         // documented "inlined-before-assemble" category and leaves
         // them `UnresolvedRef`, but nothing downstream falls back to
         // the flattened fields, so `wrapPrintStatement`'s `_content`
-        // accessor chain (`_content ?? _print_statement_group1 ??
-        // _print_statement_group2`) never finds a value — every
+        // accessor chain (`_content ?? _print_statement_arm1 ??
+        // _print_statement_arm2`) never finds a value — every
         // print-statement form throws at wrap time.
         //
         // Per the `case_tuple_pattern`/`case_list_pattern` precedent
@@ -4864,13 +4865,13 @@ var grammar_sittir_default = grammar(
           optional(",")
         ),
         _print_chevron_arguments: ($) => seq(repeat1(seq(",", field("argument", $.expression))), optional(",")),
-        print_statement_group1: ($) => seq(
+        print_statement_arm1: ($) => seq(
           "print",
           $.chevron,
           optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ","))
         ),
-        print_statement_group2: ($) => seq("print", alias($._print_arguments, $.print_arguments)),
-        print_statement: ($) => choice(prec(1, $.print_statement_group1), prec(-3, prec.dynamic(-1, $.print_statement_group2))),
+        print_statement_arm2: ($) => seq("print", alias($._print_arguments, $.print_arguments)),
+        print_statement: ($) => choice(prec(1, $.print_statement_arm1), prec(-3, prec.dynamic(-1, $.print_statement_arm2))),
         // Base `_simple_pattern`'s last arm is the bare literal `'_'`
         // (the match-statement wildcard pattern). Every other arm is a
         // named rule (`$.dotted_name`, `$.string`, ...), so when

@@ -1313,14 +1313,14 @@
       "required": false,
       "types": [
         {
-          "type": "binary_expression_group1",
+          "type": "binary_expression_arm1",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "binary_expression_group1",
+    "type": "binary_expression_arm1",
     "named": true,
     "fields": {
       "left": {
@@ -4093,7 +4093,7 @@
             "named": true
           },
           {
-            "type": "import_statement_group1",
+            "type": "import_statement_arm1",
             "named": true
           },
           {
@@ -4143,7 +4143,7 @@
     }
   },
   {
-    "type": "import_statement_group1",
+    "type": "import_statement_arm1",
     "named": true,
     "fields": {
       "source": {
@@ -4779,23 +4779,23 @@
       "required": true,
       "types": [
         {
-          "type": "meta_property_group1",
+          "type": "meta_property_arm1",
           "named": true
         },
         {
-          "type": "meta_property_group2",
+          "type": "meta_property_arm2",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "meta_property_group1",
+    "type": "meta_property_arm1",
     "named": true,
     "fields": {}
   },
   {
-    "type": "meta_property_group2",
+    "type": "meta_property_arm2",
     "named": true,
     "fields": {}
   },
@@ -7383,18 +7383,18 @@
       "required": true,
       "types": [
         {
-          "type": "variable_declarator_group1",
+          "type": "variable_declarator_arm1",
           "named": true
         },
         {
-          "type": "variable_declarator_group2",
+          "type": "variable_declarator_arm2",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "variable_declarator_group1",
+    "type": "variable_declarator_arm1",
     "named": true,
     "fields": {
       "name": {
@@ -7438,7 +7438,7 @@
     }
   },
   {
-    "type": "variable_declarator_group2",
+    "type": "variable_declarator_arm2",
     "named": true,
     "fields": {
       "name": {

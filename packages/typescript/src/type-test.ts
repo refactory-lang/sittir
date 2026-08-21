@@ -190,8 +190,8 @@ import type {
 	ImportSpecifiers,
 	ImportSpecifiersTree,
 	ImportStatement,
-	ImportStatementGroup1,
-	ImportStatementGroup1Tree,
+	ImportStatementArm1,
+	ImportStatementArm1Tree,
 	ImportStatementTree,
 	ImportTree,
 	IndexSignature,
@@ -245,10 +245,10 @@ import type {
 	MemberExpression,
 	MemberExpressionTree,
 	MetaProperty,
-	MetaPropertyGroup1,
-	MetaPropertyGroup1Tree,
-	MetaPropertyGroup2,
-	MetaPropertyGroup2Tree,
+	MetaPropertyArm1,
+	MetaPropertyArm1Tree,
+	MetaPropertyArm2,
+	MetaPropertyArm2Tree,
 	MetaPropertyTree,
 	MethodDefinition,
 	MethodDefinitionTree,
@@ -687,8 +687,8 @@ export type _Type_UnionType = _TypeAssert<_TypeExtends<UnionType['$type'], TSKin
 export type _Type_IntersectionType = _TypeAssert<_TypeExtends<IntersectionType['$type'], TSKindId.IntersectionType>>;
 export type _Type_FunctionType = _TypeAssert<_TypeExtends<FunctionType['$type'], TSKindId.FunctionType>>;
 export type _Type_ExportSpecifiers = _TypeAssert<_TypeExtends<ExportSpecifiers['$type'], TSKindId.ExportSpecifiers>>;
-export type _Type_ImportStatementGroup1 = _TypeAssert<
-	_TypeExtends<ImportStatementGroup1['$type'], TSKindId.ImportStatementGroup1>
+export type _Type_ImportStatementArm1 = _TypeAssert<
+	_TypeExtends<ImportStatementArm1['$type'], TSKindId.ImportStatementArm1>
 >;
 export type _Type_ImportClauseGroup1 = _TypeAssert<
 	_TypeExtends<ImportClauseGroup1['$type'], TSKindId.ImportClauseGroup1>
@@ -812,12 +812,8 @@ export type _Type_PredefinedType = _TypeAssert<
 	>
 >;
 export type _Type_TypeIdentifier = _TypeAssert<_TypeExtends<TypeIdentifier['$type'], TSKindId.TypeIdentifier>>;
-export type _Type_MetaPropertyGroup1 = _TypeAssert<
-	_TypeExtends<MetaPropertyGroup1['$type'], TSKindId.MetaPropertyGroup1>
->;
-export type _Type_MetaPropertyGroup2 = _TypeAssert<
-	_TypeExtends<MetaPropertyGroup2['$type'], TSKindId.MetaPropertyGroup2>
->;
+export type _Type_MetaPropertyArm1 = _TypeAssert<_TypeExtends<MetaPropertyArm1['$type'], TSKindId.MetaPropertyArm1>>;
+export type _Type_MetaPropertyArm2 = _TypeAssert<_TypeExtends<MetaPropertyArm2['$type'], TSKindId.MetaPropertyArm2>>;
 export type _Type_Kind = _TypeAssert<_TypeExtends<Kind['$type'], TSKindId.Let | TSKindId.Const>>;
 export type _Type_ForHeaderOperator = _TypeAssert<_TypeExtends<ForHeaderOperator['$type'], TSKindId.In | TSKindId.Of>>;
 export type _Type_AugmentedAssignmentExpressionOperator = _TypeAssert<
@@ -1080,8 +1076,8 @@ export type _Tree_UnionType = _TypeAssert<_TypeExtends<UnionTypeTree['type'], 'u
 export type _Tree_IntersectionType = _TypeAssert<_TypeExtends<IntersectionTypeTree['type'], 'intersection_type'>>;
 export type _Tree_FunctionType = _TypeAssert<_TypeExtends<FunctionTypeTree['type'], 'function_type'>>;
 export type _Tree_ExportSpecifiers = _TypeAssert<_TypeExtends<ExportSpecifiersTree['type'], '_export_specifiers'>>;
-export type _Tree_ImportStatementGroup1 = _TypeAssert<
-	_TypeExtends<ImportStatementGroup1Tree['type'], '_import_statement_group1'>
+export type _Tree_ImportStatementArm1 = _TypeAssert<
+	_TypeExtends<ImportStatementArm1Tree['type'], '_import_statement_arm1'>
 >;
 export type _Tree_ImportClauseGroup1 = _TypeAssert<
 	_TypeExtends<ImportClauseGroup1Tree['type'], '_import_clause_group1'>
@@ -1165,12 +1161,8 @@ export type _Tree_AccessibilityModifier = _TypeAssert<
 export type _Tree_OverrideModifier = _TypeAssert<_TypeExtends<OverrideModifierTree['type'], 'override_modifier'>>;
 export type _Tree_PredefinedType = _TypeAssert<_TypeExtends<PredefinedTypeTree['type'], 'predefined_type'>>;
 export type _Tree_TypeIdentifier = _TypeAssert<_TypeExtends<TypeIdentifierTree['type'], '_type_identifier'>>;
-export type _Tree_MetaPropertyGroup1 = _TypeAssert<
-	_TypeExtends<MetaPropertyGroup1Tree['type'], '_meta_property_group1'>
->;
-export type _Tree_MetaPropertyGroup2 = _TypeAssert<
-	_TypeExtends<MetaPropertyGroup2Tree['type'], '_meta_property_group2'>
->;
+export type _Tree_MetaPropertyArm1 = _TypeAssert<_TypeExtends<MetaPropertyArm1Tree['type'], '_meta_property_arm1'>>;
+export type _Tree_MetaPropertyArm2 = _TypeAssert<_TypeExtends<MetaPropertyArm2Tree['type'], '_meta_property_arm2'>>;
 export type _Tree_Kind = _TypeAssert<_TypeExtends<KindTree['type'], '_kind'>>;
 export type _Tree_ForHeaderOperator = _TypeAssert<_TypeExtends<ForHeaderOperatorTree['type'], '__for_header_operator'>>;
 export type _Tree_AugmentedAssignmentExpressionOperator = _TypeAssert<

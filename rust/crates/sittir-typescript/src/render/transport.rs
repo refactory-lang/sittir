@@ -235,17 +235,17 @@ pub enum AnyTransport {
     KwConstMarker(KwConstMarkerTransport),
     ExportSpecifiers(ExportSpecifiersTransport),
     ExportSpecifierOptional1(ExportSpecifierOptional1Transport),
-    ImportStatementGroup1(ImportStatementGroup1Transport),
+    ImportStatementArm1(ImportStatementArm1Transport),
     ImportClauseGroup1(ImportClauseGroup1Transport),
     ImportSpecifiers(ImportSpecifiersTransport),
-    VariableDeclaratorGroup1(VariableDeclaratorGroup1Transport),
-    VariableDeclaratorGroup2(VariableDeclaratorGroup2Transport),
+    VariableDeclaratorArm1(VariableDeclaratorArm1Transport),
+    VariableDeclaratorArm2(VariableDeclaratorArm2Transport),
     CatchClauseGroup1(CatchClauseGroup1Transport),
-    BinaryExpressionGroup1(BinaryExpressionGroup1Transport),
-    MetaPropertyGroup1(MetaPropertyGroup1Transport),
-    MetaPropertyGroup2(MetaPropertyGroup2Transport),
+    BinaryExpressionArm1(BinaryExpressionArm1Transport),
+    MetaPropertyArm1(MetaPropertyArm1Transport),
+    MetaPropertyArm2(MetaPropertyArm2Transport),
     FormalParametersElements(FormalParametersElementsTransport),
-    JsxStartOpeningElementGroup1(JsxStartOpeningElementGroup1Transport),
+    JsxStartOpeningElementArm1(JsxStartOpeningElementArm1Transport),
     EnumBodyElements(EnumBodyElementsTransport),
     InferTypeOptional1(InferTypeOptional1Transport),
     MappedTypeClauseOptional1(MappedTypeClauseOptional1Transport),
@@ -1269,9 +1269,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 362 => Ok(AnyTransport::ExportSpecifiers(
                     ExportSpecifiersTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _import_statement_group1 (_IMPORT_STATEMENT_GROUP1)
-                363 => Ok(AnyTransport::ImportStatementGroup1(
-                    ImportStatementGroup1Transport::from_napi_value(env, napi_val)?
+                // kind: _import_statement_arm1 (_IMPORT_STATEMENT_ARM1)
+                363 => Ok(AnyTransport::ImportStatementArm1(
+                    ImportStatementArm1Transport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _import_clause_group1 (_IMPORT_CLAUSE_GROUP1)
                 364 => Ok(AnyTransport::ImportClauseGroup1(
@@ -1281,29 +1281,29 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 365 => Ok(AnyTransport::ImportSpecifiers(
                     ImportSpecifiersTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _variable_declarator_group1 (_VARIABLE_DECLARATOR_GROUP1)
-                366 => Ok(AnyTransport::VariableDeclaratorGroup1(
-                    VariableDeclaratorGroup1Transport::from_napi_value(env, napi_val)?
+                // kind: _variable_declarator_arm1 (_VARIABLE_DECLARATOR_ARM1)
+                366 => Ok(AnyTransport::VariableDeclaratorArm1(
+                    VariableDeclaratorArm1Transport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _variable_declarator_group2 (_VARIABLE_DECLARATOR_GROUP2)
-                367 => Ok(AnyTransport::VariableDeclaratorGroup2(
-                    VariableDeclaratorGroup2Transport::from_napi_value(env, napi_val)?
+                // kind: _variable_declarator_arm2 (_VARIABLE_DECLARATOR_ARM2)
+                367 => Ok(AnyTransport::VariableDeclaratorArm2(
+                    VariableDeclaratorArm2Transport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _catch_clause_group1 (_CATCH_CLAUSE_GROUP1)
                 368 => Ok(AnyTransport::CatchClauseGroup1(
                     CatchClauseGroup1Transport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _binary_expression_group1 (_BINARY_EXPRESSION_GROUP1)
-                369 => Ok(AnyTransport::BinaryExpressionGroup1(
-                    BinaryExpressionGroup1Transport::from_napi_value(env, napi_val)?
+                // kind: _binary_expression_arm1 (_BINARY_EXPRESSION_ARM1)
+                369 => Ok(AnyTransport::BinaryExpressionArm1(
+                    BinaryExpressionArm1Transport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _meta_property_group1 (_META_PROPERTY_GROUP1)
-                370 => Ok(AnyTransport::MetaPropertyGroup1(
-                    MetaPropertyGroup1Transport::from_napi_value(env, napi_val)?
+                // kind: _meta_property_arm1 (_META_PROPERTY_ARM1)
+                370 => Ok(AnyTransport::MetaPropertyArm1(
+                    MetaPropertyArm1Transport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _meta_property_group2 (_META_PROPERTY_GROUP2)
-                371 => Ok(AnyTransport::MetaPropertyGroup2(
-                    MetaPropertyGroup2Transport::from_napi_value(env, napi_val)?
+                // kind: _meta_property_arm2 (_META_PROPERTY_ARM2)
+                371 => Ok(AnyTransport::MetaPropertyArm2(
+                    MetaPropertyArm2Transport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _formal_parameters_elements (_FORMAL_PARAMETERS_ELEMENTS)
                 372 => Ok(AnyTransport::FormalParametersElements(
@@ -8634,7 +8634,7 @@ impl RenderableTransport for ImportStatementImportClauseTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum ImportStatementFromClauseTransportSlot {
-    ImportStatementGroup1(ImportStatementGroup1Transport),
+    ImportStatementArm1(ImportStatementArm1Transport),
     ImportRequireClause(ImportRequireClauseTransport),
     String(StringTransport),
 }
@@ -8648,8 +8648,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportStatementFromClauseTranspo
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    363 => Ok(Self::ImportStatementGroup1(
-                        ImportStatementGroup1Transport::from_napi_value(env, napi_val)?
+                    363 => Ok(Self::ImportStatementArm1(
+                        ImportStatementArm1Transport::from_napi_value(env, napi_val)?
                     )),
                     279 => Ok(Self::ImportRequireClause(
                         ImportRequireClauseTransport::from_napi_value(env, napi_val)?
@@ -8668,8 +8668,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportStatementFromClauseTranspo
                     ::napi::Error::from_reason("$type property missing in ImportStatementFromClauseTransportSlot")
                 )?;
                 match kind_id {
-                    363 => Ok(Self::ImportStatementGroup1(
-                        ImportStatementGroup1Transport::from_napi_value(env, napi_val)?
+                    363 => Ok(Self::ImportStatementArm1(
+                        ImportStatementArm1Transport::from_napi_value(env, napi_val)?
                     )),
                     279 => Ok(Self::ImportRequireClause(
                         ImportRequireClauseTransport::from_napi_value(env, napi_val)?
@@ -8719,7 +8719,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportStatementFromClauseTrans
 
 fn import_statement_from_clause_transport_slot_to_any(t: ImportStatementFromClauseTransportSlot) -> AnyTransport {
     match t {
-        ImportStatementFromClauseTransportSlot::ImportStatementGroup1(inner) => AnyTransport::ImportStatementGroup1(inner),
+        ImportStatementFromClauseTransportSlot::ImportStatementArm1(inner) => AnyTransport::ImportStatementArm1(inner),
         ImportStatementFromClauseTransportSlot::ImportRequireClause(inner) => AnyTransport::ImportRequireClause(inner),
         ImportStatementFromClauseTransportSlot::String(inner) => AnyTransport::String(inner),
     }
@@ -8731,7 +8731,7 @@ impl RenderableTransport for ImportStatementFromClauseTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ImportStatementFromClauseTransportSlot::ImportStatementGroup1(inner) => inner.render_into(dest),
+            ImportStatementFromClauseTransportSlot::ImportStatementArm1(inner) => inner.render_into(dest),
             ImportStatementFromClauseTransportSlot::ImportRequireClause(inner) => inner.render_into(dest),
             ImportStatementFromClauseTransportSlot::String(inner) => inner.render_into(dest),
         }
@@ -9134,8 +9134,8 @@ impl RenderableTransport for ImportAttributeAttributeKindTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum VariableDeclaratorContentTransportSlot {
-    VariableDeclaratorGroup1(VariableDeclaratorGroup1Transport),
-    VariableDeclaratorGroup2(VariableDeclaratorGroup2Transport),
+    VariableDeclaratorArm1(VariableDeclaratorArm1Transport),
+    VariableDeclaratorArm2(VariableDeclaratorArm2Transport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -9147,11 +9147,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for VariableDeclaratorContentTranspo
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    366 => Ok(Self::VariableDeclaratorGroup1(
-                        VariableDeclaratorGroup1Transport::from_napi_value(env, napi_val)?
+                    366 => Ok(Self::VariableDeclaratorArm1(
+                        VariableDeclaratorArm1Transport::from_napi_value(env, napi_val)?
                     )),
-                    367 => Ok(Self::VariableDeclaratorGroup2(
-                        VariableDeclaratorGroup2Transport::from_napi_value(env, napi_val)?
+                    367 => Ok(Self::VariableDeclaratorArm2(
+                        VariableDeclaratorArm2Transport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in VariableDeclaratorContentTransportSlot",
@@ -9164,11 +9164,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for VariableDeclaratorContentTranspo
                     ::napi::Error::from_reason("$type property missing in VariableDeclaratorContentTransportSlot")
                 )?;
                 match kind_id {
-                    366 => Ok(Self::VariableDeclaratorGroup1(
-                        VariableDeclaratorGroup1Transport::from_napi_value(env, napi_val)?
+                    366 => Ok(Self::VariableDeclaratorArm1(
+                        VariableDeclaratorArm1Transport::from_napi_value(env, napi_val)?
                     )),
-                    367 => Ok(Self::VariableDeclaratorGroup2(
-                        VariableDeclaratorGroup2Transport::from_napi_value(env, napi_val)?
+                    367 => Ok(Self::VariableDeclaratorArm2(
+                        VariableDeclaratorArm2Transport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in VariableDeclaratorContentTransportSlot",
@@ -9212,8 +9212,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<VariableDeclaratorContentTrans
 
 fn variable_declarator_content_transport_slot_to_any(t: VariableDeclaratorContentTransportSlot) -> AnyTransport {
     match t {
-        VariableDeclaratorContentTransportSlot::VariableDeclaratorGroup1(inner) => AnyTransport::VariableDeclaratorGroup1(inner),
-        VariableDeclaratorContentTransportSlot::VariableDeclaratorGroup2(inner) => AnyTransport::VariableDeclaratorGroup2(inner),
+        VariableDeclaratorContentTransportSlot::VariableDeclaratorArm1(inner) => AnyTransport::VariableDeclaratorArm1(inner),
+        VariableDeclaratorContentTransportSlot::VariableDeclaratorArm2(inner) => AnyTransport::VariableDeclaratorArm2(inner),
     }
 }
 
@@ -9223,8 +9223,8 @@ impl RenderableTransport for VariableDeclaratorContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            VariableDeclaratorContentTransportSlot::VariableDeclaratorGroup1(inner) => inner.render_into(dest),
-            VariableDeclaratorContentTransportSlot::VariableDeclaratorGroup2(inner) => inner.render_into(dest),
+            VariableDeclaratorContentTransportSlot::VariableDeclaratorArm1(inner) => inner.render_into(dest),
+            VariableDeclaratorContentTransportSlot::VariableDeclaratorArm2(inner) => inner.render_into(dest),
         }
     }
 }
@@ -18038,8 +18038,8 @@ impl RenderableTransport for TemplateStringElementsTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum MetaPropertyContentTransportSlot {
-    MetaPropertyGroup1(MetaPropertyGroup1Transport),
-    MetaPropertyGroup2(MetaPropertyGroup2Transport),
+    MetaPropertyArm1(MetaPropertyArm1Transport),
+    MetaPropertyArm2(MetaPropertyArm2Transport),
     Verbatim(VerbatimTransport),
 }
 
@@ -18052,11 +18052,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyContentTransportSlot
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    370 => Ok(Self::MetaPropertyGroup1(
-                        MetaPropertyGroup1Transport::from_napi_value(env, napi_val)?
+                    370 => Ok(Self::MetaPropertyArm1(
+                        MetaPropertyArm1Transport::from_napi_value(env, napi_val)?
                     )),
-                    371 => Ok(Self::MetaPropertyGroup2(
-                        MetaPropertyGroup2Transport::from_napi_value(env, napi_val)?
+                    371 => Ok(Self::MetaPropertyArm2(
+                        MetaPropertyArm2Transport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MetaPropertyContentTransportSlot",
@@ -18073,11 +18073,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyContentTransportSlot
                     ::napi::Error::from_reason("$type property missing in MetaPropertyContentTransportSlot")
                 )?;
                 match kind_id {
-                    370 => Ok(Self::MetaPropertyGroup1(
-                        MetaPropertyGroup1Transport::from_napi_value(env, napi_val)?
+                    370 => Ok(Self::MetaPropertyArm1(
+                        MetaPropertyArm1Transport::from_napi_value(env, napi_val)?
                     )),
-                    371 => Ok(Self::MetaPropertyGroup2(
-                        MetaPropertyGroup2Transport::from_napi_value(env, napi_val)?
+                    371 => Ok(Self::MetaPropertyArm2(
+                        MetaPropertyArm2Transport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MetaPropertyContentTransportSlot",
@@ -18121,8 +18121,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MetaPropertyContentTransportSl
 
 fn meta_property_content_transport_slot_to_any(t: MetaPropertyContentTransportSlot) -> AnyTransport {
     match t {
-        MetaPropertyContentTransportSlot::MetaPropertyGroup1(inner) => AnyTransport::MetaPropertyGroup1(inner),
-        MetaPropertyContentTransportSlot::MetaPropertyGroup2(inner) => AnyTransport::MetaPropertyGroup2(inner),
+        MetaPropertyContentTransportSlot::MetaPropertyArm1(inner) => AnyTransport::MetaPropertyArm1(inner),
+        MetaPropertyContentTransportSlot::MetaPropertyArm2(inner) => AnyTransport::MetaPropertyArm2(inner),
         MetaPropertyContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -18133,8 +18133,8 @@ impl RenderableTransport for MetaPropertyContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            MetaPropertyContentTransportSlot::MetaPropertyGroup1(inner) => inner.render_into(dest),
-            MetaPropertyContentTransportSlot::MetaPropertyGroup2(inner) => inner.render_into(dest),
+            MetaPropertyContentTransportSlot::MetaPropertyArm1(inner) => inner.render_into(dest),
+            MetaPropertyContentTransportSlot::MetaPropertyArm2(inner) => inner.render_into(dest),
             MetaPropertyContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -28832,7 +28832,7 @@ impl RenderableTransport for ImportClauseGroup1ContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum VariableDeclaratorGroup1NameTransportSlot {
+pub enum VariableDeclaratorArm1NameTransportSlot {
     Identifier(IdentifierTransport),
     ObjectPattern(ObjectPatternTransport),
     ArrayPattern(ArrayPatternTransport),
@@ -28840,7 +28840,7 @@ pub enum VariableDeclaratorGroup1NameTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for VariableDeclaratorGroup1NameTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for VariableDeclaratorArm1NameTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -28861,7 +28861,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for VariableDeclaratorGroup1NameTran
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in VariableDeclaratorGroup1NameTransportSlot",
+                        "unknown kind id {other} in VariableDeclaratorArm1NameTransportSlot",
                     ))),
                 }
             }
@@ -28872,7 +28872,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for VariableDeclaratorGroup1NameTran
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in VariableDeclaratorGroup1NameTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in VariableDeclaratorArm1NameTransportSlot")
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
@@ -28888,64 +28888,64 @@ impl ::napi::bindgen_prelude::FromNapiValue for VariableDeclaratorGroup1NameTran
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in VariableDeclaratorGroup1NameTransportSlot",
+                        "unknown kind id {other} in VariableDeclaratorArm1NameTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("VariableDeclaratorGroup1NameTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("VariableDeclaratorArm1NameTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for VariableDeclaratorGroup1NameTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for VariableDeclaratorArm1NameTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("VariableDeclaratorGroup1NameTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("VariableDeclaratorArm1NameTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<VariableDeclaratorGroup1NameTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<VariableDeclaratorArm1NameTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        VariableDeclaratorGroup1NameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        VariableDeclaratorArm1NameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<VariableDeclaratorGroup1NameTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<VariableDeclaratorArm1NameTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        VariableDeclaratorGroup1NameTransportSlot::to_napi_value(env, *val)
+        VariableDeclaratorArm1NameTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn variable_declarator_group1_name_transport_slot_to_any(t: VariableDeclaratorGroup1NameTransportSlot) -> AnyTransport {
+fn variable_declarator_arm1_name_transport_slot_to_any(t: VariableDeclaratorArm1NameTransportSlot) -> AnyTransport {
     match t {
-        VariableDeclaratorGroup1NameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        VariableDeclaratorGroup1NameTransportSlot::ObjectPattern(inner) => AnyTransport::ObjectPattern(inner),
-        VariableDeclaratorGroup1NameTransportSlot::ArrayPattern(inner) => AnyTransport::ArrayPattern(inner),
-        VariableDeclaratorGroup1NameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        VariableDeclaratorArm1NameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        VariableDeclaratorArm1NameTransportSlot::ObjectPattern(inner) => AnyTransport::ObjectPattern(inner),
+        VariableDeclaratorArm1NameTransportSlot::ArrayPattern(inner) => AnyTransport::ArrayPattern(inner),
+        VariableDeclaratorArm1NameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for VariableDeclaratorGroup1NameTransportSlot {
+impl RenderableTransport for VariableDeclaratorArm1NameTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            VariableDeclaratorGroup1NameTransportSlot::Identifier(inner) => inner.render_into(dest),
-            VariableDeclaratorGroup1NameTransportSlot::ObjectPattern(inner) => inner.render_into(dest),
-            VariableDeclaratorGroup1NameTransportSlot::ArrayPattern(inner) => inner.render_into(dest),
-            VariableDeclaratorGroup1NameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            VariableDeclaratorArm1NameTransportSlot::Identifier(inner) => inner.render_into(dest),
+            VariableDeclaratorArm1NameTransportSlot::ObjectPattern(inner) => inner.render_into(dest),
+            VariableDeclaratorArm1NameTransportSlot::ArrayPattern(inner) => inner.render_into(dest),
+            VariableDeclaratorArm1NameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -29070,7 +29070,7 @@ impl RenderableTransport for CatchClauseGroup1ParameterTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum BinaryExpressionGroup1LeftTransportSlot {
+pub enum BinaryExpressionArm1LeftTransportSlot {
     AsExpression(AsExpressionTransport),
     SatisfiesExpression(SatisfiesExpressionTransport),
     InstantiationExpression(InstantiationExpressionTransport),
@@ -29114,7 +29114,7 @@ pub enum BinaryExpressionGroup1LeftTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionGroup1LeftTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionArm1LeftTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -29306,7 +29306,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionGroup1LeftTransp
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BinaryExpressionGroup1LeftTransportSlot",
+                        "unknown kind id {other} in BinaryExpressionArm1LeftTransportSlot",
                     ))),
                 }
             }
@@ -29317,7 +29317,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionGroup1LeftTransp
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in BinaryExpressionGroup1LeftTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in BinaryExpressionArm1LeftTransportSlot")
                 )?;
                 match kind_id {
                     276 => Ok(Self::AsExpression(
@@ -29504,147 +29504,147 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionGroup1LeftTransp
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BinaryExpressionGroup1LeftTransportSlot",
+                        "unknown kind id {other} in BinaryExpressionArm1LeftTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("BinaryExpressionGroup1LeftTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("BinaryExpressionArm1LeftTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BinaryExpressionGroup1LeftTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for BinaryExpressionArm1LeftTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("BinaryExpressionGroup1LeftTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("BinaryExpressionArm1LeftTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BinaryExpressionGroup1LeftTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BinaryExpressionArm1LeftTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        BinaryExpressionGroup1LeftTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        BinaryExpressionArm1LeftTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BinaryExpressionGroup1LeftTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BinaryExpressionArm1LeftTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        BinaryExpressionGroup1LeftTransportSlot::to_napi_value(env, *val)
+        BinaryExpressionArm1LeftTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn binary_expression_group1_left_transport_slot_to_any(t: BinaryExpressionGroup1LeftTransportSlot) -> AnyTransport {
+fn binary_expression_arm1_left_transport_slot_to_any(t: BinaryExpressionArm1LeftTransportSlot) -> AnyTransport {
     match t {
-        BinaryExpressionGroup1LeftTransportSlot::AsExpression(inner) => AnyTransport::AsExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::SatisfiesExpression(inner) => AnyTransport::SatisfiesExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::InstantiationExpression(inner) => AnyTransport::InstantiationExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::InternalModule(inner) => AnyTransport::InternalModule(inner),
-        BinaryExpressionGroup1LeftTransportSlot::TypeAssertion(inner) => AnyTransport::TypeAssertion(inner),
-        BinaryExpressionGroup1LeftTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
-        BinaryExpressionGroup1LeftTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        BinaryExpressionGroup1LeftTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
-        BinaryExpressionGroup1LeftTransportSlot::This(inner) => AnyTransport::This(inner),
-        BinaryExpressionGroup1LeftTransportSlot::Super(inner) => AnyTransport::Super(inner),
-        BinaryExpressionGroup1LeftTransportSlot::Number(inner) => AnyTransport::Number(inner),
-        BinaryExpressionGroup1LeftTransportSlot::String(inner) => AnyTransport::String(inner),
-        BinaryExpressionGroup1LeftTransportSlot::TemplateString(inner) => AnyTransport::TemplateString(inner),
-        BinaryExpressionGroup1LeftTransportSlot::Regex(inner) => AnyTransport::Regex(inner),
-        BinaryExpressionGroup1LeftTransportSlot::True(inner) => AnyTransport::True(inner),
-        BinaryExpressionGroup1LeftTransportSlot::False(inner) => AnyTransport::False(inner),
-        BinaryExpressionGroup1LeftTransportSlot::Null(inner) => AnyTransport::Null(inner),
-        BinaryExpressionGroup1LeftTransportSlot::Object(inner) => AnyTransport::Object(inner),
-        BinaryExpressionGroup1LeftTransportSlot::Array(inner) => AnyTransport::Array(inner),
-        BinaryExpressionGroup1LeftTransportSlot::FunctionExpression(inner) => AnyTransport::FunctionExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::ArrowFunction(inner) => AnyTransport::ArrowFunction(inner),
-        BinaryExpressionGroup1LeftTransportSlot::GeneratorFunction(inner) => AnyTransport::GeneratorFunction(inner),
-        BinaryExpressionGroup1LeftTransportSlot::Class(inner) => AnyTransport::Class(inner),
-        BinaryExpressionGroup1LeftTransportSlot::MetaProperty(inner) => AnyTransport::MetaProperty(inner),
-        BinaryExpressionGroup1LeftTransportSlot::CallExpression(inner) => AnyTransport::CallExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::AssignmentExpression(inner) => AnyTransport::AssignmentExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::AugmentedAssignmentExpression(inner) => AnyTransport::AugmentedAssignmentExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::AwaitExpression(inner) => AnyTransport::AwaitExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::UnaryExpression(inner) => AnyTransport::UnaryExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::BinaryExpression(inner) => AnyTransport::BinaryExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::TernaryExpression(inner) => AnyTransport::TernaryExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::UpdateExpression(inner) => AnyTransport::UpdateExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::NewExpression(inner) => AnyTransport::NewExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
-        BinaryExpressionGroup1LeftTransportSlot::PrivatePropertyIdentifier(inner) => AnyTransport::PrivatePropertyIdentifier(inner),
-        BinaryExpressionGroup1LeftTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        BinaryExpressionArm1LeftTransportSlot::AsExpression(inner) => AnyTransport::AsExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::SatisfiesExpression(inner) => AnyTransport::SatisfiesExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::InstantiationExpression(inner) => AnyTransport::InstantiationExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::InternalModule(inner) => AnyTransport::InternalModule(inner),
+        BinaryExpressionArm1LeftTransportSlot::TypeAssertion(inner) => AnyTransport::TypeAssertion(inner),
+        BinaryExpressionArm1LeftTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
+        BinaryExpressionArm1LeftTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        BinaryExpressionArm1LeftTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        BinaryExpressionArm1LeftTransportSlot::This(inner) => AnyTransport::This(inner),
+        BinaryExpressionArm1LeftTransportSlot::Super(inner) => AnyTransport::Super(inner),
+        BinaryExpressionArm1LeftTransportSlot::Number(inner) => AnyTransport::Number(inner),
+        BinaryExpressionArm1LeftTransportSlot::String(inner) => AnyTransport::String(inner),
+        BinaryExpressionArm1LeftTransportSlot::TemplateString(inner) => AnyTransport::TemplateString(inner),
+        BinaryExpressionArm1LeftTransportSlot::Regex(inner) => AnyTransport::Regex(inner),
+        BinaryExpressionArm1LeftTransportSlot::True(inner) => AnyTransport::True(inner),
+        BinaryExpressionArm1LeftTransportSlot::False(inner) => AnyTransport::False(inner),
+        BinaryExpressionArm1LeftTransportSlot::Null(inner) => AnyTransport::Null(inner),
+        BinaryExpressionArm1LeftTransportSlot::Object(inner) => AnyTransport::Object(inner),
+        BinaryExpressionArm1LeftTransportSlot::Array(inner) => AnyTransport::Array(inner),
+        BinaryExpressionArm1LeftTransportSlot::FunctionExpression(inner) => AnyTransport::FunctionExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::ArrowFunction(inner) => AnyTransport::ArrowFunction(inner),
+        BinaryExpressionArm1LeftTransportSlot::GeneratorFunction(inner) => AnyTransport::GeneratorFunction(inner),
+        BinaryExpressionArm1LeftTransportSlot::Class(inner) => AnyTransport::Class(inner),
+        BinaryExpressionArm1LeftTransportSlot::MetaProperty(inner) => AnyTransport::MetaProperty(inner),
+        BinaryExpressionArm1LeftTransportSlot::CallExpression(inner) => AnyTransport::CallExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::AssignmentExpression(inner) => AnyTransport::AssignmentExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::AugmentedAssignmentExpression(inner) => AnyTransport::AugmentedAssignmentExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::AwaitExpression(inner) => AnyTransport::AwaitExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::UnaryExpression(inner) => AnyTransport::UnaryExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::BinaryExpression(inner) => AnyTransport::BinaryExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::TernaryExpression(inner) => AnyTransport::TernaryExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::UpdateExpression(inner) => AnyTransport::UpdateExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::NewExpression(inner) => AnyTransport::NewExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
+        BinaryExpressionArm1LeftTransportSlot::PrivatePropertyIdentifier(inner) => AnyTransport::PrivatePropertyIdentifier(inner),
+        BinaryExpressionArm1LeftTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for BinaryExpressionGroup1LeftTransportSlot {
+impl RenderableTransport for BinaryExpressionArm1LeftTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            BinaryExpressionGroup1LeftTransportSlot::AsExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::InternalModule(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::MemberExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::Undefined(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::Identifier(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::This(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::Super(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::Number(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::String(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::TemplateString(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::Regex(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::True(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::False(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::Null(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::Object(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::Array(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::Class(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::MetaProperty(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::CallExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::NewExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::YieldExpression(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::PrivatePropertyIdentifier(inner) => inner.render_into(dest),
-            BinaryExpressionGroup1LeftTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            BinaryExpressionArm1LeftTransportSlot::AsExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::Undefined(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::Identifier(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::This(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::Super(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::Number(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::String(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::Regex(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::True(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::False(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::Null(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::Object(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::Array(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::Class(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::NewExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::YieldExpression(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::PrivatePropertyIdentifier(inner) => inner.render_into(dest),
+            BinaryExpressionArm1LeftTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum BinaryExpressionGroup1OperatorTransportSlot {
+pub enum BinaryExpressionArm1OperatorTransportSlot {
     Literal53_69_6e,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionGroup1OperatorTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionArm1OperatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -29654,83 +29654,83 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionGroup1OperatorTr
                 match u16::from_napi_value(env, napi_val)? {
                     144 => Ok(Self::Literal53_69_6e),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BinaryExpressionGroup1OperatorTransportSlot",
+                        "unknown kind id {other} in BinaryExpressionArm1OperatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in BinaryExpressionGroup1OperatorTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in BinaryExpressionArm1OperatorTransportSlot")
                 )?;
                 match kind_id {
                     144 => Ok(Self::Literal53_69_6e),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BinaryExpressionGroup1OperatorTransportSlot",
+                        "unknown kind id {other} in BinaryExpressionArm1OperatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("BinaryExpressionGroup1OperatorTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("BinaryExpressionArm1OperatorTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BinaryExpressionGroup1OperatorTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for BinaryExpressionArm1OperatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("BinaryExpressionGroup1OperatorTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("BinaryExpressionArm1OperatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BinaryExpressionGroup1OperatorTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BinaryExpressionArm1OperatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        BinaryExpressionGroup1OperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        BinaryExpressionArm1OperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BinaryExpressionGroup1OperatorTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BinaryExpressionArm1OperatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        BinaryExpressionGroup1OperatorTransportSlot::to_napi_value(env, *val)
+        BinaryExpressionArm1OperatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn binary_expression_group1_operator_transport_slot_to_any(t: BinaryExpressionGroup1OperatorTransportSlot) -> AnyTransport {
+fn binary_expression_arm1_operator_transport_slot_to_any(t: BinaryExpressionArm1OperatorTransportSlot) -> AnyTransport {
     match t {
-        BinaryExpressionGroup1OperatorTransportSlot::Literal53_69_6e => AnyTransport::Literal53_69_6e,
+        BinaryExpressionArm1OperatorTransportSlot::Literal53_69_6e => AnyTransport::Literal53_69_6e,
     }
 }
 
-impl RenderableTransport for BinaryExpressionGroup1OperatorTransportSlot {
+impl RenderableTransport for BinaryExpressionArm1OperatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            BinaryExpressionGroup1OperatorTransportSlot::Literal53_69_6e => dest.write_str("in").map_err(::askama::Error::from),
+            BinaryExpressionArm1OperatorTransportSlot::Literal53_69_6e => dest.write_str("in").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum JsxStartOpeningElementGroup1NameTransportSlot {
+pub enum JsxStartOpeningElementArm1NameTransportSlot {
     Identifier(IdentifierTransport),
     NestedIdentifier(NestedIdentifierTransport),
     Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for JsxStartOpeningElementGroup1NameTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for JsxStartOpeningElementArm1NameTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -29751,7 +29751,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxStartOpeningElementGroup1Name
                         NestedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in JsxStartOpeningElementGroup1NameTransportSlot",
+                        "unknown kind id {other} in JsxStartOpeningElementArm1NameTransportSlot",
                     ))),
                 }
             }
@@ -29762,7 +29762,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxStartOpeningElementGroup1Name
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in JsxStartOpeningElementGroup1NameTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in JsxStartOpeningElementArm1NameTransportSlot")
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
@@ -29778,62 +29778,62 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxStartOpeningElementGroup1Name
                         NestedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in JsxStartOpeningElementGroup1NameTransportSlot",
+                        "unknown kind id {other} in JsxStartOpeningElementArm1NameTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("JsxStartOpeningElementGroup1NameTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("JsxStartOpeningElementArm1NameTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for JsxStartOpeningElementGroup1NameTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for JsxStartOpeningElementArm1NameTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("JsxStartOpeningElementGroup1NameTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("JsxStartOpeningElementArm1NameTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxStartOpeningElementGroup1NameTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxStartOpeningElementArm1NameTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        JsxStartOpeningElementGroup1NameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        JsxStartOpeningElementArm1NameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxStartOpeningElementGroup1NameTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxStartOpeningElementArm1NameTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        JsxStartOpeningElementGroup1NameTransportSlot::to_napi_value(env, *val)
+        JsxStartOpeningElementArm1NameTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn jsx_start_opening_element_group1_name_transport_slot_to_any(t: JsxStartOpeningElementGroup1NameTransportSlot) -> AnyTransport {
+fn jsx_start_opening_element_arm1_name_transport_slot_to_any(t: JsxStartOpeningElementArm1NameTransportSlot) -> AnyTransport {
     match t {
-        JsxStartOpeningElementGroup1NameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        JsxStartOpeningElementGroup1NameTransportSlot::NestedIdentifier(inner) => AnyTransport::NestedIdentifier(inner),
-        JsxStartOpeningElementGroup1NameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        JsxStartOpeningElementArm1NameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        JsxStartOpeningElementArm1NameTransportSlot::NestedIdentifier(inner) => AnyTransport::NestedIdentifier(inner),
+        JsxStartOpeningElementArm1NameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for JsxStartOpeningElementGroup1NameTransportSlot {
+impl RenderableTransport for JsxStartOpeningElementArm1NameTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            JsxStartOpeningElementGroup1NameTransportSlot::Identifier(inner) => inner.render_into(dest),
-            JsxStartOpeningElementGroup1NameTransportSlot::NestedIdentifier(inner) => inner.render_into(dest),
-            JsxStartOpeningElementGroup1NameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            JsxStartOpeningElementArm1NameTransportSlot::Identifier(inner) => inner.render_into(dest),
+            JsxStartOpeningElementArm1NameTransportSlot::NestedIdentifier(inner) => inner.render_into(dest),
+            JsxStartOpeningElementArm1NameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -39530,8 +39530,8 @@ pub struct BinaryExpressionTransport {
     pub operator: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: Option<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_binary_expression_group1"))]
-    pub binary_expression_group1: Option<Box<BinaryExpressionGroup1Transport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_binary_expression_arm1"))]
+    pub binary_expression_arm1: Option<Box<BinaryExpressionArm1Transport>>,
 }
 
 impl RenderableTransport for BinaryExpressionTransport {
@@ -48118,7 +48118,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportSpecifierOptional1Transp
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct ImportStatementGroup1Transport {
+pub struct ImportStatementArm1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -48139,32 +48139,32 @@ pub struct ImportStatementGroup1Transport {
     pub import_clause: ImportClauseTransport,
 }
 
-impl RenderableTransport for ImportStatementGroup1Transport {
+impl RenderableTransport for ImportStatementArm1Transport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_import_statement_group1(self, dest))
+        render_with_trivia!(self, dest, render_import_statement_arm1(self, dest))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportStatementGroup1Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportStatementArm1Transport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ImportStatementGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+        ImportStatementArm1Transport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportStatementGroup1Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportStatementArm1Transport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ImportStatementGroup1Transport::to_napi_value(env, *val)
+        ImportStatementArm1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -48272,7 +48272,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportSpecifiersTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct VariableDeclaratorGroup1Transport {
+pub struct VariableDeclaratorArm1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -48288,45 +48288,45 @@ pub struct VariableDeclaratorGroup1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: VariableDeclaratorGroup1NameTransportSlot,
+    pub name: VariableDeclaratorArm1NameTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<TypeAnnotationTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: Option<ExpressionTransport>,
 }
 
-impl RenderableTransport for VariableDeclaratorGroup1Transport {
+impl RenderableTransport for VariableDeclaratorArm1Transport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_variable_declarator_group1(self, dest))
+        render_with_trivia!(self, dest, render_variable_declarator_arm1(self, dest))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<VariableDeclaratorGroup1Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<VariableDeclaratorArm1Transport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        VariableDeclaratorGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+        VariableDeclaratorArm1Transport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<VariableDeclaratorGroup1Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<VariableDeclaratorArm1Transport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        VariableDeclaratorGroup1Transport::to_napi_value(env, *val)
+        VariableDeclaratorArm1Transport::to_napi_value(env, *val)
     }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct VariableDeclaratorGroup2Transport {
+pub struct VariableDeclaratorArm2Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -48347,32 +48347,32 @@ pub struct VariableDeclaratorGroup2Transport {
     pub type_: TypeAnnotationTransport,
 }
 
-impl RenderableTransport for VariableDeclaratorGroup2Transport {
+impl RenderableTransport for VariableDeclaratorArm2Transport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_variable_declarator_group2(self, dest))
+        render_with_trivia!(self, dest, render_variable_declarator_arm2(self, dest))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<VariableDeclaratorGroup2Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<VariableDeclaratorArm2Transport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        VariableDeclaratorGroup2Transport::from_napi_value(env, napi_val).map(Box::new)
+        VariableDeclaratorArm2Transport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<VariableDeclaratorGroup2Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<VariableDeclaratorArm2Transport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        VariableDeclaratorGroup2Transport::to_napi_value(env, *val)
+        VariableDeclaratorArm2Transport::to_napi_value(env, *val)
     }
 }
 
@@ -48430,7 +48430,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CatchClauseGroup1Transport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct BinaryExpressionGroup1Transport {
+pub struct BinaryExpressionArm1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -48446,44 +48446,44 @@ pub struct BinaryExpressionGroup1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
-    pub left: Box<BinaryExpressionGroup1LeftTransportSlot>,
+    pub left: Box<BinaryExpressionArm1LeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: Box<ExpressionTransport>,
 }
 
-impl RenderableTransport for BinaryExpressionGroup1Transport {
+impl RenderableTransport for BinaryExpressionArm1Transport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_binary_expression_group1(self, dest))
+        render_with_trivia!(self, dest, render_binary_expression_arm1(self, dest))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BinaryExpressionGroup1Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BinaryExpressionArm1Transport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        BinaryExpressionGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+        BinaryExpressionArm1Transport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BinaryExpressionGroup1Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BinaryExpressionArm1Transport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        BinaryExpressionGroup1Transport::to_napi_value(env, *val)
+        BinaryExpressionArm1Transport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct MetaPropertyGroup1Transport {
+pub struct MetaPropertyArm1Transport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -48493,7 +48493,7 @@ pub struct MetaPropertyGroup1Transport {
     pub text: String,
 }
 
-impl RenderableTransport for MetaPropertyGroup1Transport {
+impl RenderableTransport for MetaPropertyArm1Transport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -48503,7 +48503,7 @@ impl RenderableTransport for MetaPropertyGroup1Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup1Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyArm1Transport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -48532,7 +48532,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup1Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup1Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyArm1Transport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -48558,7 +48558,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup1Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MetaPropertyGroup1Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for MetaPropertyArm1Transport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -48568,27 +48568,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for MetaPropertyGroup1Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<MetaPropertyGroup1Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MetaPropertyArm1Transport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        MetaPropertyGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+        MetaPropertyArm1Transport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<MetaPropertyGroup1Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MetaPropertyArm1Transport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        MetaPropertyGroup1Transport::to_napi_value(env, *val)
+        MetaPropertyArm1Transport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct MetaPropertyGroup2Transport {
+pub struct MetaPropertyArm2Transport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -48598,7 +48598,7 @@ pub struct MetaPropertyGroup2Transport {
     pub text: String,
 }
 
-impl RenderableTransport for MetaPropertyGroup2Transport {
+impl RenderableTransport for MetaPropertyArm2Transport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -48608,7 +48608,7 @@ impl RenderableTransport for MetaPropertyGroup2Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup2Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyArm2Transport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -48637,7 +48637,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup2Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup2Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyArm2Transport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -48663,7 +48663,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup2Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MetaPropertyGroup2Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for MetaPropertyArm2Transport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -48673,22 +48673,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for MetaPropertyGroup2Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<MetaPropertyGroup2Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MetaPropertyArm2Transport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        MetaPropertyGroup2Transport::from_napi_value(env, napi_val).map(Box::new)
+        MetaPropertyArm2Transport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<MetaPropertyGroup2Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MetaPropertyArm2Transport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        MetaPropertyGroup2Transport::to_napi_value(env, *val)
+        MetaPropertyArm2Transport::to_napi_value(env, *val)
     }
 }
 
@@ -48746,7 +48746,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FormalParametersElementsTransp
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct JsxStartOpeningElementGroup1Transport {
+pub struct JsxStartOpeningElementArm1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -48762,37 +48762,37 @@ pub struct JsxStartOpeningElementGroup1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: JsxStartOpeningElementGroup1NameTransportSlot,
+    pub name: JsxStartOpeningElementArm1NameTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: Option<TypeArgumentsTransport>,
 }
 
-impl RenderableTransport for JsxStartOpeningElementGroup1Transport {
+impl RenderableTransport for JsxStartOpeningElementArm1Transport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_jsx_start_opening_element_group1(self, dest))
+        render_with_trivia!(self, dest, render_jsx_start_opening_element_arm1(self, dest))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxStartOpeningElementGroup1Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxStartOpeningElementArm1Transport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        JsxStartOpeningElementGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+        JsxStartOpeningElementArm1Transport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxStartOpeningElementGroup1Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxStartOpeningElementArm1Transport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        JsxStartOpeningElementGroup1Transport::to_napi_value(env, *val)
+        JsxStartOpeningElementArm1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -52001,8 +52001,8 @@ pub struct JsxOpeningElementContentTransport {
     pub name: Option<JsxOpeningElementContentNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
     pub attribute: Option<Vec<_JsxAttributeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_start_opening_element_group1"))]
-    pub jsx_start_opening_element_group1: Option<JsxStartOpeningElementGroup1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_start_opening_element_arm1"))]
+    pub jsx_start_opening_element_arm1: Option<JsxStartOpeningElementArm1Transport>,
 }
 
 impl RenderableTransport for JsxOpeningElementContentTransport {
@@ -64641,13 +64641,13 @@ fn render_ternary_expression(node: &TernaryExpressionTransport, dest: &mut dyn :
 }
 
 fn render_binary_expression(node: &BinaryExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.left.is_none() && node.operator.is_none() && node.right.is_none() && node.binary_expression_group1.is_none() {
+    if node.left.is_none() && node.operator.is_none() && node.right.is_none() && node.binary_expression_arm1.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
     let template = BinaryExpressionTemplate {
-        binary_expression_group1: match &node.binary_expression_group1 {
+        binary_expression_arm1: match &node.binary_expression_arm1 {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -66067,8 +66067,8 @@ fn render_export_specifier_optional1(node: &ExportSpecifierOptional1Transport, d
     Ok(())
 }
 
-fn render_import_statement_group1(node: &ImportStatementGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = ImportStatementGroup1Template {
+fn render_import_statement_arm1(node: &ImportStatementArm1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = ImportStatementArm1Template {
         import_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.import_clause)),
         source: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.source)),
     };
@@ -66102,8 +66102,8 @@ fn render_import_specifiers(node: &ImportSpecifiersTransport, dest: &mut dyn ::s
     template.render_into(dest)
 }
 
-fn render_variable_declarator_group1(node: &VariableDeclaratorGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = VariableDeclaratorGroup1Template {
+fn render_variable_declarator_arm1(node: &VariableDeclaratorArm1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = VariableDeclaratorArm1Template {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         type_: match &node.type_ {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -66117,8 +66117,8 @@ fn render_variable_declarator_group1(node: &VariableDeclaratorGroup1Transport, d
     template.render_into(dest)
 }
 
-fn render_variable_declarator_group2(node: &VariableDeclaratorGroup2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = VariableDeclaratorGroup2Template {
+fn render_variable_declarator_arm2(node: &VariableDeclaratorArm2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = VariableDeclaratorArm2Template {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
     };
@@ -66136,8 +66136,8 @@ fn render_catch_clause_group1(node: &CatchClauseGroup1Transport, dest: &mut dyn 
     template.render_into(dest)
 }
 
-fn render_binary_expression_group1(node: &BinaryExpressionGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = BinaryExpressionGroup1Template {
+fn render_binary_expression_arm1(node: &BinaryExpressionArm1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = BinaryExpressionArm1Template {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
@@ -66145,11 +66145,11 @@ fn render_binary_expression_group1(node: &BinaryExpressionGroup1Transport, dest:
     template.render_into(dest)
 }
 
-fn render_meta_property_group1(t: &MetaPropertyGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_meta_property_arm1(t: &MetaPropertyArm1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_meta_property_group2(t: &MetaPropertyGroup2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_meta_property_arm2(t: &MetaPropertyArm2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -66173,8 +66173,8 @@ fn render_formal_parameters_elements(node: &FormalParametersElementsTransport, d
     template.render_into(dest)
 }
 
-fn render_jsx_start_opening_element_group1(node: &JsxStartOpeningElementGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = JsxStartOpeningElementGroup1Template {
+fn render_jsx_start_opening_element_arm1(node: &JsxStartOpeningElementArm1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = JsxStartOpeningElementArm1Template {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         type_arguments: match &node.type_arguments {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -66745,7 +66745,7 @@ fn render_update_expression_prefix(node: &UpdateExpressionPrefixTransport, dest:
 }
 
 fn render_jsx_opening_element_content(node: &JsxOpeningElementContentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.name.is_none() && node.attribute.as_deref().is_none_or(<[_]>::is_empty) && node.jsx_start_opening_element_group1.is_none() {
+    if node.name.is_none() && node.attribute.as_deref().is_none_or(<[_]>::is_empty) && node.jsx_start_opening_element_arm1.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
@@ -66761,7 +66761,7 @@ fn render_jsx_opening_element_content(node: &JsxOpeningElementContentTransport, 
             leading: false,
             trailing: false,
         },
-        jsx_start_opening_element_group1: match &node.jsx_start_opening_element_group1 {
+        jsx_start_opening_element_arm1: match &node.jsx_start_opening_element_arm1 {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -67779,17 +67779,17 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::KwConstMarker(t) => t.render_into(dest),
             AnyTransport::ExportSpecifiers(t) => t.render_into(dest),
             AnyTransport::ExportSpecifierOptional1(t) => t.render_into(dest),
-            AnyTransport::ImportStatementGroup1(t) => t.render_into(dest),
+            AnyTransport::ImportStatementArm1(t) => t.render_into(dest),
             AnyTransport::ImportClauseGroup1(t) => t.render_into(dest),
             AnyTransport::ImportSpecifiers(t) => t.render_into(dest),
-            AnyTransport::VariableDeclaratorGroup1(t) => t.render_into(dest),
-            AnyTransport::VariableDeclaratorGroup2(t) => t.render_into(dest),
+            AnyTransport::VariableDeclaratorArm1(t) => t.render_into(dest),
+            AnyTransport::VariableDeclaratorArm2(t) => t.render_into(dest),
             AnyTransport::CatchClauseGroup1(t) => t.render_into(dest),
-            AnyTransport::BinaryExpressionGroup1(t) => t.render_into(dest),
-            AnyTransport::MetaPropertyGroup1(t) => t.render_into(dest),
-            AnyTransport::MetaPropertyGroup2(t) => t.render_into(dest),
+            AnyTransport::BinaryExpressionArm1(t) => t.render_into(dest),
+            AnyTransport::MetaPropertyArm1(t) => t.render_into(dest),
+            AnyTransport::MetaPropertyArm2(t) => t.render_into(dest),
             AnyTransport::FormalParametersElements(t) => t.render_into(dest),
-            AnyTransport::JsxStartOpeningElementGroup1(t) => t.render_into(dest),
+            AnyTransport::JsxStartOpeningElementArm1(t) => t.render_into(dest),
             AnyTransport::EnumBodyElements(t) => t.render_into(dest),
             AnyTransport::InferTypeOptional1(t) => t.render_into(dest),
             AnyTransport::MappedTypeClauseOptional1(t) => t.render_into(dest),
@@ -68228,17 +68228,17 @@ impl AnyTransport {
             Self::KwConstMarker(t) => t.transport_named,
             Self::ExportSpecifiers(t) => t.transport_named,
             Self::ExportSpecifierOptional1(t) => t.transport_named,
-            Self::ImportStatementGroup1(t) => t.transport_named,
+            Self::ImportStatementArm1(t) => t.transport_named,
             Self::ImportClauseGroup1(t) => t.transport_named,
             Self::ImportSpecifiers(t) => t.transport_named,
-            Self::VariableDeclaratorGroup1(t) => t.transport_named,
-            Self::VariableDeclaratorGroup2(t) => t.transport_named,
+            Self::VariableDeclaratorArm1(t) => t.transport_named,
+            Self::VariableDeclaratorArm2(t) => t.transport_named,
             Self::CatchClauseGroup1(t) => t.transport_named,
-            Self::BinaryExpressionGroup1(t) => t.transport_named,
-            Self::MetaPropertyGroup1(t) => t.transport_named,
-            Self::MetaPropertyGroup2(t) => t.transport_named,
+            Self::BinaryExpressionArm1(t) => t.transport_named,
+            Self::MetaPropertyArm1(t) => t.transport_named,
+            Self::MetaPropertyArm2(t) => t.transport_named,
             Self::FormalParametersElements(t) => t.transport_named,
-            Self::JsxStartOpeningElementGroup1(t) => t.transport_named,
+            Self::JsxStartOpeningElementArm1(t) => t.transport_named,
             Self::EnumBodyElements(t) => t.transport_named,
             Self::InferTypeOptional1(t) => t.transport_named,
             Self::MappedTypeClauseOptional1(t) => t.transport_named,

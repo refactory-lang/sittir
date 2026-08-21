@@ -328,7 +328,7 @@ export const enum SyntaxKind {
 	LineComment = 'line_comment',
 	BlockComment = 'block_comment',
 	MacroRules = '_macro_rules',
-	AttributeGroup1 = '_attribute_group1',
+	AttributeArm1 = '_attribute_arm1',
 	EnumVariantListElements = '_enum_variant_list_elements',
 	EnumVariantOptional1 = '_enum_variant_optional1',
 	FieldDeclarationListElements = '_field_declaration_list_elements',
@@ -351,15 +351,15 @@ export const enum SyntaxKind {
 	TypeArgumentsElements = '_type_arguments_elements',
 	AbstractTypeOptional1 = '_abstract_type_optional1',
 	ArgumentsElements = '_arguments_elements',
-	ArrayExpressionGroup1 = '_array_expression_group1',
+	ArrayExpressionArm1 = '_array_expression_arm1',
 	FieldInitializerListElements = '_field_initializer_list_elements',
 	MatchPatternOptional1 = '_match_pattern_optional1',
 	WhileExpressionOptional1 = '_while_expression_optional1',
 	TuplePatternElements = '_tuple_pattern_elements',
 	Patterns = '_patterns',
 	StructPatternElements = '_struct_pattern_elements',
-	RangePatternGroup2 = '_range_pattern_group2',
-	BlockCommentGroup1 = '_block_comment_group1',
+	RangePatternArm2 = '_range_pattern_arm2',
+	BlockCommentArm1 = '_block_comment_arm1',
 	TupleTypeElements = '_tuple_type_elements',
 	TupleExpressionElements = '_tuple_expression_elements',
 	UseWildcardClause = '_use_wildcard_clause',
@@ -812,7 +812,7 @@ export const enum TSKindId {
 	_KwAsyncMarker = 324,
 	KwMoveMarker = 325,
 	MacroRules = 326,
-	AttributeGroup1 = 327,
+	AttributeArm1 = 327,
 	EnumVariantListElements = 328,
 	FieldDeclarationListElements = 329,
 	OrderedFieldDeclarationListElements = 330,
@@ -825,13 +825,13 @@ export const enum TSKindId {
 	UseBoundsElements = 337,
 	TypeArgumentsElements = 338,
 	ArgumentsElements = 339,
-	ArrayExpressionGroup1 = 340,
+	ArrayExpressionArm1 = 340,
 	FieldInitializerListElements = 341,
 	TuplePatternElements = 342,
 	Patterns = 343,
 	StructPatternElements = 344,
-	RangePatternGroup2 = 345,
-	BlockCommentGroup1 = 346,
+	RangePatternArm2 = 345,
+	BlockCommentArm1 = 346,
 	TupleTypeElements = 347,
 	TupleExpressionElements = 348,
 	TokenTreePunctuation = 349,
@@ -1256,7 +1256,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[324, '_kw_async_marker'],
 	[325, '_kw_move_marker'],
 	[326, '_macro_rules'],
-	[327, '_attribute_group1'],
+	[327, '_attribute_arm1'],
 	[328, '_enum_variant_list_elements'],
 	[329, '_field_declaration_list_elements'],
 	[330, '_ordered_field_declaration_list_elements'],
@@ -1269,13 +1269,13 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[337, '_use_bounds_elements'],
 	[338, '_type_arguments_elements'],
 	[339, '_arguments_elements'],
-	[340, '_array_expression_group1'],
+	[340, '_array_expression_arm1'],
 	[341, '_field_initializer_list_elements'],
 	[342, '_tuple_pattern_elements'],
 	[343, '_patterns'],
 	[344, '_struct_pattern_elements'],
-	[345, '_range_pattern_group2'],
-	[346, '_block_comment_group1'],
+	[345, '_range_pattern_arm2'],
+	[346, '_block_comment_arm1'],
 	[347, '_tuple_type_elements'],
 	[348, '_tuple_expression_elements'],
 	[349, '_token_tree_punctuation'],
@@ -1701,7 +1701,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[324, '_kw_async_marker'],
 	[325, '_kw_move_marker'],
 	[326, 'macro_rules'],
-	[327, 'attribute_group1'],
+	[327, 'attribute_arm1'],
 	[328, 'enum_variant_list_elements'],
 	[329, 'field_declaration_list_elements'],
 	[330, 'ordered_field_declaration_list_elements'],
@@ -1714,13 +1714,13 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[337, 'use_bounds_elements'],
 	[338, 'type_arguments_elements'],
 	[339, 'arguments_elements'],
-	[340, 'array_expression_group1'],
+	[340, 'array_expression_arm1'],
 	[341, 'field_initializer_list_elements'],
 	[342, 'tuple_pattern_elements'],
 	[343, 'patterns'],
 	[344, 'struct_pattern_elements'],
-	[345, 'range_pattern_group2'],
-	[346, 'block_comment_group1'],
+	[345, 'range_pattern_arm2'],
+	[346, 'block_comment_arm1'],
 	[347, 'tuple_type_elements'],
 	[348, 'tuple_expression_elements'],
 	[349, 'token_tree_punctuation'],
@@ -2474,8 +2474,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.KwMoveMarker;
 		case '_macro_rules':
 			return TSKindId.MacroRules;
-		case '_attribute_group1':
-			return TSKindId.AttributeGroup1;
+		case '_attribute_arm1':
+			return TSKindId.AttributeArm1;
 		case '_enum_variant_list_elements':
 			return TSKindId.EnumVariantListElements;
 		case '_field_declaration_list_elements':
@@ -2500,8 +2500,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TypeArgumentsElements;
 		case '_arguments_elements':
 			return TSKindId.ArgumentsElements;
-		case '_array_expression_group1':
-			return TSKindId.ArrayExpressionGroup1;
+		case '_array_expression_arm1':
+			return TSKindId.ArrayExpressionArm1;
 		case '_field_initializer_list_elements':
 			return TSKindId.FieldInitializerListElements;
 		case '_tuple_pattern_elements':
@@ -2510,10 +2510,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Patterns;
 		case '_struct_pattern_elements':
 			return TSKindId.StructPatternElements;
-		case '_range_pattern_group2':
-			return TSKindId.RangePatternGroup2;
-		case '_block_comment_group1':
-			return TSKindId.BlockCommentGroup1;
+		case '_range_pattern_arm2':
+			return TSKindId.RangePatternArm2;
+		case '_block_comment_arm1':
+			return TSKindId.BlockCommentArm1;
 		case '_tuple_type_elements':
 			return TSKindId.TupleTypeElements;
 		case '_tuple_expression_elements':
@@ -2836,8 +2836,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LetChain;
 		case 'macro_rules':
 			return TSKindId.MacroRules;
-		case 'attribute_group1':
-			return TSKindId.AttributeGroup1;
+		case 'attribute_arm1':
+			return TSKindId.AttributeArm1;
 		case 'enum_variant_list_elements':
 			return TSKindId.EnumVariantListElements;
 		case 'field_declaration_list_elements':
@@ -2862,8 +2862,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TypeArgumentsElements;
 		case 'arguments_elements':
 			return TSKindId.ArgumentsElements;
-		case 'array_expression_group1':
-			return TSKindId.ArrayExpressionGroup1;
+		case 'array_expression_arm1':
+			return TSKindId.ArrayExpressionArm1;
 		case 'field_initializer_list_elements':
 			return TSKindId.FieldInitializerListElements;
 		case 'tuple_pattern_elements':
@@ -2872,10 +2872,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Patterns;
 		case 'struct_pattern_elements':
 			return TSKindId.StructPatternElements;
-		case 'range_pattern_group2':
-			return TSKindId.RangePatternGroup2;
-		case 'block_comment_group1':
-			return TSKindId.BlockCommentGroup1;
+		case 'range_pattern_arm2':
+			return TSKindId.RangePatternArm2;
+		case 'block_comment_arm1':
+			return TSKindId.BlockCommentArm1;
 		case 'tuple_type_elements':
 			return TSKindId.TupleTypeElements;
 		case 'tuple_expression_elements':
@@ -3565,9 +3565,9 @@ export interface InnerAttributeItem {
 export interface Attribute {
 	readonly $type: TSKindId.Attribute;
 	readonly _path: Path;
-	readonly _attribute_group1?: AttributeGroup1;
+	readonly _attribute_arm1?: AttributeArm1;
 	path(): Path;
-	attributeGroup1(): AttributeGroup1 | undefined;
+	attributeArm1(): AttributeArm1 | undefined;
 }
 
 export interface ModItem {
@@ -4709,8 +4709,8 @@ export interface MutPattern {
 
 export interface RangePattern {
 	readonly $type: TSKindId.RangePattern;
-	readonly _content: RangePatternGroup2 | RangePatternPrefix;
-	content(): RangePatternGroup2 | RangePatternPrefix;
+	readonly _content: RangePatternArm2 | RangePatternPrefix;
+	content(): RangePatternArm2 | RangePatternPrefix;
 }
 
 export interface RefPattern {
@@ -4782,8 +4782,8 @@ export interface LineComment {
 
 export interface BlockComment {
 	readonly $type: TSKindId.BlockComment;
-	readonly _block_comment_group1?: BlockCommentGroup1;
-	blockCommentGroup1(): BlockCommentGroup1 | undefined;
+	readonly _block_comment_arm1?: BlockCommentArm1;
+	blockCommentArm1(): BlockCommentArm1 | undefined;
 }
 
 export interface MacroRules {
@@ -4792,8 +4792,8 @@ export interface MacroRules {
 	macroRules(): NonEmptyArray<MacroRule>;
 }
 
-export interface AttributeGroup1 {
-	readonly $type: TSKindId.AttributeGroup1;
+export interface AttributeArm1 {
+	readonly $type: TSKindId.AttributeArm1;
 	readonly _value?: Expression;
 	readonly _arguments?: DelimTokenTree;
 	value(): Expression | undefined;
@@ -4932,8 +4932,8 @@ export interface ArgumentsElements {
 	elements(): NonEmptyArray<AttributedArgument>;
 }
 
-export interface ArrayExpressionGroup1 {
-	readonly $type: TSKindId.ArrayExpressionGroup1;
+export interface ArrayExpressionArm1 {
+	readonly $type: TSKindId.ArrayExpressionArm1;
 	readonly _expression: Expression;
 	readonly _length: Expression;
 	expression(): Expression;
@@ -4976,16 +4976,16 @@ export interface StructPatternElements {
 	elements(): NonEmptyArray<FieldPattern | RemainingFieldPattern>;
 }
 
-export interface RangePatternGroup2 {
-	readonly $type: TSKindId.RangePatternGroup2;
+export interface RangePatternArm2 {
+	readonly $type: TSKindId.RangePatternArm2;
 	readonly _left: LiteralPattern | Path;
 	readonly _content: RangePatternLeftWithRight | '..';
 	left(): LiteralPattern | Path;
 	content(): RangePatternLeftWithRight | '..';
 }
 
-export interface BlockCommentGroup1 {
-	readonly $type: TSKindId.BlockCommentGroup1;
+export interface BlockCommentArm1 {
+	readonly $type: TSKindId.BlockCommentArm1;
 	readonly _outer?: boolean;
 	readonly _inner?: boolean;
 	readonly _doc?: BlockCommentContent;
@@ -5046,9 +5046,9 @@ export interface ImplItemNegativeClause {
 export interface ArrayExpressionSemi {
 	readonly $type: TSKindId.ArrayExpressionSemi;
 	readonly _attributes?: readonly AttributeItem[];
-	readonly _array_expression_group1: ArrayExpressionGroup1;
+	readonly _array_expression_arm1: ArrayExpressionArm1;
 	attributes(): readonly AttributeItem[];
-	arrayExpressionGroup1(): ArrayExpressionGroup1;
+	arrayExpressionArm1(): ArrayExpressionArm1;
 }
 
 export interface ArrayExpressionList {
@@ -5787,8 +5787,8 @@ export interface BlockCommentTree extends TreeNode<'block_comment'> {}
 export interface MacroRulesTree extends AnyTreeNode {
 	readonly type: '_macro_rules';
 }
-export interface AttributeGroup1Tree extends AnyTreeNode {
-	readonly type: '_attribute_group1';
+export interface AttributeArm1Tree extends AnyTreeNode {
+	readonly type: '_attribute_arm1';
 }
 export interface EnumVariantListElementsTree extends AnyTreeNode {
 	readonly type: '_enum_variant_list_elements';
@@ -5856,8 +5856,8 @@ export interface AbstractTypeOptional1Tree extends AnyTreeNode {
 export interface ArgumentsElementsTree extends AnyTreeNode {
 	readonly type: '_arguments_elements';
 }
-export interface ArrayExpressionGroup1Tree extends AnyTreeNode {
-	readonly type: '_array_expression_group1';
+export interface ArrayExpressionArm1Tree extends AnyTreeNode {
+	readonly type: '_array_expression_arm1';
 }
 export interface FieldInitializerListElementsTree extends AnyTreeNode {
 	readonly type: '_field_initializer_list_elements';
@@ -5877,11 +5877,11 @@ export interface PatternsTree extends AnyTreeNode {
 export interface StructPatternElementsTree extends AnyTreeNode {
 	readonly type: '_struct_pattern_elements';
 }
-export interface RangePatternGroup2Tree extends AnyTreeNode {
-	readonly type: '_range_pattern_group2';
+export interface RangePatternArm2Tree extends AnyTreeNode {
+	readonly type: '_range_pattern_arm2';
 }
-export interface BlockCommentGroup1Tree extends AnyTreeNode {
-	readonly type: '_block_comment_group1';
+export interface BlockCommentArm1Tree extends AnyTreeNode {
+	readonly type: '_block_comment_arm1';
 }
 export interface TupleTypeElementsTree extends AnyTreeNode {
 	readonly type: '_tuple_type_elements';
@@ -7121,7 +7121,7 @@ export type RustNode =
 	| LineComment
 	| BlockComment
 	| MacroRules
-	| AttributeGroup1
+	| AttributeArm1
 	| EnumVariantListElements
 	| EnumVariantOptional1
 	| FieldDeclarationListElements
@@ -7144,15 +7144,15 @@ export type RustNode =
 	| TypeArgumentsElements
 	| AbstractTypeOptional1
 	| ArgumentsElements
-	| ArrayExpressionGroup1
+	| ArrayExpressionArm1
 	| FieldInitializerListElements
 	| MatchPatternOptional1
 	| WhileExpressionOptional1
 	| TuplePatternElements
 	| Patterns
 	| StructPatternElements
-	| RangePatternGroup2
-	| BlockCommentGroup1
+	| RangePatternArm2
+	| BlockCommentArm1
 	| TupleTypeElements
 	| TupleExpressionElements
 	| UseWildcardClause
@@ -7346,7 +7346,7 @@ export interface KindMap {
 	line_comment: LineComment;
 	block_comment: BlockComment;
 	_macro_rules: MacroRules;
-	_attribute_group1: AttributeGroup1;
+	_attribute_arm1: AttributeArm1;
 	_enum_variant_list_elements: EnumVariantListElements;
 	_enum_variant_optional1: EnumVariantOptional1;
 	_field_declaration_list_elements: FieldDeclarationListElements;
@@ -7369,15 +7369,15 @@ export interface KindMap {
 	_type_arguments_elements: TypeArgumentsElements;
 	_abstract_type_optional1: AbstractTypeOptional1;
 	_arguments_elements: ArgumentsElements;
-	_array_expression_group1: ArrayExpressionGroup1;
+	_array_expression_arm1: ArrayExpressionArm1;
 	_field_initializer_list_elements: FieldInitializerListElements;
 	_match_pattern_optional1: MatchPatternOptional1;
 	_while_expression_optional1: WhileExpressionOptional1;
 	_tuple_pattern_elements: TuplePatternElements;
 	_patterns: Patterns;
 	_struct_pattern_elements: StructPatternElements;
-	_range_pattern_group2: RangePatternGroup2;
-	_block_comment_group1: BlockCommentGroup1;
+	_range_pattern_arm2: RangePatternArm2;
+	_block_comment_arm1: BlockCommentArm1;
 	_tuple_type_elements: TupleTypeElements;
 	_tuple_expression_elements: TupleExpressionElements;
 	_use_wildcard_clause: UseWildcardClause;
@@ -7694,7 +7694,7 @@ export interface CommentNs extends NodeNs<Comment, LeafScalarMap, LeafStringMap,
 export interface LineCommentNs extends NodeNs<LineComment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface BlockCommentNs extends NodeNs<BlockComment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MacroRulesNs extends NodeNs<MacroRules, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AttributeGroup1Ns extends NodeNs<AttributeGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AttributeArm1Ns extends NodeNs<AttributeArm1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface EnumVariantListElementsNs extends NodeNs<
 	EnumVariantListElements,
 	LeafScalarMap,
@@ -7792,8 +7792,8 @@ export interface AbstractTypeOptional1Ns extends NodeNs<
 	NamespaceMap
 > {}
 export interface ArgumentsElementsNs extends NodeNs<ArgumentsElements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ArrayExpressionGroup1Ns extends NodeNs<
-	ArrayExpressionGroup1,
+export interface ArrayExpressionArm1Ns extends NodeNs<
+	ArrayExpressionArm1,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
@@ -7829,8 +7829,8 @@ export interface StructPatternElementsNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface RangePatternGroup2Ns extends NodeNs<RangePatternGroup2, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface BlockCommentGroup1Ns extends NodeNs<BlockCommentGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface RangePatternArm2Ns extends NodeNs<RangePatternArm2, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface BlockCommentArm1Ns extends NodeNs<BlockCommentArm1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TupleTypeElementsNs extends NodeNs<TupleTypeElements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TupleExpressionElementsNs extends NodeNs<
 	TupleExpressionElements,
@@ -8179,7 +8179,7 @@ export interface NamespaceMap {
 	line_comment: LineCommentNs;
 	block_comment: BlockCommentNs;
 	_macro_rules: MacroRulesNs;
-	_attribute_group1: AttributeGroup1Ns;
+	_attribute_arm1: AttributeArm1Ns;
 	_enum_variant_list_elements: EnumVariantListElementsNs;
 	_enum_variant_optional1: EnumVariantOptional1Ns;
 	_field_declaration_list_elements: FieldDeclarationListElementsNs;
@@ -8202,15 +8202,15 @@ export interface NamespaceMap {
 	_type_arguments_elements: TypeArgumentsElementsNs;
 	_abstract_type_optional1: AbstractTypeOptional1Ns;
 	_arguments_elements: ArgumentsElementsNs;
-	_array_expression_group1: ArrayExpressionGroup1Ns;
+	_array_expression_arm1: ArrayExpressionArm1Ns;
 	_field_initializer_list_elements: FieldInitializerListElementsNs;
 	_match_pattern_optional1: MatchPatternOptional1Ns;
 	_while_expression_optional1: WhileExpressionOptional1Ns;
 	_tuple_pattern_elements: TuplePatternElementsNs;
 	_patterns: PatternsNs;
 	_struct_pattern_elements: StructPatternElementsNs;
-	_range_pattern_group2: RangePatternGroup2Ns;
-	_block_comment_group1: BlockCommentGroup1Ns;
+	_range_pattern_arm2: RangePatternArm2Ns;
+	_block_comment_arm1: BlockCommentArm1Ns;
 	_tuple_type_elements: TupleTypeElementsNs;
 	_tuple_expression_elements: TupleExpressionElementsNs;
 	_use_wildcard_clause: UseWildcardClauseNs;
@@ -9263,12 +9263,12 @@ export namespace MacroRules {
 	export type Tree = TreeFor<'_macro_rules'>;
 	export type Kind = '_macro_rules';
 }
-export namespace AttributeGroup1 {
-	export type Config = ConfigFor<'_attribute_group1'>;
-	export type Fluent = FluentFor<'_attribute_group1'>;
-	export type Loose = LooseFor<'_attribute_group1'>;
-	export type Tree = TreeFor<'_attribute_group1'>;
-	export type Kind = '_attribute_group1';
+export namespace AttributeArm1 {
+	export type Config = ConfigFor<'_attribute_arm1'>;
+	export type Fluent = FluentFor<'_attribute_arm1'>;
+	export type Loose = LooseFor<'_attribute_arm1'>;
+	export type Tree = TreeFor<'_attribute_arm1'>;
+	export type Kind = '_attribute_arm1';
 }
 export namespace EnumVariantListElements {
 	export type Config = ConfigFor<'_enum_variant_list_elements'>;
@@ -9424,12 +9424,12 @@ export namespace ArgumentsElements {
 	export type Tree = TreeFor<'_arguments_elements'>;
 	export type Kind = '_arguments_elements';
 }
-export namespace ArrayExpressionGroup1 {
-	export type Config = ConfigFor<'_array_expression_group1'>;
-	export type Fluent = FluentFor<'_array_expression_group1'>;
-	export type Loose = LooseFor<'_array_expression_group1'>;
-	export type Tree = TreeFor<'_array_expression_group1'>;
-	export type Kind = '_array_expression_group1';
+export namespace ArrayExpressionArm1 {
+	export type Config = ConfigFor<'_array_expression_arm1'>;
+	export type Fluent = FluentFor<'_array_expression_arm1'>;
+	export type Loose = LooseFor<'_array_expression_arm1'>;
+	export type Tree = TreeFor<'_array_expression_arm1'>;
+	export type Kind = '_array_expression_arm1';
 }
 export namespace FieldInitializerListElements {
 	export type Config = ConfigFor<'_field_initializer_list_elements'>;
@@ -9473,19 +9473,19 @@ export namespace StructPatternElements {
 	export type Tree = TreeFor<'_struct_pattern_elements'>;
 	export type Kind = '_struct_pattern_elements';
 }
-export namespace RangePatternGroup2 {
-	export type Config = ConfigFor<'_range_pattern_group2'>;
-	export type Fluent = FluentFor<'_range_pattern_group2'>;
-	export type Loose = LooseFor<'_range_pattern_group2'>;
-	export type Tree = TreeFor<'_range_pattern_group2'>;
-	export type Kind = '_range_pattern_group2';
+export namespace RangePatternArm2 {
+	export type Config = ConfigFor<'_range_pattern_arm2'>;
+	export type Fluent = FluentFor<'_range_pattern_arm2'>;
+	export type Loose = LooseFor<'_range_pattern_arm2'>;
+	export type Tree = TreeFor<'_range_pattern_arm2'>;
+	export type Kind = '_range_pattern_arm2';
 }
-export namespace BlockCommentGroup1 {
-	export type Config = ConfigFor<'_block_comment_group1'>;
-	export type Fluent = FluentFor<'_block_comment_group1'>;
-	export type Loose = LooseFor<'_block_comment_group1'>;
-	export type Tree = TreeFor<'_block_comment_group1'>;
-	export type Kind = '_block_comment_group1';
+export namespace BlockCommentArm1 {
+	export type Config = ConfigFor<'_block_comment_arm1'>;
+	export type Fluent = FluentFor<'_block_comment_arm1'>;
+	export type Loose = LooseFor<'_block_comment_arm1'>;
+	export type Tree = TreeFor<'_block_comment_arm1'>;
+	export type Kind = '_block_comment_arm1';
 }
 export namespace TupleTypeElements {
 	export type Config = ConfigFor<'_tuple_type_elements'>;
