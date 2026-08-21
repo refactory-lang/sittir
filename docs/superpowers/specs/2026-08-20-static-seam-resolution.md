@@ -129,12 +129,20 @@ baseline compare (fail ceiling never rises).
 - **fixed × fixed** — realized (predates this spec): the template SEQ join
   applies the writer's invariant to statically known seam chars and bakes
   the space (`joinParts` in the template emitter).
-- **class-derivable** — open: needs per-kind edge classes; the census counts
-  the candidate pool (tag-adjacent boundaries).
-- **residue report** — first cut realized: the SEQ join records every
-  boundary it classifies and generation prints the per-grammar census.
-  First measurement: rust 10/431 static, typescript 16/535, python 5/232 —
-  the runtime share is the class-derivable workload, not yet a ratchet.
+- **class-derivable** — measured, and nearly empty: per-kind edge classes
+  (`edgeClassesOfKind`, keyword/enum/pattern-leading/structural-walk) plus
+  the emitted-form walker (`renderRuleEdge`) subdivide every tag-adjacent
+  boundary. Only rust 5, typescript 12, python 1 of the runtime boundaries
+  have statically knowable outcomes — per-instance PRESENCE (optional and
+  array slots) and pattern trailing edges dominate, which no class analysis
+  can resolve. This falsifies the "residue should be near-empty" prediction
+  above: the residue IS the population, the runtime writer earns its keep,
+  and consuming the derivable handful (a template-position mark) is not
+  worth its mechanism until profiling says otherwise.
+- **residue report** — realized: the SEQ join records every boundary
+  (static-glued / static-spaced / runtime-derivable / runtime-varying) and
+  generation prints the per-grammar census. Current numbers:
+  rust 10+5/431, typescript 16+12/535, python 5+1/232 statically knowable.
 - **mark rename** (`mark_adjacent` → resolved-boundary contract) — open;
   rename lands when a non-immediate boundary first sets the mark.
 

@@ -302,8 +302,10 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	writeJinjaTemplates(result.jinjaTemplates, join(dirname(outDir), 'templates'));
 
 	// Static-seam-resolution residue report: how many template boundaries
-	// the SEQ join resolved statically vs left to the render-time
-	// SpacingWriter. The runtime count is the residue the spec ratchets on.
+	// the SEQ join resolved statically, how many runtime checks have a
+	// statically-knowable outcome (derivable — the static-resolution
+	// candidate pool), and how many genuinely vary per instance (the true
+	// residue the spec ratchets on).
 	{
 		const census = result.jinjaTemplates.seamCensus;
 		const total = census.boundaries.length;
@@ -311,7 +313,8 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 			`  seam census: ${total} template boundaries — ` +
 				`${census.staticGlued + census.staticSpaced} static ` +
 				`(${census.staticGlued} glued, ${census.staticSpaced} spaced), ` +
-				`${census.runtime} runtime (residue)`
+				`${census.runtimeDerivable} runtime-derivable, ` +
+				`${census.runtimeVarying} runtime-varying (residue)`
 		);
 	}
 

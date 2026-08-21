@@ -3198,3 +3198,164 @@ function leftmostTerminalImmediate(rule: Rule<'link'> | undefined, ctx: Leftmost
 			return false;
 	}
 }
+
+// ---------------------------------------------------------------------------
+// Seam edge classes — static-seam-resolution's class-derivable inputs
+// ---------------------------------------------------------------------------
+
+/** Boundary character class of a kind's rendered edge: `word`/`not-word`
+ *  when every instance's edge character has that class under the grammar's
+ *  `wordMatcher`, `varies` when the class differs per instance or cannot be
+ *  established (nullable edges, unparsed pattern tails, unresolved refs). */
+export type SeamEdgeClass = 'word' | 'not-word' | 'varies';
+
+export interface KindEdgeClasses {
+	readonly starts: SeamEdgeClass;
+	readonly ends: SeamEdgeClass;
+}
+
+/** Duck-typed against `NodeMap` (same circularity rationale as
+ *  `LeftImmediateCtx`), plus the word predicate the classes are relative to. */
+export interface EdgeClassCtx {
+	readonly nodes: ReadonlyMap<string, AssembledNode>;
+	readonly linkRules?: Record<string, Rule<'link'>>;
+	readonly isWordChar: (c: string) => boolean;
+}
+
+const uniformEdgeClass = (classes: readonly SeamEdgeClass[]): SeamEdgeClass => {
+	if (classes.length === 0) return 'varies';
+	const first = classes[0]!;
+	return classes.every((c) => c === first) ? first : 'varies';
+};
+
+const charEdgeClass = (c: string | undefined, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass =>
+	c === undefined || c === '' ? 'varies' : ctx.isWordChar(c) ? 'word' : 'not-word';
+
+/**
+ * Leading character class of a regex source, or `varies` when the leading
+ * atom is not one of the shapes this understands (a positive character
+ * class, an escape class, or a literal character). A negated class or an
+ * alternation/group head bails to `varies` — conservative, never wrong.
+ */
+export function patternLeadingEdgeClass(source: string, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass {
+	if (source.length === 0) return 'varies';
+	const c0 = source[0]!;
+	if (c0 === '[') {
+		if (source[1] === '^') return 'varies';
+		const chars: string[] = [];
+		for (let i = 1; i < source.length && source[i] !== ']'; i++) {
+			let ch = source[i]!;
+			if (ch === '\\') {
+				const esc = source[++i];
+				if (esc === undefined) return 'varies';
+				if (esc === 'd' || esc === 'w') {
+					chars.push('a');
+					continue;
+				}
+				if (esc === 's' || esc === 'S' || esc === 'D' || esc === 'W' || esc === 'p' || esc === 'u' || esc === 'x')
+					return 'varies';
+				ch = esc;
+			}
+			if (source[i + 1] === '-' && source[i + 2] !== undefined && source[i + 2] !== ']') {
+				const lo = ch.charCodeAt(0);
+				const hi = source[i + 2]!.charCodeAt(0);
+				i += 2;
+				if (hi < lo || hi - lo > 128) return 'varies';
+				for (let code = lo; code <= hi; code++) chars.push(String.fromCharCode(code));
+				continue;
+			}
+			chars.push(ch);
+		}
+		return uniformEdgeClass(chars.map((c) => charEdgeClass(c, ctx)));
+	}
+	if (c0 === '\\') {
+		const esc = source[1];
+		if (esc === 'd' || esc === 'w') return 'word';
+		if (esc === undefined || esc === 's' || esc === 'S' || esc === 'D' || esc === 'W' || esc === 'p') return 'varies';
+		return charEdgeClass(esc, ctx);
+	}
+	if (c0 === '(' || c0 === '^' || c0 === '.') return 'varies';
+	return charEdgeClass(c0, ctx);
+}
+
+/**
+ * Edge character classes of a kind's rendered text. Leaves answer from
+ * their own literal text (keyword), literal value set (enum), or pattern
+ * source (leading atom only — a pattern's trailing class is `varies` in
+ * this cut); structural kinds walk their link-phase rule to the leftmost/
+ * rightmost terminal, with nullable edges and cycles deciding `varies`.
+ * `varies` never causes a wrong static decision — only a boundary left to
+ * the runtime writer.
+ */
+export function edgeClassesOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeClasses {
+	const node = ctx.nodes.get(kind);
+	if (node instanceof AssembledKeyword) {
+		return {
+			starts: charEdgeClass(node.text[0], ctx),
+			ends: charEdgeClass(node.text[node.text.length - 1], ctx)
+		};
+	}
+	if (node instanceof AssembledEnum) {
+		const values = node.values;
+		return {
+			starts: uniformEdgeClass(values.map((v) => charEdgeClass(v[0], ctx))),
+			ends: uniformEdgeClass(values.map((v) => charEdgeClass(v[v.length - 1], ctx)))
+		};
+	}
+	if (node instanceof AssembledPattern) {
+		const fixed = node.fixedLiteralText;
+		if (fixed !== undefined && fixed !== '') {
+			return { starts: charEdgeClass(fixed[0], ctx), ends: charEdgeClass(fixed[fixed.length - 1], ctx) };
+		}
+		const pattern = node.pattern;
+		if (pattern !== undefined) return { starts: patternLeadingEdgeClass(pattern, ctx), ends: 'varies' };
+		return { starts: 'varies', ends: 'varies' };
+	}
+	const rule = ctx.linkRules?.[kind];
+	return {
+		starts: ruleEdgeClass(rule, 'starts', ctx, new Set([kind])),
+		ends: ruleEdgeClass(rule, 'ends', ctx, new Set([kind]))
+	};
+}
+
+function ruleEdgeClass(
+	rule: Rule<'link'> | undefined,
+	side: 'starts' | 'ends',
+	ctx: EdgeClassCtx,
+	visiting: Set<string>
+): SeamEdgeClass {
+	if (!rule) return 'varies';
+	switch (rule.type) {
+		case 'STRING': {
+			const c = side === 'starts' ? rule.value[0] : rule.value[rule.value.length - 1];
+			return charEdgeClass(c, ctx);
+		}
+		case 'PATTERN':
+			return side === 'starts' ? patternLeadingEdgeClass(rule.value, ctx) : 'varies';
+		case 'SEQ': {
+			const member = side === 'starts' ? rule.members[0] : rule.members[rule.members.length - 1];
+			return ruleEdgeClass(member, side, ctx, visiting);
+		}
+		case 'CHOICE':
+			return uniformEdgeClass(rule.members.map((m) => ruleEdgeClass(m, side, ctx, visiting)));
+		case 'REPEAT1':
+		case 'FIELD':
+		case 'VARIANT':
+		case 'ALIAS':
+		case 'TOKEN':
+			return ruleEdgeClass(rule.content, side, ctx, visiting);
+		case 'SYMBOL': {
+			if (visiting.has(rule.name)) return 'varies';
+			visiting.add(rule.name);
+			const node = ctx.nodes.get(rule.name);
+			if (node instanceof AssembledLeaf) {
+				return edgeClassesOfKind(rule.name, ctx)[side];
+			}
+			return ruleEdgeClass(ctx.linkRules?.[rule.name], side, ctx, visiting);
+		}
+		default:
+			// OPTIONAL/REPEAT (nullable edge) and forms with no single
+			// terminal on this side.
+			return 'varies';
+	}
+}

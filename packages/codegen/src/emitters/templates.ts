@@ -48,14 +48,17 @@ import {
 	isMultiple,
 	isRequired,
 	kindsOf,
-	isTerminalValue
+	isTerminalValue,
+	edgeClassesOfKind,
+	patternLeadingEdgeClass
 } from '../compiler/model/node-map.ts';
 import type {
 	AssembledBranch,
 	AssembledNode,
 	AssembledNonterminal,
 	AssembledSeparatedList,
-	NodeOrTerminal
+	NodeOrTerminal,
+	SeamEdgeClass
 } from '../compiler/model/node-map.ts';
 import type { Rule, RuleBase, RenderRule, Multiplicity } from '../types/rule.ts';
 import type { CodegenEmitter } from './emitter.ts';
@@ -76,25 +79,29 @@ export interface EmittedTemplates {
 /**
  * One template boundary the SEQ join classified. `left`/`right` are the
  * seam's adjacent characters in template text — a `'}'` left or `'{'`
- * right is template syntax (a slot/tag boundary), which is exactly the
- * `runtime` class: the render-time SpacingWriter owns that seam because
- * the real characters are only known per instance.
+ * right is template syntax (a slot/tag boundary), decided by the
+ * render-time SpacingWriter. Tag boundaries subdivide by edge classes:
+ * `runtime-derivable` means both sides' edge character classes are
+ * statically known (the check's outcome is a constant — a candidate for
+ * static resolution), `runtime-varying` means at least one edge varies
+ * per instance (or a literal-merge pair is possible for the class combo,
+ * which only concrete characters can decide) — the true residue.
  */
 export interface SeamBoundaryRecord {
 	readonly kind: string;
 	readonly left: string;
 	readonly right: string;
-	readonly resolution: 'static-glued' | 'static-spaced' | 'runtime';
+	readonly resolution: 'static-glued' | 'static-spaced' | 'runtime-derivable' | 'runtime-varying';
 }
 
 /** Per-grammar census of template-boundary seam resolutions — the
- *  static-seam-resolution spec's residue report. `runtime` is the residue:
- *  boundaries still decided by the render-time SpacingWriter. */
+ *  static-seam-resolution spec's residue report. */
 export interface SeamCensusSummary {
 	readonly boundaries: readonly SeamBoundaryRecord[];
 	readonly staticGlued: number;
 	readonly staticSpaced: number;
-	readonly runtime: number;
+	readonly runtimeDerivable: number;
+	readonly runtimeVarying: number;
 }
 
 export interface EmitCtx {
@@ -124,6 +131,11 @@ export interface EmitCtx {
 	// Seam-census sink (optional so hand-built test ctx literals stay valid):
 	// the SEQ join appends one record per boundary it classifies.
 	readonly seamBoundaries?: SeamBoundaryRecord[];
+	// Class combos (`${leftClass}\0${rightClass}`) for which at least one
+	// literal-merge pair exists — a tag boundary with such a combo cannot be
+	// declared glued from classes alone (only concrete characters decide),
+	// so it stays `runtime-varying`. Optional for hand-built test ctx.
+	readonly mergePairClassCombos?: ReadonlySet<string>;
 	readonly ownerSlots?: Readonly<Record<string, AssembledNonterminal>>;
 	readonly currentKind?: string;
 }
@@ -231,6 +243,15 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				return (l: string, r: string) =>
 					l.charCodeAt(0) < 128 && r.charCodeAt(0) < 128 && pairs.has(l.charCodeAt(0) * 128 + r.charCodeAt(0));
 			})(),
+			mergePairClassCombos: (() => {
+				const table = wordCharAsciiTable(this.#wordMatcher);
+				const cls = (code: number) => (table[code] ? 'word' : 'not-word');
+				const combos = new Set<string>();
+				for (const [a, b] of literalMergePairs(getTransportProjection(config.nodeMap).literals)) {
+					combos.add(`${cls(a)}\0${cls(b)}`);
+				}
+				return combos;
+			})(),
 			externals: [...(config.nodeMap.externals ?? [])],
 			rules: config.nodeMap.normalizedRules ?? {},
 			visitingHelpers: new Set<string>(),
@@ -260,7 +281,8 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				boundaries,
 				staticGlued: boundaries.filter((b) => b.resolution === 'static-glued').length,
 				staticSpaced: boundaries.filter((b) => b.resolution === 'static-spaced').length,
-				runtime: boundaries.filter((b) => b.resolution === 'runtime').length
+				runtimeDerivable: boundaries.filter((b) => b.resolution === 'runtime-derivable').length,
+				runtimeVarying: boundaries.filter((b) => b.resolution === 'runtime-varying').length
 			}
 		};
 	}
@@ -290,6 +312,65 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			assertSlotPreservation(node, newBody);
 		}
 		this.#bodies.set(node.kind, `${GENERATED_HEADER}\n${newBody}`);
+	}
+}
+
+/**
+ * Edge class of a RenderRule member's EMITTED form — the tag-boundary side
+ * of the seam census. Mirrors `edgeClassesOfKind`'s lattice with one extra
+ * value: `'empty'` marks members whose canonical emission is nothing (an
+ * `optional` separator literal — see the STRING case in `emitRule`), so a
+ * SEQ's edge falls through to its next member. Conditional emissions
+ * (optional/array slots) are `varies`: presence itself is per-instance.
+ */
+function renderRuleEdge(
+	rule: RenderRule,
+	side: 'starts' | 'ends',
+	ctx: EmitCtx,
+	visiting: Set<string>
+): SeamEdgeClass | 'empty' {
+	const mult = (rule as { multiplicity?: Multiplicity }).multiplicity;
+	if (rule.type === STRING) {
+		if (mult === 'optional') return 'empty';
+		const c = side === 'starts' ? rule.value[0] : rule.value[rule.value.length - 1];
+		return c === undefined ? 'empty' : ctx.isWordChar(c) ? 'word' : 'not-word';
+	}
+	if (mult !== undefined && mult !== 'single') return 'varies';
+	switch (rule.type) {
+		case PATTERN:
+			return side === 'starts' ? patternLeadingEdgeClass(rule.value, ctx) : 'varies';
+		case SEQ: {
+			const members = side === 'starts' ? rule.members : [...rule.members].reverse();
+			for (const m of members) {
+				const e = renderRuleEdge(m, side, ctx, visiting);
+				if (e !== 'empty') return e;
+			}
+			return 'empty';
+		}
+		case CHOICE: {
+			const edges = rule.members.map((m) => renderRuleEdge(m, side, ctx, visiting));
+			const first = edges[0];
+			if (first === undefined) return 'varies';
+			return edges.every((e) => e === first && e !== 'empty') ? first : 'varies';
+		}
+		case VARIANT:
+		case GROUP:
+			return renderRuleEdge(rule.content, side, ctx, visiting);
+		case SYMBOL: {
+			if (visiting.has(rule.name)) return 'varies';
+			visiting.add(rule.name);
+			if (ctx.nodeMap.nodes.has(rule.name)) {
+				return edgeClassesOfKind(rule.name, {
+					nodes: ctx.nodeMap.nodes,
+					linkRules: ctx.nodeMap.linkRules,
+					isWordChar: ctx.isWordChar
+				})[side];
+			}
+			const helper = ctx.rules[rule.name];
+			return helper !== undefined ? renderRuleEdge(helper, side, ctx, visiting) : 'varies';
+		}
+		default:
+			return 'varies';
 	}
 }
 
@@ -467,11 +548,13 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			// doc comment). `emitSlotReference` is the shared chokepoint that
 			// dedupes by slot identity, so a member whose subtree resolves to an
 			// already-emitted array slot simply emits '' here.
+			const partRules: RenderRule[] = [];
 			rule.members.forEach((m, i) => {
 				const text = emitRule(m, ctx);
 				if (text === '') return;
 				if (i === indentMemberIdx) indentPartIdx = parts.length;
 				parts.push(text);
+				partRules.push(m);
 			});
 			if (parts.length === 0) return '';
 			// Static-static seams only (spec v2 note: "space baked into the
@@ -490,13 +573,38 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			const recordSeam = (l: string, r: string, resolution: SeamBoundaryRecord['resolution']): void => {
 				ctx.seamBoundaries?.push({ kind: ctx.currentKind ?? '(unknown)', left: l, right: r, resolution });
 			};
-			const joinParts = (segments: string[]): string => {
+			// Tag-boundary subdivision: a seam whose template chars are tag
+			// syntax is decided by the runtime writer, but when both sides'
+			// edge CLASSES are statically known the check's outcome is a
+			// constant — `runtime-derivable`, the static-resolution candidate
+			// pool. word×word would always space; a no-word-seam combo is
+			// glued only if no literal-merge pair exists for the class combo
+			// (concrete characters alone decide a possible pair — varying).
+			const classifyTagSeam = (leftE: SeamEdgeClass, rightE: SeamEdgeClass): SeamBoundaryRecord['resolution'] => {
+				if (leftE === 'varies' || rightE === 'varies') return 'runtime-varying';
+				if (leftE === 'word' && rightE === 'word') return 'runtime-derivable';
+				return ctx.mergePairClassCombos?.has(`${leftE}\0${rightE}`) ? 'runtime-varying' : 'runtime-derivable';
+			};
+			const partEdge = (idx: number, side: 'starts' | 'ends', text: string): SeamEdgeClass => {
+				const c = side === 'starts' ? text[0]! : text[text.length - 1]!;
+				if (side === 'starts' ? c !== '{' : c !== '}') return ctx.isWordChar(c) ? 'word' : 'not-word';
+				const e = renderRuleEdge(partRules[idx]!, side, ctx, new Set());
+				return e === 'empty' ? 'varies' : e;
+			};
+			const joinParts = (segments: string[], firstIdx: number): string => {
 				let body = segments[0]!;
 				for (let i = 1; i < segments.length; i++) {
 					const l = body[body.length - 1]!;
 					const r = segments[i]![0]!;
 					if (l === '}' || r === '{') {
-						recordSeam(l, r, 'runtime');
+						recordSeam(
+							l,
+							r,
+							classifyTagSeam(
+								partEdge(firstIdx + i - 1, 'ends', segments[i - 1]!),
+								partEdge(firstIdx + i, 'starts', segments[i]!)
+							)
+						);
 						body += segments[i]!;
 						continue;
 					}
@@ -510,15 +618,15 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			};
 			let seqBody: string;
 			if (indentPartIdx !== -1 && indentPartIdx < parts.length - 1) {
-				const before = joinParts(parts.slice(0, indentPartIdx + 1));
-				const after = joinParts(parts.slice(indentPartIdx + 1));
-				// The filter-wrapped indent seam is runtime by construction —
-				// the writer sees before-tail against per-instance indented
-				// content; count it so the census hides nothing.
-				recordSeam(before[before.length - 1] ?? '', after[0] ?? '', 'runtime');
+				const before = joinParts(parts.slice(0, indentPartIdx + 1), 0);
+				const after = joinParts(parts.slice(indentPartIdx + 1), indentPartIdx + 1);
+				// The filter-wrapped indent seam is per-instance by
+				// construction (indented content) — the true residue; count
+				// it so the census hides nothing.
+				recordSeam(before[before.length - 1] ?? '', after[0] ?? '', 'runtime-varying');
 				seqBody = `${before}{% filter indent(2, true) %}${after}{% endfilter %}`;
 			} else {
-				seqBody = joinParts(parts);
+				seqBody = joinParts(parts, 0);
 			}
 			// §D-2a seq-unit multiplicity (normalize inline hoist): a `seq` that
 			// carries its OWN `multiplicity` is an inlined group body whose
