@@ -69,7 +69,6 @@ export interface ArgumentListElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<ArgumentListElementsElementTransportSlot>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -285,7 +284,6 @@ export interface CasePatternsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _case_pattern: Array<CasePatternTransport>
-  _case_pattern_delimiter?: number
   _delimiter?: number
 }
 
@@ -358,7 +356,6 @@ export interface CollectionElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<CollectionElementsElementTransportSlot>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -515,7 +512,6 @@ export interface DictionaryElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<DictionaryElementsElementTransportSlot>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -561,7 +557,6 @@ export interface DictPatternElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<DictPatternElementsElementTransportSlot>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -705,7 +700,6 @@ export interface ExpressionListExpressionsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _expression: Array<ExpressionTransport>
-  _expression_delimiter?: number
   _delimiter?: number
 }
 
@@ -741,7 +735,6 @@ export interface ExpressionStatementTupleTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _expression: Array<ExpressionTransport>
-  _expression_delimiter?: number
   _delimiter?: number
 }
 
@@ -926,7 +919,6 @@ export interface ImportListTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _name: Array<ImportListNameTransportSlot>
-  _name_delimiter?: number
   _delimiter?: number
 }
 
@@ -1049,7 +1041,6 @@ export interface ListPatternCasePatternsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _case_pattern: Array<CasePatternTransport>
-  _case_pattern_delimiter?: number
   _delimiter?: number
 }
 
@@ -1224,7 +1215,6 @@ export interface ParametersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _parameter: Array<ParameterTransport>
-  _parameter_delimiter?: number
   _delimiter?: number
 }
 
@@ -1259,7 +1249,6 @@ export interface PatternListPatternsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _pattern: Array<PatternTransport>
-  _pattern_delimiter?: number
   _delimiter?: number
 }
 
@@ -1284,7 +1273,6 @@ export interface PatternsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _pattern: Array<PatternTransport>
-  _pattern_delimiter?: number
   _delimiter?: number
 }
 
@@ -1297,7 +1285,6 @@ export interface PrintArgumentsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _argument: Array<ExpressionTransport>
-  _argument_delimiter?: number
   _delimiter?: number
 }
 
@@ -1310,7 +1297,6 @@ export interface PrintChevronArgumentsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _argument: Array<ExpressionTransport>
-  _argument_delimiter?: number
   _delimiter?: number
 }
 
@@ -1441,7 +1427,6 @@ export interface SimpleStatementsElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _simple_statement: Array<SimpleStatementTransport>
-  _simple_statement_delimiter?: number
   _delimiter?: number
 }
 
@@ -1538,7 +1523,6 @@ export interface SubjectsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _subject: Array<ExpressionTransport>
-  _subject_delimiter?: number
   _delimiter?: number
 }
 
@@ -1551,7 +1535,6 @@ export interface SubscriptsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _subscript: Array<SubscriptsSubscriptTransportSlot>
-  _subscript_delimiter?: number
   _delimiter?: number
 }
 
@@ -1687,7 +1670,6 @@ export interface TypesTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: Array<TypeTransport>
-  _type_delimiter?: number
   _delimiter?: number
 }
 
@@ -1759,7 +1741,6 @@ export interface WithClauseBareTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _with_item: Array<WithItemTransport>
-  _with_item_delimiter?: number
   _delimiter?: number
 }
 
@@ -1795,7 +1776,6 @@ export interface WithClauseWithItemsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _with_item: Array<WithItemTransport>
-  _with_item_delimiter?: number
   _delimiter?: number
 }
 

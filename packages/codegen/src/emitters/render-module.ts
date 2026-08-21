@@ -1395,39 +1395,26 @@ function buildTypedTemplateBody(
 			// ("Render" section).
 			const separatedList = node instanceof AssembledSeparatedList ? node : undefined;
 			// Three-way branch on `DelimiterMode`: `'optional'` reads the
-			// wire-captured per-instance bool; `'mandatory'` is always present
-			// (hardcoded `true`, no per-instance capture exists — see
-			// AssembledSeparatedList's `leadingDelimiter`/`trailingDelimiter` doc comment,
-			// node-map.ts); `'none'`/`undefined` is always absent (`false`).
-			// Non-separatedList list-shaped slots (a 'branch'/'group' kind's own
-			// array field, e.g. a paren-wrapped tuple's inner repeat) carry the
-			// SAME tri-state mode on `f` itself (render-module.ts's EmittedField,
-			// threaded from AssembledNonterminal — see wrap.ts's
-			// emitFieldFlankCaptureLines doc comment for the per-field wire-key
-			// counterpart this reads). Only the 'optional' case is wired here.
-			// `f.trailingDelimiter === 'mandatory'` on an inner slot is deliberately
-			// left at the 'false' default rather than flipped to an
-			// unconditional 'true': unlike the kind-level AssembledSeparatedList
-			// case (a proven-safe, already-shipped fact), no inner-slot kind
-			// with that combination has been verified against real render
-			// output — flipping it speculatively risks an unreviewed behavior
-			// change on a kind whose output is otherwise byte-identical today.
+			// wire-captured per-instance bitflag; `'mandatory'` is always
+			// present (hardcoded `true`, no per-instance capture exists — see
+			// AssembledSeparatedList's `leadingDelimiter`/`trailingDelimiter`
+			// doc comment, node-map.ts); `'none'`/`undefined` is always absent
+			// (`false`). A delimiter-bearing list is always its own
+			// separatedList kind (kind-level `_delimiter`), so the kind-level
+			// read is the only wire read; an inner slot's own delimiter mode
+			// never carries an 'optional' flank here.
 			const leadingExpr =
 				separatedList?.leadingDelimiter === 'optional'
 					? 'node.delimiter.map(|d| d & 1 != 0).unwrap_or(false)'
 					: separatedList?.leadingDelimiter === 'mandatory'
 						? 'true'
-						: f.leadingDelimiter === 'optional'
-							? `node.${rIdent}_delimiter.map(|d| d & 1 != 0).unwrap_or(false)`
-							: 'false';
+						: 'false';
 			const trailingExpr =
 				separatedList?.trailingDelimiter === 'optional'
 					? 'node.delimiter.map(|d| d & 2 != 0).unwrap_or(false)'
 					: separatedList?.trailingDelimiter === 'mandatory'
 						? 'true'
-						: f.trailingDelimiter === 'optional'
-							? `node.${rIdent}_delimiter.map(|d| d & 2 != 0).unwrap_or(false)`
-							: 'false';
+						: 'false';
 			const separatorMatchLines =
 				separatedList?.separatorRule !== undefined
 					? buildSeparatorKindMatchLines(separatedList.separatorRule, fieldSepLiteral, kindIdByKind)
@@ -3684,18 +3671,6 @@ function renderTransportDataStruct(
 			// per slot with the matching `js_name` to deserialize.
 			for (const field of [...slotModel.named, ...slotModel.unnamed]) {
 				lines.push(...renderTransportField(field, node.kind, node.typeName, nodeMap));
-				// Per-field optional-flank capture (see wrap.ts's
-				// emitFieldFlankCaptureLines doc comment) — the per-slot
-				// counterpart to AssembledSeparatedList's kind-level
-				// delimiter field below. Gated on the SAME
-				// 'optional' mode wrap.ts gates its wire-key emission on, so a
-				// struct field only exists when the wire can actually populate it.
-				if (field.trailingDelimiter === 'optional' || field.leadingDelimiter === 'optional') {
-					lines.push(
-						`    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_${field.storageName}_delimiter"))]`,
-						`    pub ${rustFieldIdent(field.storageName)}_delimiter: Option<u8>,`
-					);
-				}
 			}
 			// Group-lift inner field hoisting: for each unnamed SINGULAR slot that
 			// is a group-lift helper (points to `_<slotName>`), also emit the

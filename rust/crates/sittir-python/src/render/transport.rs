@@ -15446,8 +15446,6 @@ pub struct ImportListTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: Vec<ImportListNameTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name_delimiter"))]
-    pub name_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -18518,8 +18516,6 @@ pub struct _ParametersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter"))]
     pub parameter: Vec<ParameterTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter_delimiter"))]
-    pub parameter_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -18572,8 +18568,6 @@ pub struct PatternsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: Vec<PatternTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_delimiter"))]
-    pub pattern_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -21017,8 +21011,6 @@ pub struct CollectionElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<CollectionElementsElementTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
-    pub element_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -23032,8 +23024,6 @@ pub struct SimpleStatementsElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statement"))]
     pub simple_statement: Vec<SimpleStatementTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statement_delimiter"))]
-    pub simple_statement_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -23188,8 +23178,6 @@ pub struct SubjectsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subject"))]
     pub subject: Vec<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subject_delimiter"))]
-    pub subject_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -23242,8 +23230,6 @@ pub struct CasePatternsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern"))]
     pub case_pattern: Vec<CasePatternTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern_delimiter"))]
-    pub case_pattern_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -23346,8 +23332,6 @@ pub struct WithClauseWithItemsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_item"))]
     pub with_item: Vec<WithItemTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_item_delimiter"))]
-    pub with_item_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -23500,8 +23484,6 @@ pub struct TypesTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Vec<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_delimiter"))]
-    pub type__delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -23554,8 +23536,6 @@ pub struct ArgumentListElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<ArgumentListElementsElementTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
-    pub element_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -23608,8 +23588,6 @@ pub struct ExpressionListExpressionsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Vec<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_delimiter"))]
-    pub expression_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -23662,8 +23640,6 @@ pub struct ListPatternCasePatternsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern"))]
     pub case_pattern: Vec<CasePatternTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern_delimiter"))]
-    pub case_pattern_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -23716,8 +23692,6 @@ pub struct DictPatternElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<DictPatternElementsElementTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
-    pub element_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -23770,8 +23744,6 @@ pub struct PatternListPatternsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: Vec<PatternTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_delimiter"))]
-    pub pattern_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -23824,8 +23796,6 @@ pub struct SubscriptsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscript"))]
     pub subscript: Vec<SubscriptsSubscriptTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscript_delimiter"))]
-    pub subscript_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -23928,8 +23898,6 @@ pub struct DictionaryElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<DictionaryElementsElementTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
-    pub element_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -24556,8 +24524,6 @@ pub struct PrintArgumentsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: Vec<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument_delimiter"))]
-    pub argument_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -24610,8 +24576,6 @@ pub struct PrintChevronArgumentsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: Vec<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument_delimiter"))]
-    pub argument_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -25027,8 +24991,6 @@ pub struct ExpressionStatementTupleTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Vec<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_delimiter"))]
-    pub expression_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }
@@ -25081,8 +25043,6 @@ pub struct WithClauseBareTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_item"))]
     pub with_item: Vec<WithItemTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_item_delimiter"))]
-    pub with_item_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
 }

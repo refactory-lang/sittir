@@ -740,7 +740,6 @@ export interface EnumBodyElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<EnumBodyElementsContentTransportSlot>
-  _content_delimiter?: number
   _delimiter?: number
 }
 
@@ -800,7 +799,6 @@ export interface ExportSpecifiersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _export_specifier: Array<ExportSpecifierTransport>
-  _export_specifier_delimiter?: number
   _delimiter?: number
 }
 
@@ -1114,7 +1112,6 @@ export interface FormalParametersElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _formal_parameter: Array<FormalParameterTransport>
-  _formal_parameter_delimiter?: number
   _delimiter?: number
 }
 
@@ -1378,7 +1375,6 @@ export interface ImportSpecifiersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _import_specifier: Array<ImportSpecifierTransport>
-  _import_specifier_delimiter?: number
   _delimiter?: number
 }
 
@@ -1989,7 +1985,6 @@ export interface ObjectTypeContentTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<ObjectTypeContentContentTransportSlot>
-  _content_delimiter?: number
   _delimiter?: number
   _separator?: number
 }
@@ -2563,7 +2558,6 @@ export interface TupleTypeMembersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _tuple_type_member: Array<TupleTypeMemberTransport>
-  _tuple_type_member_delimiter?: number
   _delimiter?: number
 }
 
@@ -2637,7 +2631,6 @@ export interface TypeParametersElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type_parameter: Array<TypeParameterTransport>
-  _type_parameter_delimiter?: number
   _delimiter?: number
 }
 
@@ -2783,7 +2776,6 @@ export interface TypesTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: Array<TypeTransport>
-  _type_delimiter?: number
   _delimiter?: number
 }
 

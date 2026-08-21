@@ -875,9 +875,7 @@ function _deriveSlotsInternal(rule: Rule<'link'>, ctx?: DeriveCtx): AssembledNon
  * field within one rule (e.g. python `if_statement`'s `alternative` in both
  * a repeat and an optional). Widen to `'optional'` on any disagreement: the
  * merged field's actual flank presence then genuinely varies depending on
- * which occurrence a real parse reached, which is exactly what `'optional'`
- * mode triggers real per-instance wire capture for (see
- * `emitFieldFlankCaptureLines`, wrap.ts) — picking either single
+ * which occurrence a real parse reached — picking either single
  * occurrence's fixed mode would be wrong for a parse that reached the
  * other. Defined here (not `collect-slots.ts`, its other call site) since
  * `collect-slots.ts` already imports `AssembledNonterminal` from this file

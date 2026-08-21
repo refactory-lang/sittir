@@ -80,7 +80,6 @@ export interface ArgumentsElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<AttributedArgumentTransport>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -688,7 +687,6 @@ export interface EnumVariantListElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<AttributedEnumVariantTransport>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -796,7 +794,6 @@ export interface FieldDeclarationListElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<AttributedFieldDeclarationTransport>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -846,7 +843,6 @@ export interface FieldInitializerListElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<FieldInitializerListElementsElementTransportSlot>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -1298,7 +1294,6 @@ export interface LifetimesTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _lifetime: Array<LifetimeTransport>
-  _lifetime_delimiter?: number
   _delimiter?: number
 }
 
@@ -1418,7 +1413,6 @@ export interface MacroRulesTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _macro_rule: Array<MacroRuleTransport>
-  _macro_rule_delimiter?: number
   _delimiter?: number
 }
 
@@ -1562,7 +1556,6 @@ export interface OrderedFieldDeclarationListElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<AttributedOrderedFieldTransport>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -1620,7 +1613,6 @@ export interface ParametersElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<AttributedParameterTransport>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -1669,7 +1661,6 @@ export interface PatternsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _pattern: Array<PatternTransport>
-  _pattern_delimiter?: number
   _delimiter?: number
 }
 
@@ -2071,7 +2062,6 @@ export interface StructPatternElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<StructPatternElementsElementTransportSlot>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -2272,7 +2262,6 @@ export interface TupleExpressionElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<ExpressionTransport>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -2298,7 +2287,6 @@ export interface TuplePatternElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<TuplePatternElementsElementTransportSlot>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -2335,7 +2323,6 @@ export interface TupleTypeElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: Array<_TypeTransport>
-  _type_delimiter?: number
   _delimiter?: number
 }
 
@@ -2360,7 +2347,6 @@ export interface TypeArgumentsElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<TypeArgumentTransport>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -2449,7 +2435,6 @@ export interface TypeParametersElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<AttributedTypeParameterTransport>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -2537,7 +2522,6 @@ export interface UseBoundsElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _element: Array<UseBoundsElementsElementTransportSlot>
-  _element_delimiter?: number
   _delimiter?: number
 }
 
@@ -2561,7 +2545,6 @@ export interface UseClausesTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _use_clause: Array<UseClauseTransport>
-  _use_clause_delimiter?: number
   _delimiter?: number
 }
 
@@ -2711,7 +2694,6 @@ export interface WherePredicatesTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _where_predicate: Array<WherePredicateTransport>
-  _where_predicate_delimiter?: number
   _delimiter?: number
 }
 
