@@ -65,16 +65,33 @@ stamped fact's spelling and storage shape move.
   (per-field capture and the render-side flank-mode threading) reduces
   to populating and reading one struct.
 
+## Factory surface
+
+Separated-list factories (and `from`) are **spread-based with leading
+options**:
+
+```
+enumBodyElements(...elements)                          // delimiter: none
+enumBodyElements({ delimiter: trailing }, ...elements) // opts lead
+```
+
+The options position is the FIRST argument, present only when opting
+in — the common case stays a bare spread. A leading argument is
+recognized as options by shape: a plain object with no `$type` whose
+keys are a subset of the kind's permitted option keys (`separator`,
+`delimiter`); anything else is the first element. Kinds whose elements
+can themselves be plain config objects must still disambiguate through
+that rule — an element config always carries `$type` or an
+element-shaped key, so the subset test is decisive.
+
 ## Blast radius (why this is its own PR series)
 
 The list-slot wire contract changes for every list slot in all three
 grammars: wrap emission and `$with` setters, transport structs and
-`FromNapiValue` decoders, factory param types (accepting
-`elements` with options carried beside them — the exact factory-surface
-shape is the first implementation decision), the render-module
-flank-mode maps, and the validator comparison metadata. Gate per slice
-with the standard battery; floors move only where a corpus row pins an
-intentional fidelity change.
+`FromNapiValue` decoders, the factory signatures above, the
+render-module flank-mode maps, and the validator comparison metadata.
+Gate per slice with the standard battery; floors move only where a
+corpus row pins an intentional fidelity change.
 
 ## Non-goals
 
