@@ -44,7 +44,8 @@ import {
 	aliasTargetToSourceMapOf,
 	acceptedIdPairsByKindOf,
 	storageKindOfRef,
-	storageKindOfValue
+	storageKindOfValue,
+	isLeftImmediateKind
 } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type { TemplateFile } from './template-hash.ts';
@@ -3149,7 +3150,16 @@ function emitPerSlotChildEnum(
 	for (const { kind, node } of validKinds) {
 		const variant = rustTypeIdent(node.typeName);
 		const innerExpr = isBoxed(kind, node) ? 'inner.as_ref()' : 'inner';
-		lines.push(`            ${enumName}::${variant}(inner) => ${innerExpr}.render_into(dest),`);
+		// A structural kind whose leftmost terminal is grammar-immediate
+		// (`isLeftImmediateKind`) renders seam-free on its left in every
+		// context — mark before delegating. Leaf kinds carry their mark
+		// inside their own render fn, so marking here would double-declare.
+		const call = `${innerExpr}.render_into(dest)`;
+		const arm =
+			!(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap)
+				? `{ ::sittir_core::spacing::mark_adjacent(); ${call} }`
+				: call;
+		lines.push(`            ${enumName}::${variant}(inner) => ${arm},`);
 	}
 	for (const literal of entry.literals) {
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);

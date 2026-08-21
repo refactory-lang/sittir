@@ -598,6 +598,20 @@ export default grammar(
 					'#170 — multi-field separatedList (name/enum_assignment); emitSeparatedListFactory only fixes the single-field-storage case, needs a real per-field partition of the flat elements array'
 			},
 			rules: {
+				// `template_substitution` sits only in string-interior contexts
+				// (template_string / template_literal_type elements), where any
+				// preceding characters are absorbed into a fragment token — no
+				// whitespace can ever precede its `${`, but upstream writes a
+				// plain string. Declaring `token.immediate` matters for
+				// RENDERING: `$` is word-class in typescript, so without the
+				// declared fact the seam check injects a hazard space after a
+				// word-ending fragment or escape (`mid\n ${`), which reparses
+				// as a spurious one-space string_fragment. The stamp makes the
+				// kind left-immediate (its leftmost terminal), so structural
+				// references render seam-free. Parser-neutral by the absorption
+				// argument above.
+				template_substitution: ($) => seq(token.immediate('${'), $._expressions, '}'),
+
 				// The class-body repeat's bare `';'` arm (stray member-separator
 				// semicolons) has no kind identity, so the read's array capture
 				// cannot materialize it. Alias the STRING in place to the visible

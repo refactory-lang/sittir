@@ -3136,3 +3136,65 @@ export function allStructuralSlotsOf(node: AssembledNode): readonly AssembledNon
 		return Object.values(node.slots);
 	return [];
 }
+
+/**
+ * Duck-typed against `NodeMap` rather than importing it — `NodeMap` (in
+ * `compiler/types.ts`) references `AssembledNode`, defined in THIS module,
+ * so a direct import would be circular (same pattern as `SlotAliasPairsCtx`).
+ */
+export interface LeftImmediateCtx {
+	readonly nodes: ReadonlyMap<string, AssembledNode>;
+	readonly linkRules?: Record<string, Rule<'link'>>;
+}
+
+/**
+ * Grammar-declared LEFT-immediacy of a kind: true when every leftmost
+ * terminal of the kind's rule forbids preceding whitespace
+ * (`token.immediate`), making every reference to the kind seam-free on its
+ * left in every context — the structural counterpart of
+ * `AssembledLeaf.immediate`. Walks the link-phase rule leftmost-first: a
+ * pushed `immediate` attr anywhere on the leftmost path decides true; a
+ * CHOICE requires every arm; a nullable leftmost item (OPTIONAL/REPEAT)
+ * decides false because the true left edge then varies per instance; an
+ * unresolvable reference decides false. A conservative false never costs
+ * correctness — only a runtime seam check that static resolution could
+ * have skipped.
+ */
+export function isLeftImmediateKind(kind: string, ctx: LeftImmediateCtx): boolean {
+	const node = ctx.nodes.get(kind);
+	if (node instanceof AssembledLeaf) return node.immediate;
+	const rules = ctx.linkRules;
+	if (!rules) return false;
+	return leftmostTerminalImmediate(rules[kind], { rules, visiting: new Set([kind]) });
+}
+
+interface LeftmostWalkCtx {
+	readonly rules: Record<string, Rule<'link'>>;
+	readonly visiting: Set<string>;
+}
+
+function leftmostTerminalImmediate(rule: Rule<'link'> | undefined, ctx: LeftmostWalkCtx): boolean {
+	if (!rule) return false;
+	if (rule.immediate === true) return true;
+	switch (rule.type) {
+		case 'SEQ':
+			return rule.members.length > 0 && leftmostTerminalImmediate(rule.members[0], ctx);
+		case 'CHOICE':
+			return rule.members.length > 0 && rule.members.every((m) => leftmostTerminalImmediate(m, ctx));
+		case 'REPEAT1':
+		case 'FIELD':
+		case 'VARIANT':
+		case 'ALIAS':
+		case 'TOKEN':
+			return leftmostTerminalImmediate(rule.content, ctx);
+		case 'SYMBOL': {
+			if (ctx.visiting.has(rule.name)) return false;
+			ctx.visiting.add(rule.name);
+			return leftmostTerminalImmediate(ctx.rules[rule.name], ctx);
+		}
+		default:
+			// OPTIONAL/REPEAT (nullable left edge), unstamped terminals, and
+			// compound forms with no single leftmost path.
+			return false;
+	}
+}
