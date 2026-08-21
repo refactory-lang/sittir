@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "6c98517",
+    "commit": "385a577",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -82,8 +82,8 @@
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
-                "pass": 1498,
-                "total": 1498
+                "pass": 1500,
+                "total": 1500
             },
             "validators": {
                 "coverage": {
@@ -93,13 +93,13 @@
                     "total": 199
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1199,
+                    "astMatchPass": 1203,
                     "failingKinds": [
                         "object_type_content"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 1199,
-                    "total": 1208
+                    "pass": 1203,
+                    "total": 1212
                 },
                 "from": {
                     "failingKinds": [
@@ -110,18 +110,18 @@
                     "total": 143
                 },
                 "roundtrip": {
-                    "astMatchPass": 111,
+                    "astMatchPass": 112,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 111,
-                    "total": 113
+                    "pass": 112,
+                    "total": 114
                 }
             }
         }
     },
     "totals": {
         "fail": 24,
-        "pass": 9678,
-        "total": 9702
+        "pass": 9685,
+        "total": 9709
     }
 }

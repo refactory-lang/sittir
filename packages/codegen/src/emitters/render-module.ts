@@ -537,82 +537,18 @@ function emitStruct(
 ): EmittedStruct {
 	const name = structNameFor(kind, node);
 	const slotModel = renderSlotModelOf(node);
-	// Build name→multiple and name→required lookups from the assembled node's
-	// slots so the typed dispatch emitter generates code consistent with what
-	// the transport struct emits (Vec<...> vs Option<Vec<...>>,
-	// Box<...> vs Option<Box<...>>). Named and unnamed slots are symmetric
-	// (cleanup-rules §E1) — both contribute transport fields.
-	const multipleByName = new Map<string, boolean>();
-	const requiredByName = new Map<string, boolean>();
-	const storageByName = new Map<string, string>();
-	// Per-slot separator: read from the slot's own NodeRef/TerminalValue
-	// metadata (stamped at evaluate / wrapper-deletion time). The separator
-	// is a property of the value, not the node, so each list-multiplicity
-	// slot's emission gets its own — no node-wide fallback that would mask
-	// distinct per-slot separators behind a single first-match.
-	const separatorByName = new Map<string, string>();
-	// Per-slot separator flank modes: like the separator itself, these are
-	// slot stamps that must reach template emission even when the slot is
-	// UNNAMED — the surface only carries named slots, so a surface entry for
-	// unnamed storage (e.g. a merged union slot's `content`) is minted from
-	// the template body with default 'none' modes, silently hardcoding the
-	// rendered flank to absent. Collect from the assembled slots and let the
-	// stamp win over the surface default below.
-	const trailingModeByName = new Map<string, 'mandatory' | 'optional' | 'none'>();
-	const leadingModeByName = new Map<string, 'mandatory' | 'optional' | 'none'>();
-	const unnamedNames = new Set<string>();
-	if (node) {
-		for (const f of [...slotModel.named, ...slotModel.unnamed]) {
-			const mul = isMultiple(f);
-			const req = isRequired(f);
-			multipleByName.set(f.name, mul);
-			requiredByName.set(f.name, req);
-			storageByName.set(f.name, f.storageName);
-			if (f.trailingMode !== 'none') trailingModeByName.set(f.name, f.trailingMode);
-			if (f.leadingMode !== 'none') leadingModeByName.set(f.name, f.leadingMode);
-			for (const v of f.values) {
-				if (v.separator) {
-					separatorByName.set(f.name, v.separator);
-					break;
-				}
-			}
-			// Template walker emits one template var per kind referenced by an
-			// unnamed slot (e.g. a slot with kinds [escape_sequence, string_content]
-			// surfaces both names in the template). Register every kind as an
-			// alias that points back to the slot's single storage so the template
-			// variables all bind to the same transport field. Skip aliases that
-			// collide with another slot's own name — declared fields take
-			// precedence. Only register aliases for unnamed MULTIPLE slots:
-			// single-value slots store one transport-shaped value that cannot
-			// be re-routed through a kind-named template variable, and the
-			// template-walker's "kind as variable" pattern only applies to the
-			// list-style `{{ kind | join(...) }}` emission.
-			if (f.isUnnamed && mul) {
-				for (const k of kindsOf(f)) {
-					const alias = k.replace(/^_+/, '');
-					if (alias === f.name) continue;
-					if (storageByName.has(alias)) continue;
-					multipleByName.set(alias, mul);
-					requiredByName.set(alias, req);
-					storageByName.set(alias, f.storageName);
-				}
-			}
-		}
-		for (const f of slotModel.unnamed) {
-			unnamedNames.add(f.name);
-			if (f.isUnnamed && isMultiple(f)) {
-				for (const k of kindsOf(f)) {
-					const alias = k.replace(/^_+/, '');
-					if (alias === f.name) continue;
-					// Only mark as unnamed-alias when the alias resolves to this
-					// unnamed slot — see storageByName guard above.
-					if (storageByName.get(alias) === f.storageName) {
-						unnamedNames.add(alias);
-					}
-				}
-			}
-		}
-	}
+	// Slot-stamped emission metadata (multiplicity, storage, separators,
+	// flank modes, unnamed aliases) — see collectSlotEmissionMetadata for
+	// why each stamp must win over the surface defaults below.
+	const {
+		multipleByName,
+		requiredByName,
+		storageByName,
+		separatorByName,
+		trailingModeByName,
+		leadingModeByName,
+		unnamedNames
+	} = collectSlotEmissionMetadata(node, slotModel);
 	const fields: EmittedField[] = surface.slots.map((slot) => ({
 		...slot,
 		multiple: multipleByName.get(slot.name) ?? false,
@@ -2748,6 +2684,109 @@ function expandConcreteTransportKinds(
 	}
 
 	return expanded;
+}
+
+interface SlotEmissionMetadata {
+	readonly multipleByName: Map<string, boolean>;
+	readonly requiredByName: Map<string, boolean>;
+	readonly storageByName: Map<string, string>;
+	readonly separatorByName: Map<string, string>;
+	readonly trailingModeByName: Map<string, 'mandatory' | 'optional' | 'none'>;
+	readonly leadingModeByName: Map<string, 'mandatory' | 'optional' | 'none'>;
+	readonly unnamedNames: Set<string>;
+}
+
+/**
+ * Per-slot emission metadata for `emitStruct`'s typed dispatch, collected
+ * from the assembled node's slots so generated code stays consistent with
+ * what the transport struct emits (Vec<...> vs Option<Vec<...>>, Box<...>
+ * vs Option<Box<...>>). Named and unnamed slots are symmetric (cleanup
+ * rules §E1) — both contribute transport fields.
+ *
+ * Separators are read from the slot's own NodeRef/TerminalValue metadata
+ * (stamped at evaluate / wrapper-deletion time): a separator is a property
+ * of the value, not the node, so each list-multiplicity slot's emission
+ * gets its own — no node-wide fallback that would mask distinct per-slot
+ * separators behind a single first-match. Flank modes travel the same way:
+ * they are slot stamps that must reach template emission even when the
+ * slot is UNNAMED — the surface only carries named slots, so a surface
+ * entry for unnamed storage (e.g. a merged union slot's `content`) is
+ * minted from the template body with default 'none' modes, silently
+ * hardcoding the rendered flank to absent. The stamps collected here win
+ * over those surface defaults at the call site.
+ */
+function collectSlotEmissionMetadata(
+	node: AssembledNode | undefined,
+	slotModel: ReturnType<typeof renderSlotModelOf>
+): SlotEmissionMetadata {
+	const multipleByName = new Map<string, boolean>();
+	const requiredByName = new Map<string, boolean>();
+	const storageByName = new Map<string, string>();
+	const separatorByName = new Map<string, string>();
+	const trailingModeByName = new Map<string, 'mandatory' | 'optional' | 'none'>();
+	const leadingModeByName = new Map<string, 'mandatory' | 'optional' | 'none'>();
+	const unnamedNames = new Set<string>();
+	if (node) {
+		for (const f of [...slotModel.named, ...slotModel.unnamed]) {
+			const mul = isMultiple(f);
+			const req = isRequired(f);
+			multipleByName.set(f.name, mul);
+			requiredByName.set(f.name, req);
+			storageByName.set(f.name, f.storageName);
+			if (f.trailingMode !== 'none') trailingModeByName.set(f.name, f.trailingMode);
+			if (f.leadingMode !== 'none') leadingModeByName.set(f.name, f.leadingMode);
+			for (const v of f.values) {
+				if (v.separator) {
+					separatorByName.set(f.name, v.separator);
+					break;
+				}
+			}
+			// Template walker emits one template var per kind referenced by an
+			// unnamed slot (e.g. a slot with kinds [escape_sequence, string_content]
+			// surfaces both names in the template). Register every kind as an
+			// alias that points back to the slot's single storage so the template
+			// variables all bind to the same transport field. Skip aliases that
+			// collide with another slot's own name — declared fields take
+			// precedence. Only register aliases for unnamed MULTIPLE slots:
+			// single-value slots store one transport-shaped value that cannot
+			// be re-routed through a kind-named template variable, and the
+			// template-walker's "kind as variable" pattern only applies to the
+			// list-style `{{ kind | join(...) }}` emission.
+			if (f.isUnnamed && mul) {
+				for (const k of kindsOf(f)) {
+					const alias = k.replace(/^_+/, '');
+					if (alias === f.name) continue;
+					if (storageByName.has(alias)) continue;
+					multipleByName.set(alias, mul);
+					requiredByName.set(alias, req);
+					storageByName.set(alias, f.storageName);
+				}
+			}
+		}
+		for (const f of slotModel.unnamed) {
+			unnamedNames.add(f.name);
+			if (f.isUnnamed && isMultiple(f)) {
+				for (const k of kindsOf(f)) {
+					const alias = k.replace(/^_+/, '');
+					if (alias === f.name) continue;
+					// Only mark as unnamed-alias when the alias resolves to this
+					// unnamed slot — see the storageByName guard above.
+					if (storageByName.get(alias) === f.storageName) {
+						unnamedNames.add(alias);
+					}
+				}
+			}
+		}
+	}
+	return {
+		multipleByName,
+		requiredByName,
+		storageByName,
+		separatorByName,
+		trailingModeByName,
+		leadingModeByName,
+		unnamedNames
+	};
 }
 
 interface PerSlotChildEnum {

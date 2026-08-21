@@ -58087,6 +58087,152 @@
       "$named": true,
       "_statements": [
         {
+          "$type": 292,
+          "$source": 0,
+          "$named": true,
+          "_name": "T",
+          "_body": {
+            "$type": 293,
+            "$source": 0,
+            "$named": true,
+            "_enum_body_elements": {
+              "$type": 373,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                14,
+                14
+              ],
+              "$span": {
+                "start": 9,
+                "end": 14
+              },
+              "$nodeHandle": 6,
+              "_content": [
+                "A",
+                "B"
+              ],
+              "_content_trailing_sep": true
+            },
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 7,
+              "end": 16
+            },
+            "$nodeHandle": 5
+          },
+          "$other": [
+            135
+          ],
+          "$span": {
+            "start": 0,
+            "end": 16
+          },
+          "$nodeHandle": 4,
+          "$slotOrder": [
+            "name",
+            "body"
+          ]
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 16
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "enum T{ A,B, }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "enum T { A, B, }",
+    "pattern": "program",
+    "edits": [],
+    "expectedSourceOut": "enum T{ A,B, }",
+    "expectedReparseTree": "(program statements: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier)))))",
+    "wrappedText": "enum T{ A,B, }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 292,
+      "$source": 0,
+      "$named": true,
+      "_name": "T",
+      "_body": {
+        "$type": 293,
+        "$source": 0,
+        "$named": true,
+        "_enum_body_elements": {
+          "$type": 373,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            14,
+            14
+          ],
+          "$span": {
+            "start": 9,
+            "end": 14
+          },
+          "$nodeHandle": 8,
+          "_content": [
+            "A",
+            "B"
+          ],
+          "_content_trailing_sep": true
+        },
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 7,
+          "end": 16
+        },
+        "$nodeHandle": 7
+      },
+      "$other": [
+        135
+      ],
+      "$span": {
+        "start": 0,
+        "end": 16
+      },
+      "$nodeHandle": 1,
+      "$slotOrder": [
+        "name",
+        "body"
+      ]
+    },
+    "expectedOutput": "enum T{ A,B, }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "enum T { A, B, }",
+    "pattern": "enum_declaration",
+    "edits": [],
+    "expectedSourceOut": "enum T{ A,B, }",
+    "expectedReparseTree": "(enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier))))",
+    "wrappedText": "enum T{ A,B, }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 167,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
           "$type": 183,
           "$source": 0,
           "$named": true,
