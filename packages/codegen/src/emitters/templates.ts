@@ -50,7 +50,9 @@ import {
 	kindsOf,
 	isTerminalValue,
 	edgeClassesOfKind,
-	patternLeadingEdgeClass
+	edgeCharSetsOfKind,
+	patternLeadingEdgeClass,
+	storageKindOfValue
 } from '../compiler/model/node-map.ts';
 import type {
 	AssembledBranch,
@@ -136,6 +138,13 @@ export interface EmitCtx {
 	// declared glued from classes alone (only concrete characters decide),
 	// so it stays `runtime-varying`. Optional for hand-built test ctx.
 	readonly mergePairClassCombos?: ReadonlySet<string>;
+	// The pair table's left/right character projections: a char absent from
+	// the right set can never be seamed AGAINST (as a boundary's right
+	// char), one absent from the left set can never seam FORWARD — the
+	// separator-side static rule in `staticListInterior` quantifies over
+	// these instead of unknown element edges. Optional for hand-built ctx.
+	readonly mergePairLeftChars?: ReadonlySet<string>;
+	readonly mergePairRightChars?: ReadonlySet<string>;
 	readonly ownerSlots?: Readonly<Record<string, AssembledNonterminal>>;
 	readonly currentKind?: string;
 }
@@ -243,14 +252,18 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				return (l: string, r: string) =>
 					l.charCodeAt(0) < 128 && r.charCodeAt(0) < 128 && pairs.has(l.charCodeAt(0) * 128 + r.charCodeAt(0));
 			})(),
-			mergePairClassCombos: (() => {
+			...(() => {
 				const table = wordCharAsciiTable(this.#wordMatcher);
 				const cls = (code: number) => (table[code] ? 'word' : 'not-word');
 				const combos = new Set<string>();
+				const lefts = new Set<string>();
+				const rights = new Set<string>();
 				for (const [a, b] of literalMergePairs(getTransportProjection(config.nodeMap).literals)) {
 					combos.add(`${cls(a)}\0${cls(b)}`);
+					lefts.add(String.fromCharCode(a));
+					rights.add(String.fromCharCode(b));
 				}
-				return combos;
+				return { mergePairClassCombos: combos, mergePairLeftChars: lefts, mergePairRightChars: rights };
 			})(),
 			externals: [...(config.nodeMap.externals ?? [])],
 			rules: config.nodeMap.normalizedRules ?? {},
@@ -869,7 +882,103 @@ function selectJoinFilter(
 
 const DEFAULT_JOIN_SEPARATOR = '';
 
-function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonterminal): string {
+/**
+ * The SpacingWriter's seam law — `word_seam(l, r) ∨ (l ≠ r ∧
+ * literal_merge_pair(l, r))`, same word table, same pair table, including
+ * the identical-char exclusion (see `spacing.rs::write_str`) — applied
+ * STATICALLY to a list's interior boundaries. The separator string itself
+ * captures the resolution: a constant-TRUE outcome over the slot's derived
+ * edge-char sets (`edgeCharSetsOfKind`) bakes the owed space into the
+ * separator (`static-spaced` — the writer's residual checks then see a
+ * space and never fire); a constant-FALSE outcome, or a separator whose
+ * own edge chars can never seam against ANY character, proves the
+ * remaining checks dead (`runtime-derivable` — emission unchanged, the
+ * census records the statically-known outcome). Marks are NOT used here:
+ * they are reserved for grammar-immediacy, where the writer would wrongly
+ * INSERT and must be suppressed.
+ *
+ * A trailing-trivia element edge ('\n' after a line comment) is not in
+ * the derived sets, but it is seam-inert against every right edge, so
+ * glue verdicts stay valid; the space-bake verdict can over-space after
+ * such trivia — a whitespace-only, reparse-identical divergence.
+ *
+ * Any unknown edge, empty edge text, or non-constant outcome returns
+ * `undefined`: the boundary stays with the runtime writer, outcome and
+ * all.
+ */
+interface ListInteriorResolution {
+	readonly sep: string;
+	readonly resolution: 'static-spaced' | 'runtime-derivable';
+}
+
+function staticListInterior(
+	slot: AssembledNonterminal,
+	sep: string,
+	ctx: EmitCtx
+): ListInteriorResolution | undefined {
+	let verdict: ListInteriorResolution | undefined;
+	let detail = '';
+	if (sep !== '') {
+		const first = sep[0]!;
+		const last = sep[sep.length - 1]!;
+		const blocked =
+			!ctx.isWordChar(first) &&
+			!ctx.isWordChar(last) &&
+			ctx.mergePairRightChars?.has(first) === false &&
+			ctx.mergePairLeftChars?.has(last) === false;
+		verdict = blocked ? { sep, resolution: 'runtime-derivable' } : undefined;
+		detail = `sep=${JSON.stringify(sep)}`;
+	} else {
+		const edgeCtx = { nodes: ctx.nodeMap.nodes, linkRules: ctx.nodeMap.linkRules, isWordChar: ctx.isWordChar };
+		const ends = new Set<string>();
+		const starts = new Set<string>();
+		let known = true;
+		for (const v of slot.values) {
+			if (isTerminalValue(v)) {
+				if (v.value === '') {
+					known = false;
+					break;
+				}
+				ends.add(v.value[v.value.length - 1]!);
+				starts.add(v.value[0]!);
+				continue;
+			}
+			const kind = storageKindOfValue(v);
+			const sets = kind === undefined ? {} : edgeCharSetsOfKind(kind, edgeCtx);
+			if (sets.starts === undefined || sets.ends === undefined) {
+				known = false;
+				break;
+			}
+			for (const c of sets.ends) ends.add(c);
+			for (const c of sets.starts) starts.add(c);
+		}
+		if (known && ends.size > 0 && starts.size > 0) {
+			let seams = 0;
+			for (const l of ends) {
+				for (const r of starts) {
+					const seam = (ctx.isWordChar(l) && ctx.isWordChar(r)) || (l !== r && ctx.isLiteralMergePair(l, r));
+					if (seam) seams++;
+				}
+			}
+			const combos = ends.size * starts.size;
+			verdict =
+				seams === combos
+					? { sep: ' ', resolution: 'static-spaced' }
+					: seams === 0
+						? { sep: '', resolution: 'runtime-derivable' }
+						: undefined;
+			detail = `ends={${[...ends].join('')}} starts={${[...starts].join('')}}`;
+		} else {
+			detail = 'edges unknown';
+		}
+	}
+	if (process.env['DBG_LIST_SEAM'] === '1') {
+		console.error(`[list-seam] ${ctx.currentKind ?? '?'}: ${detail} -> ${verdict?.resolution ?? 'runtime'}`);
+	}
+	return verdict;
+}
+
+function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonterminal, ctx?: EmitCtx): string {
 	const filter = selectJoinFilter(rule, slot);
 	// Immediate-terminal check: when ALL slot values are terminal entries
 	// stamped with `immediate: true` (produced by `token.immediate(…)` in
@@ -906,6 +1015,25 @@ function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonter
 				)?.separator
 			: undefined;
 	const sep = allImmediate ? '' : (ruleSep ?? slotValueSep ?? DEFAULT_JOIN_SEPARATOR);
+	// Statically resolved list interiors (`staticListInterior`): a
+	// static-spaced verdict bakes the owed space into the separator string;
+	// a runtime-derivable verdict changes nothing (checks are provably
+	// dead) and is recorded for the census. Plain 'join' only: flank
+	// filters compare captured anonymous-token text against the separator,
+	// which must stay the grammar's own.
+	const interior =
+		filter === 'join' && !allImmediate && slot !== undefined && ctx !== undefined
+			? staticListInterior(slot, sep, ctx)
+			: undefined;
+	if (interior !== undefined && ctx !== undefined) {
+		ctx.seamBoundaries?.push({
+			kind: ctx.currentKind ?? '(unknown)',
+			left: '·',
+			right: '·',
+			resolution: interior.resolution
+		});
+		return `{{ ${slotName} | ${filter}("${escapeJinjaString(interior.sep)}") }}`;
+	}
 	return `{{ ${slotName} | ${filter}("${escapeJinjaString(sep)}") }}`;
 }
 
@@ -922,7 +1050,7 @@ function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal, ctx: Em
 		// this SAME merged array slot — emit the join only once per kind.
 		if (ctx.emittedArraySlots.has(slot)) return '';
 		ctx.emittedArraySlots.add(slot);
-		return emitListSlot(slotName, rule, slot);
+		return emitListSlot(slotName, rule, slot, ctx);
 	}
 	if (mult === 'optional' || !isRequired(slot)) {
 		return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
@@ -1102,7 +1230,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 						? (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase()
 						: (pickConditionalKey(helperRenderRule, helperCtx) ??
 							(rule.name.replace(/^_+/, '') || 'children').toLowerCase());
-					return emitListSlot(listName, rule, slot);
+					return emitListSlot(listName, rule, slot, helperCtx);
 				}
 				// symbolFieldName: when present, it's the outer FIELD's own name
 				// (e.g. `name`/`semicolon`) — prefer it over a condKey derived
@@ -1161,7 +1289,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 				const listName = slot
 					? (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase()
 					: (pickConditionalKey(target, ctx) ?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase());
-				return emitListSlot(listName, rule, slot);
+				return emitListSlot(listName, rule, slot, ctx);
 			}
 			// Bug 5 fix (hidden-helper path): when the surrounding context stamped
 			// `multiplicity: 'optional'` onto this symbol (e.g. the symbol was

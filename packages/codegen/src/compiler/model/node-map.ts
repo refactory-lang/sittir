@@ -3359,3 +3359,99 @@ function ruleEdgeClass(
 			return 'varies';
 	}
 }
+
+/** Concrete edge character sets of a kind's rendered text — `undefined`
+ *  side = not statically enumerable (patterns, nullable edges, cycles).
+ *  These are the inputs the static seam law quantifies over; the edge
+ *  CLASSES above are their projection. */
+export interface KindEdgeCharSets {
+	readonly starts?: ReadonlySet<string>;
+	readonly ends?: ReadonlySet<string>;
+}
+
+export function edgeCharSetsOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeCharSets {
+	const node = ctx.nodes.get(kind);
+	if (node instanceof AssembledKeyword) {
+		return node.text === ''
+			? {}
+			: { starts: new Set([node.text[0]!]), ends: new Set([node.text[node.text.length - 1]!]) };
+	}
+	if (node instanceof AssembledEnum) {
+		const values = node.values.filter((v) => v !== '');
+		if (values.length === 0) return {};
+		return {
+			starts: new Set(values.map((v) => v[0]!)),
+			ends: new Set(values.map((v) => v[v.length - 1]!))
+		};
+	}
+	if (node instanceof AssembledPattern) {
+		const fixed = node.fixedLiteralText;
+		if (fixed !== undefined && fixed !== '') {
+			return { starts: new Set([fixed[0]!]), ends: new Set([fixed[fixed.length - 1]!]) };
+		}
+		return {};
+	}
+	const rule = ctx.linkRules?.[kind];
+	return {
+		starts: ruleEdgeCharSet(rule, 'starts', ctx, new Set([kind])),
+		ends: ruleEdgeCharSet(rule, 'ends', ctx, new Set([kind]))
+	};
+}
+
+function ruleEdgeCharSet(
+	rule: Rule<'link'> | undefined,
+	side: 'starts' | 'ends',
+	ctx: EdgeClassCtx,
+	visiting: Set<string>
+): ReadonlySet<string> | undefined {
+	if (!rule) return undefined;
+	switch (rule.type) {
+		case 'STRING': {
+			const c = side === 'starts' ? rule.value[0] : rule.value[rule.value.length - 1];
+			return c === undefined ? undefined : new Set([c]);
+		}
+		case 'SEQ': {
+			// A nullable edge member (OPTIONAL/REPEAT) contributes its
+			// content's edge chars AND falls through to the next member
+			// inward — both are possible edges depending on presence.
+			const members = side === 'starts' ? rule.members : [...rule.members].reverse();
+			const union = new Set<string>();
+			for (const m of members) {
+				const nullable = m.type === 'OPTIONAL' || m.type === 'REPEAT';
+				const s = ruleEdgeCharSet(nullable ? (m as { content: Rule<'link'> }).content : m, side, ctx, visiting);
+				if (s === undefined) return undefined;
+				for (const c of s) union.add(c);
+				if (!nullable) return union;
+			}
+			return union.size > 0 ? union : undefined;
+		}
+		case 'CHOICE': {
+			const union = new Set<string>();
+			for (const m of rule.members) {
+				const s = ruleEdgeCharSet(m, side, ctx, visiting);
+				if (s === undefined) return undefined;
+				for (const c of s) union.add(c);
+			}
+			return union.size > 0 ? union : undefined;
+		}
+		case 'REPEAT1':
+		case 'FIELD':
+		case 'VARIANT':
+		case 'ALIAS':
+		case 'TOKEN':
+			return ruleEdgeCharSet(rule.content, side, ctx, visiting);
+		case 'SYMBOL': {
+			if (visiting.has(rule.name)) return undefined;
+			visiting.add(rule.name);
+			const node = ctx.nodes.get(rule.name);
+			if (node instanceof AssembledLeaf) {
+				return edgeCharSetsOfKind(rule.name, ctx)[side];
+			}
+			return ruleEdgeCharSet(ctx.linkRules?.[rule.name], side, ctx, visiting);
+		}
+		default:
+			// PATTERN (not enumerable), OPTIONAL/REPEAT (nullable edge), and
+			// forms with no single terminal on this side.
+			return undefined;
+	}
+}

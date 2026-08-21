@@ -269,9 +269,12 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		// SpacingWriter first consumer: the default list separator is empty —
-		// the render-time writer supplies word-word seam spaces.
-		expect(emitRule(rule, ctx)).toBe('{{ args | join("") }}');
+		// Static seam resolution: the fixture's single terminal value 'x' is
+		// word-class on both edges, so every interior boundary statically
+		// owes a space under the writer's law — the space bakes into the
+		// separator string (`staticListInterior`), byte-identical to the
+		// writer's own insertion.
+		expect(emitRule(rule, ctx)).toBe('{{ args | join(" ") }}');
 	});
 
 	it('uses the separator attribute when emitting a list slot', () => {
@@ -420,8 +423,34 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		// isMultiple(slot) is false (values=[]), multiplicity=array → list form
-		// SpacingWriter first consumer: default separator is empty (see above).
+		// isMultiple(slot) is false (one 'single' value), multiplicity=array
+		// → list form. Same static resolution as the fieldName suite: the
+		// word-edged terminal value bakes the owed space into the separator.
+		expect(emitRule(rule, ctx)).toBe('{{ item | join(" ") }}');
+	});
+
+	it('keeps the empty separator and the runtime writer when edges are unknown', () => {
+		const rule: SymbolRule = {
+			type: SYMBOL,
+			name: 'item',
+			id: 'r11',
+			multiplicity: 'array'
+		};
+		// A node-ref value with no resolvable kind: edge chars underivable,
+		// so the interior stays with the runtime SpacingWriter.
+		const slot = makeSlot({
+			name: 'item',
+			propertyName: 'item',
+			storageName: 'item',
+			values: [{ node: {}, multiplicity: 'single' } as unknown as NodeOrTerminal]
+		});
+		const ctx = makeCtx({
+			nodeMap: {
+				slotByRuleId: new Map([['r11', slot]]),
+				nodeByRuleId: new Map(),
+				nodes: new Map()
+			} as unknown as EmitCtx['nodeMap']
+		});
 		expect(emitRule(rule, ctx)).toBe('{{ item | join("") }}');
 	});
 
