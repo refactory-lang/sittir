@@ -618,8 +618,8 @@ function emitSeparatedListFrom(
 	const candidateKindNames = hasSeparatorKindOption
 		? collectSeparatorCandidateKindNames(node.separatorRule!).filter((k) => hasCatalogEntry(kindEntries, k))
 		: [];
-	const hasLeadingOption = node.leadingMode === 'optional';
-	const hasTrailingOption = node.trailingMode === 'optional';
+	const hasLeadingOption = node.leadingDelimiter === 'optional';
+	const hasTrailingOption = node.trailingDelimiter === 'optional';
 	const hasOptions = hasSeparatorKindOption || hasLeadingOption || hasTrailingOption;
 
 	// The factory's spread signature — `fn(...elements)` / `fn(options,

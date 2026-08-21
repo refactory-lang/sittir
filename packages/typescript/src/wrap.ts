@@ -341,7 +341,7 @@ function _separatorKindOf(data: _NodeData, candidateKindIds: readonly number[]):
 // "this is the trailing flank", and the count alone cannot tell them
 // apart (both queries would compute the identical boolean off the
 // identical formula). `otherFlankOptional` is the codegen-time fact
-// (`node.leadingMode === 'optional' && node.trailingMode === 'optional'`)
+// (`node.leadingDelimiter === 'optional' && node.trailingDelimiter === 'optional'`)
 // that flags this — a kind combining both-optional flanks with
 // text-collapsed content has no real-grammar coverage today (all such
 // kinds currently retain per-element span), so this throws loudly rather

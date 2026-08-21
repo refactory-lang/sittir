@@ -425,10 +425,10 @@ interface EmittedField {
 	hasTransportField: boolean;
 	storageName: string;
 	isUnnamed: boolean;
-	hasLeading: boolean;
-	hasTrailing: boolean;
-	trailingMode: 'mandatory' | 'optional' | 'none';
-	leadingMode: 'mandatory' | 'optional' | 'none';
+	hasLeadingDelimiter: boolean;
+	hasTrailingDelimiter: boolean;
+	trailingDelimiter: 'mandatory' | 'optional' | 'none';
+	leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	separator?: string;
 	backingTransportField?: string;
 	backingInnerRequired?: boolean;
@@ -462,8 +462,8 @@ function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNont
 		(merged, slot) =>
 			merged.with({
 				values: [...merged.values, ...slot.values],
-				hasTrailing: merged.hasTrailing || slot.hasTrailing,
-				hasLeading: merged.hasLeading || slot.hasLeading
+				hasTrailingDelimiter: merged.hasTrailingDelimiter || slot.hasTrailingDelimiter,
+				hasLeadingDelimiter: merged.hasLeadingDelimiter || slot.hasLeadingDelimiter
 			}),
 		first.with({ values: [...first.values] })
 	);
@@ -556,8 +556,8 @@ function emitStruct(
 		required: requiredByName.has(slot.name) ? (requiredByName.get(slot.name) as boolean) : slot.required,
 		// Slot-stamped flank modes win over the surface's default (see the
 		// trailingModeByName doc comment above).
-		trailingMode: trailingModeByName.get(slot.name) ?? slot.trailingMode,
-		leadingMode: leadingModeByName.get(slot.name) ?? slot.leadingMode,
+		trailingDelimiter: trailingModeByName.get(slot.name) ?? slot.trailingDelimiter,
+		leadingDelimiter: leadingModeByName.get(slot.name) ?? slot.leadingDelimiter,
 		// Mark whether this slot has a corresponding field in the transport struct.
 		// Virtual presentation slots (from the template walker) are not in the
 		// transport struct and must be defaulted to "" in the typed dispatch path.
@@ -630,10 +630,10 @@ function mergeTemplateSurfaceFromBody(body: string, surface: RenderTemplateSurfa
 			name,
 			view,
 			required: !guarded.has(name),
-			hasLeading: false,
-			hasTrailing: false,
-			trailingMode: 'none',
-			leadingMode: 'none'
+			hasLeadingDelimiter: false,
+			hasTrailingDelimiter: false,
+			trailingDelimiter: 'none',
+			leadingDelimiter: 'none'
 		} as const;
 		const prev = byName.get(name);
 		if (!prev) {
@@ -676,10 +676,10 @@ function buildSlotModelSurface(node: AssembledNode | undefined): RenderTemplateS
 		name: slot.name,
 		view: (isMultiple(slot) ? 'field' : 'scalar') as 'scalar' | 'list' | 'field',
 		required: isRequired(slot),
-		hasLeading: slot.hasLeading,
-		hasTrailing: slot.hasTrailing,
-		trailingMode: slot.trailingMode,
-		leadingMode: slot.leadingMode
+		hasLeadingDelimiter: slot.hasLeadingDelimiter,
+		hasTrailingDelimiter: slot.hasTrailingDelimiter,
+		trailingDelimiter: slot.trailingDelimiter,
+		leadingDelimiter: slot.leadingDelimiter
 	}));
 	return {
 		slots,
@@ -1394,10 +1394,10 @@ function buildTypedTemplateBody(
 			// See docs/superpowers/specs/2026-07-12-separator-as-slot-design.md
 			// ("Render" section).
 			const separatedList = node instanceof AssembledSeparatedList ? node : undefined;
-			// Three-way branch on `SeparatorFlankMode`: `'optional'` reads the
+			// Three-way branch on `DelimiterMode`: `'optional'` reads the
 			// wire-captured per-instance bool; `'mandatory'` is always present
 			// (hardcoded `true`, no per-instance capture exists — see
-			// AssembledSeparatedList's `leadingMode`/`trailingMode` doc comment,
+			// AssembledSeparatedList's `leadingDelimiter`/`trailingDelimiter` doc comment,
 			// node-map.ts); `'none'`/`undefined` is always absent (`false`).
 			// Non-separatedList list-shaped slots (a 'branch'/'group' kind's own
 			// array field, e.g. a paren-wrapped tuple's inner repeat) carry the
@@ -1405,7 +1405,7 @@ function buildTypedTemplateBody(
 			// threaded from AssembledNonterminal — see wrap.ts's
 			// emitFieldFlankCaptureLines doc comment for the per-field wire-key
 			// counterpart this reads). Only the 'optional' case is wired here.
-			// `f.trailingMode === 'mandatory'` on an inner slot is deliberately
+			// `f.trailingDelimiter === 'mandatory'` on an inner slot is deliberately
 			// left at the 'false' default rather than flipped to an
 			// unconditional 'true': unlike the kind-level AssembledSeparatedList
 			// case (a proven-safe, already-shipped fact), no inner-slot kind
@@ -1413,19 +1413,19 @@ function buildTypedTemplateBody(
 			// output — flipping it speculatively risks an unreviewed behavior
 			// change on a kind whose output is otherwise byte-identical today.
 			const leadingExpr =
-				separatedList?.leadingMode === 'optional'
+				separatedList?.leadingDelimiter === 'optional'
 					? 'node.leading_sep.unwrap_or(false)'
-					: separatedList?.leadingMode === 'mandatory'
+					: separatedList?.leadingDelimiter === 'mandatory'
 						? 'true'
-						: f.leadingMode === 'optional'
+						: f.leadingDelimiter === 'optional'
 							? `node.${rIdent}_leading_sep.unwrap_or(false)`
 							: 'false';
 			const trailingExpr =
-				separatedList?.trailingMode === 'optional'
+				separatedList?.trailingDelimiter === 'optional'
 					? 'node.trailing_sep.unwrap_or(false)'
-					: separatedList?.trailingMode === 'mandatory'
+					: separatedList?.trailingDelimiter === 'mandatory'
 						? 'true'
-						: f.trailingMode === 'optional'
+						: f.trailingDelimiter === 'optional'
 							? `node.${rIdent}_trailing_sep.unwrap_or(false)`
 							: 'false';
 			const separatorMatchLines =
@@ -2733,8 +2733,8 @@ function collectSlotEmissionMetadata(
 			multipleByName.set(f.name, mul);
 			requiredByName.set(f.name, req);
 			storageByName.set(f.name, f.storageName);
-			if (f.trailingMode !== 'none') trailingModeByName.set(f.name, f.trailingMode);
-			if (f.leadingMode !== 'none') leadingModeByName.set(f.name, f.leadingMode);
+			if (f.trailingDelimiter !== 'none') trailingModeByName.set(f.name, f.trailingDelimiter);
+			if (f.leadingDelimiter !== 'none') leadingModeByName.set(f.name, f.leadingDelimiter);
 			for (const v of f.values) {
 				if (v.separator) {
 					separatorByName.set(f.name, v.separator);
@@ -3690,13 +3690,13 @@ function renderTransportDataStruct(
 				// leading_sep/trailing_sep fields below. Gated on the SAME
 				// 'optional' mode wrap.ts gates its wire-key emission on, so a
 				// struct field only exists when the wire can actually populate it.
-				if (field.trailingMode === 'optional') {
+				if (field.trailingDelimiter === 'optional') {
 					lines.push(
 						`    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_${field.storageName}_trailing_sep"))]`,
 						`    pub ${rustFieldIdent(field.storageName)}_trailing_sep: Option<bool>,`
 					);
 				}
-				if (field.leadingMode === 'optional') {
+				if (field.leadingDelimiter === 'optional') {
 					lines.push(
 						`    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_${field.storageName}_leading_sep"))]`,
 						`    pub ${rustFieldIdent(field.storageName)}_leading_sep: Option<bool>,`
@@ -3761,13 +3761,13 @@ function renderTransportDataStruct(
 				// section) — mirror that same gating here so the struct never
 				// declares a field the wire can't populate.
 				if (node instanceof AssembledSeparatedList) {
-					if (node.leadingMode === 'optional') {
+					if (node.leadingDelimiter === 'optional') {
 						lines.push(
 							'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_leading_sep"))]',
 							'    pub leading_sep: Option<bool>,'
 						);
 					}
-					if (node.trailingMode === 'optional') {
+					if (node.trailingDelimiter === 'optional') {
 						lines.push(
 							'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]',
 							'    pub trailing_sep: Option<bool>,'

@@ -3,7 +3,7 @@
  *
  * Covers:
  * - renderTransportDataStruct: `leading_sep`/`trailing_sep`/`separator_kind`
- *   sibling transport-struct fields, gated on leadingMode/trailingMode/
+ *   sibling transport-struct fields, gated on leadingDelimiter/trailingDelimiter/
  *   separatorRule exactly like wrap.ts's `emitSeparatedListWrap` wire capture.
  * - buildTypedTemplateBody: real `leading`/`trailing`/`separator` expressions
  *   in the emitted `ListNonterminalView` for 'separatedList' kinds, instead

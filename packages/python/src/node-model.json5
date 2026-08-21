@@ -2120,8 +2120,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "expression",
         "list_splat",
@@ -2308,8 +2308,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "case_pattern"
       ],
@@ -2327,8 +2327,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "expression",
         "yield",
@@ -2495,8 +2495,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "key_value_pattern",
         "splat_pattern"
@@ -2515,8 +2515,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "pair",
         "dictionary_splat"
@@ -2752,8 +2752,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "mandatory",
-      "trailingMode": "optional",
+      "leadingDelimiter": "mandatory",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "expression"
       ],
@@ -2919,8 +2919,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "dotted_name",
         "aliased_import"
@@ -3042,8 +3042,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "case_pattern"
       ],
@@ -3186,8 +3186,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "parameter"
       ],
@@ -3205,8 +3205,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "mandatory",
-      "trailingMode": "optional",
+      "leadingDelimiter": "mandatory",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "pattern"
       ],
@@ -3224,8 +3224,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "pattern"
       ],
@@ -3467,8 +3467,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "_simple_statement"
       ],
@@ -3554,8 +3554,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "expression"
       ],
@@ -3573,8 +3573,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "expression",
         "slice"
@@ -3682,8 +3682,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "type"
       ],
@@ -3726,8 +3726,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "with_item"
       ],
@@ -3784,8 +3784,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "with_item"
       ],

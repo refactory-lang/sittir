@@ -3746,8 +3746,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "attributed_argument"
       ],
@@ -4995,8 +4995,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "attributed_enum_variant"
       ],
@@ -5265,8 +5265,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "attributed_field_declaration"
       ],
@@ -5293,8 +5293,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "shorthand_field_initializer",
         "field_initializer",
@@ -5876,8 +5876,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "lifetime"
       ],
@@ -6156,8 +6156,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "macro_rule"
       ],
@@ -6474,8 +6474,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "attributed_ordered_field"
       ],
@@ -6513,8 +6513,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "attributed_parameter"
       ],
@@ -6583,8 +6583,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "_pattern"
       ],
@@ -7371,8 +7371,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "field_pattern",
         "remaining_field_pattern"
@@ -7776,8 +7776,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "_pattern",
         "closure_expression"
@@ -7916,8 +7916,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "type_argument"
       ],
@@ -7979,8 +7979,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "attributed_type_parameter"
       ],
@@ -7998,8 +7998,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "lifetime",
         "_type_identifier"
@@ -8039,8 +8039,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "_use_clause"
       ],
@@ -8324,8 +8324,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "where_predicate"
       ],

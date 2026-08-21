@@ -605,7 +605,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 });
 
 describe('AssembledSeparatedList — construction', () => {
-	it('derives elements/separatorRule/leadingMode/trailingMode for a nonterminal separator', () => {
+	it('derives elements/separatorRule/leadingDelimiter/trailingDelimiter for a nonterminal separator', () => {
 		const sepChoice: Rule<'link'> = {
 			type: CHOICE,
 			members: [
@@ -627,11 +627,11 @@ describe('AssembledSeparatedList — construction', () => {
 		expect(node.elements).toHaveLength(1);
 		expect(node.elements[0]).toMatchObject({ multiplicity: 'nonEmptyArray' });
 		expect(node.separatorRule).toBe(sepChoice);
-		expect(node.leadingMode).toBe('none');
-		expect(node.trailingMode).toBe('none');
+		expect(node.leadingDelimiter).toBe('none');
+		expect(node.trailingDelimiter).toBe('none');
 	});
 
-	it('derives separatorRule=undefined and trailingMode=optional for a literal separator with an optional trailing flank', () => {
+	it('derives separatorRule=undefined and trailingDelimiter=optional for a literal separator with an optional trailing flank', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
@@ -644,11 +644,11 @@ describe('AssembledSeparatedList — construction', () => {
 		});
 
 		expect(node.separatorRule).toBeUndefined();
-		expect(node.trailingMode).toBe('optional');
-		expect(node.leadingMode).toBe('none');
+		expect(node.trailingDelimiter).toBe('optional');
+		expect(node.leadingDelimiter).toBe('none');
 	});
 
-	it('derives separatorRule=undefined and leadingMode=optional for a literal separator with an optional leading flank', () => {
+	it('derives separatorRule=undefined and leadingDelimiter=optional for a literal separator with an optional leading flank', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
@@ -661,8 +661,8 @@ describe('AssembledSeparatedList — construction', () => {
 		});
 
 		expect(node.separatorRule).toBeUndefined();
-		expect(node.leadingMode).toBe('optional');
-		expect(node.trailingMode).toBe('none');
+		expect(node.leadingDelimiter).toBe('optional');
+		expect(node.trailingDelimiter).toBe('none');
 	});
 
 	it('derives nonEmptyArray-multiplicity elements for a repeat1 rule', () => {

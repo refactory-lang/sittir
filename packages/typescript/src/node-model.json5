@@ -5701,8 +5701,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "export_specifier"
       ],
@@ -6821,8 +6821,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "_formal_parameter"
       ],
@@ -7083,8 +7083,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "import_specifier"
       ],
@@ -8781,8 +8781,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "_tuple_type_member"
       ],
@@ -8808,8 +8808,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "type_parameter"
       ],
@@ -9400,8 +9400,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
-      "trailingMode": "optional",
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "type"
       ],
@@ -19372,8 +19372,8 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": true,
-      "leadingMode": "optional",
-      "trailingMode": "optional",
+      "leadingDelimiter": "optional",
+      "trailingDelimiter": "optional",
       "elementKinds": [
         "export_statement",
         "property_signature",

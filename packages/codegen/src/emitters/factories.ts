@@ -633,9 +633,9 @@ function emitFieldCarryingFactory(
 	// factory. Only wired for the `singleField`/`config` shapes below;
 	// `containerFacts` factories have no flank-optional field in any
 	// current grammar and keep today's un-configurable `false` default.
-	const flankOptionField = fields.find((f) => f.trailingMode === 'optional' || f.leadingMode === 'optional');
-	const hasLeadingOption = flankOptionField?.leadingMode === 'optional';
-	const hasTrailingOption = flankOptionField?.trailingMode === 'optional';
+	const flankOptionField = fields.find((f) => f.trailingDelimiter === 'optional' || f.leadingDelimiter === 'optional');
+	const hasLeadingOption = flankOptionField?.leadingDelimiter === 'optional';
+	const hasTrailingOption = flankOptionField?.trailingDelimiter === 'optional';
 	const hasFlankOptions = !containerFacts && flankOptionField !== undefined;
 	const flankOptionsTypeParts: string[] = [];
 	if (hasLeadingOption) flankOptionsTypeParts.push('leading?: boolean');
@@ -821,8 +821,8 @@ function emitFieldCarryingFactory(
 		// where a single-element instance structurally REQUIRES `trailing:
 		// true` to disambiguate from a parenthesized expression, a fixed
 		// `false` default is actively wrong, not just incomplete.
-		if (f.trailingMode === 'optional') lines.push(`    ${f.storageKey}_trailing_sep: ${flankSourceFor(f, 'trailing')},`);
-		if (f.leadingMode === 'optional') lines.push(`    ${f.storageKey}_leading_sep: ${flankSourceFor(f, 'leading')},`);
+		if (f.trailingDelimiter === 'optional') lines.push(`    ${f.storageKey}_trailing_sep: ${flankSourceFor(f, 'trailing')},`);
+		if (f.leadingDelimiter === 'optional') lines.push(`    ${f.storageKey}_leading_sep: ${flankSourceFor(f, 'leading')},`);
 	}
 	lines.push(...withLines);
 	lines.push('  }, {');
@@ -1065,8 +1065,8 @@ function emitSeparatedListFactory(
 	const candidateKindNames = hasSeparatorKindOption
 		? collectSeparatorCandidateKindNames(node.separatorRule!).filter((k) => hasCatalogEntry(kindEntries, k))
 		: [];
-	const hasLeadingOption = node.leadingMode === 'optional';
-	const hasTrailingOption = node.trailingMode === 'optional';
+	const hasLeadingOption = node.leadingDelimiter === 'optional';
+	const hasTrailingOption = node.trailingDelimiter === 'optional';
 	const hasOptions = hasSeparatorKindOption || hasLeadingOption || hasTrailingOption;
 
 	// `never` when the separator is nonterminal but zero candidates resolve

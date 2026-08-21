@@ -55,7 +55,7 @@ import {
 	deriveValuesForRule,
 	dedupeValues,
 	extractSeparatorString,
-	mergeFlankMode,
+	mergeDelimiterMode,
 	mergeSourceRuleIds,
 	recordAssembleWarning,
 	stampListFactsOnValues
@@ -267,10 +267,10 @@ function mergeByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
 		const prev = out[idx]!;
 		out[idx] = prev.with({
 			values: dedupeValues([...prev.values, ...s.values]),
-			hasTrailing: prev.hasTrailing || s.hasTrailing,
-			hasLeading: prev.hasLeading || s.hasLeading,
-			trailingMode: mergeFlankMode([prev.trailingMode, s.trailingMode]),
-			leadingMode: mergeFlankMode([prev.leadingMode, s.leadingMode]),
+			hasTrailingDelimiter: prev.hasTrailingDelimiter || s.hasTrailingDelimiter,
+			hasLeadingDelimiter: prev.hasLeadingDelimiter || s.hasLeadingDelimiter,
+			trailingDelimiter: mergeDelimiterMode([prev.trailingDelimiter, s.trailingDelimiter]),
+			leadingDelimiter: mergeDelimiterMode([prev.leadingDelimiter, s.leadingDelimiter]),
 			sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, s.sourceRuleIds)
 		});
 	}
@@ -313,10 +313,10 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 				slot.name,
 				prev.with({
 					values: dedupeValues([...prev.values, ...slot.values]),
-					hasTrailing: prev.hasTrailing || slot.hasTrailing,
-					hasLeading: prev.hasLeading || slot.hasLeading,
-					trailingMode: mergeFlankMode([prev.trailingMode, slot.trailingMode]),
-					leadingMode: mergeFlankMode([prev.leadingMode, slot.leadingMode]),
+					hasTrailingDelimiter: prev.hasTrailingDelimiter || slot.hasTrailingDelimiter,
+					hasLeadingDelimiter: prev.hasLeadingDelimiter || slot.hasLeadingDelimiter,
+					trailingDelimiter: mergeDelimiterMode([prev.trailingDelimiter, slot.trailingDelimiter]),
+					leadingDelimiter: mergeDelimiterMode([prev.leadingDelimiter, slot.leadingDelimiter]),
 					sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, slot.sourceRuleIds)
 				})
 			);
@@ -490,19 +490,19 @@ function buildSlot(
 	// branch/seq (e.g. a paren-wrapped tuple's inner repeat field) never
 	// reaches that check, so `sep?.trailing`/`.leading` here can genuinely be
 	// `'optional'`, not just `'mandatory'`. Preserve that tri-state via
-	// `trailingMode`/`leadingMode` (mirrors `AssembledSeparatedList`'s own
+	// `trailingDelimiter`/`leadingDelimiter` (mirrors `AssembledSeparatedList`'s own
 	// fields) instead of collapsing straight to a presence boolean — the
 	// `findRepeatFlag` fallback has no mode granularity of its own, so a flag
 	// found only that way is treated as `'mandatory'` (preserves prior
 	// behavior for that path; no known case needs `'optional'` there).
-	const trailingMode: 'mandatory' | 'optional' | 'none' = !isMultiSlot
+	const trailingDelimiter: 'mandatory' | 'optional' | 'none' = !isMultiSlot
 		? 'none'
 		: (sep?.trailing ?? (findRepeatFlag(rule, 'trailing') ? 'mandatory' : 'none'));
-	const leadingMode: 'mandatory' | 'optional' | 'none' = !isMultiSlot
+	const leadingDelimiter: 'mandatory' | 'optional' | 'none' = !isMultiSlot
 		? 'none'
 		: (sep?.leading ?? (findRepeatFlag(rule, 'leading') ? 'mandatory' : 'none'));
-	const hasTrailing = trailingMode !== 'none';
-	const hasLeading = leadingMode !== 'none';
+	const hasTrailingDelimiter = trailingDelimiter !== 'none';
+	const hasLeadingDelimiter = leadingDelimiter !== 'none';
 
 	const separatorStr = isMultiSlot ? extractSeparatorString(sep) : undefined;
 	// A NESTED-SCAN separator (the fanOutSeqChoices/factorChoiceBranches rebuild
@@ -550,10 +550,10 @@ function buildSlot(
 	return new AssembledNonterminal({
 		values,
 		fieldName: (rule as { fieldName?: string }).fieldName,
-		hasTrailing,
-		hasLeading,
-		trailingMode,
-		leadingMode,
+		hasTrailingDelimiter,
+		hasLeadingDelimiter,
+		trailingDelimiter,
+		leadingDelimiter,
 		sourceRuleIds,
 		// Blind opaque passthrough — never read/branched
 		// on here or by any compiler consumer. Only a dsl-sanctioned reader

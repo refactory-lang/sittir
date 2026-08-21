@@ -2359,10 +2359,10 @@ export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
 	// Case 3: [sep, x, repeat(sep, x)] — a MANDATORY leading separator
 	// (bare, not `optional(...)`-wrapped): always present, no per-instance
 	// variability. Stamped `leading: 'mandatory'` — a real, distinct
-	// `SeparatorFlankMode` value from Case 4's `'optional'`, not the same
+	// `DelimiterMode` value from Case 4's `'optional'`, not the same
 	// boolean `true` both used to share (which is what let a genuinely
 	// mandatory flank get misclassified as `'optional'` downstream, per
-	// `AssembledSeparatedList.leadingMode`'s doc comment, node-map.ts).
+	// `AssembledSeparatedList.leadingDelimiter`'s doc comment, node-map.ts).
 	if (members.length === 3 && repeatIdx === 2 && rulesEqual(members[0]!, sep.value) && matchesElem(members[1]!)) {
 		return { type: REPEAT1, content: elem, separator: { ...sep, leading: 'mandatory' } };
 	}

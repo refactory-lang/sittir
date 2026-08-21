@@ -30,7 +30,7 @@ import {
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
-import type { AnyRule, SeparatorFlankMode } from '../types/rule.ts';
+import type { AnyRule, DelimiterMode } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal, NodeOrTerminal } from '../compiler/model/node-map.ts';
 import {
 	isNodeRef,
@@ -136,8 +136,8 @@ interface SerializedMulti extends SerializedNodeBase {
 	modelType: 'multi';
 	nonEmpty: boolean;
 	separator?: string;
-	trailing?: SeparatorFlankMode;
-	leading?: SeparatorFlankMode;
+	trailing?: DelimiterMode;
+	leading?: DelimiterMode;
 	elementKinds: string[];
 }
 
@@ -145,8 +145,8 @@ interface SerializedSeparatedList extends SerializedNodeBase {
 	modelType: 'separatedList';
 	nonEmpty: boolean;
 	hasNonterminalSeparator: boolean;
-	leadingMode: 'mandatory' | 'optional' | 'none';
-	trailingMode: 'mandatory' | 'optional' | 'none';
+	leadingDelimiter: 'mandatory' | 'optional' | 'none';
+	trailingDelimiter: 'mandatory' | 'optional' | 'none';
 	elementKinds: string[];
 }
 
@@ -301,8 +301,8 @@ function serializeNode(node: AssembledNode): SerializedNode {
 				modelType: 'separatedList',
 				nonEmpty: node.nonEmpty,
 				hasNonterminalSeparator: node.separatorRule !== undefined,
-				leadingMode: node.leadingMode,
-				trailingMode: node.trailingMode,
+				leadingDelimiter: node.leadingDelimiter,
+				trailingDelimiter: node.trailingDelimiter,
 				elementKinds: [...valueParseKindsOf({ values: node.elements })]
 			};
 	}

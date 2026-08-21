@@ -24,13 +24,13 @@
  */
 
 import { typeEq, type RuntimeRule } from '../types/runtime-shapes.ts';
-import type { SeparatorFlankMode } from '../types/rule.ts';
+import type { DelimiterMode } from '../types/rule.ts';
 import { ruleKey } from './shared.ts';
 
 interface SeparatorFact {
 	readonly value: RuntimeRule;
-	readonly trailing?: SeparatorFlankMode;
-	readonly leading?: SeparatorFlankMode;
+	readonly trailing?: DelimiterMode;
+	readonly leading?: DelimiterMode;
 }
 
 export function separatorFactsEqual(a: SeparatorFact | undefined, b: SeparatorFact | undefined): boolean {

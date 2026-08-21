@@ -1343,7 +1343,7 @@ function isSeparatedListShape(rule: RenderRule): boolean {
 	// Only a genuinely OPTIONAL flank has per-instance variability worth
 	// this classification — 'mandatory' (always present) is compile-time
 	// renderable exactly like 'none' (absent), and stays classified as
-	// 'branch' via the pre-existing hasTrailing/hasLeading mechanism.
+	// 'branch' via the pre-existing hasTrailingDelimiter/hasLeadingDelimiter mechanism.
 	return sep.trailing === 'optional' || sep.leading === 'optional';
 }
 

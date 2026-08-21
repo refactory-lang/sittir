@@ -132,8 +132,8 @@ export function pluralizeFieldName(name: string): string {
 interface SlotLike {
 	name: string;
 	arity: 'one' | 'many';
-	trailingMode: FlankMode;
-	leadingMode: FlankMode;
+	trailingDelimiter: FlankMode;
+	leadingDelimiter: FlankMode;
 	values: readonly {
 		node?: { kind?: string; name?: string };
 		value?: unknown;
@@ -239,15 +239,15 @@ export function computeSeparatedListsCensus(grammar: string, nm: NodeMap): Separ
 			if (arrayValues.length === 0) continue;
 			const separators = [...new Set(arrayValues.map((v) => v.separator).filter((s) => s !== undefined))];
 			if (separators.length === 0) continue;
-			const flankCarrying = slot.trailingMode === 'optional' || slot.leadingMode === 'optional';
+			const flankCarrying = slot.trailingDelimiter === 'optional' || slot.leadingDelimiter === 'optional';
 			const proposedName = pluralizeFieldName(slot.name);
 			const fallbackName = fallbackNameOf(kind, proposedName);
 			inline.push({
 				kind,
 				slot: slot.name,
 				separator: separators.map((s) => JSON.stringify(s)).join('|'),
-				leading: slot.leadingMode,
-				trailing: slot.trailingMode,
+				leading: slot.leadingDelimiter,
+				trailing: slot.trailingDelimiter,
 				flankCarrying,
 				elementKinds: [
 					...new Set(arrayValues.map((v) => refKindName(v) ?? JSON.stringify(v.value)))

@@ -597,8 +597,8 @@ export function buildSeparatedListContentSlot(node: AssembledSeparatedList): Ass
 	return new AssembledNonterminal({
 		values: node.elements,
 		fieldName: undefined,
-		hasTrailing: false,
-		hasLeading: false,
+		hasTrailingDelimiter: false,
+		hasLeadingDelimiter: false,
 		sourceRuleIds: []
 	});
 }
@@ -776,15 +776,15 @@ function emitSeparatedListWrap(
 			.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries));
 		lines.push(`    _separator_kind: _separatorKindOf(data, [${candidateExprs.join(', ')}]),`);
 	}
-	const bothFlanksOptional = node.leadingMode === 'optional' && node.trailingMode === 'optional';
-	if (node.leadingMode === 'optional') {
-		const mandatoryAnons = node.trailingMode === 'mandatory' ? 1 : 0;
+	const bothFlanksOptional = node.leadingDelimiter === 'optional' && node.trailingDelimiter === 'optional';
+	if (node.leadingDelimiter === 'optional') {
+		const mandatoryAnons = node.trailingDelimiter === 'mandatory' ? 1 : 0;
 		lines.push(
 			`    _leading_sep: _hasSeparatorFlank(data, _content, data.$other, "leading", ${bothFlanksOptional}, ${mandatoryAnons}),`
 		);
 	}
-	if (node.trailingMode === 'optional') {
-		const mandatoryAnons = node.leadingMode === 'mandatory' ? 1 : 0;
+	if (node.trailingDelimiter === 'optional') {
+		const mandatoryAnons = node.leadingDelimiter === 'mandatory' ? 1 : 0;
 		lines.push(
 			`    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", ${bothFlanksOptional}, ${mandatoryAnons}),`
 		);
@@ -957,8 +957,8 @@ function emitFieldFlankCaptureLines(
 	nodeMap: NodeMap
 ): void {
 	for (const f of fields) {
-		if (f.trailingMode !== 'optional' && f.leadingMode !== 'optional') continue;
-		if (f.trailingMode === 'optional' && f.leadingMode === 'optional') continue;
+		if (f.trailingDelimiter !== 'optional' && f.leadingDelimiter !== 'optional') continue;
+		if (f.trailingDelimiter === 'optional' && f.leadingDelimiter === 'optional') continue;
 		const sepText = f.values.map((v) => v.separator).find((s): s is string => s !== undefined);
 		if (sepText === undefined || !hasCatalogEntry(kindEntries, sepText)) continue;
 		const kindExpr = kindDiscriminantExpr(sepText, nodeMap, kindEntries);
@@ -966,12 +966,12 @@ function emitFieldFlankCaptureLines(
 		const otherExpr =
 			`(Array.isArray(${dataExpr}.$other) ? ${dataExpr}.$other : ${dataExpr}.$other !== undefined ? [${dataExpr}.$other] : [])` +
 			`.filter((e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === ${kindExpr})`;
-		if (f.trailingMode === 'optional') {
+		if (f.trailingDelimiter === 'optional') {
 			lines.push(
 				`    ${f.storageKey}_trailing_sep: _hasSeparatorFlank({}, ${contentExpr}, ${otherExpr}, "trailing", false, 0),`
 			);
 		}
-		if (f.leadingMode === 'optional') {
+		if (f.leadingDelimiter === 'optional') {
 			lines.push(
 				`    ${f.storageKey}_leading_sep: _hasSeparatorFlank({}, ${contentExpr}, ${otherExpr}, "leading", false, 0),`
 			);
@@ -1714,7 +1714,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'// "this is the trailing flank", and the count alone cannot tell them',
 						'// apart (both queries would compute the identical boolean off the',
 						'// identical formula). `otherFlankOptional` is the codegen-time fact',
-						"// (`node.leadingMode === 'optional' && node.trailingMode === 'optional'`)",
+						"// (`node.leadingDelimiter === 'optional' && node.trailingDelimiter === 'optional'`)",
 						'// that flags this — a kind combining both-optional flanks with',
 						'// text-collapsed content has no real-grammar coverage today (all such',
 						'// kinds currently retain per-element span), so this throws loudly rather',
