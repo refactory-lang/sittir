@@ -1207,6 +1207,34 @@
     }
   },
   {
+    "type": "collection_elements",
+    "named": true,
+    "fields": {
+      "element": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "list_splat",
+            "named": true
+          },
+          {
+            "type": "parenthesized_list_splat",
+            "named": true
+          },
+          {
+            "type": "yield",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "comparison_operator",
     "named": true,
     "fields": {
@@ -1709,34 +1737,6 @@
         "types": [
           {
             "type": "identifier",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "element_list",
-    "named": true,
-    "fields": {
-      "element": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "expression",
-            "named": true
-          },
-          {
-            "type": "list_splat",
-            "named": true
-          },
-          {
-            "type": "parenthesized_list_splat",
-            "named": true
-          },
-          {
-            "type": "yield",
             "named": true
           }
         ]
@@ -2866,7 +2866,7 @@
       "required": true,
       "types": [
         {
-          "type": "parameter_list",
+          "type": "parameters_elements",
           "named": true
         }
       ]
@@ -2911,7 +2911,7 @@
       "required": false,
       "types": [
         {
-          "type": "element_list",
+          "type": "collection_elements",
           "named": true
         }
       ]
@@ -2952,7 +2952,7 @@
       "required": false,
       "types": [
         {
-          "type": "pattern_group",
+          "type": "patterns",
           "named": true
         }
       ]
@@ -3217,7 +3217,22 @@
     }
   },
   {
-    "type": "parameter_list",
+    "type": "parameters",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "parameters_elements",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "parameters_elements",
     "named": true,
     "fields": {
       "parameter": {
@@ -3230,21 +3245,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "parameters",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "parameter_list",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -3299,22 +3299,6 @@
     "fields": {}
   },
   {
-    "type": "pattern_group",
-    "named": true,
-    "fields": {
-      "pattern": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "pattern",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "pattern_list",
     "named": true,
     "fields": {
@@ -3357,6 +3341,22 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "patterns",
+    "named": true,
+    "fields": {
+      "pattern": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "pattern",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -3533,7 +3533,7 @@
       "required": true,
       "types": [
         {
-          "type": "element_list",
+          "type": "collection_elements",
           "named": true
         }
       ]
@@ -3946,7 +3946,7 @@
       "required": false,
       "types": [
         {
-          "type": "element_list",
+          "type": "collection_elements",
           "named": true
         }
       ]
@@ -3961,7 +3961,7 @@
       "required": false,
       "types": [
         {
-          "type": "pattern_group",
+          "type": "patterns",
           "named": true
         }
       ]

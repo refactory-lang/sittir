@@ -1446,7 +1446,7 @@
                 "name": "_parameters"
               },
               "named": true,
-              "value": "parameter_list"
+              "value": "parameters_elements"
             },
             {
               "type": "BLANK"
@@ -1466,7 +1466,7 @@
         "name": "_parameters"
       },
       "named": true,
-      "value": "parameter_list"
+      "value": "parameters_elements"
     },
     "list_splat": {
       "type": "SEQ",
@@ -2686,7 +2686,7 @@
                 "name": "_patterns"
               },
               "named": true,
-              "value": "pattern_group"
+              "value": "patterns"
             },
             {
               "type": "BLANK"
@@ -2716,7 +2716,7 @@
                 "name": "_patterns"
               },
               "named": true,
-              "value": "pattern_group"
+              "value": "patterns"
             },
             {
               "type": "BLANK"
@@ -4468,7 +4468,7 @@
                 "name": "_collection_elements"
               },
               "named": true,
-              "value": "element_list"
+              "value": "collection_elements"
             },
             {
               "type": "BLANK"
@@ -4495,7 +4495,7 @@
             "name": "_collection_elements"
           },
           "named": true,
-          "value": "element_list"
+          "value": "collection_elements"
         },
         {
           "type": "STRING",
@@ -4520,7 +4520,7 @@
                 "name": "_collection_elements"
               },
               "named": true,
-              "value": "element_list"
+              "value": "collection_elements"
             },
             {
               "type": "BLANK"

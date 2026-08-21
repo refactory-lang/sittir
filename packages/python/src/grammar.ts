@@ -447,6 +447,22 @@ export type PythonGrammar = {
 			dotted_name: { multiple: false; required: true; types: [{ type: 'dotted_name'; named: true }] };
 		};
 	};
+	readonly collection_elements: {
+		type: 'collection_elements';
+		named: true;
+		fields: {
+			element: {
+				multiple: true;
+				required: true;
+				types: [
+					{ type: 'expression'; named: true },
+					{ type: 'list_splat'; named: true },
+					{ type: 'parenthesized_list_splat'; named: true },
+					{ type: 'yield'; named: true }
+				];
+			};
+		};
+	};
 	readonly comparison_operator: {
 		type: 'comparison_operator';
 		named: true;
@@ -636,22 +652,6 @@ export type PythonGrammar = {
 		type: 'dotted_name';
 		named: true;
 		fields: { identifier: { multiple: true; required: true; types: [{ type: 'identifier'; named: true }] } };
-	};
-	readonly element_list: {
-		type: 'element_list';
-		named: true;
-		fields: {
-			element: {
-				multiple: true;
-				required: true;
-				types: [
-					{ type: 'expression'; named: true },
-					{ type: 'list_splat'; named: true },
-					{ type: 'parenthesized_list_splat'; named: true },
-					{ type: 'yield'; named: true }
-				];
-			};
-		};
 	};
 	readonly elif_clause: {
 		type: 'elif_clause';
@@ -1075,7 +1075,7 @@ export type PythonGrammar = {
 		type: 'lambda_parameters';
 		named: true;
 		fields: {};
-		children: { multiple: false; required: true; types: [{ type: 'parameter_list'; named: true }] };
+		children: { multiple: false; required: true; types: [{ type: 'parameters_elements'; named: true }] };
 	};
 	readonly lambda_within_for_in_clause: {
 		type: 'lambda_within_for_in_clause';
@@ -1093,7 +1093,7 @@ export type PythonGrammar = {
 		type: 'list';
 		named: true;
 		fields: {};
-		children: { multiple: false; required: false; types: [{ type: 'element_list'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'collection_elements'; named: true }] };
 	};
 	readonly list_comprehension: {
 		type: 'list_comprehension';
@@ -1105,7 +1105,7 @@ export type PythonGrammar = {
 		type: 'list_pattern';
 		named: true;
 		fields: {};
-		children: { multiple: false; required: false; types: [{ type: 'pattern_group'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'patterns'; named: true }] };
 	};
 	readonly list_pattern_case_patterns: {
 		type: 'list_pattern_case_patterns';
@@ -1201,16 +1201,16 @@ export type PythonGrammar = {
 			value: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
 		};
 	};
-	readonly parameter_list: {
-		type: 'parameter_list';
-		named: true;
-		fields: { parameter: { multiple: true; required: true; types: [{ type: 'parameter'; named: true }] } };
-	};
 	readonly parameters: {
 		type: 'parameters';
 		named: true;
 		fields: {};
-		children: { multiple: false; required: false; types: [{ type: 'parameter_list'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'parameters_elements'; named: true }] };
+	};
+	readonly parameters_elements: {
+		type: 'parameters_elements';
+		named: true;
+		fields: { parameter: { multiple: true; required: true; types: [{ type: 'parameter'; named: true }] } };
 	};
 	readonly parenthesized_expression: {
 		type: 'parenthesized_expression';
@@ -1238,11 +1238,6 @@ export type PythonGrammar = {
 		};
 	};
 	readonly pass_statement: { type: 'pass_statement'; named: true; fields: {} };
-	readonly pattern_group: {
-		type: 'pattern_group';
-		named: true;
-		fields: { pattern: { multiple: true; required: true; types: [{ type: 'pattern'; named: true }] } };
-	};
 	readonly pattern_list: {
 		type: 'pattern_list';
 		named: true;
@@ -1260,6 +1255,11 @@ export type PythonGrammar = {
 		named: true;
 		fields: {};
 		children: { multiple: true; required: true; types: [{ type: 'pattern'; named: true }] };
+	};
+	readonly patterns: {
+		type: 'patterns';
+		named: true;
+		fields: { pattern: { multiple: true; required: true; types: [{ type: 'pattern'; named: true }] } };
 	};
 	readonly positional_separator: { type: 'positional_separator'; named: true; fields: {} };
 	readonly print_arguments: {
@@ -1330,7 +1330,7 @@ export type PythonGrammar = {
 		type: 'set';
 		named: true;
 		fields: {};
-		children: { multiple: false; required: true; types: [{ type: 'element_list'; named: true }] };
+		children: { multiple: false; required: true; types: [{ type: 'collection_elements'; named: true }] };
 	};
 	readonly set_comprehension: {
 		type: 'set_comprehension';
@@ -1481,13 +1481,13 @@ export type PythonGrammar = {
 		type: 'tuple';
 		named: true;
 		fields: {};
-		children: { multiple: false; required: false; types: [{ type: 'element_list'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'collection_elements'; named: true }] };
 	};
 	readonly tuple_pattern: {
 		type: 'tuple_pattern';
 		named: true;
 		fields: {};
-		children: { multiple: false; required: false; types: [{ type: 'pattern_group'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'patterns'; named: true }] };
 	};
 	readonly type: {
 		type: 'type';

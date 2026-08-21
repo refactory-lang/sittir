@@ -8447,7 +8447,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_parameters",
-              "parseKind": "parameter_list",
+              "parseKind": "parameters_elements",
               "unresolved": true
             }
           ],
@@ -8577,7 +8577,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_collection_elements",
-              "parseKind": "element_list",
+              "parseKind": "collection_elements",
               "unresolved": true
             }
           ],
@@ -8678,7 +8678,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_patterns",
-              "parseKind": "pattern_group",
+              "parseKind": "patterns",
               "unresolved": true
             }
           ],
@@ -9273,7 +9273,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_parameters",
-              "parseKind": "parameter_list",
+              "parseKind": "parameters_elements",
               "unresolved": true
             }
           ],
@@ -9972,7 +9972,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_collection_elements",
-              "parseKind": "element_list",
+              "parseKind": "collection_elements",
               "unresolved": true
             }
           ],
@@ -10707,7 +10707,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_collection_elements",
-              "parseKind": "element_list",
+              "parseKind": "collection_elements",
               "unresolved": true
             }
           ],
@@ -10746,7 +10746,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_patterns",
-              "parseKind": "pattern_group",
+              "parseKind": "patterns",
               "unresolved": true
             }
           ],

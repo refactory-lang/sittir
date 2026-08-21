@@ -2528,13 +2528,16 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 	return _node;
 }
 
-export function wrapParameters(data: T.Parameters & { readonly _parameter_list?: T._Parameters }, tree: TreeHandle) {
+export function wrapParameters(
+	data: T.Parameters & { readonly _parameters_elements?: T._Parameters },
+	tree: TreeHandle
+) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_parameter_list']),
+			..._omitWrapKeys(data, ['_parameters_elements']),
 			$type: TSKindId.Parameters as const,
 			_parameters: normalizeSingularWrapSlot(
-				data._parameters ?? data._parameter_list,
+				data._parameters ?? data._parameters_elements,
 				'parameters',
 				false,
 				data.$type,
@@ -2554,19 +2557,20 @@ export function wrapParameters(data: T.Parameters & { readonly _parameter_list?:
 }
 
 export function wrapLambdaParameters(
-	data: T.LambdaParameters & { readonly _parameter_list?: T._Parameters },
+	data: T.LambdaParameters & { readonly _parameters_elements?: T._Parameters },
 	tree: TreeHandle
 ) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_parameter_list']),
+			..._omitWrapKeys(data, ['_parameters_elements']),
 			$type: TSKindId.LambdaParameters as const,
-			_parameters: normalizeSingularWrapSlot(data._parameters ?? data._parameter_list, 'parameters', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'parameters',
-				span: (data as _NodeData).$span
-			}),
+			_parameters: normalizeSingularWrapSlot(
+				data._parameters ?? data._parameters_elements,
+				'parameters',
+				true,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'parameters', span: (data as _NodeData).$span }
+			),
 
 			parameters() {
 				return drillIn<T._Parameters>(this._parameters, tree);
@@ -3751,12 +3755,12 @@ export function wrapPattern(
 	);
 }
 
-export function wrapTuplePattern(data: T.TuplePattern & { readonly _pattern_group?: T.Patterns }, tree: TreeHandle) {
+export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_pattern_group']),
+			...data,
 			$type: TSKindId.TuplePattern as const,
-			_patterns: normalizeSingularWrapSlot(data._patterns ?? data._pattern_group, 'patterns', false, data.$type, {
+			_patterns: normalizeSingularWrapSlot(data._patterns, 'patterns', false, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'patterns',
@@ -3775,12 +3779,12 @@ export function wrapTuplePattern(data: T.TuplePattern & { readonly _pattern_grou
 	return _node;
 }
 
-export function wrapListPattern(data: T.ListPattern & { readonly _pattern_group?: T.Patterns }, tree: TreeHandle) {
+export function wrapListPattern(data: T.ListPattern, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_pattern_group']),
+			...data,
 			$type: TSKindId.ListPattern as const,
-			_patterns: normalizeSingularWrapSlot(data._patterns ?? data._pattern_group, 'patterns', false, data.$type, {
+			_patterns: normalizeSingularWrapSlot(data._patterns, 'patterns', false, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'patterns',
@@ -5395,13 +5399,13 @@ export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapList(data: T.List & { readonly _element_list?: T.CollectionElements }, tree: TreeHandle) {
+export function wrapList(data: T.List, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_element_list']),
+			...data,
 			$type: TSKindId.List as const,
 			_collection_elements: normalizeSingularWrapSlot(
-				data._collection_elements ?? data._element_list,
+				data._collection_elements,
 				'collection_elements',
 				false,
 				data.$type,
@@ -5421,13 +5425,13 @@ export function wrapList(data: T.List & { readonly _element_list?: T.CollectionE
 	return _node;
 }
 
-export function wrapSet(data: T.Set & { readonly _element_list?: T.CollectionElements }, tree: TreeHandle) {
+export function wrapSet(data: T.Set, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_element_list']),
+			...data,
 			$type: TSKindId.Set as const,
 			_collection_elements: normalizeSingularWrapSlot(
-				data._collection_elements ?? data._element_list,
+				data._collection_elements,
 				'collection_elements',
 				true,
 				data.$type,
@@ -5447,13 +5451,13 @@ export function wrapSet(data: T.Set & { readonly _element_list?: T.CollectionEle
 	return _node;
 }
 
-export function wrapTuple(data: T.Tuple & { readonly _element_list?: T.CollectionElements }, tree: TreeHandle) {
+export function wrapTuple(data: T.Tuple, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_element_list']),
+			...data,
 			$type: TSKindId.Tuple as const,
 			_collection_elements: normalizeSingularWrapSlot(
-				data._collection_elements ?? data._element_list,
+				data._collection_elements,
 				'collection_elements',
 				false,
 				data.$type,

@@ -4751,13 +4751,13 @@ var grammar_sittir_default = grammar(
           ":",
           repeat(choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression)))
         ),
-        parameters: ($) => seq("(", optional(alias($._parameters, $.parameter_list)), ")"),
-        lambda_parameters: ($) => alias($._parameters, $.parameter_list),
-        tuple_pattern: ($) => seq("(", optional(alias($._patterns, $.pattern_group)), ")"),
-        list_pattern: ($) => seq("[", optional(alias($._patterns, $.pattern_group)), "]"),
-        list: ($) => seq("[", optional(alias($._collection_elements, $.element_list)), "]"),
-        set: ($) => seq("{", alias($._collection_elements, $.element_list), "}"),
-        tuple: ($) => seq("(", optional(alias($._collection_elements, $.element_list)), ")"),
+        parameters: ($) => seq("(", optional(alias($._parameters, $.parameters_elements)), ")"),
+        lambda_parameters: ($) => alias($._parameters, $.parameters_elements),
+        tuple_pattern: ($) => seq("(", optional(alias($._patterns, $.patterns)), ")"),
+        list_pattern: ($) => seq("[", optional(alias($._patterns, $.patterns)), "]"),
+        list: ($) => seq("[", optional(alias($._collection_elements, $.collection_elements)), "]"),
+        set: ($) => seq("{", alias($._collection_elements, $.collection_elements), "}"),
+        tuple: ($) => seq("(", optional(alias($._collection_elements, $.collection_elements)), ")"),
         // Reference the shared case-pattern list kind (the enrich mint
         // serving _list_pattern/_tuple_pattern/class_pattern) instead of
         // respelling the list inline — the visible list node carries the
@@ -4793,7 +4793,7 @@ var grammar_sittir_default = grammar(
         // 'comprehension_clauses' … requires one value; got undefined").
         // A Track-B reference-site alias can't help here — every reference
         // is mandatory (no `optional(...)` site to satisfy
-        // `parentIsOptionalSeq`, see the `set`/`element_list` note above) —
+        // `parentIsOptionalSeq`, see the `set`/`collection_elements` note above) —
         // so declare it as a REAL visible rule (natural stripped name, per
         // the `print_statement_group1/2` precedent: it's what the generated
         // model already expects) and reference it directly.

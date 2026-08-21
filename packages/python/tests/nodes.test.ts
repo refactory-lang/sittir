@@ -1696,7 +1696,13 @@ describe('list', () => {
 
 describe('set', () => {
 	it('factory produces correct type', () => {
-		const node = ir.set({ $type: TSKindId.CollectionElements, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.set({
+			$type: TSKindId.CollectionElements,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_element: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+		} as any);
 		expect(node.$type).toBe(TSKindId.Set);
 		expect(node.$source).toBe(2);
 	});

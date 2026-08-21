@@ -1114,8 +1114,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[169, 'splat_pattern'],
 	[170, 'class_pattern'],
 	[171, 'complex_pattern'],
-	[172, 'parameter_list'],
-	[173, 'pattern_group'],
+	[172, 'parameters_elements'],
+	[173, 'patterns'],
 	[174, 'parameter'],
 	[175, 'pattern'],
 	[176, 'tuple_pattern'],
@@ -1164,7 +1164,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[219, 'set_comprehension'],
 	[220, 'generator_expression'],
 	[221, 'parenthesized_expression'],
-	[222, 'element_list'],
+	[222, 'collection_elements'],
 	[223, 'for_in_clause'],
 	[224, 'if_clause'],
 	[225, 'conditional_expression'],
@@ -1992,15 +1992,15 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ImportList;
 		case 'key_value_pattern':
 			return TSKindId.KeyValuePattern;
-		case 'parameter_list':
+		case 'parameters_elements':
 			return TSKindId._Parameters;
-		case 'pattern_group':
+		case 'patterns':
 			return TSKindId.Patterns;
 		case 'not in':
 			return TSKindId.NotIn;
 		case 'is not':
 			return TSKindId.IsNot;
-		case 'element_list':
+		case 'collection_elements':
 			return TSKindId.CollectionElements;
 		case 'not_escape_sequence':
 			return TSKindId.NotEscapeSequence;
