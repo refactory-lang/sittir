@@ -2004,7 +2004,7 @@ export function buildFunctionType(config: T.FunctionType.Config) {
 	);
 }
 
-export function buildTupleType(config: T.TupleType.Config, options: { trailing?: boolean } = {}) {
+export function buildTupleType(config: T.TupleType.Config, options: { delimiter?: 2 } = {}) {
 	const _type = config.type ?? [];
 	return withMethods(
 		withAccessors(
@@ -2013,10 +2013,10 @@ export function buildTupleType(config: T.TupleType.Config, options: { trailing?:
 				$source: 2 as const,
 				$named: true as const,
 				_type,
-				_type_delimiter: (options.trailing ?? false) ? 2 : 0,
+				_type_delimiter: options.delimiter ?? 0,
 				$with: {
 					types: (...values: NonEmptyArray<T._Type>) => buildTupleType({ ...config, type: values }, options),
-					trailing: (v: boolean) => buildTupleType(config, { ...options, trailing: v })
+					delimiter: (v: 2) => buildTupleType(config, { ...options, delimiter: v })
 				}
 			},
 			{
@@ -2884,7 +2884,7 @@ export function buildParenthesizedExpression(expression: T.ParenthesizedExpressi
 	);
 }
 
-export function buildTupleExpression(config: T.TupleExpression.Config, options: { trailing?: boolean } = {}) {
+export function buildTupleExpression(config: T.TupleExpression.Config, options: { delimiter?: 2 } = {}) {
 	const _attributes = config.attributes ?? [];
 	const _elements = config.elements ?? [];
 	return withMethods(
@@ -2895,13 +2895,13 @@ export function buildTupleExpression(config: T.TupleExpression.Config, options: 
 				$named: true as const,
 				_attributes,
 				_elements,
-				_elements_delimiter: (options.trailing ?? false) ? 2 : 0,
+				_elements_delimiter: options.delimiter ?? 0,
 				$with: {
 					attributes: (...values: T.AttributeItem[]) =>
 						buildTupleExpression({ ...config, attributes: values }, options),
 					elements: (...values: NonEmptyArray<T.Expression>) =>
 						buildTupleExpression({ ...config, elements: values }, options),
-					trailing: (v: boolean) => buildTupleExpression(config, { ...options, trailing: v })
+					delimiter: (v: 2) => buildTupleExpression(config, { ...options, delimiter: v })
 				}
 			},
 			{
@@ -4445,19 +4445,19 @@ export function buildMetavariable(text: string) {
 
 export function buildMacroRules(...elements: NonEmptyArray<T.MacroRule>): ReturnType<typeof _buildMacroRules>;
 export function buildMacroRules(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.MacroRule>
 ): ReturnType<typeof _buildMacroRules>;
-export function buildMacroRules(...args: ({ trailing?: boolean } | T.MacroRule)[]) {
+export function buildMacroRules(...args: ({ delimiter?: 2 } | T.MacroRule)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.MacroRule>;
 	return _buildMacroRules(elements, options);
 }
-function _buildMacroRules(elements: NonEmptyArray<T.MacroRule>, options: { trailing?: boolean }) {
+function _buildMacroRules(elements: NonEmptyArray<T.MacroRule>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_macro_rules.elements');
 	const _macro_rule = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -4468,7 +4468,7 @@ function _buildMacroRules(elements: NonEmptyArray<T.MacroRule>, options: { trail
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.MacroRule>) => buildMacroRules(options, ...vs),
-					trailing: (v: boolean) => buildMacroRules({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildMacroRules({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4508,22 +4508,19 @@ export function buildEnumVariantListElements(
 	...elements: NonEmptyArray<T.AttributedEnumVariant>
 ): ReturnType<typeof _buildEnumVariantListElements>;
 export function buildEnumVariantListElements(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.AttributedEnumVariant>
 ): ReturnType<typeof _buildEnumVariantListElements>;
-export function buildEnumVariantListElements(...args: ({ trailing?: boolean } | T.AttributedEnumVariant)[]) {
+export function buildEnumVariantListElements(...args: ({ delimiter?: 2 } | T.AttributedEnumVariant)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedEnumVariant>;
 	return _buildEnumVariantListElements(elements, options);
 }
-function _buildEnumVariantListElements(
-	elements: NonEmptyArray<T.AttributedEnumVariant>,
-	options: { trailing?: boolean }
-) {
+function _buildEnumVariantListElements(elements: NonEmptyArray<T.AttributedEnumVariant>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_enum_variant_list_elements.elements');
 	const _element = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -4534,7 +4531,7 @@ function _buildEnumVariantListElements(
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedEnumVariant>) => buildEnumVariantListElements(options, ...vs),
-					trailing: (v: boolean) => buildEnumVariantListElements({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildEnumVariantListElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4549,22 +4546,22 @@ export function buildFieldDeclarationListElements(
 	...elements: NonEmptyArray<T.AttributedFieldDeclaration>
 ): ReturnType<typeof _buildFieldDeclarationListElements>;
 export function buildFieldDeclarationListElements(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.AttributedFieldDeclaration>
 ): ReturnType<typeof _buildFieldDeclarationListElements>;
-export function buildFieldDeclarationListElements(...args: ({ trailing?: boolean } | T.AttributedFieldDeclaration)[]) {
+export function buildFieldDeclarationListElements(...args: ({ delimiter?: 2 } | T.AttributedFieldDeclaration)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedFieldDeclaration>;
 	return _buildFieldDeclarationListElements(elements, options);
 }
 function _buildFieldDeclarationListElements(
 	elements: NonEmptyArray<T.AttributedFieldDeclaration>,
-	options: { trailing?: boolean }
+	options: { delimiter?: 2 }
 ) {
 	_assertNonEmpty(elements, '_field_declaration_list_elements.elements');
 	const _element = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -4576,7 +4573,7 @@ function _buildFieldDeclarationListElements(
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedFieldDeclaration>) =>
 						buildFieldDeclarationListElements(options, ...vs),
-					trailing: (v: boolean) => buildFieldDeclarationListElements({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4591,24 +4588,22 @@ export function buildOrderedFieldDeclarationListElements(
 	...elements: NonEmptyArray<T.AttributedOrderedField>
 ): ReturnType<typeof _buildOrderedFieldDeclarationListElements>;
 export function buildOrderedFieldDeclarationListElements(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.AttributedOrderedField>
 ): ReturnType<typeof _buildOrderedFieldDeclarationListElements>;
-export function buildOrderedFieldDeclarationListElements(
-	...args: ({ trailing?: boolean } | T.AttributedOrderedField)[]
-) {
+export function buildOrderedFieldDeclarationListElements(...args: ({ delimiter?: 2 } | T.AttributedOrderedField)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedOrderedField>;
 	return _buildOrderedFieldDeclarationListElements(elements, options);
 }
 function _buildOrderedFieldDeclarationListElements(
 	elements: NonEmptyArray<T.AttributedOrderedField>,
-	options: { trailing?: boolean }
+	options: { delimiter?: 2 }
 ) {
 	_assertNonEmpty(elements, '_ordered_field_declaration_list_elements.elements');
 	const _element = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -4620,7 +4615,7 @@ function _buildOrderedFieldDeclarationListElements(
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedOrderedField>) =>
 						buildOrderedFieldDeclarationListElements(options, ...vs),
-					trailing: (v: boolean) => buildOrderedFieldDeclarationListElements({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildOrderedFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4635,19 +4630,19 @@ export function buildWherePredicates(
 	...elements: NonEmptyArray<T.WherePredicate>
 ): ReturnType<typeof _buildWherePredicates>;
 export function buildWherePredicates(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.WherePredicate>
 ): ReturnType<typeof _buildWherePredicates>;
-export function buildWherePredicates(...args: ({ trailing?: boolean } | T.WherePredicate)[]) {
+export function buildWherePredicates(...args: ({ delimiter?: 2 } | T.WherePredicate)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.WherePredicate>;
 	return _buildWherePredicates(elements, options);
 }
-function _buildWherePredicates(elements: NonEmptyArray<T.WherePredicate>, options: { trailing?: boolean }) {
+function _buildWherePredicates(elements: NonEmptyArray<T.WherePredicate>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_where_predicates.elements');
 	const _where_predicate = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -4658,7 +4653,7 @@ function _buildWherePredicates(elements: NonEmptyArray<T.WherePredicate>, option
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.WherePredicate>) => buildWherePredicates(options, ...vs),
-					trailing: (v: boolean) => buildWherePredicates({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildWherePredicates({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4673,22 +4668,19 @@ export function buildTypeParametersElements(
 	...elements: NonEmptyArray<T.AttributedTypeParameter>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.AttributedTypeParameter>
 ): ReturnType<typeof _buildTypeParametersElements>;
-export function buildTypeParametersElements(...args: ({ trailing?: boolean } | T.AttributedTypeParameter)[]) {
+export function buildTypeParametersElements(...args: ({ delimiter?: 2 } | T.AttributedTypeParameter)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedTypeParameter>;
 	return _buildTypeParametersElements(elements, options);
 }
-function _buildTypeParametersElements(
-	elements: NonEmptyArray<T.AttributedTypeParameter>,
-	options: { trailing?: boolean }
-) {
+function _buildTypeParametersElements(elements: NonEmptyArray<T.AttributedTypeParameter>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_type_parameters_elements.elements');
 	const _element = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -4699,7 +4691,7 @@ function _buildTypeParametersElements(
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedTypeParameter>) => buildTypeParametersElements(options, ...vs),
-					trailing: (v: boolean) => buildTypeParametersElements({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildTypeParametersElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4712,19 +4704,19 @@ function _buildTypeParametersElements(
 
 export function buildUseClauses(...elements: NonEmptyArray<T.UseClause>): ReturnType<typeof _buildUseClauses>;
 export function buildUseClauses(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.UseClause>
 ): ReturnType<typeof _buildUseClauses>;
-export function buildUseClauses(...args: ({ trailing?: boolean } | T.UseClause)[]) {
+export function buildUseClauses(...args: ({ delimiter?: 2 } | T.UseClause)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.UseClause>;
 	return _buildUseClauses(elements, options);
 }
-function _buildUseClauses(elements: NonEmptyArray<T.UseClause>, options: { trailing?: boolean }) {
+function _buildUseClauses(elements: NonEmptyArray<T.UseClause>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_use_clauses.elements');
 	const _use_clause = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -4735,7 +4727,7 @@ function _buildUseClauses(elements: NonEmptyArray<T.UseClause>, options: { trail
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.UseClause>) => buildUseClauses(options, ...vs),
-					trailing: (v: boolean) => buildUseClauses({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildUseClauses({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4750,19 +4742,19 @@ export function buildParametersElements(
 	...elements: NonEmptyArray<T.AttributedParameter>
 ): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.AttributedParameter>
 ): ReturnType<typeof _buildParametersElements>;
-export function buildParametersElements(...args: ({ trailing?: boolean } | T.AttributedParameter)[]) {
+export function buildParametersElements(...args: ({ delimiter?: 2 } | T.AttributedParameter)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedParameter>;
 	return _buildParametersElements(elements, options);
 }
-function _buildParametersElements(elements: NonEmptyArray<T.AttributedParameter>, options: { trailing?: boolean }) {
+function _buildParametersElements(elements: NonEmptyArray<T.AttributedParameter>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_parameters_elements.elements');
 	const _element = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -4773,7 +4765,7 @@ function _buildParametersElements(elements: NonEmptyArray<T.AttributedParameter>
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedParameter>) => buildParametersElements(options, ...vs),
-					trailing: (v: boolean) => buildParametersElements({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildParametersElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4807,19 +4799,19 @@ export function buildVisibilityModifierGroup1(child: T.Self | T.Super | T.Crate 
 
 export function buildLifetimes(...elements: NonEmptyArray<T.Lifetime>): ReturnType<typeof _buildLifetimes>;
 export function buildLifetimes(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.Lifetime>
 ): ReturnType<typeof _buildLifetimes>;
-export function buildLifetimes(...args: ({ trailing?: boolean } | T.Lifetime)[]) {
+export function buildLifetimes(...args: ({ delimiter?: 2 } | T.Lifetime)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Lifetime>;
 	return _buildLifetimes(elements, options);
 }
-function _buildLifetimes(elements: NonEmptyArray<T.Lifetime>, options: { trailing?: boolean }) {
+function _buildLifetimes(elements: NonEmptyArray<T.Lifetime>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_lifetimes.elements');
 	const _lifetime = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -4830,7 +4822,7 @@ function _buildLifetimes(elements: NonEmptyArray<T.Lifetime>, options: { trailin
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Lifetime>) => buildLifetimes(options, ...vs),
-					trailing: (v: boolean) => buildLifetimes({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildLifetimes({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4845,19 +4837,19 @@ export function buildUseBoundsElements(
 	...elements: NonEmptyArray<T.Lifetime | T.Identifier>
 ): ReturnType<typeof _buildUseBoundsElements>;
 export function buildUseBoundsElements(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.Lifetime | T.Identifier>
 ): ReturnType<typeof _buildUseBoundsElements>;
-export function buildUseBoundsElements(...args: ({ trailing?: boolean } | (T.Lifetime | T.Identifier))[]) {
+export function buildUseBoundsElements(...args: ({ delimiter?: 2 } | (T.Lifetime | T.Identifier))[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Lifetime | T.Identifier>;
 	return _buildUseBoundsElements(elements, options);
 }
-function _buildUseBoundsElements(elements: NonEmptyArray<T.Lifetime | T.Identifier>, options: { trailing?: boolean }) {
+function _buildUseBoundsElements(elements: NonEmptyArray<T.Lifetime | T.Identifier>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_use_bounds_elements.elements');
 	const _element = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -4868,7 +4860,7 @@ function _buildUseBoundsElements(elements: NonEmptyArray<T.Lifetime | T.Identifi
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Lifetime | T.Identifier>) => buildUseBoundsElements(options, ...vs),
-					trailing: (v: boolean) => buildUseBoundsElements({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildUseBoundsElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4883,19 +4875,19 @@ export function buildTypeArgumentsElements(
 	...elements: NonEmptyArray<T.TypeArgument>
 ): ReturnType<typeof _buildTypeArgumentsElements>;
 export function buildTypeArgumentsElements(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.TypeArgument>
 ): ReturnType<typeof _buildTypeArgumentsElements>;
-export function buildTypeArgumentsElements(...args: ({ trailing?: boolean } | T.TypeArgument)[]) {
+export function buildTypeArgumentsElements(...args: ({ delimiter?: 2 } | T.TypeArgument)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.TypeArgument>;
 	return _buildTypeArgumentsElements(elements, options);
 }
-function _buildTypeArgumentsElements(elements: NonEmptyArray<T.TypeArgument>, options: { trailing?: boolean }) {
+function _buildTypeArgumentsElements(elements: NonEmptyArray<T.TypeArgument>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_type_arguments_elements.elements');
 	const _element = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -4906,7 +4898,7 @@ function _buildTypeArgumentsElements(elements: NonEmptyArray<T.TypeArgument>, op
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.TypeArgument>) => buildTypeArgumentsElements(options, ...vs),
-					trailing: (v: boolean) => buildTypeArgumentsElements({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildTypeArgumentsElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4921,19 +4913,19 @@ export function buildArgumentsElements(
 	...elements: NonEmptyArray<T.AttributedArgument>
 ): ReturnType<typeof _buildArgumentsElements>;
 export function buildArgumentsElements(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.AttributedArgument>
 ): ReturnType<typeof _buildArgumentsElements>;
-export function buildArgumentsElements(...args: ({ trailing?: boolean } | T.AttributedArgument)[]) {
+export function buildArgumentsElements(...args: ({ delimiter?: 2 } | T.AttributedArgument)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedArgument>;
 	return _buildArgumentsElements(elements, options);
 }
-function _buildArgumentsElements(elements: NonEmptyArray<T.AttributedArgument>, options: { trailing?: boolean }) {
+function _buildArgumentsElements(elements: NonEmptyArray<T.AttributedArgument>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_arguments_elements.elements');
 	const _element = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -4944,7 +4936,7 @@ function _buildArgumentsElements(elements: NonEmptyArray<T.AttributedArgument>, 
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedArgument>) => buildArgumentsElements(options, ...vs),
-					trailing: (v: boolean) => buildArgumentsElements({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildArgumentsElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4984,14 +4976,14 @@ export function buildFieldInitializerListElements(
 	...elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
 ): ReturnType<typeof _buildFieldInitializerListElements>;
 export function buildFieldInitializerListElements(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
 ): ReturnType<typeof _buildFieldInitializerListElements>;
 export function buildFieldInitializerListElements(
-	...args: ({ trailing?: boolean } | (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer))[]
+	...args: ({ delimiter?: 2 } | (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer))[]
 ) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer
 	>;
@@ -4999,11 +4991,11 @@ export function buildFieldInitializerListElements(
 }
 function _buildFieldInitializerListElements(
 	elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>,
-	options: { trailing?: boolean }
+	options: { delimiter?: 2 }
 ) {
 	_assertNonEmpty(elements, '_field_initializer_list_elements.elements');
 	const _element = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5016,7 +5008,7 @@ function _buildFieldInitializerListElements(
 					$children: (
 						...vs: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
 					) => buildFieldInitializerListElements(options, ...vs),
-					trailing: (v: boolean) => buildFieldInitializerListElements({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildFieldInitializerListElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5031,22 +5023,22 @@ export function buildTuplePatternElements(
 	...elements: NonEmptyArray<T.Pattern | T.ClosureExpression>
 ): ReturnType<typeof _buildTuplePatternElements>;
 export function buildTuplePatternElements(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.Pattern | T.ClosureExpression>
 ): ReturnType<typeof _buildTuplePatternElements>;
-export function buildTuplePatternElements(...args: ({ trailing?: boolean } | (T.Pattern | T.ClosureExpression))[]) {
+export function buildTuplePatternElements(...args: ({ delimiter?: 2 } | (T.Pattern | T.ClosureExpression))[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Pattern | T.ClosureExpression>;
 	return _buildTuplePatternElements(elements, options);
 }
 function _buildTuplePatternElements(
 	elements: NonEmptyArray<T.Pattern | T.ClosureExpression>,
-	options: { trailing?: boolean }
+	options: { delimiter?: 2 }
 ) {
 	_assertNonEmpty(elements, '_tuple_pattern_elements.elements');
 	const _element = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5058,7 +5050,7 @@ function _buildTuplePatternElements(
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Pattern | T.ClosureExpression>) =>
 						buildTuplePatternElements(options, ...vs),
-					trailing: (v: boolean) => buildTuplePatternElements({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildTuplePatternElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5071,19 +5063,19 @@ function _buildTuplePatternElements(
 
 export function buildPatterns(...elements: NonEmptyArray<T.Pattern>): ReturnType<typeof _buildPatterns>;
 export function buildPatterns(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.Pattern>
 ): ReturnType<typeof _buildPatterns>;
-export function buildPatterns(...args: ({ trailing?: boolean } | T.Pattern)[]) {
+export function buildPatterns(...args: ({ delimiter?: 2 } | T.Pattern)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Pattern>;
 	return _buildPatterns(elements, options);
 }
-function _buildPatterns(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean }) {
+function _buildPatterns(elements: NonEmptyArray<T.Pattern>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_patterns.elements');
 	const _pattern = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5094,7 +5086,7 @@ function _buildPatterns(elements: NonEmptyArray<T.Pattern>, options: { trailing?
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Pattern>) => buildPatterns(options, ...vs),
-					trailing: (v: boolean) => buildPatterns({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildPatterns({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5109,14 +5101,14 @@ export function buildStructPatternElements(
 	...elements: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>
 ): ReturnType<typeof _buildStructPatternElements>;
 export function buildStructPatternElements(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>
 ): ReturnType<typeof _buildStructPatternElements>;
 export function buildStructPatternElements(
-	...args: ({ trailing?: boolean } | (T.FieldPattern | T.RemainingFieldPattern))[]
+	...args: ({ delimiter?: 2 } | (T.FieldPattern | T.RemainingFieldPattern))[]
 ) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.FieldPattern | T.RemainingFieldPattern
 	>;
@@ -5124,11 +5116,11 @@ export function buildStructPatternElements(
 }
 function _buildStructPatternElements(
 	elements: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>,
-	options: { trailing?: boolean }
+	options: { delimiter?: 2 }
 ) {
 	_assertNonEmpty(elements, '_struct_pattern_elements.elements');
 	const _element = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5140,7 +5132,7 @@ function _buildStructPatternElements(
 				$with: {
 					$children: (...vs: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>) =>
 						buildStructPatternElements(options, ...vs),
-					trailing: (v: boolean) => buildStructPatternElements({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildStructPatternElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{

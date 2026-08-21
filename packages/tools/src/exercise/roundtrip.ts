@@ -273,21 +273,18 @@ export function buildFactoryNode(
 		return factory(value);
 	}
 	if (shape === 'elements') {
-		// separatedList factory: `(elements, options?: {separatorKind?, leading?, trailing?})`
+		// separatedList factory: `(elements, options?: {separator?, delimiter?})`
 		// — distinct calling convention from 'spread's rest-param factories.
 		const separatorSourceKind = (readData as { _separator?: number })._separator;
-		const separatorKind = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
+		const separator = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
 		const delimiter = (readData as { _delimiter?: number })._delimiter ?? 0;
-		const leading = (delimiter & 1) !== 0;
-		const trailing = (delimiter & 2) !== 0;
-		const options: { separatorKind?: string; leading?: boolean; trailing?: boolean } = {};
-		if (separatorKind !== undefined) options.separatorKind = separatorKind;
-		if (leading) options.leading = true;
-		if (trailing) options.trailing = true;
+		const options: { separator?: string; delimiter?: number } = {};
+		if (separator !== undefined) options.separator = separator;
+		if (delimiter !== 0) options.delimiter = delimiter;
 		return (
 			factory as (
 				elements: readonly unknown[],
-				options?: { separatorKind?: string; leading?: boolean; trailing?: boolean }
+				options?: { separator?: string; delimiter?: number }
 			) => unknown
 		)(childArgs, Object.keys(options).length > 0 ? options : undefined);
 	}

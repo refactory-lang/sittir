@@ -105,14 +105,12 @@ describe('factories emitter — separatedList', () => {
 
 		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): ');
 		expect(emitted).toContain('export function buildMemberList(options: ');
-		expect(emitted).toContain('separatorKind?: "," | ";"');
-		expect(emitted).toContain('leading?: boolean');
-		expect(emitted).toContain('trailing?: boolean');
+		expect(emitted).toContain('separator?: "," | ";"');
+		expect(emitted).toContain('delimiter?: 1 | 2 | 3');
 		expect(emitted).toContain('_member');
 		expect(emitted).toContain('_separator');
 		expect(emitted).toContain('_delimiter');
-		expect(emitted).toContain('(options.leading ? 1 : 0)');
-		expect(emitted).toContain('(options.trailing ? 2 : 0)');
+		expect(emitted).toContain('options.delimiter ?? 0');
 		// Selection maps the caller's literal choice to its KindId, defaulting
 		// to the first candidate arm when omitted.
 		expect(emitted).toContain('TSKindId.Comma');
@@ -129,13 +127,11 @@ describe('factories emitter — separatedList', () => {
 
 		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): ');
 		expect(emitted).toContain('export function buildMemberList(options: ');
-		expect(emitted).not.toContain('separatorKind?:');
-		expect(emitted).not.toContain('leading?: boolean');
-		expect(emitted).toContain('trailing?: boolean');
+		expect(emitted).not.toContain('separator?:');
+		expect(emitted).toContain('delimiter?: 2');
 		expect(emitted).not.toContain('_separator');
 		expect(emitted).toContain('_delimiter');
-		expect(emitted).not.toContain('options.leading ?');
-		expect(emitted).toContain('(options.trailing ? 2 : 0)');
+		expect(emitted).toContain('options.delimiter ?? 0');
 	});
 
 	it('literal separator with both flanks optional (mirrors object_type_content_comma/_semi): leading + trailing, no separatorKind', () => {
@@ -146,13 +142,11 @@ describe('factories emitter — separatedList', () => {
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
-		expect(emitted).not.toContain('separatorKind?:');
-		expect(emitted).toContain('leading?: boolean');
-		expect(emitted).toContain('trailing?: boolean');
+		expect(emitted).not.toContain('separator?:');
+		expect(emitted).toContain('delimiter?: 1 | 2 | 3');
 		expect(emitted).not.toContain('_separator');
 		expect(emitted).toContain('_delimiter');
-		expect(emitted).toContain('(options.leading ? 1 : 0)');
-		expect(emitted).toContain('(options.trailing ? 2 : 0)');
+		expect(emitted).toContain('options.delimiter ?? 0');
 	});
 
 	it('literal separator with mandatory-only (no optional flanks): no options object at all — bare elements signature', () => {

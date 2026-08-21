@@ -1586,7 +1586,7 @@ export interface NodeToConfigOpts {
 	/** `KIND_LITERAL_TEXT` (types.ts) — literal punctuation/keyword text for
 	 * anonymous-token kind ids. Reverses a separatedList's captured
 	 * `_separator` back to the literal string its factory's
-	 * `options.separatorKind` expects. */
+	 * `options.separator` expects. */
 	readonly kindLiteralText?: ReadonlyMap<number, string>;
 }
 
@@ -1739,7 +1739,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		return factory(...childArgs);
 	}
 	// 'elements' shape: separatedList factory — spread with a LEADING
-	// optional options bag, `(...elements)` / `({separatorKind?, leading?,
+	// optional options bag, `(...elements)` / `({separator?, delimiter?,
 	// trailing?}, ...elements)` — distinct from 'spread's plain rest-param
 	// convention (see classifyFactoryShape).
 	if (shape === 'elements') {
@@ -2832,19 +2832,17 @@ export function dedupeMismatchesByContainment<T extends { entry?: string; start:
 export function separatedListFactoryOptions(
 	data: unknown,
 	kindLiteralText: ReadonlyMap<number, string> | undefined
-): { separatorKind?: string; leading?: boolean; trailing?: boolean } | undefined {
+): { separator?: string; delimiter?: number } | undefined {
 	const rec = (data ?? {}) as Record<string, unknown>;
-	const flank = (which: 'leading' | 'trailing'): boolean => {
-		const bit = which === 'leading' ? 1 : 2;
-		if (typeof rec['_delimiter'] === 'number') return (rec['_delimiter'] & bit) !== 0;
+	const delimiter = ((): number => {
+		if (typeof rec['_delimiter'] === 'number') return rec['_delimiter'];
 		const matches = Object.keys(rec).filter((k) => k.endsWith('_delimiter') && k !== '_delimiter');
-		return matches.length === 1 && typeof rec[matches[0]!] === 'number' && ((rec[matches[0]!] as number) & bit) !== 0;
-	};
+		return matches.length === 1 && typeof rec[matches[0]!] === 'number' ? (rec[matches[0]!] as number) : 0;
+	})();
 	const separatorSourceKind = rec['_separator'] as number | undefined;
-	const separatorKind = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
-	const options: { separatorKind?: string; leading?: boolean; trailing?: boolean } = {};
-	if (separatorKind !== undefined) options.separatorKind = separatorKind;
-	if (flank('leading')) options.leading = true;
-	if (flank('trailing')) options.trailing = true;
+	const separator = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
+	const options: { separator?: string; delimiter?: number } = {};
+	if (separator !== undefined) options.separator = separator;
+	if (delimiter !== 0) options.delimiter = delimiter;
 	return Object.keys(options).length > 0 ? options : undefined;
 }

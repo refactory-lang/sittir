@@ -5396,19 +5396,19 @@ export function buildExportSpecifiers(
 	...elements: NonEmptyArray<T.ExportSpecifier>
 ): ReturnType<typeof _buildExportSpecifiers>;
 export function buildExportSpecifiers(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.ExportSpecifier>
 ): ReturnType<typeof _buildExportSpecifiers>;
-export function buildExportSpecifiers(...args: ({ trailing?: boolean } | T.ExportSpecifier)[]) {
+export function buildExportSpecifiers(...args: ({ delimiter?: 2 } | T.ExportSpecifier)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.ExportSpecifier>;
 	return _buildExportSpecifiers(elements, options);
 }
-function _buildExportSpecifiers(elements: NonEmptyArray<T.ExportSpecifier>, options: { trailing?: boolean }) {
+function _buildExportSpecifiers(elements: NonEmptyArray<T.ExportSpecifier>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_export_specifiers.elements');
 	const _export_specifier = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5419,7 +5419,7 @@ function _buildExportSpecifiers(elements: NonEmptyArray<T.ExportSpecifier>, opti
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.ExportSpecifier>) => buildExportSpecifiers(options, ...vs),
-					trailing: (v: boolean) => buildExportSpecifiers({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildExportSpecifiers({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5478,19 +5478,19 @@ export function buildImportSpecifiers(
 	...elements: NonEmptyArray<T.ImportSpecifier>
 ): ReturnType<typeof _buildImportSpecifiers>;
 export function buildImportSpecifiers(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.ImportSpecifier>
 ): ReturnType<typeof _buildImportSpecifiers>;
-export function buildImportSpecifiers(...args: ({ trailing?: boolean } | T.ImportSpecifier)[]) {
+export function buildImportSpecifiers(...args: ({ delimiter?: 2 } | T.ImportSpecifier)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.ImportSpecifier>;
 	return _buildImportSpecifiers(elements, options);
 }
-function _buildImportSpecifiers(elements: NonEmptyArray<T.ImportSpecifier>, options: { trailing?: boolean }) {
+function _buildImportSpecifiers(elements: NonEmptyArray<T.ImportSpecifier>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_import_specifiers.elements');
 	const _import_specifier = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5501,7 +5501,7 @@ function _buildImportSpecifiers(elements: NonEmptyArray<T.ImportSpecifier>, opti
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.ImportSpecifier>) => buildImportSpecifiers(options, ...vs),
-					trailing: (v: boolean) => buildImportSpecifiers({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildImportSpecifiers({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5654,19 +5654,19 @@ export function buildFormalParametersElements(
 	...elements: NonEmptyArray<T.FormalParameter>
 ): ReturnType<typeof _buildFormalParametersElements>;
 export function buildFormalParametersElements(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.FormalParameter>
 ): ReturnType<typeof _buildFormalParametersElements>;
-export function buildFormalParametersElements(...args: ({ trailing?: boolean } | T.FormalParameter)[]) {
+export function buildFormalParametersElements(...args: ({ delimiter?: 2 } | T.FormalParameter)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.FormalParameter>;
 	return _buildFormalParametersElements(elements, options);
 }
-function _buildFormalParametersElements(elements: NonEmptyArray<T.FormalParameter>, options: { trailing?: boolean }) {
+function _buildFormalParametersElements(elements: NonEmptyArray<T.FormalParameter>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_formal_parameters_elements.elements');
 	const _formal_parameter = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5677,7 +5677,7 @@ function _buildFormalParametersElements(elements: NonEmptyArray<T.FormalParamete
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.FormalParameter>) => buildFormalParametersElements(options, ...vs),
-					trailing: (v: boolean) => buildFormalParametersElements({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildFormalParametersElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5690,7 +5690,7 @@ function _buildFormalParametersElements(elements: NonEmptyArray<T.FormalParamete
 
 export function buildEnumBodyElements(
 	config: Partial<T.EnumBodyElements.Config> = {},
-	options: { trailing?: boolean } = {}
+	options: { delimiter?: 2 } = {}
 ) {
 	const _content = config.content ?? [];
 	return withMethods(
@@ -5700,11 +5700,11 @@ export function buildEnumBodyElements(
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				_content_delimiter: (options.trailing ?? false) ? 2 : 0,
+				_content_delimiter: options.delimiter ?? 0,
 				$with: {
 					contents: (...values: (T.EnumAssignment | T.PropertyName)[]) =>
 						buildEnumBodyElements({ ...config, content: values }, options),
-					trailing: (v: boolean) => buildEnumBodyElements(config, { ...options, trailing: v })
+					delimiter: (v: 2) => buildEnumBodyElements(config, { ...options, delimiter: v })
 				}
 			},
 			{
@@ -5717,19 +5717,19 @@ export function buildEnumBodyElements(
 
 export function buildTypes(...elements: NonEmptyArray<T.Type>): ReturnType<typeof _buildTypes>;
 export function buildTypes(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.Type>
 ): ReturnType<typeof _buildTypes>;
-export function buildTypes(...args: ({ trailing?: boolean } | T.Type)[]) {
+export function buildTypes(...args: ({ delimiter?: 2 } | T.Type)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Type>;
 	return _buildTypes(elements, options);
 }
-function _buildTypes(elements: NonEmptyArray<T.Type>, options: { trailing?: boolean }) {
+function _buildTypes(elements: NonEmptyArray<T.Type>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_types.elements');
 	const _type = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5740,7 +5740,7 @@ function _buildTypes(elements: NonEmptyArray<T.Type>, options: { trailing?: bool
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Type>) => buildTypes(options, ...vs),
-					trailing: (v: boolean) => buildTypes({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildTypes({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5755,19 +5755,19 @@ export function buildTypeParametersElements(
 	...elements: NonEmptyArray<T.TypeParameter>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.TypeParameter>
 ): ReturnType<typeof _buildTypeParametersElements>;
-export function buildTypeParametersElements(...args: ({ trailing?: boolean } | T.TypeParameter)[]) {
+export function buildTypeParametersElements(...args: ({ delimiter?: 2 } | T.TypeParameter)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.TypeParameter>;
 	return _buildTypeParametersElements(elements, options);
 }
-function _buildTypeParametersElements(elements: NonEmptyArray<T.TypeParameter>, options: { trailing?: boolean }) {
+function _buildTypeParametersElements(elements: NonEmptyArray<T.TypeParameter>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_type_parameters_elements.elements');
 	const _type_parameter = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5778,7 +5778,7 @@ function _buildTypeParametersElements(elements: NonEmptyArray<T.TypeParameter>, 
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.TypeParameter>) => buildTypeParametersElements(options, ...vs),
-					trailing: (v: boolean) => buildTypeParametersElements({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildTypeParametersElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5793,19 +5793,19 @@ export function buildTupleTypeMembers(
 	...elements: NonEmptyArray<T.TupleTypeMember>
 ): ReturnType<typeof _buildTupleTypeMembers>;
 export function buildTupleTypeMembers(
-	options: { trailing?: boolean },
+	options: { delimiter?: 2 },
 	...elements: NonEmptyArray<T.TupleTypeMember>
 ): ReturnType<typeof _buildTupleTypeMembers>;
-export function buildTupleTypeMembers(...args: ({ trailing?: boolean } | T.TupleTypeMember)[]) {
+export function buildTupleTypeMembers(...args: ({ delimiter?: 2 } | T.TupleTypeMember)[]) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.TupleTypeMember>;
 	return _buildTupleTypeMembers(elements, options);
 }
-function _buildTupleTypeMembers(elements: NonEmptyArray<T.TupleTypeMember>, options: { trailing?: boolean }) {
+function _buildTupleTypeMembers(elements: NonEmptyArray<T.TupleTypeMember>, options: { delimiter?: 2 }) {
 	_assertNonEmpty(elements, '_tuple_type_members.elements');
 	const _tuple_type_member = elements;
-	const _delimiter = options.trailing ? 2 : 0;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5816,7 +5816,7 @@ function _buildTupleTypeMembers(elements: NonEmptyArray<T.TupleTypeMember>, opti
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.TupleTypeMember>) => buildTupleTypeMembers(options, ...vs),
-					trailing: (v: boolean) => buildTupleTypeMembers({ ...options, trailing: v }, ...elements)
+					delimiter: (v: 2) => buildTupleTypeMembers({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5916,7 +5916,7 @@ export function buildObjectTypeContent(
 	>
 ): ReturnType<typeof _buildObjectTypeContent>;
 export function buildObjectTypeContent(
-	options: { separatorKind?: ',' | ';'; leading?: boolean; trailing?: boolean },
+	options: { separator?: ',' | ';'; delimiter?: 1 | 2 | 3 },
 	...elements: NonEmptyArray<
 		| T.ExportStatement
 		| T.PropertySignature
@@ -5928,7 +5928,7 @@ export function buildObjectTypeContent(
 ): ReturnType<typeof _buildObjectTypeContent>;
 export function buildObjectTypeContent(
 	...args: (
-		| { separatorKind?: ',' | ';'; leading?: boolean; trailing?: boolean }
+		| { separator?: ',' | ';'; delimiter?: 1 | 2 | 3 }
 		| (
 				| T.ExportStatement
 				| T.PropertySignature
@@ -5940,7 +5940,7 @@ export function buildObjectTypeContent(
 	)[]
 ) {
 	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
-	const options = (_optsFirst ? args[0] : {}) as { separatorKind?: ',' | ';'; leading?: boolean; trailing?: boolean };
+	const options = (_optsFirst ? args[0] : {}) as { separator?: ',' | ';'; delimiter?: 1 | 2 | 3 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		| T.ExportStatement
 		| T.PropertySignature
@@ -5960,14 +5960,12 @@ function _buildObjectTypeContent(
 		| T.IndexSignature
 		| T.MethodSignature
 	>,
-	options: { separatorKind?: ',' | ';'; leading?: boolean; trailing?: boolean }
+	options: { separator?: ',' | ';'; delimiter?: 1 | 2 | 3 }
 ) {
 	_assertNonEmpty(elements, 'object_type_content.elements');
 	const _content = elements;
-	const _separator = ({ ',': TSKindId.Comma, ';': TSKindId.Semi } as Record<string, number>)[
-		options.separatorKind ?? ','
-	];
-	const _delimiter = (options.leading ? 1 : 0) | (options.trailing ? 2 : 0);
+	const _separator = ({ ',': TSKindId.Comma, ';': TSKindId.Semi } as Record<string, number>)[options.separator ?? ','];
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5988,9 +5986,8 @@ function _buildObjectTypeContent(
 							| T.MethodSignature
 						>
 					) => buildObjectTypeContent(options, ...vs),
-					separatorKind: (v: ',' | ';') => buildObjectTypeContent({ ...options, separatorKind: v }, ...elements),
-					leading: (v: boolean) => buildObjectTypeContent({ ...options, leading: v }, ...elements),
-					trailing: (v: boolean) => buildObjectTypeContent({ ...options, trailing: v }, ...elements)
+					separator: (v: ',' | ';') => buildObjectTypeContent({ ...options, separator: v }, ...elements),
+					delimiter: (v: 1 | 2 | 3) => buildObjectTypeContent({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{

@@ -642,17 +642,10 @@ function emitSeparatedListFrom(
 			// `KIND_LITERAL_TEXT` (types.ts) is the single stamped source for
 			// kindId→literal-text — no per-kind reverse-arms table to build here.
 			optionParts.push(
-				`separatorKind: (() => { const sk = ${sourceFields}._separator; return sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk); })()`
+				`separator: (() => { const sk = ${sourceFields}._separator; return sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk); })()`
 			);
 		}
-		if (hasLeadingOption)
-			optionParts.push(
-				`leading: (() => { const d = ${sourceFields}._delimiter; return d === undefined ? undefined : (d & 1) !== 0; })()`
-			);
-		if (hasTrailingOption)
-			optionParts.push(
-				`trailing: (() => { const d = ${sourceFields}._delimiter; return d === undefined ? undefined : (d & 2) !== 0; })()`
-			);
+		if (hasLeadingOption || hasTrailingOption) optionParts.push(`delimiter: ${sourceFields}._delimiter`);
 		return `${factory}({ ${optionParts.join(', ')} }, ${spreadElements(varExpr)})`;
 	};
 

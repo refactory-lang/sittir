@@ -3321,18 +3321,11 @@ export function coerceToObjectTypeContent(
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildObjectTypeContent(
 			{
-				separatorKind: (() => {
+				separator: (() => {
 					const sk = (data as unknown as { _separator?: number; _delimiter?: number })._separator;
 					return sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk);
 				})(),
-				leading: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: number })._delimiter;
-					return d === undefined ? undefined : (d & 1) !== 0;
-				})(),
-				trailing: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: number })._delimiter;
-					return d === undefined ? undefined : (d & 2) !== 0;
-				})()
+				delimiter: (data as unknown as { _separator?: number; _delimiter?: number })._delimiter
 			},
 			...(children as unknown as NonEmptyArray<
 				| T.ExportStatement
