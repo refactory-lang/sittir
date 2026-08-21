@@ -167,7 +167,7 @@ describe('generate() — non-literal-separator diagnostic surfacing (PR-S task 5
 		// synthesized `_object_type_optional1` wrapper. The object_type
 		// rewrite replaced that wrapper with the `object_type_content`
 		// separated-list kind, whose separator is a captured runtime slot
-		// (`_separator_kind`) rather than an unsupported CHOICE template —
+		// (`_separator`) rather than an unsupported CHOICE template —
 		// the wrapper kind no longer exists in grammar.json/node-model, so
 		// its diagnostic legitimately stopped firing. The assertion pins the
 		// count so a REGRESSION (more occurrences, or occurrences in

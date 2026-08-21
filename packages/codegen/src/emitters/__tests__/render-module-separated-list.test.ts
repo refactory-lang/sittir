@@ -129,7 +129,7 @@ describe('renderTransportDataStruct — separatedList sibling fields', () => {
 		expect(emitted).toContain('pub delimiter: Option<u8>,');
 		expect(emitted).toContain('pub separator_kind: Option<u16>,');
 		expect(emitted).toContain('napi(js_name = "_delimiter")');
-		expect(emitted).toContain('napi(js_name = "_separator_kind")');
+		expect(emitted).toContain('napi(js_name = "_separator")');
 	});
 
 	it('omits separator_kind for a literal-separator node with only an optional trailing flank', () => {

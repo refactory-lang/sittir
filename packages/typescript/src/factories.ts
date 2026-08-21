@@ -5964,7 +5964,7 @@ function _buildObjectTypeContent(
 ) {
 	_assertNonEmpty(elements, 'object_type_content.elements');
 	const _content = elements;
-	const _separator_kind = ({ ',': TSKindId.Comma, ';': TSKindId.Semi } as Record<string, number>)[
+	const _separator = ({ ',': TSKindId.Comma, ';': TSKindId.Semi } as Record<string, number>)[
 		options.separatorKind ?? ','
 	];
 	const _delimiter = (options.leading ? 1 : 0) | (options.trailing ? 2 : 0);
@@ -5975,7 +5975,7 @@ function _buildObjectTypeContent(
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				_separator_kind,
+				_separator,
 				_delimiter,
 				$with: {
 					$children: (

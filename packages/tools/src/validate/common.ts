@@ -1585,7 +1585,7 @@ export interface NodeToConfigOpts {
 	readonly kindNameFromId?: (id: number) => string | undefined;
 	/** `KIND_LITERAL_TEXT` (types.ts) — literal punctuation/keyword text for
 	 * anonymous-token kind ids. Reverses a separatedList's captured
-	 * `_separator_kind` back to the literal string its factory's
+	 * `_separator` back to the literal string its factory's
 	 * `options.separatorKind` expects. */
 	readonly kindLiteralText?: ReadonlyMap<number, string>;
 }
@@ -2840,7 +2840,7 @@ export function separatedListFactoryOptions(
 		const matches = Object.keys(rec).filter((k) => k.endsWith('_delimiter') && k !== '_delimiter');
 		return matches.length === 1 && typeof rec[matches[0]!] === 'number' && ((rec[matches[0]!] as number) & bit) !== 0;
 	};
-	const separatorSourceKind = rec['_separator_kind'] as number | undefined;
+	const separatorSourceKind = rec['_separator'] as number | undefined;
 	const separatorKind = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
 	const options: { separatorKind?: string; leading?: boolean; trailing?: boolean } = {};
 	if (separatorKind !== undefined) options.separatorKind = separatorKind;

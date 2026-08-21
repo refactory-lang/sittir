@@ -460,7 +460,7 @@ function emitRestParamFromResolver(
 	// `isSelfUnwrap` distinguishes the two call sites below: `true` inside
 	// the self-NodeData-unwrap branch (a `data` local naming the original
 	// wrapped node is in scope, so a caller like `emitSeparatedListFrom` can
-	// read per-instance facts off it — e.g. preserving `_separator_kind`/
+	// read per-instance facts off it — e.g. preserving `_separator`/
 	// `_delimiter` when reconstructing an already-wrapped
 	// separatedList node); `false` for the fresh-input path, where no such
 	// source node exists to read facts from.
@@ -636,13 +636,13 @@ function emitSeparatedListFrom(
 		// three per-instance fields through one shared cast rather than
 		// three separate ones.
 		const sourceFields =
-			'(data as unknown as { _separator_kind?: number; _delimiter?: number })';
+			'(data as unknown as { _separator?: number; _delimiter?: number })';
 		const optionParts: string[] = [];
 		if (candidateKindNames.length > 0) {
 			// `KIND_LITERAL_TEXT` (types.ts) is the single stamped source for
 			// kindId→literal-text — no per-kind reverse-arms table to build here.
 			optionParts.push(
-				`separatorKind: (() => { const sk = ${sourceFields}._separator_kind; return sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk); })()`
+				`separatorKind: (() => { const sk = ${sourceFields}._separator; return sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk); })()`
 			);
 		}
 		if (hasLeadingOption)

@@ -1117,10 +1117,10 @@ function emitSeparatedListFactory(
 				.map((k) => `${JSON.stringify(k)}: ${kindDiscriminantExpr(k, nodeMap, kindEntries)}`)
 				.join(', ');
 			lines.push(
-				`  const _separator_kind = ({ ${arms} } as Record<string, number>)[options.separatorKind ?? ${JSON.stringify(candidateKindNames[0])}];`
+				`  const _separator = ({ ${arms} } as Record<string, number>)[options.separatorKind ?? ${JSON.stringify(candidateKindNames[0])}];`
 			);
 		} else {
-			lines.push('  const _separator_kind = undefined;');
+			lines.push('  const _separator = undefined;');
 		}
 	}
 	if (hasLeadingOption || hasTrailingOption) {
@@ -1136,7 +1136,7 @@ function emitSeparatedListFactory(
 	lines.push('    $source: 2 as const,');
 	lines.push('    $named: true as const,');
 	lines.push(`    ${contentStorageKey},`);
-	if (hasSeparatorKindOption) lines.push('    _separator_kind,');
+	if (hasSeparatorKindOption) lines.push('    _separator,');
 	if (hasLeadingOption || hasTrailingOption) lines.push('    _delimiter,');
 	lines.push('    $with: {');
 	const optionsArg = hasOptions ? 'options, ' : '';

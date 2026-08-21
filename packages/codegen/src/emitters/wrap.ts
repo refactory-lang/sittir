@@ -588,7 +588,7 @@ export function collectSeparatorCandidateKindNames(rule: Rule<'link'>): string[]
 			throw new Error(
 				`collectSeparatorCandidateKindNames: unhandled separator rule shape '${rule.type}' — ` +
 					`extend this walk to resolve its kind-discriminant leaves before this kind can emit ` +
-					`_separator_kind.`
+					`_separator.`
 			);
 	}
 }
@@ -774,7 +774,7 @@ function emitSeparatedListWrap(
 		const candidateExprs = candidateKindNames
 			.filter((k) => hasCatalogEntry(kindEntries, k))
 			.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries));
-		lines.push(`    _separator_kind: _separatorKindOf(data, [${candidateExprs.join(', ')}]),`);
+		lines.push(`    _separator: _separatorKindOf(data, [${candidateExprs.join(', ')}]),`);
 	}
 	// The delimiter bitflag (leading = 1, trailing = 2) is the single wire
 	// key for the list's optional-flank state — one fact, one key, matching

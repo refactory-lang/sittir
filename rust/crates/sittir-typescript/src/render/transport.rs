@@ -49977,7 +49977,7 @@ pub struct ObjectTypeContentTransport {
     pub content_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator_kind"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator"))]
     pub separator_kind: Option<u16>,
 }
 

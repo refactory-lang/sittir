@@ -3322,15 +3322,15 @@ export function coerceToObjectTypeContent(
 		return F.buildObjectTypeContent(
 			{
 				separatorKind: (() => {
-					const sk = (data as unknown as { _separator_kind?: number; _delimiter?: number })._separator_kind;
+					const sk = (data as unknown as { _separator?: number; _delimiter?: number })._separator;
 					return sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk);
 				})(),
 				leading: (() => {
-					const d = (data as unknown as { _separator_kind?: number; _delimiter?: number })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: number })._delimiter;
 					return d === undefined ? undefined : (d & 1) !== 0;
 				})(),
 				trailing: (() => {
-					const d = (data as unknown as { _separator_kind?: number; _delimiter?: number })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: number })._delimiter;
 					return d === undefined ? undefined : (d & 2) !== 0;
 				})()
 			},

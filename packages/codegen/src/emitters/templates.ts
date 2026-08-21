@@ -995,7 +995,7 @@ function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonter
 	// not because there's no separator at all. Reference the transport
 	// struct's own `.separator` field (a runtime-resolved `&str`, populated
 	// by render-module.ts's `buildSeparatorKindMatchLines` from the wire-
-	// captured `_separator_kind`) instead of falling through to
+	// captured `_separator`) instead of falling through to
 	// `DEFAULT_JOIN_SEPARATOR` — which would silently drop every separator
 	// occurrence (see docs/superpowers/specs/2026-07-12-separator-as-slot-design.md).
 	if (!allImmediate && ruleSep === undefined && isNonterminalSeparatorRule(rule)) {

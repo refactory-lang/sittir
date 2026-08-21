@@ -1990,7 +1990,7 @@ export interface ObjectTypeContentTransport {
   _content?: Array<ObjectTypeContentContentTransportSlot>
   _content_delimiter?: number
   _delimiter?: number
-  _separator_kind?: number
+  _separator?: number
 }
 
 export interface ObjectTypeTransport {

@@ -35,7 +35,7 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 ];
 
 describe('wrap emitter — separatedList', () => {
-	it('emits _member/_separator_kind/_delimiter for a nonterminal separator with both flanks optional', () => {
+	it('emits _member/_separator/_delimiter for a nonterminal separator with both flanks optional', () => {
 		// Storage/accessor key is the model's OWN derived slot name (`_member`,
 		// from the element kind — see AssembledSeparatedList.fields / Bug B fix),
 		// NOT a hardcoded `_content`/`content()`. `_content` remains only as an
@@ -57,14 +57,14 @@ describe('wrap emitter — separatedList', () => {
 
 		expect(emitted).toContain('_member:');
 		expect(emitted).toContain('member() {');
-		expect(emitted).toContain('_separator_kind:');
+		expect(emitted).toContain('_separator:');
 		expect(emitted).toContain('_delimiter:');
 		expect(emitted).toContain('"leading"');
 		expect(emitted).toContain('"trailing"');
 		expect(emitted).toContain('_separatorKindOf(data, [TSKindId.Comma, TSKindId.Semi])');
 	});
 
-	it('omits _separator_kind and the leading bit for a literal-separator node with only an optional trailing flank', () => {
+	it('omits _separator and the leading bit for a literal-separator node with only an optional trailing flank', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
@@ -74,7 +74,7 @@ describe('wrap emitter — separatedList', () => {
 		const emitted = emitWrap({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES });
 
 		expect(emitted).toContain('_member:');
-		expect(emitted).not.toContain('_separator_kind:');
+		expect(emitted).not.toContain('_separator:');
 		expect(emitted).toContain('_delimiter:');
 		// Only the trailing bit contributes — no leading term in the flag.
 		expect(emitted).not.toContain('? 1 : 0');

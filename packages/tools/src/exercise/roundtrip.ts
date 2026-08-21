@@ -275,7 +275,7 @@ export function buildFactoryNode(
 	if (shape === 'elements') {
 		// separatedList factory: `(elements, options?: {separatorKind?, leading?, trailing?})`
 		// — distinct calling convention from 'spread's rest-param factories.
-		const separatorSourceKind = (readData as { _separator_kind?: number })._separator_kind;
+		const separatorSourceKind = (readData as { _separator?: number })._separator;
 		const separatorKind = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
 		const delimiter = (readData as { _delimiter?: number })._delimiter ?? 0;
 		const leading = (delimiter & 1) !== 0;

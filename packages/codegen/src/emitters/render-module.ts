@@ -3749,7 +3749,7 @@ function renderTransportDataStruct(
 					}
 				}
 				// Task 4's wire capture (wrap.ts's `emitSeparatedListWrap`) emits
-				// `_delimiter`/`_separator_kind` sibling wire keys
+				// `_delimiter`/`_separator` sibling wire keys
 				// ONLY when the corresponding grammar-level mode/rule actually needs
 				// per-instance capture (design's "Field shape and wire capture"
 				// section) — mirror that same gating here so the struct never
@@ -3763,7 +3763,7 @@ function renderTransportDataStruct(
 					}
 					if (node.separatorRule !== undefined) {
 						lines.push(
-							'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator_kind"))]',
+							'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator"))]',
 							'    pub separator_kind: Option<u16>,'
 						);
 					}

@@ -6,7 +6,7 @@
  * `elements` argument, plus a trailing options object (only emitted when at
  * least one of separatorKind/leading/trailing genuinely varies per-instance)
  * for `separatorKind`/`leading`/`trailing` overrides — mirroring wrap.ts's
- * `_separator_kind`/`_delimiter` wire-key naming
+ * `_separator`/`_delimiter` wire-key naming
  * so the same three concepts share one naming scheme across
  * capture/render/construct. The elements' own storage key is NOT a fixed
  * `_content` bucket — it's the fixture's real single-field canonical slot
@@ -109,7 +109,7 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).toContain('leading?: boolean');
 		expect(emitted).toContain('trailing?: boolean');
 		expect(emitted).toContain('_member');
-		expect(emitted).toContain('_separator_kind');
+		expect(emitted).toContain('_separator');
 		expect(emitted).toContain('_delimiter');
 		expect(emitted).toContain('(options.leading ? 1 : 0)');
 		expect(emitted).toContain('(options.trailing ? 2 : 0)');
@@ -132,7 +132,7 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).not.toContain('separatorKind?:');
 		expect(emitted).not.toContain('leading?: boolean');
 		expect(emitted).toContain('trailing?: boolean');
-		expect(emitted).not.toContain('_separator_kind');
+		expect(emitted).not.toContain('_separator');
 		expect(emitted).toContain('_delimiter');
 		expect(emitted).not.toContain('options.leading ?');
 		expect(emitted).toContain('(options.trailing ? 2 : 0)');
@@ -149,7 +149,7 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).not.toContain('separatorKind?:');
 		expect(emitted).toContain('leading?: boolean');
 		expect(emitted).toContain('trailing?: boolean');
-		expect(emitted).not.toContain('_separator_kind');
+		expect(emitted).not.toContain('_separator');
 		expect(emitted).toContain('_delimiter');
 		expect(emitted).toContain('(options.leading ? 1 : 0)');
 		expect(emitted).toContain('(options.trailing ? 2 : 0)');
@@ -165,7 +165,7 @@ describe('factories emitter — separatedList', () => {
 
 		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>) {');
 		expect(emitted).not.toContain('options');
-		expect(emitted).not.toContain('_separator_kind');
+		expect(emitted).not.toContain('_separator');
 		expect(emitted).not.toContain('_delimiter');
 	});
 

@@ -5,7 +5,7 @@
  * merged from the former `object_type_content_comma`/`_semi` split by the
  * plan's Task 7. Three concerns:
  *
- * - Wire capture (Task 4's `_leading_sep`/`_trailing_sep`): the
+ * - Wire capture (the `_delimiter` bitflag: leading = 1, trailing = 2): the
  *   `wrap-separated-list-emit` unit tests only assert the EMITTED SOURCE
  *   contains the expected calls; this exercises the actual generated
  *   `wrapObjectTypeContent` against a real parse, locking in the
@@ -17,8 +17,8 @@
  *   verification, with no committed regression test at the time — these
  *   `rendered` assertions close that gap.
  * - Reconstruction (`emitSeparatedListFrom`): `from()` on an already-wrapped
- *   separatedList node used to silently reset `_separator_kind`/
- *   `_leading_sep`/`_trailing_sep` to the factory's defaults (comma, no
+ *   separatedList node used to silently reset `_separator`/
+ *   `_delimiter` to the factory's defaults (comma, no
  *   flanks) instead of preserving the original instance's own facts —
  *   found via external code review, fixed by threading them through as
  *   factory options on the self-NodeData-unwrap path.
@@ -35,8 +35,7 @@ describe('separatedList wrap capture — real typescript grammar integration', (
 		});
 
 		expect(trace.trace.native?.deep?.nodeData).toMatchObject({
-			_leading_sep: false,
-			_trailing_sep: true
+			_delimiter: 2
 		});
 	});
 
@@ -47,8 +46,7 @@ describe('separatedList wrap capture — real typescript grammar integration', (
 		});
 
 		expect(trace.trace.native?.deep?.nodeData).toMatchObject({
-			_leading_sep: false,
-			_trailing_sep: false
+			_delimiter: 0
 		});
 	});
 });
@@ -96,13 +94,13 @@ describe('separatedList from() reconstruction — preserves original separator f
 			engine: 'native'
 		});
 
-		const wrapped = trace.trace.native?.deep?.nodeData as { _trailing_sep?: boolean; _separator_kind?: number };
-		expect(wrapped._trailing_sep).toBe(true);
-		expect(wrapped._separator_kind).toBeDefined();
+		const wrapped = trace.trace.native?.deep?.nodeData as { _delimiter?: number; _separator?: number };
+		expect(((wrapped._delimiter ?? 0) & 2) !== 0).toBe(true);
+		expect(wrapped._separator).toBeDefined();
 
 		const reconstructed = coerceToObjectTypeContent(wrapped as never);
-		expect((reconstructed as unknown as { _trailing_sep: boolean })._trailing_sep).toBe(true);
-		expect((reconstructed as unknown as { _separator_kind: number })._separator_kind).toBe(wrapped._separator_kind);
+		expect((((reconstructed as unknown as { _delimiter?: number })._delimiter ?? 0) & 2) !== 0).toBe(true);
+		expect((reconstructed as unknown as { _separator: number })._separator).toBe(wrapped._separator);
 		expect(reconstructed.$render!()).toContain(';');
 		expect(reconstructed.$render!()).not.toContain(',');
 	});

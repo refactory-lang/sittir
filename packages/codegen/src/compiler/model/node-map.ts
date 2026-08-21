@@ -3029,7 +3029,7 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 	 * byte-identically to their pre-Task-2 `'branch'` output, so `cargo
 	 * build` stays green and existing corpus round-trips don't regress.
 	 * Tasks 4-6 replace this with real per-instance separator capture
-	 * (`_separator_kind`/`_leading_sep`/`_trailing_sep`); at that point this
+	 * (`_separator`/`_leading_sep`/`_trailing_sep`); at that point this
 	 * slot-bearing surface goes away — do NOT build new capture logic on
 	 * top of it.
 	 */
