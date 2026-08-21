@@ -267,6 +267,9 @@ export interface IsGuards {
 	StructPatternElements<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.StructPatternElements };
+	TupleTypeElements<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.TupleTypeElements };
 	ReferenceExpressionRawMut<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ReferenceExpressionRawMut };
@@ -518,6 +521,7 @@ export interface AssertGuards {
 	TuplePatternElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TuplePatternElements };
 	Patterns(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Patterns };
 	StructPatternElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StructPatternElements };
+	TupleTypeElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleTypeElements };
 	ReferenceExpressionRawMut(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ReferenceExpressionRawMut };
@@ -578,12 +582,12 @@ const _supertype_declarationStatement_ids = new Set<number>([
 	186, 240, 161, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
 ]);
 const _supertype_tokenPattern_ids = new Set<number>([
-	164, 166, 165, 136, 312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 347, 348
+	164, 166, 165, 136, 312, 313, 123, 314, 121, 151, 1, 79, 133, 134, 135, 348, 349
 ]);
 const _supertype_tokens_ids = new Set<number>([
-	168, 169, 136, 312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 347, 348
+	168, 169, 136, 312, 313, 123, 314, 121, 151, 1, 79, 133, 134, 135, 348, 349
 ]);
-const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 347, 348]);
+const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 123, 314, 121, 151, 1, 79, 133, 134, 135, 348, 349]);
 const _supertype_useClause_ids = new Set<number>([133, 1, 136, 134, 135, 244, 209, 208, 207, 210]);
 const _supertype_type_ids = new Set<number>([236, 233, 136, 234, 227, 246, 224, 225, 221, 223, 1, 240, 237, 229, 199]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
@@ -598,13 +602,13 @@ const _supertype_expressionEndingWithBlock_ids = new Set<number>([
 	290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
 ]);
 const _supertype_delimTokens_ids = new Set<number>([241]);
-const _supertype_nonDelimToken_ids = new Set<number>([312, 313, 123, 314, 121, 151, 1, 80, 133, 134, 135, 347, 348]);
+const _supertype_nonDelimToken_ids = new Set<number>([312, 313, 123, 314, 121, 151, 1, 79, 133, 134, 135, 348, 349]);
 const _supertype_condition_ids = new Set<number>([
 	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 123, 314, 121, 151, 1, 133, 244, 226, 288, 289, 259, 261,
 	240, 262, 285, 286, 287, 136, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247, 269, 270
 ]);
 const _supertype_pattern_ids = new Set<number>([
-	312, 313, 123, 314, 121, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 303, 304, 308, 281, 240, 350
+	312, 313, 123, 314, 121, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 303, 304, 308, 281, 240, 351
 ]);
 const _supertype_literal_ids = new Set<number>([312, 313, 123, 314, 121, 151]);
 const _supertype_literalPattern_ids = new Set<number>([312, 313, 123, 314, 121, 151, 311]);
@@ -834,6 +838,7 @@ const _kindIdByKind = new Map<string, number>([
 	['_struct_pattern_elements', TSKindId.StructPatternElements],
 	['_range_pattern_group2', TSKindId.RangePatternGroup2],
 	['_block_comment_group1', TSKindId.BlockCommentGroup1],
+	['_tuple_type_elements', TSKindId.TupleTypeElements],
 	['_token_tree_punctuation', TSKindId.TokenTreePunctuation],
 	['_token_keywords', TSKindId.TokenKeywords],
 	['_use_wildcard_clause', TSKindId.UseWildcardClause],
@@ -1049,6 +1054,7 @@ export const is = {
 	TuplePatternElements: _g(TSKindId.TuplePatternElements),
 	Patterns: _g(TSKindId.Patterns),
 	StructPatternElements: _g(TSKindId.StructPatternElements),
+	TupleTypeElements: _g(TSKindId.TupleTypeElements),
 	ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
 	ImplItemBody: _g(TSKindId.ImplItemBody),
 	ClosureExpressionExpr: _g(TSKindId.ClosureExpressionExpr),
@@ -1280,6 +1286,7 @@ export const assert = {
 	TuplePatternElements: _makeAssert('TuplePatternElements', is.TuplePatternElements as _AnyGuard),
 	Patterns: _makeAssert('Patterns', is.Patterns as _AnyGuard),
 	StructPatternElements: _makeAssert('StructPatternElements', is.StructPatternElements as _AnyGuard),
+	TupleTypeElements: _makeAssert('TupleTypeElements', is.TupleTypeElements as _AnyGuard),
 	ReferenceExpressionRawMut: _makeAssert('ReferenceExpressionRawMut', is.ReferenceExpressionRawMut as _AnyGuard),
 	ImplItemBody: _makeAssert('ImplItemBody', is.ImplItemBody as _AnyGuard),
 	ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),

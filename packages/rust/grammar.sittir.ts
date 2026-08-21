@@ -26,9 +26,10 @@ import type { EnrichedGrammar } from '../codegen/src/dsl/enrich.ts';
 declare const string: (value: string) => unknown;
 
 const enrichedBase = enrich(base, {
-	// `tuple_type` and `trait_bounds` already field their separated list's
-	// element position via their own override below (`tuple_type: {
-	// '(_type)': field('type') }`, `trait_bounds`'s `bounds` field) —
+	// `tuple_type`'s separated list is extracted into its own
+	// `_tuple_type_elements` rule (`rules:` below) with every element
+	// position explicitly fielded, and `trait_bounds` fields its list's
+	// element position via its `bounds` field override —
 	// applyNodeChoiceFieldWrap's separated-list target fielding the same
 	// position first left those overrides with nothing to find: a hard
 	// `tree-sitter generate` failure for `tuple_type` (kind-match search
@@ -298,10 +299,6 @@ export default grammar(
 					'(_expression)': field('elements')
 				},
 
-				tuple_type: {
-					'(_type)': field('type')
-				},
-
 				type_item: {
 					4: field('where_clause'),
 					7: field('trailing_where_clause')
@@ -351,6 +348,16 @@ export default grammar(
 				}
 			},
 			rules: {
+				// tuple_type's separated list realized as its own kind — the
+				// delimiter is a fact of the list, so the list is a top-level
+				// rule carrying it (hidden rule + visible alias, matching the
+				// `*_elements` family). Every element position is fielded so
+				// the extracted rule classifies separatedList and enrich's
+				// separated-list field wrap has nothing left to target.
+				_tuple_type_elements: ($) =>
+					seq(field('type', $._type), repeat(seq(',', field('type', $._type))), optional(',')),
+				tuple_type: ($) => seq('(', alias($._tuple_type_elements, $.tuple_type_elements), ')'),
+
 				_token_tree_punctuation: ($) =>
 					choice(
 						'+',

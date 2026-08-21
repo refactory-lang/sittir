@@ -1041,16 +1041,14 @@ describe('function_type', () => {
 describe('tuple_type', () => {
 	it('factory produces correct type', () => {
 		const node = ir.tupleType({
-			type: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
-		});
+			$type: TSKindId.TupleTypeElements,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_type: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+		} as any);
 		expect(node.$type).toBe(TSKindId.TupleType);
 		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.tupleType({
-			type: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
-		});
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

@@ -2313,7 +2313,7 @@ export interface TupleStructPatternTransport {
   _pattern?: Array<PatternTransport>
 }
 
-export interface TupleTypeTransport {
+export interface TupleTypeElementsTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -2323,6 +2323,19 @@ export interface TupleTypeTransport {
   '$triviaData'?: TransportTrivia
   _type: Array<_TypeTransport>
   _type_delimiter?: number
+  _delimiter?: number
+}
+
+export interface TupleTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _tuple_type_elements: TupleTypeElementsTransport
+  _type?: Array<_TypeTransport>
 }
 
 export interface TypeArgumentsElementsTransport {

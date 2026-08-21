@@ -4657,50 +4657,20 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.TupleType as const,
-			_type: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._type, [
-					'_type',
-					'abstract_type',
-					'reference_type',
-					'metavariable',
-					'pointer_type',
-					'generic_type',
-					'scoped_type_identifier',
-					'tuple_type',
-					'unit_type',
-					'array_type',
-					'function_type',
-					'identifier',
-					'macro_invocation',
-					'never_type',
-					'dynamic_type',
-					'bounded_type',
-					'removed_trait_bound',
-					'_primitive_type'
-				]),
+			_tuple_type_elements: normalizeSingularWrapSlot(
+				data._tuple_type_elements,
+				'tuple_type_elements',
 				true,
-				'type',
-				{ tree, nodeType: data.$type, slotName: 'type', span: (data as _NodeData).$span }
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'tuple_type_elements', span: (data as _NodeData).$span }
 			),
-			_type_delimiter: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._type) ? data._type : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			)
-				? 2
-				: 0,
 
-			types() {
-				return drillInAll<T._Type>(this._type as readonly T._Type[] | undefined, tree);
+			tupleTypeElements() {
+				return drillIn<T.TupleTypeElements>(this._tuple_type_elements, tree);
 			},
 			$with: {
-				types: (...v: NonEmptyArray<NonNullable<T.TupleType['_type']>[number]>) =>
-					wrapTupleType({ ...data, _type: v }, tree)
+				tupleTypeElements: (v: NonNullable<T.TupleType['_tuple_type_elements']>) =>
+					wrapTupleType({ ...data, _tuple_type_elements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -5031,7 +5001,7 @@ export function wrapPointerType(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ const: 383, mut: 80 }
+				{ const: 384, mut: 79 }
 			),
 			_type: normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 				tree,
@@ -5738,7 +5708,7 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '-': 81, '*': 11, '!': 48 }
+				{ '-': 80, '*': 11, '!': 48 }
 			),
 			_operand: normalizeSingularWrapSlot(data._operand, 'operand', true, data.$type, {
 				tree,
@@ -5889,24 +5859,24 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
 				{
-					'&&': 82,
-					'||': 83,
-					'&': 78,
-					'|': 84,
-					'^': 85,
-					'==': 86,
-					'!=': 87,
+					'&&': 81,
+					'||': 82,
+					'&': 77,
+					'|': 83,
+					'^': 84,
+					'==': 85,
+					'!=': 86,
 					'<': 68,
-					'<=': 88,
+					'<=': 87,
 					'>': 69,
-					'>=': 89,
-					'<<': 90,
-					'>>': 91,
+					'>=': 88,
+					'<<': 89,
+					'>>': 90,
 					'+': 10,
-					'-': 81,
+					'-': 80,
 					'*': 11,
-					'/': 92,
-					'%': 93
+					'/': 91,
+					'%': 92
 				}
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -6004,7 +5974,7 @@ export function wrapCompoundAssignmentExpr(data: T.CompoundAssignmentExpr, tree:
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '+=': 94, '-=': 95, '*=': 96, '/=': 97, '%=': 98, '&=': 99, '|=': 100, '^=': 101, '<<=': 102, '>>=': 103 }
+				{ '+=': 93, '-=': 94, '*=': 95, '/=': 96, '%=': 97, '&=': 98, '|=': 99, '^=': 100, '<<=': 101, '>>=': 102 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -8188,7 +8158,7 @@ export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'mutable_specifier', span: (data as _NodeData).$span }
 				),
-				{ mut: 80 }
+				{ mut: 79 }
 			),
 			_pattern: normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
 				tree,
@@ -9435,6 +9405,35 @@ export function wrapBlockCommentGroup1(data: T.BlockCommentGroup1, tree: TreeHan
 	return _node;
 }
 
+export function wrapTupleTypeElements(
+	data: T.TupleTypeElements & {
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._type, true, 'type', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'type',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
+		{
+			...data,
+			$type: TSKindId.TupleTypeElements as const,
+			_type: _content,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+
+			types() {
+				return drillInAll<T._Type>(this._type as readonly T._Type[] | undefined, tree);
+			},
+			$with: {}
+		},
+		methodsEngine
+	);
+}
+
 export function wrapUseWildcardClause(data: T.UseWildcardClause, tree: TreeHandle) {
 	const _node = withMethods(
 		{
@@ -9472,7 +9471,7 @@ export function wrapReferenceExpressionRawMut(data: T.ReferenceExpressionRawMut,
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'mutable_specifier', span: (data as _NodeData).$span }
 				),
-				{ mut: 80 }
+				{ mut: 79 }
 			),
 
 			mutableSpecifier() {
@@ -11521,6 +11520,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.StructPatternElements]: (d, t) => wrapStructPatternElements(d as unknown as T.StructPatternElements, t),
 	[TSKindId.RangePatternGroup2]: (d, t) => wrapRangePatternGroup2(d as unknown as T.RangePatternGroup2, t),
 	[TSKindId.BlockCommentGroup1]: (d, t) => wrapBlockCommentGroup1(d as unknown as T.BlockCommentGroup1, t),
+	[TSKindId.TupleTypeElements]: (d, t) => wrapTupleTypeElements(d as unknown as T.TupleTypeElements, t),
 	[TSKindId.TokenTreePunctuation]: (d) => ({ ...d, $type: TSKindId.TokenTreePunctuation as const }),
 	[TSKindId.TokenKeywords]: (d) => ({ ...d, $type: TSKindId.TokenKeywords as const }),
 	[TSKindId.UseWildcardClause]: (d, t) => wrapUseWildcardClause(d as unknown as T.UseWildcardClause, t),

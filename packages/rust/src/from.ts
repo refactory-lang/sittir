@@ -327,6 +327,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	visibility_modifier: TSKindId.VisibilityModifier,
 	bracketed_type: TSKindId.BracketedType,
 	for_lifetimes: TSKindId.ForLifetimes,
+	tuple_type: TSKindId.TupleType,
 	type_arguments: TSKindId.TypeArguments,
 	delim_token_tree: TSKindId.DelimTokenTree,
 	range_expression: TSKindId.RangeExpression,
@@ -357,6 +358,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_tuple_pattern_elements: TSKindId.TuplePatternElements,
 	_patterns: TSKindId.Patterns,
 	_struct_pattern_elements: TSKindId.StructPatternElements,
+	_tuple_type_elements: TSKindId.TupleTypeElements,
 	_impl_item_body: TSKindId.ImplItemBody,
 	_function_type_fn_form: TSKindId.FunctionTypeFnForm,
 	_macro_definition_paren: TSKindId.MacroDefinitionParen,
@@ -391,6 +393,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildBracketedType(children[0] as Parameters<typeof F.buildBracketedType>[0]);
 		case 'for_lifetimes':
 			return F.buildForLifetimes(children[0] as Parameters<typeof F.buildForLifetimes>[0]);
+		case 'tuple_type':
+			return F.buildTupleType(children[0] as Parameters<typeof F.buildTupleType>[0]);
 		case 'type_arguments':
 			return F.buildTypeArguments(children[0] as Parameters<typeof F.buildTypeArguments>[0]);
 		case 'delim_token_tree':
@@ -451,6 +455,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildPatterns as (...args: unknown[]) => unknown)(...children);
 		case '_struct_pattern_elements':
 			return (F.buildStructPatternElements as (...args: unknown[]) => unknown)(...children);
+		case '_tuple_type_elements':
+			return (F.buildTupleTypeElements as (...args: unknown[]) => unknown)(...children);
 		case '_impl_item_body':
 			return F.buildImplItemBody(children[0] as Parameters<typeof F.buildImplItemBody>[0]);
 		case '_function_type_fn_form':
@@ -1681,13 +1687,13 @@ export function coerceToFunctionType(input: T.FunctionType.Loose): ReturnType<ty
 	});
 }
 
-export function coerceToTupleType(input: T.TupleType.Loose): ReturnType<typeof F.buildTupleType> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTupleType>;
-	const _ne_types = _resolveMany<T._Type>(input.type, _K13, _K14);
-	_assertNonEmpty(_ne_types, 'tuple_type.types');
-	return F.buildTupleType({
-		type: _ne_types
-	});
+export function coerceToTupleType(input?: T.TupleTypeElements | T.TupleType): ReturnType<typeof F.buildTupleType> {
+	if (isNodeData(input) && input.$type === TSKindId.TupleType) {
+		const data = input;
+		const child = (data as unknown as { _tuple_type_elements?: unknown })._tuple_type_elements;
+		return F.buildTupleType(child as Parameters<typeof F.buildTupleType>[0]);
+	}
+	return F.buildTupleType(input as Parameters<typeof F.buildTupleType>[0]);
 }
 
 export function coerceToUnitType(input: string | T.UnitType): ReturnType<typeof F.buildUnitType> {

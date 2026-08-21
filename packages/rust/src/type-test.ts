@@ -351,6 +351,8 @@ import type {
 	TupleStructPattern,
 	TupleStructPatternTree,
 	TupleType,
+	TupleTypeElements,
+	TupleTypeElementsTree,
 	TupleTypeTree,
 	TypeArgument,
 	TypeArgumentTree,
@@ -646,6 +648,7 @@ export type _Type_Patterns = _TypeAssert<_TypeExtends<Patterns['$type'], TSKindI
 export type _Type_StructPatternElements = _TypeAssert<
 	_TypeExtends<StructPatternElements['$type'], TSKindId.StructPatternElements>
 >;
+export type _Type_TupleTypeElements = _TypeAssert<_TypeExtends<TupleTypeElements['$type'], TSKindId.TupleTypeElements>>;
 export type _Type_ReferenceExpressionRawMut = _TypeAssert<
 	_TypeExtends<ReferenceExpressionRawMut['$type'], TSKindId.ReferenceExpressionRawMut>
 >;
@@ -1092,6 +1095,7 @@ export type _Tree_Patterns = _TypeAssert<_TypeExtends<PatternsTree['type'], '_pa
 export type _Tree_StructPatternElements = _TypeAssert<
 	_TypeExtends<StructPatternElementsTree['type'], '_struct_pattern_elements'>
 >;
+export type _Tree_TupleTypeElements = _TypeAssert<_TypeExtends<TupleTypeElementsTree['type'], '_tuple_type_elements'>>;
 export type _Tree_ReferenceExpressionRawMut = _TypeAssert<
 	_TypeExtends<ReferenceExpressionRawMutTree['type'], '_reference_expression_raw_mut'>
 >;

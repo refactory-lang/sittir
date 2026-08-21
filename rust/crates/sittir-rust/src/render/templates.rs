@@ -468,6 +468,12 @@ pub struct TuplePatternElementsTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_tuple_type_elements.jinja", escape = "none")]
+pub struct TupleTypeElementsTemplate<'a> {
+    pub type_: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_type_argument.jinja", escape = "none")]
 pub struct TypeArgumentTemplate<'a> {
     pub content: SingleNonterminalView<'a>,
@@ -1384,7 +1390,7 @@ pub struct TupleStructPatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "tuple_type.jinja", escape = "none")]
 pub struct TupleTypeTemplate<'a> {
-    pub type_: ListNonterminalView<'a>,
+    pub tuple_type_elements: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

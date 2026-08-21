@@ -2004,23 +2004,34 @@ export function buildFunctionType(config: T.FunctionType.Config) {
 	);
 }
 
-export function buildTupleType(config: T.TupleType.Config, options: { delimiter?: 2 } = {}) {
-	const _type = config.type ?? [];
+export function buildTupleType(child: T.TupleTypeElements): ReturnType<typeof _buildTupleType>;
+export function buildTupleType(...args: Parameters<typeof buildTupleTypeElements>): ReturnType<typeof _buildTupleType>;
+export function buildTupleType(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildTupleType(args[0] as T.TupleTypeElements);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TupleTypeElements as const);
+	return prebuilt
+		? _buildTupleType(args[0] as T.TupleTypeElements)
+		: _buildTupleType((buildTupleTypeElements as (...a: unknown[]) => unknown)(...args) as T.TupleTypeElements);
+}
+function _buildTupleType(child: T.TupleTypeElements) {
+	const _tuple_type_elements = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.TupleType as const,
 				$source: 2 as const,
 				$named: true as const,
-				_type,
-				_type_delimiter: options.delimiter ?? 0,
-				$with: {
-					types: (...values: NonEmptyArray<T._Type>) => buildTupleType({ ...config, type: values }, options),
-					delimiter: (v: 2) => buildTupleType(config, { ...options, delimiter: v })
-				}
+				_tuple_type_elements,
+				$with: { $child: (v: T.TupleTypeElements) => buildTupleType(v) }
 			},
 			{
-				types: () => _type
+				tupleTypeElements: () => _tuple_type_elements
 			}
 		),
 		methodsEngine
@@ -5199,6 +5210,42 @@ export function buildBlockCommentGroup1(config: Partial<T.BlockCommentGroup1.Con
 	);
 }
 
+export function buildTupleTypeElements(...elements: NonEmptyArray<T._Type>): ReturnType<typeof _buildTupleTypeElements>;
+export function buildTupleTypeElements(
+	options: { delimiter?: 2 },
+	...elements: NonEmptyArray<T._Type>
+): ReturnType<typeof _buildTupleTypeElements>;
+export function buildTupleTypeElements(...args: ({ delimiter?: 2 } | T._Type)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T._Type>;
+	return _buildTupleTypeElements(elements, options);
+}
+function _buildTupleTypeElements(elements: NonEmptyArray<T._Type>, options: { delimiter?: 2 }) {
+	_assertNonEmpty(elements, '_tuple_type_elements.elements');
+	const _type = elements;
+	const _delimiter = options.delimiter ?? 0;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.TupleTypeElements as const,
+				$source: 2 as const,
+				$named: true as const,
+				_type,
+				_delimiter,
+				$with: {
+					$children: (...vs: NonEmptyArray<T._Type>) => buildTupleTypeElements(options, ...vs),
+					delimiter: (v: 2) => buildTupleTypeElements({ ...options, delimiter: v }, ...elements)
+				}
+			},
+			{
+				types: () => _type
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildTokenTreePunctuation(
 	text:
 		| '+'
@@ -6820,6 +6867,7 @@ export type FluentKindMap = {
 	_struct_pattern_elements: FluentNode<'_struct_pattern_elements', T.StructPatternElements.Config>;
 	_range_pattern_group2: T.RangePatternGroup2;
 	_block_comment_group1: T.BlockCommentGroup1;
+	_tuple_type_elements: FluentNode<'_tuple_type_elements', T.TupleTypeElements.Config>;
 	_token_tree_punctuation: T.TokenTreePunctuation;
 	_token_keywords: T.TokenKeywords;
 	_use_wildcard_clause: T.UseWildcardClause;
@@ -7059,6 +7107,7 @@ export const _factoryMap = {
 	_struct_pattern_elements: buildStructPatternElements,
 	_range_pattern_group2: buildRangePatternGroup2,
 	_block_comment_group1: buildBlockCommentGroup1,
+	_tuple_type_elements: buildTupleTypeElements,
 	_token_tree_punctuation: buildTokenTreePunctuation,
 	_token_keywords: buildTokenKeywords,
 	_use_wildcard_clause: buildUseWildcardClause,

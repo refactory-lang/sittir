@@ -2188,6 +2188,12 @@ export type RustGrammar = {
 	readonly tuple_type: {
 		type: 'tuple_type';
 		named: true;
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'tuple_type_elements'; named: true }] };
+	};
+	readonly tuple_type_elements: {
+		type: 'tuple_type_elements';
+		named: true;
 		fields: { type: { multiple: true; required: true; types: [{ type: '_type'; named: true }] } };
 	};
 	readonly type_argument: {

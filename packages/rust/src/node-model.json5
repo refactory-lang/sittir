@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 365,
+  "nodeCount": 366,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -297,10 +297,6 @@
       "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
-    "tuple_type.type": {
-      "_type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
-    },
     "generic_type.type": {
       "type_identifier": "identifier"
     },
@@ -409,6 +405,10 @@
     },
     "_block_comment_group1.doc": {
       "doc_comment": "_block_comment_content"
+    },
+    "_tuple_type_elements.type": {
+      "_type_identifier": "identifier",
+      "primitive_type": "_primitive_type"
     },
     "_impl_item_positive_clause.trait": {
       "type_identifier": "identifier"
@@ -1682,12 +1682,12 @@
       }
     },
     "tuple_type": {
-      "type": {
+      "tuple_type_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "generic_function": {
@@ -3108,6 +3108,15 @@
         "required": false,
         "multiple": false,
         "nonEmpty": false
+      }
+    },
+    "_tuple_type_elements": {
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
       }
     },
     "_reference_expression_raw_mut": {
@@ -7785,6 +7794,25 @@
       "factoryShape": "elements",
       "factoryFields": [
         "element"
+      ]
+    },
+    {
+      "kind": "_tuple_type_elements",
+      "modelType": "separatedList",
+      "typeName": "TupleTypeElements",
+      "factoryName": "tupleTypeElements",
+      "irKey": "tupleTypeElements",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
+      "elementKinds": [
+        "_type"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "type"
       ]
     },
     {
@@ -18090,33 +18118,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "type",
-          "propertyName": "types",
-          "paramName": "types",
+          "name": "tuple_type_elements",
+          "propertyName": "tupleTypeElements",
+          "paramName": "tupleTypeElements",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_type",
-              "parseKind": "_type",
+              "multiplicity": "single",
+              "name": "_tuple_type_elements",
+              "parseKind": "tuple_type_elements",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type"
+              "_tuple_type_elements"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_tuple_type_elements",
       "factoryFields": [
-        "type"
+        "tuple_type_elements"
       ]
     },
     {
