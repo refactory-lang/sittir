@@ -44,7 +44,8 @@ import {
 	aliasTargetToSourceMapOf,
 	acceptedIdPairsByKindOf,
 	storageKindOfRef,
-	storageKindOfValue
+	storageKindOfValue,
+	isLeftImmediateKind
 } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type { TemplateFile } from './template-hash.ts';
@@ -536,82 +537,18 @@ function emitStruct(
 ): EmittedStruct {
 	const name = structNameFor(kind, node);
 	const slotModel = renderSlotModelOf(node);
-	// Build name→multiple and name→required lookups from the assembled node's
-	// slots so the typed dispatch emitter generates code consistent with what
-	// the transport struct emits (Vec<...> vs Option<Vec<...>>,
-	// Box<...> vs Option<Box<...>>). Named and unnamed slots are symmetric
-	// (cleanup-rules §E1) — both contribute transport fields.
-	const multipleByName = new Map<string, boolean>();
-	const requiredByName = new Map<string, boolean>();
-	const storageByName = new Map<string, string>();
-	// Per-slot separator: read from the slot's own NodeRef/TerminalValue
-	// metadata (stamped at evaluate / wrapper-deletion time). The separator
-	// is a property of the value, not the node, so each list-multiplicity
-	// slot's emission gets its own — no node-wide fallback that would mask
-	// distinct per-slot separators behind a single first-match.
-	const separatorByName = new Map<string, string>();
-	// Per-slot separator flank modes: like the separator itself, these are
-	// slot stamps that must reach template emission even when the slot is
-	// UNNAMED — the surface only carries named slots, so a surface entry for
-	// unnamed storage (e.g. a merged union slot's `content`) is minted from
-	// the template body with default 'none' modes, silently hardcoding the
-	// rendered flank to absent. Collect from the assembled slots and let the
-	// stamp win over the surface default below.
-	const trailingModeByName = new Map<string, 'mandatory' | 'optional' | 'none'>();
-	const leadingModeByName = new Map<string, 'mandatory' | 'optional' | 'none'>();
-	const unnamedNames = new Set<string>();
-	if (node) {
-		for (const f of [...slotModel.named, ...slotModel.unnamed]) {
-			const mul = isMultiple(f);
-			const req = isRequired(f);
-			multipleByName.set(f.name, mul);
-			requiredByName.set(f.name, req);
-			storageByName.set(f.name, f.storageName);
-			if (f.trailingMode !== 'none') trailingModeByName.set(f.name, f.trailingMode);
-			if (f.leadingMode !== 'none') leadingModeByName.set(f.name, f.leadingMode);
-			for (const v of f.values) {
-				if (v.separator) {
-					separatorByName.set(f.name, v.separator);
-					break;
-				}
-			}
-			// Template walker emits one template var per kind referenced by an
-			// unnamed slot (e.g. a slot with kinds [escape_sequence, string_content]
-			// surfaces both names in the template). Register every kind as an
-			// alias that points back to the slot's single storage so the template
-			// variables all bind to the same transport field. Skip aliases that
-			// collide with another slot's own name — declared fields take
-			// precedence. Only register aliases for unnamed MULTIPLE slots:
-			// single-value slots store one transport-shaped value that cannot
-			// be re-routed through a kind-named template variable, and the
-			// template-walker's "kind as variable" pattern only applies to the
-			// list-style `{{ kind | join(...) }}` emission.
-			if (f.isUnnamed && mul) {
-				for (const k of kindsOf(f)) {
-					const alias = k.replace(/^_+/, '');
-					if (alias === f.name) continue;
-					if (storageByName.has(alias)) continue;
-					multipleByName.set(alias, mul);
-					requiredByName.set(alias, req);
-					storageByName.set(alias, f.storageName);
-				}
-			}
-		}
-		for (const f of slotModel.unnamed) {
-			unnamedNames.add(f.name);
-			if (f.isUnnamed && isMultiple(f)) {
-				for (const k of kindsOf(f)) {
-					const alias = k.replace(/^_+/, '');
-					if (alias === f.name) continue;
-					// Only mark as unnamed-alias when the alias resolves to this
-					// unnamed slot — see storageByName guard above.
-					if (storageByName.get(alias) === f.storageName) {
-						unnamedNames.add(alias);
-					}
-				}
-			}
-		}
-	}
+	// Slot-stamped emission metadata (multiplicity, storage, separators,
+	// flank modes, unnamed aliases) — see collectSlotEmissionMetadata for
+	// why each stamp must win over the surface defaults below.
+	const {
+		multipleByName,
+		requiredByName,
+		storageByName,
+		separatorByName,
+		trailingModeByName,
+		leadingModeByName,
+		unnamedNames
+	} = collectSlotEmissionMetadata(node, slotModel);
 	const fields: EmittedField[] = surface.slots.map((slot) => ({
 		...slot,
 		multiple: multipleByName.get(slot.name) ?? false,
@@ -2749,6 +2686,109 @@ function expandConcreteTransportKinds(
 	return expanded;
 }
 
+interface SlotEmissionMetadata {
+	readonly multipleByName: Map<string, boolean>;
+	readonly requiredByName: Map<string, boolean>;
+	readonly storageByName: Map<string, string>;
+	readonly separatorByName: Map<string, string>;
+	readonly trailingModeByName: Map<string, 'mandatory' | 'optional' | 'none'>;
+	readonly leadingModeByName: Map<string, 'mandatory' | 'optional' | 'none'>;
+	readonly unnamedNames: Set<string>;
+}
+
+/**
+ * Per-slot emission metadata for `emitStruct`'s typed dispatch, collected
+ * from the assembled node's slots so generated code stays consistent with
+ * what the transport struct emits (Vec<...> vs Option<Vec<...>>, Box<...>
+ * vs Option<Box<...>>). Named and unnamed slots are symmetric (cleanup
+ * rules §E1) — both contribute transport fields.
+ *
+ * Separators are read from the slot's own NodeRef/TerminalValue metadata
+ * (stamped at evaluate / wrapper-deletion time): a separator is a property
+ * of the value, not the node, so each list-multiplicity slot's emission
+ * gets its own — no node-wide fallback that would mask distinct per-slot
+ * separators behind a single first-match. Flank modes travel the same way:
+ * they are slot stamps that must reach template emission even when the
+ * slot is UNNAMED — the surface only carries named slots, so a surface
+ * entry for unnamed storage (e.g. a merged union slot's `content`) is
+ * minted from the template body with default 'none' modes, silently
+ * hardcoding the rendered flank to absent. The stamps collected here win
+ * over those surface defaults at the call site.
+ */
+function collectSlotEmissionMetadata(
+	node: AssembledNode | undefined,
+	slotModel: ReturnType<typeof renderSlotModelOf>
+): SlotEmissionMetadata {
+	const multipleByName = new Map<string, boolean>();
+	const requiredByName = new Map<string, boolean>();
+	const storageByName = new Map<string, string>();
+	const separatorByName = new Map<string, string>();
+	const trailingModeByName = new Map<string, 'mandatory' | 'optional' | 'none'>();
+	const leadingModeByName = new Map<string, 'mandatory' | 'optional' | 'none'>();
+	const unnamedNames = new Set<string>();
+	if (node) {
+		for (const f of [...slotModel.named, ...slotModel.unnamed]) {
+			const mul = isMultiple(f);
+			const req = isRequired(f);
+			multipleByName.set(f.name, mul);
+			requiredByName.set(f.name, req);
+			storageByName.set(f.name, f.storageName);
+			if (f.trailingMode !== 'none') trailingModeByName.set(f.name, f.trailingMode);
+			if (f.leadingMode !== 'none') leadingModeByName.set(f.name, f.leadingMode);
+			for (const v of f.values) {
+				if (v.separator) {
+					separatorByName.set(f.name, v.separator);
+					break;
+				}
+			}
+			// Template walker emits one template var per kind referenced by an
+			// unnamed slot (e.g. a slot with kinds [escape_sequence, string_content]
+			// surfaces both names in the template). Register every kind as an
+			// alias that points back to the slot's single storage so the template
+			// variables all bind to the same transport field. Skip aliases that
+			// collide with another slot's own name — declared fields take
+			// precedence. Only register aliases for unnamed MULTIPLE slots:
+			// single-value slots store one transport-shaped value that cannot
+			// be re-routed through a kind-named template variable, and the
+			// template-walker's "kind as variable" pattern only applies to the
+			// list-style `{{ kind | join(...) }}` emission.
+			if (f.isUnnamed && mul) {
+				for (const k of kindsOf(f)) {
+					const alias = k.replace(/^_+/, '');
+					if (alias === f.name) continue;
+					if (storageByName.has(alias)) continue;
+					multipleByName.set(alias, mul);
+					requiredByName.set(alias, req);
+					storageByName.set(alias, f.storageName);
+				}
+			}
+		}
+		for (const f of slotModel.unnamed) {
+			unnamedNames.add(f.name);
+			if (f.isUnnamed && isMultiple(f)) {
+				for (const k of kindsOf(f)) {
+					const alias = k.replace(/^_+/, '');
+					if (alias === f.name) continue;
+					// Only mark as unnamed-alias when the alias resolves to this
+					// unnamed slot — see the storageByName guard above.
+					if (storageByName.get(alias) === f.storageName) {
+						unnamedNames.add(alias);
+					}
+				}
+			}
+		}
+	}
+	return {
+		multipleByName,
+		requiredByName,
+		storageByName,
+		separatorByName,
+		trailingModeByName,
+		leadingModeByName,
+		unnamedNames
+	};
+}
+
 interface PerSlotChildEnum {
 	typeName: string;
 	ownerKind: string;
@@ -2774,7 +2814,7 @@ function isImmediateLeafKind(kind: string, nodeMap: NodeMap): boolean {
  * the wire erase kind identity (a text-collapsed leaf and an inline terminal
  * both arrive as bare strings), so the arm can only be marked when ALL
  * sources that can produce one forbid preceding whitespace: inline
- * `TerminalValue`s via their own `immediate` stamp (§H1 threading), leaf
+ * `TerminalValue`s via their own `immediate` stamp, leaf
  * kind refs via the referenced node's stamp. Non-leaf refs can't scalarize
  * through this arm's normal path and are ignored. Requires at least one
  * scalar-capable source — a vacuous pass would mark arms whose scalars come
@@ -2850,7 +2890,12 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 			const key = `${literalKind}\0${component.value}`;
 			if (literalSet.has(key)) continue;
 			literalSet.add(key);
-			literals.push({ kind: literalKind, text: component.value, resolvedKindId: component.resolvedKindId });
+			literals.push({
+				kind: literalKind,
+				text: component.value,
+				resolvedKindId: component.resolvedKindId,
+				immediate: component.immediate
+			});
 		}
 		// Mixed-content override: a slot with named kinds AND anonymous literal
 		// content is heterogeneous regardless of classifier.
@@ -3149,14 +3194,26 @@ function emitPerSlotChildEnum(
 	for (const { kind, node } of validKinds) {
 		const variant = rustTypeIdent(node.typeName);
 		const innerExpr = isBoxed(kind, node) ? 'inner.as_ref()' : 'inner';
-		lines.push(`            ${enumName}::${variant}(inner) => ${innerExpr}.render_into(dest),`);
+		// A structural kind whose leftmost terminal is grammar-immediate
+		// (`isLeftImmediateKind`) renders seam-free on its left in every
+		// context — mark before delegating. Leaf kinds carry their mark
+		// inside their own render fn, so marking here would double-declare.
+		const call = `${innerExpr}.render_into(dest)`;
+		const arm =
+			!(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap)
+				? `{ ::sittir_core::spacing::mark_adjacent(); ${call} }`
+				: call;
+		lines.push(`            ${enumName}::${variant}(inner) => ${arm},`);
 	}
 	for (const literal of entry.literals) {
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant !== undefined) {
-			// A literal arm for an immediate token kind writes seam-free —
-			// grammar forbids whitespace before it (see `mark_adjacent`).
-			const arm = isImmediateLeafKind(literal.kind, nodeMap)
+			// A literal arm for an immediate token writes seam-free — grammar
+			// forbids whitespace before it (see `mark_adjacent`). Inline
+			// terminals carry the stamp on the literal itself (no kind of
+			// their own to look up); kind-named literals resolve it through
+			// their kind.
+			const arm = (literal.immediate === true || isImmediateLeafKind(literal.kind, nodeMap))
 				? `{ ::sittir_core::spacing::mark_adjacent(); dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from) }`
 				: `dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from)`;
 			lines.push(`            ${enumName}::${variant} => ${arm},`);

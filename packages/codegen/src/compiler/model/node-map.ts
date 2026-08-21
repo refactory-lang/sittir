@@ -3136,3 +3136,366 @@ export function allStructuralSlotsOf(node: AssembledNode): readonly AssembledNon
 		return Object.values(node.slots);
 	return [];
 }
+
+/**
+ * Duck-typed against `NodeMap` rather than importing it — `NodeMap` (in
+ * `compiler/types.ts`) references `AssembledNode`, defined in THIS module,
+ * so a direct import would be circular (same pattern as `SlotAliasPairsCtx`).
+ */
+export interface LeftImmediateCtx {
+	readonly nodes: ReadonlyMap<string, AssembledNode>;
+	readonly linkRules?: Record<string, Rule<'link'>>;
+}
+
+/**
+ * Grammar-declared LEFT-immediacy of a kind: true when every leftmost
+ * terminal of the kind's rule forbids preceding whitespace
+ * (`token.immediate`), making every reference to the kind seam-free on its
+ * left in every context — the structural counterpart of
+ * `AssembledLeaf.immediate`. Walks the link-phase rule leftmost-first: a
+ * pushed `immediate` attr anywhere on the leftmost path decides true; a
+ * CHOICE requires every arm; a nullable leftmost item (OPTIONAL/REPEAT)
+ * decides false because the true left edge then varies per instance; an
+ * unresolvable reference decides false. A conservative false never costs
+ * correctness — only a runtime seam check that static resolution could
+ * have skipped.
+ */
+export function isLeftImmediateKind(kind: string, ctx: LeftImmediateCtx): boolean {
+	const node = ctx.nodes.get(kind);
+	if (node instanceof AssembledLeaf) return node.immediate;
+	const rules = ctx.linkRules;
+	if (!rules) return false;
+	return leftmostTerminalImmediate(rules[kind], { rules, visiting: new Set([kind]) });
+}
+
+interface LeftmostWalkCtx {
+	readonly rules: Record<string, Rule<'link'>>;
+	readonly visiting: Set<string>;
+}
+
+function leftmostTerminalImmediate(rule: Rule<'link'> | undefined, ctx: LeftmostWalkCtx): boolean {
+	if (!rule) return false;
+	if (rule.immediate === true) return true;
+	switch (rule.type) {
+		case 'SEQ':
+			return rule.members.length > 0 && leftmostTerminalImmediate(rule.members[0], ctx);
+		case 'CHOICE':
+			// Fork the cycle guard per arm: `visiting` is an ancestor-path set,
+			// and sibling arms are separate paths — a shared set would make a
+			// symbol resolved in one arm look recursive in the next, an
+			// order-dependent false negative (and a missing mark is a missed
+			// immediacy suppression, not just census noise).
+			return (
+				rule.members.length > 0 &&
+				rule.members.every((m) =>
+					leftmostTerminalImmediate(m, { rules: ctx.rules, visiting: new Set(ctx.visiting) })
+				)
+			);
+		case 'REPEAT1':
+		case 'FIELD':
+		case 'VARIANT':
+		case 'ALIAS':
+		case 'TOKEN':
+			return leftmostTerminalImmediate(rule.content, ctx);
+		case 'SYMBOL': {
+			if (ctx.visiting.has(rule.name)) return false;
+			ctx.visiting.add(rule.name);
+			return leftmostTerminalImmediate(ctx.rules[rule.name], ctx);
+		}
+		default:
+			// OPTIONAL/REPEAT (nullable left edge), unstamped terminals, and
+			// compound forms with no single leftmost path.
+			return false;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Seam edge classes — static-seam-resolution's class-derivable inputs
+// ---------------------------------------------------------------------------
+
+/** Boundary character class of a kind's rendered edge: `word`/`not-word`
+ *  when every instance's edge character has that class under the grammar's
+ *  `wordMatcher`, `varies` when the class differs per instance or cannot be
+ *  established (nullable edges, unparsed pattern tails, unresolved refs). */
+export type SeamEdgeClass = 'word' | 'not-word' | 'varies';
+
+export interface KindEdgeClasses {
+	readonly starts: SeamEdgeClass;
+	readonly ends: SeamEdgeClass;
+}
+
+/** Duck-typed against `NodeMap` (same circularity rationale as
+ *  `LeftImmediateCtx`), plus the word predicate the classes are relative to. */
+export interface EdgeClassCtx {
+	readonly nodes: ReadonlyMap<string, AssembledNode>;
+	readonly linkRules?: Record<string, Rule<'link'>>;
+	readonly isWordChar: (c: string) => boolean;
+}
+
+const uniformEdgeClass = (classes: readonly SeamEdgeClass[]): SeamEdgeClass => {
+	if (classes.length === 0) return 'varies';
+	const first = classes[0]!;
+	return classes.every((c) => c === first) ? first : 'varies';
+};
+
+const charEdgeClass = (c: string | undefined, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass =>
+	c === undefined || c === '' ? 'varies' : ctx.isWordChar(c) ? 'word' : 'not-word';
+
+/** Control escapes decoded to the character they match — classifying by
+ *  the escape LETTER gives the wrong class (`\r` is not word-class 'r'). */
+const REGEX_CONTROL_ESCAPES: Record<string, string> = {
+	n: '\n',
+	r: '\r',
+	t: '\t',
+	f: '\f',
+	v: '\v',
+	'0': '\0'
+};
+
+/**
+ * Leading character class of a regex source, or `varies` when the leading
+ * atom is not one of the shapes this understands (a positive character
+ * class, an escape class, or a literal character). A negated class or an
+ * alternation/group head bails to `varies` — conservative, never wrong.
+ */
+export function patternLeadingEdgeClass(source: string, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass {
+	if (source.length === 0) return 'varies';
+	const c0 = source[0]!;
+	if (c0 === '[') {
+		if (source[1] === '^') return 'varies';
+		const chars: string[] = [];
+		for (let i = 1; i < source.length && source[i] !== ']'; i++) {
+			let ch = source[i]!;
+			if (ch === '\\') {
+				const esc = source[++i];
+				if (esc === undefined) return 'varies';
+				if (esc === 'd' || esc === 'w') {
+					chars.push('a');
+					continue;
+				}
+				if (esc === 's' || esc === 'S' || esc === 'D' || esc === 'W' || esc === 'p' || esc === 'u' || esc === 'x')
+					return 'varies';
+				// Decode control escapes to the character they MATCH — the
+				// escape letter itself has the wrong class ('r' is word,
+				// '\r' is not). Other letter escapes stay the letter:
+				// escaped punctuation ('\.', '\[') matches itself.
+				ch = REGEX_CONTROL_ESCAPES[esc] ?? esc;
+			}
+			if (source[i + 1] === '-' && source[i + 2] !== undefined && source[i + 2] !== ']') {
+				const lo = ch.charCodeAt(0);
+				const hi = source[i + 2]!.charCodeAt(0);
+				i += 2;
+				if (hi < lo || hi - lo > 128) return 'varies';
+				for (let code = lo; code <= hi; code++) chars.push(String.fromCharCode(code));
+				continue;
+			}
+			chars.push(ch);
+		}
+		return uniformEdgeClass(chars.map((c) => charEdgeClass(c, ctx)));
+	}
+	if (c0 === '\\') {
+		const esc = source[1];
+		if (esc === 'd' || esc === 'w') return 'word';
+		if (
+			esc === undefined ||
+			esc === 's' ||
+			esc === 'S' ||
+			esc === 'D' ||
+			esc === 'W' ||
+			esc === 'p' ||
+			esc === 'u' ||
+			esc === 'x'
+		)
+			return 'varies';
+		return charEdgeClass(REGEX_CONTROL_ESCAPES[esc] ?? esc, ctx);
+	}
+	if (c0 === '(' || c0 === '^' || c0 === '.') return 'varies';
+	return charEdgeClass(c0, ctx);
+}
+
+/**
+ * Edge character classes of a kind's rendered text. Leaves answer from
+ * their own literal text (keyword), literal value set (enum), or pattern
+ * source (leading atom only — a pattern's trailing class is `varies` in
+ * this cut); structural kinds walk their link-phase rule to the leftmost/
+ * rightmost terminal, with nullable edges and cycles deciding `varies`.
+ * `varies` never causes a wrong static decision — only a boundary left to
+ * the runtime writer.
+ */
+export function edgeClassesOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeClasses {
+	const node = ctx.nodes.get(kind);
+	if (node instanceof AssembledKeyword) {
+		return {
+			starts: charEdgeClass(node.text[0], ctx),
+			ends: charEdgeClass(node.text[node.text.length - 1], ctx)
+		};
+	}
+	if (node instanceof AssembledEnum) {
+		const values = node.values;
+		return {
+			starts: uniformEdgeClass(values.map((v) => charEdgeClass(v[0], ctx))),
+			ends: uniformEdgeClass(values.map((v) => charEdgeClass(v[v.length - 1], ctx)))
+		};
+	}
+	if (node instanceof AssembledPattern) {
+		const fixed = node.fixedLiteralText;
+		if (fixed !== undefined && fixed !== '') {
+			return { starts: charEdgeClass(fixed[0], ctx), ends: charEdgeClass(fixed[fixed.length - 1], ctx) };
+		}
+		const pattern = node.pattern;
+		if (pattern !== undefined) return { starts: patternLeadingEdgeClass(pattern, ctx), ends: 'varies' };
+		return { starts: 'varies', ends: 'varies' };
+	}
+	const rule = ctx.linkRules?.[kind];
+	return {
+		starts: ruleEdgeClass(rule, 'starts', ctx, new Set([kind])),
+		ends: ruleEdgeClass(rule, 'ends', ctx, new Set([kind]))
+	};
+}
+
+function ruleEdgeClass(
+	rule: Rule<'link'> | undefined,
+	side: 'starts' | 'ends',
+	ctx: EdgeClassCtx,
+	visiting: Set<string>
+): SeamEdgeClass {
+	if (!rule) return 'varies';
+	switch (rule.type) {
+		case 'STRING': {
+			const c = side === 'starts' ? rule.value[0] : rule.value[rule.value.length - 1];
+			return charEdgeClass(c, ctx);
+		}
+		case 'PATTERN':
+			return side === 'starts' ? patternLeadingEdgeClass(rule.value, ctx) : 'varies';
+		case 'SEQ': {
+			const member = side === 'starts' ? rule.members[0] : rule.members[rule.members.length - 1];
+			return ruleEdgeClass(member, side, ctx, visiting);
+		}
+		case 'CHOICE':
+			// Per-arm cycle-guard fork — see leftmostTerminalImmediate's CHOICE case.
+			return uniformEdgeClass(rule.members.map((m) => ruleEdgeClass(m, side, ctx, new Set(visiting))));
+		case 'REPEAT1':
+		case 'FIELD':
+		case 'VARIANT':
+		case 'ALIAS':
+		case 'TOKEN':
+			return ruleEdgeClass(rule.content, side, ctx, visiting);
+		case 'SYMBOL': {
+			if (visiting.has(rule.name)) return 'varies';
+			visiting.add(rule.name);
+			const node = ctx.nodes.get(rule.name);
+			if (node instanceof AssembledLeaf) {
+				return edgeClassesOfKind(rule.name, ctx)[side];
+			}
+			return ruleEdgeClass(ctx.linkRules?.[rule.name], side, ctx, visiting);
+		}
+		default:
+			// OPTIONAL/REPEAT (nullable edge) and forms with no single
+			// terminal on this side.
+			return 'varies';
+	}
+}
+
+/** Concrete edge character sets of a kind's rendered text — `undefined`
+ *  side = not statically enumerable (patterns, nullable edges, cycles).
+ *  These are the inputs the static seam law quantifies over; the edge
+ *  CLASSES above are their projection. */
+export interface KindEdgeCharSets {
+	readonly starts?: ReadonlySet<string>;
+	readonly ends?: ReadonlySet<string>;
+}
+
+export function edgeCharSetsOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeCharSets {
+	const node = ctx.nodes.get(kind);
+	if (node instanceof AssembledKeyword) {
+		return node.text === ''
+			? {}
+			: { starts: new Set([node.text[0]!]), ends: new Set([node.text[node.text.length - 1]!]) };
+	}
+	if (node instanceof AssembledEnum) {
+		const values = node.values.filter((v) => v !== '');
+		if (values.length === 0) return {};
+		return {
+			starts: new Set(values.map((v) => v[0]!)),
+			ends: new Set(values.map((v) => v[v.length - 1]!))
+		};
+	}
+	if (node instanceof AssembledPattern) {
+		const fixed = node.fixedLiteralText;
+		if (fixed !== undefined && fixed !== '') {
+			return { starts: new Set([fixed[0]!]), ends: new Set([fixed[fixed.length - 1]!]) };
+		}
+		return {};
+	}
+	const rule = ctx.linkRules?.[kind];
+	return {
+		starts: ruleEdgeCharSet(rule, 'starts', ctx, new Set([kind])),
+		ends: ruleEdgeCharSet(rule, 'ends', ctx, new Set([kind]))
+	};
+}
+
+function ruleEdgeCharSet(
+	rule: Rule<'link'> | undefined,
+	side: 'starts' | 'ends',
+	ctx: EdgeClassCtx,
+	visiting: Set<string>
+): ReadonlySet<string> | undefined {
+	if (!rule) return undefined;
+	switch (rule.type) {
+		case 'STRING': {
+			const c = side === 'starts' ? rule.value[0] : rule.value[rule.value.length - 1];
+			return c === undefined ? undefined : new Set([c]);
+		}
+		case 'SEQ': {
+			// A nullable edge member (OPTIONAL/REPEAT) contributes its
+			// content's edge chars AND falls through to the next member
+			// inward — both are possible edges depending on presence.
+			const members = side === 'starts' ? rule.members : [...rule.members].reverse();
+			const union = new Set<string>();
+			for (const m of members) {
+				const nullable = m.type === 'OPTIONAL' || m.type === 'REPEAT';
+				// Each explored member is its own recursion path — fork the
+				// cycle guard (see leftmostTerminalImmediate's CHOICE case).
+				const s = ruleEdgeCharSet(
+					nullable ? (m as { content: Rule<'link'> }).content : m,
+					side,
+					ctx,
+					new Set(visiting)
+				);
+				if (s === undefined) return undefined;
+				for (const c of s) union.add(c);
+				if (!nullable) return union;
+			}
+			return union.size > 0 ? union : undefined;
+		}
+		case 'CHOICE': {
+			// Per-arm cycle-guard fork — see leftmostTerminalImmediate's CHOICE case.
+			const union = new Set<string>();
+			for (const m of rule.members) {
+				const s = ruleEdgeCharSet(m, side, ctx, new Set(visiting));
+				if (s === undefined) return undefined;
+				for (const c of s) union.add(c);
+			}
+			return union.size > 0 ? union : undefined;
+		}
+		case 'REPEAT1':
+		case 'FIELD':
+		case 'VARIANT':
+		case 'ALIAS':
+		case 'TOKEN':
+			return ruleEdgeCharSet(rule.content, side, ctx, visiting);
+		case 'SYMBOL': {
+			if (visiting.has(rule.name)) return undefined;
+			visiting.add(rule.name);
+			const node = ctx.nodes.get(rule.name);
+			if (node instanceof AssembledLeaf) {
+				return edgeCharSetsOfKind(rule.name, ctx)[side];
+			}
+			return ruleEdgeCharSet(ctx.linkRules?.[rule.name], side, ctx, visiting);
+		}
+		default:
+			// PATTERN (not enumerable), OPTIONAL/REPEAT (nullable edge), and
+			// forms with no single terminal on this side.
+			return undefined;
+	}
+}

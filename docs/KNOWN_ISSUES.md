@@ -8,8 +8,10 @@ Suggested attack order (by payoff ÷ effort; remove a line when its entry is del
 
 1. `ki-sclass-residuals` — the corpus clusters, biggest first (python deep-AST mismatches, rust rrp residuals)
 2. `ki-from-string-composition` — blocked on a quote-style design decision
-3. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
-4. `ki-perfield-flank-residual` — design-blocked (tuple separator-possession; print/expression-tuple override rewrites)
+3. `ki-nodemembervalue-boolean` — small type-union fix, deferred with the type-debt class
+4. `ki-interp-brace-padding` — cosmetic byte divergence, reparse-safe; walker-emitter change
+5. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
+6. `ki-perfield-flank-residual` — design-blocked (tuple separator-possession; print/expression-tuple override rewrites)
 
 ## `ki-emitsymbol-fielded-seq` — `emitSymbol`'s generalized hidden-helper inlining doesn't yet handle a fielded sequence inside the inlined target
 
@@ -47,7 +49,25 @@ The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the
 
 The validator's suffix-discovery options helper (`separatedListFactoryOptions`, `packages/tools/src/validate/common.ts`) is retained for exactly these config-shaped factories — do not delete it while any generated wrap still emits a field-prefixed flank key (auditable via `rg '_\w+_(trailing|leading)_sep' packages/*/src/wrap.ts`).
 
-**Fix, if/when prioritized:** per family — the tuple design retires the rust pair; rewriting the print/expression-tuple overrides to reference visible list kinds (the `case_tuple_pattern` precedent) retires the python trio.
+**Fix, if/when prioritized:** the separated-list options struct
+(`docs/superpowers/specs/2026-08-21-separated-list-options-struct.md`)
+retires the per-field representation wholesale — one
+`{ separator?, delimiter? }` struct per list slot replaces both key
+spellings; the rust tuple family becomes `delimiter: trailing` with a
+length invariant, and the python trio stores the same struct once their
+override bodies reference it.
+
+## `ki-interp-brace-padding` — interpolation braces render with template-authored padding (`f"{ x }"`, `` `${ x }` ``)
+
+**Found during:** the string-fragment visibility work (python) and the template-substitution immediacy fix (typescript). The walker-authored templates for interpolation kinds carry style spaces around the substitution body, so a source `f"{x}"` renders `f"{ x }"` and `` `pre${x}` `` renders `` `pre${ x }` `` — valid in both languages and reparse-identical (the padding is code-context whitespace inside the substitution), but byte-divergent from typical source. Distinct from the (fixed) seam-injection class: these spaces are template TEXT, not writer insertions, so the seam machinery never sees them.
+
+**Fix, if/when prioritized:** drop the padding from the walker-emitted templates for interpolation-family kinds (template text is the sole owner of these spaces — deleting them there is the whole fix); the corpus rows for mixed strings pin that nothing else regresses.
+
+## `ki-nodemembervalue-boolean` — TS `NodeMemberValue` union lacks `boolean`, lagging the sanctioned wire contract
+
+**Found during:** the parity-fixture serde fix — the generic Rust `FieldValue` union gained `Bool` (and `Option`-element `Multiple`) to match what the generated transports and `assertNativeFieldValue` already accept, but the TS-side `NodeMemberValue` (`AnyNodeData | string | number`) was left unwidened: a naive widening would falsely widen `NodeChildren` too, since children disallow booleans. Type-level only — runtime paths already handle boolean slots.
+
+**Fix, if/when prioritized:** split the member-value and child-value unions so `boolean` lands only on the member side; deferred with the rest of the type-debt class (gates run on `validate:native`, not tsgo).
 
 ## `ki-from-string-composition` — Rust `from.string` / `from.comment` canonical factories are not emitted — composition needs a design decision
 

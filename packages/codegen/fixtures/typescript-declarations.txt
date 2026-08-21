@@ -1467,3 +1467,19 @@ class Bar extends Foo {
         name: (property_identifier)
         parameters: (formal_parameters)
         body: (statement_block)))))
+
+=================================
+Enum with trailing comma
+=================================
+
+enum T { A, B, }
+
+---
+
+(program
+  (enum_declaration
+    (identifier)
+    (enum_body
+      (enum_body_elements
+        (property_identifier)
+        (property_identifier)))))
