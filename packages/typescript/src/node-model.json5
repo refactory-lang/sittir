@@ -5612,47 +5612,20 @@
     },
     {
       "kind": "_enum_body_elements",
-      "modelType": "group",
+      "modelType": "separatedList",
       "typeName": "EnumBodyElements",
-      "factoryName": "_enumBodyElements",
+      "factoryName": "enumBodyElements",
       "irKey": "enumBodyElements",
       "hidden": false,
-      "name": "_enum_body_elements",
-      "fields": [
-        {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "enum_assignment",
-              "parseKind": "enum_assignment",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_property_name",
-              "parseKind": "_property_name",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "enum_assignment",
-              "_property_name"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
+      "elementKinds": [
+        "_property_name",
+        "enum_assignment"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "content"
       ]

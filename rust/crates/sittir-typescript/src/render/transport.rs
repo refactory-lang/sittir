@@ -48851,6 +48851,8 @@ pub struct EnumBodyElementsTransport {
     pub content: Option<Vec<EnumBodyElementsContentTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_delimiter"))]
     pub content_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for EnumBodyElementsTransport {
@@ -66243,7 +66245,7 @@ fn render_enum_body_elements(node: &EnumBodyElementsTransport, dest: &mut dyn ::
             items: content_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.content_delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)

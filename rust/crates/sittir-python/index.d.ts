@@ -742,6 +742,7 @@ export interface ExpressionStatementTupleTransport {
   '$triviaData'?: TransportTrivia
   _expression: Array<ExpressionTransport>
   _expression_delimiter?: number
+  _delimiter?: number
 }
 
 export interface FinallyClauseTransport {
@@ -1310,6 +1311,7 @@ export interface PrintChevronArgumentsTransport {
   '$triviaData'?: TransportTrivia
   _argument: Array<ExpressionTransport>
   _argument_delimiter?: number
+  _delimiter?: number
 }
 
 export interface PrintStatementGroup1Transport {

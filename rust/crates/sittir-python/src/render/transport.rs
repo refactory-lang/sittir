@@ -24612,6 +24612,8 @@ pub struct PrintChevronArgumentsTransport {
     pub argument: Vec<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument_delimiter"))]
     pub argument_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for PrintChevronArgumentsTransport {
@@ -25027,6 +25029,8 @@ pub struct ExpressionStatementTupleTransport {
     pub expression: Vec<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_delimiter"))]
     pub expression_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for ExpressionStatementTupleTransport {
@@ -35435,8 +35439,8 @@ fn render_print_chevron_arguments(node: &PrintChevronArgumentsTransport, dest: &
         argument: ListNonterminalView {
             items: argument_buf.as_slice(),
             separator: ",",
-            leading: false,
-            trailing: node.argument_delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            leading: true,
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -35500,7 +35504,7 @@ fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, d
             items: expression_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.expression_delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)

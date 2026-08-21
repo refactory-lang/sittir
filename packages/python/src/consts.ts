@@ -10,6 +10,7 @@ export const NODE_KINDS = [
 	'_except_clause_group1',
 	'_except_clause_list',
 	'_expression_list_expressions',
+	'_expression_statement_tuple',
 	'_future_import_statement_group1',
 	'_import_list',
 	'_list_pattern_case_patterns',
@@ -18,6 +19,7 @@ export const NODE_KINDS = [
 	'_pattern_list_patterns',
 	'_patterns',
 	'_print_arguments',
+	'_print_chevron_arguments',
 	'_simple_statements',
 	'_simple_statements_elements',
 	'_slice_group1',
@@ -1773,6 +1775,7 @@ export const FIELD_MAP: Record<
 	_except_clause_group1: [{ name: 'content', required: true, multiple: false }],
 	_except_clause_list: [{ name: 'values', required: true, multiple: true }],
 	_expression_list_expressions: [{ name: 'expressions', required: true, multiple: true }],
+	_expression_statement_tuple: [{ name: 'expressions', required: true, multiple: true }],
 	_future_import_statement_group1: [{ name: 'importList', required: true, multiple: false }],
 	_import_list: [{ name: 'names', required: true, multiple: true }],
 	_list_pattern_case_patterns: [{ name: 'casePatterns', required: true, multiple: true }],
@@ -1781,6 +1784,7 @@ export const FIELD_MAP: Record<
 	_pattern_list_patterns: [{ name: 'patterns', required: true, multiple: true }],
 	_patterns: [{ name: 'patterns', required: true, multiple: true }],
 	_print_arguments: [{ name: 'arguments', required: true, multiple: true }],
+	_print_chevron_arguments: [{ name: 'arguments', required: true, multiple: true }],
 	_simple_statements: [
 		{ name: 'simpleStatementsElements', required: true, multiple: false },
 		{ name: 'newline', required: true, multiple: false }

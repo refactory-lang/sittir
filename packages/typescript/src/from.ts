@@ -343,6 +343,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_import_clause_group1: TSKindId.ImportClauseGroup1,
 	_import_specifiers: TSKindId.ImportSpecifiers,
 	_formal_parameters_elements: TSKindId.FormalParametersElements,
+	_enum_body_elements: TSKindId.EnumBodyElements,
 	_types: TSKindId.Types,
 	_type_parameters_elements: TSKindId.TypeParametersElements,
 	_tuple_type_members: TSKindId.TupleTypeMembers,
@@ -417,6 +418,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildImportSpecifiers as (...args: unknown[]) => unknown)(...children);
 		case '_formal_parameters_elements':
 			return (F.buildFormalParametersElements as (...args: unknown[]) => unknown)(...children);
+		case '_enum_body_elements':
+			return (F.buildEnumBodyElements as (...args: unknown[]) => unknown)(...children);
 		case '_types':
 			return (F.buildTypes as (...args: unknown[]) => unknown)(...children);
 		case '_type_parameters_elements':

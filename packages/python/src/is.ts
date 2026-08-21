@@ -214,12 +214,18 @@ export interface IsGuards {
 		v: T
 	): v is T & { readonly $type: TSKindId.ComprehensionClauses };
 	PrintArguments<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintArguments };
+	PrintChevronArguments<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.PrintChevronArguments };
 	printStatementGroup1<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.PrintStatementGroup1 };
 	printStatementGroup2<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.PrintStatementGroup2 };
+	ExpressionStatementTuple<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.ExpressionStatementTuple };
 	WithClauseBare<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WithClauseBare };
 	WithClauseParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WithClauseParen };
 	SuiteBlockWithIndent<T extends { readonly $type: number }>(
@@ -392,8 +398,12 @@ export interface AssertGuards {
 	caseAsPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CaseAsPattern };
 	comprehensionClauses(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ComprehensionClauses };
 	PrintArguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PrintArguments };
+	PrintChevronArguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PrintChevronArguments };
 	printStatementGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PrintStatementGroup1 };
 	printStatementGroup2(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PrintStatementGroup2 };
+	ExpressionStatementTuple(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.ExpressionStatementTuple };
 	WithClauseBare(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseBare };
 	WithClauseParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseParen };
 	SuiteBlockWithIndent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SuiteBlockWithIndent };
@@ -785,8 +795,10 @@ export const is = {
 	caseAsPattern: _g(TSKindId.CaseAsPattern),
 	comprehensionClauses: _g(TSKindId.ComprehensionClauses),
 	PrintArguments: _g(TSKindId.PrintArguments),
+	PrintChevronArguments: _g(TSKindId.PrintChevronArguments),
 	printStatementGroup1: _g(TSKindId.PrintStatementGroup1),
 	printStatementGroup2: _g(TSKindId.PrintStatementGroup2),
+	ExpressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
 	WithClauseBare: _g(TSKindId.WithClauseBare),
 	WithClauseParen: _g(TSKindId.WithClauseParen),
 	SuiteBlockWithIndent: _g(TSKindId.SuiteBlockWithIndent),
@@ -963,8 +975,10 @@ export const assert = {
 	caseAsPattern: _makeAssert('caseAsPattern', is.caseAsPattern as _AnyGuard),
 	comprehensionClauses: _makeAssert('comprehensionClauses', is.comprehensionClauses as _AnyGuard),
 	PrintArguments: _makeAssert('PrintArguments', is.PrintArguments as _AnyGuard),
+	PrintChevronArguments: _makeAssert('PrintChevronArguments', is.PrintChevronArguments as _AnyGuard),
 	printStatementGroup1: _makeAssert('printStatementGroup1', is.printStatementGroup1 as _AnyGuard),
 	printStatementGroup2: _makeAssert('printStatementGroup2', is.printStatementGroup2 as _AnyGuard),
+	ExpressionStatementTuple: _makeAssert('ExpressionStatementTuple', is.ExpressionStatementTuple as _AnyGuard),
 	WithClauseBare: _makeAssert('WithClauseBare', is.WithClauseBare as _AnyGuard),
 	WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen as _AnyGuard),
 	SuiteBlockWithIndent: _makeAssert('SuiteBlockWithIndent', is.SuiteBlockWithIndent as _AnyGuard),

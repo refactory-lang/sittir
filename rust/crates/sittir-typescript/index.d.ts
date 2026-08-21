@@ -741,6 +741,7 @@ export interface EnumBodyElementsTransport {
   '$triviaData'?: TransportTrivia
   _content?: Array<EnumBodyElementsContentTransportSlot>
   _content_delimiter?: number
+  _delimiter?: number
 }
 
 export interface EnumBodyTransport {

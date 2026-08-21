@@ -3938,8 +3938,23 @@ function _buildPrintArguments(elements: NonEmptyArray<T.Expression>, options: { 
 	);
 }
 
-export function buildPrintChevronArguments(config: T.PrintChevronArguments.Config, options: { delimiter?: 2 } = {}) {
-	const _argument = config.argument ?? [];
+export function buildPrintChevronArguments(
+	...elements: NonEmptyArray<T.Expression>
+): ReturnType<typeof _buildPrintChevronArguments>;
+export function buildPrintChevronArguments(
+	options: { delimiter?: 2 },
+	...elements: NonEmptyArray<T.Expression>
+): ReturnType<typeof _buildPrintChevronArguments>;
+export function buildPrintChevronArguments(...args: ({ delimiter?: 2 } | T.Expression)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Expression>;
+	return _buildPrintChevronArguments(elements, options);
+}
+function _buildPrintChevronArguments(elements: NonEmptyArray<T.Expression>, options: { delimiter?: 2 }) {
+	_assertNonEmpty(elements, '_print_chevron_arguments.elements');
+	const _argument = elements;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -3947,11 +3962,10 @@ export function buildPrintChevronArguments(config: T.PrintChevronArguments.Confi
 				$source: 2 as const,
 				$named: true as const,
 				_argument,
-				_argument_delimiter: options.delimiter ?? 0,
+				_delimiter,
 				$with: {
-					arguments: (...values: NonEmptyArray<T.Expression>) =>
-						buildPrintChevronArguments({ ...config, argument: values }, options),
-					delimiter: (v: 2) => buildPrintChevronArguments(config, { ...options, delimiter: v })
+					$children: (...vs: NonEmptyArray<T.Expression>) => buildPrintChevronArguments(options, ...vs),
+					delimiter: (v: 2) => buildPrintChevronArguments({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4092,10 +4106,22 @@ export function buildAssignmentTyped(config: T.AssignmentTyped.Config) {
 }
 
 export function buildExpressionStatementTuple(
-	config: T.ExpressionStatementTuple.Config,
-	options: { delimiter?: 2 } = {}
-) {
-	const _expression = config.expression ?? [];
+	...elements: NonEmptyArray<T.Expression>
+): ReturnType<typeof _buildExpressionStatementTuple>;
+export function buildExpressionStatementTuple(
+	options: { delimiter?: 2 },
+	...elements: NonEmptyArray<T.Expression>
+): ReturnType<typeof _buildExpressionStatementTuple>;
+export function buildExpressionStatementTuple(...args: ({ delimiter?: 2 } | T.Expression)[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Expression>;
+	return _buildExpressionStatementTuple(elements, options);
+}
+function _buildExpressionStatementTuple(elements: NonEmptyArray<T.Expression>, options: { delimiter?: 2 }) {
+	_assertNonEmpty(elements, '_expression_statement_tuple.elements');
+	const _expression = elements;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -4103,11 +4129,10 @@ export function buildExpressionStatementTuple(
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				_expression_delimiter: options.delimiter ?? 0,
+				_delimiter,
 				$with: {
-					expressions: (...values: NonEmptyArray<T.Expression>) =>
-						buildExpressionStatementTuple({ ...config, expression: values }, options),
-					delimiter: (v: 2) => buildExpressionStatementTuple(config, { ...options, delimiter: v })
+					$children: (...vs: NonEmptyArray<T.Expression>) => buildExpressionStatementTuple(options, ...vs),
+					delimiter: (v: 2) => buildExpressionStatementTuple({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4649,13 +4674,13 @@ export type FluentKindMap = {
 	case_as_pattern: FluentNode<'case_as_pattern', T.CaseAsPattern.Config>;
 	comprehension_clauses: FluentNode<'comprehension_clauses', T.ComprehensionClauses.Config>;
 	_print_arguments: FluentNode<'_print_arguments', T.PrintArguments.Config>;
-	_print_chevron_arguments: T.PrintChevronArguments;
+	_print_chevron_arguments: FluentNode<'_print_chevron_arguments', T.PrintChevronArguments.Config>;
 	print_statement_group1: FluentNode<'print_statement_group1', T.PrintStatementGroup1.Config>;
 	print_statement_group2: FluentNode<'print_statement_group2', T.PrintStatementGroup2.Config>;
 	_assignment_eq: T.AssignmentEq;
 	_assignment_type: T.AssignmentType;
 	_assignment_typed: T.AssignmentTyped;
-	_expression_statement_tuple: T.ExpressionStatementTuple;
+	_expression_statement_tuple: FluentNode<'_expression_statement_tuple', T.ExpressionStatementTuple.Config>;
 	_with_clause_bare: FluentNode<'_with_clause_bare', T.WithClauseBare.Config>;
 	_with_clause_paren: FluentNode<'_with_clause_paren', T.WithClauseParen.Config>;
 	_match_block_block: T.MatchBlockBlock;

@@ -630,7 +630,13 @@ function collectSeparatedListContentStorageKeys(
 	const parseKinds = valueParseKindsOf(contentSlot);
 	if (parseKinds.length === 0) return [];
 	const concrete = expandToConcreteParseKinds(parseKinds, nodeMap);
-	return [...new Set(concrete.map((k) => `_${k}`))];
+	// A fielded element arm routes by its field label, not its kind — the
+	// raw read stores those elements under `_<label>` (the value's stamped
+	// `parseName`), so the label is a capture key alongside the kind buckets.
+	const armFieldNames = contentSlot.values
+		.map((v) => v.parseName)
+		.filter((n): n is string => n !== undefined);
+	return [...new Set([...armFieldNames.map((n) => `_${n}`), ...concrete.map((k) => `_${k}`)])];
 }
 
 function collectSeparatedListWireKeyTypes(

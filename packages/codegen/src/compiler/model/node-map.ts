@@ -1370,7 +1370,11 @@ export function deriveValuesForRule(
 			// plain union arms' kinds.
 			return nonBlank.flatMap((m) => {
 				const values = deriveValuesForRule(m, ctx, armMult);
-				const fieldName = (m as { fieldName?: string }).fieldName;
+				// A fielded arm appears either as a genuine FIELD wrapper
+				// (link-phase rule, e.g. a separatedList's element choice) or
+				// as a pushed-down `fieldName` attribute (post-wrapper-deletion
+				// members) — both route by field label at read time.
+				const fieldName = m.type === FIELD ? m.name : (m as { fieldName?: string }).fieldName;
 				return fieldName === undefined ? values : values.map((v) => ({ ...v, parseName: fieldName }));
 			});
 		}
@@ -3055,7 +3059,14 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 	) {
 		super(kind, rule, {});
 		const sep = rule.separator;
-		this.elements = deriveValuesForRule(rule.content, ctx, rule.type === REPEAT1 ? 'nonEmptyArray' : 'array');
+		// Fielded element arms (`choice(field('name', …), enum_assignment)`)
+		// route by field label at read time — stamp the label as `parseName`
+		// so the wrap capture keys can include it.
+		this.elements = deriveValuesForRule(
+			rule.content,
+			{ ...ctx, stampArmFieldNamesAsParseName: true },
+			rule.type === REPEAT1 ? 'nonEmptyArray' : 'array'
+		);
 		this.separatorRule = opts.separatorRule;
 		this.leadingDelimiter = sep?.leading ?? 'none';
 		this.trailingDelimiter = sep?.trailing ?? 'none';

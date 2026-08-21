@@ -273,6 +273,64 @@ describe('Assemble — classifyNode', () => {
 		expect(classifyNode('_sig', deleteWrapper(rule))).toBe('group');
 	});
 
+	it('classifies a group-wrapped lifted separated list as separatedList (fielded element)', () => {
+		// The polymorph-form / content-alias group wrapper must not hide a
+		// lifted separated list from classification: the group's CONTENT
+		// carries the list's multiplicity + separator (python
+		// `_print_chevron_arguments`, `_expression_statement_tuple`).
+		const rule: Rule<'link'> = {
+			type: GROUP,
+			name: '_args',
+			content: {
+				type: SEQ,
+				members: [
+					{
+						type: REPEAT1,
+						content: {
+							type: FIELD,
+							name: 'argument',
+							content: { type: SYMBOL, name: 'expression' }
+						},
+						separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
+					}
+				]
+			}
+		};
+		expect(classifyNode('_args', deleteWrapper(rule))).toBe('separatedList');
+	});
+
+	it('classifies a group-wrapped separated list of mixed field/bare choice arms as separatedList', () => {
+		// typescript `_enum_body_elements`: each element is
+		// `choice(field('name', _property_name), enum_assignment)` — the
+		// multi-field element must not push the kind off the separatedList
+		// classification (its content slot is the merged union).
+		const rule: Rule<'link'> = {
+			type: GROUP,
+			name: '_enum_body_elements',
+			content: {
+				type: SEQ,
+				members: [
+					{
+						type: REPEAT1,
+						content: {
+							type: CHOICE,
+							members: [
+								{
+									type: FIELD,
+									name: 'name',
+									content: { type: SYMBOL, name: '_property_name' }
+								},
+								{ type: SYMBOL, name: 'enum_assignment' }
+							]
+						},
+						separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
+					}
+				]
+			}
+		};
+		expect(classifyNode('_enum_body_elements', deleteWrapper(rule))).toBe('separatedList');
+	});
+
 	it('assembles hidden alias sources from their captured leaf body', () => {
 		const normalized = makeNormalized(
 			{

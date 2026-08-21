@@ -315,7 +315,9 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	case_tuple_pattern: TSKindId.CaseTuplePattern,
 	case_list_pattern: TSKindId.CaseListPattern,
 	_print_arguments: TSKindId.PrintArguments,
+	_print_chevron_arguments: TSKindId.PrintChevronArguments,
 	print_statement_group2: TSKindId.PrintStatementGroup2,
+	_expression_statement_tuple: TSKindId.ExpressionStatementTuple,
 	_with_clause_bare: TSKindId.WithClauseBare,
 	_with_clause_paren: TSKindId.WithClauseParen,
 	_suite_block_with_indent: TSKindId.SuiteBlockWithIndent,
@@ -426,8 +428,12 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildCaseListPattern(children[0] as Parameters<typeof F.buildCaseListPattern>[0]);
 		case '_print_arguments':
 			return (F.buildPrintArguments as (...args: unknown[]) => unknown)(...children);
+		case '_print_chevron_arguments':
+			return (F.buildPrintChevronArguments as (...args: unknown[]) => unknown)(...children);
 		case 'print_statement_group2':
 			return F.buildPrintStatementGroup2(children[0] as Parameters<typeof F.buildPrintStatementGroup2>[0]);
+		case '_expression_statement_tuple':
+			return (F.buildExpressionStatementTuple as (...args: unknown[]) => unknown)(...children);
 		case '_with_clause_bare':
 			return (F.buildWithClauseBare as (...args: unknown[]) => unknown)(...children);
 		case '_with_clause_paren':

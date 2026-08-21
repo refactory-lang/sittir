@@ -7132,77 +7132,33 @@ export function wrapPrintArguments(
 	);
 }
 
-export function wrapPrintChevronArguments(data: T.PrintChevronArguments, tree: TreeHandle) {
-	const _node = withMethods(
+export function wrapPrintChevronArguments(
+	data: T.PrintChevronArguments & {
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._argument, true, 'argument', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'argument',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
 		{
 			...data,
 			$type: TSKindId.PrintChevronArguments as const,
-			_argument: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._argument, [
-					'expression',
-					'comparison_operator',
-					'not_operator',
-					'boolean_operator',
-					'lambda',
-					'primary_expression',
-					'await',
-					'binary_operator',
-					'identifier',
-					'keyword_identifier',
-					'string',
-					'concatenated_string',
-					'integer',
-					'float',
-					'true',
-					'false',
-					'none',
-					'unary_operator',
-					'attribute',
-					'subscript',
-					'call',
-					'list',
-					'list_comprehension',
-					'dictionary',
-					'dictionary_comprehension',
-					'set',
-					'set_comprehension',
-					'tuple',
-					'parenthesized_expression',
-					'generator_expression',
-					'ellipsis',
-					'list_splat_pattern',
-					'conditional_expression',
-					'named_expression',
-					'as_pattern'
-				]),
-				true,
-				'argument',
-				{ tree, nodeType: data.$type, slotName: 'argument', span: (data as _NodeData).$span }
-			),
-			_argument_delimiter: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._argument) ? data._argument : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			)
-				? 2
-				: 0,
+			_argument: _content,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 1) ? 2 : 0,
 
 			arguments() {
 				return drillInAll<T.Expression>(this._argument as readonly T.Expression[] | undefined, tree);
 			},
-			$with: {
-				arguments: (...v: NonEmptyArray<NonNullable<T.PrintChevronArguments['_argument']>[number]>) =>
-					wrapPrintChevronArguments({ ...data, _argument: v }, tree)
-			}
+			$with: {}
 		},
 		methodsEngine
 	);
-	return _node;
 }
 
 export function wrapPrintStatementGroup1(
@@ -7354,77 +7310,33 @@ export function wrapAssignmentTyped(data: T.AssignmentTyped, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapExpressionStatementTuple(data: T.ExpressionStatementTuple, tree: TreeHandle) {
-	const _node = withMethods(
+export function wrapExpressionStatementTuple(
+	data: T.ExpressionStatementTuple & {
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._expression, true, 'expression', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'expression',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
 		{
 			...data,
 			$type: TSKindId.ExpressionStatementTuple as const,
-			_expression: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._expression, [
-					'expression',
-					'comparison_operator',
-					'not_operator',
-					'boolean_operator',
-					'lambda',
-					'primary_expression',
-					'await',
-					'binary_operator',
-					'identifier',
-					'keyword_identifier',
-					'string',
-					'concatenated_string',
-					'integer',
-					'float',
-					'true',
-					'false',
-					'none',
-					'unary_operator',
-					'attribute',
-					'subscript',
-					'call',
-					'list',
-					'list_comprehension',
-					'dictionary',
-					'dictionary_comprehension',
-					'set',
-					'set_comprehension',
-					'tuple',
-					'parenthesized_expression',
-					'generator_expression',
-					'ellipsis',
-					'list_splat_pattern',
-					'conditional_expression',
-					'named_expression',
-					'as_pattern'
-				]),
-				true,
-				'expression',
-				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
-			),
-			_expression_delimiter: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._expression) ? data._expression : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			)
-				? 2
-				: 0,
+			_expression: _content,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			expressions() {
 				return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree);
 			},
-			$with: {
-				expressions: (...v: NonEmptyArray<NonNullable<T.ExpressionStatementTuple['_expression']>[number]>) =>
-					wrapExpressionStatementTuple({ ...data, _expression: v }, tree)
-			}
+			$with: {}
 		},
 		methodsEngine
 	);
-	return _node;
 }
 
 export function wrapWithClauseBare(

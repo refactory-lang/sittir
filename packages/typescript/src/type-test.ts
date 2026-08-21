@@ -93,6 +93,8 @@ import type {
 	EnumAssignment,
 	EnumAssignmentTree,
 	EnumBody,
+	EnumBodyElements,
+	EnumBodyElementsTree,
 	EnumBodyTree,
 	EnumDeclaration,
 	EnumDeclarationTree,
@@ -695,6 +697,7 @@ export type _Type_ImportSpecifiers = _TypeAssert<_TypeExtends<ImportSpecifiers['
 export type _Type_FormalParametersElements = _TypeAssert<
 	_TypeExtends<FormalParametersElements['$type'], TSKindId.FormalParametersElements>
 >;
+export type _Type_EnumBodyElements = _TypeAssert<_TypeExtends<EnumBodyElements['$type'], TSKindId.EnumBodyElements>>;
 export type _Type_Types = _TypeAssert<_TypeExtends<Types['$type'], TSKindId.Types>>;
 export type _Type_TypeParametersElements = _TypeAssert<
 	_TypeExtends<TypeParametersElements['$type'], TSKindId.TypeParametersElements>
@@ -1087,6 +1090,7 @@ export type _Tree_ImportSpecifiers = _TypeAssert<_TypeExtends<ImportSpecifiersTr
 export type _Tree_FormalParametersElements = _TypeAssert<
 	_TypeExtends<FormalParametersElementsTree['type'], '_formal_parameters_elements'>
 >;
+export type _Tree_EnumBodyElements = _TypeAssert<_TypeExtends<EnumBodyElementsTree['type'], '_enum_body_elements'>>;
 export type _Tree_Types = _TypeAssert<_TypeExtends<TypesTree['type'], '_types'>>;
 export type _Tree_TypeParametersElements = _TypeAssert<
 	_TypeExtends<TypeParametersElementsTree['type'], '_type_parameters_elements'>

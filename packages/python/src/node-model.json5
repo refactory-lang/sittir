@@ -2782,39 +2782,19 @@
     },
     {
       "kind": "_expression_statement_tuple",
-      "modelType": "group",
+      "modelType": "separatedList",
       "typeName": "ExpressionStatementTuple",
-      "factoryName": "_expressionStatementTuple",
+      "factoryName": "expressionStatementTuple",
       "irKey": "expressionStatementTuple",
       "hidden": false,
-      "name": "_expression_statement_tuple",
-      "fields": [
-        {
-          "name": "expression",
-          "propertyName": "expressions",
-          "paramName": "expressions",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "expression",
-              "parseKind": "expression",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "expression"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
+      "elementKinds": [
+        "expression"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "expression"
       ]
@@ -3273,39 +3253,19 @@
     },
     {
       "kind": "_print_chevron_arguments",
-      "modelType": "group",
+      "modelType": "separatedList",
       "typeName": "PrintChevronArguments",
-      "factoryName": "_printChevronArguments",
+      "factoryName": "printChevronArguments",
       "irKey": "printChevronArguments",
       "hidden": false,
-      "name": "_print_chevron_arguments",
-      "fields": [
-        {
-          "name": "argument",
-          "propertyName": "arguments",
-          "paramName": "arguments_",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "expression",
-              "parseKind": "expression",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "expression"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "mandatory",
+      "trailingDelimiter": "optional",
+      "elementKinds": [
+        "expression"
       ],
-      "children": [],
-      "factoryShape": "config",
+      "factoryShape": "elements",
       "factoryFields": [
         "argument"
       ]

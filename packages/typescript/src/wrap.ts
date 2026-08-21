@@ -10422,25 +10422,39 @@ export function wrapFormalParametersElements(
 
 export function wrapEnumBodyElements(
 	data: T.EnumBodyElements & {
-		readonly _name?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
-		readonly _enum_assignment?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
-		readonly _property_identifier?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
-		readonly _identifier?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
-		readonly _reserved_identifier?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
-		readonly _private_property_identifier?:
-			| T.EnumAssignment
-			| T.PropertyName
-			| readonly (T.EnumAssignment | T.PropertyName)[];
-		readonly _string?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
-		readonly _number?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
-		readonly _computed_property_name?:
-			| T.EnumAssignment
-			| T.PropertyName
-			| readonly (T.EnumAssignment | T.PropertyName)[];
+		readonly _name?: T.EnumAssignment | T.PropertyName;
+		readonly _property_identifier?: T.EnumAssignment | T.PropertyName;
+		readonly _identifier?: T.EnumAssignment | T.PropertyName;
+		readonly _reserved_identifier?: T.EnumAssignment | T.PropertyName;
+		readonly _private_property_identifier?: T.EnumAssignment | T.PropertyName;
+		readonly _string?: T.EnumAssignment | T.PropertyName;
+		readonly _number?: T.EnumAssignment | T.PropertyName;
+		readonly _computed_property_name?: T.EnumAssignment | T.PropertyName;
+		readonly _enum_assignment?: T.EnumAssignment | T.PropertyName;
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
 	},
 	tree: TreeHandle
 ) {
-	const _node = withMethods(
+	const _content = normalizeRepeatedWrapSlot(
+		data._content !== undefined
+			? _toArr(data._content)
+			: _interleaveBySlotOrder(data as _NodeData, [
+					['name', data._name],
+					['property_identifier', data._property_identifier],
+					['identifier', data._identifier],
+					['reserved_identifier', data._reserved_identifier],
+					['private_property_identifier', data._private_property_identifier],
+					['string', data._string],
+					['number', data._number],
+					['computed_property_name', data._computed_property_name],
+					['enum_assignment', data._enum_assignment]
+				]),
+		true,
+		'content',
+		{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+	);
+	return withMethods(
 		{
 			..._omitWrapKeys(data, [
 				'_computed_property_name',
@@ -10454,76 +10468,19 @@ export function wrapEnumBodyElements(
 				'_string'
 			]),
 			$type: TSKindId.EnumBodyElements as const,
-			_content: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(
-					data._content !== undefined
-						? _toArr(data._content)
-						: _interleaveBySlotOrder(data as _NodeData, [
-								['name', data._name],
-								['enum_assignment', data._enum_assignment],
-								['property_identifier', data._property_identifier],
-								['identifier', data._identifier],
-								['reserved_identifier', data._reserved_identifier],
-								['private_property_identifier', data._private_property_identifier],
-								['string', data._string],
-								['number', data._number],
-								['computed_property_name', data._computed_property_name]
-							]),
-					[
-						'enum_assignment',
-						'_property_name',
-						'_property_identifier',
-						'identifier',
-						'_reserved_identifier',
-						'private_property_identifier',
-						'string',
-						'number',
-						'computed_property_name'
-					]
-				),
-				false,
-				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
-			_content_delimiter: _hasSeparatorFlank(
-				{},
-				data._content !== undefined
-					? _toArr(data._content)
-					: [
-							..._toArr(data._name),
-							..._toArr(data._enum_assignment),
-							..._toArr(data._property_identifier),
-							..._toArr(data._identifier),
-							..._toArr(data._reserved_identifier),
-							..._toArr(data._private_property_identifier),
-							..._toArr(data._string),
-							..._toArr(data._number),
-							..._toArr(data._computed_property_name)
-						],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			)
-				? 2
-				: 0,
+			_content: _content,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			contents() {
-				return drillInAll<T.EnumAssignment | T.PropertyName>(
-					this._content as readonly (T.EnumAssignment | T.PropertyName)[] | undefined,
+				return drillInAll<T.PropertyName | T.EnumAssignment>(
+					this._content as readonly (T.PropertyName | T.EnumAssignment)[] | undefined,
 					tree
 				);
 			},
-			$with: {
-				contents: (...v: NonNullable<T.EnumBodyElements['_content']>[number][]) =>
-					wrapEnumBodyElements({ ...data, _content: v }, tree)
-			}
+			$with: {}
 		},
 		methodsEngine
 	);
-	return _node;
 }
 
 export function wrapTypes(

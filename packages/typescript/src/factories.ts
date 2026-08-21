@@ -5689,10 +5689,25 @@ function _buildFormalParametersElements(elements: NonEmptyArray<T.FormalParamete
 }
 
 export function buildEnumBodyElements(
-	config: Partial<T.EnumBodyElements.Config> = {},
-	options: { delimiter?: 2 } = {}
+	...elements: NonEmptyArray<T.PropertyName | T.EnumAssignment>
+): ReturnType<typeof _buildEnumBodyElements>;
+export function buildEnumBodyElements(
+	options: { delimiter?: 2 },
+	...elements: NonEmptyArray<T.PropertyName | T.EnumAssignment>
+): ReturnType<typeof _buildEnumBodyElements>;
+export function buildEnumBodyElements(...args: ({ delimiter?: 2 } | (T.PropertyName | T.EnumAssignment))[]) {
+	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.PropertyName | T.EnumAssignment>;
+	return _buildEnumBodyElements(elements, options);
+}
+function _buildEnumBodyElements(
+	elements: NonEmptyArray<T.PropertyName | T.EnumAssignment>,
+	options: { delimiter?: 2 }
 ) {
-	const _content = config.content ?? [];
+	_assertNonEmpty(elements, '_enum_body_elements.elements');
+	const _content = elements;
+	const _delimiter = options.delimiter ?? 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5700,11 +5715,10 @@ export function buildEnumBodyElements(
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				_content_delimiter: options.delimiter ?? 0,
+				_delimiter,
 				$with: {
-					contents: (...values: (T.EnumAssignment | T.PropertyName)[]) =>
-						buildEnumBodyElements({ ...config, content: values }, options),
-					delimiter: (v: 2) => buildEnumBodyElements(config, { ...options, delimiter: v })
+					$children: (...vs: NonEmptyArray<T.PropertyName | T.EnumAssignment>) => buildEnumBodyElements(options, ...vs),
+					delimiter: (v: 2) => buildEnumBodyElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -7295,7 +7309,7 @@ export type FluentKindMap = {
 	_meta_property_group1: T.MetaPropertyGroup1;
 	_meta_property_group2: T.MetaPropertyGroup2;
 	_formal_parameters_elements: FluentNode<'_formal_parameters_elements', T.FormalParametersElements.Config>;
-	_enum_body_elements: T.EnumBodyElements;
+	_enum_body_elements: FluentNode<'_enum_body_elements', T.EnumBodyElements.Config>;
 	_types: FluentNode<'_types', T.Types.Config>;
 	_type_parameters_elements: FluentNode<'_type_parameters_elements', T.TypeParametersElements.Config>;
 	_tuple_type_members: FluentNode<'_tuple_type_members', T.TupleTypeMembers.Config>;
