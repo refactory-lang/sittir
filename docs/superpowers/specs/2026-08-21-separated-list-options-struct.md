@@ -84,6 +84,16 @@ can themselves be plain config objects must still disambiguate through
 that rule — an element config always carries `$type` or an
 element-shaped key, so the subset test is decisive.
 
+**Single-slot hoisting.** When the separated list is its parent's
+single slot (the helper kind exists only to hold the list —
+`enum_body` → `_enum_body_elements`), the spread-plus-leading-options
+surface hoists to the parent factory: `enumBody({ delimiter: trailing },
+...elements)`, with no helper-kind call in user code — the same
+single-slot inlining rule the factory surface already applies to
+hoisted groups, composing through chains of single-slot wrappers. The
+options ride wherever the elements surface does; multi-slot parents
+keep the list kind's own factory as the options home.
+
 ## Blast radius (why this is its own PR series)
 
 The list-slot wire contract changes for every list slot in all three
