@@ -120,6 +120,24 @@ baseline compare (fail ceiling never rises).
 - **Punct-punct merges** — unchanged from the spacing-writer spec: style
   spaces in template literals prevent them; documented, not mechanized.
 
+## Realization state
+
+- **immediate** — realized: leaf render fns, literal arms, and scalar
+  (`slotVerbatimIsImmediate`) arms mark; structural arms mark via the
+  leftmost-terminal derivation (`isLeftImmediateKind`); the
+  `template_substitution` acceptance case passes.
+- **fixed × fixed** — realized (predates this spec): the template SEQ join
+  applies the writer's invariant to statically known seam chars and bakes
+  the space (`joinParts` in the template emitter).
+- **class-derivable** — open: needs per-kind edge classes; the census counts
+  the candidate pool (tag-adjacent boundaries).
+- **residue report** — first cut realized: the SEQ join records every
+  boundary it classifies and generation prints the per-grammar census.
+  First measurement: rust 10/431 static, typescript 16/535, python 5/232 —
+  the runtime share is the class-derivable workload, not yet a ratchet.
+- **mark rename** (`mark_adjacent` → resolved-boundary contract) — open;
+  rename lands when a non-immediate boundary first sets the mark.
+
 ## Optional end-state: writer layer split
 
 If a custom sink trait is ever threaded end-to-end through the render stack
