@@ -301,6 +301,20 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	// whose rule kind is no longer in the grammar.
 	writeJinjaTemplates(result.jinjaTemplates, join(dirname(outDir), 'templates'));
 
+	// Static-seam-resolution residue report: how many template boundaries
+	// the SEQ join resolved statically vs left to the render-time
+	// SpacingWriter. The runtime count is the residue the spec ratchets on.
+	{
+		const census = result.jinjaTemplates.seamCensus;
+		const total = census.boundaries.length;
+		console.log(
+			`  seam census: ${total} template boundaries — ` +
+				`${census.staticGlued + census.staticSpaced} static ` +
+				`(${census.staticGlued} glued, ${census.staticSpaced} spaced), ` +
+				`${census.runtime} runtime (residue)`
+		);
+	}
+
 	// --- grammar-owned Rust render-module emission (spec 012 T017) ---
 	// When `--all` is set for a supported grammar, also emit hash.rs / hash.ts
 	// so the native backend and the TS backend can detect template-bundle drift

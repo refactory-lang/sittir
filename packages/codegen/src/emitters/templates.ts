@@ -70,6 +70,31 @@ export interface EmitTemplatesConfig {
 
 export interface EmittedTemplates {
 	bodies: Map<string, string>;
+	seamCensus: SeamCensusSummary;
+}
+
+/**
+ * One template boundary the SEQ join classified. `left`/`right` are the
+ * seam's adjacent characters in template text — a `'}'` left or `'{'`
+ * right is template syntax (a slot/tag boundary), which is exactly the
+ * `runtime` class: the render-time SpacingWriter owns that seam because
+ * the real characters are only known per instance.
+ */
+export interface SeamBoundaryRecord {
+	readonly kind: string;
+	readonly left: string;
+	readonly right: string;
+	readonly resolution: 'static-glued' | 'static-spaced' | 'runtime';
+}
+
+/** Per-grammar census of template-boundary seam resolutions — the
+ *  static-seam-resolution spec's residue report. `runtime` is the residue:
+ *  boundaries still decided by the render-time SpacingWriter. */
+export interface SeamCensusSummary {
+	readonly boundaries: readonly SeamBoundaryRecord[];
+	readonly staticGlued: number;
+	readonly staticSpaced: number;
+	readonly runtime: number;
 }
 
 export interface EmitCtx {
@@ -96,6 +121,9 @@ export interface EmitCtx {
 	// WHOLE merged array at each position, duplicating output. Cleared per
 	// node in `TemplateEmitter#emitNode` (mirrors `visitingHelpers`).
 	readonly emittedArraySlots: Set<AssembledNonterminal>;
+	// Seam-census sink (optional so hand-built test ctx literals stay valid):
+	// the SEQ join appends one record per boundary it classifies.
+	readonly seamBoundaries?: SeamBoundaryRecord[];
 	readonly ownerSlots?: Readonly<Record<string, AssembledNonterminal>>;
 	readonly currentKind?: string;
 }
@@ -174,6 +202,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	readonly #wordMatcher: RegExp;
 	readonly #ctx: EmitCtx;
 	#bodies = new Map<string, string>();
+	readonly #seamBoundaries: SeamBoundaryRecord[] = [];
 
 	constructor(config: EmitTemplatesConfig) {
 		this.#config = config;
@@ -205,7 +234,8 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			externals: [...(config.nodeMap.externals ?? [])],
 			rules: config.nodeMap.normalizedRules ?? {},
 			visitingHelpers: new Set<string>(),
-			emittedArraySlots: new Set<AssembledNonterminal>()
+			emittedArraySlots: new Set<AssembledNonterminal>(),
+			seamBoundaries: this.#seamBoundaries
 		};
 	}
 
@@ -223,7 +253,16 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 
 	finalize(): EmittedTemplates {
 		dumpSlotMissLog(this.#config.grammar);
-		return { bodies: new Map(this.#bodies) };
+		const boundaries = [...this.#seamBoundaries];
+		return {
+			bodies: new Map(this.#bodies),
+			seamCensus: {
+				boundaries,
+				staticGlued: boundaries.filter((b) => b.resolution === 'static-glued').length,
+				staticSpaced: boundaries.filter((b) => b.resolution === 'static-spaced').length,
+				runtime: boundaries.filter((b) => b.resolution === 'runtime').length
+			}
+		};
 	}
 
 	#emitNode(node: AssembledNode): void {
@@ -255,7 +294,9 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 }
 
 function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
-	const ctxK: EmitCtx = DBG_SLOT_MISS ? { ...ctx, currentKind: node.kind } : ctx;
+	// currentKind always populated — the seam census attributes every
+	// boundary to its owning kind (was DBG_SLOT_MISS-gated).
+	const ctxK: EmitCtx = { ...ctx, currentKind: node.kind };
 	switch (node.modelType) {
 		case 'branch':
 			return emitBranchTemplate(node, ctxK);
@@ -446,17 +487,22 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			// real braces with spaces ('{ '/' }'), which makes them seam-inert.
 			// Tag boundaries are dynamic and belong to the runtime writer,
 			// which sees the real rendered characters.
+			const recordSeam = (l: string, r: string, resolution: SeamBoundaryRecord['resolution']): void => {
+				ctx.seamBoundaries?.push({ kind: ctx.currentKind ?? '(unknown)', left: l, right: r, resolution });
+			};
 			const joinParts = (segments: string[]): string => {
 				let body = segments[0]!;
 				for (let i = 1; i < segments.length; i++) {
 					const l = body[body.length - 1]!;
 					const r = segments[i]![0]!;
 					if (l === '}' || r === '{') {
+						recordSeam(l, r, 'runtime');
 						body += segments[i]!;
 						continue;
 					}
 					const wordSeam = ctx.isWordChar(l) && ctx.isWordChar(r);
 					const symbolSeam = l !== r && ctx.isLiteralMergePair(l, r);
+					recordSeam(l, r, wordSeam || symbolSeam ? 'static-spaced' : 'static-glued');
 					if (wordSeam || symbolSeam) body += ' ';
 					body += segments[i]!;
 				}
@@ -466,6 +512,10 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			if (indentPartIdx !== -1 && indentPartIdx < parts.length - 1) {
 				const before = joinParts(parts.slice(0, indentPartIdx + 1));
 				const after = joinParts(parts.slice(indentPartIdx + 1));
+				// The filter-wrapped indent seam is runtime by construction —
+				// the writer sees before-tail against per-instance indented
+				// content; count it so the census hides nothing.
+				recordSeam(before[before.length - 1] ?? '', after[0] ?? '', 'runtime');
 				seqBody = `${before}{% filter indent(2, true) %}${after}{% endfilter %}`;
 			} else {
 				seqBody = joinParts(parts);
