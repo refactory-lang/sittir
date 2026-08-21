@@ -427,8 +427,6 @@ export interface CatchClauseTransport {
   '$triviaData'?: TransportTrivia
   _body: StatementBlockTransport
   _catch_clause_group1?: CatchClauseGroup1Transport
-  _parameter?: CatchClauseGroup1ParameterTransportSlot
-  _type?: TypeAnnotationTransport
 }
 
 export interface ClassBodyMemberTransport {
@@ -776,7 +774,6 @@ export interface ExportClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _export_specifiers?: ExportSpecifiersTransport
-  _export_specifier?: Array<ExportSpecifierTransport>
 }
 
 export interface ExportSpecifierOptional1Transport {
@@ -1124,7 +1121,6 @@ export interface FormalParametersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _formal_parameters_elements?: FormalParametersElementsTransport
-  _formal_parameter?: Array<FormalParameterTransport>
 }
 
 export interface ForStatementTransport {
@@ -1619,7 +1615,6 @@ export interface JsxOpeningElementContentTransport {
   _name?: JsxOpeningElementContentNameTransportSlot
   _attribute?: Array<_JsxAttributeTransport>
   _jsx_start_opening_element_group1?: JsxStartOpeningElementGroup1Transport
-  _type_arguments?: TypeArgumentsTransport
 }
 
 export interface JsxOpeningElementTransport {
@@ -1631,8 +1626,6 @@ export interface JsxOpeningElementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _jsx_opening_element_content?: JsxOpeningElementContentTransport
-  _name?: JsxOpeningElementContentNameTransportSlot
-  _attribute?: Array<_JsxAttributeTransport>
 }
 
 export interface JsxSelfClosingElementTransport {
@@ -1644,8 +1637,6 @@ export interface JsxSelfClosingElementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _jsx_opening_element_content?: JsxOpeningElementContentTransport
-  _name?: JsxOpeningElementContentNameTransportSlot
-  _attribute?: Array<_JsxAttributeTransport>
 }
 
 export interface JsxStartOpeningElementGroup1Transport {
@@ -1669,8 +1660,6 @@ export interface JsxStartOpeningElementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _jsx_opening_element_content?: JsxOpeningElementContentTransport
-  _name?: JsxOpeningElementContentNameTransportSlot
-  _attribute?: Array<_JsxAttributeTransport>
 }
 
 export interface JsxStringTransport {
@@ -1857,7 +1846,6 @@ export interface NamedImportsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _import_specifiers?: ImportSpecifiersTransport
-  _import_specifier?: Array<ImportSpecifierTransport>
 }
 
 export interface NamespaceExportTransport {
@@ -2570,7 +2558,6 @@ export interface TupleTypeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _tuple_type_members?: TupleTypeMembersTransport
-  _tuple_type_member?: Array<TupleTypeMemberTransport>
 }
 
 export interface TypeAliasDeclarationTransport {
@@ -2607,7 +2594,6 @@ export interface TypeArgumentsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _types: TypesTransport
-  _type?: Array<TypeTransport>
 }
 
 export interface TypeAssertionTransport {
@@ -2643,7 +2629,6 @@ export interface TypeParametersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type_parameters_elements: TypeParametersElementsTransport
-  _type_parameter?: Array<TypeParameterTransport>
 }
 
 export interface TypeParameterTransport {

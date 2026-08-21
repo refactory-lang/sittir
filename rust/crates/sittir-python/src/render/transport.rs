@@ -15085,8 +15085,6 @@ pub struct SimpleStatementsTransport {
     pub simple_statements_elements: SimpleStatementsElementsTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_newline"))]
     pub newline: NewlineTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statement"))]
-    pub simple_statement: Option<Vec<SimpleStatementTransport>>,
 }
 
 impl RenderableTransport for SimpleStatementsTransport {
@@ -15137,8 +15135,6 @@ pub struct ImportStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_list"))]
     pub import_list: ImportListTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Option<Vec<ImportListNameTransportSlot>>,
 }
 
 impl RenderableTransport for ImportStatementTransport {
@@ -16532,8 +16528,6 @@ pub struct MatchStatementTransport {
     pub body: MatchBlockTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subjects"))]
     pub subjects: SubjectsTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subject"))]
-    pub subject: Option<Vec<ExpressionTransport>>,
 }
 
 impl RenderableTransport for MatchStatementTransport {
@@ -16638,8 +16632,6 @@ pub struct CaseClauseTransport {
     pub consequence: CaseClauseConsequenceTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_patterns"))]
     pub case_patterns: CasePatternsTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern"))]
-    pub case_pattern: Option<Vec<CasePatternTransport>>,
 }
 
 impl RenderableTransport for CaseClauseTransport {
@@ -17176,8 +17168,6 @@ pub struct ParametersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: Option<_ParametersTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter"))]
-    pub parameter: Option<Vec<ParameterTransport>>,
 }
 
 impl RenderableTransport for ParametersTransport {
@@ -17228,8 +17218,6 @@ pub struct LambdaParametersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: _ParametersTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter"))]
-    pub parameter: Option<Vec<ParameterTransport>>,
 }
 
 impl RenderableTransport for LambdaParametersTransport {
@@ -17642,8 +17630,6 @@ pub struct TypeParameterTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_types"))]
     pub types: TypesTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: Option<Vec<TypeTransport>>,
 }
 
 impl RenderableTransport for TypeParameterTransport {
@@ -18200,8 +18186,6 @@ pub struct DictPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dict_pattern_elements"))]
     pub dict_pattern_elements: Option<DictPatternElementsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Option<Vec<DictPatternElementsElementTransportSlot>>,
 }
 
 impl RenderableTransport for DictPatternTransport {
@@ -18620,8 +18604,6 @@ pub struct TuplePatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns"))]
     pub patterns: Option<PatternsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
-    pub pattern: Option<Vec<PatternTransport>>,
 }
 
 impl RenderableTransport for TuplePatternTransport {
@@ -18672,8 +18654,6 @@ pub struct ListPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns"))]
     pub patterns: Option<PatternsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
-    pub pattern: Option<Vec<PatternTransport>>,
 }
 
 impl RenderableTransport for ListPatternTransport {
@@ -19820,8 +19800,6 @@ pub struct SubscriptTransport {
     pub value: Box<PrimaryExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscripts"))]
     pub subscripts: SubscriptsTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscript"))]
-    pub subscript: Option<Vec<SubscriptsSubscriptTransportSlot>>,
 }
 
 impl RenderableTransport for SubscriptTransport {
@@ -20495,8 +20473,6 @@ pub struct ListTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_collection_elements"))]
     pub collection_elements: Option<CollectionElementsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Option<Vec<CollectionElementsElementTransportSlot>>,
 }
 
 impl RenderableTransport for ListTransport {
@@ -20547,8 +20523,6 @@ pub struct SetTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_collection_elements"))]
     pub collection_elements: CollectionElementsTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Option<Vec<CollectionElementsElementTransportSlot>>,
 }
 
 impl RenderableTransport for SetTransport {
@@ -20599,8 +20573,6 @@ pub struct TupleTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_collection_elements"))]
     pub collection_elements: Option<CollectionElementsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Option<Vec<CollectionElementsElementTransportSlot>>,
 }
 
 impl RenderableTransport for TupleTransport {
@@ -23076,8 +23048,6 @@ pub struct FutureImportStatementGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_list"))]
     pub import_list: ImportListTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Option<Vec<ImportListNameTransportSlot>>,
 }
 
 impl RenderableTransport for FutureImportStatementGroup1Transport {
@@ -24318,8 +24288,6 @@ pub struct CaseTuplePatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_list_pattern_case_patterns"))]
     pub list_pattern_case_patterns: Option<ListPatternCasePatternsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern"))]
-    pub case_pattern: Option<Vec<CasePatternTransport>>,
 }
 
 impl RenderableTransport for CaseTuplePatternTransport {
@@ -24370,8 +24338,6 @@ pub struct CaseListPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_list_pattern_case_patterns"))]
     pub list_pattern_case_patterns: Option<ListPatternCasePatternsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern"))]
-    pub case_pattern: Option<Vec<CasePatternTransport>>,
 }
 
 impl RenderableTransport for CaseListPatternTransport {
@@ -24630,8 +24596,6 @@ pub struct PrintStatementGroup1Transport {
     pub chevron: ChevronTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_chevron_arguments"))]
     pub print_chevron_arguments: Option<PrintStatementGroup1PrintChevronArgumentsTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
-    pub argument: Option<Vec<ExpressionTransport>>,
 }
 
 impl RenderableTransport for PrintStatementGroup1Transport {
@@ -24682,8 +24646,6 @@ pub struct PrintStatementGroup2Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_arguments"))]
     pub print_arguments: PrintArgumentsTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
-    pub argument: Option<Vec<ExpressionTransport>>,
 }
 
 impl RenderableTransport for PrintStatementGroup2Transport {
@@ -25095,8 +25057,6 @@ pub struct WithClauseParenTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_clause_with_items"))]
     pub with_clause_with_items: WithClauseWithItemsTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_item"))]
-    pub with_item: Option<Vec<WithItemTransport>>,
 }
 
 impl RenderableTransport for WithClauseParenTransport {

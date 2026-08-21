@@ -3672,18 +3672,25 @@ function renderTransportDataStruct(
 			for (const field of [...slotModel.named, ...slotModel.unnamed]) {
 				lines.push(...renderTransportField(field, node.kind, node.typeName, nodeMap));
 			}
-			// Group-lift inner field hoisting: for each unnamed SINGULAR slot that
-			// is a group-lift helper (points to `_<slotName>`), also emit the
-			// helper's inner NAMED fields as direct transport fields on the parent
-			// struct (e.g. `_value: Option<ExpressionTransport>` on
-			// ConstItemTransport).
+			// INLINED-helper inner field storage: for each unnamed SINGULAR slot
+			// referencing an inlined hidden helper (`_<slotName>`, no CST node of
+			// its own — tree-sitter splices it), also emit the helper's inner
+			// NAMED fields as direct transport fields on the parent struct (e.g.
+			// `_value: Option<ExpressionTransport>` on ConstItemTransport).
 			//
-			// The CST native reader exposes inner grammar fields at the parent
-			// level (tree-sitter places `value` directly on `const_item`, not
-			// nested inside `_const_item_optional1`). Adding the direct fields
-			// lets napi deserialization read the CST path without a nested
-			// helper object. The render fn then tries the direct field first,
-			// falling back to the helper for factory-built transports.
+			// For an inlined ref the parent level IS the parser's real shape:
+			// the CST native reader exposes the inner grammar fields there
+			// (tree-sitter places `value` directly on `const_item`, not nested
+			// inside `_const_item_optional1`). Adding the direct fields lets
+			// napi deserialization read the CST path without a nested helper
+			// object. The render fn then tries the direct field first, falling
+			// back to the helper for factory-built transports.
+			//
+			// An alias-VISIBLE helper ref is the opposite case: the CST
+			// materializes the helper's own node, the reader nests the inner
+			// fields inside it, and factories build the node — so a parent-level
+			// field could never be populated. Such refs may project their shape
+			// onto the factory surface (hoisting) but never into storage.
 			//
 			// MULTIPLE unnamed slots are excluded (`isMultiple` guard below): this
 			// hoist only makes sense for a single collapsed occurrence — a
@@ -3703,6 +3710,13 @@ function renderTransportDataStruct(
 				]);
 				for (const unnamedSlot of slotModel.unnamed) {
 					if (isMultiple(unnamedSlot)) continue;
+					// Alias-visible ref → the helper has its own CST node; inner
+					// fields live inside it, never at the parent level (see the
+					// inlining-vs-hoisting note above).
+					const aliasVisible = unnamedSlot.values.some(
+						(v) => v.parseKind?.name !== undefined && !v.parseKind.name.startsWith('_')
+					);
+					if (aliasVisible) continue;
 					const helperNodeName = `_${unnamedSlot.name}`;
 					const helperNode = nodeMap.nodes.get(helperNodeName);
 					if (helperNode === undefined) continue;

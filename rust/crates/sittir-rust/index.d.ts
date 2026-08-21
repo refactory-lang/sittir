@@ -92,7 +92,6 @@ export interface ArgumentsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _arguments_elements?: ArgumentsElementsTransport
-  _element?: Array<AttributedArgumentTransport>
 }
 
 export interface ArrayExpressionGroup1Transport {
@@ -117,7 +116,6 @@ export interface ArrayExpressionListTransport {
   '$triviaData'?: TransportTrivia
   _attributes?: Array<AttributeItemTransport>
   _arguments_elements?: ArgumentsElementsTransport
-  _element?: Array<AttributedArgumentTransport>
 }
 
 export interface ArrayExpressionSemiTransport {
@@ -130,7 +128,6 @@ export interface ArrayExpressionSemiTransport {
   '$triviaData'?: TransportTrivia
   _attributes?: Array<AttributeItemTransport>
   _array_expression_group1: Box<ArrayExpressionGroup1Transport>
-  _length?: Box<ExpressionTransport>
 }
 
 export interface ArrayExpressionTransport {
@@ -311,8 +308,6 @@ export interface AttributeTransport {
   '$triviaData'?: TransportTrivia
   _path: PathTransport
   _attribute_group1?: AttributeGroup1Transport
-  _value?: ExpressionTransport
-  _arguments?: DelimTokenTreeTransport
 }
 
 export interface AwaitExpressionTransport {
@@ -372,9 +367,6 @@ export interface BlockCommentTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _block_comment_group1?: BlockCommentGroup1Transport
-  _outer?: OuterBlockDocCommentMarkerTransport
-  _inner?: InnerBlockDocCommentMarkerTransport
-  _doc?: Box<AnyTransport>
 }
 
 export interface BlockTransport {
@@ -699,7 +691,6 @@ export interface EnumVariantListTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _enum_variant_list_elements?: EnumVariantListElementsTransport
-  _element?: Array<AttributedEnumVariantTransport>
 }
 
 export interface EnumVariantOptional1Transport {
@@ -806,7 +797,6 @@ export interface FieldDeclarationListTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _field_declaration_list_elements?: FieldDeclarationListElementsTransport
-  _element?: Array<AttributedFieldDeclarationTransport>
 }
 
 export interface FieldDeclarationTransport {
@@ -931,7 +921,6 @@ export interface ForLifetimesTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _lifetimes: LifetimesTransport
-  _lifetime?: Array<LifetimeTransport>
 }
 
 export interface FunctionItemOptional1Transport {
@@ -1026,7 +1015,6 @@ export interface FunctionTypeTransport {
   _return_type?: Box<_TypeTransport>
   _function_type_trait_form?: Box<FunctionTypeTraitFormTransport>
   _function_type_fn_form?: FunctionTypeFnFormTransport
-  _trait?: Box<FunctionTypeTraitFormTraitTransportSlot>
 }
 
 export interface GenBlockTransport {
@@ -1353,7 +1341,6 @@ export interface MacroDefinitionBraceTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _macro_rules?: MacroRulesTransport
-  _macro_rule?: Array<MacroRuleTransport>
 }
 
 export interface MacroDefinitionBracketTransport {
@@ -1365,7 +1352,6 @@ export interface MacroDefinitionBracketTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _macro_rules?: MacroRulesTransport
-  _macro_rule?: Array<MacroRuleTransport>
 }
 
 export interface MacroDefinitionParenTransport {
@@ -1377,7 +1363,6 @@ export interface MacroDefinitionParenTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _macro_rules?: MacroRulesTransport
-  _macro_rule?: Array<MacroRuleTransport>
 }
 
 export interface MacroDefinitionTransport {
@@ -1473,7 +1458,6 @@ export interface MatchBlockTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _match_block_arms?: Box<MatchBlockArmsTransport>
-  _last_arm?: Box<LastMatchArmTransport>
 }
 
 export interface MatchExpressionTransport {
@@ -1625,7 +1609,6 @@ export interface ParametersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _parameters_elements?: ParametersElementsTransport
-  _element?: Array<AttributedParameterTransport>
 }
 
 export interface ParameterTransport {
@@ -1960,7 +1943,6 @@ export interface SlicePatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _patterns?: PatternsTransport
-  _pattern?: Array<PatternTransport>
 }
 
 export interface SourceFileTransport {
@@ -2275,7 +2257,6 @@ export interface TupleExpressionTransport {
   '$triviaData'?: TransportTrivia
   _attributes?: Array<AttributeItemTransport>
   _tuple_expression_elements: TupleExpressionElementsTransport
-  _element?: Array<ExpressionTransport>
 }
 
 export interface TuplePatternElementsTransport {
@@ -2311,7 +2292,6 @@ export interface TupleStructPatternTransport {
   '$triviaData'?: TransportTrivia
   _type: Box<TupleStructPatternTypeTransportSlot>
   _patterns?: PatternsTransport
-  _pattern?: Array<PatternTransport>
 }
 
 export interface TupleTypeElementsTransport {
@@ -2335,7 +2315,6 @@ export interface TupleTypeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _tuple_type_elements: TupleTypeElementsTransport
-  _type?: Array<_TypeTransport>
 }
 
 export interface TypeArgumentsElementsTransport {
@@ -2359,7 +2338,6 @@ export interface TypeArgumentsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type_arguments_elements: TypeArgumentsElementsTransport
-  _element?: Array<TypeArgumentTransport>
 }
 
 export interface TypeArgumentTransport {
@@ -2447,7 +2425,6 @@ export interface TypeParametersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type_parameters_elements: TypeParametersElementsTransport
-  _element?: Array<AttributedTypeParameterTransport>
 }
 
 export interface TypeParameterTransport {
@@ -2569,7 +2546,6 @@ export interface UseListTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _use_clauses?: UseClausesTransport
-  _use_clause?: Array<UseClauseTransport>
 }
 
 export interface UseWildcardClauseTransport {
@@ -2682,7 +2658,6 @@ export interface WhereClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _where_predicates?: WherePredicatesTransport
-  _where_predicate?: Array<WherePredicateTransport>
 }
 
 export interface WherePredicatesTransport {
