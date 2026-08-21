@@ -2814,7 +2814,7 @@ function isImmediateLeafKind(kind: string, nodeMap: NodeMap): boolean {
  * the wire erase kind identity (a text-collapsed leaf and an inline terminal
  * both arrive as bare strings), so the arm can only be marked when ALL
  * sources that can produce one forbid preceding whitespace: inline
- * `TerminalValue`s via their own `immediate` stamp (§H1 threading), leaf
+ * `TerminalValue`s via their own `immediate` stamp, leaf
  * kind refs via the referenced node's stamp. Non-leaf refs can't scalarize
  * through this arm's normal path and are ignored. Requires at least one
  * scalar-capable source — a vacuous pass would mark arms whose scalars come
@@ -2890,7 +2890,12 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 			const key = `${literalKind}\0${component.value}`;
 			if (literalSet.has(key)) continue;
 			literalSet.add(key);
-			literals.push({ kind: literalKind, text: component.value, resolvedKindId: component.resolvedKindId });
+			literals.push({
+				kind: literalKind,
+				text: component.value,
+				resolvedKindId: component.resolvedKindId,
+				immediate: component.immediate
+			});
 		}
 		// Mixed-content override: a slot with named kinds AND anonymous literal
 		// content is heterogeneous regardless of classifier.
@@ -3203,9 +3208,12 @@ function emitPerSlotChildEnum(
 	for (const literal of entry.literals) {
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant !== undefined) {
-			// A literal arm for an immediate token kind writes seam-free —
-			// grammar forbids whitespace before it (see `mark_adjacent`).
-			const arm = isImmediateLeafKind(literal.kind, nodeMap)
+			// A literal arm for an immediate token writes seam-free — grammar
+			// forbids whitespace before it (see `mark_adjacent`). Inline
+			// terminals carry the stamp on the literal itself (no kind of
+			// their own to look up); kind-named literals resolve it through
+			// their kind.
+			const arm = (literal.immediate === true || isImmediateLeafKind(literal.kind, nodeMap))
 				? `{ ::sittir_core::spacing::mark_adjacent(); dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from) }`
 				: `dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from)`;
 			lines.push(`            ${enumName}::${variant} => ${arm},`);

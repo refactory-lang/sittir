@@ -269,12 +269,12 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		// Static seam resolution: the fixture's single terminal value 'x' is
-		// word-class on both edges, so every interior boundary statically
-		// owes a space under the writer's law — the space bakes into the
-		// separator string (`staticListInterior`), byte-identical to the
-		// writer's own insertion.
-		expect(emitRule(rule, ctx)).toBe('{{ args | join(" ") }}');
+		// The default list separator is empty — the render-time writer
+		// supplies word-word seam spaces. staticListInterior classifies this
+		// interior for the census (the 'x' value's edges are word-class both
+		// sides) but never changes emission: baking the owed space is
+		// blocked until trailing-trivia edges are modeled (see its doc).
+		expect(emitRule(rule, ctx)).toBe('{{ args | join("") }}');
 	});
 
 	it('uses the separator attribute when emitting a list slot', () => {
@@ -424,9 +424,9 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 			} as unknown as EmitCtx['nodeMap']
 		});
 		// isMultiple(slot) is false (one 'single' value), multiplicity=array
-		// → list form. Same static resolution as the fieldName suite: the
-		// word-edged terminal value bakes the owed space into the separator.
-		expect(emitRule(rule, ctx)).toBe('{{ item | join(" ") }}');
+		// → list form. Census-classified, emission unchanged (see the
+		// fieldName suite's comment).
+		expect(emitRule(rule, ctx)).toBe('{{ item | join("") }}');
 	});
 
 	it('keeps the empty separator and the runtime writer when edges are unknown', () => {
@@ -436,13 +436,13 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 			id: 'r11',
 			multiplicity: 'array'
 		};
-		// A node-ref value with no resolvable kind: edge chars underivable,
-		// so the interior stays with the runtime SpacingWriter.
+		// A node-ref to an UNRESOLVED target: edge chars underivable, so the
+		// interior stays with the runtime SpacingWriter.
 		const slot = makeSlot({
 			name: 'item',
 			propertyName: 'item',
 			storageName: 'item',
-			values: [{ node: {}, multiplicity: 'single' } as unknown as NodeOrTerminal]
+			values: [{ node: { kind: 'unresolved-ref', name: 'mystery' }, multiplicity: 'single' } as NodeOrTerminal]
 		});
 		const ctx = makeCtx({
 			nodeMap: {

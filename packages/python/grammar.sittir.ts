@@ -299,7 +299,9 @@ export default grammar(
 				// parse: the text|text seam is load-bearing for RENDERING and
 				// not subsumed by static char-class analysis. At parse time two
 				// adjacent text runs can't occur (greedy lexing), but
-				// factory-built nodes CAN pass ['10', 'd'] as separate items;
+				// config-built nodes ($with setters, untyped construction
+				// through the Verbatim scalar arm) CAN pass '10' and 'd' as
+				// separate items;
 				// a seam check would inject '10 d' — corrupting the format
 				// spec, where raw '10d' is the only correct output (verbatim
 				// content: a space is semantics). Both sides are

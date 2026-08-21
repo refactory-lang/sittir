@@ -3180,7 +3180,17 @@ function leftmostTerminalImmediate(rule: Rule<'link'> | undefined, ctx: Leftmost
 		case 'SEQ':
 			return rule.members.length > 0 && leftmostTerminalImmediate(rule.members[0], ctx);
 		case 'CHOICE':
-			return rule.members.length > 0 && rule.members.every((m) => leftmostTerminalImmediate(m, ctx));
+			// Fork the cycle guard per arm: `visiting` is an ancestor-path set,
+			// and sibling arms are separate paths — a shared set would make a
+			// symbol resolved in one arm look recursive in the next, an
+			// order-dependent false negative (and a missing mark is a missed
+			// immediacy suppression, not just census noise).
+			return (
+				rule.members.length > 0 &&
+				rule.members.every((m) =>
+					leftmostTerminalImmediate(m, { rules: ctx.rules, visiting: new Set(ctx.visiting) })
+				)
+			);
 		case 'REPEAT1':
 		case 'FIELD':
 		case 'VARIANT':
@@ -3231,6 +3241,17 @@ const uniformEdgeClass = (classes: readonly SeamEdgeClass[]): SeamEdgeClass => {
 const charEdgeClass = (c: string | undefined, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass =>
 	c === undefined || c === '' ? 'varies' : ctx.isWordChar(c) ? 'word' : 'not-word';
 
+/** Control escapes decoded to the character they match — classifying by
+ *  the escape LETTER gives the wrong class (`\r` is not word-class 'r'). */
+const REGEX_CONTROL_ESCAPES: Record<string, string> = {
+	n: '\n',
+	r: '\r',
+	t: '\t',
+	f: '\f',
+	v: '\v',
+	'0': '\0'
+};
+
 /**
  * Leading character class of a regex source, or `varies` when the leading
  * atom is not one of the shapes this understands (a positive character
@@ -3254,7 +3275,11 @@ export function patternLeadingEdgeClass(source: string, ctx: { isWordChar: (c: s
 				}
 				if (esc === 's' || esc === 'S' || esc === 'D' || esc === 'W' || esc === 'p' || esc === 'u' || esc === 'x')
 					return 'varies';
-				ch = esc;
+				// Decode control escapes to the character they MATCH — the
+				// escape letter itself has the wrong class ('r' is word,
+				// '\r' is not). Other letter escapes stay the letter:
+				// escaped punctuation ('\.', '\[') matches itself.
+				ch = REGEX_CONTROL_ESCAPES[esc] ?? esc;
 			}
 			if (source[i + 1] === '-' && source[i + 2] !== undefined && source[i + 2] !== ']') {
 				const lo = ch.charCodeAt(0);
@@ -3271,8 +3296,18 @@ export function patternLeadingEdgeClass(source: string, ctx: { isWordChar: (c: s
 	if (c0 === '\\') {
 		const esc = source[1];
 		if (esc === 'd' || esc === 'w') return 'word';
-		if (esc === undefined || esc === 's' || esc === 'S' || esc === 'D' || esc === 'W' || esc === 'p') return 'varies';
-		return charEdgeClass(esc, ctx);
+		if (
+			esc === undefined ||
+			esc === 's' ||
+			esc === 'S' ||
+			esc === 'D' ||
+			esc === 'W' ||
+			esc === 'p' ||
+			esc === 'u' ||
+			esc === 'x'
+		)
+			return 'varies';
+		return charEdgeClass(REGEX_CONTROL_ESCAPES[esc] ?? esc, ctx);
 	}
 	if (c0 === '(' || c0 === '^' || c0 === '.') return 'varies';
 	return charEdgeClass(c0, ctx);
@@ -3337,7 +3372,8 @@ function ruleEdgeClass(
 			return ruleEdgeClass(member, side, ctx, visiting);
 		}
 		case 'CHOICE':
-			return uniformEdgeClass(rule.members.map((m) => ruleEdgeClass(m, side, ctx, visiting)));
+			// Per-arm cycle-guard fork — see leftmostTerminalImmediate's CHOICE case.
+			return uniformEdgeClass(rule.members.map((m) => ruleEdgeClass(m, side, ctx, new Set(visiting))));
 		case 'REPEAT1':
 		case 'FIELD':
 		case 'VARIANT':
@@ -3418,7 +3454,14 @@ function ruleEdgeCharSet(
 			const union = new Set<string>();
 			for (const m of members) {
 				const nullable = m.type === 'OPTIONAL' || m.type === 'REPEAT';
-				const s = ruleEdgeCharSet(nullable ? (m as { content: Rule<'link'> }).content : m, side, ctx, visiting);
+				// Each explored member is its own recursion path — fork the
+				// cycle guard (see leftmostTerminalImmediate's CHOICE case).
+				const s = ruleEdgeCharSet(
+					nullable ? (m as { content: Rule<'link'> }).content : m,
+					side,
+					ctx,
+					new Set(visiting)
+				);
 				if (s === undefined) return undefined;
 				for (const c of s) union.add(c);
 				if (!nullable) return union;
@@ -3426,9 +3469,10 @@ function ruleEdgeCharSet(
 			return union.size > 0 ? union : undefined;
 		}
 		case 'CHOICE': {
+			// Per-arm cycle-guard fork — see leftmostTerminalImmediate's CHOICE case.
 			const union = new Set<string>();
 			for (const m of rule.members) {
-				const s = ruleEdgeCharSet(m, side, ctx, visiting);
+				const s = ruleEdgeCharSet(m, side, ctx, new Set(visiting));
 				if (s === undefined) return undefined;
 				for (const c of s) union.add(c);
 			}

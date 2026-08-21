@@ -355,13 +355,18 @@ function renderRuleEdge(
 		case SEQ: {
 			const members = side === 'starts' ? rule.members : [...rule.members].reverse();
 			for (const m of members) {
-				const e = renderRuleEdge(m, side, ctx, visiting);
+				// Fork the cycle guard per explored member: `visiting` is an
+				// ancestor-path set and each member is its own path — a shared
+				// set would make a symbol resolved in one sibling look
+				// recursive in the next (order-dependent false varies).
+				const e = renderRuleEdge(m, side, ctx, new Set(visiting));
 				if (e !== 'empty') return e;
 			}
 			return 'empty';
 		}
 		case CHOICE: {
-			const edges = rule.members.map((m) => renderRuleEdge(m, side, ctx, visiting));
+			// Per-arm cycle-guard fork — see the SEQ case above.
+			const edges = rule.members.map((m) => renderRuleEdge(m, side, ctx, new Set(visiting)));
 			const first = edges[0];
 			if (first === undefined) return 'varies';
 			return edges.every((e) => e === first && e !== 'empty') ? first : 'varies';
@@ -886,37 +891,32 @@ const DEFAULT_JOIN_SEPARATOR = '';
  * The SpacingWriter's seam law — `word_seam(l, r) ∨ (l ≠ r ∧
  * literal_merge_pair(l, r))`, same word table, same pair table, including
  * the identical-char exclusion (see `spacing.rs::write_str`) — applied
- * STATICALLY to a list's interior boundaries. The separator string itself
- * captures the resolution: a constant-TRUE outcome over the slot's derived
- * edge-char sets (`edgeCharSetsOfKind`) bakes the owed space into the
- * separator (`static-spaced` — the writer's residual checks then see a
- * space and never fire); a constant-FALSE outcome, or a separator whose
- * own edge chars can never seam against ANY character, proves the
- * remaining checks dead (`runtime-derivable` — emission unchanged, the
- * census records the statically-known outcome). Marks are NOT used here:
- * they are reserved for grammar-immediacy, where the writer would wrongly
- * INSERT and must be suppressed.
+ * STATICALLY to a list's interior boundaries, for the census:
  *
- * A trailing-trivia element edge ('\n' after a line comment) is not in
- * the derived sets, but it is seam-inert against every right edge, so
- * glue verdicts stay valid; the space-bake verdict can over-space after
- * such trivia — a whitespace-only, reparse-identical divergence.
+ * - `runtime-derivable`: the checks' outcome is a statically-known
+ *   constant — a separator whose own edge chars can never seam against
+ *   any character, or a `""`-joined list whose derived element edge-char
+ *   sets (`edgeCharSetsOfKind`) give the law one outcome over every
+ *   combination.
+ * - `runtime-varying`: unknown edges or a non-constant outcome — the
+ *   true residue.
  *
- * Any unknown edge, empty edge text, or non-constant outcome returns
- * `undefined`: the boundary stays with the runtime writer, outcome and
- * all.
+ * Emission is NEVER changed here. A constant-space verdict statically
+ * owes the writer's space between GRAMMAR edges, but a rendered element
+ * may end in trailing trivia (a line comment's `'\n'`) that is not in
+ * the derived sets — the writer would then NOT insert, so baking the
+ * space into the separator would diverge (and a space after a newline is
+ * an indentation error in python). Baking stays blocked until trivia
+ * edges are modeled or ruled out; until then the verdict is census
+ * information only, and the separator string remains the sole place a
+ * space could ever be added.
  */
-interface ListInteriorResolution {
-	readonly sep: string;
-	readonly resolution: 'static-spaced' | 'runtime-derivable';
-}
-
 function staticListInterior(
 	slot: AssembledNonterminal,
 	sep: string,
 	ctx: EmitCtx
-): ListInteriorResolution | undefined {
-	let verdict: ListInteriorResolution | undefined;
+): 'runtime-derivable' | 'runtime-varying' {
+	let verdict: 'runtime-derivable' | 'runtime-varying' = 'runtime-varying';
 	let detail = '';
 	if (sep !== '') {
 		const first = sep[0]!;
@@ -926,7 +926,7 @@ function staticListInterior(
 			!ctx.isWordChar(last) &&
 			ctx.mergePairRightChars?.has(first) === false &&
 			ctx.mergePairLeftChars?.has(last) === false;
-		verdict = blocked ? { sep, resolution: 'runtime-derivable' } : undefined;
+		verdict = blocked ? 'runtime-derivable' : 'runtime-varying';
 		detail = `sep=${JSON.stringify(sep)}`;
 	} else {
 		const edgeCtx = { nodes: ctx.nodeMap.nodes, linkRules: ctx.nodeMap.linkRules, isWordChar: ctx.isWordChar };
@@ -961,19 +961,14 @@ function staticListInterior(
 				}
 			}
 			const combos = ends.size * starts.size;
-			verdict =
-				seams === combos
-					? { sep: ' ', resolution: 'static-spaced' }
-					: seams === 0
-						? { sep: '', resolution: 'runtime-derivable' }
-						: undefined;
+			verdict = seams === combos || seams === 0 ? 'runtime-derivable' : 'runtime-varying';
 			detail = `ends={${[...ends].join('')}} starts={${[...starts].join('')}}`;
 		} else {
 			detail = 'edges unknown';
 		}
 	}
 	if (process.env['DBG_LIST_SEAM'] === '1') {
-		console.error(`[list-seam] ${ctx.currentKind ?? '?'}: ${detail} -> ${verdict?.resolution ?? 'runtime'}`);
+		console.error(`[list-seam] ${ctx.currentKind ?? '?'}: ${detail} -> ${verdict}`);
 	}
 	return verdict;
 }
@@ -1015,24 +1010,19 @@ function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonter
 				)?.separator
 			: undefined;
 	const sep = allImmediate ? '' : (ruleSep ?? slotValueSep ?? DEFAULT_JOIN_SEPARATOR);
-	// Statically resolved list interiors (`staticListInterior`): a
-	// static-spaced verdict bakes the owed space into the separator string;
-	// a runtime-derivable verdict changes nothing (checks are provably
-	// dead) and is recorded for the census. Plain 'join' only: flank
-	// filters compare captured anonymous-token text against the separator,
-	// which must stay the grammar's own.
-	const interior =
-		filter === 'join' && !allImmediate && slot !== undefined && ctx !== undefined
-			? staticListInterior(slot, sep, ctx)
-			: undefined;
-	if (interior !== undefined && ctx !== undefined) {
+	// List-interior census: EVERY plain-join list boundary is classified —
+	// derivable (checks provably constant) or varying (the true residue) —
+	// so unresolved interiors are counted, not silently dropped. Emission
+	// is never changed (see staticListInterior on why baking is blocked).
+	// Flank filters are excluded: they compare captured anonymous-token
+	// text against the separator, which must stay the grammar's own.
+	if (filter === 'join' && !allImmediate && slot !== undefined && ctx !== undefined) {
 		ctx.seamBoundaries?.push({
 			kind: ctx.currentKind ?? '(unknown)',
 			left: '·',
 			right: '·',
-			resolution: interior.resolution
+			resolution: staticListInterior(slot, sep, ctx)
 		});
-		return `{{ ${slotName} | ${filter}("${escapeJinjaString(interior.sep)}") }}`;
 	}
 	return `{{ ${slotName} | ${filter}("${escapeJinjaString(sep)}") }}`;
 }
