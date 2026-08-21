@@ -60,7 +60,7 @@
     "import_statement": {
       "definedBy": "override",
       "childKind": {
-        "import_statement_arm1": "arm1"
+        "import_statement_arm": "arm"
       }
     },
     "import_clause": {
@@ -112,7 +112,7 @@
     "binary_expression": {
       "definedBy": "override",
       "childKind": {
-        "binary_expression_arm1": "arm1"
+        "binary_expression_arm": "arm"
       }
     },
     "update_expression": {
@@ -470,9 +470,6 @@
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
-    "_jsx_start_opening_element_arm1.name": {
-      "member_expression": "nested_identifier"
-    },
     "_infer_type_optional1.type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
@@ -489,6 +486,9 @@
       "required_parameter": "tuple_parameter",
       "optional_parameter": "optional_tuple_parameter"
     },
+    "_jsx_start_opening_element_arm.name": {
+      "member_expression": "nested_identifier"
+    },
     "_ambient_declaration_module.name": {
       "property_identifier": "identifier"
     },
@@ -503,8 +503,8 @@
     "_for_header_lhs.left": {
       "lhs_expression": "_lhs_expression"
     },
-    "_jsx_opening_element_content.jsx_start_opening_element_arm1": {
-      "jsx_start_opening_element_arm1": "_jsx_start_opening_element_arm1"
+    "_jsx_opening_element_content.jsx_start_opening_element_arm": {
+      "jsx_start_opening_element_arm": "_jsx_start_opening_element_arm"
     }
   },
   "factorySlots": {
@@ -1060,7 +1060,7 @@
       }
     },
     "catch_clause": {
-      "catch_clause_group1": {
+      "catch_clause_group": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1767,7 +1767,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "binary_expression_arm1": {
+      "binary_expression_arm": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3581,31 +3581,6 @@
         "nonEmpty": true
       }
     },
-    "_import_statement_arm1": {
-      "import_clause": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "source": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_import_clause_group1": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_import_specifiers": {
       "import_specifier": {
         "unnamed": false,
@@ -3654,45 +3629,6 @@
         "nonEmpty": false
       }
     },
-    "_catch_clause_group1": {
-      "parameter": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_binary_expression_arm1": {
-      "left": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "operator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "right": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_formal_parameters_elements": {
       "formal_parameter": {
         "unnamed": false,
@@ -3700,22 +3636,6 @@
         "required": true,
         "multiple": true,
         "nonEmpty": true
-      }
-    },
-    "_jsx_start_opening_element_arm1": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "type_arguments": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
       }
     },
     "_enum_body_elements": {
@@ -3752,6 +3672,86 @@
         "required": true,
         "multiple": true,
         "nonEmpty": true
+      }
+    },
+    "_import_statement_arm": {
+      "import_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "source": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_import_clause_group": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_catch_clause_group": {
+      "parameter": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_binary_expression_arm": {
+      "left": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "operator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "right": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_jsx_start_opening_element_arm": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type_arguments": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "_ambient_declaration_global": {
@@ -3860,7 +3860,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "import_clause_group1": {
+      "import_clause_group": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4379,7 +4379,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "jsx_start_opening_element_arm1": {
+      "jsx_start_opening_element_arm": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4777,13 +4777,13 @@
       "text": "\n"
     },
     {
-      "kind": "_binary_expression_arm1",
+      "kind": "_binary_expression_arm",
       "modelType": "group",
-      "typeName": "BinaryExpressionArm1",
-      "factoryName": "_binaryExpressionArm1",
-      "irKey": "binaryExpressionArm1",
+      "typeName": "BinaryExpressionArm",
+      "factoryName": "_binaryExpressionArm",
+      "irKey": "binaryExpressionArm",
       "hidden": false,
-      "name": "_binary_expression_arm1",
+      "name": "_binary_expression_arm",
       "fields": [
         {
           "name": "left",
@@ -5218,13 +5218,13 @@
       "children": []
     },
     {
-      "kind": "_catch_clause_group1",
+      "kind": "_catch_clause_group",
       "modelType": "group",
-      "typeName": "CatchClauseGroup1",
-      "factoryName": "_catchClauseGroup1",
-      "irKey": "catchClauseGroup1",
+      "typeName": "CatchClauseGroup",
+      "factoryName": "_catchClauseGroup",
+      "irKey": "catchClauseGroup",
       "hidden": false,
-      "name": "_catch_clause_group1",
+      "name": "_catch_clause_group",
       "fields": [
         {
           "name": "parameter",
@@ -6892,9 +6892,9 @@
           }
         },
         {
-          "name": "import_clause_group1",
-          "propertyName": "importClauseGroup1",
-          "paramName": "importClauseGroup1",
+          "name": "import_clause_group",
+          "propertyName": "importClauseGroup",
+          "paramName": "importClauseGroup",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6902,15 +6902,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_import_clause_group1",
-              "parseKind": "import_clause_group1",
+              "name": "_import_clause_group",
+              "parseKind": "import_clause_group",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_import_clause_group1"
+              "_import_clause_group"
             ]
           }
         }
@@ -6919,15 +6919,15 @@
       "factoryShape": "config",
       "factoryFields": [
         "import_identifier",
-        "import_clause_group1"
+        "import_clause_group"
       ]
     },
     {
-      "kind": "_import_clause_group1",
+      "kind": "_import_clause_group",
       "modelType": "branch",
-      "typeName": "ImportClauseGroup1",
-      "factoryName": "importClauseGroup1",
-      "irKey": "importClauseGroup1",
+      "typeName": "ImportClauseGroup",
+      "factoryName": "importClauseGroup",
+      "irKey": "importClauseGroup",
       "hidden": false,
       "fields": [
         {
@@ -7067,11 +7067,11 @@
       ]
     },
     {
-      "kind": "_import_statement_arm1",
+      "kind": "_import_statement_arm",
       "modelType": "branch",
-      "typeName": "ImportStatementArm1",
-      "factoryName": "importStatementArm1",
-      "irKey": "importStatementArm1",
+      "typeName": "ImportStatementArm",
+      "factoryName": "importStatementArm",
+      "irKey": "importStatementArm",
       "hidden": false,
       "fields": [
         {
@@ -7462,9 +7462,9 @@
           }
         },
         {
-          "name": "jsx_start_opening_element_arm1",
-          "propertyName": "jsxStartOpeningElementArm1",
-          "paramName": "jsxStartOpeningElementArm1",
+          "name": "jsx_start_opening_element_arm",
+          "propertyName": "jsxStartOpeningElementArm",
+          "paramName": "jsxStartOpeningElementArm",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7472,15 +7472,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_jsx_start_opening_element_arm1",
-              "parseKind": "jsx_start_opening_element_arm1",
+              "name": "_jsx_start_opening_element_arm",
+              "parseKind": "jsx_start_opening_element_arm",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_jsx_start_opening_element_arm1"
+              "_jsx_start_opening_element_arm"
             ]
           }
         },
@@ -7512,7 +7512,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "name",
-        "jsx_start_opening_element_arm1",
+        "jsx_start_opening_element_arm",
         "attribute"
       ]
     },
@@ -7551,13 +7551,13 @@
       "children": []
     },
     {
-      "kind": "_jsx_start_opening_element_arm1",
+      "kind": "_jsx_start_opening_element_arm",
       "modelType": "group",
-      "typeName": "JsxStartOpeningElementArm1",
-      "factoryName": "_jsxStartOpeningElementArm1",
-      "irKey": "jsxStartOpeningElementArm1",
+      "typeName": "JsxStartOpeningElementArm",
+      "factoryName": "_jsxStartOpeningElementArm",
+      "irKey": "jsxStartOpeningElementArm",
       "hidden": false,
-      "name": "_jsx_start_opening_element_arm1",
+      "name": "_jsx_start_opening_element_arm",
       "fields": [
         {
           "name": "name",
@@ -11251,9 +11251,9 @@
           }
         },
         {
-          "name": "binary_expression_arm1",
-          "propertyName": "binaryExpressionArm1",
-          "paramName": "binaryExpressionArm1",
+          "name": "binary_expression_arm",
+          "propertyName": "binaryExpressionArm",
+          "paramName": "binaryExpressionArm",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11261,15 +11261,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_binary_expression_arm1",
-              "parseKind": "binary_expression_arm1",
+              "name": "_binary_expression_arm",
+              "parseKind": "binary_expression_arm",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_binary_expression_arm1"
+              "_binary_expression_arm"
             ]
           }
         }
@@ -11280,7 +11280,7 @@
         "left",
         "operator",
         "right",
-        "binary_expression_arm1"
+        "binary_expression_arm"
       ]
     },
     {
@@ -11563,9 +11563,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "catch_clause_group1",
-          "propertyName": "catchClauseGroup1",
-          "paramName": "catchClauseGroup1",
+          "name": "catch_clause_group",
+          "propertyName": "catchClauseGroup",
+          "paramName": "catchClauseGroup",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11573,15 +11573,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_catch_clause_group1",
-              "parseKind": "catch_clause_group1",
+              "name": "_catch_clause_group",
+              "parseKind": "catch_clause_group",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_catch_clause_group1"
+              "_catch_clause_group"
             ]
           }
         },
@@ -11612,7 +11612,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "catch_clause_group1",
+        "catch_clause_group",
         "body"
       ]
     },
@@ -16201,8 +16201,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_import_statement_arm1",
-              "parseKind": "import_statement_arm1",
+              "name": "_import_statement_arm",
+              "parseKind": "import_statement_arm",
               "unresolved": true
             },
             {
@@ -16223,7 +16223,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_import_statement_arm1",
+              "_import_statement_arm",
               "import_require_clause",
               "string"
             ]

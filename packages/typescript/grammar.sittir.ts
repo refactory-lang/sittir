@@ -50,7 +50,7 @@ export default grammar(
 			conflicts: ($, previous) => [
 				...(previous ?? []),
 				[$.sequence_expression, $._parenthesized_expression_typed],
-				[$.sequence_expression, $._parenthesized_expression_arm1],
+				[$.sequence_expression, $._parenthesized_expression_arm],
 				[$.primary_expression, $.arrow_function],
 				[$.readonly_type, $._kw_readonly_marker],
 				[$.abstract_method_signature, $._kw_abstract_marker],
@@ -126,36 +126,36 @@ export default grammar(
 				[$.arrow_function, $._update_expression_arm1],
 				[$.await_expression, $._call_expression_call],
 				[$.instantiation_expression, $._call_expression_call],
-				[$.await_expression, $._binary_expression_arm1],
-				[$.as_expression, $._binary_expression_arm1],
-				[$._call_expression_call, $._binary_expression_arm1],
+				[$.await_expression, $._binary_expression_arm],
+				[$.as_expression, $._binary_expression_arm],
+				[$._call_expression_call, $._binary_expression_arm],
 				// _binary_expression_arm1 (the `in`-operator arm, freshly extracted —
 				// same PREC-descent mechanism as call_expression's arms above) mirrors
 				// binary_expression's own conflict set: every continuation that used to
 				// share LR state with the whole (unsplit) binary_expression choice needs
 				// the same explicit GLR declaration now that this one arm has its own
 				// symbol boundary.
-				[$.call_expression, $._binary_expression_arm1, $.unary_expression, $.instantiation_expression],
-				[$.call_expression, $.await_expression, $._binary_expression_arm1, $.instantiation_expression],
-				[$.call_expression, $._binary_expression_arm1, $.update_expression, $.instantiation_expression],
-				[$.call_expression, $._binary_expression_arm1, $.instantiation_expression],
-				[$._initializer, $._binary_expression_arm1],
-				[$._binary_expression_arm1, $.unary_expression, $.instantiation_expression, $._call_expression_call],
-				[$.await_expression, $._binary_expression_arm1, $.instantiation_expression, $._call_expression_call],
-				[$._binary_expression_arm1, $.update_expression, $.instantiation_expression, $._call_expression_call],
-				[$._binary_expression_arm1, $.instantiation_expression, $._call_expression_call],
-				[$.subscript_expression, $._binary_expression_arm1],
-				[$.member_expression, $._binary_expression_arm1],
-				[$.member_expression, $.subscript_expression, $._binary_expression_arm1],
-				[$.binary_expression, $.instantiation_expression, $._call_expression_call, $._binary_expression_arm1],
-				[$.non_null_expression, $._binary_expression_arm1],
-				[$.satisfies_expression, $._binary_expression_arm1],
-				[$._binary_expression_arm1, $._update_expression_postfix],
-				[$._binary_expression_arm1, $._update_expression_prefix],
-				[$._binary_expression_arm1, $._update_expression_arm1],
-				[$.ternary_expression, $._binary_expression_arm1],
+				[$.call_expression, $._binary_expression_arm, $.unary_expression, $.instantiation_expression],
+				[$.call_expression, $.await_expression, $._binary_expression_arm, $.instantiation_expression],
+				[$.call_expression, $._binary_expression_arm, $.update_expression, $.instantiation_expression],
+				[$.call_expression, $._binary_expression_arm, $.instantiation_expression],
+				[$._initializer, $._binary_expression_arm],
+				[$._binary_expression_arm, $.unary_expression, $.instantiation_expression, $._call_expression_call],
+				[$.await_expression, $._binary_expression_arm, $.instantiation_expression, $._call_expression_call],
+				[$._binary_expression_arm, $.update_expression, $.instantiation_expression, $._call_expression_call],
+				[$._binary_expression_arm, $.instantiation_expression, $._call_expression_call],
+				[$.subscript_expression, $._binary_expression_arm],
+				[$.member_expression, $._binary_expression_arm],
+				[$.member_expression, $.subscript_expression, $._binary_expression_arm],
+				[$.binary_expression, $.instantiation_expression, $._call_expression_call, $._binary_expression_arm],
+				[$.non_null_expression, $._binary_expression_arm],
+				[$.satisfies_expression, $._binary_expression_arm],
+				[$._binary_expression_arm, $._update_expression_postfix],
+				[$._binary_expression_arm, $._update_expression_prefix],
+				[$._binary_expression_arm, $._update_expression_arm1],
+				[$.ternary_expression, $._binary_expression_arm],
 				[$.arrow_function, $._call_expression_call],
-				[$.arrow_function, $._binary_expression_arm1],
+				[$.arrow_function, $._binary_expression_arm],
 				[$.expression, $._call_expression_template_call],
 				[$._variable_declarator_arm1, $._for_header_arm2],
 				[$.primary_expression, $._for_header_arm2],
@@ -279,7 +279,7 @@ export default grammar(
 					seq(
 						choice(
 							field('name', choice($._jsx_identifier, $.jsx_namespace_name)),
-							alias($._jsx_start_opening_element_arm1, $.jsx_start_opening_element_arm1)
+							alias($._jsx_start_opening_element_arm, $.jsx_start_opening_element_arm)
 						),
 						repeat(field('attribute', $._jsx_attribute))
 					)

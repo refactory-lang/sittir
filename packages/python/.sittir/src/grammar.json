@@ -235,14 +235,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_future_import_statement_arm1",
+                "name": "_future_import_statement_arm",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "future_import_statement_arm1",
+              "value": "future_import_statement_arm",
               "metadata": {
                 "author": "enrich"
               }
@@ -309,14 +309,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_future_import_statement_arm1",
+                "name": "_future_import_statement_arm",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "future_import_statement_arm1",
+              "value": "future_import_statement_arm",
               "metadata": {
                 "author": "enrich"
               }
@@ -1185,14 +1185,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_except_clause_arm1",
+                "name": "_except_clause_arm",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "except_clause_arm1",
+              "value": "except_clause_arm",
               "metadata": {
                 "author": "enrich"
               }
@@ -4099,14 +4099,14 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_slice_group1",
+                  "name": "_slice_group",
                   "metadata": {
                     "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
                 "named": true,
-                "value": "slice_group1",
+                "value": "slice_group",
                 "metadata": {
                   "author": "enrich"
                 }
@@ -5822,31 +5822,6 @@
         }
       ]
     },
-    "_future_import_statement_arm1": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "("
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_import_list"
-          },
-          "named": true,
-          "value": "names",
-          "metadata": {
-            "author": "enrich"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": ")"
-        }
-      ]
-    },
     "_raise_statement_optional1": {
       "type": "SEQ",
       "members": [
@@ -5957,29 +5932,6 @@
               "type": "BLANK"
             }
           ]
-        }
-      ]
-    },
-    "_except_clause_arm1": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_except_clause_as"
-          },
-          "named": true,
-          "value": "except_clause_as"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_except_clause_list"
-          },
-          "named": true,
-          "value": "except_clause_list"
         }
       ]
     },
@@ -6516,27 +6468,6 @@
         ]
       }
     },
-    "_slice_group1": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": ":"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "expression"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        }
-      ]
-    },
     "_dictionary_elements": {
       "type": "SEQ",
       "members": [
@@ -6598,6 +6529,75 @@
             {
               "type": "STRING",
               "value": ","
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_future_import_statement_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_import_list"
+          },
+          "named": true,
+          "value": "names",
+          "metadata": {
+            "author": "enrich"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "_except_clause_arm": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_except_clause_as"
+          },
+          "named": true,
+          "value": "except_clause_as"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_except_clause_list"
+          },
+          "named": true,
+          "value": "except_clause_list"
+        }
+      ]
+    },
+    "_slice_group": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "expression"
             },
             {
               "type": "BLANK"
@@ -7486,13 +7486,6 @@
       "_import_list"
     ],
     [
-      "future_import_statement",
-      "_future_import_statement_arm1"
-    ],
-    [
-      "_future_import_statement_arm1"
-    ],
-    [
       "match_statement",
       "_subjects"
     ],
@@ -7505,13 +7498,6 @@
     ],
     [
       "_case_patterns"
-    ],
-    [
-      "except_clause",
-      "_except_clause_arm1"
-    ],
-    [
-      "_except_clause_arm1"
     ],
     [
       "with_clause",
@@ -7594,13 +7580,6 @@
       "_subscripts"
     ],
     [
-      "slice",
-      "_slice_group1"
-    ],
-    [
-      "_slice_group1"
-    ],
-    [
       "list",
       "_collection_elements"
     ],
@@ -7613,6 +7592,27 @@
     ],
     [
       "_dictionary_elements"
+    ],
+    [
+      "future_import_statement",
+      "_future_import_statement_arm"
+    ],
+    [
+      "_future_import_statement_arm"
+    ],
+    [
+      "except_clause",
+      "_except_clause_arm"
+    ],
+    [
+      "_except_clause_arm"
+    ],
+    [
+      "slice",
+      "_slice_group"
+    ],
+    [
+      "_slice_group"
     ]
   ],
   "precedences": [],
@@ -7675,9 +7675,15 @@
     "keyword_identifier",
     "_except_clause_as_optional1",
     "_kw_sign",
+    "_future_import_statement_arm1",
     "_raise_statement_optional1",
+    "_except_clause_arm1",
+    "_with_clause_arm1",
     "_function_definition_optional1",
     "_exec_statement_optional1",
+    "_simple_pattern_arm1",
+    "_assignment_arm1",
+    "_slice_group1",
     "_kw_real",
     "_kw_comma",
     "_kw_eq_marker",

@@ -606,7 +606,7 @@ export interface EngineOptions {
   format?: string
 }
 
-export interface ExceptClauseArm1Transport {
+export interface ExceptClauseArmTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -614,7 +614,7 @@ export interface ExceptClauseArm1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: ExceptClauseArm1ContentTransportSlot
+  _content: ExceptClauseArmContentTransportSlot
 }
 
 export interface ExceptClauseAsOptional1Transport {
@@ -660,7 +660,7 @@ export interface ExceptClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _star_marker?: boolean
-  _except_clause_arm1?: ExceptClauseArm1Transport
+  _except_clause_arm?: ExceptClauseArmTransport
   _content: ExceptClauseContentTransportSlot
 }
 
@@ -812,7 +812,7 @@ export interface FunctionDefinitionTransport {
   _body: FunctionDefinitionBodyTransportSlot
 }
 
-export interface FutureImportStatementArm1Transport {
+export interface FutureImportStatementArmTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1428,7 +1428,7 @@ export interface SimpleStatementsTransport {
   _newline: NewlineTransport
 }
 
-export interface SliceGroup1Transport {
+export interface SliceGroupTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1449,7 +1449,7 @@ export interface SliceTransport {
   '$triviaData'?: TransportTrivia
   _start?: ExpressionTransport
   _stop?: ExpressionTransport
-  _step?: SliceGroup1Transport
+  _step?: SliceGroupTransport
 }
 
 export interface SplatPatternTransport {

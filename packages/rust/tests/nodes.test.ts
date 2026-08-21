@@ -1668,8 +1668,8 @@ describe('array_expression', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_array_expression_arm1: {
-				$type: TSKindId.ArrayExpressionArm1,
+			_array_expression_arm: {
+				$type: TSKindId.ArrayExpressionArm,
 				$text: 'test',
 				$source: 2,
 				$named: true,

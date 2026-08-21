@@ -291,7 +291,7 @@ export interface AwaitExpressionTransport {
   _expression: Box<ExpressionTransport>
 }
 
-export interface BinaryExpressionArm1Transport {
+export interface BinaryExpressionArmTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -299,7 +299,7 @@ export interface BinaryExpressionArm1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _left: Box<BinaryExpressionArm1LeftTransportSlot>
+  _left: Box<BinaryExpressionArmLeftTransportSlot>
   _operator: Box<AnyTransport>
   _right: Box<ExpressionTransport>
 }
@@ -315,7 +315,7 @@ export interface BinaryExpressionTransport {
   _left?: Box<ExpressionTransport>
   _operator?: Box<AnyTransport>
   _right?: Box<ExpressionTransport>
-  _binary_expression_arm1?: Box<BinaryExpressionArm1Transport>
+  _binary_expression_arm?: Box<BinaryExpressionArmTransport>
 }
 
 export interface BreakStatementTransport {
@@ -405,7 +405,7 @@ export interface CallSignatureTransport {
   _return_type?: CallSignatureReturnTypeTransportSlot
 }
 
-export interface CatchClauseGroup1Transport {
+export interface CatchClauseGroupTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -413,7 +413,7 @@ export interface CatchClauseGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _parameter: CatchClauseGroup1ParameterTransportSlot
+  _parameter: CatchClauseGroupParameterTransportSlot
   _type?: TypeAnnotationTransport
 }
 
@@ -426,7 +426,7 @@ export interface CatchClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _body: StatementBlockTransport
-  _catch_clause_group1?: CatchClauseGroup1Transport
+  _catch_clause_group?: CatchClauseGroupTransport
 }
 
 export interface ClassBodyMemberTransport {
@@ -1313,10 +1313,10 @@ export interface ImportClauseDefaultImportTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _import_identifier: ImportIdentifierTransport
-  _import_clause_group1?: ImportClauseGroup1Transport
+  _import_clause_group?: ImportClauseGroupTransport
 }
 
-export interface ImportClauseGroup1Transport {
+export interface ImportClauseGroupTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1324,7 +1324,7 @@ export interface ImportClauseGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: ImportClauseGroup1ContentTransportSlot
+  _content: ImportClauseGroupContentTransportSlot
 }
 
 export interface ImportClauseTransport {
@@ -1386,7 +1386,7 @@ export interface ImportSpecifierTransport {
   _content: ImportSpecifierContentTransportSlot
 }
 
-export interface ImportStatementArm1Transport {
+export interface ImportStatementArmTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1614,7 +1614,7 @@ export interface JsxOpeningElementContentTransport {
   '$triviaData'?: TransportTrivia
   _name?: JsxOpeningElementContentNameTransportSlot
   _attribute?: Array<_JsxAttributeTransport>
-  _jsx_start_opening_element_arm1?: JsxStartOpeningElementArm1Transport
+  _jsx_start_opening_element_arm?: JsxStartOpeningElementArmTransport
 }
 
 export interface JsxOpeningElementTransport {
@@ -1639,7 +1639,7 @@ export interface JsxSelfClosingElementTransport {
   _jsx_opening_element_content?: JsxOpeningElementContentTransport
 }
 
-export interface JsxStartOpeningElementArm1Transport {
+export interface JsxStartOpeningElementArmTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1647,7 +1647,7 @@ export interface JsxStartOpeningElementArm1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: JsxStartOpeningElementArm1NameTransportSlot
+  _name: JsxStartOpeningElementArmNameTransportSlot
   _type_arguments?: TypeArgumentsTransport
 }
 

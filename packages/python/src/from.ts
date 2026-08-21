@@ -298,10 +298,8 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	string_content: TSKindId.StringContent,
 	format_specifier: TSKindId.FormatSpecifier,
 	_simple_statements_elements: TSKindId.SimpleStatementsElements,
-	_future_import_statement_arm1: TSKindId.FutureImportStatementArm1,
 	_subjects: TSKindId.Subjects,
 	_case_patterns: TSKindId.CasePatterns,
-	_except_clause_arm1: TSKindId.ExceptClauseArm1,
 	_with_clause_with_items: TSKindId.WithClauseWithItems,
 	_types: TSKindId.Types,
 	_argument_list_elements: TSKindId.ArgumentListElements,
@@ -310,8 +308,10 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_dict_pattern_elements: TSKindId.DictPatternElements,
 	_pattern_list_patterns: TSKindId.PatternListPatterns,
 	_subscripts: TSKindId.Subscripts,
-	_slice_group1: TSKindId.SliceGroup1,
 	_dictionary_elements: TSKindId.DictionaryElements,
+	_future_import_statement_arm: TSKindId.FutureImportStatementArm,
+	_except_clause_arm: TSKindId.ExceptClauseArm,
+	_slice_group: TSKindId.SliceGroup,
 	case_tuple_pattern: TSKindId.CaseTuplePattern,
 	case_list_pattern: TSKindId.CaseListPattern,
 	_print_arguments: TSKindId.PrintArguments,
@@ -392,14 +392,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildFormatSpecifier(...(children as Parameters<typeof F.buildFormatSpecifier>));
 		case '_simple_statements_elements':
 			return (F.buildSimpleStatementsElements as (...args: unknown[]) => unknown)(...children);
-		case '_future_import_statement_arm1':
-			return F.buildFutureImportStatementArm1(children[0] as Parameters<typeof F.buildFutureImportStatementArm1>[0]);
 		case '_subjects':
 			return (F.buildSubjects as (...args: unknown[]) => unknown)(...children);
 		case '_case_patterns':
 			return (F.buildCasePatterns as (...args: unknown[]) => unknown)(...children);
-		case '_except_clause_arm1':
-			return F.buildExceptClauseArm1(children[0] as Parameters<typeof F.buildExceptClauseArm1>[0]);
 		case '_with_clause_with_items':
 			return (F.buildWithClauseWithItems as (...args: unknown[]) => unknown)(...children);
 		case '_types':
@@ -416,10 +412,14 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildPatternListPatterns as (...args: unknown[]) => unknown)(...children);
 		case '_subscripts':
 			return (F.buildSubscripts as (...args: unknown[]) => unknown)(...children);
-		case '_slice_group1':
-			return F.buildSliceGroup1(children[0] as Parameters<typeof F.buildSliceGroup1>[0]);
 		case '_dictionary_elements':
 			return (F.buildDictionaryElements as (...args: unknown[]) => unknown)(...children);
+		case '_future_import_statement_arm':
+			return F.buildFutureImportStatementArm(children[0] as Parameters<typeof F.buildFutureImportStatementArm>[0]);
+		case '_except_clause_arm':
+			return F.buildExceptClauseArm(children[0] as Parameters<typeof F.buildExceptClauseArm>[0]);
+		case '_slice_group':
+			return F.buildSliceGroup(children[0] as Parameters<typeof F.buildSliceGroup>[0]);
 		case 'case_tuple_pattern':
 			return F.buildCaseTuplePattern(children[0] as Parameters<typeof F.buildCaseTuplePattern>[0]);
 		case 'case_list_pattern':
@@ -548,7 +548,7 @@ const _K1: readonly string[] = [
 	'match_statement'
 ];
 const _K2: readonly string[] = ['relative_import', 'dotted_name'];
-const _K3: readonly string[] = ['_import_list', '_future_import_statement_arm1'];
+const _K3: readonly string[] = ['_import_list', '_future_import_statement_arm'];
 const _K4: readonly string[] = ['identifier', 'integer', 'float', 'true', 'false', 'none'];
 const _K5: readonly string[] = [
 	'comparison_operator',
@@ -786,7 +786,7 @@ export function coerceToRelativeImport(input: T.RelativeImport.Loose): ReturnTyp
 }
 
 export function coerceToFutureImportStatement(
-	input?: (T.ImportList | T.FutureImportStatementArm1) | T.FutureImportStatement
+	input?: (T.ImportList | T.FutureImportStatementArm) | T.FutureImportStatement
 ): ReturnType<typeof F.buildFutureImportStatement> {
 	if (isNodeData(input) && input.$type === TSKindId.FutureImportStatement) {
 		const data = input;
@@ -809,7 +809,7 @@ export function coerceToImportFromStatement(
 		content: _requireField(
 			'import_from_statement',
 			'content',
-			_resolveOne<T.ImportList | T.FutureImportStatementArm1 | T.WildcardImport>(input.content, _K0, _K3)
+			_resolveOne<T.ImportList | T.FutureImportStatementArm | T.WildcardImport>(input.content, _K0, _K3)
 		)
 	});
 }
@@ -1042,7 +1042,7 @@ export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<ty
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExceptClause>;
 	return F.buildExceptClause({
 		starMarker: _resolveBooleanKeyword(input.starMarker),
-		exceptClauseArm1: _resolveOneBranch<T.ExceptClauseArm1>(input.exceptClauseArm1, '_except_clause_arm1'),
+		exceptClauseArm: _resolveOneBranch<T.ExceptClauseArm>(input.exceptClauseArm, '_except_clause_arm'),
 		content: _requireField(
 			'except_clause',
 			'content',
@@ -1725,7 +1725,7 @@ export function coerceToSlice(input?: T.Slice.Loose): ReturnType<typeof F.buildS
 	return F.buildSlice({
 		start: _resolveOne<T.Expression>(input?.start, _K4, _K5),
 		stop: _resolveOne<T.Expression>(input?.stop, _K4, _K5),
-		step: _resolveOneBranch<T.SliceGroup1>(input?.step, '_slice_group1')
+		step: _resolveOneBranch<T.SliceGroup>(input?.step, '_slice_group')
 	});
 }
 

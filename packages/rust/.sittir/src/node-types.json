@@ -572,7 +572,7 @@
     }
   },
   {
-    "type": "array_expression_arm1",
+    "type": "array_expression_arm",
     "named": true,
     "fields": {
       "length": {
@@ -643,7 +643,7 @@
       "required": true,
       "types": [
         {
-          "type": "array_expression_arm1",
+          "type": "array_expression_arm",
           "named": true
         }
       ]
@@ -813,14 +813,14 @@
       "required": false,
       "types": [
         {
-          "type": "attribute_arm1",
+          "type": "attribute_arm",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "attribute_arm1",
+    "type": "attribute_arm",
     "named": true,
     "fields": {
       "arguments": {
@@ -1196,14 +1196,14 @@
       "required": false,
       "types": [
         {
-          "type": "block_comment_arm1",
+          "type": "block_comment_arm",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "block_comment_arm1",
+    "type": "block_comment_arm",
     "named": true,
     "fields": {
       "doc": {
@@ -6822,7 +6822,7 @@
     }
   },
   {
-    "type": "visibility_modifier_group1",
+    "type": "visibility_modifier_group",
     "named": true,
     "fields": {},
     "children": {
@@ -6903,7 +6903,7 @@
       "required": false,
       "types": [
         {
-          "type": "visibility_modifier_group1",
+          "type": "visibility_modifier_group",
           "named": true
         }
       ]

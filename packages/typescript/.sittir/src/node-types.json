@@ -1313,14 +1313,14 @@
       "required": false,
       "types": [
         {
-          "type": "binary_expression_arm1",
+          "type": "binary_expression_arm",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "binary_expression_arm1",
+    "type": "binary_expression_arm",
     "named": true,
     "fields": {
       "left": {
@@ -1625,14 +1625,14 @@
       "required": false,
       "types": [
         {
-          "type": "catch_clause_group1",
+          "type": "catch_clause_group",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "catch_clause_group1",
+    "type": "catch_clause_group",
     "named": true,
     "fields": {
       "parameter": {
@@ -3949,14 +3949,14 @@
           "named": true
         },
         {
-          "type": "import_clause_group1",
+          "type": "import_clause_group",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "import_clause_group1",
+    "type": "import_clause_group",
     "named": true,
     "fields": {},
     "children": {
@@ -4093,7 +4093,7 @@
             "named": true
           },
           {
-            "type": "import_statement_arm1",
+            "type": "import_statement_arm",
             "named": true
           },
           {
@@ -4143,7 +4143,7 @@
     }
   },
   {
-    "type": "import_statement_arm1",
+    "type": "import_statement_arm",
     "named": true,
     "fields": {
       "source": {

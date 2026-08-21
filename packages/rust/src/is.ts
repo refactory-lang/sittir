@@ -226,7 +226,6 @@ export interface IsGuards {
 	lineComment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LineComment };
 	blockComment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BlockComment };
 	MacroRules<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroRules };
-	AttributeArm1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributeArm1 };
 	EnumVariantListElements<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.EnumVariantListElements };
@@ -244,9 +243,6 @@ export interface IsGuards {
 	ParametersElements<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ParametersElements };
-	VisibilityModifierGroup1<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.VisibilityModifierGroup1 };
 	Lifetimes<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Lifetimes };
 	UseBoundsElements<T extends { readonly $type: number }>(
 		v: T
@@ -267,6 +263,10 @@ export interface IsGuards {
 	StructPatternElements<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.StructPatternElements };
+	AttributeArm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributeArm };
+	VisibilityModifierGroup<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.VisibilityModifierGroup };
 	TupleTypeElements<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.TupleTypeElements };
@@ -495,7 +495,6 @@ export interface AssertGuards {
 	lineComment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LineComment };
 	blockComment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BlockComment };
 	MacroRules(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroRules };
-	AttributeArm1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributeArm1 };
 	EnumVariantListElements(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.EnumVariantListElements };
@@ -511,9 +510,6 @@ export interface AssertGuards {
 	}): asserts v is { readonly $type: TSKindId.TypeParametersElements };
 	UseClauses(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseClauses };
 	ParametersElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParametersElements };
-	VisibilityModifierGroup1(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.VisibilityModifierGroup1 };
 	Lifetimes(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Lifetimes };
 	UseBoundsElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseBoundsElements };
 	TypeArgumentsElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeArgumentsElements };
@@ -524,6 +520,10 @@ export interface AssertGuards {
 	TuplePatternElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TuplePatternElements };
 	Patterns(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Patterns };
 	StructPatternElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StructPatternElements };
+	AttributeArm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributeArm };
+	VisibilityModifierGroup(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.VisibilityModifierGroup };
 	TupleTypeElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleTypeElements };
 	TupleExpressionElements(v: {
 		readonly $type: number;
@@ -824,7 +824,6 @@ const _kindIdByKind = new Map<string, number>([
 	['_kw_ref_marker', TSKindId.KwRefMarker],
 	['_kw_move_marker', TSKindId.KwMoveMarker],
 	['_macro_rules', TSKindId.MacroRules],
-	['_attribute_arm1', TSKindId.AttributeArm1],
 	['_enum_variant_list_elements', TSKindId.EnumVariantListElements],
 	['_field_declaration_list_elements', TSKindId.FieldDeclarationListElements],
 	['_ordered_field_declaration_list_elements', TSKindId.OrderedFieldDeclarationListElements],
@@ -832,18 +831,19 @@ const _kindIdByKind = new Map<string, number>([
 	['_type_parameters_elements', TSKindId.TypeParametersElements],
 	['_use_clauses', TSKindId.UseClauses],
 	['_parameters_elements', TSKindId.ParametersElements],
-	['_visibility_modifier_group1', TSKindId.VisibilityModifierGroup1],
 	['_lifetimes', TSKindId.Lifetimes],
 	['_use_bounds_elements', TSKindId.UseBoundsElements],
 	['_type_arguments_elements', TSKindId.TypeArgumentsElements],
 	['_arguments_elements', TSKindId.ArgumentsElements],
-	['_array_expression_arm1', TSKindId.ArrayExpressionArm1],
 	['_field_initializer_list_elements', TSKindId.FieldInitializerListElements],
 	['_tuple_pattern_elements', TSKindId.TuplePatternElements],
 	['_patterns', TSKindId.Patterns],
 	['_struct_pattern_elements', TSKindId.StructPatternElements],
 	['_range_pattern_arm2', TSKindId.RangePatternArm2],
-	['_block_comment_arm1', TSKindId.BlockCommentArm1],
+	['_attribute_arm', TSKindId.AttributeArm],
+	['_visibility_modifier_group', TSKindId.VisibilityModifierGroup],
+	['_array_expression_arm', TSKindId.ArrayExpressionArm],
+	['_block_comment_arm', TSKindId.BlockCommentArm],
 	['_tuple_type_elements', TSKindId.TupleTypeElements],
 	['_tuple_expression_elements', TSKindId.TupleExpressionElements],
 	['_token_tree_punctuation', TSKindId.TokenTreePunctuation],
@@ -1044,7 +1044,6 @@ export const is = {
 	lineComment: _g(TSKindId.LineComment),
 	blockComment: _g(TSKindId.BlockComment),
 	MacroRules: _g(TSKindId.MacroRules),
-	AttributeArm1: _g(TSKindId.AttributeArm1),
 	EnumVariantListElements: _g(TSKindId.EnumVariantListElements),
 	FieldDeclarationListElements: _g(TSKindId.FieldDeclarationListElements),
 	OrderedFieldDeclarationListElements: _g(TSKindId.OrderedFieldDeclarationListElements),
@@ -1052,7 +1051,6 @@ export const is = {
 	TypeParametersElements: _g(TSKindId.TypeParametersElements),
 	UseClauses: _g(TSKindId.UseClauses),
 	ParametersElements: _g(TSKindId.ParametersElements),
-	VisibilityModifierGroup1: _g(TSKindId.VisibilityModifierGroup1),
 	Lifetimes: _g(TSKindId.Lifetimes),
 	UseBoundsElements: _g(TSKindId.UseBoundsElements),
 	TypeArgumentsElements: _g(TSKindId.TypeArgumentsElements),
@@ -1061,6 +1059,8 @@ export const is = {
 	TuplePatternElements: _g(TSKindId.TuplePatternElements),
 	Patterns: _g(TSKindId.Patterns),
 	StructPatternElements: _g(TSKindId.StructPatternElements),
+	AttributeArm: _g(TSKindId.AttributeArm),
+	VisibilityModifierGroup: _g(TSKindId.VisibilityModifierGroup),
 	TupleTypeElements: _g(TSKindId.TupleTypeElements),
 	TupleExpressionElements: _g(TSKindId.TupleExpressionElements),
 	ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
@@ -1268,7 +1268,6 @@ export const assert = {
 	lineComment: _makeAssert('lineComment', is.lineComment as _AnyGuard),
 	blockComment: _makeAssert('blockComment', is.blockComment as _AnyGuard),
 	MacroRules: _makeAssert('MacroRules', is.MacroRules as _AnyGuard),
-	AttributeArm1: _makeAssert('AttributeArm1', is.AttributeArm1 as _AnyGuard),
 	EnumVariantListElements: _makeAssert('EnumVariantListElements', is.EnumVariantListElements as _AnyGuard),
 	FieldDeclarationListElements: _makeAssert(
 		'FieldDeclarationListElements',
@@ -1282,7 +1281,6 @@ export const assert = {
 	TypeParametersElements: _makeAssert('TypeParametersElements', is.TypeParametersElements as _AnyGuard),
 	UseClauses: _makeAssert('UseClauses', is.UseClauses as _AnyGuard),
 	ParametersElements: _makeAssert('ParametersElements', is.ParametersElements as _AnyGuard),
-	VisibilityModifierGroup1: _makeAssert('VisibilityModifierGroup1', is.VisibilityModifierGroup1 as _AnyGuard),
 	Lifetimes: _makeAssert('Lifetimes', is.Lifetimes as _AnyGuard),
 	UseBoundsElements: _makeAssert('UseBoundsElements', is.UseBoundsElements as _AnyGuard),
 	TypeArgumentsElements: _makeAssert('TypeArgumentsElements', is.TypeArgumentsElements as _AnyGuard),
@@ -1294,6 +1292,8 @@ export const assert = {
 	TuplePatternElements: _makeAssert('TuplePatternElements', is.TuplePatternElements as _AnyGuard),
 	Patterns: _makeAssert('Patterns', is.Patterns as _AnyGuard),
 	StructPatternElements: _makeAssert('StructPatternElements', is.StructPatternElements as _AnyGuard),
+	AttributeArm: _makeAssert('AttributeArm', is.AttributeArm as _AnyGuard),
+	VisibilityModifierGroup: _makeAssert('VisibilityModifierGroup', is.VisibilityModifierGroup as _AnyGuard),
 	TupleTypeElements: _makeAssert('TupleTypeElements', is.TupleTypeElements as _AnyGuard),
 	TupleExpressionElements: _makeAssert('TupleExpressionElements', is.TupleExpressionElements as _AnyGuard),
 	ReferenceExpressionRawMut: _makeAssert('ReferenceExpressionRawMut', is.ReferenceExpressionRawMut as _AnyGuard),

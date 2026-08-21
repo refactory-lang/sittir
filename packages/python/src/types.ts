@@ -200,11 +200,9 @@ export const enum SyntaxKind {
 	FormatSpecifier = 'format_specifier',
 	Await = 'await',
 	SimpleStatementsElements = '_simple_statements_elements',
-	FutureImportStatementArm1 = '_future_import_statement_arm1',
 	RaiseStatementOptional1 = '_raise_statement_optional1',
 	Subjects = '_subjects',
 	CasePatterns = '_case_patterns',
-	ExceptClauseArm1 = '_except_clause_arm1',
 	WithClauseWithItems = '_with_clause_with_items',
 	FunctionDefinitionOptional1 = '_function_definition_optional1',
 	ExecStatementOptional1 = '_exec_statement_optional1',
@@ -215,8 +213,10 @@ export const enum SyntaxKind {
 	DictPatternElements = '_dict_pattern_elements',
 	PatternListPatterns = '_pattern_list_patterns',
 	Subscripts = '_subscripts',
-	SliceGroup1 = '_slice_group1',
 	DictionaryElements = '_dictionary_elements',
+	FutureImportStatementArm = '_future_import_statement_arm',
+	ExceptClauseArm = '_except_clause_arm',
+	SliceGroup = '_slice_group',
 	ExceptClauseAs = '_except_clause_as',
 	ExceptClauseAsOptional1 = '_except_clause_as_optional1',
 	CaseTuplePattern = 'case_tuple_pattern',
@@ -549,20 +549,20 @@ export const enum TSKindId {
 	KeywordSeparator = 235,
 	KwAsyncMarker = 236,
 	SimpleStatementsElements = 237,
-	FutureImportStatementArm1 = 238,
-	Subjects = 239,
-	CasePatterns = 240,
-	ExceptClauseArm1 = 241,
-	WithClauseWithItems = 242,
-	Types = 243,
-	ArgumentListElements = 244,
-	ExpressionListExpressions = 245,
-	ListPatternCasePatterns = 246,
-	DictPatternElements = 247,
-	PatternListPatterns = 248,
-	Subscripts = 249,
-	SliceGroup1 = 250,
-	DictionaryElements = 251,
+	Subjects = 238,
+	CasePatterns = 239,
+	WithClauseWithItems = 240,
+	Types = 241,
+	ArgumentListElements = 242,
+	ExpressionListExpressions = 243,
+	ListPatternCasePatterns = 244,
+	DictPatternElements = 245,
+	PatternListPatterns = 246,
+	Subscripts = 247,
+	DictionaryElements = 248,
+	FutureImportStatementArm = 249,
+	ExceptClauseArm = 250,
+	SliceGroup = 251,
 	AugmentedAssignmentOperator = 252,
 	ExceptClauseAs = 253,
 	CaseTuplePattern = 254,
@@ -864,20 +864,20 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[235, 'keyword_separator'],
 	[236, '_kw_async_marker'],
 	[237, '_simple_statements_elements'],
-	[238, '_future_import_statement_arm1'],
-	[239, '_subjects'],
-	[240, '_case_patterns'],
-	[241, '_except_clause_arm1'],
-	[242, '_with_clause_with_items'],
-	[243, '_types'],
-	[244, '_argument_list_elements'],
-	[245, '_expression_list_expressions'],
-	[246, '_list_pattern_case_patterns'],
-	[247, '_dict_pattern_elements'],
-	[248, '_pattern_list_patterns'],
-	[249, '_subscripts'],
-	[250, '_slice_group1'],
-	[251, '_dictionary_elements'],
+	[238, '_subjects'],
+	[239, '_case_patterns'],
+	[240, '_with_clause_with_items'],
+	[241, '_types'],
+	[242, '_argument_list_elements'],
+	[243, '_expression_list_expressions'],
+	[244, '_list_pattern_case_patterns'],
+	[245, '_dict_pattern_elements'],
+	[246, '_pattern_list_patterns'],
+	[247, '_subscripts'],
+	[248, '_dictionary_elements'],
+	[249, '_future_import_statement_arm'],
+	[250, '_except_clause_arm'],
+	[251, '_slice_group'],
 	[252, '_augmented_assignment_operator'],
 	[253, '_except_clause_as'],
 	[254, 'case_tuple_pattern'],
@@ -1180,20 +1180,20 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[235, 'keyword_separator'],
 	[236, '_kw_async_marker'],
 	[237, 'simple_statements_elements'],
-	[238, 'future_import_statement_arm1'],
-	[239, 'subjects'],
-	[240, 'case_patterns'],
-	[241, 'except_clause_arm1'],
-	[242, 'with_clause_with_items'],
-	[243, 'types'],
-	[244, 'argument_list_elements'],
-	[245, 'expression_list_expressions'],
-	[246, 'list_pattern_case_patterns'],
-	[247, 'dict_pattern_elements'],
-	[248, 'pattern_list_patterns'],
-	[249, 'subscripts'],
-	[250, 'slice_group1'],
-	[251, 'dictionary_elements'],
+	[238, 'subjects'],
+	[239, 'case_patterns'],
+	[240, 'with_clause_with_items'],
+	[241, 'types'],
+	[242, 'argument_list_elements'],
+	[243, 'expression_list_expressions'],
+	[244, 'list_pattern_case_patterns'],
+	[245, 'dict_pattern_elements'],
+	[246, 'pattern_list_patterns'],
+	[247, 'subscripts'],
+	[248, 'dictionary_elements'],
+	[249, 'future_import_statement_arm'],
+	[250, 'except_clause_arm'],
+	[251, 'slice_group'],
 	[252, '_augmented_assignment_operator'],
 	[253, 'except_clause_as'],
 	[254, 'case_tuple_pattern'],
@@ -1736,14 +1736,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.KwAsyncMarker;
 		case '_simple_statements_elements':
 			return TSKindId.SimpleStatementsElements;
-		case '_future_import_statement_arm1':
-			return TSKindId.FutureImportStatementArm1;
 		case '_subjects':
 			return TSKindId.Subjects;
 		case '_case_patterns':
 			return TSKindId.CasePatterns;
-		case '_except_clause_arm1':
-			return TSKindId.ExceptClauseArm1;
 		case '_with_clause_with_items':
 			return TSKindId.WithClauseWithItems;
 		case '_types':
@@ -1760,10 +1756,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PatternListPatterns;
 		case '_subscripts':
 			return TSKindId.Subscripts;
-		case '_slice_group1':
-			return TSKindId.SliceGroup1;
 		case '_dictionary_elements':
 			return TSKindId.DictionaryElements;
+		case '_future_import_statement_arm':
+			return TSKindId.FutureImportStatementArm;
+		case '_except_clause_arm':
+			return TSKindId.ExceptClauseArm;
+		case '_slice_group':
+			return TSKindId.SliceGroup;
 		case '_augmented_assignment_operator':
 			return TSKindId.AugmentedAssignmentOperator;
 		case '_except_clause_as':
@@ -2006,14 +2006,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.NotEscapeSequence;
 		case 'simple_statements_elements':
 			return TSKindId.SimpleStatementsElements;
-		case 'future_import_statement_arm1':
-			return TSKindId.FutureImportStatementArm1;
 		case 'subjects':
 			return TSKindId.Subjects;
 		case 'case_patterns':
 			return TSKindId.CasePatterns;
-		case 'except_clause_arm1':
-			return TSKindId.ExceptClauseArm1;
 		case 'with_clause_with_items':
 			return TSKindId.WithClauseWithItems;
 		case 'types':
@@ -2030,10 +2026,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PatternListPatterns;
 		case 'subscripts':
 			return TSKindId.Subscripts;
-		case 'slice_group1':
-			return TSKindId.SliceGroup1;
 		case 'dictionary_elements':
 			return TSKindId.DictionaryElements;
+		case 'future_import_statement_arm':
+			return TSKindId.FutureImportStatementArm;
+		case 'except_clause_arm':
+			return TSKindId.ExceptClauseArm;
+		case 'slice_group':
+			return TSKindId.SliceGroup;
 		case 'except_clause_as':
 			return TSKindId.ExceptClauseAs;
 		case 'print_arguments':
@@ -2277,16 +2277,16 @@ export interface RelativeImport {
 
 export interface FutureImportStatement {
 	readonly $type: TSKindId.FutureImportStatement;
-	readonly _content: ImportList | FutureImportStatementArm1;
-	content(): ImportList | FutureImportStatementArm1;
+	readonly _content: ImportList | FutureImportStatementArm;
+	content(): ImportList | FutureImportStatementArm;
 }
 
 export interface ImportFromStatement {
 	readonly $type: TSKindId.ImportFromStatement;
 	readonly _module_name: RelativeImport | DottedName;
-	readonly _content: ImportList | FutureImportStatementArm1 | WildcardImport;
+	readonly _content: ImportList | FutureImportStatementArm | WildcardImport;
 	moduleName(): RelativeImport | DottedName;
-	content(): ImportList | FutureImportStatementArm1 | WildcardImport;
+	content(): ImportList | FutureImportStatementArm | WildcardImport;
 }
 
 export interface ImportList {
@@ -2445,13 +2445,13 @@ export interface TryStatement {
 export interface ExceptClause {
 	readonly $type: TSKindId.ExceptClause;
 	readonly _star_marker?: boolean;
-	readonly _except_clause_arm1?: ExceptClauseArm1;
+	readonly _except_clause_arm?: ExceptClauseArm;
 	readonly _content: SimpleStatements | SuiteBlockWithIndent | '\n';
 	readonly __inputHints__?: {
 		readonly star_marker?: BooleanKeyword<'*'>;
 	};
 	starMarker(): boolean | undefined;
-	exceptClauseArm1(): ExceptClauseArm1 | undefined;
+	exceptClauseArm(): ExceptClauseArm | undefined;
 	content(): SimpleStatements | SuiteBlockWithIndent | '\n';
 }
 
@@ -2920,10 +2920,10 @@ export interface Slice {
 	readonly $type: TSKindId.Slice;
 	readonly _start?: Expression;
 	readonly _stop?: Expression;
-	readonly _step?: SliceGroup1;
+	readonly _step?: SliceGroup;
 	start(): Expression | undefined;
 	stop(): Expression | undefined;
-	step(): SliceGroup1 | undefined;
+	step(): SliceGroup | undefined;
 }
 
 export interface Call {
@@ -3157,12 +3157,6 @@ export interface SimpleStatementsElements {
 	simpleStatements(): NonEmptyArray<SimpleStatement>;
 }
 
-export interface FutureImportStatementArm1 {
-	readonly $type: TSKindId.FutureImportStatementArm1;
-	readonly _import_list: ImportList;
-	importList(): ImportList;
-}
-
 export interface RaiseStatementOptional1 {
 	readonly $type: '_raise_statement_optional1';
 	readonly _cause: Expression;
@@ -3179,12 +3173,6 @@ export interface CasePatterns {
 	readonly $type: TSKindId.CasePatterns;
 	readonly _case_pattern: NonEmptyArray<CasePattern>;
 	casePatterns(): NonEmptyArray<CasePattern>;
-}
-
-export interface ExceptClauseArm1 {
-	readonly $type: TSKindId.ExceptClauseArm1;
-	readonly _content: ExceptClauseAs | ExceptClauseList;
-	content(): ExceptClauseAs | ExceptClauseList;
 }
 
 export interface WithClauseWithItems {
@@ -3247,16 +3235,28 @@ export interface Subscripts {
 	subscripts(): NonEmptyArray<Expression | Slice>;
 }
 
-export interface SliceGroup1 {
-	readonly $type: TSKindId.SliceGroup1;
-	readonly _expression?: Expression;
-	expression(): Expression | undefined;
-}
-
 export interface DictionaryElements {
 	readonly $type: TSKindId.DictionaryElements;
 	readonly _element: NonEmptyArray<Pair | DictionarySplat>;
 	elements(): NonEmptyArray<Pair | DictionarySplat>;
+}
+
+export interface FutureImportStatementArm {
+	readonly $type: TSKindId.FutureImportStatementArm;
+	readonly _import_list: ImportList;
+	importList(): ImportList;
+}
+
+export interface ExceptClauseArm {
+	readonly $type: TSKindId.ExceptClauseArm;
+	readonly _content: ExceptClauseAs | ExceptClauseList;
+	content(): ExceptClauseAs | ExceptClauseList;
+}
+
+export interface SliceGroup {
+	readonly $type: TSKindId.SliceGroup;
+	readonly _expression?: Expression;
+	expression(): Expression | undefined;
 }
 
 export interface ExceptClauseAs {
@@ -3596,9 +3596,6 @@ export interface AwaitTree extends TreeNode<'await'> {}
 export interface SimpleStatementsElementsTree extends AnyTreeNode {
 	readonly type: '_simple_statements_elements';
 }
-export interface FutureImportStatementArm1Tree extends AnyTreeNode {
-	readonly type: '_future_import_statement_arm1';
-}
 export interface RaiseStatementOptional1Tree extends AnyTreeNode {
 	readonly type: '_raise_statement_optional1';
 }
@@ -3607,9 +3604,6 @@ export interface SubjectsTree extends AnyTreeNode {
 }
 export interface CasePatternsTree extends AnyTreeNode {
 	readonly type: '_case_patterns';
-}
-export interface ExceptClauseArm1Tree extends AnyTreeNode {
-	readonly type: '_except_clause_arm1';
 }
 export interface WithClauseWithItemsTree extends AnyTreeNode {
 	readonly type: '_with_clause_with_items';
@@ -3641,11 +3635,17 @@ export interface PatternListPatternsTree extends AnyTreeNode {
 export interface SubscriptsTree extends AnyTreeNode {
 	readonly type: '_subscripts';
 }
-export interface SliceGroup1Tree extends AnyTreeNode {
-	readonly type: '_slice_group1';
-}
 export interface DictionaryElementsTree extends AnyTreeNode {
 	readonly type: '_dictionary_elements';
+}
+export interface FutureImportStatementArmTree extends AnyTreeNode {
+	readonly type: '_future_import_statement_arm';
+}
+export interface ExceptClauseArmTree extends AnyTreeNode {
+	readonly type: '_except_clause_arm';
+}
+export interface SliceGroupTree extends AnyTreeNode {
+	readonly type: '_slice_group';
 }
 export interface ExceptClauseAsTree extends AnyTreeNode {
 	readonly type: '_except_clause_as';
@@ -4254,11 +4254,9 @@ export type PythonNode =
 	| FormatSpecifier
 	| Await
 	| SimpleStatementsElements
-	| FutureImportStatementArm1
 	| RaiseStatementOptional1
 	| Subjects
 	| CasePatterns
-	| ExceptClauseArm1
 	| WithClauseWithItems
 	| FunctionDefinitionOptional1
 	| ExecStatementOptional1
@@ -4269,8 +4267,10 @@ export type PythonNode =
 	| DictPatternElements
 	| PatternListPatterns
 	| Subscripts
-	| SliceGroup1
 	| DictionaryElements
+	| FutureImportStatementArm
+	| ExceptClauseArm
+	| SliceGroup
 	| ExceptClauseAs
 	| ExceptClauseAsOptional1
 	| CaseTuplePattern
@@ -4405,11 +4405,9 @@ export interface KindMap {
 	format_specifier: FormatSpecifier;
 	await: Await;
 	_simple_statements_elements: SimpleStatementsElements;
-	_future_import_statement_arm1: FutureImportStatementArm1;
 	_raise_statement_optional1: RaiseStatementOptional1;
 	_subjects: Subjects;
 	_case_patterns: CasePatterns;
-	_except_clause_arm1: ExceptClauseArm1;
 	_with_clause_with_items: WithClauseWithItems;
 	_function_definition_optional1: FunctionDefinitionOptional1;
 	_exec_statement_optional1: ExecStatementOptional1;
@@ -4420,8 +4418,10 @@ export interface KindMap {
 	_dict_pattern_elements: DictPatternElements;
 	_pattern_list_patterns: PatternListPatterns;
 	_subscripts: Subscripts;
-	_slice_group1: SliceGroup1;
 	_dictionary_elements: DictionaryElements;
+	_future_import_statement_arm: FutureImportStatementArm;
+	_except_clause_arm: ExceptClauseArm;
+	_slice_group: SliceGroup;
 	_except_clause_as: ExceptClauseAs;
 	_except_clause_as_optional1: ExceptClauseAsOptional1;
 	case_tuple_pattern: CaseTuplePattern;
@@ -4655,12 +4655,6 @@ export interface SimpleStatementsElementsNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface FutureImportStatementArm1Ns extends NodeNs<
-	FutureImportStatementArm1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
 export interface RaiseStatementOptional1Ns extends NodeNs<
 	RaiseStatementOptional1,
 	LeafScalarMap,
@@ -4669,7 +4663,6 @@ export interface RaiseStatementOptional1Ns extends NodeNs<
 > {}
 export interface SubjectsNs extends NodeNs<Subjects, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface CasePatternsNs extends NodeNs<CasePatterns, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExceptClauseArm1Ns extends NodeNs<ExceptClauseArm1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface WithClauseWithItemsNs extends NodeNs<
 	WithClauseWithItems,
 	LeafScalarMap,
@@ -4720,8 +4713,15 @@ export interface PatternListPatternsNs extends NodeNs<
 	NamespaceMap
 > {}
 export interface SubscriptsNs extends NodeNs<Subscripts, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SliceGroup1Ns extends NodeNs<SliceGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface DictionaryElementsNs extends NodeNs<DictionaryElements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FutureImportStatementArmNs extends NodeNs<
+	FutureImportStatementArm,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ExceptClauseArmNs extends NodeNs<ExceptClauseArm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SliceGroupNs extends NodeNs<SliceGroup, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExceptClauseAsNs extends NodeNs<ExceptClauseAs, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExceptClauseAsOptional1Ns extends NodeNs<
 	ExceptClauseAsOptional1,
@@ -4891,11 +4891,9 @@ export interface NamespaceMap {
 	format_specifier: FormatSpecifierNs;
 	await: AwaitNs;
 	_simple_statements_elements: SimpleStatementsElementsNs;
-	_future_import_statement_arm1: FutureImportStatementArm1Ns;
 	_raise_statement_optional1: RaiseStatementOptional1Ns;
 	_subjects: SubjectsNs;
 	_case_patterns: CasePatternsNs;
-	_except_clause_arm1: ExceptClauseArm1Ns;
 	_with_clause_with_items: WithClauseWithItemsNs;
 	_function_definition_optional1: FunctionDefinitionOptional1Ns;
 	_exec_statement_optional1: ExecStatementOptional1Ns;
@@ -4906,8 +4904,10 @@ export interface NamespaceMap {
 	_dict_pattern_elements: DictPatternElementsNs;
 	_pattern_list_patterns: PatternListPatternsNs;
 	_subscripts: SubscriptsNs;
-	_slice_group1: SliceGroup1Ns;
 	_dictionary_elements: DictionaryElementsNs;
+	_future_import_statement_arm: FutureImportStatementArmNs;
+	_except_clause_arm: ExceptClauseArmNs;
+	_slice_group: SliceGroupNs;
 	_except_clause_as: ExceptClauseAsNs;
 	_except_clause_as_optional1: ExceptClauseAsOptional1Ns;
 	case_tuple_pattern: CaseTuplePatternNs;
@@ -5709,13 +5709,6 @@ export namespace SimpleStatementsElements {
 	export type Tree = TreeFor<'_simple_statements_elements'>;
 	export type Kind = '_simple_statements_elements';
 }
-export namespace FutureImportStatementArm1 {
-	export type Config = ConfigFor<'_future_import_statement_arm1'>;
-	export type Fluent = FluentFor<'_future_import_statement_arm1'>;
-	export type Loose = LooseFor<'_future_import_statement_arm1'>;
-	export type Tree = TreeFor<'_future_import_statement_arm1'>;
-	export type Kind = '_future_import_statement_arm1';
-}
 export namespace RaiseStatementOptional1 {
 	export type Config = ConfigFor<'_raise_statement_optional1'>;
 	export type Fluent = FluentFor<'_raise_statement_optional1'>;
@@ -5736,13 +5729,6 @@ export namespace CasePatterns {
 	export type Loose = LooseFor<'_case_patterns'>;
 	export type Tree = TreeFor<'_case_patterns'>;
 	export type Kind = '_case_patterns';
-}
-export namespace ExceptClauseArm1 {
-	export type Config = ConfigFor<'_except_clause_arm1'>;
-	export type Fluent = FluentFor<'_except_clause_arm1'>;
-	export type Loose = LooseFor<'_except_clause_arm1'>;
-	export type Tree = TreeFor<'_except_clause_arm1'>;
-	export type Kind = '_except_clause_arm1';
 }
 export namespace WithClauseWithItems {
 	export type Config = ConfigFor<'_with_clause_with_items'>;
@@ -5814,19 +5800,33 @@ export namespace Subscripts {
 	export type Tree = TreeFor<'_subscripts'>;
 	export type Kind = '_subscripts';
 }
-export namespace SliceGroup1 {
-	export type Config = ConfigFor<'_slice_group1'>;
-	export type Fluent = FluentFor<'_slice_group1'>;
-	export type Loose = LooseFor<'_slice_group1'>;
-	export type Tree = TreeFor<'_slice_group1'>;
-	export type Kind = '_slice_group1';
-}
 export namespace DictionaryElements {
 	export type Config = ConfigFor<'_dictionary_elements'>;
 	export type Fluent = FluentFor<'_dictionary_elements'>;
 	export type Loose = LooseFor<'_dictionary_elements'>;
 	export type Tree = TreeFor<'_dictionary_elements'>;
 	export type Kind = '_dictionary_elements';
+}
+export namespace FutureImportStatementArm {
+	export type Config = ConfigFor<'_future_import_statement_arm'>;
+	export type Fluent = FluentFor<'_future_import_statement_arm'>;
+	export type Loose = LooseFor<'_future_import_statement_arm'>;
+	export type Tree = TreeFor<'_future_import_statement_arm'>;
+	export type Kind = '_future_import_statement_arm';
+}
+export namespace ExceptClauseArm {
+	export type Config = ConfigFor<'_except_clause_arm'>;
+	export type Fluent = FluentFor<'_except_clause_arm'>;
+	export type Loose = LooseFor<'_except_clause_arm'>;
+	export type Tree = TreeFor<'_except_clause_arm'>;
+	export type Kind = '_except_clause_arm';
+}
+export namespace SliceGroup {
+	export type Config = ConfigFor<'_slice_group'>;
+	export type Fluent = FluentFor<'_slice_group'>;
+	export type Loose = LooseFor<'_slice_group'>;
+	export type Tree = TreeFor<'_slice_group'>;
+	export type Kind = '_slice_group';
 }
 export namespace ExceptClauseAs {
 	export type Config = ConfigFor<'_except_clause_as'>;

@@ -175,12 +175,8 @@ export interface IsGuards {
 	SimpleStatementsElements<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.SimpleStatementsElements };
-	FutureImportStatementArm1<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.FutureImportStatementArm1 };
 	Subjects<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Subjects };
 	CasePatterns<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePatterns };
-	ExceptClauseArm1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExceptClauseArm1 };
 	WithClauseWithItems<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.WithClauseWithItems };
@@ -201,10 +197,14 @@ export interface IsGuards {
 		v: T
 	): v is T & { readonly $type: TSKindId.PatternListPatterns };
 	Subscripts<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Subscripts };
-	SliceGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SliceGroup1 };
 	DictionaryElements<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.DictionaryElements };
+	FutureImportStatementArm<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.FutureImportStatementArm };
+	ExceptClauseArm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExceptClauseArm };
+	SliceGroup<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SliceGroup };
 	caseTuplePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CaseTuplePattern };
 	caseListPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CaseListPattern };
 	caseAsPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CaseAsPattern };
@@ -371,12 +371,8 @@ export interface AssertGuards {
 	SimpleStatementsElements(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.SimpleStatementsElements };
-	FutureImportStatementArm1(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.FutureImportStatementArm1 };
 	Subjects(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Subjects };
 	CasePatterns(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CasePatterns };
-	ExceptClauseArm1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseArm1 };
 	WithClauseWithItems(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseWithItems };
 	Types(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Types };
 	ArgumentListElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArgumentListElements };
@@ -389,8 +385,12 @@ export interface AssertGuards {
 	DictPatternElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DictPatternElements };
 	PatternListPatterns(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PatternListPatterns };
 	Subscripts(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Subscripts };
-	SliceGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SliceGroup1 };
 	DictionaryElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DictionaryElements };
+	FutureImportStatementArm(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.FutureImportStatementArm };
+	ExceptClauseArm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseArm };
+	SliceGroup(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SliceGroup };
 	caseTuplePattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CaseTuplePattern };
 	caseListPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CaseListPattern };
 	caseAsPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CaseAsPattern };
@@ -626,10 +626,8 @@ const _kindIdByKind = new Map<string, number>([
 	['await', TSKindId.Await],
 	['_kw_async_marker', TSKindId.KwAsyncMarker],
 	['_simple_statements_elements', TSKindId.SimpleStatementsElements],
-	['_future_import_statement_arm1', TSKindId.FutureImportStatementArm1],
 	['_subjects', TSKindId.Subjects],
 	['_case_patterns', TSKindId.CasePatterns],
-	['_except_clause_arm1', TSKindId.ExceptClauseArm1],
 	['_with_clause_with_items', TSKindId.WithClauseWithItems],
 	['_types', TSKindId.Types],
 	['_argument_list_elements', TSKindId.ArgumentListElements],
@@ -638,8 +636,10 @@ const _kindIdByKind = new Map<string, number>([
 	['_dict_pattern_elements', TSKindId.DictPatternElements],
 	['_pattern_list_patterns', TSKindId.PatternListPatterns],
 	['_subscripts', TSKindId.Subscripts],
-	['_slice_group1', TSKindId.SliceGroup1],
 	['_dictionary_elements', TSKindId.DictionaryElements],
+	['_future_import_statement_arm', TSKindId.FutureImportStatementArm],
+	['_except_clause_arm', TSKindId.ExceptClauseArm],
+	['_slice_group', TSKindId.SliceGroup],
 	['_augmented_assignment_operator', TSKindId.AugmentedAssignmentOperator],
 	['_except_clause_as', TSKindId.ExceptClauseAs],
 	['case_tuple_pattern', TSKindId.CaseTuplePattern],
@@ -774,10 +774,8 @@ export const is = {
 	formatSpecifier: _g(TSKindId.FormatSpecifier),
 	await: _g(TSKindId.Await),
 	SimpleStatementsElements: _g(TSKindId.SimpleStatementsElements),
-	FutureImportStatementArm1: _g(TSKindId.FutureImportStatementArm1),
 	Subjects: _g(TSKindId.Subjects),
 	CasePatterns: _g(TSKindId.CasePatterns),
-	ExceptClauseArm1: _g(TSKindId.ExceptClauseArm1),
 	WithClauseWithItems: _g(TSKindId.WithClauseWithItems),
 	Types: _g(TSKindId.Types),
 	ArgumentListElements: _g(TSKindId.ArgumentListElements),
@@ -786,8 +784,10 @@ export const is = {
 	DictPatternElements: _g(TSKindId.DictPatternElements),
 	PatternListPatterns: _g(TSKindId.PatternListPatterns),
 	Subscripts: _g(TSKindId.Subscripts),
-	SliceGroup1: _g(TSKindId.SliceGroup1),
 	DictionaryElements: _g(TSKindId.DictionaryElements),
+	FutureImportStatementArm: _g(TSKindId.FutureImportStatementArm),
+	ExceptClauseArm: _g(TSKindId.ExceptClauseArm),
+	SliceGroup: _g(TSKindId.SliceGroup),
 	caseTuplePattern: _g(TSKindId.CaseTuplePattern),
 	caseListPattern: _g(TSKindId.CaseListPattern),
 	caseAsPattern: _g(TSKindId.CaseAsPattern),
@@ -954,10 +954,8 @@ export const assert = {
 	formatSpecifier: _makeAssert('formatSpecifier', is.formatSpecifier as _AnyGuard),
 	await: _makeAssert('await', is.await as _AnyGuard),
 	SimpleStatementsElements: _makeAssert('SimpleStatementsElements', is.SimpleStatementsElements as _AnyGuard),
-	FutureImportStatementArm1: _makeAssert('FutureImportStatementArm1', is.FutureImportStatementArm1 as _AnyGuard),
 	Subjects: _makeAssert('Subjects', is.Subjects as _AnyGuard),
 	CasePatterns: _makeAssert('CasePatterns', is.CasePatterns as _AnyGuard),
-	ExceptClauseArm1: _makeAssert('ExceptClauseArm1', is.ExceptClauseArm1 as _AnyGuard),
 	WithClauseWithItems: _makeAssert('WithClauseWithItems', is.WithClauseWithItems as _AnyGuard),
 	Types: _makeAssert('Types', is.Types as _AnyGuard),
 	ArgumentListElements: _makeAssert('ArgumentListElements', is.ArgumentListElements as _AnyGuard),
@@ -966,8 +964,10 @@ export const assert = {
 	DictPatternElements: _makeAssert('DictPatternElements', is.DictPatternElements as _AnyGuard),
 	PatternListPatterns: _makeAssert('PatternListPatterns', is.PatternListPatterns as _AnyGuard),
 	Subscripts: _makeAssert('Subscripts', is.Subscripts as _AnyGuard),
-	SliceGroup1: _makeAssert('SliceGroup1', is.SliceGroup1 as _AnyGuard),
 	DictionaryElements: _makeAssert('DictionaryElements', is.DictionaryElements as _AnyGuard),
+	FutureImportStatementArm: _makeAssert('FutureImportStatementArm', is.FutureImportStatementArm as _AnyGuard),
+	ExceptClauseArm: _makeAssert('ExceptClauseArm', is.ExceptClauseArm as _AnyGuard),
+	SliceGroup: _makeAssert('SliceGroup', is.SliceGroup as _AnyGuard),
 	caseTuplePattern: _makeAssert('caseTuplePattern', is.caseTuplePattern as _AnyGuard),
 	caseListPattern: _makeAssert('caseListPattern', is.caseListPattern as _AnyGuard),
 	caseAsPattern: _makeAssert('caseAsPattern', is.caseAsPattern as _AnyGuard),

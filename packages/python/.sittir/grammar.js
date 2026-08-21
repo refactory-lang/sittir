@@ -1115,6 +1115,7 @@ function enrich(baseInput, config) {
     }
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+  collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupHiddenNames, clauseGroupOwners);
   for (const name of Object.keys(mergedRules)) {
     if (enrichSkip.has(name)) continue;
     const rule = mergedRules[name];
@@ -2873,6 +2874,51 @@ function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag,
   dedupeMap[key] = name;
   clauseGroupRules[name] = seqBody;
   return name;
+}
+function collapseSingletonMintOrdinals(mergedRules, mintedRules, visibleGroupHiddenNames, clauseGroupOwners) {
+  const byParentFlavor = /* @__PURE__ */ new Map();
+  for (const hidden of Object.keys(mintedRules)) {
+    const m = /^_(.+)_(arm|group)(\d+)$/.exec(hidden);
+    if (!m) continue;
+    const key = `${m[1]}_${m[2]}`;
+    const bucket = byParentFlavor.get(key);
+    if (bucket) bucket.push(hidden);
+    else byParentFlavor.set(key, [hidden]);
+  }
+  const renames = /* @__PURE__ */ new Map();
+  for (const [bare, hiddens] of byParentFlavor) {
+    if (hiddens.length !== 1) continue;
+    const oldHidden = hiddens[0];
+    const newHidden = `_${bare}`;
+    if (newHidden in mergedRules || bare in mergedRules) continue;
+    renames.set(oldHidden, newHidden);
+    renames.set(oldHidden.replace(/^_/, ""), bare);
+  }
+  if (renames.size === 0) return;
+  for (const [oldName, newName] of renames) {
+    if (oldName.startsWith("_") && oldName in mergedRules) {
+      mergedRules[newName] = mergedRules[oldName];
+      delete mergedRules[oldName];
+    }
+    if (visibleGroupHiddenNames.delete(oldName)) visibleGroupHiddenNames.add(newName);
+    const owner = clauseGroupOwners.get(oldName);
+    if (owner !== void 0) {
+      clauseGroupOwners.delete(oldName);
+      clauseGroupOwners.set(newName, owner);
+    }
+  }
+  const rewrite = (node) => {
+    if (Array.isArray(node)) {
+      for (const m of node) rewrite(m);
+      return;
+    }
+    if (node === null || typeof node !== "object") return;
+    const r = node;
+    if (typeof r.name === "string" && renames.has(r.name)) r.name = renames.get(r.name);
+    if (r.type === "ALIAS" && typeof r.value === "string" && renames.has(r.value)) r.value = renames.get(r.value);
+    for (const v of Object.values(r)) rewrite(v);
+  };
+  for (const name of Object.keys(mergedRules)) rewrite(mergedRules[name]);
 }
 function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, ambientPrec, enclosingFieldName, flavor = "group") {
   if (process.env.SITTIR_DEBUG_LISTNAME) {

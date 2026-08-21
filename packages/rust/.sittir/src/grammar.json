@@ -850,14 +850,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_attribute_arm1",
+                "name": "_attribute_arm",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "attribute_arm1",
+              "value": "attribute_arm",
               "metadata": {
                 "author": "enrich"
               }
@@ -8401,14 +8401,14 @@
                   "type": "ALIAS",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "_block_comment_arm1",
+                    "name": "_block_comment_arm",
                     "metadata": {
                       "author": "enrich",
                       "symbolSource": "group-lift"
                     }
                   },
                   "named": true,
-                  "value": "block_comment_arm1",
+                  "value": "block_comment_arm",
                   "metadata": {
                     "author": "enrich"
                   }
@@ -8704,41 +8704,6 @@
               "type": "BLANK"
             }
           ]
-        }
-      ]
-    },
-    "_attribute_arm1": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "="
-            },
-            {
-              "type": "FIELD",
-              "name": "value",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_expression"
-              }
-            }
-          ]
-        },
-        {
-          "type": "FIELD",
-          "name": "arguments",
-          "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "delim_token_tree"
-            },
-            "named": true,
-            "value": "token_tree"
-          }
         }
       ]
     },
@@ -9324,45 +9289,6 @@
         }
       ]
     },
-    "_visibility_modifier_group1": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "("
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "self"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "super"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "crate"
-            },
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_visibility_modifier_in_path"
-              },
-              "named": true,
-              "value": "visibility_modifier_in_path"
-            }
-          ]
-        },
-        {
-          "type": "STRING",
-          "value": ")"
-        }
-      ]
-    },
     "_array_type_optional1": {
       "type": "SEQ",
       "members": [
@@ -9639,27 +9565,6 @@
               "type": "BLANK"
             }
           ]
-        }
-      ]
-    },
-    "_array_expression_arm1": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_expression"
-        },
-        {
-          "type": "STRING",
-          "value": ";"
-        },
-        {
-          "type": "FIELD",
-          "name": "length",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_expression"
-          }
         }
       ]
     },
@@ -10084,7 +9989,102 @@
         }
       ]
     },
-    "_block_comment_arm1": {
+    "_attribute_arm": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "="
+            },
+            {
+              "type": "FIELD",
+              "name": "value",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_expression"
+              }
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "arguments",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "delim_token_tree"
+            },
+            "named": true,
+            "value": "token_tree"
+          }
+        }
+      ]
+    },
+    "_visibility_modifier_group": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "self"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "super"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "crate"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_visibility_modifier_in_path"
+              },
+              "named": true,
+              "value": "visibility_modifier_in_path"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "_array_expression_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_expression"
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        },
+        {
+          "type": "FIELD",
+          "name": "length",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_expression"
+          }
+        }
+      ]
+    },
+    "_block_comment_arm": {
       "type": "SEQ",
       "members": [
         {
@@ -10699,14 +10699,14 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_array_expression_arm1",
+            "name": "_array_expression_arm",
             "metadata": {
               "author": "enrich",
               "symbolSource": "group-lift"
             }
           },
           "named": true,
-          "value": "array_expression_arm1",
+          "value": "array_expression_arm",
           "metadata": {
             "author": "enrich"
           }
@@ -11354,14 +11354,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_visibility_modifier_group1",
+                "name": "_visibility_modifier_group",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "visibility_modifier_group1",
+              "value": "visibility_modifier_group",
               "metadata": {
                 "author": "enrich"
               }
@@ -12067,13 +12067,6 @@
       "_non_special_token"
     ],
     [
-      "attribute",
-      "_attribute_arm1"
-    ],
-    [
-      "_attribute_arm1"
-    ],
-    [
       "enum_variant_list",
       "_enum_variant_list_elements"
     ],
@@ -12123,13 +12116,6 @@
       "_parameters_elements"
     ],
     [
-      "visibility_modifier",
-      "_visibility_modifier_group1"
-    ],
-    [
-      "_visibility_modifier_group1"
-    ],
-    [
       "for_lifetimes",
       "_lifetimes"
     ],
@@ -12156,13 +12142,6 @@
     ],
     [
       "_arguments_elements"
-    ],
-    [
-      "array_expression",
-      "_array_expression_arm1"
-    ],
-    [
-      "_array_expression_arm1"
     ],
     [
       "field_initializer_list",
@@ -12200,11 +12179,32 @@
       "_range_pattern_arm2"
     ],
     [
-      "block_comment",
-      "_block_comment_arm1"
+      "attribute",
+      "_attribute_arm"
     ],
     [
-      "_block_comment_arm1"
+      "_attribute_arm"
+    ],
+    [
+      "visibility_modifier",
+      "_visibility_modifier_group"
+    ],
+    [
+      "_visibility_modifier_group"
+    ],
+    [
+      "array_expression",
+      "_array_expression_arm"
+    ],
+    [
+      "_array_expression_arm"
+    ],
+    [
+      "block_comment",
+      "_block_comment_arm"
+    ],
+    [
+      "_block_comment_arm"
     ],
     [
       "_array_expression_semi",
@@ -12268,20 +12268,33 @@
     "_declaration_statement",
     "_reserved_identifier",
     "_expression_ending_with_block",
+    "_attribute_arm1",
     "_enum_variant_optional1",
     "_extern_crate_declaration_optional1",
     "_function_item_optional1",
+    "_impl_item_group1",
     "_const_parameter_optional1",
     "_type_parameter_optional1",
     "_let_declaration_optional1",
     "_let_declaration_optional2",
+    "_use_wildcard_group1",
     "_variadic_parameter_optional1",
+    "_visibility_modifier_group1",
+    "_visibility_modifier_arm1",
     "_array_type_optional1",
+    "_function_type_arm1",
     "_abstract_type_optional1",
+    "_reference_expression_arm1",
+    "_array_expression_arm1",
+    "_let_chain_arm1",
     "_match_block_optional1",
     "_match_pattern_optional1",
     "_while_expression_optional1",
+    "_closure_expression_arm1",
     "_closure_parameters_optional1",
+    "_field_pattern_arm1",
+    "_or_pattern_arm1",
+    "_block_comment_arm1",
     "_kw_operator",
     "_kw_comma",
     "_kw_pub",

@@ -897,7 +897,7 @@ describe('enrich()', () => {
 				b: { type: STRING, value: 'b' }
 			});
 			const out = runEnrich(input);
-			expect(out.grammar.rules._call_group1).toMatchObject({
+			expect(out.grammar.rules._call_group).toMatchObject({
 				type: 'SEQ',
 				members: [
 					{ type: 'SYMBOL', name: 'a' },
@@ -1017,7 +1017,7 @@ describe('enrich()', () => {
 				]
 			});
 			// The second arm falls back to an ordinal instead of overwriting it.
-			expect(out.grammar.rules._call_group1).toMatchObject({
+			expect(out.grammar.rules._call_group).toMatchObject({
 				type: 'SEQ',
 				members: [
 					{ type: 'SYMBOL', name: 'c' },
@@ -1111,7 +1111,7 @@ describe('enrich()', () => {
 				b: { type: STRING, value: 'b' }
 			});
 			const out = runEnrich(input);
-			expect(out.grammar.rules._call_group1).toMatchObject({
+			expect(out.grammar.rules._call_group).toMatchObject({
 				type: 'SEQ',
 				members: [
 					{ type: 'SYMBOL', name: 'a' },

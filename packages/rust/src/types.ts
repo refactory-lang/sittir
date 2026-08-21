@@ -328,7 +328,6 @@ export const enum SyntaxKind {
 	LineComment = 'line_comment',
 	BlockComment = 'block_comment',
 	MacroRules = '_macro_rules',
-	AttributeArm1 = '_attribute_arm1',
 	EnumVariantListElements = '_enum_variant_list_elements',
 	EnumVariantOptional1 = '_enum_variant_optional1',
 	FieldDeclarationListElements = '_field_declaration_list_elements',
@@ -344,14 +343,12 @@ export const enum SyntaxKind {
 	UseClauses = '_use_clauses',
 	ParametersElements = '_parameters_elements',
 	VariadicParameterOptional1 = '_variadic_parameter_optional1',
-	VisibilityModifierGroup1 = '_visibility_modifier_group1',
 	ArrayTypeOptional1 = '_array_type_optional1',
 	Lifetimes = '_lifetimes',
 	UseBoundsElements = '_use_bounds_elements',
 	TypeArgumentsElements = '_type_arguments_elements',
 	AbstractTypeOptional1 = '_abstract_type_optional1',
 	ArgumentsElements = '_arguments_elements',
-	ArrayExpressionArm1 = '_array_expression_arm1',
 	FieldInitializerListElements = '_field_initializer_list_elements',
 	MatchPatternOptional1 = '_match_pattern_optional1',
 	WhileExpressionOptional1 = '_while_expression_optional1',
@@ -359,7 +356,10 @@ export const enum SyntaxKind {
 	Patterns = '_patterns',
 	StructPatternElements = '_struct_pattern_elements',
 	RangePatternArm2 = '_range_pattern_arm2',
-	BlockCommentArm1 = '_block_comment_arm1',
+	AttributeArm = '_attribute_arm',
+	VisibilityModifierGroup = '_visibility_modifier_group',
+	ArrayExpressionArm = '_array_expression_arm',
+	BlockCommentArm = '_block_comment_arm',
 	TupleTypeElements = '_tuple_type_elements',
 	TupleExpressionElements = '_tuple_expression_elements',
 	UseWildcardClause = '_use_wildcard_clause',
@@ -812,26 +812,26 @@ export const enum TSKindId {
 	_KwAsyncMarker = 324,
 	KwMoveMarker = 325,
 	MacroRules = 326,
-	AttributeArm1 = 327,
-	EnumVariantListElements = 328,
-	FieldDeclarationListElements = 329,
-	OrderedFieldDeclarationListElements = 330,
-	WherePredicates = 331,
-	TypeParametersElements = 332,
-	UseClauses = 333,
-	ParametersElements = 334,
-	VisibilityModifierGroup1 = 335,
-	Lifetimes = 336,
-	UseBoundsElements = 337,
-	TypeArgumentsElements = 338,
-	ArgumentsElements = 339,
-	ArrayExpressionArm1 = 340,
-	FieldInitializerListElements = 341,
-	TuplePatternElements = 342,
-	Patterns = 343,
-	StructPatternElements = 344,
-	RangePatternArm2 = 345,
-	BlockCommentArm1 = 346,
+	EnumVariantListElements = 327,
+	FieldDeclarationListElements = 328,
+	OrderedFieldDeclarationListElements = 329,
+	WherePredicates = 330,
+	TypeParametersElements = 331,
+	UseClauses = 332,
+	ParametersElements = 333,
+	Lifetimes = 334,
+	UseBoundsElements = 335,
+	TypeArgumentsElements = 336,
+	ArgumentsElements = 337,
+	FieldInitializerListElements = 338,
+	TuplePatternElements = 339,
+	Patterns = 340,
+	StructPatternElements = 341,
+	RangePatternArm2 = 342,
+	AttributeArm = 343,
+	VisibilityModifierGroup = 344,
+	ArrayExpressionArm = 345,
+	BlockCommentArm = 346,
 	TupleTypeElements = 347,
 	TupleExpressionElements = 348,
 	TokenTreePunctuation = 349,
@@ -1256,26 +1256,26 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[324, '_kw_async_marker'],
 	[325, '_kw_move_marker'],
 	[326, '_macro_rules'],
-	[327, '_attribute_arm1'],
-	[328, '_enum_variant_list_elements'],
-	[329, '_field_declaration_list_elements'],
-	[330, '_ordered_field_declaration_list_elements'],
-	[331, '_where_predicates'],
-	[332, '_type_parameters_elements'],
-	[333, '_use_clauses'],
-	[334, '_parameters_elements'],
-	[335, '_visibility_modifier_group1'],
-	[336, '_lifetimes'],
-	[337, '_use_bounds_elements'],
-	[338, '_type_arguments_elements'],
-	[339, '_arguments_elements'],
-	[340, '_array_expression_arm1'],
-	[341, '_field_initializer_list_elements'],
-	[342, '_tuple_pattern_elements'],
-	[343, '_patterns'],
-	[344, '_struct_pattern_elements'],
-	[345, '_range_pattern_arm2'],
-	[346, '_block_comment_arm1'],
+	[327, '_enum_variant_list_elements'],
+	[328, '_field_declaration_list_elements'],
+	[329, '_ordered_field_declaration_list_elements'],
+	[330, '_where_predicates'],
+	[331, '_type_parameters_elements'],
+	[332, '_use_clauses'],
+	[333, '_parameters_elements'],
+	[334, '_lifetimes'],
+	[335, '_use_bounds_elements'],
+	[336, '_type_arguments_elements'],
+	[337, '_arguments_elements'],
+	[338, '_field_initializer_list_elements'],
+	[339, '_tuple_pattern_elements'],
+	[340, '_patterns'],
+	[341, '_struct_pattern_elements'],
+	[342, '_range_pattern_arm2'],
+	[343, '_attribute_arm'],
+	[344, '_visibility_modifier_group'],
+	[345, '_array_expression_arm'],
+	[346, '_block_comment_arm'],
 	[347, '_tuple_type_elements'],
 	[348, '_tuple_expression_elements'],
 	[349, '_token_tree_punctuation'],
@@ -1701,26 +1701,26 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[324, '_kw_async_marker'],
 	[325, '_kw_move_marker'],
 	[326, 'macro_rules'],
-	[327, 'attribute_arm1'],
-	[328, 'enum_variant_list_elements'],
-	[329, 'field_declaration_list_elements'],
-	[330, 'ordered_field_declaration_list_elements'],
-	[331, 'where_predicates'],
-	[332, 'type_parameters_elements'],
-	[333, 'use_clauses'],
-	[334, 'parameters_elements'],
-	[335, 'visibility_modifier_group1'],
-	[336, 'lifetimes'],
-	[337, 'use_bounds_elements'],
-	[338, 'type_arguments_elements'],
-	[339, 'arguments_elements'],
-	[340, 'array_expression_arm1'],
-	[341, 'field_initializer_list_elements'],
-	[342, 'tuple_pattern_elements'],
-	[343, 'patterns'],
-	[344, 'struct_pattern_elements'],
-	[345, 'range_pattern_arm2'],
-	[346, 'block_comment_arm1'],
+	[327, 'enum_variant_list_elements'],
+	[328, 'field_declaration_list_elements'],
+	[329, 'ordered_field_declaration_list_elements'],
+	[330, 'where_predicates'],
+	[331, 'type_parameters_elements'],
+	[332, 'use_clauses'],
+	[333, 'parameters_elements'],
+	[334, 'lifetimes'],
+	[335, 'use_bounds_elements'],
+	[336, 'type_arguments_elements'],
+	[337, 'arguments_elements'],
+	[338, 'field_initializer_list_elements'],
+	[339, 'tuple_pattern_elements'],
+	[340, 'patterns'],
+	[341, 'struct_pattern_elements'],
+	[342, 'range_pattern_arm2'],
+	[343, 'attribute_arm'],
+	[344, 'visibility_modifier_group'],
+	[345, 'array_expression_arm'],
+	[346, 'block_comment_arm'],
 	[347, 'tuple_type_elements'],
 	[348, 'tuple_expression_elements'],
 	[349, 'token_tree_punctuation'],
@@ -2474,8 +2474,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.KwMoveMarker;
 		case '_macro_rules':
 			return TSKindId.MacroRules;
-		case '_attribute_arm1':
-			return TSKindId.AttributeArm1;
 		case '_enum_variant_list_elements':
 			return TSKindId.EnumVariantListElements;
 		case '_field_declaration_list_elements':
@@ -2490,8 +2488,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.UseClauses;
 		case '_parameters_elements':
 			return TSKindId.ParametersElements;
-		case '_visibility_modifier_group1':
-			return TSKindId.VisibilityModifierGroup1;
 		case '_lifetimes':
 			return TSKindId.Lifetimes;
 		case '_use_bounds_elements':
@@ -2500,8 +2496,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TypeArgumentsElements;
 		case '_arguments_elements':
 			return TSKindId.ArgumentsElements;
-		case '_array_expression_arm1':
-			return TSKindId.ArrayExpressionArm1;
 		case '_field_initializer_list_elements':
 			return TSKindId.FieldInitializerListElements;
 		case '_tuple_pattern_elements':
@@ -2512,8 +2506,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.StructPatternElements;
 		case '_range_pattern_arm2':
 			return TSKindId.RangePatternArm2;
-		case '_block_comment_arm1':
-			return TSKindId.BlockCommentArm1;
+		case '_attribute_arm':
+			return TSKindId.AttributeArm;
+		case '_visibility_modifier_group':
+			return TSKindId.VisibilityModifierGroup;
+		case '_array_expression_arm':
+			return TSKindId.ArrayExpressionArm;
+		case '_block_comment_arm':
+			return TSKindId.BlockCommentArm;
 		case '_tuple_type_elements':
 			return TSKindId.TupleTypeElements;
 		case '_tuple_expression_elements':
@@ -2836,8 +2836,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LetChain;
 		case 'macro_rules':
 			return TSKindId.MacroRules;
-		case 'attribute_arm1':
-			return TSKindId.AttributeArm1;
 		case 'enum_variant_list_elements':
 			return TSKindId.EnumVariantListElements;
 		case 'field_declaration_list_elements':
@@ -2852,8 +2850,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.UseClauses;
 		case 'parameters_elements':
 			return TSKindId.ParametersElements;
-		case 'visibility_modifier_group1':
-			return TSKindId.VisibilityModifierGroup1;
 		case 'lifetimes':
 			return TSKindId.Lifetimes;
 		case 'use_bounds_elements':
@@ -2862,8 +2858,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TypeArgumentsElements;
 		case 'arguments_elements':
 			return TSKindId.ArgumentsElements;
-		case 'array_expression_arm1':
-			return TSKindId.ArrayExpressionArm1;
 		case 'field_initializer_list_elements':
 			return TSKindId.FieldInitializerListElements;
 		case 'tuple_pattern_elements':
@@ -2874,8 +2868,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.StructPatternElements;
 		case 'range_pattern_arm2':
 			return TSKindId.RangePatternArm2;
-		case 'block_comment_arm1':
-			return TSKindId.BlockCommentArm1;
+		case 'attribute_arm':
+			return TSKindId.AttributeArm;
+		case 'visibility_modifier_group':
+			return TSKindId.VisibilityModifierGroup;
+		case 'array_expression_arm':
+			return TSKindId.ArrayExpressionArm;
+		case 'block_comment_arm':
+			return TSKindId.BlockCommentArm;
 		case 'tuple_type_elements':
 			return TSKindId.TupleTypeElements;
 		case 'tuple_expression_elements':
@@ -3565,9 +3565,9 @@ export interface InnerAttributeItem {
 export interface Attribute {
 	readonly $type: TSKindId.Attribute;
 	readonly _path: Path;
-	readonly _attribute_arm1?: AttributeArm1;
+	readonly _attribute_arm?: AttributeArm;
 	path(): Path;
-	attributeArm1(): AttributeArm1 | undefined;
+	attributeArm(): AttributeArm | undefined;
 }
 
 export interface ModItem {
@@ -4782,22 +4782,14 @@ export interface LineComment {
 
 export interface BlockComment {
 	readonly $type: TSKindId.BlockComment;
-	readonly _block_comment_arm1?: BlockCommentArm1;
-	blockCommentArm1(): BlockCommentArm1 | undefined;
+	readonly _block_comment_arm?: BlockCommentArm;
+	blockCommentArm(): BlockCommentArm | undefined;
 }
 
 export interface MacroRules {
 	readonly $type: TSKindId.MacroRules;
 	readonly _macro_rule: NonEmptyArray<MacroRule>;
 	macroRules(): NonEmptyArray<MacroRule>;
-}
-
-export interface AttributeArm1 {
-	readonly $type: TSKindId.AttributeArm1;
-	readonly _value?: Expression;
-	readonly _arguments?: DelimTokenTree;
-	value(): Expression | undefined;
-	arguments(): DelimTokenTree | undefined;
 }
 
 export interface EnumVariantListElements {
@@ -4890,12 +4882,6 @@ export interface VariadicParameterOptional1 {
 	pattern(): Pattern;
 }
 
-export interface VisibilityModifierGroup1 {
-	readonly $type: TSKindId.VisibilityModifierGroup1;
-	readonly _content: Self | Super | Crate | VisibilityModifierInPath;
-	content(): Self | Super | Crate | VisibilityModifierInPath;
-}
-
 export interface ArrayTypeOptional1 {
 	readonly $type: '_array_type_optional1';
 	readonly _length: Expression;
@@ -4930,14 +4916,6 @@ export interface ArgumentsElements {
 	readonly $type: TSKindId.ArgumentsElements;
 	readonly _element: NonEmptyArray<AttributedArgument>;
 	elements(): NonEmptyArray<AttributedArgument>;
-}
-
-export interface ArrayExpressionArm1 {
-	readonly $type: TSKindId.ArrayExpressionArm1;
-	readonly _expression: Expression;
-	readonly _length: Expression;
-	expression(): Expression;
-	length(): Expression;
 }
 
 export interface FieldInitializerListElements {
@@ -4984,8 +4962,30 @@ export interface RangePatternArm2 {
 	content(): RangePatternLeftWithRight | '..';
 }
 
-export interface BlockCommentArm1 {
-	readonly $type: TSKindId.BlockCommentArm1;
+export interface AttributeArm {
+	readonly $type: TSKindId.AttributeArm;
+	readonly _value?: Expression;
+	readonly _arguments?: DelimTokenTree;
+	value(): Expression | undefined;
+	arguments(): DelimTokenTree | undefined;
+}
+
+export interface VisibilityModifierGroup {
+	readonly $type: TSKindId.VisibilityModifierGroup;
+	readonly _content: Self | Super | Crate | VisibilityModifierInPath;
+	content(): Self | Super | Crate | VisibilityModifierInPath;
+}
+
+export interface ArrayExpressionArm {
+	readonly $type: TSKindId.ArrayExpressionArm;
+	readonly _expression: Expression;
+	readonly _length: Expression;
+	expression(): Expression;
+	length(): Expression;
+}
+
+export interface BlockCommentArm {
+	readonly $type: TSKindId.BlockCommentArm;
 	readonly _outer?: boolean;
 	readonly _inner?: boolean;
 	readonly _doc?: BlockCommentContent;
@@ -5046,9 +5046,9 @@ export interface ImplItemNegativeClause {
 export interface ArrayExpressionSemi {
 	readonly $type: TSKindId.ArrayExpressionSemi;
 	readonly _attributes?: readonly AttributeItem[];
-	readonly _array_expression_arm1: ArrayExpressionArm1;
+	readonly _array_expression_arm: ArrayExpressionArm;
 	attributes(): readonly AttributeItem[];
-	arrayExpressionArm1(): ArrayExpressionArm1;
+	arrayExpressionArm(): ArrayExpressionArm;
 }
 
 export interface ArrayExpressionList {
@@ -5201,12 +5201,12 @@ export interface StructItemTuple {
 export interface VisibilityModifierPub {
 	readonly $type: TSKindId.VisibilityModifierPub;
 	readonly _pub: AutoStamp<number>;
-	readonly _visibility_modifier_group1?: VisibilityModifierGroup1;
+	readonly _visibility_modifier_group?: VisibilityModifierGroup;
 	readonly __inputHints__?: {
 		readonly pub: AutoStamp<KindEnum<'pub', TSKindId.Pub>>;
 	};
 	pub(): AutoStamp<number>;
-	visibilityModifierGroup1(): VisibilityModifierGroup1 | undefined;
+	visibilityModifierGroup(): VisibilityModifierGroup | undefined;
 }
 
 export interface VisibilityModifierInPath {
@@ -5363,8 +5363,8 @@ export interface MatchBlockArms {
 
 export interface VisibilityModifierPubParens {
 	readonly $type: '_visibility_modifier_pub_parens';
-	readonly _visibility_modifier_group1: VisibilityModifierGroup1;
-	visibilityModifierGroup1(): VisibilityModifierGroup1;
+	readonly _visibility_modifier_group: VisibilityModifierGroup;
+	visibilityModifierGroup(): VisibilityModifierGroup;
 }
 
 // Leaf node types
@@ -5787,9 +5787,6 @@ export interface BlockCommentTree extends TreeNode<'block_comment'> {}
 export interface MacroRulesTree extends AnyTreeNode {
 	readonly type: '_macro_rules';
 }
-export interface AttributeArm1Tree extends AnyTreeNode {
-	readonly type: '_attribute_arm1';
-}
 export interface EnumVariantListElementsTree extends AnyTreeNode {
 	readonly type: '_enum_variant_list_elements';
 }
@@ -5835,9 +5832,6 @@ export interface ParametersElementsTree extends AnyTreeNode {
 export interface VariadicParameterOptional1Tree extends AnyTreeNode {
 	readonly type: '_variadic_parameter_optional1';
 }
-export interface VisibilityModifierGroup1Tree extends AnyTreeNode {
-	readonly type: '_visibility_modifier_group1';
-}
 export interface ArrayTypeOptional1Tree extends AnyTreeNode {
 	readonly type: '_array_type_optional1';
 }
@@ -5855,9 +5849,6 @@ export interface AbstractTypeOptional1Tree extends AnyTreeNode {
 }
 export interface ArgumentsElementsTree extends AnyTreeNode {
 	readonly type: '_arguments_elements';
-}
-export interface ArrayExpressionArm1Tree extends AnyTreeNode {
-	readonly type: '_array_expression_arm1';
 }
 export interface FieldInitializerListElementsTree extends AnyTreeNode {
 	readonly type: '_field_initializer_list_elements';
@@ -5880,8 +5871,17 @@ export interface StructPatternElementsTree extends AnyTreeNode {
 export interface RangePatternArm2Tree extends AnyTreeNode {
 	readonly type: '_range_pattern_arm2';
 }
-export interface BlockCommentArm1Tree extends AnyTreeNode {
-	readonly type: '_block_comment_arm1';
+export interface AttributeArmTree extends AnyTreeNode {
+	readonly type: '_attribute_arm';
+}
+export interface VisibilityModifierGroupTree extends AnyTreeNode {
+	readonly type: '_visibility_modifier_group';
+}
+export interface ArrayExpressionArmTree extends AnyTreeNode {
+	readonly type: '_array_expression_arm';
+}
+export interface BlockCommentArmTree extends AnyTreeNode {
+	readonly type: '_block_comment_arm';
 }
 export interface TupleTypeElementsTree extends AnyTreeNode {
 	readonly type: '_tuple_type_elements';
@@ -7121,7 +7121,6 @@ export type RustNode =
 	| LineComment
 	| BlockComment
 	| MacroRules
-	| AttributeArm1
 	| EnumVariantListElements
 	| EnumVariantOptional1
 	| FieldDeclarationListElements
@@ -7137,14 +7136,12 @@ export type RustNode =
 	| UseClauses
 	| ParametersElements
 	| VariadicParameterOptional1
-	| VisibilityModifierGroup1
 	| ArrayTypeOptional1
 	| Lifetimes
 	| UseBoundsElements
 	| TypeArgumentsElements
 	| AbstractTypeOptional1
 	| ArgumentsElements
-	| ArrayExpressionArm1
 	| FieldInitializerListElements
 	| MatchPatternOptional1
 	| WhileExpressionOptional1
@@ -7152,7 +7149,10 @@ export type RustNode =
 	| Patterns
 	| StructPatternElements
 	| RangePatternArm2
-	| BlockCommentArm1
+	| AttributeArm
+	| VisibilityModifierGroup
+	| ArrayExpressionArm
+	| BlockCommentArm
 	| TupleTypeElements
 	| TupleExpressionElements
 	| UseWildcardClause
@@ -7346,7 +7346,6 @@ export interface KindMap {
 	line_comment: LineComment;
 	block_comment: BlockComment;
 	_macro_rules: MacroRules;
-	_attribute_arm1: AttributeArm1;
 	_enum_variant_list_elements: EnumVariantListElements;
 	_enum_variant_optional1: EnumVariantOptional1;
 	_field_declaration_list_elements: FieldDeclarationListElements;
@@ -7362,14 +7361,12 @@ export interface KindMap {
 	_use_clauses: UseClauses;
 	_parameters_elements: ParametersElements;
 	_variadic_parameter_optional1: VariadicParameterOptional1;
-	_visibility_modifier_group1: VisibilityModifierGroup1;
 	_array_type_optional1: ArrayTypeOptional1;
 	_lifetimes: Lifetimes;
 	_use_bounds_elements: UseBoundsElements;
 	_type_arguments_elements: TypeArgumentsElements;
 	_abstract_type_optional1: AbstractTypeOptional1;
 	_arguments_elements: ArgumentsElements;
-	_array_expression_arm1: ArrayExpressionArm1;
 	_field_initializer_list_elements: FieldInitializerListElements;
 	_match_pattern_optional1: MatchPatternOptional1;
 	_while_expression_optional1: WhileExpressionOptional1;
@@ -7377,7 +7374,10 @@ export interface KindMap {
 	_patterns: Patterns;
 	_struct_pattern_elements: StructPatternElements;
 	_range_pattern_arm2: RangePatternArm2;
-	_block_comment_arm1: BlockCommentArm1;
+	_attribute_arm: AttributeArm;
+	_visibility_modifier_group: VisibilityModifierGroup;
+	_array_expression_arm: ArrayExpressionArm;
+	_block_comment_arm: BlockCommentArm;
 	_tuple_type_elements: TupleTypeElements;
 	_tuple_expression_elements: TupleExpressionElements;
 	_use_wildcard_clause: UseWildcardClause;
@@ -7694,7 +7694,6 @@ export interface CommentNs extends NodeNs<Comment, LeafScalarMap, LeafStringMap,
 export interface LineCommentNs extends NodeNs<LineComment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface BlockCommentNs extends NodeNs<BlockComment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MacroRulesNs extends NodeNs<MacroRules, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AttributeArm1Ns extends NodeNs<AttributeArm1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface EnumVariantListElementsNs extends NodeNs<
 	EnumVariantListElements,
 	LeafScalarMap,
@@ -7770,12 +7769,6 @@ export interface VariadicParameterOptional1Ns extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface VisibilityModifierGroup1Ns extends NodeNs<
-	VisibilityModifierGroup1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
 export interface ArrayTypeOptional1Ns extends NodeNs<ArrayTypeOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LifetimesNs extends NodeNs<Lifetimes, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface UseBoundsElementsNs extends NodeNs<UseBoundsElements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -7792,12 +7785,6 @@ export interface AbstractTypeOptional1Ns extends NodeNs<
 	NamespaceMap
 > {}
 export interface ArgumentsElementsNs extends NodeNs<ArgumentsElements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ArrayExpressionArm1Ns extends NodeNs<
-	ArrayExpressionArm1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
 export interface FieldInitializerListElementsNs extends NodeNs<
 	FieldInitializerListElements,
 	LeafScalarMap,
@@ -7830,7 +7817,15 @@ export interface StructPatternElementsNs extends NodeNs<
 	NamespaceMap
 > {}
 export interface RangePatternArm2Ns extends NodeNs<RangePatternArm2, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface BlockCommentArm1Ns extends NodeNs<BlockCommentArm1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AttributeArmNs extends NodeNs<AttributeArm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface VisibilityModifierGroupNs extends NodeNs<
+	VisibilityModifierGroup,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ArrayExpressionArmNs extends NodeNs<ArrayExpressionArm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface BlockCommentArmNs extends NodeNs<BlockCommentArm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TupleTypeElementsNs extends NodeNs<TupleTypeElements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TupleExpressionElementsNs extends NodeNs<
 	TupleExpressionElements,
@@ -8179,7 +8174,6 @@ export interface NamespaceMap {
 	line_comment: LineCommentNs;
 	block_comment: BlockCommentNs;
 	_macro_rules: MacroRulesNs;
-	_attribute_arm1: AttributeArm1Ns;
 	_enum_variant_list_elements: EnumVariantListElementsNs;
 	_enum_variant_optional1: EnumVariantOptional1Ns;
 	_field_declaration_list_elements: FieldDeclarationListElementsNs;
@@ -8195,14 +8189,12 @@ export interface NamespaceMap {
 	_use_clauses: UseClausesNs;
 	_parameters_elements: ParametersElementsNs;
 	_variadic_parameter_optional1: VariadicParameterOptional1Ns;
-	_visibility_modifier_group1: VisibilityModifierGroup1Ns;
 	_array_type_optional1: ArrayTypeOptional1Ns;
 	_lifetimes: LifetimesNs;
 	_use_bounds_elements: UseBoundsElementsNs;
 	_type_arguments_elements: TypeArgumentsElementsNs;
 	_abstract_type_optional1: AbstractTypeOptional1Ns;
 	_arguments_elements: ArgumentsElementsNs;
-	_array_expression_arm1: ArrayExpressionArm1Ns;
 	_field_initializer_list_elements: FieldInitializerListElementsNs;
 	_match_pattern_optional1: MatchPatternOptional1Ns;
 	_while_expression_optional1: WhileExpressionOptional1Ns;
@@ -8210,7 +8202,10 @@ export interface NamespaceMap {
 	_patterns: PatternsNs;
 	_struct_pattern_elements: StructPatternElementsNs;
 	_range_pattern_arm2: RangePatternArm2Ns;
-	_block_comment_arm1: BlockCommentArm1Ns;
+	_attribute_arm: AttributeArmNs;
+	_visibility_modifier_group: VisibilityModifierGroupNs;
+	_array_expression_arm: ArrayExpressionArmNs;
+	_block_comment_arm: BlockCommentArmNs;
 	_tuple_type_elements: TupleTypeElementsNs;
 	_tuple_expression_elements: TupleExpressionElementsNs;
 	_use_wildcard_clause: UseWildcardClauseNs;
@@ -9263,13 +9258,6 @@ export namespace MacroRules {
 	export type Tree = TreeFor<'_macro_rules'>;
 	export type Kind = '_macro_rules';
 }
-export namespace AttributeArm1 {
-	export type Config = ConfigFor<'_attribute_arm1'>;
-	export type Fluent = FluentFor<'_attribute_arm1'>;
-	export type Loose = LooseFor<'_attribute_arm1'>;
-	export type Tree = TreeFor<'_attribute_arm1'>;
-	export type Kind = '_attribute_arm1';
-}
 export namespace EnumVariantListElements {
 	export type Config = ConfigFor<'_enum_variant_list_elements'>;
 	export type Fluent = FluentFor<'_enum_variant_list_elements'>;
@@ -9375,13 +9363,6 @@ export namespace VariadicParameterOptional1 {
 	export type Tree = TreeFor<'_variadic_parameter_optional1'>;
 	export type Kind = '_variadic_parameter_optional1';
 }
-export namespace VisibilityModifierGroup1 {
-	export type Config = ConfigFor<'_visibility_modifier_group1'>;
-	export type Fluent = FluentFor<'_visibility_modifier_group1'>;
-	export type Loose = LooseFor<'_visibility_modifier_group1'>;
-	export type Tree = TreeFor<'_visibility_modifier_group1'>;
-	export type Kind = '_visibility_modifier_group1';
-}
 export namespace ArrayTypeOptional1 {
 	export type Config = ConfigFor<'_array_type_optional1'>;
 	export type Fluent = FluentFor<'_array_type_optional1'>;
@@ -9423,13 +9404,6 @@ export namespace ArgumentsElements {
 	export type Loose = LooseFor<'_arguments_elements'>;
 	export type Tree = TreeFor<'_arguments_elements'>;
 	export type Kind = '_arguments_elements';
-}
-export namespace ArrayExpressionArm1 {
-	export type Config = ConfigFor<'_array_expression_arm1'>;
-	export type Fluent = FluentFor<'_array_expression_arm1'>;
-	export type Loose = LooseFor<'_array_expression_arm1'>;
-	export type Tree = TreeFor<'_array_expression_arm1'>;
-	export type Kind = '_array_expression_arm1';
 }
 export namespace FieldInitializerListElements {
 	export type Config = ConfigFor<'_field_initializer_list_elements'>;
@@ -9480,12 +9454,33 @@ export namespace RangePatternArm2 {
 	export type Tree = TreeFor<'_range_pattern_arm2'>;
 	export type Kind = '_range_pattern_arm2';
 }
-export namespace BlockCommentArm1 {
-	export type Config = ConfigFor<'_block_comment_arm1'>;
-	export type Fluent = FluentFor<'_block_comment_arm1'>;
-	export type Loose = LooseFor<'_block_comment_arm1'>;
-	export type Tree = TreeFor<'_block_comment_arm1'>;
-	export type Kind = '_block_comment_arm1';
+export namespace AttributeArm {
+	export type Config = ConfigFor<'_attribute_arm'>;
+	export type Fluent = FluentFor<'_attribute_arm'>;
+	export type Loose = LooseFor<'_attribute_arm'>;
+	export type Tree = TreeFor<'_attribute_arm'>;
+	export type Kind = '_attribute_arm';
+}
+export namespace VisibilityModifierGroup {
+	export type Config = ConfigFor<'_visibility_modifier_group'>;
+	export type Fluent = FluentFor<'_visibility_modifier_group'>;
+	export type Loose = LooseFor<'_visibility_modifier_group'>;
+	export type Tree = TreeFor<'_visibility_modifier_group'>;
+	export type Kind = '_visibility_modifier_group';
+}
+export namespace ArrayExpressionArm {
+	export type Config = ConfigFor<'_array_expression_arm'>;
+	export type Fluent = FluentFor<'_array_expression_arm'>;
+	export type Loose = LooseFor<'_array_expression_arm'>;
+	export type Tree = TreeFor<'_array_expression_arm'>;
+	export type Kind = '_array_expression_arm';
+}
+export namespace BlockCommentArm {
+	export type Config = ConfigFor<'_block_comment_arm'>;
+	export type Fluent = FluentFor<'_block_comment_arm'>;
+	export type Loose = LooseFor<'_block_comment_arm'>;
+	export type Tree = TreeFor<'_block_comment_arm'>;
+	export type Kind = '_block_comment_arm';
 }
 export namespace TupleTypeElements {
 	export type Config = ConfigFor<'_tuple_type_elements'>;

@@ -71,14 +71,14 @@ describe('generate — new pipeline end-to-end', () => {
 		// A representative sample of operator tokens, not the full union —
 		// hardcoding the whole (now multi-line) KindEnum union makes this
 		// brittle to reformatting with no added signal. `in` is deliberately
-		// NOT checked here: it has its own field (`_binary_expression_arm1`),
+		// NOT checked here: it has its own field (`_binary_expression_arm`),
 		// not a member of `operator` — its left-hand side also accepts
 		// `private_property_identifier` (for `#field in obj`), which doesn't
 		// fit the uniform `left: Expression` shape the other operators share.
 		for (const token of ['&&', '||', '**', 'instanceof', '??']) {
 			expect(result.types).toContain(`"${token}"`);
 		}
-		expect(result.types).toContain('_binary_expression_arm1?: BinaryExpressionArm1');
+		expect(result.types).toContain('_binary_expression_arm?: BinaryExpressionArm');
 		expect(result.factories.length).toBeGreaterThan(0);
 		expect(result.nodeMap.nodes.size).toBeGreaterThan(100);
 	}, 30000);

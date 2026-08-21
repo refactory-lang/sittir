@@ -366,14 +366,14 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_import_statement_arm1",
+                  "name": "_import_statement_arm",
                   "metadata": {
                     "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
                 "named": true,
-                "value": "import_statement_arm1",
+                "value": "import_statement_arm",
                 "metadata": {
                   "author": "enrich"
                 }
@@ -1731,14 +1731,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_catch_clause_group1",
+                "name": "_catch_clause_group",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "catch_clause_group1",
+              "value": "catch_clause_group",
               "metadata": {
                 "author": "enrich"
               }
@@ -5080,14 +5080,14 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_binary_expression_arm1",
+              "name": "_binary_expression_arm",
               "metadata": {
                 "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
             "named": true,
-            "value": "binary_expression_arm1",
+            "value": "binary_expression_arm",
             "metadata": {
               "author": "enrich"
             }
@@ -11024,41 +11024,6 @@
         }
       ]
     },
-    "_import_statement_arm1": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "import_clause"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_from_clause"
-        }
-      ]
-    },
-    "_import_clause_group1": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": ","
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "namespace_import"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "named_imports"
-            }
-          ]
-        }
-      ]
-    },
     "_import_specifiers": {
       "type": "SEQ",
       "members": [
@@ -11189,52 +11154,6 @@
         ]
       }
     },
-    "_catch_clause_group1": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "("
-        },
-        {
-          "type": "FIELD",
-          "name": "parameter",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_destructuring_pattern"
-              }
-            ]
-          }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "type",
-              "content": {
-                "type": "SYMBOL",
-                "name": "type_annotation"
-              }
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "STRING",
-          "value": ")"
-        }
-      ]
-    },
     "_jsx_attribute_optional1": {
       "type": "SEQ",
       "members": [
@@ -11247,48 +11166,6 @@
           "name": "_jsx_attribute_value"
         }
       ]
-    },
-    "_binary_expression_arm1": {
-      "type": "PREC_LEFT",
-      "value": "binary_relation",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "FIELD",
-            "name": "left",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "expression"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "private_property_identifier"
-                }
-              ]
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "operator",
-            "content": {
-              "type": "STRING",
-              "value": "in"
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "right",
-            "content": {
-              "type": "SYMBOL",
-              "name": "expression"
-            }
-          }
-        ]
-      }
     },
     "_meta_property_arm1": {
       "type": "SEQ",
@@ -11372,49 +11249,6 @@
               "type": "BLANK"
             }
           ]
-        }
-      ]
-    },
-    "_jsx_start_opening_element_arm1": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "FIELD",
-          "name": "name",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "identifier"
-              },
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "nested_identifier"
-                },
-                "named": true,
-                "value": "member_expression"
-              }
-            ]
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "type_arguments",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "type_arguments"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
         }
       ]
     },
@@ -11723,6 +11557,172 @@
               "type": "BLANK"
             }
           ]
+        }
+      ]
+    },
+    "_import_statement_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "import_clause"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_from_clause"
+        }
+      ]
+    },
+    "_import_clause_group": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ","
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "namespace_import"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "named_imports"
+            }
+          ]
+        }
+      ]
+    },
+    "_catch_clause_group": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "FIELD",
+          "name": "parameter",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_destructuring_pattern"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "type",
+              "content": {
+                "type": "SYMBOL",
+                "name": "type_annotation"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "_binary_expression_arm": {
+      "type": "PREC_LEFT",
+      "value": "binary_relation",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "left",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "private_property_identifier"
+                }
+              ]
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "operator",
+            "content": {
+              "type": "STRING",
+              "value": "in"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "right",
+            "content": {
+              "type": "SYMBOL",
+              "name": "expression"
+            }
+          }
+        ]
+      }
+    },
+    "_jsx_start_opening_element_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "nested_identifier"
+                },
+                "named": true,
+                "value": "member_expression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "type_arguments",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "type_arguments"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
         }
       ]
     },
@@ -12136,14 +12136,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_import_clause_group1",
+                "name": "_import_clause_group",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "import_clause_group1",
+              "value": "import_clause_group",
               "metadata": {
                 "author": "enrich"
               }
@@ -13280,10 +13280,10 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_jsx_start_opening_element_arm1"
+                "name": "_jsx_start_opening_element_arm"
               },
               "named": true,
-              "value": "jsx_start_opening_element_arm1"
+              "value": "jsx_start_opening_element_arm"
             }
           ]
         },
@@ -13838,104 +13838,104 @@
     ],
     [
       "await_expression",
-      "_binary_expression_arm1"
+      "_binary_expression_arm"
     ],
     [
       "as_expression",
-      "_binary_expression_arm1"
+      "_binary_expression_arm"
     ],
     [
       "_call_expression_call",
-      "_binary_expression_arm1"
+      "_binary_expression_arm"
     ],
     [
       "call_expression",
-      "_binary_expression_arm1",
+      "_binary_expression_arm",
       "unary_expression",
       "instantiation_expression"
     ],
     [
       "call_expression",
       "await_expression",
-      "_binary_expression_arm1",
+      "_binary_expression_arm",
       "instantiation_expression"
     ],
     [
       "call_expression",
-      "_binary_expression_arm1",
+      "_binary_expression_arm",
       "update_expression",
       "instantiation_expression"
     ],
     [
       "call_expression",
-      "_binary_expression_arm1",
+      "_binary_expression_arm",
       "instantiation_expression"
     ],
     [
       "_initializer",
-      "_binary_expression_arm1"
+      "_binary_expression_arm"
     ],
     [
-      "_binary_expression_arm1",
+      "_binary_expression_arm",
       "unary_expression",
       "instantiation_expression",
       "_call_expression_call"
     ],
     [
       "await_expression",
-      "_binary_expression_arm1",
+      "_binary_expression_arm",
       "instantiation_expression",
       "_call_expression_call"
     ],
     [
-      "_binary_expression_arm1",
+      "_binary_expression_arm",
       "update_expression",
       "instantiation_expression",
       "_call_expression_call"
     ],
     [
-      "_binary_expression_arm1",
+      "_binary_expression_arm",
       "instantiation_expression",
       "_call_expression_call"
     ],
     [
       "subscript_expression",
-      "_binary_expression_arm1"
+      "_binary_expression_arm"
     ],
     [
       "member_expression",
-      "_binary_expression_arm1"
+      "_binary_expression_arm"
     ],
     [
       "member_expression",
       "subscript_expression",
-      "_binary_expression_arm1"
+      "_binary_expression_arm"
     ],
     [
       "binary_expression",
       "instantiation_expression",
       "_call_expression_call",
-      "_binary_expression_arm1"
+      "_binary_expression_arm"
     ],
     [
       "non_null_expression",
-      "_binary_expression_arm1"
+      "_binary_expression_arm"
     ],
     [
       "satisfies_expression",
-      "_binary_expression_arm1"
+      "_binary_expression_arm"
     ],
     [
-      "_binary_expression_arm1",
+      "_binary_expression_arm",
       "_update_expression_postfix"
     ],
     [
-      "_binary_expression_arm1",
+      "_binary_expression_arm",
       "_update_expression_prefix"
     ],
     [
       "ternary_expression",
-      "_binary_expression_arm1"
+      "_binary_expression_arm"
     ],
     [
       "arrow_function",
@@ -13943,7 +13943,7 @@
     ],
     [
       "arrow_function",
-      "_binary_expression_arm1"
+      "_binary_expression_arm"
     ],
     [
       "expression",
@@ -14120,20 +14120,6 @@
       "_export_specifiers"
     ],
     [
-      "import_statement",
-      "_import_statement_arm1"
-    ],
-    [
-      "_import_statement_arm1"
-    ],
-    [
-      "import_clause",
-      "_import_clause_group1"
-    ],
-    [
-      "_import_clause_group1"
-    ],
-    [
       "named_imports",
       "_import_specifiers"
     ],
@@ -14162,25 +14148,11 @@
       "_lhs_expression"
     ],
     [
-      "catch_clause",
-      "_catch_clause_group1"
-    ],
-    [
-      "_catch_clause_group1"
-    ],
-    [
       "arrow_function",
       "_call_signature"
     ],
     [
       "_call_signature"
-    ],
-    [
-      "binary_expression",
-      "_binary_expression_arm1"
-    ],
-    [
-      "_binary_expression_arm1"
     ],
     [
       "meta_property",
@@ -14202,13 +14174,6 @@
     ],
     [
       "_formal_parameters_elements"
-    ],
-    [
-      "_jsx_start_opening_element",
-      "_jsx_start_opening_element_arm1"
-    ],
-    [
-      "_jsx_start_opening_element_arm1"
     ],
     [
       "enum_body",
@@ -14237,6 +14202,41 @@
     ],
     [
       "_tuple_type_members"
+    ],
+    [
+      "import_statement",
+      "_import_statement_arm"
+    ],
+    [
+      "_import_statement_arm"
+    ],
+    [
+      "import_clause",
+      "_import_clause_group"
+    ],
+    [
+      "_import_clause_group"
+    ],
+    [
+      "catch_clause",
+      "_catch_clause_group"
+    ],
+    [
+      "_catch_clause_group"
+    ],
+    [
+      "binary_expression",
+      "_binary_expression_arm"
+    ],
+    [
+      "_binary_expression_arm"
+    ],
+    [
+      "_jsx_start_opening_element",
+      "_jsx_start_opening_element_arm"
+    ],
+    [
+      "_jsx_start_opening_element_arm"
     ]
   ],
   "precedences": [
@@ -14894,11 +14894,22 @@
     "_type_identifier",
     "_jsx_start_opening_element",
     "_export_specifier_optional1",
+    "_import_statement_arm1",
+    "_import_clause_group1",
+    "_import_clause_arm1",
+    "_import_specifier_arm1",
+    "_catch_clause_group1",
+    "_parenthesized_expression_arm1",
     "_jsx_attribute_optional1",
+    "_class_heritage_arm1",
+    "_binary_expression_arm1",
+    "_jsx_start_opening_element_arm1",
     "__jsx_start_opening_element_optional1",
+    "_ambient_declaration_arm1",
     "_infer_type_optional1",
     "_mapped_type_clause_optional1",
     "_index_signature_optional1",
+    "_index_signature_arm1",
     "_kw_optional_marker",
     "_kw_readonly_marker"
   ],

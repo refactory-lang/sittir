@@ -190,7 +190,6 @@ pub enum AnyTransport {
     KwRefMarker(KwRefMarkerTransport),
     KwMoveMarker(KwMoveMarkerTransport),
     MacroRules(MacroRulesTransport),
-    AttributeArm1(AttributeArm1Transport),
     EnumVariantListElements(EnumVariantListElementsTransport),
     EnumVariantOptional1(EnumVariantOptional1Transport),
     FieldDeclarationListElements(FieldDeclarationListElementsTransport),
@@ -206,14 +205,12 @@ pub enum AnyTransport {
     UseClauses(UseClausesTransport),
     ParametersElements(ParametersElementsTransport),
     VariadicParameterOptional1(VariadicParameterOptional1Transport),
-    VisibilityModifierGroup1(VisibilityModifierGroup1Transport),
     ArrayTypeOptional1(ArrayTypeOptional1Transport),
     Lifetimes(LifetimesTransport),
     UseBoundsElements(UseBoundsElementsTransport),
     TypeArgumentsElements(TypeArgumentsElementsTransport),
     AbstractTypeOptional1(AbstractTypeOptional1Transport),
     ArgumentsElements(ArgumentsElementsTransport),
-    ArrayExpressionArm1(ArrayExpressionArm1Transport),
     FieldInitializerListElements(FieldInitializerListElementsTransport),
     MatchPatternOptional1(MatchPatternOptional1Transport),
     WhileExpressionOptional1(WhileExpressionOptional1Transport),
@@ -221,7 +218,10 @@ pub enum AnyTransport {
     Patterns(PatternsTransport),
     StructPatternElements(StructPatternElementsTransport),
     RangePatternArm2(RangePatternArm2Transport),
-    BlockCommentArm1(BlockCommentArm1Transport),
+    AttributeArm(AttributeArmTransport),
+    VisibilityModifierGroup(VisibilityModifierGroupTransport),
+    ArrayExpressionArm(ArrayExpressionArmTransport),
+    BlockCommentArm(BlockCommentArmTransport),
     CompoundAssignmentExprOperator(CompoundAssignmentExprOperatorEnum),
     TupleTypeElements(TupleTypeElementsTransport),
     TupleExpressionElements(TupleExpressionElementsTransport),
@@ -1093,85 +1093,85 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 326 => Ok(AnyTransport::MacroRules(
                     MacroRulesTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _attribute_arm1 (_ATTRIBUTE_ARM1)
-                327 => Ok(AnyTransport::AttributeArm1(
-                    AttributeArm1Transport::from_napi_value(env, napi_val)?
-                )),
                 // kind: _enum_variant_list_elements (_ENUM_VARIANT_LIST_ELEMENTS)
-                328 => Ok(AnyTransport::EnumVariantListElements(
+                327 => Ok(AnyTransport::EnumVariantListElements(
                     EnumVariantListElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _field_declaration_list_elements (_FIELD_DECLARATION_LIST_ELEMENTS)
-                329 => Ok(AnyTransport::FieldDeclarationListElements(
+                328 => Ok(AnyTransport::FieldDeclarationListElements(
                     FieldDeclarationListElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _ordered_field_declaration_list_elements (_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS)
-                330 => Ok(AnyTransport::OrderedFieldDeclarationListElements(
+                329 => Ok(AnyTransport::OrderedFieldDeclarationListElements(
                     OrderedFieldDeclarationListElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _where_predicates (_WHERE_PREDICATES)
-                331 => Ok(AnyTransport::WherePredicates(
+                330 => Ok(AnyTransport::WherePredicates(
                     WherePredicatesTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_parameters_elements (_TYPE_PARAMETERS_ELEMENTS)
-                332 => Ok(AnyTransport::TypeParametersElements(
+                331 => Ok(AnyTransport::TypeParametersElements(
                     TypeParametersElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _use_clauses (_USE_CLAUSES)
-                333 => Ok(AnyTransport::UseClauses(
+                332 => Ok(AnyTransport::UseClauses(
                     UseClausesTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _parameters_elements (_PARAMETERS_ELEMENTS)
-                334 => Ok(AnyTransport::ParametersElements(
+                333 => Ok(AnyTransport::ParametersElements(
                     ParametersElementsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _visibility_modifier_group1 (_VISIBILITY_MODIFIER_GROUP1)
-                335 => Ok(AnyTransport::VisibilityModifierGroup1(
-                    VisibilityModifierGroup1Transport::from_napi_value(env, napi_val)?
-                )),
                 // kind: _lifetimes (_LIFETIMES)
-                336 => Ok(AnyTransport::Lifetimes(
+                334 => Ok(AnyTransport::Lifetimes(
                     LifetimesTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _use_bounds_elements (_USE_BOUNDS_ELEMENTS)
-                337 => Ok(AnyTransport::UseBoundsElements(
+                335 => Ok(AnyTransport::UseBoundsElements(
                     UseBoundsElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_arguments_elements (_TYPE_ARGUMENTS_ELEMENTS)
-                338 => Ok(AnyTransport::TypeArgumentsElements(
+                336 => Ok(AnyTransport::TypeArgumentsElements(
                     TypeArgumentsElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _arguments_elements (_ARGUMENTS_ELEMENTS)
-                339 => Ok(AnyTransport::ArgumentsElements(
+                337 => Ok(AnyTransport::ArgumentsElements(
                     ArgumentsElementsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _array_expression_arm1 (_ARRAY_EXPRESSION_ARM1)
-                340 => Ok(AnyTransport::ArrayExpressionArm1(
-                    ArrayExpressionArm1Transport::from_napi_value(env, napi_val)?
-                )),
                 // kind: _field_initializer_list_elements (_FIELD_INITIALIZER_LIST_ELEMENTS)
-                341 => Ok(AnyTransport::FieldInitializerListElements(
+                338 => Ok(AnyTransport::FieldInitializerListElements(
                     FieldInitializerListElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _tuple_pattern_elements (_TUPLE_PATTERN_ELEMENTS)
-                342 => Ok(AnyTransport::TuplePatternElements(
+                339 => Ok(AnyTransport::TuplePatternElements(
                     TuplePatternElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _patterns (_PATTERNS)
-                343 => Ok(AnyTransport::Patterns(
+                340 => Ok(AnyTransport::Patterns(
                     PatternsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _struct_pattern_elements (_STRUCT_PATTERN_ELEMENTS)
-                344 => Ok(AnyTransport::StructPatternElements(
+                341 => Ok(AnyTransport::StructPatternElements(
                     StructPatternElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _range_pattern_arm2 (_RANGE_PATTERN_ARM2)
-                345 => Ok(AnyTransport::RangePatternArm2(
+                342 => Ok(AnyTransport::RangePatternArm2(
                     RangePatternArm2Transport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _block_comment_arm1 (_BLOCK_COMMENT_ARM1)
-                346 => Ok(AnyTransport::BlockCommentArm1(
-                    BlockCommentArm1Transport::from_napi_value(env, napi_val)?
+                // kind: _attribute_arm (_ATTRIBUTE_ARM)
+                343 => Ok(AnyTransport::AttributeArm(
+                    AttributeArmTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _visibility_modifier_group (_VISIBILITY_MODIFIER_GROUP)
+                344 => Ok(AnyTransport::VisibilityModifierGroup(
+                    VisibilityModifierGroupTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _array_expression_arm (_ARRAY_EXPRESSION_ARM)
+                345 => Ok(AnyTransport::ArrayExpressionArm(
+                    ArrayExpressionArmTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _block_comment_arm (_BLOCK_COMMENT_ARM)
+                346 => Ok(AnyTransport::BlockCommentArm(
+                    BlockCommentArmTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _tuple_type_elements (_TUPLE_TYPE_ELEMENTS)
                 347 => Ok(AnyTransport::TupleTypeElements(
@@ -25883,7 +25883,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternContentTransportSlot
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    345 => Ok(Self::RangePatternArm2(
+                    342 => Ok(Self::RangePatternArm2(
                         RangePatternArm2Transport::from_napi_value(env, napi_val)?
                     )),
                     377 => Ok(Self::RangePatternPrefix(
@@ -25900,7 +25900,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternContentTransportSlot
                     ::napi::Error::from_reason("$type property missing in RangePatternContentTransportSlot")
                 )?;
                 match kind_id {
-                    345 => Ok(Self::RangePatternArm2(
+                    342 => Ok(Self::RangePatternArm2(
                         RangePatternArm2Transport::from_napi_value(env, napi_val)?
                     )),
                     377 => Ok(Self::RangePatternPrefix(
@@ -26775,128 +26775,6 @@ impl RenderableTransport for ConstParameterOptional1ValueTransportSlot {
             ConstParameterOptional1ValueTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
             ConstParameterOptional1ValueTransportSlot::NegativeLiteral(inner) => inner.render_into(dest),
             ConstParameterOptional1ValueTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum VisibilityModifierGroup1ContentTransportSlot {
-    Self_(Self_Transport),
-    Super(SuperTransport),
-    Crate(CrateTransport),
-    VisibilityModifierInPath(VisibilityModifierInPathTransport),
-    Verbatim(VerbatimTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierGroup1ContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    132 => Ok(Self::Self_(
-                        Self_Transport::from_napi_value(env, napi_val)?
-                    )),
-                    133 => Ok(Self::Super(
-                        SuperTransport::from_napi_value(env, napi_val)?
-                    )),
-                    134 => Ok(Self::Crate(
-                        CrateTransport::from_napi_value(env, napi_val)?
-                    )),
-                    384 => Ok(Self::VisibilityModifierInPath(
-                        VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in VisibilityModifierGroup1ContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => {
-                let text = String::from_napi_value(env, napi_val)?;
-                Ok(Self::Verbatim(VerbatimTransport { text }))
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in VisibilityModifierGroup1ContentTransportSlot")
-                )?;
-                match kind_id {
-                    132 => Ok(Self::Self_(
-                        Self_Transport::from_napi_value(env, napi_val)?
-                    )),
-                    133 => Ok(Self::Super(
-                        SuperTransport::from_napi_value(env, napi_val)?
-                    )),
-                    134 => Ok(Self::Crate(
-                        CrateTransport::from_napi_value(env, napi_val)?
-                    )),
-                    384 => Ok(Self::VisibilityModifierInPath(
-                        VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in VisibilityModifierGroup1ContentTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("VisibilityModifierGroup1ContentTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for VisibilityModifierGroup1ContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("VisibilityModifierGroup1ContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<VisibilityModifierGroup1ContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        VisibilityModifierGroup1ContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierGroup1ContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        VisibilityModifierGroup1ContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn visibility_modifier_group1_content_transport_slot_to_any(t: VisibilityModifierGroup1ContentTransportSlot) -> AnyTransport {
-    match t {
-        VisibilityModifierGroup1ContentTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
-        VisibilityModifierGroup1ContentTransportSlot::Super(inner) => AnyTransport::Super(inner),
-        VisibilityModifierGroup1ContentTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
-        VisibilityModifierGroup1ContentTransportSlot::VisibilityModifierInPath(inner) => AnyTransport::VisibilityModifierInPath(inner),
-        VisibilityModifierGroup1ContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl RenderableTransport for VisibilityModifierGroup1ContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            VisibilityModifierGroup1ContentTransportSlot::Self_(inner) => inner.render_into(dest),
-            VisibilityModifierGroup1ContentTransportSlot::Super(inner) => inner.render_into(dest),
-            VisibilityModifierGroup1ContentTransportSlot::Crate(inner) => inner.render_into(dest),
-            VisibilityModifierGroup1ContentTransportSlot::VisibilityModifierInPath(inner) => inner.render_into(dest),
-            VisibilityModifierGroup1ContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -28212,12 +28090,16 @@ impl RenderableTransport for RangePatternArm2ContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum BlockCommentArm1OuterTransportSlot {
-    Literal37_5f_6f_75_74_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72,
+pub enum VisibilityModifierGroupContentTransportSlot {
+    Self_(Self_Transport),
+    Super(SuperTransport),
+    Crate(CrateTransport),
+    VisibilityModifierInPath(VisibilityModifierInPathTransport),
+    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for BlockCommentArm1OuterTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierGroupContentTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -28225,83 +28107,201 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlockCommentArm1OuterTransportSl
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    152 => Ok(Self::Literal37_5f_6f_75_74_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72),
+                    132 => Ok(Self::Self_(
+                        Self_Transport::from_napi_value(env, napi_val)?
+                    )),
+                    133 => Ok(Self::Super(
+                        SuperTransport::from_napi_value(env, napi_val)?
+                    )),
+                    134 => Ok(Self::Crate(
+                        CrateTransport::from_napi_value(env, napi_val)?
+                    )),
+                    384 => Ok(Self::VisibilityModifierInPath(
+                        VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BlockCommentArm1OuterTransportSlot",
+                        "unknown kind id {other} in VisibilityModifierGroupContentTransportSlot",
                     ))),
                 }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in BlockCommentArm1OuterTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in VisibilityModifierGroupContentTransportSlot")
                 )?;
                 match kind_id {
-                    152 => Ok(Self::Literal37_5f_6f_75_74_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72),
+                    132 => Ok(Self::Self_(
+                        Self_Transport::from_napi_value(env, napi_val)?
+                    )),
+                    133 => Ok(Self::Super(
+                        SuperTransport::from_napi_value(env, napi_val)?
+                    )),
+                    134 => Ok(Self::Crate(
+                        CrateTransport::from_napi_value(env, napi_val)?
+                    )),
+                    384 => Ok(Self::VisibilityModifierInPath(
+                        VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BlockCommentArm1OuterTransportSlot",
+                        "unknown kind id {other} in VisibilityModifierGroupContentTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("BlockCommentArm1OuterTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("VisibilityModifierGroupContentTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BlockCommentArm1OuterTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for VisibilityModifierGroupContentTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("BlockCommentArm1OuterTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("VisibilityModifierGroupContentTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BlockCommentArm1OuterTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<VisibilityModifierGroupContentTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        BlockCommentArm1OuterTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        VisibilityModifierGroupContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BlockCommentArm1OuterTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierGroupContentTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        BlockCommentArm1OuterTransportSlot::to_napi_value(env, *val)
+        VisibilityModifierGroupContentTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn block_comment_arm1_outer_transport_slot_to_any(t: BlockCommentArm1OuterTransportSlot) -> AnyTransport {
+fn visibility_modifier_group_content_transport_slot_to_any(t: VisibilityModifierGroupContentTransportSlot) -> AnyTransport {
     match t {
-        BlockCommentArm1OuterTransportSlot::Literal37_5f_6f_75_74_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal37_5f_6f_75_74_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72,
+        VisibilityModifierGroupContentTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
+        VisibilityModifierGroupContentTransportSlot::Super(inner) => AnyTransport::Super(inner),
+        VisibilityModifierGroupContentTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
+        VisibilityModifierGroupContentTransportSlot::VisibilityModifierInPath(inner) => AnyTransport::VisibilityModifierInPath(inner),
+        VisibilityModifierGroupContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for BlockCommentArm1OuterTransportSlot {
+impl RenderableTransport for VisibilityModifierGroupContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            BlockCommentArm1OuterTransportSlot::Literal37_5f_6f_75_74_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72 => dest.write_str("*").map_err(::askama::Error::from),
+            VisibilityModifierGroupContentTransportSlot::Self_(inner) => inner.render_into(dest),
+            VisibilityModifierGroupContentTransportSlot::Super(inner) => inner.render_into(dest),
+            VisibilityModifierGroupContentTransportSlot::Crate(inner) => inner.render_into(dest),
+            VisibilityModifierGroupContentTransportSlot::VisibilityModifierInPath(inner) => inner.render_into(dest),
+            VisibilityModifierGroupContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum BlockCommentArm1InnerTransportSlot {
+pub enum BlockCommentArmOuterTransportSlot {
+    Literal37_5f_6f_75_74_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for BlockCommentArmOuterTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    152 => Ok(Self::Literal37_5f_6f_75_74_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in BlockCommentArmOuterTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in BlockCommentArmOuterTransportSlot")
+                )?;
+                match kind_id {
+                    152 => Ok(Self::Literal37_5f_6f_75_74_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in BlockCommentArmOuterTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("BlockCommentArmOuterTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BlockCommentArmOuterTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("BlockCommentArmOuterTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BlockCommentArmOuterTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        BlockCommentArmOuterTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BlockCommentArmOuterTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        BlockCommentArmOuterTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn block_comment_arm_outer_transport_slot_to_any(t: BlockCommentArmOuterTransportSlot) -> AnyTransport {
+    match t {
+        BlockCommentArmOuterTransportSlot::Literal37_5f_6f_75_74_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal37_5f_6f_75_74_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for BlockCommentArmOuterTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            BlockCommentArmOuterTransportSlot::Literal37_5f_6f_75_74_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72 => dest.write_str("*").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum BlockCommentArmInnerTransportSlot {
     Literal38_5f_69_6e_6e_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for BlockCommentArm1InnerTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for BlockCommentArmInnerTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -28311,70 +28311,70 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlockCommentArm1InnerTransportSl
                 match u16::from_napi_value(env, napi_val)? {
                     153 => Ok(Self::Literal38_5f_69_6e_6e_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BlockCommentArm1InnerTransportSlot",
+                        "unknown kind id {other} in BlockCommentArmInnerTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in BlockCommentArm1InnerTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in BlockCommentArmInnerTransportSlot")
                 )?;
                 match kind_id {
                     153 => Ok(Self::Literal38_5f_69_6e_6e_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BlockCommentArm1InnerTransportSlot",
+                        "unknown kind id {other} in BlockCommentArmInnerTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("BlockCommentArm1InnerTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("BlockCommentArmInnerTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BlockCommentArm1InnerTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for BlockCommentArmInnerTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("BlockCommentArm1InnerTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("BlockCommentArmInnerTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BlockCommentArm1InnerTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BlockCommentArmInnerTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        BlockCommentArm1InnerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        BlockCommentArmInnerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BlockCommentArm1InnerTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BlockCommentArmInnerTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        BlockCommentArm1InnerTransportSlot::to_napi_value(env, *val)
+        BlockCommentArmInnerTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn block_comment_arm1_inner_transport_slot_to_any(t: BlockCommentArm1InnerTransportSlot) -> AnyTransport {
+fn block_comment_arm_inner_transport_slot_to_any(t: BlockCommentArmInnerTransportSlot) -> AnyTransport {
     match t {
-        BlockCommentArm1InnerTransportSlot::Literal38_5f_69_6e_6e_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal38_5f_69_6e_6e_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72,
+        BlockCommentArmInnerTransportSlot::Literal38_5f_69_6e_6e_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal38_5f_69_6e_6e_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72,
     }
 }
 
-impl RenderableTransport for BlockCommentArm1InnerTransportSlot {
+impl RenderableTransport for BlockCommentArmInnerTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            BlockCommentArm1InnerTransportSlot::Literal38_5f_69_6e_6e_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72 => dest.write_str("!").map_err(::askama::Error::from),
+            BlockCommentArmInnerTransportSlot::Literal38_5f_69_6e_6e_65_72_5f_62_6c_6f_63_6b_5f_64_6f_63_5f_63_6f_6d_6d_65_6e_74_5f_6d_61_72_6b_65_72 => dest.write_str("!").map_err(::askama::Error::from),
         }
     }
 }
@@ -32924,8 +32924,8 @@ pub struct AttributeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_path"))]
     pub path: PathTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute_arm1"))]
-    pub attribute_arm1: Option<AttributeArm1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute_arm"))]
+    pub attribute_arm: Option<AttributeArmTransport>,
 }
 
 impl RenderableTransport for AttributeTransport {
@@ -40922,8 +40922,8 @@ pub struct BlockCommentTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block_comment_arm1"))]
-    pub block_comment_arm1: Option<BlockCommentArm1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block_comment_arm"))]
+    pub block_comment_arm: Option<BlockCommentArmTransport>,
 }
 
 impl RenderableTransport for BlockCommentTransport {
@@ -42417,58 +42417,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MacroRulesTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct AttributeArm1Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
-    pub arguments: Option<DelimTokenTreeTransport>,
-}
-
-impl RenderableTransport for AttributeArm1Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_attribute_arm1(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AttributeArm1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        AttributeArm1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AttributeArm1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        AttributeArm1Transport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
 pub struct EnumVariantListElementsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
@@ -43233,56 +43181,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<VariadicParameterOptional1Tran
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct VisibilityModifierGroup1Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: VisibilityModifierGroup1ContentTransportSlot,
-}
-
-impl RenderableTransport for VisibilityModifierGroup1Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_visibility_modifier_group1(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<VisibilityModifierGroup1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        VisibilityModifierGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierGroup1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        VisibilityModifierGroup1Transport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
 pub struct ArrayTypeOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
@@ -43586,58 +43484,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ArgumentsElementsTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ArgumentsElementsTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct ArrayExpressionArm1Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_length"))]
-    pub length: Box<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: Box<ExpressionTransport>,
-}
-
-impl RenderableTransport for ArrayExpressionArm1Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_array_expression_arm1(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ArrayExpressionArm1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ArrayExpressionArm1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ArrayExpressionArm1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ArrayExpressionArm1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -44003,7 +43849,161 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RangePatternArm2Transport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct BlockCommentArm1Transport {
+pub struct AttributeArmTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    pub value: Option<ExpressionTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
+    pub arguments: Option<DelimTokenTreeTransport>,
+}
+
+impl RenderableTransport for AttributeArmTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_attribute_arm(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AttributeArmTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        AttributeArmTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AttributeArmTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        AttributeArmTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct VisibilityModifierGroupTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: VisibilityModifierGroupContentTransportSlot,
+}
+
+impl RenderableTransport for VisibilityModifierGroupTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_visibility_modifier_group(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<VisibilityModifierGroupTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        VisibilityModifierGroupTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierGroupTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        VisibilityModifierGroupTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct ArrayExpressionArmTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_length"))]
+    pub length: Box<ExpressionTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    pub expression: Box<ExpressionTransport>,
+}
+
+impl RenderableTransport for ArrayExpressionArmTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_array_expression_arm(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ArrayExpressionArmTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ArrayExpressionArmTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ArrayExpressionArmTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ArrayExpressionArmTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct BlockCommentArmTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -44026,32 +44026,32 @@ pub struct BlockCommentArm1Transport {
     pub doc: Option<Box<AnyTransport>>,
 }
 
-impl RenderableTransport for BlockCommentArm1Transport {
+impl RenderableTransport for BlockCommentArmTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_block_comment_arm1(self, dest))
+        render_with_trivia!(self, dest, render_block_comment_arm(self, dest))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BlockCommentArm1Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BlockCommentArmTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        BlockCommentArm1Transport::from_napi_value(env, napi_val).map(Box::new)
+        BlockCommentArmTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BlockCommentArm1Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BlockCommentArmTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        BlockCommentArm1Transport::to_napi_value(env, *val)
+        BlockCommentArmTransport::to_napi_value(env, *val)
     }
 }
 
@@ -45830,8 +45830,8 @@ pub struct ArrayExpressionSemiTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
     pub attributes: Option<Vec<AttributeItemTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_expression_arm1"))]
-    pub array_expression_arm1: Box<ArrayExpressionArm1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_expression_arm"))]
+    pub array_expression_arm: Box<ArrayExpressionArmTransport>,
 }
 
 impl RenderableTransport for ArrayExpressionSemiTransport {
@@ -47121,8 +47121,8 @@ pub struct VisibilityModifierPubTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pub"))]
     pub pub_: Box<AnyTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_modifier_group1"))]
-    pub visibility_modifier_group1: Option<VisibilityModifierGroup1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_modifier_group"))]
+    pub visibility_modifier_group: Option<VisibilityModifierGroupTransport>,
 }
 
 impl RenderableTransport for VisibilityModifierPubTransport {
@@ -49765,8 +49765,8 @@ pub struct VisibilityModifierPubParensTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_modifier_group1"))]
-    pub visibility_modifier_group1: VisibilityModifierGroup1Transport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_modifier_group"))]
+    pub visibility_modifier_group: VisibilityModifierGroupTransport,
 }
 
 impl RenderableTransport for VisibilityModifierPubParensTransport {
@@ -57945,7 +57945,7 @@ fn render_inner_attribute_item(node: &InnerAttributeItemTransport, dest: &mut dy
 
 fn render_attribute(node: &AttributeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = AttributeTemplate {
-        attribute_arm1: match &node.attribute_arm1 {
+        attribute_arm: match &node.attribute_arm {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -59636,13 +59636,13 @@ fn render_outer_line_doc_comment_marker(t: &OuterLineDocCommentMarkerTransport, 
 }
 
 fn render_block_comment(node: &BlockCommentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.block_comment_arm1.is_none() {
+    if node.block_comment_arm.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
     let template = BlockCommentTemplate {
-        block_comment_arm1: match &node.block_comment_arm1 {
+        block_comment_arm: match &node.block_comment_arm {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -59713,25 +59713,6 @@ fn render_macro_rules(node: &MacroRulesTransport, dest: &mut dyn ::std::fmt::Wri
             separator: ";",
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        },
-    };
-    template.render_into(dest)
-}
-
-fn render_attribute_arm1(node: &AttributeArm1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.value.is_none() && node.arguments.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
-    let template = AttributeArm1Template {
-        arguments: match &node.arguments {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        value: match &node.value {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -59917,13 +59898,6 @@ fn render_variadic_parameter_optional1(node: &VariadicParameterOptional1Transpor
     Ok(())
 }
 
-fn render_visibility_modifier_group1(node: &VisibilityModifierGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = VisibilityModifierGroup1Template {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    template.render_into(dest)
-}
-
 fn render_array_type_optional1(node: &ArrayTypeOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     render_expression(&node.length, dest)?;
     Ok(())
@@ -60010,14 +59984,6 @@ fn render_arguments_elements(node: &ArgumentsElementsTransport, dest: &mut dyn :
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
-    };
-    template.render_into(dest)
-}
-
-fn render_array_expression_arm1(node: &ArrayExpressionArm1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = ArrayExpressionArm1Template {
-        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
-        length: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.length)),
     };
     template.render_into(dest)
 }
@@ -60120,13 +60086,47 @@ fn render_range_pattern_arm2(node: &RangePatternArm2Transport, dest: &mut dyn ::
     template.render_into(dest)
 }
 
-fn render_block_comment_arm1(node: &BlockCommentArm1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_attribute_arm(node: &AttributeArmTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.value.is_none() && node.arguments.is_none() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
+    let template = AttributeArmTemplate {
+        arguments: match &node.arguments {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+        value: match &node.value {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+    };
+    template.render_into(dest)
+}
+
+fn render_visibility_modifier_group(node: &VisibilityModifierGroupTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = VisibilityModifierGroupTemplate {
+        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
+    };
+    template.render_into(dest)
+}
+
+fn render_array_expression_arm(node: &ArrayExpressionArmTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = ArrayExpressionArmTemplate {
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        length: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.length)),
+    };
+    template.render_into(dest)
+}
+
+fn render_block_comment_arm(node: &BlockCommentArmTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     if node.outer.is_none() && node.inner.is_none() && node.doc.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let template = BlockCommentArm1Template {
+    let template = BlockCommentArmTemplate {
         doc: match &node.doc {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
             None => OptionalNonterminalView::Missing,
@@ -60254,7 +60254,7 @@ fn render_array_expression_semi(node: &ArrayExpressionSemiTransport, dest: &mut 
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ArrayExpressionSemiTemplate {
-        array_expression_arm1: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.array_expression_arm1)),
+        array_expression_arm: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.array_expression_arm)),
         attributes: ListNonterminalView {
             items: attributes_buf.as_slice(),
             separator: "",
@@ -60476,7 +60476,7 @@ fn render_struct_item_unit(t: &StructItemUnitTransport, dest: &mut dyn ::std::fm
 fn render_visibility_modifier_pub(node: &VisibilityModifierPubTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = VisibilityModifierPubTemplate {
         pub_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.pub_.as_ref())),
-        visibility_modifier_group1: match &node.visibility_modifier_group1 {
+        visibility_modifier_group: match &node.visibility_modifier_group {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -60895,7 +60895,7 @@ fn render_error_sentinel(t: &ErrorSentinelTransport, dest: &mut dyn ::std::fmt::
 }
 
 fn render_visibility_modifier_pub_parens(node: &VisibilityModifierPubParensTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_visibility_modifier_group1(&node.visibility_modifier_group1, dest)?;
+    render_visibility_modifier_group(&node.visibility_modifier_group, dest)?;
     Ok(())
 }
 
@@ -61845,7 +61845,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::KwRefMarker(t) => t.render_into(dest),
             AnyTransport::KwMoveMarker(t) => t.render_into(dest),
             AnyTransport::MacroRules(t) => t.render_into(dest),
-            AnyTransport::AttributeArm1(t) => t.render_into(dest),
             AnyTransport::EnumVariantListElements(t) => t.render_into(dest),
             AnyTransport::EnumVariantOptional1(t) => t.render_into(dest),
             AnyTransport::FieldDeclarationListElements(t) => t.render_into(dest),
@@ -61861,14 +61860,12 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::UseClauses(t) => t.render_into(dest),
             AnyTransport::ParametersElements(t) => t.render_into(dest),
             AnyTransport::VariadicParameterOptional1(t) => t.render_into(dest),
-            AnyTransport::VisibilityModifierGroup1(t) => t.render_into(dest),
             AnyTransport::ArrayTypeOptional1(t) => t.render_into(dest),
             AnyTransport::Lifetimes(t) => t.render_into(dest),
             AnyTransport::UseBoundsElements(t) => t.render_into(dest),
             AnyTransport::TypeArgumentsElements(t) => t.render_into(dest),
             AnyTransport::AbstractTypeOptional1(t) => t.render_into(dest),
             AnyTransport::ArgumentsElements(t) => t.render_into(dest),
-            AnyTransport::ArrayExpressionArm1(t) => t.render_into(dest),
             AnyTransport::FieldInitializerListElements(t) => t.render_into(dest),
             AnyTransport::MatchPatternOptional1(t) => t.render_into(dest),
             AnyTransport::WhileExpressionOptional1(t) => t.render_into(dest),
@@ -61876,7 +61873,10 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Patterns(t) => t.render_into(dest),
             AnyTransport::StructPatternElements(t) => t.render_into(dest),
             AnyTransport::RangePatternArm2(t) => t.render_into(dest),
-            AnyTransport::BlockCommentArm1(t) => t.render_into(dest),
+            AnyTransport::AttributeArm(t) => t.render_into(dest),
+            AnyTransport::VisibilityModifierGroup(t) => t.render_into(dest),
+            AnyTransport::ArrayExpressionArm(t) => t.render_into(dest),
+            AnyTransport::BlockCommentArm(t) => t.render_into(dest),
             AnyTransport::CompoundAssignmentExprOperator(t) => t.render_into(dest),
             AnyTransport::TupleTypeElements(t) => t.render_into(dest),
             AnyTransport::TupleExpressionElements(t) => t.render_into(dest),
@@ -62246,7 +62246,6 @@ impl AnyTransport {
             Self::KwRefMarker(t) => t.transport_named,
             Self::KwMoveMarker(t) => t.transport_named,
             Self::MacroRules(t) => t.transport_named,
-            Self::AttributeArm1(t) => t.transport_named,
             Self::EnumVariantListElements(t) => t.transport_named,
             Self::EnumVariantOptional1(t) => t.transport_named,
             Self::FieldDeclarationListElements(t) => t.transport_named,
@@ -62262,14 +62261,12 @@ impl AnyTransport {
             Self::UseClauses(t) => t.transport_named,
             Self::ParametersElements(t) => t.transport_named,
             Self::VariadicParameterOptional1(t) => t.transport_named,
-            Self::VisibilityModifierGroup1(t) => t.transport_named,
             Self::ArrayTypeOptional1(t) => t.transport_named,
             Self::Lifetimes(t) => t.transport_named,
             Self::UseBoundsElements(t) => t.transport_named,
             Self::TypeArgumentsElements(t) => t.transport_named,
             Self::AbstractTypeOptional1(t) => t.transport_named,
             Self::ArgumentsElements(t) => t.transport_named,
-            Self::ArrayExpressionArm1(t) => t.transport_named,
             Self::FieldInitializerListElements(t) => t.transport_named,
             Self::MatchPatternOptional1(t) => t.transport_named,
             Self::WhileExpressionOptional1(t) => t.transport_named,
@@ -62277,7 +62274,10 @@ impl AnyTransport {
             Self::Patterns(t) => t.transport_named,
             Self::StructPatternElements(t) => t.transport_named,
             Self::RangePatternArm2(t) => t.transport_named,
-            Self::BlockCommentArm1(t) => t.transport_named,
+            Self::AttributeArm(t) => t.transport_named,
+            Self::VisibilityModifierGroup(t) => t.transport_named,
+            Self::ArrayExpressionArm(t) => t.transport_named,
+            Self::BlockCommentArm(t) => t.transport_named,
             Self::TupleTypeElements(t) => t.transport_named,
             Self::TupleExpressionElements(t) => t.transport_named,
             Self::UseWildcardClause(t) => t.transport_named,

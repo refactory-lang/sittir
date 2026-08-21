@@ -225,7 +225,7 @@ export function buildImportStatement(config: T.ImportStatement.Config) {
 				$with: {
 					importClause: (value?: NonNullable<Parameters<typeof buildImportStatement>[0]>['importClause']) =>
 						buildImportStatement({ ...config, importClause: value }),
-					fromClause: (value: T.ImportStatementArm1 | T.ImportRequireClause | T.String) =>
+					fromClause: (value: T.ImportStatementArm | T.ImportRequireClause | T.String) =>
 						buildImportStatement({ ...config, fromClause: value }),
 					importAttribute: (value?: T.ImportAttribute) => buildImportStatement({ ...config, importAttribute: value }),
 					semicolon: (value: NonNullable<Parameters<typeof buildImportStatement>[0]>['semicolon']) =>
@@ -1114,7 +1114,7 @@ export function buildSwitchDefault(config: Partial<T.SwitchDefault.Config> = {})
 }
 
 export function buildCatchClause(config: T.CatchClause.Config) {
-	const _catch_clause_group1 = config.catchClauseGroup1;
+	const _catch_clause_group = config.catchClauseGroup;
 	const _body = config.body;
 	return withMethods(
 		withAccessors(
@@ -1122,15 +1122,15 @@ export function buildCatchClause(config: T.CatchClause.Config) {
 				$type: TSKindId.CatchClause as const,
 				$source: 2 as const,
 				$named: true as const,
-				_catch_clause_group1,
+				_catch_clause_group,
 				_body,
 				$with: {
-					catchClauseGroup1: (value?: T.CatchClauseGroup1) => buildCatchClause({ ...config, catchClauseGroup1: value }),
+					catchClauseGroup: (value?: T.CatchClauseGroup) => buildCatchClause({ ...config, catchClauseGroup: value }),
 					body: (value: T.StatementBlock) => buildCatchClause({ ...config, body: value })
 				}
 			},
 			{
-				catchClauseGroup1: () => _catch_clause_group1,
+				catchClauseGroup: () => _catch_clause_group,
 				body: () => _body
 			}
 		),
@@ -2065,7 +2065,7 @@ export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config>
 		['instanceof', TSKindId.Instanceof] as const
 	]);
 	const _right = config.right;
-	const _binary_expression_arm1 = config.binaryExpressionArm1;
+	const _binary_expression_arm = config.binaryExpressionArm;
 	return withMethods(
 		withAccessors(
 			{
@@ -2075,21 +2075,21 @@ export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config>
 				_left,
 				_operator,
 				_right,
-				_binary_expression_arm1,
+				_binary_expression_arm,
 				$with: {
 					left: (value?: T.Expression) => buildBinaryExpression({ ...config, left: value }),
 					operator: (value?: NonNullable<Parameters<typeof buildBinaryExpression>[0]>['operator']) =>
 						buildBinaryExpression({ ...config, operator: value }),
 					right: (value?: T.Expression) => buildBinaryExpression({ ...config, right: value }),
-					binaryExpressionArm1: (value?: T.BinaryExpressionArm1) =>
-						buildBinaryExpression({ ...config, binaryExpressionArm1: value })
+					binaryExpressionArm: (value?: T.BinaryExpressionArm) =>
+						buildBinaryExpression({ ...config, binaryExpressionArm: value })
 				}
 			},
 			{
 				left: () => _left,
 				operator: () => _operator,
 				right: () => _right,
-				binaryExpressionArm1: () => _binary_expression_arm1
+				binaryExpressionArm: () => _binary_expression_arm
 			}
 		),
 		methodsEngine
@@ -5430,50 +5430,6 @@ function _buildExportSpecifiers(elements: NonEmptyArray<T.ExportSpecifier>, opti
 	);
 }
 
-export function buildImportStatementArm1(config: T.ImportStatementArm1.Config) {
-	const _import_clause = config.importClause;
-	const _source = config.source;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ImportStatementArm1 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_import_clause,
-				_source,
-				$with: {
-					importClause: (value: T.ImportClause) => buildImportStatementArm1({ ...config, importClause: value }),
-					source: (value: T.String) => buildImportStatementArm1({ ...config, source: value })
-				}
-			},
-			{
-				importClause: () => _import_clause,
-				source: () => _source
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildImportClauseGroup1(child: T.NamespaceImport | T.NamedImports) {
-	const _content = child;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ImportClauseGroup1 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: { $child: (v: T.NamespaceImport | T.NamedImports) => buildImportClauseGroup1(v) }
-			},
-			{
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildImportSpecifiers(
 	...elements: NonEmptyArray<T.ImportSpecifier>
 ): ReturnType<typeof _buildImportSpecifiers>;
@@ -5561,61 +5517,6 @@ export function buildVariableDeclaratorArm2(config: T.VariableDeclaratorArm2.Con
 			{
 				name: () => _name,
 				type: () => _type
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildCatchClauseGroup1(config: T.CatchClauseGroup1.Config) {
-	const _parameter = config.parameter;
-	const _type = config.type;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CatchClauseGroup1 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_parameter,
-				_type,
-				$with: {
-					parameter: (value: T.Identifier | T.DestructuringPattern) =>
-						buildCatchClauseGroup1({ ...config, parameter: value }),
-					type: (value?: T.TypeAnnotation) => buildCatchClauseGroup1({ ...config, type: value })
-				}
-			},
-			{
-				parameter: () => _parameter,
-				type: () => _type
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildBinaryExpressionArm1(config: T.BinaryExpressionArm1.Config) {
-	const _left = config.left;
-	const _operator = coerceKindEnumStorage('in' as const, [['in', TSKindId.In] as const]);
-	const _right = config.right;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.BinaryExpressionArm1 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_left,
-				_operator,
-				_right,
-				$with: {
-					left: (value: T.Expression | T.PrivatePropertyIdentifier) =>
-						buildBinaryExpressionArm1({ ...config, left: value }),
-					right: (value: T.Expression) => buildBinaryExpressionArm1({ ...config, right: value })
-				}
-			},
-			{
-				left: () => _left,
-				operator: () => _operator,
-				right: () => _right
 			}
 		),
 		methodsEngine
@@ -5835,6 +5736,105 @@ function _buildTupleTypeMembers(elements: NonEmptyArray<T.TupleTypeMember>, opti
 			},
 			{
 				tupleTypeMembers: () => _tuple_type_member
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildImportStatementArm(config: T.ImportStatementArm.Config) {
+	const _import_clause = config.importClause;
+	const _source = config.source;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ImportStatementArm as const,
+				$source: 2 as const,
+				$named: true as const,
+				_import_clause,
+				_source,
+				$with: {
+					importClause: (value: T.ImportClause) => buildImportStatementArm({ ...config, importClause: value }),
+					source: (value: T.String) => buildImportStatementArm({ ...config, source: value })
+				}
+			},
+			{
+				importClause: () => _import_clause,
+				source: () => _source
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildImportClauseGroup(child: T.NamespaceImport | T.NamedImports) {
+	const _content = child;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ImportClauseGroup as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { $child: (v: T.NamespaceImport | T.NamedImports) => buildImportClauseGroup(v) }
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config) {
+	const _parameter = config.parameter;
+	const _type = config.type;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CatchClauseGroup as const,
+				$source: 2 as const,
+				$named: true as const,
+				_parameter,
+				_type,
+				$with: {
+					parameter: (value: T.Identifier | T.DestructuringPattern) =>
+						buildCatchClauseGroup({ ...config, parameter: value }),
+					type: (value?: T.TypeAnnotation) => buildCatchClauseGroup({ ...config, type: value })
+				}
+			},
+			{
+				parameter: () => _parameter,
+				type: () => _type
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildBinaryExpressionArm(config: T.BinaryExpressionArm.Config) {
+	const _left = config.left;
+	const _operator = coerceKindEnumStorage('in' as const, [['in', TSKindId.In] as const]);
+	const _right = config.right;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.BinaryExpressionArm as const,
+				$source: 2 as const,
+				$named: true as const,
+				_left,
+				_operator,
+				_right,
+				$with: {
+					left: (value: T.Expression | T.PrivatePropertyIdentifier) =>
+						buildBinaryExpressionArm({ ...config, left: value }),
+					right: (value: T.Expression) => buildBinaryExpressionArm({ ...config, right: value })
+				}
+			},
+			{
+				left: () => _left,
+				operator: () => _operator,
+				right: () => _right
 			}
 		),
 		methodsEngine
@@ -6116,7 +6116,7 @@ export function buildClassHeritageExtendsClause(config: T.ClassHeritageExtendsCl
 
 export function buildImportClauseDefaultImport(config: T.ImportClauseDefaultImport.Config) {
 	const _import_identifier = config.importIdentifier;
-	const _import_clause_group1 = config.importClauseGroup1;
+	const _import_clause_group = config.importClauseGroup;
 	return withMethods(
 		withAccessors(
 			{
@@ -6124,17 +6124,17 @@ export function buildImportClauseDefaultImport(config: T.ImportClauseDefaultImpo
 				$source: 2 as const,
 				$named: true as const,
 				_import_identifier,
-				_import_clause_group1,
+				_import_clause_group,
 				$with: {
 					importIdentifier: (value: T.ImportIdentifier) =>
 						buildImportClauseDefaultImport({ ...config, importIdentifier: value }),
-					importClauseGroup1: (value?: T.ImportClauseGroup1) =>
-						buildImportClauseDefaultImport({ ...config, importClauseGroup1: value })
+					importClauseGroup: (value?: T.ImportClauseGroup) =>
+						buildImportClauseDefaultImport({ ...config, importClauseGroup: value })
 				}
 			},
 			{
 				importIdentifier: () => _import_identifier,
-				importClauseGroup1: () => _import_clause_group1
+				importClauseGroup: () => _import_clause_group
 			}
 		),
 		methodsEngine
@@ -7299,13 +7299,9 @@ export type FluentKindMap = {
 	function_type: FluentNode<'function_type', T.FunctionType.Config>;
 	_type_identifier: T.TypeIdentifier;
 	_export_specifiers: FluentNode<'_export_specifiers', T.ExportSpecifiers.Config>;
-	_import_statement_arm1: FluentNode<'_import_statement_arm1', T.ImportStatementArm1.Config>;
-	_import_clause_group1: FluentNode<'_import_clause_group1', T.ImportClauseGroup1.Config>;
 	_import_specifiers: FluentNode<'_import_specifiers', T.ImportSpecifiers.Config>;
 	_variable_declarator_arm1: T.VariableDeclaratorArm1;
 	_variable_declarator_arm2: T.VariableDeclaratorArm2;
-	_catch_clause_group1: T.CatchClauseGroup1;
-	_binary_expression_arm1: T.BinaryExpressionArm1;
 	_meta_property_arm1: T.MetaPropertyArm1;
 	_meta_property_arm2: T.MetaPropertyArm2;
 	_formal_parameters_elements: FluentNode<'_formal_parameters_elements', T.FormalParametersElements.Config>;
@@ -7313,6 +7309,10 @@ export type FluentKindMap = {
 	_types: FluentNode<'_types', T.Types.Config>;
 	_type_parameters_elements: FluentNode<'_type_parameters_elements', T.TypeParametersElements.Config>;
 	_tuple_type_members: FluentNode<'_tuple_type_members', T.TupleTypeMembers.Config>;
+	_import_statement_arm: FluentNode<'_import_statement_arm', T.ImportStatementArm.Config>;
+	_import_clause_group: FluentNode<'_import_clause_group', T.ImportClauseGroup.Config>;
+	_catch_clause_group: T.CatchClauseGroup;
+	_binary_expression_arm: T.BinaryExpressionArm;
 	_kind: T.Kind;
 	__for_header_operator: T.ForHeaderOperator;
 	_ambient_declaration_global: T.AmbientDeclarationGlobal;
@@ -7567,13 +7567,9 @@ export const _factoryMap = {
 	function_type: buildFunctionType,
 	_type_identifier: buildTypeIdentifier,
 	_export_specifiers: buildExportSpecifiers,
-	_import_statement_arm1: buildImportStatementArm1,
-	_import_clause_group1: buildImportClauseGroup1,
 	_import_specifiers: buildImportSpecifiers,
 	_variable_declarator_arm1: buildVariableDeclaratorArm1,
 	_variable_declarator_arm2: buildVariableDeclaratorArm2,
-	_catch_clause_group1: buildCatchClauseGroup1,
-	_binary_expression_arm1: buildBinaryExpressionArm1,
 	_meta_property_arm1: buildMetaPropertyArm1,
 	_meta_property_arm2: buildMetaPropertyArm2,
 	_formal_parameters_elements: buildFormalParametersElements,
@@ -7581,6 +7577,10 @@ export const _factoryMap = {
 	_types: buildTypes,
 	_type_parameters_elements: buildTypeParametersElements,
 	_tuple_type_members: buildTupleTypeMembers,
+	_import_statement_arm: buildImportStatementArm,
+	_import_clause_group: buildImportClauseGroup,
+	_catch_clause_group: buildCatchClauseGroup,
+	_binary_expression_arm: buildBinaryExpressionArm,
 	_kind: buildKind,
 	__for_header_operator: buildForHeaderOperator,
 	_ambient_declaration_global: buildAmbientDeclarationGlobal,

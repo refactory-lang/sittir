@@ -349,7 +349,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_type_parameters_elements: TSKindId.TypeParametersElements,
 	_use_clauses: TSKindId.UseClauses,
 	_parameters_elements: TSKindId.ParametersElements,
-	_visibility_modifier_group1: TSKindId.VisibilityModifierGroup1,
 	_lifetimes: TSKindId.Lifetimes,
 	_use_bounds_elements: TSKindId.UseBoundsElements,
 	_type_arguments_elements: TSKindId.TypeArgumentsElements,
@@ -358,6 +357,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_tuple_pattern_elements: TSKindId.TuplePatternElements,
 	_patterns: TSKindId.Patterns,
 	_struct_pattern_elements: TSKindId.StructPatternElements,
+	_visibility_modifier_group: TSKindId.VisibilityModifierGroup,
 	_tuple_type_elements: TSKindId.TupleTypeElements,
 	_tuple_expression_elements: TSKindId.TupleExpressionElements,
 	_impl_item_body: TSKindId.ImplItemBody,
@@ -438,8 +438,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildUseClauses as (...args: unknown[]) => unknown)(...children);
 		case '_parameters_elements':
 			return (F.buildParametersElements as (...args: unknown[]) => unknown)(...children);
-		case '_visibility_modifier_group1':
-			return F.buildVisibilityModifierGroup1(children[0] as Parameters<typeof F.buildVisibilityModifierGroup1>[0]);
 		case '_lifetimes':
 			return (F.buildLifetimes as (...args: unknown[]) => unknown)(...children);
 		case '_use_bounds_elements':
@@ -456,6 +454,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildPatterns as (...args: unknown[]) => unknown)(...children);
 		case '_struct_pattern_elements':
 			return (F.buildStructPatternElements as (...args: unknown[]) => unknown)(...children);
+		case '_visibility_modifier_group':
+			return F.buildVisibilityModifierGroup(children[0] as Parameters<typeof F.buildVisibilityModifierGroup>[0]);
 		case '_tuple_type_elements':
 			return (F.buildTupleTypeElements as (...args: unknown[]) => unknown)(...children);
 		case '_tuple_expression_elements':
@@ -1118,7 +1118,7 @@ export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildAttribute>;
 	return F.buildAttribute({
 		path: _requireField('attribute', 'path', _resolveOne<T.Path>(input.path, _K6, _K7)),
-		attributeArm1: _resolveOneBranch<T.AttributeArm1>(input.attributeArm1, '_attribute_arm1')
+		attributeArm: _resolveOneBranch<T.AttributeArm>(input.attributeArm, '_attribute_arm')
 	});
 }
 
@@ -2771,11 +2771,11 @@ export function coerceToLineComment(
 }
 
 export function coerceToBlockComment(
-	input?: T.BlockCommentArm1 | T.BlockComment
+	input?: T.BlockCommentArm | T.BlockComment
 ): ReturnType<typeof F.buildBlockComment> {
 	if (isNodeData(input) && input.$type === TSKindId.BlockComment) {
 		const data = input;
-		const child = (data as unknown as { _block_comment_arm1?: unknown })._block_comment_arm1;
+		const child = (data as unknown as { _block_comment_arm?: unknown })._block_comment_arm;
 		return F.buildBlockComment(child as Parameters<typeof F.buildBlockComment>[0]);
 	}
 	return F.buildBlockComment(input as Parameters<typeof F.buildBlockComment>[0]);

@@ -180,8 +180,8 @@ import type {
 	ImportClause,
 	ImportClauseDefaultImport,
 	ImportClauseDefaultImportTree,
-	ImportClauseGroup1,
-	ImportClauseGroup1Tree,
+	ImportClauseGroup,
+	ImportClauseGroupTree,
 	ImportClauseTree,
 	ImportRequireClause,
 	ImportRequireClauseTree,
@@ -190,8 +190,8 @@ import type {
 	ImportSpecifiers,
 	ImportSpecifiersTree,
 	ImportStatement,
-	ImportStatementArm1,
-	ImportStatementArm1Tree,
+	ImportStatementArm,
+	ImportStatementArmTree,
 	ImportStatementTree,
 	ImportTree,
 	IndexSignature,
@@ -687,12 +687,6 @@ export type _Type_UnionType = _TypeAssert<_TypeExtends<UnionType['$type'], TSKin
 export type _Type_IntersectionType = _TypeAssert<_TypeExtends<IntersectionType['$type'], TSKindId.IntersectionType>>;
 export type _Type_FunctionType = _TypeAssert<_TypeExtends<FunctionType['$type'], TSKindId.FunctionType>>;
 export type _Type_ExportSpecifiers = _TypeAssert<_TypeExtends<ExportSpecifiers['$type'], TSKindId.ExportSpecifiers>>;
-export type _Type_ImportStatementArm1 = _TypeAssert<
-	_TypeExtends<ImportStatementArm1['$type'], TSKindId.ImportStatementArm1>
->;
-export type _Type_ImportClauseGroup1 = _TypeAssert<
-	_TypeExtends<ImportClauseGroup1['$type'], TSKindId.ImportClauseGroup1>
->;
 export type _Type_ImportSpecifiers = _TypeAssert<_TypeExtends<ImportSpecifiers['$type'], TSKindId.ImportSpecifiers>>;
 export type _Type_FormalParametersElements = _TypeAssert<
 	_TypeExtends<FormalParametersElements['$type'], TSKindId.FormalParametersElements>
@@ -703,6 +697,10 @@ export type _Type_TypeParametersElements = _TypeAssert<
 	_TypeExtends<TypeParametersElements['$type'], TSKindId.TypeParametersElements>
 >;
 export type _Type_TupleTypeMembers = _TypeAssert<_TypeExtends<TupleTypeMembers['$type'], TSKindId.TupleTypeMembers>>;
+export type _Type_ImportStatementArm = _TypeAssert<
+	_TypeExtends<ImportStatementArm['$type'], TSKindId.ImportStatementArm>
+>;
+export type _Type_ImportClauseGroup = _TypeAssert<_TypeExtends<ImportClauseGroup['$type'], TSKindId.ImportClauseGroup>>;
 export type _Type_ObjectTypeContent = _TypeAssert<_TypeExtends<ObjectTypeContent['$type'], TSKindId.ObjectTypeContent>>;
 export type _Type_ExportStatementDefault = _TypeAssert<
 	_TypeExtends<ExportStatementDefault['$type'], TSKindId.ExportStatementDefault>
@@ -1076,12 +1074,6 @@ export type _Tree_UnionType = _TypeAssert<_TypeExtends<UnionTypeTree['type'], 'u
 export type _Tree_IntersectionType = _TypeAssert<_TypeExtends<IntersectionTypeTree['type'], 'intersection_type'>>;
 export type _Tree_FunctionType = _TypeAssert<_TypeExtends<FunctionTypeTree['type'], 'function_type'>>;
 export type _Tree_ExportSpecifiers = _TypeAssert<_TypeExtends<ExportSpecifiersTree['type'], '_export_specifiers'>>;
-export type _Tree_ImportStatementArm1 = _TypeAssert<
-	_TypeExtends<ImportStatementArm1Tree['type'], '_import_statement_arm1'>
->;
-export type _Tree_ImportClauseGroup1 = _TypeAssert<
-	_TypeExtends<ImportClauseGroup1Tree['type'], '_import_clause_group1'>
->;
 export type _Tree_ImportSpecifiers = _TypeAssert<_TypeExtends<ImportSpecifiersTree['type'], '_import_specifiers'>>;
 export type _Tree_FormalParametersElements = _TypeAssert<
 	_TypeExtends<FormalParametersElementsTree['type'], '_formal_parameters_elements'>
@@ -1092,6 +1084,10 @@ export type _Tree_TypeParametersElements = _TypeAssert<
 	_TypeExtends<TypeParametersElementsTree['type'], '_type_parameters_elements'>
 >;
 export type _Tree_TupleTypeMembers = _TypeAssert<_TypeExtends<TupleTypeMembersTree['type'], '_tuple_type_members'>>;
+export type _Tree_ImportStatementArm = _TypeAssert<
+	_TypeExtends<ImportStatementArmTree['type'], '_import_statement_arm'>
+>;
+export type _Tree_ImportClauseGroup = _TypeAssert<_TypeExtends<ImportClauseGroupTree['type'], '_import_clause_group'>>;
 export type _Tree_ObjectTypeContent = _TypeAssert<_TypeExtends<ObjectTypeContentTree['type'], 'object_type_content'>>;
 export type _Tree_ExportStatementDefault = _TypeAssert<
 	_TypeExtends<ExportStatementDefaultTree['type'], '_export_statement_default'>

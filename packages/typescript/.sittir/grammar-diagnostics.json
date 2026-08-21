@@ -5,7 +5,7 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression amp_amp expression), seq[3](expression pipe_pipe expression), seq[3](expression gt_gt expression), seq[3](expression gt_gt_gt expression), seq[3](expression lt_lt expression), seq[3](expression amp expression), seq[3](expression caret expression), seq[3](expression pipe expression), seq[3](expression plus expression), seq[3](expression dash expression), seq[3](expression star expression), seq[3](expression slash expression), seq[3](expression percent expression), seq[3](expression star_star expression), seq[3](expression lt expression), seq[3](expression lt_eq expression), seq[3](expression eq_eq expression), seq[3](expression eq_eq_eq expression), seq[3](expression bang_eq expression), seq[3](expression bang_eq_eq expression), seq[3](expression gt_eq expression), seq[3](expression gt expression), seq[3](expression qmark_qmark expression), seq[3](expression instanceof expression)] alongside union arm(s) [binary_expression_arm1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression amp_amp expression), seq[3](expression pipe_pipe expression), seq[3](expression gt_gt expression), seq[3](expression gt_gt_gt expression), seq[3](expression lt_lt expression), seq[3](expression amp expression), seq[3](expression caret expression), seq[3](expression pipe expression), seq[3](expression plus expression), seq[3](expression dash expression), seq[3](expression star expression), seq[3](expression slash expression), seq[3](expression percent expression), seq[3](expression star_star expression), seq[3](expression lt expression), seq[3](expression lt_eq expression), seq[3](expression eq_eq expression), seq[3](expression eq_eq_eq expression), seq[3](expression bang_eq expression), seq[3](expression bang_eq_eq expression), seq[3](expression gt_eq expression), seq[3](expression gt expression), seq[3](expression qmark_qmark expression), seq[3](expression instanceof expression)] alongside union arm(s) [binary_expression_arm]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
     "canProceed": true
   },
   {
@@ -74,7 +74,7 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "_jsx_opening_element_content",
-    "message": "[collect-slots] kind '_jsx_opening_element_content': choice rule:_jsx_opening_element_content:root is a singular mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [jsx_start_opening_element_arm1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind '_jsx_opening_element_content': choice rule:_jsx_opening_element_content:root is a singular mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [jsx_start_opening_element_arm]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
     "canProceed": true
   },
   {
@@ -295,7 +295,7 @@
         "_jsx_identifier",
         "_jsx_opening_element_content",
         "_jsx_start_opening_element",
-        "_jsx_start_opening_element_arm1",
+        "_jsx_start_opening_element_arm",
         "_jsx_string",
         "_kw_optional_marker",
         "_kw_readonly_marker",
@@ -312,7 +312,7 @@
         "jsx_opening_element",
         "jsx_opening_element_content",
         "jsx_self_closing_element",
-        "jsx_start_opening_element_arm1",
+        "jsx_start_opening_element_arm",
         "unescaped_double_jsx_string_fragment",
         "unescaped_single_jsx_string_fragment"
       ]
@@ -389,7 +389,7 @@
     "details": {
       "kinds": [
         "_jsx_opening_element_content",
-        "_jsx_start_opening_element_arm1",
+        "_jsx_start_opening_element_arm",
         "_jsx_string",
         "html_character_reference",
         "jsx_attribute",
@@ -401,7 +401,7 @@
         "jsx_opening_element",
         "jsx_opening_element_content",
         "jsx_self_closing_element",
-        "jsx_start_opening_element_arm1",
+        "jsx_start_opening_element_arm",
         "unescaped_double_jsx_string_fragment",
         "unescaped_single_jsx_string_fragment"
       ]

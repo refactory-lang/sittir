@@ -147,8 +147,8 @@ pub struct DictionaryElementsTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_except_clause_arm1.jinja", escape = "none")]
-pub struct ExceptClauseArm1Template<'a> {
+#[template(path = "_except_clause_arm.jinja", escape = "none")]
+pub struct ExceptClauseArmTemplate<'a> {
     pub content: SingleNonterminalView<'a>,
 }
 
@@ -178,8 +178,8 @@ pub struct ExpressionStatementTupleTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_future_import_statement_arm1.jinja", escape = "none")]
-pub struct FutureImportStatementArm1Template<'a> {
+#[template(path = "_future_import_statement_arm.jinja", escape = "none")]
+pub struct FutureImportStatementArmTemplate<'a> {
     pub import_list: SingleNonterminalView<'a>,
 }
 
@@ -265,8 +265,8 @@ pub struct SimpleStatementsTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_slice_group1.jinja", escape = "none")]
-pub struct SliceGroup1Template<'a> {
+#[template(path = "_slice_group.jinja", escape = "none")]
+pub struct SliceGroupTemplate<'a> {
     pub expression: OptionalNonterminalView<'a>,
 }
 
@@ -580,7 +580,7 @@ pub struct ElseClauseTemplate<'a> {
 #[template(path = "except_clause.jinja", escape = "none")]
 pub struct ExceptClauseTemplate<'a> {
     pub content: SingleNonterminalView<'a>,
-    pub except_clause_arm1: OptionalNonterminalView<'a>,
+    pub except_clause_arm: OptionalNonterminalView<'a>,
     pub star_marker: OptionalNonterminalView<'a>,
 }
 

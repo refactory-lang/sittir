@@ -189,7 +189,7 @@
     "block_comment": {
       "definedBy": "override",
       "childKind": {
-        "block_comment_arm1": "arm1"
+        "block_comment_arm": "arm"
       }
     }
   },
@@ -382,9 +382,6 @@
     "raw_string_literal.string_content": {
       "string_content": "raw_string_literal_content"
     },
-    "_attribute_arm1.arguments": {
-      "token_tree": "delim_token_tree"
-    },
     "_function_item_optional1.return_type": {
       "_type_identifier": "identifier",
       "primitive_type": "_primitive_type"
@@ -403,7 +400,10 @@
     "_match_pattern_optional1.condition": {
       "let_chain": "_let_chain"
     },
-    "_block_comment_arm1.doc": {
+    "_attribute_arm.arguments": {
+      "token_tree": "delim_token_tree"
+    },
+    "_block_comment_arm.doc": {
       "doc_comment": "_block_comment_content"
     },
     "_tuple_type_elements.type": {
@@ -618,7 +618,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "attribute_arm1": {
+      "attribute_arm": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2878,7 +2878,7 @@
       }
     },
     "block_comment": {
-      "block_comment_arm1": {
+      "block_comment_arm": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2893,22 +2893,6 @@
         "required": true,
         "multiple": true,
         "nonEmpty": true
-      }
-    },
-    "_attribute_arm1": {
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "arguments": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
       }
     },
     "_enum_variant_list_elements": {
@@ -2974,15 +2958,6 @@
         "nonEmpty": true
       }
     },
-    "_visibility_modifier_group1": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_lifetimes": {
       "lifetime": {
         "unnamed": false,
@@ -3017,22 +2992,6 @@
         "required": true,
         "multiple": true,
         "nonEmpty": true
-      }
-    },
-    "_array_expression_arm1": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "length": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
       }
     },
     "_field_initializer_list_elements": {
@@ -3087,7 +3046,48 @@
         "nonEmpty": false
       }
     },
-    "_block_comment_arm1": {
+    "_attribute_arm": {
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "arguments": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_visibility_modifier_group": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_array_expression_arm": {
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "length": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_block_comment_arm": {
       "outer": {
         "unnamed": false,
         "slotCount": 1,
@@ -3172,7 +3172,7 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "array_expression_arm1": {
+      "array_expression_arm": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3434,7 +3434,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "visibility_modifier_group1": {
+      "visibility_modifier_group": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3775,13 +3775,13 @@
       ]
     },
     {
-      "kind": "_array_expression_arm1",
+      "kind": "_array_expression_arm",
       "modelType": "group",
-      "typeName": "ArrayExpressionArm1",
-      "factoryName": "_arrayExpressionArm1",
-      "irKey": "arrayExpressionArm1",
+      "typeName": "ArrayExpressionArm",
+      "factoryName": "_arrayExpressionArm",
+      "irKey": "arrayExpressionArm",
       "hidden": false,
-      "name": "_array_expression_arm1",
+      "name": "_array_expression_arm",
       "fields": [
         {
           "name": "expression",
@@ -3933,9 +3933,9 @@
           }
         },
         {
-          "name": "array_expression_arm1",
-          "propertyName": "arrayExpressionArm1",
-          "paramName": "arrayExpressionArm1",
+          "name": "array_expression_arm",
+          "propertyName": "arrayExpressionArm",
+          "paramName": "arrayExpressionArm",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3943,15 +3943,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_array_expression_arm1",
-              "parseKind": "array_expression_arm1",
+              "name": "_array_expression_arm",
+              "parseKind": "array_expression_arm",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_array_expression_arm1"
+              "_array_expression_arm"
             ]
           }
         }
@@ -3960,7 +3960,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "attributes",
-        "array_expression_arm1"
+        "array_expression_arm"
       ]
     },
     {
@@ -3999,11 +3999,11 @@
       "children": []
     },
     {
-      "kind": "_attribute_arm1",
+      "kind": "_attribute_arm",
       "modelType": "branch",
-      "typeName": "AttributeArm1",
-      "factoryName": "attributeArm1",
-      "irKey": "attributeArm1",
+      "typeName": "AttributeArm",
+      "factoryName": "attributeArm",
+      "irKey": "attributeArm",
       "hidden": false,
       "fields": [
         {
@@ -4512,13 +4512,13 @@
       ]
     },
     {
-      "kind": "_block_comment_arm1",
+      "kind": "_block_comment_arm",
       "modelType": "group",
-      "typeName": "BlockCommentArm1",
-      "factoryName": "_blockCommentArm1",
-      "irKey": "blockCommentArm1",
+      "typeName": "BlockCommentArm",
+      "factoryName": "_blockCommentArm",
+      "irKey": "blockCommentArm",
       "hidden": false,
-      "name": "_block_comment_arm1",
+      "name": "_block_comment_arm",
       "fields": [
         {
           "name": "outer",
@@ -8176,11 +8176,11 @@
       "children": []
     },
     {
-      "kind": "_visibility_modifier_group1",
+      "kind": "_visibility_modifier_group",
       "modelType": "branch",
-      "typeName": "VisibilityModifierGroup1",
-      "factoryName": "visibilityModifierGroup1",
-      "irKey": "visibilityModifierGroup1",
+      "typeName": "VisibilityModifierGroup",
+      "factoryName": "visibilityModifierGroup",
+      "irKey": "visibilityModifierGroup",
       "hidden": false,
       "fields": [
         {
@@ -8307,9 +8307,9 @@
           }
         },
         {
-          "name": "visibility_modifier_group1",
-          "propertyName": "visibilityModifierGroup1",
-          "paramName": "visibilityModifierGroup1",
+          "name": "visibility_modifier_group",
+          "propertyName": "visibilityModifierGroup",
+          "paramName": "visibilityModifierGroup",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8317,15 +8317,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_visibility_modifier_group1",
-              "parseKind": "visibility_modifier_group1",
+              "name": "_visibility_modifier_group",
+              "parseKind": "visibility_modifier_group",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_visibility_modifier_group1"
+              "_visibility_modifier_group"
             ]
           }
         }
@@ -8333,7 +8333,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "visibility_modifier_group1"
+        "visibility_modifier_group"
       ]
     },
     {
@@ -8346,9 +8346,9 @@
       "name": "_visibility_modifier_pub_parens",
       "fields": [
         {
-          "name": "visibility_modifier_group1",
-          "propertyName": "visibilityModifierGroup1",
-          "paramName": "visibilityModifierGroup1",
+          "name": "visibility_modifier_group",
+          "propertyName": "visibilityModifierGroup",
+          "paramName": "visibilityModifierGroup",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -8356,15 +8356,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_visibility_modifier_group1",
-              "parseKind": "visibility_modifier_group1",
+              "name": "_visibility_modifier_group",
+              "parseKind": "visibility_modifier_group",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_visibility_modifier_group1"
+              "_visibility_modifier_group"
             ]
           }
         }
@@ -9010,9 +9010,9 @@
           }
         },
         {
-          "name": "attribute_arm1",
-          "propertyName": "attributeArm1",
-          "paramName": "attributeArm1",
+          "name": "attribute_arm",
+          "propertyName": "attributeArm",
+          "paramName": "attributeArm",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9020,15 +9020,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_attribute_arm1",
-              "parseKind": "attribute_arm1",
+              "name": "_attribute_arm",
+              "parseKind": "attribute_arm",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_attribute_arm1"
+              "_attribute_arm"
             ]
           }
         }
@@ -9037,7 +9037,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "path",
-        "attribute_arm1"
+        "attribute_arm"
       ]
     },
     {
@@ -9456,9 +9456,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "block_comment_arm1",
-          "propertyName": "blockCommentArm1",
-          "paramName": "blockCommentArm1",
+          "name": "block_comment_arm",
+          "propertyName": "blockCommentArm",
+          "paramName": "blockCommentArm",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9466,24 +9466,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_block_comment_arm1",
-              "parseKind": "block_comment_arm1",
+              "name": "_block_comment_arm",
+              "parseKind": "block_comment_arm",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_block_comment_arm1"
+              "_block_comment_arm"
             ]
           }
         }
       ],
       "children": [],
       "factoryShape": "forwarded",
-      "forwardsTo": "_block_comment_arm1",
+      "forwardsTo": "_block_comment_arm",
       "factoryFields": [
-        "block_comment_arm1"
+        "block_comment_arm"
       ]
     },
     {

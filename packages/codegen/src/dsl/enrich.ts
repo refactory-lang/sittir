@@ -324,6 +324,11 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 	// Inject clause-group rules — user rules NEVER shadow them either
 	// (they start with `_<parentKind>_optional`, a synthesized prefix).
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+	// Singleton-ordinal collapse: an arm/group mint's ordinal exists only to
+	// disambiguate siblings under one parent — a parent with exactly one mint
+	// of a flavor drops it (`slice_group1` → `slice_group`). Runs before the
+	// later passes so they (and wire's override callbacks) see final names.
+	collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupHiddenNames, clauseGroupOwners);
 	// Node-choice field wrapping (pass 6) — runs once, last, over every rule
 	// this enrich() call produced (original + kw + clause-hoist mints), never
 	// inside the fixed-point loop above. Needs `mergedRules` itself (to
@@ -3367,6 +3372,65 @@ function clauseHoistSynthName(
 	return name;
 }
 
+
+/**
+ * Drop the ordinal from arm/group mint names whose parent minted exactly one
+ * of that flavor: the ordinal only disambiguates siblings, so a lone
+ * `<parent>_group1` / `<parent>_arm2` renames to `<parent>_group` /
+ * `<parent>_arm` (hidden rule key, visible alias value, every symbol
+ * reference, and the wire-facing tracking structures). A name collision with
+ * any existing rule keeps the ordinal.
+ */
+function collapseSingletonMintOrdinals(
+	mergedRules: Record<string, Rule>,
+	mintedRules: Record<string, Rule>,
+	visibleGroupHiddenNames: Set<string>,
+	clauseGroupOwners: Map<string, string>
+): void {
+	const byParentFlavor = new Map<string, string[]>();
+	for (const hidden of Object.keys(mintedRules)) {
+		const m = /^_(.+)_(arm|group)(\d+)$/.exec(hidden);
+		if (!m) continue;
+		const key = `${m[1]}_${m[2]}`;
+		const bucket = byParentFlavor.get(key);
+		if (bucket) bucket.push(hidden);
+		else byParentFlavor.set(key, [hidden]);
+	}
+	const renames = new Map<string, string>();
+	for (const [bare, hiddens] of byParentFlavor) {
+		if (hiddens.length !== 1) continue;
+		const oldHidden = hiddens[0]!;
+		const newHidden = `_${bare}`;
+		if (newHidden in mergedRules || bare in mergedRules) continue;
+		renames.set(oldHidden, newHidden);
+		renames.set(oldHidden.replace(/^_/, ''), bare);
+	}
+	if (renames.size === 0) return;
+	for (const [oldName, newName] of renames) {
+		if (oldName.startsWith('_') && oldName in mergedRules) {
+			mergedRules[newName] = mergedRules[oldName]!;
+			delete mergedRules[oldName];
+		}
+		if (visibleGroupHiddenNames.delete(oldName)) visibleGroupHiddenNames.add(newName);
+		const owner = clauseGroupOwners.get(oldName);
+		if (owner !== undefined) {
+			clauseGroupOwners.delete(oldName);
+			clauseGroupOwners.set(newName, owner);
+		}
+	}
+	const rewrite = (node: unknown): void => {
+		if (Array.isArray(node)) {
+			for (const m of node) rewrite(m);
+			return;
+		}
+		if (node === null || typeof node !== 'object') return;
+		const r = node as { type?: string; name?: string; value?: unknown } & Record<string, unknown>;
+		if (typeof r.name === 'string' && renames.has(r.name)) r.name = renames.get(r.name)!;
+		if (r.type === 'ALIAS' && typeof r.value === 'string' && renames.has(r.value)) r.value = renames.get(r.value)!;
+		for (const v of Object.values(r)) rewrite(v);
+	};
+	for (const name of Object.keys(mergedRules)) rewrite(mergedRules[name]);
+}
 function visibleGroupSynthName(
 	content: Rule,
 	parentKind: string,

@@ -692,15 +692,15 @@ export type PythonGrammar = {
 			multiple: true;
 			required: true;
 			types: [
-				{ type: 'except_clause_arm1'; named: true },
+				{ type: 'except_clause_arm'; named: true },
 				{ type: 'newline'; named: true },
 				{ type: 'simple_statements'; named: true },
 				{ type: 'suite_block_with_indent'; named: true }
 			];
 		};
 	};
-	readonly except_clause_arm1: {
-		type: 'except_clause_arm1';
+	readonly except_clause_arm: {
+		type: 'except_clause_arm';
 		named: true;
 		fields: {};
 		children: {
@@ -889,11 +889,11 @@ export type PythonGrammar = {
 		children: {
 			multiple: false;
 			required: true;
-			types: [{ type: 'future_import_statement_arm1'; named: true }, { type: 'import_list'; named: true }];
+			types: [{ type: 'future_import_statement_arm'; named: true }, { type: 'import_list'; named: true }];
 		};
 	};
-	readonly future_import_statement_arm1: {
-		type: 'future_import_statement_arm1';
+	readonly future_import_statement_arm: {
+		type: 'future_import_statement_arm';
 		named: true;
 		fields: {};
 		children: { multiple: false; required: true; types: [{ type: 'names'; named: true }] };
@@ -957,7 +957,7 @@ export type PythonGrammar = {
 		children: {
 			multiple: false;
 			required: false;
-			types: [{ type: 'future_import_statement_arm1'; named: true }, { type: 'import_list'; named: true }];
+			types: [{ type: 'future_import_statement_arm'; named: true }, { type: 'import_list'; named: true }];
 		};
 	};
 	readonly import_list: {
@@ -1370,12 +1370,12 @@ export type PythonGrammar = {
 		named: true;
 		fields: {
 			start: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
-			step: { multiple: false; required: false; types: [{ type: 'slice_group1'; named: true }] };
+			step: { multiple: false; required: false; types: [{ type: 'slice_group'; named: true }] };
 			stop: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
 		};
 	};
-	readonly slice_group1: {
-		type: 'slice_group1';
+	readonly slice_group: {
+		type: 'slice_group';
 		named: true;
 		fields: {};
 		children: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };

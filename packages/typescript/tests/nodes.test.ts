@@ -102,7 +102,7 @@ describe('import_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.importStatement({
 			fromClause: {
-				$type: TSKindId.ImportStatementArm1,
+				$type: TSKindId.ImportStatementArm,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -135,7 +135,7 @@ describe('import_statement', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.importStatement({
 			fromClause: {
-				$type: TSKindId.ImportStatementArm1,
+				$type: TSKindId.ImportStatementArm,
 				$text: 'test',
 				$source: 2,
 				$named: true,

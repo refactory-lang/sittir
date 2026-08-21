@@ -62,7 +62,7 @@ export default grammar(
 				[$.generic_type_with_turbofish, $.generic_pattern, $._path],
 				[$.generic_type_with_turbofish, $._path],
 				[$.visibility_modifier, $._path],
-				[$._expression_except_range, $._closure_expression_arm1],
+				[$._expression_except_range, $._closure_expression_arm],
 				[$.async_block, $._kw_async_marker],
 				[$.scoped_identifier, $.scoped_type_identifier, $._visibility_modifier_crate],
 				[$._visibility_modifier_pub],

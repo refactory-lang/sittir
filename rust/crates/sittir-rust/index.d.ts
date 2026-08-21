@@ -94,7 +94,7 @@ export interface ArgumentsTransport {
   _arguments_elements?: ArgumentsElementsTransport
 }
 
-export interface ArrayExpressionArm1Transport {
+export interface ArrayExpressionArmTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -127,7 +127,7 @@ export interface ArrayExpressionSemiTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributes?: Array<AttributeItemTransport>
-  _array_expression_arm1: Box<ArrayExpressionArm1Transport>
+  _array_expression_arm: Box<ArrayExpressionArmTransport>
 }
 
 export interface ArrayExpressionTransport {
@@ -202,7 +202,7 @@ export interface AsyncBlockTransport {
   _block: Box<BlockTransport>
 }
 
-export interface AttributeArm1Transport {
+export interface AttributeArmTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -307,7 +307,7 @@ export interface AttributeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _path: PathTransport
-  _attribute_arm1?: AttributeArm1Transport
+  _attribute_arm?: AttributeArmTransport
 }
 
 export interface AwaitExpressionTransport {
@@ -345,7 +345,7 @@ export interface BinaryExpressionTransport {
   _right: Box<ExpressionTransport>
 }
 
-export interface BlockCommentArm1Transport {
+export interface BlockCommentArmTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -366,7 +366,7 @@ export interface BlockCommentTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _block_comment_arm1?: BlockCommentArm1Transport
+  _block_comment_arm?: BlockCommentArmTransport
 }
 
 export interface BlockTransport {
@@ -2593,7 +2593,7 @@ export interface VariadicParameterTransport {
   _pattern?: PatternTransport
 }
 
-export interface VisibilityModifierGroup1Transport {
+export interface VisibilityModifierGroupTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -2601,7 +2601,7 @@ export interface VisibilityModifierGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: VisibilityModifierGroup1ContentTransportSlot
+  _content: VisibilityModifierGroupContentTransportSlot
 }
 
 export interface VisibilityModifierInPathTransport {
@@ -2623,7 +2623,7 @@ export interface VisibilityModifierPubParensTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _visibility_modifier_group1: VisibilityModifierGroup1Transport
+  _visibility_modifier_group: VisibilityModifierGroupTransport
 }
 
 export interface VisibilityModifierPubTransport {
@@ -2635,7 +2635,7 @@ export interface VisibilityModifierPubTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _pub: Box<AnyTransport>
-  _visibility_modifier_group1?: VisibilityModifierGroup1Transport
+  _visibility_modifier_group?: VisibilityModifierGroupTransport
 }
 
 export interface VisibilityModifierTransport {

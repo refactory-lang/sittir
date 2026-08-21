@@ -38,7 +38,7 @@
     "future_import_statement": {
       "definedBy": "override",
       "childKind": {
-        "future_import_statement_arm1": "arm1"
+        "future_import_statement_arm": "arm"
       }
     },
     "expression_statement": {
@@ -103,7 +103,7 @@
     "format_specifier.content": {
       "format_expression": "interpolation"
     },
-    "_future_import_statement_arm1.import_list": {
+    "_future_import_statement_arm.import_list": {
       "names": "_import_list"
     }
   },
@@ -488,7 +488,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "except_clause_arm1": {
+      "except_clause_arm": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1705,15 +1705,6 @@
         "nonEmpty": true
       }
     },
-    "_future_import_statement_arm1": {
-      "import_list": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_subjects": {
       "subject": {
         "unnamed": false,
@@ -1730,15 +1721,6 @@
         "required": true,
         "multiple": true,
         "nonEmpty": true
-      }
-    },
-    "_except_clause_arm1": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
       }
     },
     "_with_clause_with_items": {
@@ -1813,15 +1795,6 @@
         "nonEmpty": true
       }
     },
-    "_slice_group1": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_dictionary_elements": {
       "element": {
         "unnamed": false,
@@ -1829,6 +1802,33 @@
         "required": true,
         "multiple": true,
         "nonEmpty": true
+      }
+    },
+    "_future_import_statement_arm": {
+      "import_list": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_except_clause_arm": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_slice_group": {
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "_except_clause_as": {
@@ -2545,11 +2545,11 @@
       ]
     },
     {
-      "kind": "_except_clause_arm1",
+      "kind": "_except_clause_arm",
       "modelType": "branch",
-      "typeName": "ExceptClauseArm1",
-      "factoryName": "exceptClauseArm1",
-      "irKey": "exceptClauseArm1",
+      "typeName": "ExceptClauseArm",
+      "factoryName": "exceptClauseArm",
+      "irKey": "exceptClauseArm",
       "hidden": false,
       "fields": [
         {
@@ -2870,11 +2870,11 @@
       "children": []
     },
     {
-      "kind": "_future_import_statement_arm1",
+      "kind": "_future_import_statement_arm",
       "modelType": "branch",
-      "typeName": "FutureImportStatementArm1",
-      "factoryName": "futureImportStatementArm1",
-      "irKey": "futureImportStatementArm1",
+      "typeName": "FutureImportStatementArm",
+      "factoryName": "futureImportStatementArm",
+      "irKey": "futureImportStatementArm",
       "hidden": false,
       "fields": [
         {
@@ -3514,11 +3514,11 @@
       ]
     },
     {
-      "kind": "_slice_group1",
+      "kind": "_slice_group",
       "modelType": "branch",
-      "typeName": "SliceGroup1",
-      "factoryName": "sliceGroup1",
-      "irKey": "sliceGroup1",
+      "typeName": "SliceGroup",
+      "factoryName": "sliceGroup",
+      "irKey": "sliceGroup",
       "hidden": false,
       "fields": [
         {
@@ -6661,9 +6661,9 @@
           }
         },
         {
-          "name": "except_clause_arm1",
-          "propertyName": "exceptClauseArm1",
-          "paramName": "exceptClauseArm1",
+          "name": "except_clause_arm",
+          "propertyName": "exceptClauseArm",
+          "paramName": "exceptClauseArm",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6671,15 +6671,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_except_clause_arm1",
-              "parseKind": "except_clause_arm1",
+              "name": "_except_clause_arm",
+              "parseKind": "except_clause_arm",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_except_clause_arm1"
+              "_except_clause_arm"
             ]
           }
         },
@@ -6726,7 +6726,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "except_clause_arm1",
+        "except_clause_arm",
         "content"
       ]
     },
@@ -7570,8 +7570,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_future_import_statement_arm1",
-              "parseKind": "future_import_statement_arm1",
+              "name": "_future_import_statement_arm",
+              "parseKind": "future_import_statement_arm",
               "unresolved": true
             }
           ],
@@ -7579,7 +7579,7 @@
             "typeName": "",
             "kinds": [
               "_import_list",
-              "_future_import_statement_arm1"
+              "_future_import_statement_arm"
             ]
           }
         }
@@ -8010,8 +8010,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_future_import_statement_arm1",
-              "parseKind": "future_import_statement_arm1",
+              "name": "_future_import_statement_arm",
+              "parseKind": "future_import_statement_arm",
               "unresolved": true
             },
             {
@@ -8026,7 +8026,7 @@
             "typeName": "",
             "kinds": [
               "_import_list",
-              "_future_import_statement_arm1",
+              "_future_import_statement_arm",
               "wildcard_import"
             ]
           }
@@ -10138,15 +10138,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_slice_group1",
-              "parseKind": "slice_group1",
+              "name": "_slice_group",
+              "parseKind": "slice_group",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_slice_group1"
+              "_slice_group"
             ]
           }
         }

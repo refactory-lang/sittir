@@ -465,10 +465,10 @@ export type TypescriptGrammar = {
 			};
 			right: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
 		};
-		children: { multiple: false; required: false; types: [{ type: 'binary_expression_arm1'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'binary_expression_arm'; named: true }] };
 	};
-	readonly binary_expression_arm1: {
-		type: 'binary_expression_arm1';
+	readonly binary_expression_arm: {
+		type: 'binary_expression_arm';
 		named: true;
 		fields: {
 			left: {
@@ -574,10 +574,10 @@ export type TypescriptGrammar = {
 		type: 'catch_clause';
 		named: true;
 		fields: { body: { multiple: false; required: true; types: [{ type: 'statement_block'; named: true }] } };
-		children: { multiple: false; required: false; types: [{ type: 'catch_clause_group1'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'catch_clause_group'; named: true }] };
 	};
-	readonly catch_clause_group1: {
-		type: 'catch_clause_group1';
+	readonly catch_clause_group: {
+		type: 'catch_clause_group';
 		named: true;
 		fields: {
 			parameter: {
@@ -1396,11 +1396,11 @@ export type TypescriptGrammar = {
 		children: {
 			multiple: true;
 			required: true;
-			types: [{ type: 'identifier'; named: true }, { type: 'import_clause_group1'; named: true }];
+			types: [{ type: 'identifier'; named: true }, { type: 'import_clause_group'; named: true }];
 		};
 	};
-	readonly import_clause_group1: {
-		type: 'import_clause_group1';
+	readonly import_clause_group: {
+		type: 'import_clause_group';
 		named: true;
 		fields: {};
 		children: {
@@ -1461,7 +1461,7 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [
 					{ type: 'import_require_clause'; named: true },
-					{ type: 'import_statement_arm1'; named: true },
+					{ type: 'import_statement_arm'; named: true },
 					{ type: 'string'; named: true }
 				];
 			};
@@ -1478,8 +1478,8 @@ export type TypescriptGrammar = {
 			};
 		};
 	};
-	readonly import_statement_arm1: {
-		type: 'import_statement_arm1';
+	readonly import_statement_arm: {
+		type: 'import_statement_arm';
 		named: true;
 		fields: { source: { multiple: false; required: true; types: [{ type: 'string'; named: true }] } };
 		children: { multiple: false; required: true; types: [{ type: 'import_clause'; named: true }] };

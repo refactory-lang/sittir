@@ -97,8 +97,8 @@ pub struct ArgumentsElementsTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_array_expression_arm1.jinja", escape = "none")]
-pub struct ArrayExpressionArm1Template<'a> {
+#[template(path = "_array_expression_arm.jinja", escape = "none")]
+pub struct ArrayExpressionArmTemplate<'a> {
     pub expression: SingleNonterminalView<'a>,
     pub length: SingleNonterminalView<'a>,
 }
@@ -113,13 +113,13 @@ pub struct ArrayExpressionListTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_array_expression_semi.jinja", escape = "none")]
 pub struct ArrayExpressionSemiTemplate<'a> {
-    pub array_expression_arm1: SingleNonterminalView<'a>,
+    pub array_expression_arm: SingleNonterminalView<'a>,
     pub attributes: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_attribute_arm1.jinja", escape = "none")]
-pub struct AttributeArm1Template<'a> {
+#[template(path = "_attribute_arm.jinja", escape = "none")]
+pub struct AttributeArmTemplate<'a> {
     pub arguments: OptionalNonterminalView<'a>,
     pub value: OptionalNonterminalView<'a>,
 }
@@ -168,8 +168,8 @@ pub struct AttributedTypeParameterTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_block_comment_arm1.jinja", escape = "none")]
-pub struct BlockCommentArm1Template<'a> {
+#[template(path = "_block_comment_arm.jinja", escape = "none")]
+pub struct BlockCommentArmTemplate<'a> {
     pub doc: OptionalNonterminalView<'a>,
     pub inner: OptionalNonterminalView<'a>,
     pub outer: OptionalNonterminalView<'a>,
@@ -511,8 +511,8 @@ pub struct UseClausesTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_visibility_modifier_group1.jinja", escape = "none")]
-pub struct VisibilityModifierGroup1Template<'a> {
+#[template(path = "_visibility_modifier_group.jinja", escape = "none")]
+pub struct VisibilityModifierGroupTemplate<'a> {
     pub content: SingleNonterminalView<'a>,
 }
 
@@ -526,7 +526,7 @@ pub struct VisibilityModifierInPathTemplate<'a> {
 #[template(path = "_visibility_modifier_pub.jinja", escape = "none")]
 pub struct VisibilityModifierPubTemplate<'a> {
     pub pub_: SingleNonterminalView<'a>,
-    pub visibility_modifier_group1: OptionalNonterminalView<'a>,
+    pub visibility_modifier_group: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -593,7 +593,7 @@ pub struct AttributeItemTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "attribute.jinja", escape = "none")]
 pub struct AttributeTemplate<'a> {
-    pub attribute_arm1: OptionalNonterminalView<'a>,
+    pub attribute_arm: OptionalNonterminalView<'a>,
     pub path: SingleNonterminalView<'a>,
 }
 
@@ -620,7 +620,7 @@ pub struct BinaryExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "block_comment.jinja", escape = "none")]
 pub struct BlockCommentTemplate<'a> {
-    pub block_comment_arm1: OptionalNonterminalView<'a>,
+    pub block_comment_arm: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

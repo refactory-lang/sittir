@@ -340,13 +340,13 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	type_parameters: TSKindId.TypeParameters,
 	tuple_type: TSKindId.TupleType,
 	_export_specifiers: TSKindId.ExportSpecifiers,
-	_import_clause_group1: TSKindId.ImportClauseGroup1,
 	_import_specifiers: TSKindId.ImportSpecifiers,
 	_formal_parameters_elements: TSKindId.FormalParametersElements,
 	_enum_body_elements: TSKindId.EnumBodyElements,
 	_types: TSKindId.Types,
 	_type_parameters_elements: TSKindId.TypeParametersElements,
 	_tuple_type_members: TSKindId.TupleTypeMembers,
+	_import_clause_group: TSKindId.ImportClauseGroup,
 	object_type_content: TSKindId.ObjectTypeContent,
 	_export_statement_default: TSKindId.ExportStatementDefault,
 	_public_field_definition_declare_first: TSKindId.PublicFieldDefinitionDeclareFirst
@@ -412,8 +412,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildTupleType(children[0] as Parameters<typeof F.buildTupleType>[0]);
 		case '_export_specifiers':
 			return (F.buildExportSpecifiers as (...args: unknown[]) => unknown)(...children);
-		case '_import_clause_group1':
-			return F.buildImportClauseGroup1(children[0] as Parameters<typeof F.buildImportClauseGroup1>[0]);
 		case '_import_specifiers':
 			return (F.buildImportSpecifiers as (...args: unknown[]) => unknown)(...children);
 		case '_formal_parameters_elements':
@@ -426,6 +424,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildTypeParametersElements as (...args: unknown[]) => unknown)(...children);
 		case '_tuple_type_members':
 			return (F.buildTupleTypeMembers as (...args: unknown[]) => unknown)(...children);
+		case '_import_clause_group':
+			return F.buildImportClauseGroup(children[0] as Parameters<typeof F.buildImportClauseGroup>[0]);
 		case 'object_type_content':
 			return (F.buildObjectTypeContent as (...args: unknown[]) => unknown)(...children);
 		case '_export_statement_default':
@@ -566,7 +566,7 @@ const _K1: readonly string[] = [
 	'labeled_statement'
 ];
 const _K2: readonly string[] = ['string'];
-const _K3: readonly string[] = ['_import_statement_arm1', 'import_require_clause', 'string'];
+const _K3: readonly string[] = ['_import_statement_arm', 'import_require_clause', 'string'];
 const _K4: readonly string[] = ['_import_specifier_as'];
 const _K5: readonly string[] = [
 	'undefined',
@@ -992,7 +992,7 @@ export function coerceToImportStatement(input: T.ImportStatement.Loose): ReturnT
 		fromClause: _requireField(
 			'import_statement',
 			'fromClause',
-			_resolveOne<T.ImportStatementArm1 | T.ImportRequireClause | T.String>(input.fromClause, _K0, _K3)
+			_resolveOne<T.ImportStatementArm | T.ImportRequireClause | T.String>(input.fromClause, _K0, _K3)
 		),
 		importAttribute: _resolveOneBranch<T.ImportAttribute>(input.importAttribute, 'import_attribute'),
 		semicolon: _requireField(
@@ -1422,7 +1422,7 @@ export function coerceToSwitchDefault(input?: T.SwitchDefault.Loose): ReturnType
 export function coerceToCatchClause(input: T.CatchClause.Loose): ReturnType<typeof F.buildCatchClause> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildCatchClause>;
 	return F.buildCatchClause({
-		catchClauseGroup1: _resolveOneBranch<T.CatchClauseGroup1>(input.catchClauseGroup1, '_catch_clause_group1'),
+		catchClauseGroup: _resolveOneBranch<T.CatchClauseGroup>(input.catchClauseGroup, '_catch_clause_group'),
 		body: _resolveOneBranch<T.StatementBlock>(input.body, 'statement_block') ?? F.buildStatementBlock()
 	});
 }
@@ -1915,10 +1915,7 @@ export function coerceToBinaryExpression(input?: T.BinaryExpression.Loose): Retu
 			]
 		),
 		right: _resolveOne<T.Expression>(input?.right, _K5, _K10),
-		binaryExpressionArm1: _resolveOneBranch<T.BinaryExpressionArm1>(
-			input?.binaryExpressionArm1,
-			'_binary_expression_arm1'
-		)
+		binaryExpressionArm: _resolveOneBranch<T.BinaryExpressionArm>(input?.binaryExpressionArm, '_binary_expression_arm')
 	});
 }
 

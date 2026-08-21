@@ -162,7 +162,7 @@ export function buildRelativeImport(config: T.RelativeImport.Config) {
 	);
 }
 
-export function buildFutureImportStatement(child: T.ImportList | T.FutureImportStatementArm1) {
+export function buildFutureImportStatement(child: T.ImportList | T.FutureImportStatementArm) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -171,7 +171,7 @@ export function buildFutureImportStatement(child: T.ImportList | T.FutureImportS
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.ImportList | T.FutureImportStatementArm1) => buildFutureImportStatement(v) }
+				$with: { $child: (v: T.ImportList | T.FutureImportStatementArm) => buildFutureImportStatement(v) }
 			},
 			{
 				content: () => _content
@@ -195,7 +195,7 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config) {
 				$with: {
 					moduleName: (value: T.RelativeImport | T.DottedName) =>
 						buildImportFromStatement({ ...config, moduleName: value }),
-					content: (value: T.ImportList | T.FutureImportStatementArm1 | T.WildcardImport) =>
+					content: (value: T.ImportList | T.FutureImportStatementArm | T.WildcardImport) =>
 						buildImportFromStatement({ ...config, content: value })
 				}
 			},
@@ -738,7 +738,7 @@ export function buildTryStatement(config: T.TryStatement.Config) {
 
 export function buildExceptClause(config: T.ExceptClause.Config) {
 	const _star_marker = coerceBooleanKeywordStorage(config.starMarker);
-	const _except_clause_arm1 = config.exceptClauseArm1;
+	const _except_clause_arm = config.exceptClauseArm;
 	const _content = config.content;
 	return withMethods(
 		withAccessors(
@@ -747,19 +747,19 @@ export function buildExceptClause(config: T.ExceptClause.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_star_marker,
-				_except_clause_arm1,
+				_except_clause_arm,
 				_content,
 				$with: {
 					starMarker: (value?: NonNullable<Parameters<typeof buildExceptClause>[0]>['starMarker']) =>
 						buildExceptClause({ ...config, starMarker: value }),
-					exceptClauseArm1: (value?: T.ExceptClauseArm1) => buildExceptClause({ ...config, exceptClauseArm1: value }),
+					exceptClauseArm: (value?: T.ExceptClauseArm) => buildExceptClause({ ...config, exceptClauseArm: value }),
 					content: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
 						buildExceptClause({ ...config, content: value })
 				}
 			},
 			{
 				starMarker: () => _star_marker,
-				exceptClauseArm1: () => _except_clause_arm1,
+				exceptClauseArm: () => _except_clause_arm,
 				content: () => _content
 			}
 		),
@@ -2248,7 +2248,7 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}) {
 				$with: {
 					start: (value?: T.Expression) => buildSlice({ ...config, start: value }),
 					stop: (value?: T.Expression) => buildSlice({ ...config, stop: value }),
-					step: (value?: T.SliceGroup1) => buildSlice({ ...config, step: value })
+					step: (value?: T.SliceGroup) => buildSlice({ ...config, step: value })
 				}
 			},
 			{
@@ -3227,42 +3227,6 @@ function _buildSimpleStatementsElements(elements: NonEmptyArray<T.SimpleStatemen
 	);
 }
 
-export function buildFutureImportStatementArm1(child: T.ImportList): ReturnType<typeof _buildFutureImportStatementArm1>;
-export function buildFutureImportStatementArm1(
-	...args: Parameters<typeof buildImportList>
-): ReturnType<typeof _buildFutureImportStatementArm1>;
-export function buildFutureImportStatementArm1(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildFutureImportStatementArm1(args[0] as T.ImportList);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportList as const);
-	return prebuilt
-		? _buildFutureImportStatementArm1(args[0] as T.ImportList)
-		: _buildFutureImportStatementArm1((buildImportList as (...a: unknown[]) => unknown)(...args) as T.ImportList);
-}
-function _buildFutureImportStatementArm1(child: T.ImportList) {
-	const _import_list = child;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FutureImportStatementArm1 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_import_list,
-				$with: { $child: (v: T.ImportList) => buildFutureImportStatementArm1(v) }
-			},
-			{
-				importList: () => _import_list
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildSubjects(...elements: NonEmptyArray<T.Expression>): ReturnType<typeof _buildSubjects>;
 export function buildSubjects(
 	options: { delimiter?: 2 },
@@ -3329,25 +3293,6 @@ function _buildCasePatterns(elements: NonEmptyArray<T.CasePattern>, options: { d
 			},
 			{
 				casePatterns: () => _case_pattern
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildExceptClauseArm1(child: T.ExceptClauseAs | T.ExceptClauseList) {
-	const _content = child;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExceptClauseArm1 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: { $child: (v: T.ExceptClauseAs | T.ExceptClauseList) => buildExceptClauseArm1(v) }
-			},
-			{
-				content: () => _content
 			}
 		),
 		methodsEngine
@@ -3680,25 +3625,6 @@ function _buildSubscripts(elements: NonEmptyArray<T.Expression | T.Slice>, optio
 	);
 }
 
-export function buildSliceGroup1(child?: T.Expression) {
-	const _expression = child;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.SliceGroup1 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_expression,
-				$with: { $child: (v: T.Expression) => buildSliceGroup1(v) }
-			},
-			{
-				expression: () => _expression
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildDictionaryElements(
 	...elements: NonEmptyArray<T.Pair | T.DictionarySplat>
 ): ReturnType<typeof _buildDictionaryElements>;
@@ -3731,6 +3657,80 @@ function _buildDictionaryElements(elements: NonEmptyArray<T.Pair | T.DictionaryS
 			},
 			{
 				elements: () => _element
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildFutureImportStatementArm(child: T.ImportList): ReturnType<typeof _buildFutureImportStatementArm>;
+export function buildFutureImportStatementArm(
+	...args: Parameters<typeof buildImportList>
+): ReturnType<typeof _buildFutureImportStatementArm>;
+export function buildFutureImportStatementArm(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildFutureImportStatementArm(args[0] as T.ImportList);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportList as const);
+	return prebuilt
+		? _buildFutureImportStatementArm(args[0] as T.ImportList)
+		: _buildFutureImportStatementArm((buildImportList as (...a: unknown[]) => unknown)(...args) as T.ImportList);
+}
+function _buildFutureImportStatementArm(child: T.ImportList) {
+	const _import_list = child;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.FutureImportStatementArm as const,
+				$source: 2 as const,
+				$named: true as const,
+				_import_list,
+				$with: { $child: (v: T.ImportList) => buildFutureImportStatementArm(v) }
+			},
+			{
+				importList: () => _import_list
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildExceptClauseArm(child: T.ExceptClauseAs | T.ExceptClauseList) {
+	const _content = child;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ExceptClauseArm as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { $child: (v: T.ExceptClauseAs | T.ExceptClauseList) => buildExceptClauseArm(v) }
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildSliceGroup(child?: T.Expression) {
+	const _expression = child;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.SliceGroup as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				$with: { $child: (v: T.Expression) => buildSliceGroup(v) }
+			},
+			{
+				expression: () => _expression
 			}
 		),
 		methodsEngine
@@ -4650,10 +4650,8 @@ export type FluentKindMap = {
 	comment: T.Comment;
 	line_continuation: T.LineContinuation;
 	_simple_statements_elements: FluentNode<'_simple_statements_elements', T.SimpleStatementsElements.Config>;
-	_future_import_statement_arm1: FluentNode<'_future_import_statement_arm1', T.FutureImportStatementArm1.Config>;
 	_subjects: FluentNode<'_subjects', T.Subjects.Config>;
 	_case_patterns: FluentNode<'_case_patterns', T.CasePatterns.Config>;
-	_except_clause_arm1: FluentNode<'_except_clause_arm1', T.ExceptClauseArm1.Config>;
 	_with_clause_with_items: FluentNode<'_with_clause_with_items', T.WithClauseWithItems.Config>;
 	_types: FluentNode<'_types', T.Types.Config>;
 	_argument_list_elements: FluentNode<'_argument_list_elements', T.ArgumentListElements.Config>;
@@ -4662,8 +4660,10 @@ export type FluentKindMap = {
 	_dict_pattern_elements: FluentNode<'_dict_pattern_elements', T.DictPatternElements.Config>;
 	_pattern_list_patterns: FluentNode<'_pattern_list_patterns', T.PatternListPatterns.Config>;
 	_subscripts: FluentNode<'_subscripts', T.Subscripts.Config>;
-	_slice_group1: FluentNode<'_slice_group1', T.SliceGroup1.Config>;
 	_dictionary_elements: FluentNode<'_dictionary_elements', T.DictionaryElements.Config>;
+	_future_import_statement_arm: FluentNode<'_future_import_statement_arm', T.FutureImportStatementArm.Config>;
+	_except_clause_arm: FluentNode<'_except_clause_arm', T.ExceptClauseArm.Config>;
+	_slice_group: FluentNode<'_slice_group', T.SliceGroup.Config>;
 	_augmented_assignment_operator: T.AugmentedAssignmentOperator;
 	_except_clause_as: T.ExceptClauseAs;
 	case_tuple_pattern: FluentNode<'case_tuple_pattern', T.CaseTuplePattern.Config>;
@@ -4824,10 +4824,8 @@ export const _factoryMap = {
 	comment: buildComment,
 	line_continuation: buildLineContinuation,
 	_simple_statements_elements: buildSimpleStatementsElements,
-	_future_import_statement_arm1: buildFutureImportStatementArm1,
 	_subjects: buildSubjects,
 	_case_patterns: buildCasePatterns,
-	_except_clause_arm1: buildExceptClauseArm1,
 	_with_clause_with_items: buildWithClauseWithItems,
 	_types: buildTypes,
 	_argument_list_elements: buildArgumentListElements,
@@ -4836,8 +4834,10 @@ export const _factoryMap = {
 	_dict_pattern_elements: buildDictPatternElements,
 	_pattern_list_patterns: buildPatternListPatterns,
 	_subscripts: buildSubscripts,
-	_slice_group1: buildSliceGroup1,
 	_dictionary_elements: buildDictionaryElements,
+	_future_import_statement_arm: buildFutureImportStatementArm,
+	_except_clause_arm: buildExceptClauseArm,
+	_slice_group: buildSliceGroup,
 	_augmented_assignment_operator: buildAugmentedAssignmentOperator,
 	_except_clause_as: buildExceptClauseAs,
 	case_tuple_pattern: buildCaseTuplePattern,
