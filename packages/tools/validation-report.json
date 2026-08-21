@@ -1471,19 +1471,6 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "name": "Print statements with redirection [module]",
-    "message": "re-parse error [ERROR in chevron at \"a\"]",
-    "input": "print >> a\nprint >> a, \"b\", \"c\"",
-    "rendered": "print>>a\nprint>>a\"b\",\"c\",\n",
-    "stage": "read-render-parse",
-    "code": "read-render-parse-error",
-    "severity": "error",
-    "label": "Print statements with redirection [module]"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
     "name": "Type Alias Statements [module]",
     "message": "re-parse error [ERROR in type_parameter at \"P\"]",
     "input": "type Point = tuple[float, float]\ntype Point[T] = tuple[T, T]\ntype IntFunc[**P] = Callable[P, int]  # ParamSpec\ntype LabeledTuple[*Ts] = tuple[str, *Ts]  # TypeVarTuple\ntype HashableSequence[T: Hashable] = Sequence[T]  # TypeVar with bound\ntype IntOrStrSequence[T: (int, str)] = Sequence[T]  # TypeVar with constraints",
@@ -1505,19 +1492,6 @@
     "code": "read-render-parse-error",
     "severity": "error",
     "label": "Generic Function Definitions [module]"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "name": "Print statements with redirection [module]",
-    "message": "re-parse error [ERROR in chevron at \"a\"]",
-    "input": "print >> a\nprint >> a, \"b\", \"c\"",
-    "rendered": "print>>a\nprint>>a\"b\",\"c\",\n",
-    "stage": "read-render-parse-shallow",
-    "code": "read-render-parse-shallow-error",
-    "severity": "error",
-    "label": "Print statements with redirection [module]"
   },
   {
     "source": "validator",

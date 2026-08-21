@@ -631,23 +631,18 @@ function emitFieldCarryingFactory(
 	// signature and the shape metadata can never disagree.
 	const singleField = !containerFacts ? resolveDirectFactorySlot(node, nodeMap) : undefined;
 
-	// Fields whose own separator flank is genuinely `'optional'` need a
-	// caller-facing override — a factory has no real parse to capture a
-	// per-instance fact from, and a fixed default can't be right for every
-	// caller (e.g. rust `tuple_expression`'s single-element case structurally
-	// NEEDS `trailing: true` to disambiguate from a parenthesized
-	// expression, while a 3-element tuple structurally wants `false`).
-	// Mirrors `emitSeparatedListFactory`'s existing `options: {leading?,
-	// trailing?}` pattern for the kind-level case — same flat shape,
-	// scoped to the (today, always singular) flank-optional field on this
-	// factory. Only wired for the `singleField`/`config` shapes below;
-	// `containerFacts` factories have no flank-optional field in any
-	// current grammar and keep today's un-configurable `false` default.
-	const flankOptionField = fields.find((f) => f.trailingDelimiter === 'optional' || f.leadingDelimiter === 'optional');
-	const hasFlankOptions = !containerFacts && flankOptionField !== undefined;
-	const flankOptionsType = `{ delimiter?: ${flankOptionField ? delimiterUnionFor(flankOptionField) : 'never'} }`;
-	const delimiterSourceFor = (f: AssembledNonterminal): string =>
-		hasFlankOptions && f === flankOptionField ? 'options.delimiter ?? 0' : '0';
+	// A field with an optional delimiter flank cannot reach this emitter: a
+	// delimiter-bearing list is a separatedList KIND (classifyNode routes it
+	// there, peeling group wrappers), and the delimiter is stored kind-level
+	// on that kind — field-prefixed delimiter storage is retired. Fail fast
+	// if classification ever regresses.
+	const flankField = fields.find((f) => f.trailingDelimiter === 'optional' || f.leadingDelimiter === 'optional');
+	if (flankField !== undefined) {
+		throw new Error(
+			`emitFieldCarryingFactory: '${typeKind}' field '${flankField.name}' carries an optional delimiter — ` +
+				`a delimiter-bearing list must classify as its own separatedList kind (kind-level _delimiter storage)`
+		);
+	}
 
 	let signature: string;
 	let valueSourceFor: (f: AssembledNonterminal) => string;
@@ -708,13 +703,9 @@ function emitFieldCarryingFactory(
 		const elemType = `T.${node.typeName}.Config['${singleField.configKey}']`;
 		const paramName = singleField.paramName;
 		const optMark = isRequired(singleField) ? '' : '?';
-		signature = hasFlankOptions
-			? `export function ${fn}(${paramName}${optMark}: ${elemType}, options: ${flankOptionsType} = {}) {`
-			: `export function ${fn}(${paramName}${optMark}: ${elemType}) {`;
-		if (!hasFlankOptions) {
-			directParamType = elemType;
-			directParamOptional = !isRequired(singleField);
-		}
+		signature = `export function ${fn}(${paramName}${optMark}: ${elemType}) {`;
+		directParamType = elemType;
+		directParamOptional = !isRequired(singleField);
 		valueSourceFor = (f) =>
 			f === singleField
 				? slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries)
@@ -722,12 +713,7 @@ function emitFieldCarryingFactory(
 		const setterType = setterElemType(singleField, elemType, fn, nodeMap, true);
 		withLines = [
 			'    $with: {',
-			`      ${singleField.propertyName}: (${setterValueSignature(singleField, setterType)}) => ${fn}(value${hasFlankOptions ? ', options' : ''}),`,
-			...(hasFlankOptions
-				? [
-						`      delimiter: (v: ${delimiterUnionFor(flankOptionField!)}) => ${fn}(${paramName}, { ...options, delimiter: v }),`
-					]
-				: []),
+			`      ${singleField.propertyName}: (${setterValueSignature(singleField, setterType)}) => ${fn}(value),`,
 			'    },'
 		];
 	} else {
@@ -738,11 +724,10 @@ function emitFieldCarryingFactory(
 		// the default when the body actually reads from config — avoids dead code
 		// when all fields auto-stamp.
 		const hasConfigReads = fields.some((f) => autoStampExpression(f, nodeMap) === undefined);
-		const flankOptionsParam = hasFlankOptions ? `, options: ${flankOptionsType} = {}` : '';
 		signature =
 			opt === '?' && hasConfigReads
-				? `export function ${fn}(config: Partial<${configType}> = {}${flankOptionsParam}) {`
-				: `export function ${fn}(config${opt}: ${configType}${flankOptionsParam}) {`;
+				? `export function ${fn}(config: Partial<${configType}> = {}) {`
+				: `export function ${fn}(config${opt}: ${configType}) {`;
 		const configAccess = 'config';
 		valueSourceFor = (f) => {
 			const stamp = autoStampExpression(f, nodeMap);
@@ -756,7 +741,6 @@ function emitFieldCarryingFactory(
 		// the combined getter/setter method; under shape A getters are pure and
 		// the setter is purely a rebuild). Auto-stamp fields are skipped — no
 		// setter exposed because the value is fixed.
-		const flankOptionsArg = hasFlankOptions ? ', options' : '';
 		withLines = ['    $with: {'];
 		for (const f of fields) {
 			if (autoStampExpression(f, nodeMap) !== undefined) continue;
@@ -767,19 +751,14 @@ function emitFieldCarryingFactory(
 				const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
 				const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
 				withLines.push(
-					`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }${flankOptionsArg}),`
+					`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }),`
 				);
 			} else {
 				const elemType = setterElemType(f, fieldElementType(f, nodeMap), fn, nodeMap);
 				withLines.push(
-					`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }${flankOptionsArg}),`
+					`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }),`
 				);
 			}
-		}
-		if (hasFlankOptions) {
-			withLines.push(
-				`      delimiter: (v: ${delimiterUnionFor(flankOptionField!)}) => ${fn}(${configAccess}, { ...options, delimiter: v }),`
-			);
 		}
 		// Post-unification: the legacy `children` setter is gone — per-slot setters
 		// above cover every slot through the unified `fields` loop.
@@ -805,22 +784,6 @@ function emitFieldCarryingFactory(
 	if (variantName) lines.push(`    $variant: '${variantName}' as const,`);
 	for (const f of fieldsToEmit) {
 		lines.push(`    ${f.storageKey},`);
-		// Factory-constructed elements carry no captured wire data — the
-		// per-instance flank facts wrap.ts populates from a real parse (see
-		// emitFieldFlankCaptureLines' doc comment) default to `false` unless
-		// the caller overrides via `options` (only wired for the field
-		// `flankOptionField` resolved to — see its doc comment above; no
-		// current kind has more than one such field per factory). Mirrors
-		// `emitSeparatedListFactory`'s `options.trailing ?? false` for the
-		// kind-level case. Without this the field is simply absent, which
-		// the validator's factory-vs-read storage comparison flags as a
-		// structural gap — and for a kind like rust `tuple_expression`,
-		// where a single-element instance structurally REQUIRES `trailing:
-		// true` to disambiguate from a parenthesized expression, a fixed
-		// `false` default is actively wrong, not just incomplete.
-		if (f.trailingDelimiter === 'optional' || f.leadingDelimiter === 'optional') {
-			lines.push(`    ${f.storageKey}_delimiter: ${delimiterSourceFor(f)},`);
-		}
 	}
 	lines.push(...withLines);
 	lines.push('  }, {');

@@ -912,85 +912,6 @@ function emitFieldStorageLines(
 	}
 }
 
-/**
- * Content-list expression for the count-based flank check. For a merged
- * union slot (concrete candidate storage keys exist), a fresh read never
- * populates the canonical key — the members sit in per-route candidate
- * buckets — so counting the raw canonical key would read an empty list
- * against a full separator count and stick the flank at `true`. Spread
- * the candidate buckets instead (order is irrelevant: only the member
- * COUNT feeds the fallback); the canonical key wins outright once a
- * `$with` setter populates it, mirroring `resolveSlotStoreExpr`.
- */
-function flankContentExprOf(f: AssembledNonterminal, dataExpr: string, nodeMap: NodeMap): string {
-	const candidateKeys = (collectConcreteStorageKeys(f, nodeMap) ?? []).filter((k) => k !== f.storageKey);
-	const rawExpr = dataAccessExpr(dataExpr, f.storageKey);
-	return candidateKeys.length > 0
-		? `(${rawExpr} !== undefined ? _toArr(${rawExpr}) : [${candidateKeys.map((k) => `..._toArr(${dataAccessExpr(dataExpr, k)})`).join(', ')}])`
-		: `(Array.isArray(${rawExpr}) ? ${rawExpr} : [])`;
-}
-
-/**
- * Emit the `_<field>_delimiter` sibling wire key (bitflag: leading = 1,
- * trailing = 2) for
- * array fields whose OWN separator flank is genuinely `'optional'` — the
- * per-*field* counterpart to `emitSeparatedListWrap`'s per-*kind* capture
- * (which only fires when the array IS the kind's whole top-level structure,
- * `isSeparatedListShape`, assemble.ts). Reuses the SAME `_hasSeparatorFlank`
- * runtime helper, but can't reuse its span-comparison primary path: that
- * path compares the CONTAINER's own `$span` against the first/last content
- * element's span, which is only a valid "does a flank occurrence exist"
- * signal when the container's span IS the list's own span (the whole-kind
- * case). For a field nested inside a larger branch (e.g. a paren-wrapped
- * list), the owning node's span always extends past the field's own
- * occurrence (there's a closing delimiter after it), so that comparison
- * would spuriously always read "trailing present". Passing `{}` (no
- * `$span`) as the container forces `_hasSeparatorFlank` straight to its
- * count-based fallback instead.
- *
- * That fallback counts `$other` (the kind's full unfielded/anonymous
- * children bucket) — which, unlike the whole-kind case, may ALSO contain
- * anonymous tokens belonging to OTHER structure on this same kind (e.g.
- * `tuple_expression`'s wrapping `(`/`)`), not just this field's own
- * separator. Filter `$other` down to entries matching the separator's own
- * literal kind before counting, or the paren tokens would inflate the count
- * and produce false positives.
- *
- * Scope: only a literal separator with a catalog-resolvable kind, and only
- * when the OTHER flank on this same field isn't ALSO `'optional'` — mirrors
- * `_hasSeparatorFlank`'s own explicit unsupported case (it throws for
- * text-collapsed content when both flanks are optional, since a lone extra
- * anon can't be disambiguated by count alone). A field outside this scope
- * keeps today's behavior (no capture; render falls back to compile-time
- * `false`) rather than emitting a wire key that could be silently wrong.
- */
-function emitFieldFlankCaptureLines(
-	fields: readonly AssembledNonterminal[],
-	dataExpr: string,
-	lines: string[],
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap
-): void {
-	for (const f of fields) {
-		if (f.trailingDelimiter !== 'optional' && f.leadingDelimiter !== 'optional') continue;
-		if (f.trailingDelimiter === 'optional' && f.leadingDelimiter === 'optional') continue;
-		const sepText = f.values.map((v) => v.separator).find((s): s is string => s !== undefined);
-		if (sepText === undefined || !hasCatalogEntry(kindEntries, sepText)) continue;
-		const kindExpr = kindDiscriminantExpr(sepText, nodeMap, kindEntries);
-		const contentExpr = flankContentExprOf(f, dataExpr, nodeMap);
-		const otherExpr =
-			`(Array.isArray(${dataExpr}.$other) ? ${dataExpr}.$other : ${dataExpr}.$other !== undefined ? [${dataExpr}.$other] : [])` +
-			`.filter((e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === ${kindExpr})`;
-		const parts: string[] = [];
-		if (f.leadingDelimiter === 'optional') {
-			parts.push(`(_hasSeparatorFlank({}, ${contentExpr}, ${otherExpr}, "leading", false, 0) ? 1 : 0)`);
-		}
-		if (f.trailingDelimiter === 'optional') {
-			parts.push(`(_hasSeparatorFlank({}, ${contentExpr}, ${otherExpr}, "trailing", false, 0) ? 2 : 0)`);
-		}
-		lines.push(`    ${f.storageKey}_delimiter: ${parts.join(' | ')},`);
-	}
-}
 
 /**
  * Emitted `[<sep kind id>, …]` expression for an elidable separated-list
@@ -1125,9 +1046,6 @@ function emitFieldCarryingWrap(
 	}
 	// Named fields -> `_<name>` storage (enumerable).
 	emitFieldStorageLines(fields, node.kind, 'data', lines, kindEntries, nodeMap);
-	// Per-field optional-flank capture (see doc comment) — sibling wire keys
-	// consumed by render-module.ts's per-field leading/trailing expression.
-	emitFieldFlankCaptureLines(fields, 'data', lines, kindEntries, nodeMap);
 	// Unnamed children slot -- pass through from data (stubs; drilled lazily by consumer).
 	// $other is a $-prefixed metadata key, not a _<name> storage key, so
 	// $other doesn't have the `_` prefix convention — access via data.$other

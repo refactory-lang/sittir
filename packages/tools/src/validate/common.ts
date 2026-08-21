@@ -2821,24 +2821,17 @@ export function dedupeMismatchesByContainment<T extends { entry?: string; start:
 
 /**
  * Build a separatedList factory's options bag from a read/wrap node's
- * separator facts. The delimiter bitflag (leading = 1, trailing = 2) has
- * two generated spellings — the kind-level `_delimiter` (separatedList
- * modelType) and the field-prefixed `_<field>_delimiter` (per-field
- * capture on field-backed lists) — so the key is discovered on the node
- * itself by suffix rather than hardcoded: the exact kind-level key wins,
- * else a unique suffix-matching key (multiple matches are ambiguous →
- * absent).
+ * kind-level separator facts — `_delimiter` (bitflag: leading = 1,
+ * trailing = 2) and `_separator` (dynamic separator kind id). One wire
+ * spelling: a delimiter-bearing list is always its own separatedList
+ * kind, so the kind-level keys are the only place these facts live.
  */
 export function separatedListFactoryOptions(
 	data: unknown,
 	kindLiteralText: ReadonlyMap<number, string> | undefined
 ): { separator?: string; delimiter?: number } | undefined {
 	const rec = (data ?? {}) as Record<string, unknown>;
-	const delimiter = ((): number => {
-		if (typeof rec['_delimiter'] === 'number') return rec['_delimiter'];
-		const matches = Object.keys(rec).filter((k) => k.endsWith('_delimiter') && k !== '_delimiter');
-		return matches.length === 1 && typeof rec[matches[0]!] === 'number' ? (rec[matches[0]!] as number) : 0;
-	})();
+	const delimiter = typeof rec['_delimiter'] === 'number' ? rec['_delimiter'] : 0;
 	const separatorSourceKind = rec['_separator'] as number | undefined;
 	const separator = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
 	const options: { separator?: string; delimiter?: number } = {};

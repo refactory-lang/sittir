@@ -1,5 +1,16 @@
 # Separated-List Options Struct — One Home for List Facts
 
+**Status:** Realized (2026-08-21) — all slices landed on
+`separated-list-options`: delimiter vocabulary + `_delimiter` bitflag +
+`_separator`, spread + leading-options factories, realification of every
+field-embedded delimiter-bearing list into its own separatedList kind
+(rust `tuple_type`/`tuple_expression` extractions, python print-group
+extractions, group-wrapped classification for `enum_body_elements` /
+`expression_statement_tuple` / `print_chevron_arguments`), the
+terminated-list single-element invariant, and deletion of the per-field
+flank machinery (emitters, sittir-core anon matching, validator suffix
+discovery).
+
 A separated list's slot is its identity: kinds like `enum_body_elements`
 exist to hold one element list, and every fact about that list (does a
 trailing separator render? which separator token did this instance use?)
@@ -48,9 +59,9 @@ elements:
   Delimiter-less repeated fields stay bare arrays — there is nothing
   to store.
 - **Wire shape = view shape.** `ListNonterminalView` is constructed
-  from the struct directly; the flat-key reassembly (and the
-  validator's suffix-discovery helper `separatedListFactoryOptions`)
-  is deleted.
+  from the struct directly; the flat-key reassembly and the validator's
+  suffix discovery are deleted (`separatedListFactoryOptions` survives
+  as a plain reader of the kind-level keys).
 
 ## Vocabulary
 
