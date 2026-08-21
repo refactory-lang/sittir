@@ -129,20 +129,30 @@ baseline compare (fail ceiling never rises).
 - **fixed × fixed** — realized (predates this spec): the template SEQ join
   applies the writer's invariant to statically known seam chars and bakes
   the space (`joinParts` in the template emitter).
-- **class-derivable** — measured, and nearly empty: per-kind edge classes
-  (`edgeClassesOfKind`, keyword/enum/pattern-leading/structural-walk) plus
-  the emitted-form walker (`renderRuleEdge`) subdivide every tag-adjacent
-  boundary. Only rust 5, typescript 12, python 1 of the runtime boundaries
-  have statically knowable outcomes — per-instance PRESENCE (optional and
-  array slots) and pattern trailing edges dominate, which no class analysis
-  can resolve. This falsifies the "residue should be near-empty" prediction
-  above: the residue IS the population, the runtime writer earns its keep,
-  and consuming the derivable handful (a template-position mark) is not
-  worth its mechanism until profiling says otherwise.
-- **residue report** — realized: the SEQ join records every boundary
-  (static-glued / static-spaced / runtime-derivable / runtime-varying) and
-  generation prints the per-grammar census. Current numbers:
-  rust 10+5/431, typescript 16+12/535, python 5+1/232 statically knowable.
+- **class-derivable, tag boundaries** — measured, and nearly empty:
+  per-kind edge classes (`edgeClassesOfKind`) plus the emitted-form walker
+  (`renderRuleEdge`) subdivide every tag-adjacent SEQ boundary. Only
+  rust 5, typescript 12, python 1 have statically knowable outcomes —
+  per-instance PRESENCE (optional and array slots) and pattern trailing
+  edges dominate, which no class analysis can resolve. Consuming these (a
+  template-position mark) is not worth its mechanism absent profiling
+  evidence.
+- **class-derivable, list interiors** — realized, with a settled
+  representation principle: **the separator string captures the
+  resolution** — presence or absence of the space character, never a
+  boolean. `staticListInterior` applies the writer's law over the slot's
+  derived edge-char sets (`edgeCharSetsOfKind`): constant-TRUE bakes the
+  owed space into the separator; constant-FALSE (and separator-blocked
+  interiors — the separator's own edge chars can never seam) leaves
+  emission unchanged with the dead checks recorded as derivable. Marks
+  remain reserved for grammar-immediacy, where the writer would wrongly
+  INSERT — that fact has no character to carry it, and its boolean-free
+  form is the writer-layer split below.
+- **residue report** — realized, covering SEQ boundaries and list
+  interiors. Current: rust 10 static + 24 derivable / 450, typescript
+  16 + 23 / 546, python 5 + 11 / 242. No current list qualifies for a
+  baked space — rust `function_modifiers` is genuinely mixed
+  (`extern_modifier` can end `"`), the honest refusal.
 - **mark rename** (`mark_adjacent` → resolved-boundary contract) — open;
   rename lands when a non-immediate boundary first sets the mark.
 
