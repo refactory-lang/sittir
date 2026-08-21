@@ -40,6 +40,13 @@ elements:
   lists store the same struct as classified separated lists. Flanks can
   no longer be orphaned from their list by a consumer that reads only
   the elements key.
+- **The delimiter belongs in the kind itself.** A delimiter-bearing
+  separated list embedded in a field is realized as its own top-level
+  separatedList rule (hidden rule + visible alias — the existing
+  `*_elements` pattern), so the field holds a list NODE carrying the
+  kind-level struct and no field-prefixed storage exists anywhere.
+  Delimiter-less repeated fields stay bare arrays — there is nothing
+  to store.
 - **Wire shape = view shape.** `ListNonterminalView` is constructed
   from the struct directly; the flat-key reassembly (and the
   validator's suffix-discovery helper `separatedListFactoryOptions`)
@@ -56,7 +63,8 @@ stamped fact's spelling and storage shape move.
 ## What it absorbs
 
 - `ki-perfield-flank-residual` retires as a distinct representation:
-  the five per-field kinds store the same struct. The rust tuple family
+  the five per-field kinds realify into (or reclassify as) their own
+  separatedList kinds carrying the kind-level struct. The rust tuple family
   (`(1,)`) is `delimiter: trailing` with one element — the
   single-element-requires-trailing rule is a validity invariant the
   factory asserts, not a storage shape (a conditional requirement is
