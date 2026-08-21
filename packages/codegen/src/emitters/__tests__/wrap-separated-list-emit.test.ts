@@ -35,7 +35,7 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 ];
 
 describe('wrap emitter — separatedList', () => {
-	it('emits _member/_separator_kind/_leading_sep/_trailing_sep for a nonterminal separator with both flanks optional', () => {
+	it('emits _member/_separator_kind/_delimiter for a nonterminal separator with both flanks optional', () => {
 		// Storage/accessor key is the model's OWN derived slot name (`_member`,
 		// from the element kind — see AssembledSeparatedList.fields / Bug B fix),
 		// NOT a hardcoded `_content`/`content()`. `_content` remains only as an
@@ -58,12 +58,13 @@ describe('wrap emitter — separatedList', () => {
 		expect(emitted).toContain('_member:');
 		expect(emitted).toContain('member() {');
 		expect(emitted).toContain('_separator_kind:');
-		expect(emitted).toContain('_leading_sep:');
-		expect(emitted).toContain('_trailing_sep:');
+		expect(emitted).toContain('_delimiter:');
+		expect(emitted).toContain('"leading"');
+		expect(emitted).toContain('"trailing"');
 		expect(emitted).toContain('_separatorKindOf(data, [TSKindId.Comma, TSKindId.Semi])');
 	});
 
-	it('omits _separator_kind and _leading_sep for a literal-separator node with only an optional trailing flank', () => {
+	it('omits _separator_kind and the leading bit for a literal-separator node with only an optional trailing flank', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
@@ -74,8 +75,10 @@ describe('wrap emitter — separatedList', () => {
 
 		expect(emitted).toContain('_member:');
 		expect(emitted).not.toContain('_separator_kind:');
-		expect(emitted).not.toContain('_leading_sep:');
-		expect(emitted).toContain('_trailing_sep:');
+		expect(emitted).toContain('_delimiter:');
+		// Only the trailing bit contributes — no leading term in the flag.
+		expect(emitted).not.toContain('? 1 : 0');
+		expect(emitted).toContain('? 2 : 0');
 	});
 
 	it('routes a MULTI-field separatedList (each repeated element is itself a key/value pair) through the exact per-field drilling logic emitFieldCarryingWrap uses, not one shared bucket', () => {

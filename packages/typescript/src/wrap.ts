@@ -10115,7 +10115,7 @@ export function wrapExportSpecifiers(
 			...data,
 			$type: TSKindId.ExportSpecifiers as const,
 			_export_specifier: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			exportSpecifiers() {
 				return drillInAll<T.ExportSpecifier>(this._export_specifier as readonly T.ExportSpecifier[] | undefined, tree);
@@ -10209,7 +10209,7 @@ export function wrapImportSpecifiers(
 			...data,
 			$type: TSKindId.ImportSpecifiers as const,
 			_import_specifier: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			importSpecifiers() {
 				return drillInAll<T.ImportSpecifier>(this._import_specifier as readonly T.ImportSpecifier[] | undefined, tree);
@@ -10409,7 +10409,7 @@ export function wrapFormalParametersElements(
 			...data,
 			$type: TSKindId.FormalParametersElements as const,
 			_formal_parameter: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			formalParameters() {
 				return drillInAll<T.FormalParameter>(this._formal_parameter as readonly T.FormalParameter[] | undefined, tree);
@@ -10485,7 +10485,7 @@ export function wrapEnumBodyElements(
 				'content',
 				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
-			_content_trailing_sep: _hasSeparatorFlank(
+			_content_delimiter: _hasSeparatorFlank(
 				{},
 				data._content !== undefined
 					? _toArr(data._content)
@@ -10506,7 +10506,9 @@ export function wrapEnumBodyElements(
 				'trailing',
 				false,
 				0
-			),
+			)
+				? 2
+				: 0,
 
 			contents() {
 				return drillInAll<T.EnumAssignment | T.PropertyName>(
@@ -10539,7 +10541,7 @@ export function wrapTypes(
 			...data,
 			$type: TSKindId.Types as const,
 			_type: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			types() {
 				return drillInAll<T.Type>(this._type as readonly T.Type[] | undefined, tree);
@@ -10568,7 +10570,7 @@ export function wrapTypeParametersElements(
 			...data,
 			$type: TSKindId.TypeParametersElements as const,
 			_type_parameter: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			typeParameters() {
 				return drillInAll<T.TypeParameter>(this._type_parameter as readonly T.TypeParameter[] | undefined, tree);
@@ -10594,7 +10596,7 @@ export function wrapTupleTypeMembers(
 			...data,
 			$type: TSKindId.TupleTypeMembers as const,
 			_tuple_type_member: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			tupleTypeMembers() {
 				return drillInAll<T.TupleTypeMember>(this._tuple_type_member as readonly T.TupleTypeMember[] | undefined, tree);
@@ -10758,8 +10760,9 @@ export function wrapObjectTypeContent(
 			$type: TSKindId.ObjectTypeContent as const,
 			_content: _content,
 			_separator_kind: _separatorKindOf(data, [TSKindId.Comma, TSKindId.Semi]),
-			_leading_sep: _hasSeparatorFlank(data, _content, data.$other, 'leading', true, 0),
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', true, 0),
+			_delimiter:
+				(_hasSeparatorFlank(data, _content, data.$other, 'leading', true, 0) ? 1 : 0) |
+				(_hasSeparatorFlank(data, _content, data.$other, 'trailing', true, 0) ? 2 : 0),
 
 			contents() {
 				return drillInAll<

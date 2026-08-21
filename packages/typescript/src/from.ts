@@ -3322,14 +3322,17 @@ export function coerceToObjectTypeContent(
 		return F.buildObjectTypeContent(
 			{
 				separatorKind: (() => {
-					const sk = (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
-						._separator_kind;
+					const sk = (data as unknown as { _separator_kind?: number; _delimiter?: number })._separator_kind;
 					return sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk);
 				})(),
-				leading: (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
-					._leading_sep,
-				trailing: (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
-					._trailing_sep
+				leading: (() => {
+					const d = (data as unknown as { _separator_kind?: number; _delimiter?: number })._delimiter;
+					return d === undefined ? undefined : (d & 1) !== 0;
+				})(),
+				trailing: (() => {
+					const d = (data as unknown as { _separator_kind?: number; _delimiter?: number })._delimiter;
+					return d === undefined ? undefined : (d & 2) !== 0;
+				})()
 			},
 			...(children as unknown as NonEmptyArray<
 				| T.ExportStatement

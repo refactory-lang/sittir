@@ -15343,10 +15343,10 @@ pub struct ImportListTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: Vec<ImportListNameTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name_trailing_sep"))]
-    pub name_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name_delimiter"))]
+    pub name_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for ImportListTransport {
@@ -18415,10 +18415,10 @@ pub struct _ParametersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter"))]
     pub parameter: Vec<ParameterTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter_trailing_sep"))]
-    pub parameter_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter_delimiter"))]
+    pub parameter_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for _ParametersTransport {
@@ -18469,10 +18469,10 @@ pub struct PatternsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: Vec<PatternTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_trailing_sep"))]
-    pub pattern_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_delimiter"))]
+    pub pattern_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for PatternsTransport {
@@ -20914,10 +20914,10 @@ pub struct CollectionElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<CollectionElementsElementTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
-    pub element_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
+    pub element_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for CollectionElementsTransport {
@@ -22929,10 +22929,10 @@ pub struct SimpleStatementsElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statement"))]
     pub simple_statement: Vec<SimpleStatementTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statement_trailing_sep"))]
-    pub simple_statement_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statement_delimiter"))]
+    pub simple_statement_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for SimpleStatementsElementsTransport {
@@ -23085,10 +23085,10 @@ pub struct SubjectsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subject"))]
     pub subject: Vec<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subject_trailing_sep"))]
-    pub subject_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subject_delimiter"))]
+    pub subject_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for SubjectsTransport {
@@ -23139,10 +23139,10 @@ pub struct CasePatternsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern"))]
     pub case_pattern: Vec<CasePatternTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern_trailing_sep"))]
-    pub case_pattern_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern_delimiter"))]
+    pub case_pattern_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for CasePatternsTransport {
@@ -23243,10 +23243,10 @@ pub struct WithClauseWithItemsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_item"))]
     pub with_item: Vec<WithItemTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_item_trailing_sep"))]
-    pub with_item_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_item_delimiter"))]
+    pub with_item_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for WithClauseWithItemsTransport {
@@ -23397,10 +23397,10 @@ pub struct TypesTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Vec<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_trailing_sep"))]
-    pub type__trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_delimiter"))]
+    pub type__delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for TypesTransport {
@@ -23451,10 +23451,10 @@ pub struct ArgumentListElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<ArgumentListElementsElementTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
-    pub element_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
+    pub element_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for ArgumentListElementsTransport {
@@ -23505,10 +23505,10 @@ pub struct ExpressionListExpressionsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Vec<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_trailing_sep"))]
-    pub expression_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_delimiter"))]
+    pub expression_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for ExpressionListExpressionsTransport {
@@ -23559,10 +23559,10 @@ pub struct ListPatternCasePatternsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern"))]
     pub case_pattern: Vec<CasePatternTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern_trailing_sep"))]
-    pub case_pattern_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern_delimiter"))]
+    pub case_pattern_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for ListPatternCasePatternsTransport {
@@ -23613,10 +23613,10 @@ pub struct DictPatternElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<DictPatternElementsElementTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
-    pub element_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
+    pub element_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for DictPatternElementsTransport {
@@ -23667,10 +23667,10 @@ pub struct PatternListPatternsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: Vec<PatternTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_trailing_sep"))]
-    pub pattern_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_delimiter"))]
+    pub pattern_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for PatternListPatternsTransport {
@@ -23721,10 +23721,10 @@ pub struct SubscriptsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscript"))]
     pub subscript: Vec<SubscriptsSubscriptTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscript_trailing_sep"))]
-    pub subscript_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscript_delimiter"))]
+    pub subscript_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for SubscriptsTransport {
@@ -23825,10 +23825,10 @@ pub struct DictionaryElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<DictionaryElementsElementTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
-    pub element_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
+    pub element_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for DictionaryElementsTransport {
@@ -24453,8 +24453,8 @@ pub struct PrintStatementGroup1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: Option<Vec<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument_trailing_sep"))]
-    pub argument_trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument_delimiter"))]
+    pub argument_delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_chevron"))]
     pub chevron: ChevronTransport,
 }
@@ -24507,8 +24507,8 @@ pub struct PrintStatementGroup2Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: Option<Vec<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument_trailing_sep"))]
-    pub argument_trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument_delimiter"))]
+    pub argument_delimiter: Option<u8>,
 }
 
 impl RenderableTransport for PrintStatementGroup2Transport {
@@ -24816,8 +24816,8 @@ pub struct ExpressionStatementTupleTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Vec<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_trailing_sep"))]
-    pub expression_trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_delimiter"))]
+    pub expression_delimiter: Option<u8>,
 }
 
 impl RenderableTransport for ExpressionStatementTupleTransport {
@@ -24868,10 +24868,10 @@ pub struct WithClauseBareTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_item"))]
     pub with_item: Vec<WithItemTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_item_trailing_sep"))]
-    pub with_item_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_item_delimiter"))]
+    pub with_item_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for WithClauseBareTransport {
@@ -33538,7 +33538,7 @@ fn render_import_list(node: &ImportListTransport, dest: &mut dyn ::std::fmt::Wri
             items: name_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -34172,7 +34172,7 @@ fn render__parameters(node: &_ParametersTransport, dest: &mut dyn ::std::fmt::Wr
             items: parameter_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -34192,7 +34192,7 @@ fn render_patterns(node: &PatternsTransport, dest: &mut dyn ::std::fmt::Write) -
             items: pattern_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -34612,7 +34612,7 @@ fn render_collection_elements(node: &CollectionElementsTransport, dest: &mut dyn
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -34838,7 +34838,7 @@ fn render_simple_statements_elements(node: &SimpleStatementsElementsTransport, d
             items: simple_statement_buf.as_slice(),
             separator: ";",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -34870,7 +34870,7 @@ fn render_subjects(node: &SubjectsTransport, dest: &mut dyn ::std::fmt::Write) -
             items: subject_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -34890,7 +34890,7 @@ fn render_case_patterns(node: &CasePatternsTransport, dest: &mut dyn ::std::fmt:
             items: case_pattern_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -34917,7 +34917,7 @@ fn render_with_clause_with_items(node: &WithClauseWithItemsTransport, dest: &mut
             items: with_item_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -34949,7 +34949,7 @@ fn render_types(node: &TypesTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
             items: type__buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -34969,7 +34969,7 @@ fn render_argument_list_elements(node: &ArgumentListElementsTransport, dest: &mu
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -34989,7 +34989,7 @@ fn render_expression_list_expressions(node: &ExpressionListExpressionsTransport,
             items: expression_buf.as_slice(),
             separator: ",",
             leading: true,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -35009,7 +35009,7 @@ fn render_list_pattern_case_patterns(node: &ListPatternCasePatternsTransport, de
             items: case_pattern_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -35029,7 +35029,7 @@ fn render_dict_pattern_elements(node: &DictPatternElementsTransport, dest: &mut 
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -35049,7 +35049,7 @@ fn render_pattern_list_patterns(node: &PatternListPatternsTransport, dest: &mut 
             items: pattern_buf.as_slice(),
             separator: ",",
             leading: true,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -35069,7 +35069,7 @@ fn render_subscripts(node: &SubscriptsTransport, dest: &mut dyn ::std::fmt::Writ
             items: subscript_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -35104,7 +35104,7 @@ fn render_dictionary_elements(node: &DictionaryElementsTransport, dest: &mut dyn
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -35203,7 +35203,7 @@ fn render_print_statement_group1(node: &PrintStatementGroup1Transport, dest: &mu
             items: argument_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.argument_trailing_sep.unwrap_or(false),
+            trailing: node.argument_delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
         chevron: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.chevron)),
     };
@@ -35225,7 +35225,7 @@ fn render_print_statement_group2(node: &PrintStatementGroup2Transport, dest: &mu
             items: argument_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.argument_trailing_sep.unwrap_or(false),
+            trailing: node.argument_delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -35271,7 +35271,7 @@ fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, d
             items: expression_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.expression_trailing_sep.unwrap_or(false),
+            trailing: node.expression_delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -35291,7 +35291,7 @@ fn render_with_clause_bare(node: &WithClauseBareTransport, dest: &mut dyn ::std:
             items: with_item_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)

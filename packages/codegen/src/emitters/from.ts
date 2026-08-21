@@ -461,7 +461,7 @@ function emitRestParamFromResolver(
 	// the self-NodeData-unwrap branch (a `data` local naming the original
 	// wrapped node is in scope, so a caller like `emitSeparatedListFrom` can
 	// read per-instance facts off it — e.g. preserving `_separator_kind`/
-	// `_leading_sep`/`_trailing_sep` when reconstructing an already-wrapped
+	// `_delimiter` when reconstructing an already-wrapped
 	// separatedList node); `false` for the fresh-input path, where no such
 	// source node exists to read facts from.
 	buildCallExpr: (varExpr: string, isSelfUnwrap: boolean) => string,
@@ -636,7 +636,7 @@ function emitSeparatedListFrom(
 		// three per-instance fields through one shared cast rather than
 		// three separate ones.
 		const sourceFields =
-			'(data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })';
+			'(data as unknown as { _separator_kind?: number; _delimiter?: number })';
 		const optionParts: string[] = [];
 		if (candidateKindNames.length > 0) {
 			// `KIND_LITERAL_TEXT` (types.ts) is the single stamped source for
@@ -645,8 +645,14 @@ function emitSeparatedListFrom(
 				`separatorKind: (() => { const sk = ${sourceFields}._separator_kind; return sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk); })()`
 			);
 		}
-		if (hasLeadingOption) optionParts.push(`leading: ${sourceFields}._leading_sep`);
-		if (hasTrailingOption) optionParts.push(`trailing: ${sourceFields}._trailing_sep`);
+		if (hasLeadingOption)
+			optionParts.push(
+				`leading: (() => { const d = ${sourceFields}._delimiter; return d === undefined ? undefined : (d & 1) !== 0; })()`
+			);
+		if (hasTrailingOption)
+			optionParts.push(
+				`trailing: (() => { const d = ${sourceFields}._delimiter; return d === undefined ? undefined : (d & 2) !== 0; })()`
+			);
 		return `${factory}({ ${optionParts.join(', ')} }, ${spreadElements(varExpr)})`;
 	};
 

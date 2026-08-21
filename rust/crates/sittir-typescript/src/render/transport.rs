@@ -48061,10 +48061,10 @@ pub struct ExportSpecifiersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier"))]
     pub export_specifier: Vec<ExportSpecifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_trailing_sep"))]
-    pub export_specifier_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_delimiter"))]
+    pub export_specifier_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for ExportSpecifiersTransport {
@@ -48267,10 +48267,10 @@ pub struct ImportSpecifiersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier"))]
     pub import_specifier: Vec<ImportSpecifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_trailing_sep"))]
-    pub import_specifier_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_delimiter"))]
+    pub import_specifier_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for ImportSpecifiersTransport {
@@ -48743,10 +48743,10 @@ pub struct FormalParametersElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter"))]
     pub formal_parameter: Vec<FormalParameterTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_trailing_sep"))]
-    pub formal_parameter_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_delimiter"))]
+    pub formal_parameter_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for FormalParametersElementsTransport {
@@ -48849,8 +48849,8 @@ pub struct EnumBodyElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<EnumBodyElementsContentTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_trailing_sep"))]
-    pub content_trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_delimiter"))]
+    pub content_delimiter: Option<u8>,
 }
 
 impl RenderableTransport for EnumBodyElementsTransport {
@@ -49001,10 +49001,10 @@ pub struct TypesTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Vec<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_trailing_sep"))]
-    pub type__trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_delimiter"))]
+    pub type__delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for TypesTransport {
@@ -49055,10 +49055,10 @@ pub struct TypeParametersElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter"))]
     pub type_parameter: Vec<TypeParameterTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_trailing_sep"))]
-    pub type_parameter_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_delimiter"))]
+    pub type_parameter_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for TypeParametersElementsTransport {
@@ -49161,10 +49161,10 @@ pub struct TupleTypeMembersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member"))]
     pub tuple_type_member: Vec<TupleTypeMemberTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member_trailing_sep"))]
-    pub tuple_type_member_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member_delimiter"))]
+    pub tuple_type_member_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for TupleTypeMembersTransport {
@@ -49973,14 +49973,10 @@ pub struct ObjectTypeContentTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<ObjectTypeContentContentTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_trailing_sep"))]
-    pub content_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_leading_sep"))]
-    pub content_leading_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_leading_sep"))]
-    pub leading_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_delimiter"))]
+    pub content_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator_kind"))]
     pub separator_kind: Option<u16>,
 }
@@ -66104,7 +66100,7 @@ fn render_export_specifiers(node: &ExportSpecifiersTransport, dest: &mut dyn ::s
             items: export_specifier_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -66144,7 +66140,7 @@ fn render_import_specifiers(node: &ImportSpecifiersTransport, dest: &mut dyn ::s
             items: import_specifier_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -66215,7 +66211,7 @@ fn render_formal_parameters_elements(node: &FormalParametersElementsTransport, d
             items: formal_parameter_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -66247,7 +66243,7 @@ fn render_enum_body_elements(node: &EnumBodyElementsTransport, dest: &mut dyn ::
             items: content_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.content_trailing_sep.unwrap_or(false),
+            trailing: node.content_delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -66277,7 +66273,7 @@ fn render_types(node: &TypesTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
             items: type__buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -66297,7 +66293,7 @@ fn render_type_parameters_elements(node: &TypeParametersElementsTransport, dest:
             items: type_parameter_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -66325,7 +66321,7 @@ fn render_tuple_type_members(node: &TupleTypeMembersTransport, dest: &mut dyn ::
             items: tuple_type_member_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -66392,8 +66388,8 @@ fn render_object_type_content(node: &ObjectTypeContentTransport, dest: &mut dyn 
                 Some(20) => ";",
                 _ => "",
             },
-            leading: node.leading_sep.unwrap_or(false),
-            trailing: node.trailing_sep.unwrap_or(false),
+            leading: node.delimiter.map(|d| d & 1 != 0).unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)

@@ -2821,12 +2821,13 @@ export function dedupeMismatchesByContainment<T extends { entry?: string; start:
 
 /**
  * Build a separatedList factory's options bag from a read/wrap node's
- * separator facts. The flank keys have two generated spellings — the
- * kind-level `_trailing_sep`/`_leading_sep` (separatedList modelType) and
- * the field-prefixed `_<field>_trailing_sep` (per-field flank capture on
- * field-backed lists) — so the key is discovered on the node itself by
- * suffix rather than hardcoded: the exact kind-level key wins, else a
- * unique suffix-matching key (multiple matches are ambiguous → absent).
+ * separator facts. The delimiter bitflag (leading = 1, trailing = 2) has
+ * two generated spellings — the kind-level `_delimiter` (separatedList
+ * modelType) and the field-prefixed `_<field>_delimiter` (per-field
+ * capture on field-backed lists) — so the key is discovered on the node
+ * itself by suffix rather than hardcoded: the exact kind-level key wins,
+ * else a unique suffix-matching key (multiple matches are ambiguous →
+ * absent).
  */
 export function separatedListFactoryOptions(
 	data: unknown,
@@ -2834,10 +2835,10 @@ export function separatedListFactoryOptions(
 ): { separatorKind?: string; leading?: boolean; trailing?: boolean } | undefined {
 	const rec = (data ?? {}) as Record<string, unknown>;
 	const flank = (which: 'leading' | 'trailing'): boolean => {
-		const exact = `_${which}_sep`;
-		if (typeof rec[exact] === 'boolean') return rec[exact] === true;
-		const matches = Object.keys(rec).filter((k) => k.endsWith(exact));
-		return matches.length === 1 && rec[matches[0]!] === true;
+		const bit = which === 'leading' ? 1 : 2;
+		if (typeof rec['_delimiter'] === 'number') return (rec['_delimiter'] & bit) !== 0;
+		const matches = Object.keys(rec).filter((k) => k.endsWith('_delimiter') && k !== '_delimiter');
+		return matches.length === 1 && typeof rec[matches[0]!] === 'number' && ((rec[matches[0]!] as number) & bit) !== 0;
 	};
 	const separatorSourceKind = rec['_separator_kind'] as number | undefined;
 	const separatorKind = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);

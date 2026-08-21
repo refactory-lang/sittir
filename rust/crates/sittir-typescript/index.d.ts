@@ -740,7 +740,7 @@ export interface EnumBodyElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<EnumBodyElementsContentTransportSlot>
-  _content_trailing_sep?: boolean
+  _content_delimiter?: number
 }
 
 export interface EnumBodyTransport {
@@ -799,8 +799,8 @@ export interface ExportSpecifiersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _export_specifier: Array<ExportSpecifierTransport>
-  _export_specifier_trailing_sep?: boolean
-  _trailing_sep?: boolean
+  _export_specifier_delimiter?: number
+  _delimiter?: number
 }
 
 export interface ExportSpecifierTransport {
@@ -1113,8 +1113,8 @@ export interface FormalParametersElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _formal_parameter: Array<FormalParameterTransport>
-  _formal_parameter_trailing_sep?: boolean
-  _trailing_sep?: boolean
+  _formal_parameter_delimiter?: number
+  _delimiter?: number
 }
 
 export interface FormalParametersTransport {
@@ -1377,8 +1377,8 @@ export interface ImportSpecifiersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _import_specifier: Array<ImportSpecifierTransport>
-  _import_specifier_trailing_sep?: boolean
-  _trailing_sep?: boolean
+  _import_specifier_delimiter?: number
+  _delimiter?: number
 }
 
 export interface ImportSpecifierTransport {
@@ -1988,10 +1988,8 @@ export interface ObjectTypeContentTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<ObjectTypeContentContentTransportSlot>
-  _content_trailing_sep?: boolean
-  _content_leading_sep?: boolean
-  _leading_sep?: boolean
-  _trailing_sep?: boolean
+  _content_delimiter?: number
+  _delimiter?: number
   _separator_kind?: number
 }
 
@@ -2564,8 +2562,8 @@ export interface TupleTypeMembersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _tuple_type_member: Array<TupleTypeMemberTransport>
-  _tuple_type_member_trailing_sep?: boolean
-  _trailing_sep?: boolean
+  _tuple_type_member_delimiter?: number
+  _delimiter?: number
 }
 
 export interface TupleTypeTransport {
@@ -2638,8 +2636,8 @@ export interface TypeParametersElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type_parameter: Array<TypeParameterTransport>
-  _type_parameter_trailing_sep?: boolean
-  _trailing_sep?: boolean
+  _type_parameter_delimiter?: number
+  _delimiter?: number
 }
 
 export interface TypeParametersTransport {
@@ -2784,8 +2782,8 @@ export interface TypesTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: Array<TypeTransport>
-  _type_trailing_sep?: boolean
-  _trailing_sep?: boolean
+  _type_delimiter?: number
+  _delimiter?: number
 }
 
 export interface UnaryExpressionTransport {

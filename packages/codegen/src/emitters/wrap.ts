@@ -776,18 +776,26 @@ function emitSeparatedListWrap(
 			.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries));
 		lines.push(`    _separator_kind: _separatorKindOf(data, [${candidateExprs.join(', ')}]),`);
 	}
+	// The delimiter bitflag (leading = 1, trailing = 2) is the single wire
+	// key for the list's optional-flank state — one fact, one key, matching
+	// the options-struct design. Only grammar-optional sides contribute
+	// bits; mandatory flanks are template text and never captured.
 	const bothFlanksOptional = node.leadingDelimiter === 'optional' && node.trailingDelimiter === 'optional';
+	const delimiterParts: string[] = [];
 	if (node.leadingDelimiter === 'optional') {
 		const mandatoryAnons = node.trailingDelimiter === 'mandatory' ? 1 : 0;
-		lines.push(
-			`    _leading_sep: _hasSeparatorFlank(data, _content, data.$other, "leading", ${bothFlanksOptional}, ${mandatoryAnons}),`
+		delimiterParts.push(
+			`(_hasSeparatorFlank(data, _content, data.$other, "leading", ${bothFlanksOptional}, ${mandatoryAnons}) ? 1 : 0)`
 		);
 	}
 	if (node.trailingDelimiter === 'optional') {
 		const mandatoryAnons = node.leadingDelimiter === 'mandatory' ? 1 : 0;
-		lines.push(
-			`    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", ${bothFlanksOptional}, ${mandatoryAnons}),`
+		delimiterParts.push(
+			`(_hasSeparatorFlank(data, _content, data.$other, "trailing", ${bothFlanksOptional}, ${mandatoryAnons}) ? 2 : 0)`
 		);
+	}
+	if (delimiterParts.length > 0) {
+		lines.push(`    _delimiter: ${delimiterParts.join(' | ')},`);
 	}
 	lines.push('');
 	if (node.fields.length > 1) {
@@ -917,7 +925,8 @@ function flankContentExprOf(f: AssembledNonterminal, dataExpr: string, nodeMap: 
 }
 
 /**
- * Emit `_<field>_leading_sep`/`_<field>_trailing_sep` sibling wire keys for
+ * Emit the `_<field>_delimiter` sibling wire key (bitflag: leading = 1,
+ * trailing = 2) for
  * array fields whose OWN separator flank is genuinely `'optional'` — the
  * per-*field* counterpart to `emitSeparatedListWrap`'s per-*kind* capture
  * (which only fires when the array IS the kind's whole top-level structure,
@@ -966,16 +975,14 @@ function emitFieldFlankCaptureLines(
 		const otherExpr =
 			`(Array.isArray(${dataExpr}.$other) ? ${dataExpr}.$other : ${dataExpr}.$other !== undefined ? [${dataExpr}.$other] : [])` +
 			`.filter((e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === ${kindExpr})`;
-		if (f.trailingDelimiter === 'optional') {
-			lines.push(
-				`    ${f.storageKey}_trailing_sep: _hasSeparatorFlank({}, ${contentExpr}, ${otherExpr}, "trailing", false, 0),`
-			);
-		}
+		const parts: string[] = [];
 		if (f.leadingDelimiter === 'optional') {
-			lines.push(
-				`    ${f.storageKey}_leading_sep: _hasSeparatorFlank({}, ${contentExpr}, ${otherExpr}, "leading", false, 0),`
-			);
+			parts.push(`(_hasSeparatorFlank({}, ${contentExpr}, ${otherExpr}, "leading", false, 0) ? 1 : 0)`);
 		}
+		if (f.trailingDelimiter === 'optional') {
+			parts.push(`(_hasSeparatorFlank({}, ${contentExpr}, ${otherExpr}, "trailing", false, 0) ? 2 : 0)`);
+		}
+		lines.push(`    ${f.storageKey}_delimiter: ${parts.join(' | ')},`);
 	}
 }
 

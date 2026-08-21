@@ -821,8 +821,12 @@ function emitFieldCarryingFactory(
 		// where a single-element instance structurally REQUIRES `trailing:
 		// true` to disambiguate from a parenthesized expression, a fixed
 		// `false` default is actively wrong, not just incomplete.
-		if (f.trailingDelimiter === 'optional') lines.push(`    ${f.storageKey}_trailing_sep: ${flankSourceFor(f, 'trailing')},`);
-		if (f.leadingDelimiter === 'optional') lines.push(`    ${f.storageKey}_leading_sep: ${flankSourceFor(f, 'leading')},`);
+		if (f.trailingDelimiter === 'optional' || f.leadingDelimiter === 'optional') {
+			const parts: string[] = [];
+			if (f.leadingDelimiter === 'optional') parts.push(`((${flankSourceFor(f, 'leading')}) ? 1 : 0)`);
+			if (f.trailingDelimiter === 'optional') parts.push(`((${flankSourceFor(f, 'trailing')}) ? 2 : 0)`);
+			lines.push(`    ${f.storageKey}_delimiter: ${parts.join(' | ')},`);
+		}
 	}
 	lines.push(...withLines);
 	lines.push('  }, {');
@@ -1119,8 +1123,13 @@ function emitSeparatedListFactory(
 			lines.push('  const _separator_kind = undefined;');
 		}
 	}
-	if (hasLeadingOption) lines.push('  const _leading_sep = options.leading ?? false;');
-	if (hasTrailingOption) lines.push('  const _trailing_sep = options.trailing ?? false;');
+	if (hasLeadingOption || hasTrailingOption) {
+		const parts = [
+			...(hasLeadingOption ? ['(options.leading ? 1 : 0)'] : []),
+			...(hasTrailingOption ? ['(options.trailing ? 2 : 0)'] : [])
+		];
+		lines.push(`  const _delimiter = ${parts.join(' | ')};`);
+	}
 
 	lines.push('  return withMethods(withAccessors({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
@@ -1128,8 +1137,7 @@ function emitSeparatedListFactory(
 	lines.push('    $named: true as const,');
 	lines.push(`    ${contentStorageKey},`);
 	if (hasSeparatorKindOption) lines.push('    _separator_kind,');
-	if (hasLeadingOption) lines.push('    _leading_sep,');
-	if (hasTrailingOption) lines.push('    _trailing_sep,');
+	if (hasLeadingOption || hasTrailingOption) lines.push('    _delimiter,');
 	lines.push('    $with: {');
 	const optionsArg = hasOptions ? 'options, ' : '';
 	// Rest param type must match `elementsType` exactly (`NonEmptyArray<T>`

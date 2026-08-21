@@ -1414,19 +1414,19 @@ function buildTypedTemplateBody(
 			// change on a kind whose output is otherwise byte-identical today.
 			const leadingExpr =
 				separatedList?.leadingDelimiter === 'optional'
-					? 'node.leading_sep.unwrap_or(false)'
+					? 'node.delimiter.map(|d| d & 1 != 0).unwrap_or(false)'
 					: separatedList?.leadingDelimiter === 'mandatory'
 						? 'true'
 						: f.leadingDelimiter === 'optional'
-							? `node.${rIdent}_leading_sep.unwrap_or(false)`
+							? `node.${rIdent}_delimiter.map(|d| d & 1 != 0).unwrap_or(false)`
 							: 'false';
 			const trailingExpr =
 				separatedList?.trailingDelimiter === 'optional'
-					? 'node.trailing_sep.unwrap_or(false)'
+					? 'node.delimiter.map(|d| d & 2 != 0).unwrap_or(false)'
 					: separatedList?.trailingDelimiter === 'mandatory'
 						? 'true'
 						: f.trailingDelimiter === 'optional'
-							? `node.${rIdent}_trailing_sep.unwrap_or(false)`
+							? `node.${rIdent}_delimiter.map(|d| d & 2 != 0).unwrap_or(false)`
 							: 'false';
 			const separatorMatchLines =
 				separatedList?.separatorRule !== undefined
@@ -3687,19 +3687,13 @@ function renderTransportDataStruct(
 				// Per-field optional-flank capture (see wrap.ts's
 				// emitFieldFlankCaptureLines doc comment) — the per-slot
 				// counterpart to AssembledSeparatedList's kind-level
-				// leading_sep/trailing_sep fields below. Gated on the SAME
+				// delimiter field below. Gated on the SAME
 				// 'optional' mode wrap.ts gates its wire-key emission on, so a
 				// struct field only exists when the wire can actually populate it.
-				if (field.trailingDelimiter === 'optional') {
+				if (field.trailingDelimiter === 'optional' || field.leadingDelimiter === 'optional') {
 					lines.push(
-						`    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_${field.storageName}_trailing_sep"))]`,
-						`    pub ${rustFieldIdent(field.storageName)}_trailing_sep: Option<bool>,`
-					);
-				}
-				if (field.leadingDelimiter === 'optional') {
-					lines.push(
-						`    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_${field.storageName}_leading_sep"))]`,
-						`    pub ${rustFieldIdent(field.storageName)}_leading_sep: Option<bool>,`
+						`    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_${field.storageName}_delimiter"))]`,
+						`    pub ${rustFieldIdent(field.storageName)}_delimiter: Option<u8>,`
 					);
 				}
 			}
@@ -3755,22 +3749,16 @@ function renderTransportDataStruct(
 					}
 				}
 				// Task 4's wire capture (wrap.ts's `emitSeparatedListWrap`) emits
-				// `_leading_sep`/`_trailing_sep`/`_separator_kind` sibling wire keys
+				// `_delimiter`/`_separator_kind` sibling wire keys
 				// ONLY when the corresponding grammar-level mode/rule actually needs
 				// per-instance capture (design's "Field shape and wire capture"
 				// section) — mirror that same gating here so the struct never
 				// declares a field the wire can't populate.
 				if (node instanceof AssembledSeparatedList) {
-					if (node.leadingDelimiter === 'optional') {
+					if (node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional') {
 						lines.push(
-							'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_leading_sep"))]',
-							'    pub leading_sep: Option<bool>,'
-						);
-					}
-					if (node.trailingDelimiter === 'optional') {
-						lines.push(
-							'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]',
-							'    pub trailing_sep: Option<bool>,'
+							'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]',
+							'    pub delimiter: Option<u8>,'
 						);
 					}
 					if (node.separatorRule !== undefined) {

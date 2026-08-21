@@ -5408,7 +5408,7 @@ export function buildExportSpecifiers(...args: ({ trailing?: boolean } | T.Expor
 function _buildExportSpecifiers(elements: NonEmptyArray<T.ExportSpecifier>, options: { trailing?: boolean }) {
 	_assertNonEmpty(elements, '_export_specifiers.elements');
 	const _export_specifier = elements;
-	const _trailing_sep = options.trailing ?? false;
+	const _delimiter = options.trailing ? 2 : 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5416,7 +5416,7 @@ function _buildExportSpecifiers(elements: NonEmptyArray<T.ExportSpecifier>, opti
 				$source: 2 as const,
 				$named: true as const,
 				_export_specifier,
-				_trailing_sep,
+				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.ExportSpecifier>) => buildExportSpecifiers(options, ...vs),
 					trailing: (v: boolean) => buildExportSpecifiers({ ...options, trailing: v }, ...elements)
@@ -5490,7 +5490,7 @@ export function buildImportSpecifiers(...args: ({ trailing?: boolean } | T.Impor
 function _buildImportSpecifiers(elements: NonEmptyArray<T.ImportSpecifier>, options: { trailing?: boolean }) {
 	_assertNonEmpty(elements, '_import_specifiers.elements');
 	const _import_specifier = elements;
-	const _trailing_sep = options.trailing ?? false;
+	const _delimiter = options.trailing ? 2 : 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5498,7 +5498,7 @@ function _buildImportSpecifiers(elements: NonEmptyArray<T.ImportSpecifier>, opti
 				$source: 2 as const,
 				$named: true as const,
 				_import_specifier,
-				_trailing_sep,
+				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.ImportSpecifier>) => buildImportSpecifiers(options, ...vs),
 					trailing: (v: boolean) => buildImportSpecifiers({ ...options, trailing: v }, ...elements)
@@ -5666,7 +5666,7 @@ export function buildFormalParametersElements(...args: ({ trailing?: boolean } |
 function _buildFormalParametersElements(elements: NonEmptyArray<T.FormalParameter>, options: { trailing?: boolean }) {
 	_assertNonEmpty(elements, '_formal_parameters_elements.elements');
 	const _formal_parameter = elements;
-	const _trailing_sep = options.trailing ?? false;
+	const _delimiter = options.trailing ? 2 : 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5674,7 +5674,7 @@ function _buildFormalParametersElements(elements: NonEmptyArray<T.FormalParamete
 				$source: 2 as const,
 				$named: true as const,
 				_formal_parameter,
-				_trailing_sep,
+				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.FormalParameter>) => buildFormalParametersElements(options, ...vs),
 					trailing: (v: boolean) => buildFormalParametersElements({ ...options, trailing: v }, ...elements)
@@ -5700,7 +5700,7 @@ export function buildEnumBodyElements(
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				_content_trailing_sep: options.trailing ?? false,
+				_content_delimiter: (options.trailing ?? false) ? 2 : 0,
 				$with: {
 					contents: (...values: (T.EnumAssignment | T.PropertyName)[]) =>
 						buildEnumBodyElements({ ...config, content: values }, options),
@@ -5729,7 +5729,7 @@ export function buildTypes(...args: ({ trailing?: boolean } | T.Type)[]) {
 function _buildTypes(elements: NonEmptyArray<T.Type>, options: { trailing?: boolean }) {
 	_assertNonEmpty(elements, '_types.elements');
 	const _type = elements;
-	const _trailing_sep = options.trailing ?? false;
+	const _delimiter = options.trailing ? 2 : 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5737,7 +5737,7 @@ function _buildTypes(elements: NonEmptyArray<T.Type>, options: { trailing?: bool
 				$source: 2 as const,
 				$named: true as const,
 				_type,
-				_trailing_sep,
+				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Type>) => buildTypes(options, ...vs),
 					trailing: (v: boolean) => buildTypes({ ...options, trailing: v }, ...elements)
@@ -5767,7 +5767,7 @@ export function buildTypeParametersElements(...args: ({ trailing?: boolean } | T
 function _buildTypeParametersElements(elements: NonEmptyArray<T.TypeParameter>, options: { trailing?: boolean }) {
 	_assertNonEmpty(elements, '_type_parameters_elements.elements');
 	const _type_parameter = elements;
-	const _trailing_sep = options.trailing ?? false;
+	const _delimiter = options.trailing ? 2 : 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5775,7 +5775,7 @@ function _buildTypeParametersElements(elements: NonEmptyArray<T.TypeParameter>, 
 				$source: 2 as const,
 				$named: true as const,
 				_type_parameter,
-				_trailing_sep,
+				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.TypeParameter>) => buildTypeParametersElements(options, ...vs),
 					trailing: (v: boolean) => buildTypeParametersElements({ ...options, trailing: v }, ...elements)
@@ -5805,7 +5805,7 @@ export function buildTupleTypeMembers(...args: ({ trailing?: boolean } | T.Tuple
 function _buildTupleTypeMembers(elements: NonEmptyArray<T.TupleTypeMember>, options: { trailing?: boolean }) {
 	_assertNonEmpty(elements, '_tuple_type_members.elements');
 	const _tuple_type_member = elements;
-	const _trailing_sep = options.trailing ?? false;
+	const _delimiter = options.trailing ? 2 : 0;
 	return withMethods(
 		withAccessors(
 			{
@@ -5813,7 +5813,7 @@ function _buildTupleTypeMembers(elements: NonEmptyArray<T.TupleTypeMember>, opti
 				$source: 2 as const,
 				$named: true as const,
 				_tuple_type_member,
-				_trailing_sep,
+				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.TupleTypeMember>) => buildTupleTypeMembers(options, ...vs),
 					trailing: (v: boolean) => buildTupleTypeMembers({ ...options, trailing: v }, ...elements)
@@ -5967,8 +5967,7 @@ function _buildObjectTypeContent(
 	const _separator_kind = ({ ',': TSKindId.Comma, ';': TSKindId.Semi } as Record<string, number>)[
 		options.separatorKind ?? ','
 	];
-	const _leading_sep = options.leading ?? false;
-	const _trailing_sep = options.trailing ?? false;
+	const _delimiter = (options.leading ? 1 : 0) | (options.trailing ? 2 : 0);
 	return withMethods(
 		withAccessors(
 			{
@@ -5977,8 +5976,7 @@ function _buildObjectTypeContent(
 				$named: true as const,
 				_content,
 				_separator_kind,
-				_leading_sep,
-				_trailing_sep,
+				_delimiter,
 				$with: {
 					$children: (
 						...vs: NonEmptyArray<

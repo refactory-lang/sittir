@@ -35564,8 +35564,8 @@ pub struct TupleTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Vec<_TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_trailing_sep"))]
-    pub type__trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_delimiter"))]
+    pub type__delimiter: Option<u8>,
 }
 
 impl RenderableTransport for TupleTypeTransport {
@@ -37520,8 +37520,8 @@ pub struct TupleExpressionTransport {
     pub attributes: Option<Vec<AttributeItemTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Vec<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_trailing_sep"))]
-    pub elements_trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_delimiter"))]
+    pub elements_delimiter: Option<u8>,
 }
 
 impl RenderableTransport for TupleExpressionTransport {
@@ -42412,10 +42412,10 @@ pub struct MacroRulesTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule"))]
     pub macro_rule: Vec<MacroRuleTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule_trailing_sep"))]
-    pub macro_rule_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule_delimiter"))]
+    pub macro_rule_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for MacroRulesTransport {
@@ -42518,10 +42518,10 @@ pub struct EnumVariantListElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<AttributedEnumVariantTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
-    pub element_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
+    pub element_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for EnumVariantListElementsTransport {
@@ -42622,10 +42622,10 @@ pub struct FieldDeclarationListElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<AttributedFieldDeclarationTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
-    pub element_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
+    pub element_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for FieldDeclarationListElementsTransport {
@@ -42676,10 +42676,10 @@ pub struct OrderedFieldDeclarationListElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<AttributedOrderedFieldTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
-    pub element_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
+    pub element_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for OrderedFieldDeclarationListElementsTransport {
@@ -42830,10 +42830,10 @@ pub struct WherePredicatesTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate"))]
     pub where_predicate: Vec<WherePredicateTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate_trailing_sep"))]
-    pub where_predicate_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate_delimiter"))]
+    pub where_predicate_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for WherePredicatesTransport {
@@ -42884,10 +42884,10 @@ pub struct TypeParametersElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<AttributedTypeParameterTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
-    pub element_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
+    pub element_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for TypeParametersElementsTransport {
@@ -43138,10 +43138,10 @@ pub struct UseClausesTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause"))]
     pub use_clause: Vec<UseClauseTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause_trailing_sep"))]
-    pub use_clause_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause_delimiter"))]
+    pub use_clause_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for UseClausesTransport {
@@ -43192,10 +43192,10 @@ pub struct ParametersElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<AttributedParameterTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
-    pub element_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
+    pub element_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for ParametersElementsTransport {
@@ -43396,10 +43396,10 @@ pub struct LifetimesTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime"))]
     pub lifetime: Vec<LifetimeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime_trailing_sep"))]
-    pub lifetime_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime_delimiter"))]
+    pub lifetime_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for LifetimesTransport {
@@ -43450,10 +43450,10 @@ pub struct UseBoundsElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<UseBoundsElementsElementTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
-    pub element_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
+    pub element_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for UseBoundsElementsTransport {
@@ -43504,10 +43504,10 @@ pub struct TypeArgumentsElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<TypeArgumentTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
-    pub element_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
+    pub element_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for TypeArgumentsElementsTransport {
@@ -43608,10 +43608,10 @@ pub struct ArgumentsElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<AttributedArgumentTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
-    pub element_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
+    pub element_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for ArgumentsElementsTransport {
@@ -43714,10 +43714,10 @@ pub struct FieldInitializerListElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<FieldInitializerListElementsElementTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
-    pub element_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
+    pub element_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for FieldInitializerListElementsTransport {
@@ -43868,10 +43868,10 @@ pub struct TuplePatternElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<TuplePatternElementsElementTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
-    pub element_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
+    pub element_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for TuplePatternElementsTransport {
@@ -43922,10 +43922,10 @@ pub struct PatternsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: Vec<PatternTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_trailing_sep"))]
-    pub pattern_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_delimiter"))]
+    pub pattern_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for PatternsTransport {
@@ -43976,10 +43976,10 @@ pub struct StructPatternElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
     pub element: Vec<StructPatternElementsElementTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_trailing_sep"))]
-    pub element_trailing_sep: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
-    pub trailing_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_delimiter"))]
+    pub element_delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
 }
 
 impl RenderableTransport for StructPatternElementsTransport {
@@ -58680,7 +58680,7 @@ fn render_tuple_type(node: &TupleTypeTransport, dest: &mut dyn ::std::fmt::Write
             items: type__buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.type__trailing_sep.unwrap_or(false),
+            trailing: node.type__delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -59012,7 +59012,7 @@ fn render_tuple_expression(node: &TupleExpressionTransport, dest: &mut dyn ::std
             items: elements_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.elements_trailing_sep.unwrap_or(false),
+            trailing: node.elements_delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -59706,7 +59706,7 @@ fn render_macro_rules(node: &MacroRulesTransport, dest: &mut dyn ::std::fmt::Wri
             items: macro_rule_buf.as_slice(),
             separator: ";",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -59745,7 +59745,7 @@ fn render_enum_variant_list_elements(node: &EnumVariantListElementsTransport, de
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -59770,7 +59770,7 @@ fn render_field_declaration_list_elements(node: &FieldDeclarationListElementsTra
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -59790,7 +59790,7 @@ fn render_ordered_field_declaration_list_elements(node: &OrderedFieldDeclaration
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -59820,7 +59820,7 @@ fn render_where_predicates(node: &WherePredicatesTransport, dest: &mut dyn ::std
             items: where_predicate_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -59840,7 +59840,7 @@ fn render_type_parameters_elements(node: &TypeParametersElementsTransport, dest:
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -59880,7 +59880,7 @@ fn render_use_clauses(node: &UseClausesTransport, dest: &mut dyn ::std::fmt::Wri
             items: use_clause_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -59900,7 +59900,7 @@ fn render_parameters_elements(node: &ParametersElementsTransport, dest: &mut dyn
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -59937,7 +59937,7 @@ fn render_lifetimes(node: &LifetimesTransport, dest: &mut dyn ::std::fmt::Write)
             items: lifetime_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -59957,7 +59957,7 @@ fn render_use_bounds_elements(node: &UseBoundsElementsTransport, dest: &mut dyn 
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -59977,7 +59977,7 @@ fn render_type_arguments_elements(node: &TypeArgumentsElementsTransport, dest: &
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -60002,7 +60002,7 @@ fn render_arguments_elements(node: &ArgumentsElementsTransport, dest: &mut dyn :
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -60030,7 +60030,7 @@ fn render_field_initializer_list_elements(node: &FieldInitializerListElementsTra
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -60060,7 +60060,7 @@ fn render_tuple_pattern_elements(node: &TuplePatternElementsTransport, dest: &mu
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -60080,7 +60080,7 @@ fn render_patterns(node: &PatternsTransport, dest: &mut dyn ::std::fmt::Write) -
             items: pattern_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -60100,7 +60100,7 @@ fn render_struct_pattern_elements(node: &StructPatternElementsTransport, dest: &
             items: element_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: node.trailing_sep.unwrap_or(false),
+            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
     };
     template.render_into(dest)
