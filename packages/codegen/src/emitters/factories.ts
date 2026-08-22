@@ -48,7 +48,7 @@ import {
 	resolveDirectFactorySlot,
 	collectAliasSourceKinds,
 	warnSkippedParserSymbol,
-	unnamedChildSlotFacts,
+	soleSlotFacts,
 	canonicalSeparatedListField,
 	escForSource
 } from './shared.ts';
@@ -620,7 +620,7 @@ function emitFieldCarryingFactory(
 	// polymorph FORM factories (group) are always field-carrying.
 	const containerFacts =
 		node.modelType === 'branch' && classifyChildFactorySurface(node, nodeMap) !== null
-			? unnamedChildSlotFacts(node, nodeMap)
+			? soleSlotFacts(node, nodeMap)
 			: null;
 
 	// Gap 5: Single-field-no-children factories take the value directly

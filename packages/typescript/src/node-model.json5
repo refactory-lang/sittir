@@ -10292,7 +10292,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "arguments"
       ]
@@ -10338,7 +10338,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "elements"
       ]
@@ -10384,7 +10384,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "elements"
       ]
@@ -11813,7 +11813,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "content"
       ]
@@ -13896,7 +13896,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "type"
       ]
@@ -15791,7 +15791,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "type"
       ]
@@ -19107,7 +19107,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "properties"
       ]
@@ -19239,7 +19239,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "properties"
       ]
@@ -21290,7 +21290,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "expression"
       ]
@@ -21677,7 +21677,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "cases"
       ]
@@ -21777,7 +21777,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "body"
       ]
@@ -21885,7 +21885,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "elements"
       ]
@@ -21939,7 +21939,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "elements"
       ]

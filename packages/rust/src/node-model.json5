@@ -10029,7 +10029,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "parameters"
       ]
@@ -10581,7 +10581,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "declaration_statements"
       ]
@@ -11797,7 +11797,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
         "content"
       ]
@@ -12373,7 +12373,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "modifier"
       ]
@@ -17687,7 +17687,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "bounds"
       ]

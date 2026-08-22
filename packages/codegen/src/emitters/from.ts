@@ -37,8 +37,8 @@ import {
 	classifyFactoryShape,
 	classifyChildFactorySurface,
 	classifyFromEmission,
-	unnamedChildSlotFacts,
-	type UnnamedChildSlotFacts,
+	soleSlotFacts,
+	type SoleSlotFacts,
 	canonicalSeparatedListField
 } from './shared.ts';
 import { fieldElementType, childElementType, kindEnumTextMapExpr } from './factories.ts';
@@ -279,7 +279,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	const childSurface = branchTarget !== null ? classifyChildFactorySurface(branchTarget, nodeMap) : null;
 	if (childSurface === 'direct' || childSurface === 'spread') {
 		if (branchTarget === null) return null;
-		const facts = unnamedChildSlotFacts(branchTarget, nodeMap);
+		const facts = soleSlotFacts(branchTarget, nodeMap);
 		if (!facts) return null;
 		// Rest params (`...children`) always accept zero args. A singular
 		// positional `child` is safe only when it's itself optional.
@@ -312,7 +312,7 @@ function emitBranchFrom(
 				rawFactoryName: node.rawFactoryName,
 				fromFunctionName: node.fromFunctionName,
 				fields: node.fields,
-				childSlotFacts: unnamedChildSlotFacts(node, nodeMap)
+				childSlotFacts: soleSlotFacts(node, nodeMap)
 			},
 			kindEntries,
 			nodeMap
@@ -436,10 +436,10 @@ interface ContainerFromNode {
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
 	readonly fields?: readonly AssembledNonterminal[];
-	// The container's classified sole user slot (unnamedChildSlotFacts) —
+	// The container's classified sole user slot (soleSlotFacts) —
 	// its `storageName` drives the `_<name>` data key we read here. Computed
 	// by the caller from the full node; not derivable from `fields` alone.
-	readonly childSlotFacts: UnnamedChildSlotFacts | null;
+	readonly childSlotFacts: SoleSlotFacts | null;
 }
 
 function containerTypeCheck(kind: string, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): string {
@@ -1097,10 +1097,10 @@ function collectWrapChildrenEntries(
 			childSurface = 'array';
 		} else {
 			if (classifyChildFactorySurface(node, nodeMap) === null) continue;
-			// Real arity decides direct-vs-spread — see `unnamedChildSlotFacts`'s
+			// Real arity decides direct-vs-spread — see `soleSlotFacts`'s
 			// doc comment for why this reads the slot directly rather than
 			// trusting `classifyFactoryShape`'s label for the shape itself.
-			childSurface = unnamedChildSlotFacts(node, nodeMap)?.multiple ? 'spread' : 'direct';
+			childSurface = soleSlotFacts(node, nodeMap)?.multiple ? 'spread' : 'direct';
 		}
 		entries.push({
 			kind,

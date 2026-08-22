@@ -2721,7 +2721,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "value"
       ]
@@ -4151,7 +4151,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "expression"
       ]
@@ -4629,7 +4629,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "statements"
       ]
@@ -5647,7 +5647,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "content"
       ]
@@ -6425,7 +6425,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "identifier"
       ]
@@ -7758,7 +7758,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "identifier"
       ]
@@ -8985,7 +8985,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "statements"
       ]
@@ -9108,7 +9108,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "identifier"
       ]
@@ -11233,7 +11233,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "simple_pattern"
       ]

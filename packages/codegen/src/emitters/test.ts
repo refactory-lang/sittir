@@ -25,7 +25,7 @@ import {
 	keywordPresenceKind,
 	kindEnumTextIdPairs,
 	resolveFieldStorageInfo,
-	unnamedChildSlotFacts,
+	soleSlotFacts,
 	escForSource
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
@@ -253,11 +253,11 @@ function emitContainerTest(
 	//     input, so the no-arg form `ir.kind()` would fail at
 	//     runtime even though it type-checks.
 	//
-	// `unnamedChildSlotFacts` is the same canonical derivation
+	// `soleSlotFacts` is the same canonical derivation
 	// `emitFieldCarryingFactory` (factories.ts) bases its real signature
 	// on. Read it here too, so the test placeholder matches what the
 	// factory actually requires.
-	const facts = unnamedChildSlotFacts(node, nodeMap);
+	const facts = soleSlotFacts(node, nodeMap);
 	const requiredSingular = facts && !facts.multiple && facts.required;
 	const anyNonEmpty = facts?.nonEmpty ?? false;
 	// Candidate kind names for the slot, preferring each value's `parseKind`

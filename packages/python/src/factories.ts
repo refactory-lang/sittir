@@ -25,8 +25,8 @@ const _leafRe_build_StringContent = /^(?:[^"'\\{}\n]+)/u;
 const _leafRe_buildEscapeInterpolation = /^(?:\{\{|\}\})/u;
 const _leafRe_buildStringEnd = /^(?:["']+)/u;
 
-export function buildModule(config: Partial<T.Module.Config> = {}) {
-	const _statements = config.statements ?? [];
+export function buildModule(...children: T.Statement[]) {
+	const _statements = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -34,9 +34,7 @@ export function buildModule(config: Partial<T.Module.Config> = {}) {
 				$source: 2 as const,
 				$named: true as const,
 				_statements,
-				$with: {
-					statements: (...values: T.Statement[]) => buildModule({ ...config, statements: values })
-				}
+				$with: { $children: (...vs: T.Statement[]) => buildModule(...vs) }
 			},
 			{
 				statements: () => _statements
@@ -311,8 +309,9 @@ export function buildChevron(expression: T.Chevron.Config['expression']) {
 	);
 }
 
-export function buildAssertStatement(config: T.AssertStatement.Config) {
-	const _expression = config.expression ?? [];
+export function buildAssertStatement(...children: T.Expression[]) {
+	_assertNonEmpty(children, 'assert_statement.children');
+	const _expression = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -320,10 +319,7 @@ export function buildAssertStatement(config: T.AssertStatement.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				$with: {
-					expressions: (...values: NonEmptyArray<T.Expression>) =>
-						buildAssertStatement({ ...config, expression: values })
-				}
+				$with: { $children: (...vs: T.Expression[]) => buildAssertStatement(...vs) }
 			},
 			{
 				expressions: () => _expression
@@ -1014,8 +1010,9 @@ export function buildDictionarySplat(expression: T.DictionarySplat.Config['expre
 	);
 }
 
-export function buildGlobalStatement(config: T.GlobalStatement.Config) {
-	const _identifier = config.identifier ?? [];
+export function buildGlobalStatement(...children: T.Identifier[]) {
+	_assertNonEmpty(children, 'global_statement.children');
+	const _identifier = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -1023,10 +1020,7 @@ export function buildGlobalStatement(config: T.GlobalStatement.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_identifier,
-				$with: {
-					identifiers: (...values: NonEmptyArray<T.Identifier>) =>
-						buildGlobalStatement({ ...config, identifier: values })
-				}
+				$with: { $children: (...vs: T.Identifier[]) => buildGlobalStatement(...vs) }
 			},
 			{
 				identifiers: () => _identifier
@@ -1036,8 +1030,9 @@ export function buildGlobalStatement(config: T.GlobalStatement.Config) {
 	);
 }
 
-export function buildNonlocalStatement(config: T.NonlocalStatement.Config) {
-	const _identifier = config.identifier ?? [];
+export function buildNonlocalStatement(...children: T.Identifier[]) {
+	_assertNonEmpty(children, 'nonlocal_statement.children');
+	const _identifier = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -1045,10 +1040,7 @@ export function buildNonlocalStatement(config: T.NonlocalStatement.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_identifier,
-				$with: {
-					identifiers: (...values: NonEmptyArray<T.Identifier>) =>
-						buildNonlocalStatement({ ...config, identifier: values })
-				}
+				$with: { $children: (...vs: T.Identifier[]) => buildNonlocalStatement(...vs) }
 			},
 			{
 				identifiers: () => _identifier
@@ -1289,8 +1281,8 @@ export function buildDecorator(expression: T.Decorator.Config['expression']) {
 	);
 }
 
-export function buildBlock(config: Partial<T.Block.Config> = {}) {
-	const _statements = config.statements ?? [];
+export function buildBlock(...children: T.Statement[]) {
+	const _statements = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -1298,9 +1290,7 @@ export function buildBlock(config: Partial<T.Block.Config> = {}) {
 				$source: 2 as const,
 				$named: true as const,
 				_statements,
-				$with: {
-					statements: (...values: T.Statement[]) => buildBlock({ ...config, statements: values })
-				}
+				$with: { $children: (...vs: T.Statement[]) => buildBlock(...vs) }
 			},
 			{
 				statements: () => _statements
@@ -1335,8 +1325,9 @@ export function buildExpressionList(config: T.ExpressionList.Config) {
 	);
 }
 
-export function buildDottedName(config: T.DottedName.Config) {
-	const _identifier = config.identifier ?? [];
+export function buildDottedName(...children: T.Identifier[]) {
+	_assertNonEmpty(children, 'dotted_name.children');
+	const _identifier = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -1344,9 +1335,7 @@ export function buildDottedName(config: T.DottedName.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_identifier,
-				$with: {
-					identifiers: (...values: NonEmptyArray<T.Identifier>) => buildDottedName({ ...config, identifier: values })
-				}
+				$with: { $children: (...vs: T.Identifier[]) => buildDottedName(...vs) }
 			},
 			{
 				identifiers: () => _identifier
@@ -1375,8 +1364,9 @@ export function buildCasePattern(child: T.CaseAsPattern | T.KeywordPattern | T.S
 	);
 }
 
-export function buildUnionPattern(config: T.UnionPattern.Config) {
-	const _simple_pattern = config.simplePattern ?? [];
+export function buildUnionPattern(...children: T.SimplePattern[]) {
+	_assertNonEmpty(children, 'union_pattern.children');
+	const _simple_pattern = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -1384,10 +1374,7 @@ export function buildUnionPattern(config: T.UnionPattern.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_simple_pattern,
-				$with: {
-					simplePatterns: (...values: NonEmptyArray<T.SimplePattern>) =>
-						buildUnionPattern({ ...config, simplePattern: values })
-				}
+				$with: { $children: (...vs: T.SimplePattern[]) => buildUnionPattern(...vs) }
 			},
 			{
 				simplePatterns: () => _simple_pattern
@@ -3877,8 +3864,8 @@ export function buildCaseAsPattern(config: T.CaseAsPattern.Config) {
 	);
 }
 
-export function buildComprehensionClauses(config: Partial<T.ComprehensionClauses.Config> = {}) {
-	const _content = config.content ?? [];
+export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClause)[]) {
+	const _content = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -3886,10 +3873,7 @@ export function buildComprehensionClauses(config: Partial<T.ComprehensionClauses
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: {
-					contents: (...values: (T.ForInClause | T.IfClause)[]) =>
-						buildComprehensionClauses({ ...config, content: values })
-				}
+				$with: { $children: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...vs) }
 			},
 			{
 				contents: () => _content
@@ -4297,8 +4281,9 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 	);
 }
 
-export function buildExceptClauseList(config: T.ExceptClauseList.Config) {
-	const _value = config.value ?? [];
+export function buildExceptClauseList(...children: T.Expression[]) {
+	_assertNonEmpty(children, '_except_clause_list.children');
+	const _value = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -4306,9 +4291,7 @@ export function buildExceptClauseList(config: T.ExceptClauseList.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_value,
-				$with: {
-					values: (...values: NonEmptyArray<T.Expression>) => buildExceptClauseList({ ...config, value: values })
-				}
+				$with: { $children: (...vs: T.Expression[]) => buildExceptClauseList(...vs) }
 			},
 			{
 				values: () => _value

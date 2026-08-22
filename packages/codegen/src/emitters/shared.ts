@@ -799,14 +799,14 @@ export function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMa
 	return slotClass.tag === 'singleSlot' && slotClass.slot.isUnnamed ? 'direct' : null;
 }
 
-export interface UnnamedChildSlotFacts {
+export interface SoleSlotFacts {
 	readonly slot: AssembledNonterminal;
 	readonly multiple: boolean;
 	readonly required: boolean;
 	readonly nonEmpty: boolean;
 }
 
-export function unnamedChildSlotFacts(node: AssembledNode, nodeMap: NodeMap): UnnamedChildSlotFacts | null {
+export function soleSlotFacts(node: AssembledNode, nodeMap: NodeMap): SoleSlotFacts | null {
 	// The container's stamped slot is the classified sole user slot — NOT
 	// positionally `fields[0]`, which can be a keyword-presence marker
 	// preceding the payload (e.g. rust field_pattern's [ref_marker,
@@ -839,22 +839,31 @@ export function classifyFactoryShape(
 		case 'branch': {
 			const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 			if (slotClass.tag === 'singleSlot') {
+				// A configurable field beside the sole user slot (a keyword
+				// marker, a bitflag, an enum) makes the kind multi-slot for
+				// surface purposes — the config object is its home. Fixed-value
+				// auto-stamped fields don't count: they are never configurable
+				// (the same filter the container emission's stampedExtras uses).
+				const configurableExtras = allSlotsOf(node).filter(
+					(f) => f !== slotClass.slot && stampExpressionFor(f, nodeMap) === undefined
+				);
+				if (configurableExtras.length > 0) return 'config';
+				// A sole slot's real arity decides the surface, for named and
+				// unnamed slots alike (per the rust-slot-surface-contract
+				// architecture: one derivation path driven by arity, not by
+				// field-name presence or kind-name prefix). A list is the
+				// kind's identity — `dotted_name(...identifiers)` exactly as
+				// a separated list takes `(...elements)` — so any many-arity
+				// sole slot is 'spread'. A singular slot holding exactly one
+				// concrete kind forwards that kind's constructor ('forwarded'
+				// — see forwardedTargetKind; a singular ref to a separatedList
+				// is how the list's spread surface hoists to its parent); a
+				// union slot has no unique constructor and stays 'direct'.
+				if (slotClass.arity !== 'singular') return 'spread';
 				if (slotClass.slot.isUnnamed) {
-					// Unnamed child slot: real arity decides direct-vs-spread,
-					// independent of whether the kind name is hidden — a hidden
-					// kind's unnamed child (e.g. a polymorph's hoisted
-					// `_match_block`) is still called positionally by its parent
-					// either way, same as a visible kind's. (Per the
-					// rust-slot-surface-contract architecture: named and unnamed
-					// slots share one derivation path, driven by real arity —
-					// not by kind-name prefix.) A singular slot holding exactly
-					// one concrete kind forwards that kind's constructor
-					// ('forwarded' — see forwardedTargetKind); a union slot has
-					// no unique constructor and stays 'direct'.
-					if (slotClass.arity !== 'singular') return 'spread';
 					return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
 				}
-				// Named single field: direct only when the emitter would emit
+				// Named singular field: direct only when the emitter would emit
 				// the direct-value signature (sole non-stamped field, visible
 				// kind — see resolveDirectFactorySlot). Hidden kinds and
 				// marker-carrying kinds keep the config-object surface. Same
