@@ -3535,15 +3535,3 @@ export const DelimiterFlags = {
 	both: 3
 } as const;
 
-export type DelimiterFlag = (typeof DelimiterFlags)[keyof typeof DelimiterFlags];
-
-/** The delimiter values a slot's grammar permits, as a mask over
- *  {@link DelimiterFlags} — the canonical read surface for "which optional
- *  flanks exist here" (the per-side booleans are its storage). */
-export function permittedDelimiters(slot: {
-	readonly hasLeadingDelimiter: boolean;
-	readonly hasTrailingDelimiter: boolean;
-}): DelimiterFlag {
-	return ((slot.hasLeadingDelimiter ? DelimiterFlags.leading : 0) |
-		(slot.hasTrailingDelimiter ? DelimiterFlags.trailing : 0)) as DelimiterFlag;
-}

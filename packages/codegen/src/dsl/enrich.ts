@@ -3373,14 +3373,7 @@ function clauseHoistSynthName(
 }
 
 
-/**
- * Drop the ordinal from arm/group mint names whose parent minted exactly one
- * of that flavor: the ordinal only disambiguates siblings, so a lone
- * `<parent>_group1` / `<parent>_arm2` renames to `<parent>_group` /
- * `<parent>_arm` (hidden rule key, visible alias value, every symbol
- * reference, and the wire-facing tracking structures). A name collision with
- * any existing rule keeps the ordinal.
- */
+// Singleton-ordinal collapse — see docs/glossary/dsl.md (`collapseSingletonMintOrdinals`).
 function collapseSingletonMintOrdinals(
 	mergedRules: Record<string, Rule>,
 	mintedRules: Record<string, Rule>,
@@ -3410,6 +3403,12 @@ function collapseSingletonMintOrdinals(
 		if (oldName.startsWith('_') && oldName in mergedRules) {
 			mergedRules[newName] = mergedRules[oldName]!;
 			delete mergedRules[oldName];
+		}
+		// The minted-rule bag is read again after this pass (clauseGroupNames
+		// derives the inline list from its keys) — rename there too.
+		if (oldName.startsWith('_') && oldName in mintedRules) {
+			mintedRules[newName] = mintedRules[oldName]!;
+			delete mintedRules[oldName];
 		}
 		if (visibleGroupHiddenNames.delete(oldName)) visibleGroupHiddenNames.add(newName);
 		const owner = clauseGroupOwners.get(oldName);

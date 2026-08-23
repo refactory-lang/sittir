@@ -2898,6 +2898,10 @@ function collapseSingletonMintOrdinals(mergedRules, mintedRules, visibleGroupHid
       mergedRules[newName] = mergedRules[oldName];
       delete mergedRules[oldName];
     }
+    if (oldName.startsWith("_") && oldName in mintedRules) {
+      mintedRules[newName] = mintedRules[oldName];
+      delete mintedRules[oldName];
+    }
     if (visibleGroupHiddenNames.delete(oldName)) visibleGroupHiddenNames.add(newName);
     const owner = clauseGroupOwners.get(oldName);
     if (owner !== void 0) {
