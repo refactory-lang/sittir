@@ -29,7 +29,9 @@ describe('python type_alias_statement collision', () => {
 		const real = (text: string) => (ir as any).type((ir as any).identifier(text));
 		const out = render(ir.typeAlias({ left: real('Foo'), right: real('u64') }) as any);
 		const text = typeof out === 'string' ? out : (out as { text?: string }).text;
-		expect(text).toMatch(/^type\s*Foo\s*=\s*u64$/);
+		// The seam writer must insert the lexically-required space between the
+		// `type` keyword and the identifier (and none around `=`).
+		expect(text).toBe('type Foo=u64');
 	});
 
 	it('instances carry distinct _left/_right and nothing shared but the kind', () => {
