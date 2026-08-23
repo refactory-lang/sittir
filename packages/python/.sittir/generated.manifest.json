@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "a009cc0e79906cb65d286b127842e6b011999582314a3b91f4cf71744a6c2f8e",
+  "source_hash": "db73d0ed3079c1871cf4f67ab98546a7d0fe664c1def3ce4af2a0fb5cfe10ba8",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "913b954ae204d46dc4e35c41d1a5738f8f65cbd4f32a0b38bf6c0ffad392bfdc",
     "packages/python/.sittir/grammar.js": "5bc06b762d590c875cb1612d9b985d84744904090f41f2807b7924671ac494be",
@@ -20,8 +20,8 @@
     "packages/python/src/boundary.ts": "24637b5d59f133c9bcf18cc4a8f941ac745dc9ad4f6f0643f9ad5d4103c0c71d",
     "packages/python/src/consts.ts": "b7455632e8e410a50630765c82375bda09b7f1517de5a290314ba015f5f1a882",
     "packages/python/src/engine.ts": "8ad98d46d0066af6603ea5971daf4ae709bd85773b6897c7d12446e73b4958c5",
-    "packages/python/src/factories.ts": "2e6bf7f67d2405ca5f11f8a9dd86f9ae11958c07e62384375b5ba4b8e7c7e4c8",
-    "packages/python/src/from.ts": "34c9ac152b802b281d16682ae938477cb4daf9da9adcf4e166b9b5f95c3c7c22",
+    "packages/python/src/factories.ts": "0d30bef149e66a7c2464a0fab4df61ea0c02ec8f0aac3b76e63859710365c114",
+    "packages/python/src/from.ts": "4eb022279544c77b2017f907c4accbb92f1f8ff08c5be27b1cc799538f707041",
     "packages/python/src/grammar.ts": "7c21de7430e25db7e56e93f77851d9b4ccd22f114ca651c49b75ef18c2bf6228",
     "packages/python/src/hash.ts": "81dda79cda86933b6bb3b684f8b449ed641b5435de354f74c32181767dfaf87c",
     "packages/python/src/index.ts": "880825c1918b377123a9d40694e8e53aff1483cb384c8a0e4a025e1e23f4de0c",
@@ -29,7 +29,7 @@
     "packages/python/src/is.ts": "521b910dd95b2912dd6f959929d12cd8561eafe15089a26caadc877d31b7438f",
     "packages/python/src/node-model.json5": "0d49dfee5980b00a0e44fd98c240aa20ec68e4afbe007aedf4a79945c02b652b",
     "packages/python/src/type-test.ts": "26b9a88181565a982d363b0af54a59b3cbc0e8eec79dd1210d4aa9f6804c2df8",
-    "packages/python/src/types.ts": "69bf90f6853be1f502cdf06abdab66936c6b78f3ce5118adbb61b17a6662fca0",
+    "packages/python/src/types.ts": "89457bb042e6efce36afab2446bc8860efd828febb8d30c05ee23ee4fea57ba7",
     "packages/python/src/utils.ts": "24de84cbd1523a9b80ac5e66c35d4b484360391d45cf39745ee9cda1494bf732",
     "packages/python/src/wrap.ts": "01bf8f42176c7fb9f32fad61827946ef89387701d315df73b8e3106b302b760c",
     "packages/python/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",

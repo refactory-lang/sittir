@@ -268,22 +268,11 @@ export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMa
 }
 
 export function childTypeComponents(child: AssembledNonterminal, nodeMap: NodeMap): TypeComponent[] {
-	const out: TypeComponent[] = [];
-	for (const rawKind of slotKindNames(child)) {
-		const lit = resolveHiddenKeywordLiteral(rawKind, nodeMap);
-		if (lit !== undefined) {
-			out.push({ kind: 'literal', value: lit });
-			continue;
-		}
-		const node = nodeMap.nodes.get(rawKind);
-		if (!node) {
-			const fallback = rawKind.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase());
-			out.push({ kind: 'missing', value: fallback, rawKind });
-			continue;
-		}
-		out.push({ kind: 'nodeKind', value: node.typeName, rawKind });
-	}
-	return out;
+	// One derivation with the named-field path: a sole slot's value set can
+	// mix node references with inline terminals (rust `function_modifiers`'
+	// 'async' | ... beside extern_modifier) — projecting only node kinds
+	// would make those grammar-valid members unconstructible type-safely.
+	return fieldTypeComponents(child, nodeMap);
 }
 
 // ---------------------------------------------------------------------------

@@ -726,6 +726,14 @@ function emitSupertypeUnionDeclarations(
 ): void {
 	if (supertypes.length === 0) return;
 	lines.push('// Supertype unions');
+	// Pre-register every union's own type name: a supertype can be a MEMBER
+	// of another supertype (python's `expression` includes
+	// `primary_expression`), and the membership filter below must not
+	// depend on this loop's emission order — TS type aliases have no
+	// ordering constraint, but `generatedTypes` is populated as we go, so
+	// an early union would silently drop a later union's name.
+	const interfaceTypes = new Set(generatedTypes);
+	const pending: { kind: string; subtypes: string[]; typeName: string }[] = [];
 	for (const st of supertypes) {
 		if (st.subtypes.length === 0) {
 			throw new Error(
@@ -737,6 +745,10 @@ function emitSupertypeUnionDeclarations(
 		const typeName = stNode?.typeName ?? toPascal(st.kind.replace(/^_/, ''));
 		if (generatedTypes.has(typeName)) continue;
 		generatedTypes.add(typeName);
+		pending.push({ ...st, typeName });
+	}
+	for (const st of pending) {
+		const typeName = st.typeName;
 
 		const resolvedSubs = st.subtypes.map((sub) => {
 			// Canonical-hidden fallback (Option Y): an alias-target subtype's
@@ -765,13 +777,15 @@ function emitSupertypeUnionDeclarations(
 		lines.push('');
 		// Supertype Tree union — factories reference it from
 		// `replace(target: T.SupertypeTree)` signatures. Filter to
-		// subtypes whose data type was actually emitted (the matching
+		// subtypes whose data INTERFACE was actually emitted (the matching
 		// `Tree` alias only exists when the data type itself does — for
 		// example, hidden single-literal `_kw_*` keywords resolve their
-		// literal inline and emit no Tree alias). Without the filter the
-		// supertype Tree references dangling identifiers like
-		// `WildcardPatternTree` for `_wildcard_pattern`.
-		const treeMembers = resolvedSubs.filter((r) => generatedTypes.has(r.typeName)).map((r) => `${r.typeName}Tree`);
+		// literal inline and emit no Tree alias, and a supertype member's
+		// own Tree union is emitted only when it has tree-bearing members
+		// of its own). Without the filter the supertype Tree references
+		// dangling identifiers like `WildcardPatternTree` for
+		// `_wildcard_pattern`.
+		const treeMembers = resolvedSubs.filter((r) => interfaceTypes.has(r.typeName)).map((r) => `${r.typeName}Tree`);
 		if (treeMembers.length > 0) {
 			lines.push(`export type ${typeName}Tree = ${treeMembers.join(' | ')};`);
 			lines.push('');

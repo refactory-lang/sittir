@@ -1093,7 +1093,7 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 	);
 }
 
-export function buildFunctionModifiers(...children: T.ExternModifier[]) {
+export function buildFunctionModifiers(...children: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]) {
 	_assertNonEmpty(children, 'function_modifiers.children');
 	const _modifier = children;
 	return withMethods(
@@ -1103,7 +1103,10 @@ export function buildFunctionModifiers(...children: T.ExternModifier[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_modifier,
-				$with: { $children: (...vs: T.ExternModifier[]) => buildFunctionModifiers(...vs) }
+				$with: {
+					$children: (...vs: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]) =>
+						buildFunctionModifiers(...vs)
+				}
 			},
 			{
 				modifiers: () => _modifier
@@ -5888,7 +5891,9 @@ export function buildFunctionTypeTraitForm(config: T.FunctionTypeTraitForm.Confi
 }
 
 export function buildFunctionTypeFnForm(child?: T.FunctionModifiers): ReturnType<typeof _buildFunctionTypeFnForm>;
-export function buildFunctionTypeFnForm(...children: T.ExternModifier[]): ReturnType<typeof _buildFunctionTypeFnForm>;
+export function buildFunctionTypeFnForm(
+	...children: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]
+): ReturnType<typeof _buildFunctionTypeFnForm>;
 export function buildFunctionTypeFnForm(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildFunctionTypeFnForm(args[0] as T.FunctionModifiers);

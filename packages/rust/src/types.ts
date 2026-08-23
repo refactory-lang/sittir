@@ -6178,6 +6178,7 @@ export interface PubTree extends AnyTreeNode {
 // Supertype unions
 export type Statement =
 	| ExpressionStatement
+	| DeclarationStatement
 	| ConstItem
 	| MacroInvocation
 	| MacroDefinition
@@ -6271,6 +6272,8 @@ export type TokenPattern =
 	| TokenRepetitionPattern
 	| TokenBindingPattern
 	| Metavariable
+	| _NonSpecialToken
+	| Literal
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -6310,6 +6313,8 @@ export type Tokens =
 	| TokenTree
 	| TokenRepetition
 	| Metavariable
+	| _NonSpecialToken
+	| Literal
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -6345,6 +6350,7 @@ export type TokensTree =
 	| TokenKeywordsTree;
 
 export type _NonSpecialToken =
+	| Literal
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -6377,6 +6383,7 @@ export type _NonSpecialTokenTree =
 	| TokenKeywordsTree;
 
 export type UseClause =
+	| Path
 	| Self
 	| Identifier
 	| Metavariable
@@ -6449,6 +6456,7 @@ export type ExpressionExceptRange =
 	| CallExpression
 	| ReturnExpression
 	| YieldExpression
+	| Literal
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -6473,6 +6481,7 @@ export type ExpressionExceptRange =
 	| ClosureExpression
 	| ParenthesizedExpression
 	| StructExpression
+	| ExpressionEndingWithBlock
 	| UnsafeBlock
 	| AsyncBlock
 	| GenBlock
@@ -6544,6 +6553,7 @@ export type Expression =
 	| CallExpression
 	| ReturnExpression
 	| YieldExpression
+	| Literal
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -6568,6 +6578,7 @@ export type Expression =
 	| ClosureExpression
 	| ParenthesizedExpression
 	| StructExpression
+	| ExpressionEndingWithBlock
 	| UnsafeBlock
 	| AsyncBlock
 	| GenBlock
@@ -6582,7 +6593,6 @@ export type Expression =
 	| RangeExpression;
 
 export type ExpressionTree =
-	| ExpressionExceptRangeTree
 	| UnaryExpressionTree
 	| ReferenceExpressionTree
 	| TryExpressionTree
@@ -6656,12 +6666,13 @@ export type ExpressionEndingWithBlockTree =
 	| ForExpressionTree
 	| ConstBlockTree;
 
-export type DelimTokens = TokenTreePunctuation | DelimTokenTree;
+export type DelimTokens = NonDelimToken | NonSpecialToken | TokenTreePunctuation | DelimTokenTree;
 
 export type DelimTokensTree = TokenTreePunctuationTree | DelimTokenTreeTree;
 
 export type NonDelimToken =
 	| _NonSpecialToken
+	| Literal
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -6679,7 +6690,6 @@ export type NonDelimToken =
 	| TokenTreePunctuation;
 
 export type NonDelimTokenTree =
-	| _NonSpecialTokenTree
 	| StringLiteralTree
 	| RawStringLiteralTree
 	| CharLiteralTree
@@ -6709,6 +6719,7 @@ export type Condition =
 	| CallExpression
 	| ReturnExpression
 	| YieldExpression
+	| Literal
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -6750,8 +6761,6 @@ export type Condition =
 	| LetChain;
 
 export type ConditionTree =
-	| ExpressionTree
-	| ExpressionExceptRangeTree
 	| UnaryExpressionTree
 	| ReferenceExpressionTree
 	| TryExpressionTree
@@ -6786,7 +6795,6 @@ export type ConditionTree =
 	| ClosureExpressionTree
 	| ParenthesizedExpressionTree
 	| StructExpressionTree
-	| ExpressionEndingWithBlockTree
 	| UnsafeBlockTree
 	| AsyncBlockTree
 	| GenBlockTree
@@ -6803,6 +6811,7 @@ export type ConditionTree =
 	| LetChainTree;
 
 export type Pattern =
+	| LiteralPattern
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -6909,7 +6918,6 @@ export type NonSpecialToken =
 	| TokenKeywords;
 
 export type NonSpecialTokenTree =
-	| LiteralTree
 	| StringLiteralTree
 	| RawStringLiteralTree
 	| CharLiteralTree
