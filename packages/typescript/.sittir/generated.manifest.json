@@ -1,9 +1,9 @@
 {
   "grammar": "typescript",
-  "source_hash": "e5c3f743acb6c3aa19fb2e88ad1e91f12fe64496d84d5f101d4ea37ff8b14fda",
+  "source_hash": "853f20baa0ebd1505de91f7ecf52d2b29eb1664bee5bb392dc66a9ad35946cdd",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "1caa3006583784e78747ca599b3cd41f038d6ef98a80fa83c159aade0fd98989",
-    "packages/typescript/.sittir/grammar.js": "271b239db36114d2af4ae6c5aaf8eff8b826d6c5cd39ec8250cbf2916ea2f3b5",
+    "packages/typescript/.sittir/grammar.js": "754757455e2c3eb54a9b3478b8cbd33b4e79d7c686b5c7e1614d37c4d00bd38a",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
     "packages/typescript/.sittir/parser.dylib": "ba2a18d17e8b298756438461cd47288057ebc3220d75d115e9afa46a5f48ed89",
     "packages/typescript/.sittir/parser.wasm": "d10cf224e0abb98ea7087655ad5840b94326be6055d03f225b7d72bdd6e10187",

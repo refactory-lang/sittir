@@ -10,7 +10,12 @@ Suggested attack order (by payoff ÷ effort; remove a line when its entry is del
 2. `ki-from-string-composition` — blocked on a quote-style design decision
 3. `ki-nodemembervalue-boolean` — small type-union fix, deferred with the type-debt class
 4. `ki-interp-brace-padding` — cosmetic byte divergence, reparse-safe; walker-emitter change
-5. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
+5. `ki-exercise-legacy-renderer` — exercise tool's renders are garbage until it moves off legacy-core
+6. `ki-inline-integrity-check` — cheap post-generate guard against a warning class tree-sitter masks
+8. `ki-dict-pattern-comma` — python inter-entry comma vanishes; not yet root-caused
+9. `ki-from-default-empty-delimiter` — TS2739 type-debt cluster in generated from.ts
+10. `ki-mapentry-forwarded` — one-line type-union gap in the factory-map emitter
+11. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
 
 ## `ki-emitsymbol-fielded-seq` — `emitSymbol`'s generalized hidden-helper inlining doesn't yet handle a fielded sequence inside the inlined target
 
@@ -57,3 +62,31 @@ The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the
 
 **Fix, if/when prioritized:** a composition rule needs an explicit decision on the default open-quote (probably plain `"` with sub-entries like `from.string.raw(...)` for other variants) — an overrides-level declaration, not an emitter heuristic. Flip the scm-roles pin when it lands.
 
+
+## `ki-exercise-legacy-renderer` — the exercise tool renders through `@sittir/legacy-core`, so its output is seam-less garbage
+
+**Found during:** unifying the exercise tool's factory-call dispatch with the validator's (`buildFactoryNodeFromReference`, `packages/tools/src/validate/common.ts`). The tool's render step uses `createRenderer` from `@sittir/legacy-core` — the removed JS engine surviving as diagnostic tooling — which has no SpacingWriter, so python's built-in cases all fail with renders like `(aforainb)` for `(a for a in b)`: **0 pass / 10 fail, identical before and after the dispatch unification** (verified against master via stash-baseline). The rust built-ins pass only because their cases (`foo`, `()`) have no seams. The tool therefore cannot distinguish a real factory defect from the renderer's own spacing blindness.
+
+**Fix, if/when prioritized:** render through the native engine (`createEngine()` per grammar) exactly as the validators do, and re-pin the built-in cases' expected output; the factory-side dispatch is already shared, so only the render/compare tail needs porting.
+
+## `ki-inline-integrity-check` — tree-sitter reports only the FIRST undefined inline rule per run, masking the rest of the class
+
+**Found during:** root-causing the `inline rule '_object_arm1' is not defined` warning. The typescript override had authored an `inline:` list of 20 mint names of which every entry was dead — but tree-sitter's generate step warns about exactly one undefined inline name per run and silently drops the others, so 19 dangling entries hid behind the first for the whole life of the list. The authored list is deleted (wire auto-manages mint inlining, and its builder now also skips `orphanedSyntheticGroups`), but nothing today would catch a NEW dangling inline name beyond the single masked warning.
+
+**Fix, if/when prioritized:** a post-generate assertion in the gen pipeline — every name in the wired `inline:` output must exist in the final rule bag (compare against `.sittir/src/grammar.json`'s `rules`); fail loudly with the full list, not one name at a time.
+
+## `ki-dict-pattern-comma` — python `dict_pattern` drops the inter-entry comma on render
+
+**Found during:** the flank-capture census (Task 3 of the separator work). `case {1: a, 2: b}:` renders without the comma between entries; shares a root with the (since-fixed) `print_statement` class — the mandatory-flank handling hardcoded where a headless-group shape needs a capture — but this kind was not closed by that fix and has not been re-root-caused since.
+
+**Fix, if/when prioritized:** re-probe under the current separator-as-slot model (`probe-kind -g python -k dict_pattern --reparse`); the fix likely belongs with the kind's separated-list flank capture, not the template.
+
+## `ki-from-default-empty-delimiter` — generated `from.ts` `?? F.xElements({ delimiter: 2 })` defaults fail the list Config type
+
+**Found during:** the container-from coercion review fixes — the dominant remaining type-error cluster (TS2739, ~20-40 sites per grammar pre-review-fix, still the bulk of what's left). `canDefaultToEmpty` emits `?? F.<list>({ delimiter: 2 })` as the empty-list default, but the options bag alone is not assignable to the list factory's element-bearing Config — runtime is fine (the factory dispatches on the bag shape), types are not. Cosmetic per the type-debt policy (gates run on `validate:native`, not tsgo), but it is the single biggest cluster and one emitter site.
+
+**Fix, if/when prioritized:** emit the empty call in the list factory's real signature — `F.<list>({ delimiter: 2 })` → the options-first overload requires at least the options bag to typecheck against the overload set; passing it through the factory's declared options overload (or emitting `F.<list>()` when no options vary) closes the whole cluster at `canDefaultToEmpty`.
+
+## `ki-mapentry-forwarded` — `MapEntry.shape` union lacks `'forwarded'`
+
+**Found during:** every codegen typecheck since the forwarded shape landed (`packages/codegen/src/emitters/factories.ts` — `buildFactoryMapEntries` assigns a `FactoryShape` including `'forwarded'` into `MapEntry.shape`, whose union stops at `'config' | 'children' | 'text' | 'direct'`). One-line union widening; verify the `_factoryMap`/`FluentKindMap` emission has no shape-conditional that silently mishandles `'forwarded'` before widening.

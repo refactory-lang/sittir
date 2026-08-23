@@ -45,7 +45,8 @@ import {
 	dedupeMismatchesByContainment,
 	type TSNode,
 	type TSTree,
-	type WrappedNodeData
+	type WrappedNodeData,
+	buildFactoryNodeFromReference
 } from './common.ts';
 
 /**
@@ -522,85 +523,12 @@ function buildFactoryNodeData(
 	const factory = factoryMap[renderedKind];
 	if (!factory) return null;
 	try {
-		const shape = factoryShapes[renderedKind] ?? 'config';
-		if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
-			const config = nodeToConfig(referenceData, {
-				factoryMap,
-				factoryShapes,
-				fieldAliasMap,
-				factoryFields,
-				factorySlots,
-				polymorphVariants,
-				cstNodeKindHint,
-				firstNamedChildKindHint,
-				namedChildKindHints,
-				kindNameFromId,
-				kindLiteralText
-			});
-			if (shape === 'direct' || shape === 'forwarded') {
-				// Direct-call shape: extract the sole field value when metadata
-				// names one, otherwise treat it as a single child call.
-				const fieldNames = factoryFields[renderedKind];
-				const rawName = fieldNames?.[0];
-				const camelName = rawName ? snakeToCamel(rawName) : undefined;
-				const childArgs = getChildFactoryArgs(renderedKind, config, factorySlots, factoryFields);
-				const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
-				return (factory as (v: unknown) => AnyNodeData)(value);
-			}
-			// Config-shaped factories with flank capture take `(config, options)` —
-			// factories without options ignore the extra argument.
-			return (factory as (c: unknown, o?: unknown) => AnyNodeData)(
-				config,
-				separatedListFactoryOptions(referenceData, kindLiteralText)
-			);
-		} else if (shape === 'text') {
-			// $TEXT-templated branch/container (e.g. rust
-			// raw_string_literal) — factory accepts the raw
-			// source span because external-scanner delimiters
-			// can't be reconstructed from children.
-			const text = (referenceData as { $text?: string }).$text ?? '';
-			return (factory as (text: string) => AnyNodeData)(text);
-		} else if (shape === 'elements') {
-			// separatedList factory: spread with a LEADING optional options bag
-			// — `(...elements)` / `({separatorKind?, leading?, trailing?},
-			// ...elements)` — distinct calling convention from 'spread's plain
-			// rest-param factories (see classifyFactoryShape's separatedList
-			// case).
-			const config = nodeToConfig(referenceData, {
-				factoryMap,
-				factoryShapes,
-				fieldAliasMap,
-				factoryFields,
-				factorySlots,
-				polymorphVariants,
-				cstNodeKindHint,
-				firstNamedChildKindHint,
-				namedChildKindHints,
-				kindNameFromId,
-				kindLiteralText
-			});
-			const elements = getChildFactoryArgs(renderedKind, config, factorySlots, factoryFields);
-			const options = separatedListFactoryOptions(referenceData, kindLiteralText);
-			const listFactory = factory as (...args: unknown[]) => AnyNodeData;
-			return options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
-		} else {
-			// shape === 'spread' — child-spread factory.
-			const config = nodeToConfig(referenceData, {
-				factoryMap,
-				factoryShapes,
-				fieldAliasMap,
-				factoryFields,
-				factorySlots,
-				polymorphVariants,
-				cstNodeKindHint,
-				firstNamedChildKindHint,
-				namedChildKindHints,
-				kindNameFromId,
-				kindLiteralText
-			});
-			const childArgs = getChildFactoryArgs(renderedKind, config, factorySlots, factoryFields);
-			return (factory as (...args: unknown[]) => AnyNodeData)(...childArgs);
-		}
+		return buildFactoryNodeFromReference(
+			referenceData,
+			renderedKind,
+			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, polymorphVariants },
+			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId, kindLiteralText }
+		) as AnyNodeData | null;
 	} catch (e) {
 		errors.push({
 			kind: renderedKind,

@@ -93,6 +93,16 @@ interface CommonModule {
 		fieldAliasMap: Record<string, Record<string, string>>;
 		polymorphVariants: Record<string, unknown>;
 	}>;
+	buildFactoryNodeFromReference(
+		referenceData: ReadNodeLike,
+		kind: string,
+		artifacts: FactoryArtifacts,
+		opts?: {
+			kindNameFromId?: (id: number) => string | undefined;
+			kindLiteralText?: ReadonlyMap<number, string>;
+			tree?: unknown;
+		}
+	): unknown | null;
 }
 
 interface TreeSitterNode {
@@ -251,41 +261,14 @@ export function buildFactoryNode(
 	if (factory === undefined) {
 		throw new Error(`no factory registered for '${kind}'`);
 	}
-	const shape = artifacts.factoryShapes[resolvedKind] ?? 'config';
-	if (shape === 'text') {
-		return factory(readData.$text ?? '');
-	}
-	const config = common.nodeToConfig(readData, {
-		tree: handle,
-		factoryMap: artifacts.factoryMap,
-		factoryShapes: artifacts.factoryShapes,
-		fieldAliasMap: artifacts.fieldAliasMap,
-		factoryFields: artifacts.factoryFields,
-		factorySlots: artifacts.factorySlots,
-		polymorphVariants: artifacts.polymorphVariants,
+	// One dispatch, shared with the factory-render-parse validator
+	// (`buildFactoryNodeFromReference`, validate/common.ts) — this tool
+	// previously carried a hand-copied twin of the shape switch.
+	return common.buildFactoryNodeFromReference(readData, resolvedKind, artifacts, {
 		kindNameFromId,
-		kindLiteralText
+		kindLiteralText,
+		tree: handle
 	});
-	const childArgs = common.getChildFactoryArgs(resolvedKind, config, artifacts.factorySlots, artifacts.factoryFields);
-	if (shape === 'spread') {
-		return factory(...childArgs);
-	}
-	if (shape === 'direct' || shape === 'forwarded') {
-		const fieldNames = artifacts.factoryFields[resolvedKind];
-		const rawName = fieldNames?.[0];
-		const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
-		const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
-		return factory(value);
-	}
-	if (shape === 'elements') {
-		// separatedList factory: spread elements with a LEADING optional
-		// options bag — `(...elements)` / `({ separator?, delimiter? }, ...elements)`
-		// — the options derived by the validator's own helper (one derivation).
-		const options = common.separatedListFactoryOptions(readData, kindLiteralText);
-		const listFactory = factory as unknown as (...args: unknown[]) => unknown;
-		return options !== undefined ? listFactory(options, ...childArgs) : listFactory(...childArgs);
-	}
-	return factory(config);
 }
 
 async function resolveCorpusCase(

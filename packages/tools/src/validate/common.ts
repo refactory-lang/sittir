@@ -2859,3 +2859,88 @@ export function separatedListFactoryOptions(
 	if (delimiter !== 0) options.delimiter = delimiter;
 	return Object.keys(options).length > 0 ? options : undefined;
 }
+
+// ---------------------------------------------------------------------------
+// Factory-call dispatch — the ONE mapping from a factory's declared shape to
+// its calling convention, shared by the factory-render-parse validator and
+// the exercise tool (which previously carried a hand-copied twin).
+// ---------------------------------------------------------------------------
+
+export interface FactoryDispatchArtifacts {
+	readonly factoryMap: Record<string, (...args: any[]) => unknown>;
+	readonly factoryShapes: Record<string, FactoryShape>;
+	readonly fieldAliasMap: Record<string, Record<string, string>>;
+	readonly factoryFields: Record<string, readonly string[]>;
+	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
+	readonly polymorphVariants: PolymorphVariantMap;
+}
+
+export interface FactoryDispatchOpts {
+	readonly cstNodeKindHint?: string;
+	readonly firstNamedChildKindHint?: string;
+	readonly namedChildKindHints?: readonly string[];
+	readonly kindNameFromId?: (id: number) => string | undefined;
+	readonly kindLiteralText?: ReadonlyMap<number, string>;
+	readonly tree?: unknown;
+}
+
+/**
+ * Dispatch `referenceData` through the factory call convention its declared
+ * shape (`factoryShapes[kind]`) implies and return the built node. Throws
+ * whatever the factory throws — callers own error recording. Returns `null`
+ * when no factory is registered for `kind`.
+ */
+export function buildFactoryNodeFromReference(
+	referenceData: ReadNodeLike,
+	kind: string,
+	artifacts: FactoryDispatchArtifacts,
+	opts: FactoryDispatchOpts = {}
+): unknown | null {
+	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, polymorphVariants } = artifacts;
+	const factory = factoryMap[kind];
+	if (!factory) return null;
+	const shape = factoryShapes[kind] ?? 'config';
+	const configOpts = {
+		factoryMap,
+		factoryShapes,
+		fieldAliasMap,
+		factoryFields,
+		factorySlots,
+		polymorphVariants,
+		cstNodeKindHint: opts.cstNodeKindHint,
+		firstNamedChildKindHint: opts.firstNamedChildKindHint,
+		namedChildKindHints: opts.namedChildKindHints,
+		kindNameFromId: opts.kindNameFromId,
+		kindLiteralText: opts.kindLiteralText,
+		tree: opts.tree
+	} as NodeToConfigOpts;
+	if (shape === 'text') {
+		// $TEXT-templated branch/container (e.g. rust raw_string_literal) —
+		// the factory accepts the raw source span because external-scanner
+		// delimiters can't be reconstructed from children.
+		return factory((referenceData as { $text?: string }).$text ?? '');
+	}
+	const config = nodeToConfig(referenceData, configOpts);
+	if (shape === 'direct' || shape === 'forwarded') {
+		// Direct-call shape: extract the sole field value when metadata names
+		// one, otherwise treat it as a single child call.
+		const rawName = factoryFields[kind]?.[0];
+		const camelName = rawName?.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+		const childArgs = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
+		const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
+		return factory(value);
+	}
+	if (shape === 'elements') {
+		// separatedList factory: spread with a LEADING optional options bag —
+		// `(...elements)` / `({separator?, delimiter?}, ...elements)`.
+		const elements = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
+		const options = separatedListFactoryOptions(referenceData, opts.kindLiteralText);
+		return options !== undefined ? factory(options, ...elements) : factory(...elements);
+	}
+	if (shape === 'spread') {
+		return factory(...getChildFactoryArgs(kind, config, factorySlots, factoryFields));
+	}
+	// shape === 'config' — factories with flank capture take `(config,
+	// options)`; factories without options ignore the extra argument.
+	return factory(config, separatedListFactoryOptions(referenceData, opts.kindLiteralText));
+}

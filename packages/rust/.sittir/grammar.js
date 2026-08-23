@@ -4241,6 +4241,7 @@ function buildWiredInlineFn(userInline, context) {
     for (const name of context.syntheticInline) {
       if (existingNames.has(name)) continue;
       if (context.inlineRemovals.has(name)) continue;
+      if (context.orphanedSyntheticGroups.has(name)) continue;
       appended.push(nativeInlineRef($, name));
     }
     return appended.length === 0 ? base2 : [...base2, ...appended];
