@@ -3930,7 +3930,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 89,
                 "end": 92
@@ -4292,7 +4292,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 89,
             "end": 92
@@ -4355,7 +4355,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 89,
           "end": 92
@@ -4444,7 +4444,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 47,
                 "end": 50
@@ -4584,7 +4584,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 47,
             "end": 50
@@ -4638,7 +4638,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 47,
           "end": 50
@@ -16784,7 +16784,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 79,
                 "end": 82
@@ -17445,7 +17445,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 79,
             "end": 82
@@ -18476,7 +18476,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 79,
           "end": 82
@@ -22743,7 +22743,7 @@
                           "$type": 383,
                           "$source": 0,
                           "$named": true,
-                          "_pub": 141,
+                          "$text": "pub",
                           "$span": {
                             "start": 49,
                             "end": 52
@@ -22795,7 +22795,7 @@
                           "$type": 383,
                           "$source": 0,
                           "$named": true,
-                          "_pub": 141,
+                          "$text": "pub",
                           "$span": {
                             "start": 67,
                             "end": 70
@@ -23051,7 +23051,7 @@
                         "$type": 383,
                         "$source": 0,
                         "$named": true,
-                        "_pub": 141,
+                        "$text": "pub",
                         "$span": {
                           "start": 148,
                           "end": 151
@@ -23244,7 +23244,7 @@
                         "$type": 383,
                         "$source": 0,
                         "$named": true,
-                        "_pub": 141,
+                        "$text": "pub",
                         "$span": {
                           "start": 201,
                           "end": 204
@@ -23476,7 +23476,7 @@
                       "$type": 383,
                       "$source": 0,
                       "$named": true,
-                      "_pub": 141,
+                      "$text": "pub",
                       "$span": {
                         "start": 49,
                         "end": 52
@@ -23528,7 +23528,7 @@
                       "$type": 383,
                       "$source": 0,
                       "$named": true,
-                      "_pub": 141,
+                      "$text": "pub",
                       "$span": {
                         "start": 67,
                         "end": 70
@@ -23816,7 +23816,7 @@
                     "$type": 383,
                     "$source": 0,
                     "$named": true,
-                    "_pub": 141,
+                    "$text": "pub",
                     "$span": {
                       "start": 148,
                       "end": 151
@@ -24041,7 +24041,7 @@
                     "$type": 383,
                     "$source": 0,
                     "$named": true,
-                    "_pub": 141,
+                    "$text": "pub",
                     "$span": {
                       "start": 201,
                       "end": 204
@@ -24128,7 +24128,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 49,
           "end": 52
@@ -24165,7 +24165,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 67,
           "end": 70
@@ -24202,7 +24202,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 148,
           "end": 151
@@ -24239,7 +24239,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 201,
           "end": 204
@@ -24327,7 +24327,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -24366,7 +24366,7 @@
                         "$type": 383,
                         "$source": 0,
                         "$named": true,
-                        "_pub": 141,
+                        "$text": "pub",
                         "$span": {
                           "start": 39,
                           "end": 42
@@ -24438,7 +24438,7 @@
                         "$type": 383,
                         "$source": 0,
                         "$named": true,
-                        "_pub": 141,
+                        "$text": "pub",
                         "$span": {
                           "start": 81,
                           "end": 84
@@ -24510,7 +24510,7 @@
                         "$type": 383,
                         "$source": 0,
                         "$named": true,
-                        "_pub": 141,
+                        "$text": "pub",
                         "$span": {
                           "start": 124,
                           "end": 127
@@ -24689,7 +24689,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -24728,7 +24728,7 @@
                     "$type": 383,
                     "$source": 0,
                     "$named": true,
-                    "_pub": 141,
+                    "$text": "pub",
                     "$span": {
                       "start": 39,
                       "end": 42
@@ -24800,7 +24800,7 @@
                     "$type": 383,
                     "$source": 0,
                     "$named": true,
-                    "_pub": 141,
+                    "$text": "pub",
                     "$span": {
                       "start": 81,
                       "end": 84
@@ -24872,7 +24872,7 @@
                     "$type": 383,
                     "$source": 0,
                     "$named": true,
-                    "_pub": 141,
+                    "$text": "pub",
                     "$span": {
                       "start": 124,
                       "end": 127
@@ -25040,7 +25040,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -25077,7 +25077,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 39,
           "end": 42
@@ -25114,7 +25114,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 81,
           "end": 84
@@ -25151,7 +25151,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 124,
           "end": 127
@@ -27085,7 +27085,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -27293,7 +27293,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 47,
                 "end": 50
@@ -27817,7 +27817,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -28041,7 +28041,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 47,
             "end": 50
@@ -28554,7 +28554,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -28591,7 +28591,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 47,
           "end": 50
@@ -29135,7 +29135,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -29288,7 +29288,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -29430,7 +29430,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -29476,7 +29476,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -29819,7 +29819,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 82,
                 "end": 85
@@ -29987,7 +29987,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -30346,7 +30346,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 82,
             "end": 85
@@ -30503,7 +30503,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -30540,7 +30540,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 82,
           "end": 85
@@ -44455,7 +44455,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 157,
                 "end": 160
@@ -45912,7 +45912,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 157,
             "end": 160
@@ -46480,7 +46480,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 157,
           "end": 160
@@ -53238,7 +53238,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -53477,7 +53477,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -53542,7 +53542,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -56229,7 +56229,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -56469,7 +56469,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -56714,7 +56714,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -60588,7 +60588,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -60797,7 +60797,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -60995,7 +60995,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -61290,7 +61290,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -61437,7 +61437,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -61573,7 +61573,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -62247,7 +62247,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -63315,7 +63315,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -63590,7 +63590,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -68520,7 +68520,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -68583,7 +68583,6 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
               "_visibility_modifier_group": {
                 "$type": 344,
                 "$source": 0,
@@ -68599,15 +68598,14 @@
                 "$nodeHandle": 43,
                 "_content": "super"
               },
+              "$other": [
+                141
+              ],
               "$span": {
                 "start": 14,
                 "end": 24
               },
-              "$nodeHandle": 42,
-              "$slotOrder": [
-                "pub",
-                "visibility_modifier_group"
-              ]
+              "$nodeHandle": 42
             }
           },
           "_name": "b",
@@ -68665,7 +68663,6 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
               "_visibility_modifier_group": {
                 "$type": 344,
                 "$source": 0,
@@ -68681,15 +68678,14 @@
                 "$nodeHandle": 48,
                 "_content": "self"
               },
+              "$other": [
+                141
+              ],
               "$span": {
                 "start": 35,
                 "end": 44
               },
-              "$nodeHandle": 47,
-              "$slotOrder": [
-                "pub",
-                "visibility_modifier_group"
-              ]
+              "$nodeHandle": 47
             }
           },
           "_name": "c",
@@ -68747,7 +68743,6 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
               "_visibility_modifier_group": {
                 "$type": 344,
                 "$source": 0,
@@ -68763,15 +68758,14 @@
                 "$nodeHandle": 53,
                 "_content": "crate"
               },
+              "$other": [
+                141
+              ],
               "$span": {
                 "start": 55,
                 "end": 65
               },
-              "$nodeHandle": 52,
-              "$slotOrder": [
-                "pub",
-                "visibility_modifier_group"
-              ]
+              "$nodeHandle": 52
             }
           },
           "_name": "c",
@@ -68829,7 +68823,6 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
               "_visibility_modifier_group": {
                 "$type": 344,
                 "$source": 0,
@@ -68876,15 +68869,14 @@
                   }
                 }
               },
+              "$other": [
+                141
+              ],
               "$span": {
                 "start": 76,
                 "end": 92
               },
-              "$nodeHandle": 57,
-              "$slotOrder": [
-                "pub",
-                "visibility_modifier_group"
-              ]
+              "$nodeHandle": 57
             }
           },
           "_name": "e",
@@ -68965,7 +68957,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -69044,7 +69036,6 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
           "_visibility_modifier_group": {
             "$type": 344,
             "$source": 0,
@@ -69060,15 +69051,14 @@
             "$nodeHandle": 69,
             "_content": "super"
           },
+          "$other": [
+            141
+          ],
           "$span": {
             "start": 14,
             "end": 24
           },
-          "$nodeHandle": 68,
-          "$slotOrder": [
-            "pub",
-            "visibility_modifier_group"
-          ]
+          "$nodeHandle": 68
         }
       },
       "_name": "b",
@@ -69142,7 +69132,6 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
           "_visibility_modifier_group": {
             "$type": 344,
             "$source": 0,
@@ -69158,15 +69147,14 @@
             "$nodeHandle": 74,
             "_content": "self"
           },
+          "$other": [
+            141
+          ],
           "$span": {
             "start": 35,
             "end": 44
           },
-          "$nodeHandle": 73,
-          "$slotOrder": [
-            "pub",
-            "visibility_modifier_group"
-          ]
+          "$nodeHandle": 73
         }
       },
       "_name": "c",
@@ -69240,7 +69228,6 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
           "_visibility_modifier_group": {
             "$type": 344,
             "$source": 0,
@@ -69256,15 +69243,14 @@
             "$nodeHandle": 79,
             "_content": "crate"
           },
+          "$other": [
+            141
+          ],
           "$span": {
             "start": 55,
             "end": 65
           },
-          "$nodeHandle": 78,
-          "$slotOrder": [
-            "pub",
-            "visibility_modifier_group"
-          ]
+          "$nodeHandle": 78
         }
       },
       "_name": "c",
@@ -69338,7 +69324,6 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
           "_visibility_modifier_group": {
             "$type": 344,
             "$source": 0,
@@ -69385,15 +69370,14 @@
               }
             }
           },
+          "$other": [
+            141
+          ],
           "$span": {
             "start": 76,
             "end": 92
           },
-          "$nodeHandle": 83,
-          "$slotOrder": [
-            "pub",
-            "visibility_modifier_group"
-          ]
+          "$nodeHandle": 83
         }
       },
       "_name": "e",
@@ -69463,7 +69447,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -69500,7 +69484,6 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
         "_visibility_modifier_group": {
           "$type": 344,
           "$source": 0,
@@ -69516,15 +69499,14 @@
           "$nodeHandle": 91,
           "_content": "super"
         },
+        "$other": [
+          141
+        ],
         "$span": {
           "start": 14,
           "end": 24
         },
-        "$nodeHandle": 90,
-        "$slotOrder": [
-          "pub",
-          "visibility_modifier_group"
-        ]
+        "$nodeHandle": 90
       }
     },
     "expectedOutput": "pub(super)"
@@ -69556,7 +69538,6 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
         "_visibility_modifier_group": {
           "$type": 344,
           "$source": 0,
@@ -69572,15 +69553,14 @@
           "$nodeHandle": 93,
           "_content": "self"
         },
+        "$other": [
+          141
+        ],
         "$span": {
           "start": 35,
           "end": 44
         },
-        "$nodeHandle": 92,
-        "$slotOrder": [
-          "pub",
-          "visibility_modifier_group"
-        ]
+        "$nodeHandle": 92
       }
     },
     "expectedOutput": "pub(self)"
@@ -69612,7 +69592,6 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
         "_visibility_modifier_group": {
           "$type": 344,
           "$source": 0,
@@ -69628,15 +69607,14 @@
           "$nodeHandle": 95,
           "_content": "crate"
         },
+        "$other": [
+          141
+        ],
         "$span": {
           "start": 55,
           "end": 65
         },
-        "$nodeHandle": 94,
-        "$slotOrder": [
-          "pub",
-          "visibility_modifier_group"
-        ]
+        "$nodeHandle": 94
       }
     },
     "expectedOutput": "pub(crate)"
@@ -69668,7 +69646,6 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
         "_visibility_modifier_group": {
           "$type": 344,
           "$source": 0,
@@ -69715,15 +69692,14 @@
             }
           }
         },
+        "$other": [
+          141
+        ],
         "$span": {
           "start": 76,
           "end": 92
         },
-        "$nodeHandle": 96,
-        "$slotOrder": [
-          "pub",
-          "visibility_modifier_group"
-        ]
+        "$nodeHandle": 96
       }
     },
     "expectedOutput": "pub(in crate::d)"
@@ -72780,7 +72756,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 376,
                 "end": 379
@@ -78495,7 +78471,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 376,
             "end": 379
@@ -78669,7 +78645,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 376,
           "end": 379
@@ -80894,7 +80870,7 @@
               "$type": 383,
               "$source": 0,
               "$named": true,
-              "_pub": 141,
+              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -81136,7 +81112,7 @@
           "$type": 383,
           "$source": 0,
           "$named": true,
-          "_pub": 141,
+          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -81367,7 +81343,7 @@
         "$type": 383,
         "$source": 0,
         "$named": true,
-        "_pub": 141,
+        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -108929,7 +108905,6 @@
                   "$source": 0,
                   "$named": true,
                   "_type": "C",
-                  "_turbofish": 72,
                   "_type_arguments": {
                     "$type": 231,
                     "$source": 0,
@@ -108968,6 +108943,9 @@
                     },
                     "$nodeHandle": 38
                   },
+                  "$other": [
+                    72
+                  ],
                   "$span": {
                     "start": 8,
                     "end": 14
@@ -108975,7 +108953,6 @@
                   "$nodeHandle": 37,
                   "$slotOrder": [
                     "type",
-                    "turbofish",
                     "type_arguments"
                   ]
                 },
@@ -109262,7 +109239,6 @@
           "$source": 0,
           "$named": true,
           "_type": "C",
-          "_turbofish": 72,
           "_type_arguments": {
             "$type": 231,
             "$source": 0,
@@ -109301,6 +109277,9 @@
             },
             "$nodeHandle": 93
           },
+          "$other": [
+            72
+          ],
           "$span": {
             "start": 8,
             "end": 14
@@ -109308,7 +109287,6 @@
           "$nodeHandle": 92,
           "$slotOrder": [
             "type",
-            "turbofish",
             "type_arguments"
           ]
         },
@@ -109535,7 +109513,6 @@
         "$source": 0,
         "$named": true,
         "_type": "C",
-        "_turbofish": 72,
         "_type_arguments": {
           "$type": 231,
           "$source": 0,
@@ -109574,6 +109551,9 @@
           },
           "$nodeHandle": 103
         },
+        "$other": [
+          72
+        ],
         "$span": {
           "start": 8,
           "end": 14
@@ -109581,7 +109561,6 @@
         "$nodeHandle": 102,
         "$slotOrder": [
           "type",
-          "turbofish",
           "type_arguments"
         ]
       },
@@ -109836,7 +109815,6 @@
       "$source": 0,
       "$named": true,
       "_type": "C",
-      "_turbofish": 72,
       "_type_arguments": {
         "$type": 231,
         "$source": 0,
@@ -109875,6 +109853,9 @@
         },
         "$nodeHandle": 107
       },
+      "$other": [
+        72
+      ],
       "$span": {
         "start": 8,
         "end": 14
@@ -109882,7 +109863,6 @@
       "$nodeHandle": 12,
       "$slotOrder": [
         "type",
-        "turbofish",
         "type_arguments"
       ]
     },
@@ -132864,7 +132844,6 @@
                               "$source": 0,
                               "$named": true,
                               "_type": "Some",
-                              "_turbofish": 72,
                               "_type_arguments": {
                                 "$type": 231,
                                 "$source": 0,
@@ -132903,6 +132882,9 @@
                                 },
                                 "$nodeHandle": 88
                               },
+                              "$other": [
+                                72
+                              ],
                               "$span": {
                                 "start": 150,
                                 "end": 163
@@ -132910,7 +132892,6 @@
                               "$nodeHandle": 87,
                               "$slotOrder": [
                                 "type",
-                                "turbofish",
                                 "type_arguments"
                               ]
                             },
@@ -133603,7 +133584,6 @@
                         "$source": 0,
                         "$named": true,
                         "_type": "Some",
-                        "_turbofish": 72,
                         "_type_arguments": {
                           "$type": 231,
                           "$source": 0,
@@ -133642,6 +133622,9 @@
                           },
                           "$nodeHandle": 178
                         },
+                        "$other": [
+                          72
+                        ],
                         "$span": {
                           "start": 150,
                           "end": 163
@@ -133649,7 +133632,6 @@
                         "$nodeHandle": 177,
                         "$slotOrder": [
                           "type",
-                          "turbofish",
                           "type_arguments"
                         ]
                       },
@@ -134362,7 +134344,6 @@
               "$source": 0,
               "$named": true,
               "_type": "Some",
-              "_turbofish": 72,
               "_type_arguments": {
                 "$type": 231,
                 "$source": 0,
@@ -134401,6 +134382,9 @@
                 },
                 "$nodeHandle": 362
               },
+              "$other": [
+                72
+              ],
               "$span": {
                 "start": 150,
                 "end": 163
@@ -134408,7 +134392,6 @@
               "$nodeHandle": 361,
               "$slotOrder": [
                 "type",
-                "turbofish",
                 "type_arguments"
               ]
             },
@@ -134490,7 +134473,6 @@
         "$source": 0,
         "$named": true,
         "_type": "Some",
-        "_turbofish": 72,
         "_type_arguments": {
           "$type": 231,
           "$source": 0,
@@ -134529,6 +134511,9 @@
           },
           "$nodeHandle": 367
         },
+        "$other": [
+          72
+        ],
         "$span": {
           "start": 150,
           "end": 163
@@ -134536,7 +134521,6 @@
         "$nodeHandle": 366,
         "$slotOrder": [
           "type",
-          "turbofish",
           "type_arguments"
         ]
       },
@@ -134624,7 +134608,6 @@
       "$source": 0,
       "$named": true,
       "_type": "Some",
-      "_turbofish": 72,
       "_type_arguments": {
         "$type": 231,
         "$source": 0,
@@ -134663,6 +134646,9 @@
         },
         "$nodeHandle": 378
       },
+      "$other": [
+        72
+      ],
       "$span": {
         "start": 150,
         "end": 163
@@ -134670,7 +134656,6 @@
       "$nodeHandle": 39,
       "$slotOrder": [
         "type",
-        "turbofish",
         "type_arguments"
       ]
     },

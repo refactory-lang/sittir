@@ -6569,7 +6569,6 @@ export type StatementTree =
 	| ImportStatementTree
 	| DebuggerStatementTree
 	| ExpressionStatementTree
-	| DeclarationTree
 	| StatementBlockTree
 	| IfStatementTree
 	| SwitchStatementTree
@@ -6585,7 +6584,7 @@ export type StatementTree =
 	| ThrowStatementTree
 	| LabeledStatementTree;
 
-export type Expressions = SequenceExpression;
+export type Expressions = Expression | SequenceExpression;
 
 export type ExpressionsTree = SequenceExpressionTree;
 
@@ -6595,6 +6594,7 @@ export type Expression =
 	| InstantiationExpression
 	| InternalModule
 	| TypeAssertion
+	| PrimaryExpression
 	| AssignmentExpression
 	| AugmentedAssignmentExpression
 	| AwaitExpression
@@ -6625,6 +6625,7 @@ export type PrimaryExpression =
 	| SubscriptExpression
 	| MemberExpression
 	| ParenthesizedExpression
+	| _Identifier
 	| Undefined
 	| Identifier
 	| ReservedIdentifier
@@ -6688,7 +6689,6 @@ export type JsxChild =
 export type JsxChildTree =
 	| JsxTextTree
 	| HtmlCharacterReferenceTree
-	| _JsxElementTree
 	| JsxElementTree
 	| JsxSelfClosingElementTree
 	| JsxExpressionTree;
@@ -6699,12 +6699,7 @@ export type _JsxIdentifierTree = JsxIdentifierTree | IdentifierTree;
 
 export type JsxElementName = _JsxIdentifier | JsxIdentifier | Identifier | NestedIdentifier | JsxNamespaceName;
 
-export type JsxElementNameTree =
-	| _JsxIdentifierTree
-	| JsxIdentifierTree
-	| IdentifierTree
-	| NestedIdentifierTree
-	| JsxNamespaceNameTree;
+export type JsxElementNameTree = JsxIdentifierTree | IdentifierTree | NestedIdentifierTree | JsxNamespaceNameTree;
 
 export type _JsxAttribute = JsxAttribute | JsxExpression;
 
@@ -6712,16 +6707,11 @@ export type _JsxAttributeTree = JsxAttributeTree | JsxExpressionTree;
 
 export type JsxAttributeName = _JsxIdentifier | JsxIdentifier | Identifier | JsxNamespaceName;
 
-export type JsxAttributeNameTree = _JsxIdentifierTree | JsxIdentifierTree | IdentifierTree | JsxNamespaceNameTree;
+export type JsxAttributeNameTree = JsxIdentifierTree | IdentifierTree | JsxNamespaceNameTree;
 
 export type JsxAttributeValue = JsxString | JsxExpression | _JsxElement | JsxElement | JsxSelfClosingElement;
 
-export type JsxAttributeValueTree =
-	| JsxStringTree
-	| JsxExpressionTree
-	| _JsxElementTree
-	| JsxElementTree
-	| JsxSelfClosingElementTree;
+export type JsxAttributeValueTree = JsxStringTree | JsxExpressionTree | JsxElementTree | JsxSelfClosingElementTree;
 
 export type FormalParameter = RequiredParameter | OptionalParameter;
 
@@ -6730,9 +6720,11 @@ export type FormalParameterTree = RequiredParameterTree | OptionalParameterTree;
 export type _LhsExpression =
 	| MemberExpression
 	| SubscriptExpression
+	| _Identifier
 	| Undefined
 	| Identifier
 	| ReservedIdentifier
+	| DestructuringPattern
 	| ObjectPattern
 	| ArrayPattern
 	| NonNullExpression;
@@ -6786,20 +6778,18 @@ export type Pattern =
 	| RestPattern;
 
 export type PatternTree =
-	| _LhsExpressionTree
 	| MemberExpressionTree
 	| SubscriptExpressionTree
-	| _IdentifierTree
 	| UndefinedTree
 	| IdentifierTree
 	| ReservedIdentifierTree
-	| DestructuringPatternTree
 	| ObjectPatternTree
 	| ArrayPatternTree
 	| NonNullExpressionTree
 	| RestPatternTree;
 
 export type PropertyName =
+	| _PropertyIdentifier
 	| Identifier
 	| ReservedIdentifier
 	| PrivatePropertyIdentifier
@@ -6836,6 +6826,7 @@ export type ImportIdentifier = Identifier;
 export type ImportIdentifierTree = IdentifierTree;
 
 export type Type =
+	| PrimaryType
 	| FunctionType
 	| ReadonlyType
 	| ConstructorType
@@ -6853,12 +6844,7 @@ export type TypeTree =
 
 export type TupleTypeMember = TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type;
 
-export type TupleTypeMemberTree =
-	| TupleParameterTree
-	| OptionalTupleParameterTree
-	| OptionalTypeTree
-	| RestTypeTree
-	| TypeTree;
+export type TupleTypeMemberTree = TupleParameterTree | OptionalTupleParameterTree | OptionalTypeTree | RestTypeTree;
 
 export type PrimaryType =
 	| ParenthesizedType
@@ -6919,11 +6905,9 @@ export type LhsExpression =
 export type LhsExpressionTree =
 	| MemberExpressionTree
 	| SubscriptExpressionTree
-	| _IdentifierTree
 	| UndefinedTree
 	| IdentifierTree
 	| ReservedIdentifierTree
-	| DestructuringPatternTree
 	| ObjectPatternTree
 	| ArrayPatternTree
 	| NonNullExpressionTree;

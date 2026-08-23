@@ -1730,13 +1730,6 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "turbofish": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "type_arguments": {
         "unnamed": false,
         "slotCount": 1,
@@ -3427,13 +3420,6 @@
       }
     },
     "_visibility_modifier_pub": {
-      "pub": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "visibility_modifier_group": {
         "unnamed": false,
         "slotCount": 1,
@@ -8277,35 +8263,12 @@
     },
     {
       "kind": "_visibility_modifier_pub",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "VisibilityModifierPub",
-      "factoryName": "_visibilityModifierPub",
+      "factoryName": "visibilityModifierPub",
       "irKey": "visibilityModifierPub",
       "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "buildVisibilityModifierPub()",
-      "name": "_visibility_modifier_pub",
       "fields": [
-        {
-          "name": "pub",
-          "propertyName": "pub",
-          "paramName": "pub",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "pub",
-              "parseKind": "pub"
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
         {
           "name": "visibility_modifier_group",
           "propertyName": "visibilityModifierGroup",
@@ -8331,7 +8294,8 @@
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_visibility_modifier_group",
       "factoryFields": [
         "visibility_modifier_group"
       ]
@@ -13036,26 +13000,6 @@
               "identifier",
               "scoped_identifier"
             ]
-          }
-        },
-        {
-          "name": "turbofish",
-          "propertyName": "turbofish",
-          "paramName": "turbofish",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "::",
-              "parseKind": "colon_colon"
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": []
           }
         },
         {

@@ -295,6 +295,9 @@ export interface IsGuards {
 	MacroDefinitionBrace<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.MacroDefinitionBrace };
+	VisibilityModifierPub<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.VisibilityModifierPub };
 	VisibilityModifierInPath<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.VisibilityModifierInPath };
@@ -540,6 +543,7 @@ export interface AssertGuards {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.MacroDefinitionBracket };
 	MacroDefinitionBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinitionBrace };
+	VisibilityModifierPub(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.VisibilityModifierPub };
 	VisibilityModifierInPath(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.VisibilityModifierInPath };
@@ -1071,6 +1075,7 @@ export const is = {
 	MacroDefinitionParen: _g(TSKindId.MacroDefinitionParen),
 	MacroDefinitionBracket: _g(TSKindId.MacroDefinitionBracket),
 	MacroDefinitionBrace: _g(TSKindId.MacroDefinitionBrace),
+	VisibilityModifierPub: _g(TSKindId.VisibilityModifierPub),
 	VisibilityModifierInPath: _g(TSKindId.VisibilityModifierInPath),
 	AttributedFieldDeclaration: _g(TSKindId.AttributedFieldDeclaration),
 	AttributedEnumVariant: _g(TSKindId.AttributedEnumVariant),
@@ -1304,6 +1309,7 @@ export const assert = {
 	MacroDefinitionParen: _makeAssert('MacroDefinitionParen', is.MacroDefinitionParen as _AnyGuard),
 	MacroDefinitionBracket: _makeAssert('MacroDefinitionBracket', is.MacroDefinitionBracket as _AnyGuard),
 	MacroDefinitionBrace: _makeAssert('MacroDefinitionBrace', is.MacroDefinitionBrace as _AnyGuard),
+	VisibilityModifierPub: _makeAssert('VisibilityModifierPub', is.VisibilityModifierPub as _AnyGuard),
 	VisibilityModifierInPath: _makeAssert('VisibilityModifierInPath', is.VisibilityModifierInPath as _AnyGuard),
 	AttributedFieldDeclaration: _makeAssert('AttributedFieldDeclaration', is.AttributedFieldDeclaration as _AnyGuard),
 	AttributedEnumVariant: _makeAssert('AttributedEnumVariant', is.AttributedEnumVariant as _AnyGuard),

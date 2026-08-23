@@ -4730,9 +4730,6 @@ var grammar_sittir_default = grammar(
         string: {
           1: field("content")
         },
-        type_alias_statement: {
-          0: field("type")
-        },
         try_statement: {
           3: field("except_clauses")
         },

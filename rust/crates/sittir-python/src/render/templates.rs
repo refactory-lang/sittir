@@ -964,7 +964,6 @@ pub struct TupleTemplate<'a> {
 pub struct TypeAliasStatementTemplate<'a> {
     pub left: SingleNonterminalView<'a>,
     pub right: SingleNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

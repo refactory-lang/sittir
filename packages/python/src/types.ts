@@ -350,32 +350,32 @@ export const enum TSKindId {
 	Global = 36,
 	Nonlocal = 37,
 	Exec = 38,
-	Eq = 39,
-	Class = 40,
-	Lbrack = 41,
-	Rbrack = 42,
-	At = 43,
-	Pipe = 44,
-	Lbrace = 45,
-	Rbrace = 46,
-	Anonymous = 47,
-	Plus = 48,
-	Dash = 49,
-	Not = 50,
-	And = 51,
-	Or = 52,
-	Slash = 53,
-	Percent = 54,
-	SlashSlash = 55,
-	Amp = 56,
-	Caret = 57,
-	LtLt = 58,
-	Tilde = 59,
-	Is = 60,
-	AnonLambda = 61,
-	AnonYield = 62,
-	Ellipsis2 = 63,
-	AnonType = 64,
+	AnonType = 39,
+	Eq = 40,
+	Class = 41,
+	Lbrack = 42,
+	Rbrack = 43,
+	At = 44,
+	Pipe = 45,
+	Lbrace = 46,
+	Rbrace = 47,
+	Anonymous = 48,
+	Plus = 49,
+	Dash = 50,
+	Not = 51,
+	And = 52,
+	Or = 53,
+	Slash = 54,
+	Percent = 55,
+	SlashSlash = 56,
+	Amp = 57,
+	Caret = 58,
+	LtLt = 59,
+	Tilde = 60,
+	Is = 61,
+	AnonLambda = 62,
+	AnonYield = 63,
+	Ellipsis2 = 64,
 	EscapeSequence = 65,
 	Bslash = 66,
 	FormatSpecifierToken1 = 67,
@@ -665,32 +665,32 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[36, 'global'],
 	[37, 'nonlocal'],
 	[38, 'exec'],
-	[39, 'eq'],
-	[40, 'class'],
-	[41, 'lbrack'],
-	[42, 'rbrack'],
-	[43, 'at'],
-	[44, 'pipe'],
-	[45, 'lbrace'],
-	[46, 'rbrace'],
-	[47, '_'],
-	[48, 'plus'],
-	[49, 'dash'],
-	[50, 'not'],
-	[51, 'and'],
-	[52, 'or'],
-	[53, 'slash'],
-	[54, 'percent'],
-	[55, 'slash_slash'],
-	[56, 'amp'],
-	[57, 'caret'],
-	[58, 'lt_lt'],
-	[59, 'tilde'],
-	[60, 'is'],
-	[61, 'anon_lambda'],
-	[62, 'anon_yield'],
-	[63, 'ellipsis'],
-	[64, 'anon_type'],
+	[39, 'anon_type'],
+	[40, 'eq'],
+	[41, 'class'],
+	[42, 'lbrack'],
+	[43, 'rbrack'],
+	[44, 'at'],
+	[45, 'pipe'],
+	[46, 'lbrace'],
+	[47, 'rbrace'],
+	[48, '_'],
+	[49, 'plus'],
+	[50, 'dash'],
+	[51, 'not'],
+	[52, 'and'],
+	[53, 'or'],
+	[54, 'slash'],
+	[55, 'percent'],
+	[56, 'slash_slash'],
+	[57, 'amp'],
+	[58, 'caret'],
+	[59, 'lt_lt'],
+	[60, 'tilde'],
+	[61, 'is'],
+	[62, 'anon_lambda'],
+	[63, 'anon_yield'],
+	[64, 'ellipsis'],
 	[65, 'escape_sequence'],
 	[66, 'bslash'],
 	[67, 'format_specifier_token1'],
@@ -981,32 +981,32 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[36, 'global'],
 	[37, 'nonlocal'],
 	[38, 'exec'],
-	[39, 'eq'],
-	[40, 'class'],
-	[41, 'lbrack'],
-	[42, 'rbrack'],
-	[43, 'at'],
-	[44, 'pipe'],
-	[45, 'lbrace'],
-	[46, 'rbrace'],
-	[47, '_'],
-	[48, 'plus'],
-	[49, 'dash'],
-	[50, 'not'],
-	[51, 'and'],
-	[52, 'or'],
-	[53, 'slash'],
-	[54, 'percent'],
-	[55, 'slash_slash'],
-	[56, 'amp'],
-	[57, 'caret'],
-	[58, 'lt_lt'],
-	[59, 'tilde'],
-	[60, 'is'],
-	[61, 'anon_lambda'],
-	[62, 'anon_yield'],
-	[63, 'ellipsis'],
-	[64, 'anon_type'],
+	[39, 'anon_type'],
+	[40, 'eq'],
+	[41, 'class'],
+	[42, 'lbrack'],
+	[43, 'rbrack'],
+	[44, 'at'],
+	[45, 'pipe'],
+	[46, 'lbrace'],
+	[47, 'rbrace'],
+	[48, '_'],
+	[49, 'plus'],
+	[50, 'dash'],
+	[51, 'not'],
+	[52, 'and'],
+	[53, 'or'],
+	[54, 'slash'],
+	[55, 'percent'],
+	[56, 'slash_slash'],
+	[57, 'amp'],
+	[58, 'caret'],
+	[59, 'lt_lt'],
+	[60, 'tilde'],
+	[61, 'is'],
+	[62, 'anon_lambda'],
+	[63, 'anon_yield'],
+	[64, 'ellipsis'],
 	[65, 'escape_sequence'],
 	[66, 'bslash'],
 	[67, 'format_specifier_token1'],
@@ -1338,6 +1338,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Nonlocal;
 		case 'exec':
 			return TSKindId.Exec;
+		case 'anon_type':
+			return TSKindId.AnonType;
 		case 'eq':
 			return TSKindId.Eq;
 		case 'class':
@@ -1388,8 +1390,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.AnonYield;
 		case 'ellipsis':
 			return TSKindId.Ellipsis2;
-		case 'anon_type':
-			return TSKindId.AnonType;
 		case 'escape_sequence':
 			return TSKindId.EscapeSequence;
 		case 'bslash':
@@ -2551,13 +2551,8 @@ export interface ExecStatement {
 
 export interface TypeAliasStatement {
 	readonly $type: TSKindId.TypeAliasStatement;
-	readonly _type: AutoStamp<number>;
 	readonly _left: Type;
 	readonly _right: Type;
-	readonly __inputHints__?: {
-		readonly type: AutoStamp<KindEnum<'type', TSKindId.AnonType>>;
-	};
-	type(): AutoStamp<number>;
 	left(): Type;
 	right(): Type;
 }
@@ -3881,6 +3876,7 @@ export interface PrintTree extends AnyTreeNode {
 // Supertype unions
 export type Statement =
 	| SimpleStatements
+	| CompoundStatement
 	| IfStatement
 	| ForStatement
 	| WhileStatement
@@ -3939,11 +3935,11 @@ export type SimpleStatementTree =
 	| ExecStatementTree
 	| TypeAliasStatementTree;
 
-export type NamedExpressionLhs = Identifier;
+export type NamedExpressionLhs = Identifier | KeywordIdentifier;
 
 export type NamedExpressionLhsTree = IdentifierTree;
 
-export type Expressions = ExpressionList;
+export type Expressions = Expression | ExpressionList;
 
 export type ExpressionsTree = ExpressionListTree;
 
@@ -4019,7 +4015,14 @@ export type ParameterTree =
 	| TuplePatternTree
 	| DictionarySplatPatternTree;
 
-export type Pattern = Identifier | Subscript | Attribute | ListSplatPattern | TuplePattern | ListPattern;
+export type Pattern =
+	| Identifier
+	| KeywordIdentifier
+	| Subscript
+	| Attribute
+	| ListSplatPattern
+	| TuplePattern
+	| ListPattern;
 
 export type PatternTree =
 	| IdentifierTree
@@ -4029,7 +4032,7 @@ export type PatternTree =
 	| TuplePatternTree
 	| ListPatternTree;
 
-export type ExpressionWithinForInClause = LambdaWithinForInClause;
+export type ExpressionWithinForInClause = Expression | LambdaWithinForInClause;
 
 export type ExpressionWithinForInClauseTree = LambdaWithinForInClauseTree;
 
@@ -4038,6 +4041,7 @@ export type Expression =
 	| NotOperator
 	| BooleanOperator
 	| Lambda
+	| PrimaryExpression
 	| ConditionalExpression
 	| NamedExpression
 	| AsPattern;
@@ -4055,6 +4059,7 @@ export type PrimaryExpression =
 	| Await
 	| BinaryOperator
 	| Identifier
+	| KeywordIdentifier
 	| String
 	| ConcatenatedString
 	| Integer
@@ -4105,12 +4110,11 @@ export type PrimaryExpressionTree =
 
 export type LeftHandSide = Pattern | PatternList;
 
-export type LeftHandSideTree = PatternTree | PatternListTree;
+export type LeftHandSideTree = PatternListTree;
 
 export type RightHandSide = Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
 
 export type RightHandSideTree =
-	| ExpressionTree
 	| ExpressionListTree
 	| AssignmentTree
 	| AugmentedAssignmentTree
@@ -4119,7 +4123,7 @@ export type RightHandSideTree =
 
 export type FExpression = Expression | ExpressionList | PatternList | Yield;
 
-export type FExpressionTree = ExpressionTree | ExpressionListTree | PatternListTree | YieldTree;
+export type FExpressionTree = ExpressionListTree | PatternListTree | YieldTree;
 
 export type KeywordIdentifier = Identifier;
 

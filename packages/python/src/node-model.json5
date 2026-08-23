@@ -668,13 +668,6 @@
       }
     },
     "type_alias_statement": {
-      "type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "left": {
         "unnamed": false,
         "slotCount": 1,
@@ -10851,26 +10844,6 @@
       "irKey": "typeAliasStatement",
       "hidden": false,
       "fields": [
-        {
-          "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "type",
-              "parseKind": "anon_type"
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
         {
           "name": "left",
           "propertyName": "left",

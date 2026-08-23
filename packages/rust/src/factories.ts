@@ -1058,7 +1058,7 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 	);
 }
 
-export function buildFunctionModifiers(...children: T.ExternModifier[]) {
+export function buildFunctionModifiers(...children: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]) {
 	_assertNonEmpty(children, 'function_modifiers.children');
 	const _modifier = children;
 	return withMethods(
@@ -1068,7 +1068,10 @@ export function buildFunctionModifiers(...children: T.ExternModifier[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_modifier,
-				$with: { $children: (...vs: T.ExternModifier[]) => buildFunctionModifiers(...vs) }
+				$with: {
+					$children: (...vs: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]) =>
+						buildFunctionModifiers(...vs)
+				}
 			},
 			{
 				modifiers: () => _modifier
@@ -2098,7 +2101,6 @@ export function buildGenericType(config: T.GenericType.Config) {
 
 export function buildGenericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Config) {
 	const _type = config.type;
-	const _turbofish = coerceKindEnumStorage('::' as const, [['::', TSKindId.ColonColon] as const]);
 	const _type_arguments = config.typeArguments;
 	return withMethods(
 		withAccessors(
@@ -2107,7 +2109,6 @@ export function buildGenericTypeWithTurbofish(config: T.GenericTypeWithTurbofish
 				$source: 2 as const,
 				$named: true as const,
 				_type,
-				_turbofish,
 				_type_arguments,
 				$with: {
 					type: (value: T.Identifier | T.ScopedIdentifier) => buildGenericTypeWithTurbofish({ ...config, type: value }),
@@ -2116,7 +2117,6 @@ export function buildGenericTypeWithTurbofish(config: T.GenericTypeWithTurbofish
 			},
 			{
 				type: () => _type,
-				turbofish: () => _turbofish,
 				typeArguments: () => _type_arguments
 			}
 		),
@@ -6156,24 +6156,39 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config) {
 	);
 }
 
-export function buildVisibilityModifierPub(config: Partial<T.VisibilityModifierPub.Config> = {}) {
-	const _pub = coerceKindEnumStorage('pub' as const, [['pub', TSKindId.Pub] as const]);
-	const _visibility_modifier_group = config.visibilityModifierGroup;
+export function buildVisibilityModifierPub(
+	child?: T.VisibilityModifierGroup
+): ReturnType<typeof _buildVisibilityModifierPub>;
+export function buildVisibilityModifierPub(
+	...args: Parameters<typeof buildVisibilityModifierGroup>
+): ReturnType<typeof _buildVisibilityModifierPub>;
+export function buildVisibilityModifierPub(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildVisibilityModifierPub(args[0] as T.VisibilityModifierGroup);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.VisibilityModifierGroup as const);
+	return prebuilt
+		? _buildVisibilityModifierPub(args[0] as T.VisibilityModifierGroup)
+		: _buildVisibilityModifierPub(
+				(buildVisibilityModifierGroup as (...a: unknown[]) => unknown)(...args) as T.VisibilityModifierGroup
+			);
+}
+function _buildVisibilityModifierPub(child?: T.VisibilityModifierGroup) {
+	const _visibility_modifier_group = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.VisibilityModifierPub as const,
 				$source: 2 as const,
 				$named: true as const,
-				_pub,
 				_visibility_modifier_group,
-				$with: {
-					visibilityModifierGroup: (value?: T.VisibilityModifierGroup) =>
-						buildVisibilityModifierPub({ ...config, visibilityModifierGroup: value })
-				}
+				$with: { $child: (v: T.VisibilityModifierGroup) => buildVisibilityModifierPub(v) }
 			},
 			{
-				pub: () => _pub,
 				visibilityModifierGroup: () => _visibility_modifier_group
 			}
 		),
@@ -7027,7 +7042,7 @@ export type FluentKindMap = {
 	_range_pattern_left_with_right: T.RangePatternLeftWithRight;
 	_struct_item_brace: T.StructItemBrace;
 	_struct_item_tuple: T.StructItemTuple;
-	_visibility_modifier_pub: T.VisibilityModifierPub;
+	_visibility_modifier_pub: FluentNode<'_visibility_modifier_pub', T.VisibilityModifierPub.Config>;
 	_visibility_modifier_in_path: FluentNode<'_visibility_modifier_in_path', T.VisibilityModifierInPath.Config>;
 	_expression_statement_with_semi: T.ExpressionStatementWithSemi;
 	_match_arm_with_comma: T.MatchArmWithComma;

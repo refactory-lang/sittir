@@ -4750,8 +4750,6 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
 }
 
 export function wrapGenericTypeWithTurbofish(data: T.GenericTypeWithTurbofish, tree: TreeHandle) {
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.GenericTypeWithTurbofish as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -4762,16 +4760,6 @@ export function wrapGenericTypeWithTurbofish(data: T.GenericTypeWithTurbofish, t
 				slotName: 'type',
 				span: (data as _NodeData).$span
 			}),
-			_turbofish: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._turbofish ?? readTerminalFromOther(data, [TSKindId.ColonColon]),
-					'turbofish',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'turbofish', span: (data as _NodeData).$span }
-				),
-				{ '::': 72 }
-			),
 			_type_arguments: normalizeSingularWrapSlot(data._type_arguments, 'type_arguments', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -4782,17 +4770,12 @@ export function wrapGenericTypeWithTurbofish(data: T.GenericTypeWithTurbofish, t
 			type() {
 				return drillIn<T.Identifier | T.ScopedIdentifier>(this._type, tree);
 			},
-			turbofish() {
-				return this._turbofish;
-			},
 			typeArguments() {
 				return drillIn<T.TypeArguments>(this._type_arguments, tree);
 			},
 			$with: {
 				type: (v: NonNullable<T.GenericTypeWithTurbofish['_type']>) =>
 					wrapGenericTypeWithTurbofish({ ...data, _type: v }, tree),
-				turbofish: (v: NonNullable<T.GenericTypeWithTurbofish['_turbofish']>) =>
-					wrapGenericTypeWithTurbofish({ ...data, _turbofish: v }, tree),
 				typeArguments: (v: NonNullable<T.GenericTypeWithTurbofish['_type_arguments']>) =>
 					wrapGenericTypeWithTurbofish({ ...data, _type_arguments: v }, tree)
 			}
@@ -10187,21 +10170,10 @@ export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle) {
 }
 
 export function wrapVisibilityModifierPub(data: T.VisibilityModifierPub, tree: TreeHandle) {
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.VisibilityModifierPub as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
 			$type: TSKindId.VisibilityModifierPub as const,
-			_pub: projectKindEnumStorage(
-				normalizeSingularWrapSlot(data._pub ?? readTerminalFromOther(data, [TSKindId.Pub]), 'pub', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'pub',
-					span: (data as _NodeData).$span
-				}),
-				{ pub: 141 }
-			),
 			_visibility_modifier_group: normalizeSingularWrapSlot(
 				data._visibility_modifier_group,
 				'visibility_modifier_group',
@@ -10210,14 +10182,10 @@ export function wrapVisibilityModifierPub(data: T.VisibilityModifierPub, tree: T
 				{ tree, nodeType: data.$type, slotName: 'visibility_modifier_group', span: (data as _NodeData).$span }
 			),
 
-			pub() {
-				return this._pub;
-			},
 			visibilityModifierGroup() {
 				return drillIn<T.VisibilityModifierGroup | undefined>(this._visibility_modifier_group, tree);
 			},
 			$with: {
-				pub: (v: NonNullable<T.VisibilityModifierPub['_pub']>) => wrapVisibilityModifierPub({ ...data, _pub: v }, tree),
 				visibilityModifierGroup: (v: NonNullable<T.VisibilityModifierPub['_visibility_modifier_group']>) =>
 					wrapVisibilityModifierPub({ ...data, _visibility_modifier_group: v }, tree)
 			}

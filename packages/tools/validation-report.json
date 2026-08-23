@@ -57,7 +57,7 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "27 referenced kind(s) resolved no parser kindId",
+    "message": "25 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -73,9 +73,7 @@
         "_function_item_optional1",
         "_kw_comma",
         "_kw_operator",
-        "_kw_pub",
         "_kw_reference",
-        "_kw_turbofish",
         "_let_declaration_optional1",
         "_let_declaration_optional2",
         "_match_block_optional1",
@@ -115,7 +113,7 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-inline-excluded-symbols",
-    "message": "24 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "22 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -131,9 +129,7 @@
         "_function_item_optional1",
         "_kw_comma",
         "_kw_operator",
-        "_kw_pub",
         "_kw_reference",
-        "_kw_turbofish",
         "_let_declaration_optional1",
         "_let_declaration_optional2",
         "_match_block_optional1",
@@ -1129,7 +1125,7 @@
     "grammar": "python",
     "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "16 referenced kind(s) resolved no parser kindId",
+    "message": "15 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -1142,7 +1138,6 @@
         "_kw_eq_marker",
         "_kw_real",
         "_kw_sign",
-        "_kw_type",
         "_left_hand_side",
         "_raise_statement_optional1",
         "_simple_statement",
@@ -1187,7 +1182,7 @@
     "grammar": "python",
     "backend": "native",
     "code": "kindid-inline-excluded-symbols",
-    "message": "15 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "14 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -1201,7 +1196,6 @@
         "_kw_eq_marker",
         "_kw_real",
         "_kw_sign",
-        "_kw_type",
         "_left_hand_side",
         "_raise_statement_optional1",
         "_simple_statement",

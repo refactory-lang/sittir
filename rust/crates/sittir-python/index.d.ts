@@ -1601,7 +1601,6 @@ export interface TypeAliasStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type: Box<AnyTransport>
   _left: TypeTransport
   _right: TypeTransport
 }
