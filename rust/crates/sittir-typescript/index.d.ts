@@ -300,7 +300,6 @@ export interface BinaryExpressionArmTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _left: Box<BinaryExpressionArmLeftTransportSlot>
-  _operator: Box<AnyTransport>
   _right: Box<ExpressionTransport>
 }
 
@@ -1080,7 +1079,6 @@ export interface ForHeaderVarKindTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _kind: Box<AnyTransport>
   _left: ForHeaderVarKindLeftTransportSlot
   _value?: ExpressionTransport
 }
@@ -1433,7 +1431,6 @@ export interface IndexSignatureOptional1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _sign?: Box<AnyTransport>
-  _readonly_marker: KwReadonlyMarkerTransport
 }
 
 export interface IndexSignatureTransport {
@@ -2162,7 +2159,6 @@ export interface PublicFieldDefinitionAbstractFirstTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _abstract_marker: KwAbstractMarkerTransport
   _readonly_marker?: KwReadonlyMarkerTransport
 }
 
@@ -2197,7 +2193,6 @@ export interface PublicFieldDefinitionReadonlyFirstTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _readonly_marker: KwReadonlyMarkerTransport
   _abstract_marker?: KwAbstractMarkerTransport
 }
 
@@ -2209,7 +2204,6 @@ export interface PublicFieldDefinitionStaticModsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _static_marker: KwStaticMarkerTransport
   _readonly_marker?: KwReadonlyMarkerTransport
   _override_modifier?: OverrideModifierTransport
 }

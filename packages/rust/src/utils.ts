@@ -119,3 +119,13 @@ function extractNodeText(value: unknown): string | undefined {
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
+
+export function attachProps<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(
+	fn: T,
+	props: P
+): T & P {
+	for (const key of Object.keys(props)) {
+		Object.defineProperty(fn, key, { value: props[key], writable: true, configurable: true, enumerable: true });
+	}
+	return fn as T & P;
+}

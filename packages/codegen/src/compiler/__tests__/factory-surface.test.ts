@@ -3,6 +3,7 @@ import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
+import { pruneDeterminedSlots } from '../model/node-map.ts';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { existsSync } from 'node:fs';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../resolve-grammar.ts';
@@ -40,7 +41,11 @@ async function assembleGrammar(grammar: string): Promise<NodeMap> {
 	const entryPath = existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
 	const raw = await evaluate(entryPath);
 	const normalized = normalizeGrammar(link(raw));
-	return assemble(AssembleCtx.from(normalized));
+	const nodeMap = assemble(AssembleCtx.from(normalized));
+	// Mirror the generate() pipeline: determined slots leave the record
+	// before any classification runs.
+	pruneDeterminedSlots(nodeMap);
+	return nodeMap;
 }
 
 beforeAll(async () => {
@@ -94,7 +99,7 @@ describe('child factory surface classification', () => {
 		expect(classifyFactoryShape(nodeMap.nodes.get('gen_block')!, nodeMap)).toBe('config');
 		expect(classifyFactoryShape(nodeMap.nodes.get('reference_pattern')!, nodeMap)).toBe('config');
 		// Marker-free single-field kinds keep the ergonomic direct shape
-		// (mut_pattern's `mut` is auto-stamped, not caller-settable).
+		// (mut_pattern's `mut` is determined — grammar-fixed template text).
 		expect(classifyFactoryShape(nodeMap.nodes.get('await_expression')!, nodeMap)).toBe('direct');
 		expect(classifyFactoryShape(nodeMap.nodes.get('mut_pattern')!, nodeMap)).toBe('direct');
 	});
@@ -167,7 +172,7 @@ describe('terminated separated lists', () => {
 		const fnStart = src.indexOf('function _buildTupleExpressionElements(');
 		expect(fnStart).toBeGreaterThan(-1);
 		const body = src.slice(fnStart, src.indexOf('\n}\n', fnStart));
-		expect(body).toContain("elements.length === 1 && ((options.delimiter ?? 0) & 2) === 0");
+		expect(body).toContain('elements.length === 1 && ((options.delimiter ?? 0) & 2) === 0');
 		expect(body).toContain('requires a trailing delimiter');
 		// A prefix-style list (optional trailing comma, no mandatory head) must NOT carry the assert.
 		const tt = src.indexOf('function _buildTupleTypeElements(');

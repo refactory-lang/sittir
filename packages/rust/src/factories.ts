@@ -8,7 +8,8 @@ import {
 	withAccessors,
 	methodsEngine,
 	coerceBooleanKeywordStorage,
-	coerceKindEnumStorage
+	coerceKindEnumStorage,
+	attachProps
 } from './utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
@@ -123,7 +124,7 @@ export function buildMacroRule(config: T.MacroRule.Config) {
 	);
 }
 
-export function buildTokenTreePattern(
+function buildTokenTreePattern$impl(
 	child: T.TokenTreePatternParen | T.TokenTreePatternBracket | T.TokenTreePatternBrace
 ) {
 	const _content = child;
@@ -136,7 +137,7 @@ export function buildTokenTreePattern(
 				_content,
 				$with: {
 					$child: (v: T.TokenTreePatternParen | T.TokenTreePatternBracket | T.TokenTreePatternBrace) =>
-						buildTokenTreePattern(v)
+						buildTokenTreePattern$impl(v)
 				}
 			},
 			{
@@ -147,9 +148,18 @@ export function buildTokenTreePattern(
 	);
 }
 
+export const buildTokenTreePattern = attachProps(buildTokenTreePattern$impl, {
+	paren: (config: Partial<T.TokenTreePatternParen.Config> = {}) =>
+		buildTokenTreePattern$impl(buildTokenTreePatternParen(config)),
+	bracket: (config: Partial<T.TokenTreePatternBracket.Config> = {}) =>
+		buildTokenTreePattern$impl(buildTokenTreePatternBracket(config)),
+	brace: (config: Partial<T.TokenTreePatternBrace.Config> = {}) =>
+		buildTokenTreePattern$impl(buildTokenTreePatternBrace(config))
+});
+
 export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config) {
 	const _name = config.name;
-	const _type = coerceKindEnumStorage(config.type, [
+	const _type = coerceKindEnumStorage<number>(config.type, [
 		['block', TSKindId.AnonBlock] as const,
 		['expr', TSKindId.Expr] as const,
 		['expr_2021', TSKindId.Expr2021] as const,
@@ -189,10 +199,10 @@ export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config) {
 	);
 }
 
-export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Config) {
+function buildTokenRepetitionPattern$impl(config: T.TokenRepetitionPattern.Config) {
 	const _token_patterns = config.tokenPatterns ?? [];
 	const _separator = coerceBooleanKeywordStorage(config.separator);
-	const _operator = coerceKindEnumStorage(config.operator, [
+	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['*', TSKindId.Star] as const,
 		['?', TSKindId.Qmark] as const
@@ -208,11 +218,11 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 				_operator,
 				$with: {
 					tokenPatterns: (...values: T.TokenPattern[]) =>
-						buildTokenRepetitionPattern({ ...config, tokenPatterns: values }),
-					separator: (value?: NonNullable<Parameters<typeof buildTokenRepetitionPattern>[0]>['separator']) =>
-						buildTokenRepetitionPattern({ ...config, separator: value }),
-					operator: (value: NonNullable<Parameters<typeof buildTokenRepetitionPattern>[0]>['operator']) =>
-						buildTokenRepetitionPattern({ ...config, operator: value })
+						buildTokenRepetitionPattern$impl({ ...config, tokenPatterns: values }),
+					separator: (value?: NonNullable<Parameters<typeof buildTokenRepetitionPattern$impl>[0]>['separator']) =>
+						buildTokenRepetitionPattern$impl({ ...config, separator: value }),
+					operator: (value: NonNullable<Parameters<typeof buildTokenRepetitionPattern$impl>[0]>['operator']) =>
+						buildTokenRepetitionPattern$impl({ ...config, operator: value })
 				}
 			},
 			{
@@ -224,6 +234,15 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 		methodsEngine
 	);
 }
+
+export const buildTokenRepetitionPattern = attachProps(buildTokenRepetitionPattern$impl, {
+	plus: (tokenPatterns?: T.TokenRepetitionPattern.Config['tokenPatterns']) =>
+		buildTokenRepetitionPattern$impl({ tokenPatterns: tokenPatterns, operator: TSKindId.Plus }),
+	star: (tokenPatterns?: T.TokenRepetitionPattern.Config['tokenPatterns']) =>
+		buildTokenRepetitionPattern$impl({ tokenPatterns: tokenPatterns, operator: TSKindId.Star }),
+	qmark: (tokenPatterns?: T.TokenRepetitionPattern.Config['tokenPatterns']) =>
+		buildTokenRepetitionPattern$impl({ tokenPatterns: tokenPatterns, operator: TSKindId.Qmark })
+});
 
 export function buildFragmentSpecifier(
 	text:
@@ -254,7 +273,7 @@ export function buildFragmentSpecifier(
 	);
 }
 
-export function buildTokenTree(
+function buildTokenTree$impl(
 	child:
 		| T.TokenTreeParen
 		| T.TokenTreeBracket
@@ -280,7 +299,7 @@ export function buildTokenTree(
 							| T.DelimTokenTreeParen
 							| T.DelimTokenTreeBracket
 							| T.DelimTokenTreeBrace
-					) => buildTokenTree(v)
+					) => buildTokenTree$impl(v)
 				}
 			},
 			{
@@ -291,10 +310,22 @@ export function buildTokenTree(
 	);
 }
 
-export function buildTokenRepetition(config: T.TokenRepetition.Config) {
+export const buildTokenTree = attachProps(buildTokenTree$impl, {
+	paren: (config: Partial<T.TokenTreeParen.Config> = {}) => buildTokenTree$impl(buildTokenTreeParen(config)),
+	bracket: (config: Partial<T.TokenTreeBracket.Config> = {}) => buildTokenTree$impl(buildTokenTreeBracket(config)),
+	brace: (config: Partial<T.TokenTreeBrace.Config> = {}) => buildTokenTree$impl(buildTokenTreeBrace(config)),
+	delimTokenTreeParen: (config: Partial<T.DelimTokenTreeParen.Config> = {}) =>
+		buildTokenTree$impl(buildDelimTokenTreeParen(config)),
+	delimTokenTreeBracket: (config: Partial<T.DelimTokenTreeBracket.Config> = {}) =>
+		buildTokenTree$impl(buildDelimTokenTreeBracket(config)),
+	delimTokenTreeBrace: (config: Partial<T.DelimTokenTreeBrace.Config> = {}) =>
+		buildTokenTree$impl(buildDelimTokenTreeBrace(config))
+});
+
+function buildTokenRepetition$impl(config: T.TokenRepetition.Config) {
 	const _tokens = config.tokens ?? [];
 	const _separator = coerceBooleanKeywordStorage(config.separator);
-	const _operator = coerceKindEnumStorage(config.operator, [
+	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['*', TSKindId.Star] as const,
 		['?', TSKindId.Qmark] as const
@@ -309,11 +340,11 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config) {
 				_separator,
 				_operator,
 				$with: {
-					tokens: (...values: T.Tokens[]) => buildTokenRepetition({ ...config, tokens: values }),
-					separator: (value?: NonNullable<Parameters<typeof buildTokenRepetition>[0]>['separator']) =>
-						buildTokenRepetition({ ...config, separator: value }),
-					operator: (value: NonNullable<Parameters<typeof buildTokenRepetition>[0]>['operator']) =>
-						buildTokenRepetition({ ...config, operator: value })
+					tokens: (...values: T.Tokens[]) => buildTokenRepetition$impl({ ...config, tokens: values }),
+					separator: (value?: NonNullable<Parameters<typeof buildTokenRepetition$impl>[0]>['separator']) =>
+						buildTokenRepetition$impl({ ...config, separator: value }),
+					operator: (value: NonNullable<Parameters<typeof buildTokenRepetition$impl>[0]>['operator']) =>
+						buildTokenRepetition$impl({ ...config, operator: value })
 				}
 			},
 			{
@@ -326,8 +357,17 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config) {
 	);
 }
 
+export const buildTokenRepetition = attachProps(buildTokenRepetition$impl, {
+	plus: (tokens?: T.TokenRepetition.Config['tokens']) =>
+		buildTokenRepetition$impl({ tokens: tokens, operator: TSKindId.Plus }),
+	star: (tokens?: T.TokenRepetition.Config['tokens']) =>
+		buildTokenRepetition$impl({ tokens: tokens, operator: TSKindId.Star }),
+	qmark: (tokens?: T.TokenRepetition.Config['tokens']) =>
+		buildTokenRepetition$impl({ tokens: tokens, operator: TSKindId.Qmark })
+});
+
 export function buildAttributeItem(child: T.AttributeItem.Config['attribute']): ReturnType<typeof _buildAttributeItem>;
-export function buildAttributeItem(...args: Parameters<typeof buildAttribute>): ReturnType<typeof _buildAttributeItem>;
+export function buildAttributeItem(config: T.Attribute.Config): ReturnType<typeof _buildAttributeItem>;
 export function buildAttributeItem(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildAttributeItem(args[0] as T.AttributeItem.Config['attribute']);
@@ -367,9 +407,7 @@ function _buildAttributeItem(attribute: T.AttributeItem.Config['attribute']) {
 export function buildInnerAttributeItem(
 	child: T.InnerAttributeItem.Config['attribute']
 ): ReturnType<typeof _buildInnerAttributeItem>;
-export function buildInnerAttributeItem(
-	...args: Parameters<typeof buildAttribute>
-): ReturnType<typeof _buildInnerAttributeItem>;
+export function buildInnerAttributeItem(config: T.Attribute.Config): ReturnType<typeof _buildInnerAttributeItem>;
 export function buildInnerAttributeItem(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildInnerAttributeItem(args[0] as T.InnerAttributeItem.Config['attribute']);
@@ -621,7 +659,7 @@ export function buildEnumItem(config: T.EnumItem.Config) {
 
 export function buildEnumVariantList(child?: T.EnumVariantListElements): ReturnType<typeof _buildEnumVariantList>;
 export function buildEnumVariantList(
-	...args: Parameters<typeof buildEnumVariantListElements>
+	...args: ({ delimiter?: 2 } | T.AttributedEnumVariant)[]
 ): ReturnType<typeof _buildEnumVariantList>;
 export function buildEnumVariantList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -696,7 +734,7 @@ export function buildFieldDeclarationList(
 	child?: T.FieldDeclarationListElements
 ): ReturnType<typeof _buildFieldDeclarationList>;
 export function buildFieldDeclarationList(
-	...args: Parameters<typeof buildFieldDeclarationListElements>
+	...args: ({ delimiter?: 2 } | T.AttributedFieldDeclaration)[]
 ): ReturnType<typeof _buildFieldDeclarationList>;
 export function buildFieldDeclarationList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -766,7 +804,7 @@ export function buildOrderedFieldDeclarationList(
 	child?: T.OrderedFieldDeclarationList.Config['attributes']
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(
-	...args: Parameters<typeof buildOrderedFieldDeclarationListElements>
+	...args: ({ delimiter?: 2 } | T.AttributedOrderedField)[]
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -809,7 +847,6 @@ function _buildOrderedFieldDeclarationList(attributes?: T.OrderedFieldDeclaratio
 
 export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Config) {
 	const _visibility_modifier = config.visibilityModifier;
-	const _crate = coerceKindEnumStorage('crate' as const, [['crate', TSKindId.Crate] as const]);
 	const _name = config.name;
 	const _alias = config.alias;
 	return withMethods(
@@ -819,7 +856,6 @@ export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Con
 				$source: 2 as const,
 				$named: true as const,
 				_visibility_modifier,
-				_crate,
 				_name,
 				_alias,
 				$with: {
@@ -831,7 +867,6 @@ export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Con
 			},
 			{
 				visibilityModifier: () => _visibility_modifier,
-				crate: () => _crate,
 				name: () => _name,
 				alias: () => _alias
 			}
@@ -1083,7 +1118,7 @@ export function buildFunctionModifiers(...children: ('async' | 'default' | 'cons
 
 export function buildWhereClause(child?: T.WherePredicates): ReturnType<typeof _buildWhereClause>;
 export function buildWhereClause(
-	...args: Parameters<typeof buildWherePredicates>
+	...args: ({ delimiter?: 2 } | T.WherePredicate)[]
 ): ReturnType<typeof _buildWhereClause>;
 export function buildWhereClause(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1346,7 +1381,7 @@ export function buildRemovedTraitBound(type: T.RemovedTraitBound.Config['type'])
 
 export function buildTypeParameters(child: T.TypeParametersElements): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(
-	...args: Parameters<typeof buildTypeParametersElements>
+	...args: ({ delimiter?: 2 } | T.AttributedTypeParameter)[]
 ): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1556,7 +1591,7 @@ export function buildScopedUseList(config: T.ScopedUseList.Config) {
 }
 
 export function buildUseList(child?: T.UseClauses): ReturnType<typeof _buildUseList>;
-export function buildUseList(...args: Parameters<typeof buildUseClauses>): ReturnType<typeof _buildUseList>;
+export function buildUseList(...args: ({ delimiter?: 2 } | T.UseClause)[]): ReturnType<typeof _buildUseList>;
 export function buildUseList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildUseList(args[0] as T.UseClauses);
@@ -1637,7 +1672,7 @@ export function buildUseWildcard(path?: T.UseWildcard.Config['path']) {
 
 export function buildParameters(child?: T.ParametersElements): ReturnType<typeof _buildParameters>;
 export function buildParameters(
-	...args: Parameters<typeof buildParametersElements>
+	...args: ({ delimiter?: 2 } | T.AttributedParameter)[]
 ): ReturnType<typeof _buildParameters>;
 export function buildParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1675,7 +1710,6 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 	const _reference = coerceBooleanKeywordStorage(config.reference);
 	const _lifetime = config.lifetime;
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
-	const _self = coerceKindEnumStorage('self' as const, [['self', TSKindId.Self] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -1685,7 +1719,6 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 				_reference,
 				_lifetime,
 				_mutable_specifier,
-				_self,
 				$with: {
 					reference: (value?: NonNullable<Parameters<typeof buildSelfParameter>[0]>['reference']) =>
 						buildSelfParameter({ ...config, reference: value }),
@@ -1697,8 +1730,7 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 			{
 				reference: () => _reference,
 				lifetime: () => _lifetime,
-				mutableSpecifier: () => _mutable_specifier,
-				self: () => _self
+				mutableSpecifier: () => _mutable_specifier
 			}
 		),
 		methodsEngine
@@ -1764,9 +1796,7 @@ export function buildParameter(config: T.Parameter.Config) {
 export function buildExternModifier(
 	child?: T.ExternModifier.Config['stringLiteral']
 ): ReturnType<typeof _buildExternModifier>;
-export function buildExternModifier(
-	...args: Parameters<typeof buildStringLiteral>
-): ReturnType<typeof _buildExternModifier>;
+export function buildExternModifier(config: T.StringLiteral.Config): ReturnType<typeof _buildExternModifier>;
 export function buildExternModifier(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildExternModifier(args[0] as T.ExternModifier.Config['stringLiteral']);
@@ -1928,7 +1958,7 @@ export function buildArrayType(config: T.ArrayType.Config) {
 }
 
 export function buildForLifetimes(child: T.Lifetimes): ReturnType<typeof _buildForLifetimes>;
-export function buildForLifetimes(...args: Parameters<typeof buildLifetimes>): ReturnType<typeof _buildForLifetimes>;
+export function buildForLifetimes(...args: ({ delimiter?: 2 } | T.Lifetime)[]): ReturnType<typeof _buildForLifetimes>;
 export function buildForLifetimes(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildForLifetimes(args[0] as T.Lifetimes);
@@ -2001,7 +2031,7 @@ export function buildFunctionType(config: T.FunctionType.Config) {
 }
 
 export function buildTupleType(child: T.TupleTypeElements): ReturnType<typeof _buildTupleType>;
-export function buildTupleType(...args: Parameters<typeof buildTupleTypeElements>): ReturnType<typeof _buildTupleType>;
+export function buildTupleType(...args: ({ delimiter?: 2 } | T._Type)[]): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildTupleType(args[0] as T.TupleTypeElements);
@@ -2150,7 +2180,9 @@ export function buildBoundedType(config: T.BoundedType.Config) {
 }
 
 export function buildUseBounds(child?: T.UseBounds.Config['bounds']): ReturnType<typeof _buildUseBounds>;
-export function buildUseBounds(...args: Parameters<typeof buildUseBoundsElements>): ReturnType<typeof _buildUseBounds>;
+export function buildUseBounds(
+	...args: ({ delimiter?: 2 } | (T.Lifetime | T.Identifier))[]
+): ReturnType<typeof _buildUseBounds>;
 export function buildUseBounds(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildUseBounds(args[0] as T.UseBounds.Config['bounds']);
@@ -2189,7 +2221,7 @@ function _buildUseBounds(bounds?: T.UseBounds.Config['bounds']) {
 
 export function buildTypeArguments(child: T.TypeArgumentsElements): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
-	...args: Parameters<typeof buildTypeArgumentsElements>
+	...args: ({ delimiter?: 2 } | T.TypeArgument)[]
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -2285,7 +2317,7 @@ export function buildReferenceType(config: T.ReferenceType.Config) {
 }
 
 export function buildPointerType(config: T.PointerType.Config) {
-	const _content = coerceKindEnumStorage(config.content, [
+	const _content = coerceKindEnumStorage<number>(config.content, [
 		['const', TSKindId.PointerTypeConst] as const,
 		['mut', TSKindId.MutableSpecifier] as const
 	]);
@@ -2405,7 +2437,7 @@ export function buildMacroInvocation(config: T.MacroInvocation.Config) {
 	);
 }
 
-export function buildDelimTokenTree(child: T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace) {
+function buildDelimTokenTree$impl(child: T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -2415,7 +2447,8 @@ export function buildDelimTokenTree(child: T.DelimTokenTreeParen | T.DelimTokenT
 				$named: true as const,
 				_content,
 				$with: {
-					$child: (v: T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace) => buildDelimTokenTree(v)
+					$child: (v: T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace) =>
+						buildDelimTokenTree$impl(v)
 				}
 			},
 			{
@@ -2425,6 +2458,15 @@ export function buildDelimTokenTree(child: T.DelimTokenTreeParen | T.DelimTokenT
 		methodsEngine
 	);
 }
+
+export const buildDelimTokenTree = attachProps(buildDelimTokenTree$impl, {
+	paren: (config: Partial<T.DelimTokenTreeParen.Config> = {}) =>
+		buildDelimTokenTree$impl(buildDelimTokenTreeParen(config)),
+	bracket: (config: Partial<T.DelimTokenTreeBracket.Config> = {}) =>
+		buildDelimTokenTree$impl(buildDelimTokenTreeBracket(config)),
+	brace: (config: Partial<T.DelimTokenTreeBrace.Config> = {}) =>
+		buildDelimTokenTree$impl(buildDelimTokenTreeBrace(config))
+});
 
 export function buildScopedIdentifier(config: T.ScopedIdentifier.Config) {
 	const _path = config.path;
@@ -2530,8 +2572,8 @@ export function buildRangeExpression(
 	);
 }
 
-export function buildUnaryExpression(config: T.UnaryExpression.Config) {
-	const _operator = coerceKindEnumStorage(config.operator, [
+function buildUnaryExpression$impl(config: T.UnaryExpression.Config) {
+	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['-', TSKindId.Dash] as const,
 		['*', TSKindId.Star] as const,
 		['!', TSKindId.Bang] as const
@@ -2546,9 +2588,9 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config) {
 				_operator,
 				_operand,
 				$with: {
-					operator: (value: NonNullable<Parameters<typeof buildUnaryExpression>[0]>['operator']) =>
-						buildUnaryExpression({ ...config, operator: value }),
-					operand: (value: T.Expression) => buildUnaryExpression({ ...config, operand: value })
+					operator: (value: NonNullable<Parameters<typeof buildUnaryExpression$impl>[0]>['operator']) =>
+						buildUnaryExpression$impl({ ...config, operator: value }),
+					operand: (value: T.Expression) => buildUnaryExpression$impl({ ...config, operand: value })
 				}
 			},
 			{
@@ -2559,6 +2601,15 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config) {
 		methodsEngine
 	);
 }
+
+export const buildUnaryExpression = attachProps(buildUnaryExpression$impl, {
+	dash: (operand: T.UnaryExpression.Config['operand']) =>
+		buildUnaryExpression$impl({ operand: operand, operator: TSKindId.Dash }),
+	star: (operand: T.UnaryExpression.Config['operand']) =>
+		buildUnaryExpression$impl({ operand: operand, operator: TSKindId.Star }),
+	bang: (operand: T.UnaryExpression.Config['operand']) =>
+		buildUnaryExpression$impl({ operand: operand, operator: TSKindId.Bang })
+});
 
 export function buildTryExpression(value: T.TryExpression.Config['value']) {
 	const _value = value;
@@ -2607,9 +2658,9 @@ export function buildReferenceExpression(config: T.ReferenceExpression.Config) {
 	);
 }
 
-export function buildBinaryExpression(config: T.BinaryExpression.Config) {
+function buildBinaryExpression$impl(config: T.BinaryExpression.Config) {
 	const _left = config.left;
-	const _operator = coerceKindEnumStorage(config.operator, [
+	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['&&', TSKindId.AmpAmp] as const,
 		['||', TSKindId.PipePipe] as const,
 		['&', TSKindId.Amp] as const,
@@ -2640,10 +2691,10 @@ export function buildBinaryExpression(config: T.BinaryExpression.Config) {
 				_operator,
 				_right,
 				$with: {
-					left: (value: T.Expression) => buildBinaryExpression({ ...config, left: value }),
-					operator: (value: NonNullable<Parameters<typeof buildBinaryExpression>[0]>['operator']) =>
-						buildBinaryExpression({ ...config, operator: value }),
-					right: (value: T.Expression) => buildBinaryExpression({ ...config, right: value })
+					left: (value: T.Expression) => buildBinaryExpression$impl({ ...config, left: value }),
+					operator: (value: NonNullable<Parameters<typeof buildBinaryExpression$impl>[0]>['operator']) =>
+						buildBinaryExpression$impl({ ...config, operator: value }),
+					right: (value: T.Expression) => buildBinaryExpression$impl({ ...config, right: value })
 				}
 			},
 			{
@@ -2655,6 +2706,45 @@ export function buildBinaryExpression(config: T.BinaryExpression.Config) {
 		methodsEngine
 	);
 }
+
+export const buildBinaryExpression = attachProps(buildBinaryExpression$impl, {
+	ampAmp: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.AmpAmp }),
+	pipePipe: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.PipePipe }),
+	amp: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.Amp }),
+	pipe: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.Pipe }),
+	caret: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.Caret }),
+	eqEq: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.EqEq }),
+	bangEq: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.BangEq }),
+	lt: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.Lt }),
+	ltEq: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.LtEq }),
+	gt: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.Gt }),
+	gtEq: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.GtEq }),
+	ltLt: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.LtLt }),
+	gtGt: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.GtGt }),
+	plus: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.Plus }),
+	dash: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.Dash }),
+	star: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.Star }),
+	slash: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.Slash }),
+	percent: (left: T.BinaryExpression.Config['left'], right: T.BinaryExpression.Config['right']) =>
+		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.Percent })
+});
 
 export function buildAssignmentExpression(config: T.AssignmentExpression.Config) {
 	const _left = config.left;
@@ -2683,7 +2773,7 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 
 export function buildCompoundAssignmentExpr(config: T.CompoundAssignmentExpr.Config) {
 	const _left = config.left;
-	const _operator = coerceKindEnumStorage(config.operator, [
+	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['+=', TSKindId.PlusEq] as const,
 		['-=', TSKindId.DashEq] as const,
 		['*=', TSKindId.StarEq] as const,
@@ -2815,7 +2905,9 @@ export function buildCallExpression(config: T.CallExpression.Config) {
 }
 
 export function buildArguments(child?: T.ArgumentsElements): ReturnType<typeof _buildArguments>;
-export function buildArguments(...args: Parameters<typeof buildArgumentsElements>): ReturnType<typeof _buildArguments>;
+export function buildArguments(
+	...args: ({ delimiter?: 2 } | T.AttributedArgument)[]
+): ReturnType<typeof _buildArguments>;
 export function buildArguments(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildArguments(args[0] as T.ArgumentsElements);
@@ -2848,7 +2940,7 @@ function _buildArguments(child?: T.ArgumentsElements) {
 	);
 }
 
-export function buildArrayExpression(child: T.ArrayExpressionSemi | T.ArrayExpressionList) {
+function buildArrayExpression$impl(child: T.ArrayExpressionSemi | T.ArrayExpressionList) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -2857,7 +2949,7 @@ export function buildArrayExpression(child: T.ArrayExpressionSemi | T.ArrayExpre
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.ArrayExpressionSemi | T.ArrayExpressionList) => buildArrayExpression(v) }
+				$with: { $child: (v: T.ArrayExpressionSemi | T.ArrayExpressionList) => buildArrayExpression$impl(v) }
 			},
 			{
 				content: () => _content
@@ -2866,6 +2958,12 @@ export function buildArrayExpression(child: T.ArrayExpressionSemi | T.ArrayExpre
 		methodsEngine
 	);
 }
+
+export const buildArrayExpression = attachProps(buildArrayExpression$impl, {
+	semi: (config: T.ArrayExpressionSemi.Config) => buildArrayExpression$impl(buildArrayExpressionSemi(config)),
+	list: (config: Partial<T.ArrayExpressionList.Config> = {}) =>
+		buildArrayExpression$impl(buildArrayExpressionList(config))
+});
 
 export function buildParenthesizedExpression(expression: T.ParenthesizedExpression.Config['expression']) {
 	const _expression = expression;
@@ -2888,7 +2986,7 @@ export function buildParenthesizedExpression(expression: T.ParenthesizedExpressi
 	);
 }
 
-export function buildTupleExpression(config: T.TupleExpression.Config) {
+function buildTupleExpression$impl(config: T.TupleExpression.Config) {
 	const _attributes = config.attributes ?? [];
 	const _tuple_expression_elements = config.tupleExpressionElements;
 	return withMethods(
@@ -2900,9 +2998,9 @@ export function buildTupleExpression(config: T.TupleExpression.Config) {
 				_attributes,
 				_tuple_expression_elements,
 				$with: {
-					attributes: (...values: T.AttributeItem[]) => buildTupleExpression({ ...config, attributes: values }),
+					attributes: (...values: T.AttributeItem[]) => buildTupleExpression$impl({ ...config, attributes: values }),
 					tupleExpressionElements: (value: T.TupleExpressionElements) =>
-						buildTupleExpression({ ...config, tupleExpressionElements: value })
+						buildTupleExpression$impl({ ...config, tupleExpressionElements: value })
 				}
 			},
 			{
@@ -2913,6 +3011,15 @@ export function buildTupleExpression(config: T.TupleExpression.Config) {
 		methodsEngine
 	);
 }
+
+export const buildTupleExpression = attachProps(buildTupleExpression$impl, {
+	elements: (...args: ({ delimiter?: 2 } | T.Expression)[]) =>
+		buildTupleExpression$impl({
+			tupleExpressionElements: (
+				buildTupleExpressionElements as (...a: unknown[]) => ReturnType<typeof buildTupleExpressionElements>
+			)(...args)
+		})
+});
 
 export function buildUnitExpression(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
@@ -2958,7 +3065,7 @@ export function buildFieldInitializerList(
 	child?: T.FieldInitializerList.Config['initializers']
 ): ReturnType<typeof _buildFieldInitializerList>;
 export function buildFieldInitializerList(
-	...args: Parameters<typeof buildFieldInitializerListElements>
+	...args: ({ delimiter?: 2 } | (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer))[]
 ): ReturnType<typeof _buildFieldInitializerList>;
 export function buildFieldInitializerList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -3153,7 +3260,7 @@ export function buildLetChain(config: Partial<T.LetChain.Config> = {}) {
 	);
 }
 
-export function buildElseClause(child: T.Block | T.IfExpression) {
+function buildElseClause$impl(child: T.Block | T.IfExpression) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -3162,7 +3269,7 @@ export function buildElseClause(child: T.Block | T.IfExpression) {
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.Block | T.IfExpression) => buildElseClause(v) }
+				$with: { $child: (v: T.Block | T.IfExpression) => buildElseClause$impl(v) }
 			},
 			{
 				content: () => _content
@@ -3171,6 +3278,11 @@ export function buildElseClause(child: T.Block | T.IfExpression) {
 		methodsEngine
 	);
 }
+
+export const buildElseClause = attachProps(buildElseClause$impl, {
+	block: (config: Partial<T.Block.Config> = {}) => buildElseClause$impl(buildBlock(config)),
+	ifExpression: (config: T.IfExpression.Config) => buildElseClause$impl(buildIfExpression(config))
+});
 
 export function buildMatchExpression(config: T.MatchExpression.Config) {
 	const _value = config.value;
@@ -3198,7 +3310,7 @@ export function buildMatchExpression(config: T.MatchExpression.Config) {
 }
 
 export function buildMatchBlock(child?: T.MatchBlockArms): ReturnType<typeof _buildMatchBlock>;
-export function buildMatchBlock(...args: Parameters<typeof buildMatchBlockArms>): ReturnType<typeof _buildMatchBlock>;
+export function buildMatchBlock(config: T.MatchBlockArms.Config): ReturnType<typeof _buildMatchBlock>;
 export function buildMatchBlock(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildMatchBlock(args[0] as T.MatchBlockArms);
@@ -3410,7 +3522,7 @@ export function buildForExpression(config: T.ForExpression.Config) {
 }
 
 export function buildConstBlock(child: T.ConstBlock.Config['body']): ReturnType<typeof _buildConstBlock>;
-export function buildConstBlock(...args: Parameters<typeof buildBlock>): ReturnType<typeof _buildConstBlock>;
+export function buildConstBlock(config: Partial<T.Block.Config> = {}): ReturnType<typeof _buildConstBlock>;
 export function buildConstBlock(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildConstBlock(args[0] as T.ConstBlock.Config['body']);
@@ -3680,7 +3792,7 @@ export function buildFieldExpression(config: T.FieldExpression.Config) {
 }
 
 export function buildUnsafeBlock(child: T.UnsafeBlock.Config['block']): ReturnType<typeof _buildUnsafeBlock>;
-export function buildUnsafeBlock(...args: Parameters<typeof buildBlock>): ReturnType<typeof _buildUnsafeBlock>;
+export function buildUnsafeBlock(config: Partial<T.Block.Config> = {}): ReturnType<typeof _buildUnsafeBlock>;
 export function buildUnsafeBlock(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildUnsafeBlock(args[0] as T.UnsafeBlock.Config['block']);
@@ -3768,7 +3880,7 @@ export function buildGenBlock(config: T.GenBlock.Config) {
 }
 
 export function buildTryBlock(child: T.TryBlock.Config['block']): ReturnType<typeof _buildTryBlock>;
-export function buildTryBlock(...args: Parameters<typeof buildBlock>): ReturnType<typeof _buildTryBlock>;
+export function buildTryBlock(config: Partial<T.Block.Config> = {}): ReturnType<typeof _buildTryBlock>;
 export function buildTryBlock(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildTryBlock(args[0] as T.TryBlock.Config['block']);
@@ -3859,7 +3971,7 @@ export function buildGenericPattern(config: T.GenericPattern.Config) {
 
 export function buildTuplePattern(child?: T.TuplePattern.Config['elements']): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(
-	...args: Parameters<typeof buildTuplePatternElements>
+	...args: ({ delimiter?: 2 } | (T.Pattern | T.ClosureExpression))[]
 ): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -3898,7 +4010,7 @@ function _buildTuplePattern(elements?: T.TuplePattern.Config['elements']) {
 }
 
 export function buildSlicePattern(child?: T.Patterns): ReturnType<typeof _buildSlicePattern>;
-export function buildSlicePattern(...args: Parameters<typeof buildPatterns>): ReturnType<typeof _buildSlicePattern>;
+export function buildSlicePattern(...args: ({ delimiter?: 2 } | T.Pattern)[]): ReturnType<typeof _buildSlicePattern>;
 export function buildSlicePattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildSlicePattern(args[0] as T.Patterns);
@@ -4014,7 +4126,6 @@ export function buildFieldPattern(config: T.FieldPattern.Config) {
 }
 
 export function buildMutPattern(pattern: T.MutPattern.Config['pattern']) {
-	const _mutable_specifier = coerceKindEnumStorage('mut' as const, [['mut', TSKindId.MutableSpecifier] as const]);
 	const _pattern = pattern;
 	return withMethods(
 		withAccessors(
@@ -4022,14 +4133,12 @@ export function buildMutPattern(pattern: T.MutPattern.Config['pattern']) {
 				$type: TSKindId.MutPattern as const,
 				$source: 2 as const,
 				$named: true as const,
-				_mutable_specifier,
 				_pattern,
 				$with: {
 					pattern: (value: T.MutPattern.Config['pattern']) => buildMutPattern(value)
 				}
 			},
 			{
-				mutableSpecifier: () => _mutable_specifier,
 				pattern: () => _pattern
 			}
 		),
@@ -4037,7 +4146,7 @@ export function buildMutPattern(pattern: T.MutPattern.Config['pattern']) {
 	);
 }
 
-export function buildRangePattern(child: T.RangePatternArm2 | T.RangePatternPrefix) {
+function buildRangePattern$impl(child: T.RangePatternArm2 | T.RangePatternPrefix) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -4046,7 +4155,7 @@ export function buildRangePattern(child: T.RangePatternArm2 | T.RangePatternPref
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.RangePatternArm2 | T.RangePatternPrefix) => buildRangePattern(v) }
+				$with: { $child: (v: T.RangePatternArm2 | T.RangePatternPrefix) => buildRangePattern$impl(v) }
 			},
 			{
 				content: () => _content
@@ -4055,6 +4164,15 @@ export function buildRangePattern(child: T.RangePatternArm2 | T.RangePatternPref
 		methodsEngine
 	);
 }
+
+export const buildRangePattern = attachProps(buildRangePattern$impl, {
+	arm2: (config: T.RangePatternArm2.Config) => buildRangePattern$impl(buildRangePatternArm2(config)),
+	prefix: (config: T.RangePatternPrefix.Config) => buildRangePattern$impl(buildRangePatternPrefix(config)),
+	dotDotEq: (...args: Parameters<typeof buildRangePatternPrefix.dotDotEq>) =>
+		buildRangePattern$impl(buildRangePatternPrefix.dotDotEq(...args)),
+	dotDot: (...args: Parameters<typeof buildRangePatternPrefix.dotDot>) =>
+		buildRangePattern$impl(buildRangePatternPrefix.dotDot(...args))
+});
 
 export function buildRefPattern(pattern: T.RefPattern.Config['pattern']) {
 	const _pattern = pattern;
@@ -4128,7 +4246,7 @@ export function buildReferencePattern(config: T.ReferencePattern.Config) {
 	);
 }
 
-export function buildOrPattern(child: T.OrPatternBinary | T.OrPatternPrefix) {
+function buildOrPattern$impl(child: T.OrPatternBinary | T.OrPatternPrefix) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -4137,7 +4255,7 @@ export function buildOrPattern(child: T.OrPatternBinary | T.OrPatternPrefix) {
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.OrPatternBinary | T.OrPatternPrefix) => buildOrPattern(v) }
+				$with: { $child: (v: T.OrPatternBinary | T.OrPatternPrefix) => buildOrPattern$impl(v) }
 			},
 			{
 				content: () => _content
@@ -4146,6 +4264,11 @@ export function buildOrPattern(child: T.OrPatternBinary | T.OrPatternPrefix) {
 		methodsEngine
 	);
 }
+
+export const buildOrPattern = attachProps(buildOrPattern$impl, {
+	binary: (config: T.OrPatternBinary.Config) => buildOrPattern$impl(buildOrPatternBinary(config)),
+	prefix: (config: T.OrPatternPrefix.Config) => buildOrPattern$impl(buildOrPatternPrefix(config))
+});
 
 export function buildNegativeLiteral(value: T.NegativeLiteral.Config['value']) {
 	const _value = value;
@@ -4303,7 +4426,7 @@ export function buildLineComment(child: T.LineCommentRegularDslash | T.LineComme
 
 export function buildBlockComment(child?: T.BlockCommentArm): ReturnType<typeof _buildBlockComment>;
 export function buildBlockComment(
-	...args: Parameters<typeof buildBlockCommentArm>
+	config: Partial<T.BlockCommentArm.Config> = {}
 ): ReturnType<typeof _buildBlockComment>;
 export function buildBlockComment(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -5530,28 +5653,22 @@ export function buildReferenceExpressionRawConst(text: string) {
 }
 
 export function buildReferenceExpressionRawMut(_config?: T.ReferenceExpressionRawMut.Config) {
-	const _mutable_specifier = coerceKindEnumStorage('mut' as const, [['mut', TSKindId.MutableSpecifier] as const]);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ReferenceExpressionRawMut as const,
 				$source: 2 as const,
 				$named: true as const,
-				_mutable_specifier,
 				$with: {}
 			},
-			{
-				mutableSpecifier: () => _mutable_specifier
-			}
+			{}
 		),
 		methodsEngine
 	);
 }
 
 export function buildImplItemBody(child: T.DeclarationList): ReturnType<typeof _buildImplItemBody>;
-export function buildImplItemBody(
-	...args: Parameters<typeof buildDeclarationList>
-): ReturnType<typeof _buildImplItemBody>;
+export function buildImplItemBody(...children: T.DeclarationStatement[]): ReturnType<typeof _buildImplItemBody>;
 export function buildImplItemBody(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildImplItemBody(args[0] as T.DeclarationList);
@@ -5775,7 +5892,7 @@ export function buildFunctionTypeTraitForm(config: T.FunctionTypeTraitForm.Confi
 
 export function buildFunctionTypeFnForm(child?: T.FunctionModifiers): ReturnType<typeof _buildFunctionTypeFnForm>;
 export function buildFunctionTypeFnForm(
-	...args: Parameters<typeof buildFunctionModifiers>
+	...children: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]
 ): ReturnType<typeof _buildFunctionTypeFnForm>;
 export function buildFunctionTypeFnForm(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -5813,7 +5930,7 @@ function _buildFunctionTypeFnForm(child?: T.FunctionModifiers) {
 
 export function buildMacroDefinitionParen(child?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionParen>;
 export function buildMacroDefinitionParen(
-	...args: Parameters<typeof buildMacroRules>
+	...args: ({ delimiter?: 2 } | T.MacroRule)[]
 ): ReturnType<typeof _buildMacroDefinitionParen>;
 export function buildMacroDefinitionParen(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -5849,7 +5966,7 @@ function _buildMacroDefinitionParen(child?: T.MacroRules) {
 
 export function buildMacroDefinitionBracket(child?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionBracket>;
 export function buildMacroDefinitionBracket(
-	...args: Parameters<typeof buildMacroRules>
+	...args: ({ delimiter?: 2 } | T.MacroRule)[]
 ): ReturnType<typeof _buildMacroDefinitionBracket>;
 export function buildMacroDefinitionBracket(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -5885,7 +6002,7 @@ function _buildMacroDefinitionBracket(child?: T.MacroRules) {
 
 export function buildMacroDefinitionBrace(child?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionBrace>;
 export function buildMacroDefinitionBrace(
-	...args: Parameters<typeof buildMacroRules>
+	...args: ({ delimiter?: 2 } | T.MacroRule)[]
 ): ReturnType<typeof _buildMacroDefinitionBrace>;
 export function buildMacroDefinitionBrace(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -5965,9 +6082,9 @@ export function buildOrPatternPrefix(config: T.OrPatternPrefix.Config) {
 	);
 }
 
-export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Config) {
+function buildRangeExpressionBinary$impl(config: T.RangeExpressionBinary.Config) {
 	const _start = config.start;
-	const _operator = coerceKindEnumStorage(config.operator, [
+	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['..', TSKindId.DotDot] as const,
 		['...', TSKindId.DotDotDot] as const,
 		['..=', TSKindId.DotDotEq] as const
@@ -5983,10 +6100,10 @@ export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Confi
 				_operator,
 				_end,
 				$with: {
-					start: (value: T.Expression) => buildRangeExpressionBinary({ ...config, start: value }),
-					operator: (value: NonNullable<Parameters<typeof buildRangeExpressionBinary>[0]>['operator']) =>
-						buildRangeExpressionBinary({ ...config, operator: value }),
-					end: (value: T.Expression) => buildRangeExpressionBinary({ ...config, end: value })
+					start: (value: T.Expression) => buildRangeExpressionBinary$impl({ ...config, start: value }),
+					operator: (value: NonNullable<Parameters<typeof buildRangeExpressionBinary$impl>[0]>['operator']) =>
+						buildRangeExpressionBinary$impl({ ...config, operator: value }),
+					end: (value: T.Expression) => buildRangeExpressionBinary$impl({ ...config, end: value })
 				}
 			},
 			{
@@ -5999,9 +6116,17 @@ export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Confi
 	);
 }
 
+export const buildRangeExpressionBinary = attachProps(buildRangeExpressionBinary$impl, {
+	dotDot: (start: T.RangeExpressionBinary.Config['start'], end: T.RangeExpressionBinary.Config['end']) =>
+		buildRangeExpressionBinary$impl({ start: start, end: end, operator: TSKindId.DotDot }),
+	dotDotDot: (start: T.RangeExpressionBinary.Config['start'], end: T.RangeExpressionBinary.Config['end']) =>
+		buildRangeExpressionBinary$impl({ start: start, end: end, operator: TSKindId.DotDotDot }),
+	dotDotEq: (start: T.RangeExpressionBinary.Config['start'], end: T.RangeExpressionBinary.Config['end']) =>
+		buildRangeExpressionBinary$impl({ start: start, end: end, operator: TSKindId.DotDotEq })
+});
+
 export function buildRangeExpressionPostfix(config: T.RangeExpressionPostfix.Config) {
 	const _start = config.start;
-	const _operator = coerceKindEnumStorage('..' as const, [['..', TSKindId.DotDot] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -6009,14 +6134,12 @@ export function buildRangeExpressionPostfix(config: T.RangeExpressionPostfix.Con
 				$source: 2 as const,
 				$named: true as const,
 				_start,
-				_operator,
 				$with: {
 					start: (value: T.Expression) => buildRangeExpressionPostfix({ ...config, start: value })
 				}
 			},
 			{
-				start: () => _start,
-				operator: () => _operator
+				start: () => _start
 			}
 		),
 		methodsEngine
@@ -6024,7 +6147,6 @@ export function buildRangeExpressionPostfix(config: T.RangeExpressionPostfix.Con
 }
 
 export function buildRangeExpressionPrefix(config: T.RangeExpressionPrefix.Config) {
-	const _operator = coerceKindEnumStorage('..' as const, [['..', TSKindId.DotDot] as const]);
 	const _end = config.end;
 	return withMethods(
 		withAccessors(
@@ -6032,14 +6154,12 @@ export function buildRangeExpressionPrefix(config: T.RangeExpressionPrefix.Confi
 				$type: TSKindId.RangeExpressionPrefix as const,
 				$source: 2 as const,
 				$named: true as const,
-				_operator,
 				_end,
 				$with: {
 					end: (value: T.Expression) => buildRangeExpressionPrefix({ ...config, end: value })
 				}
 			},
 			{
-				operator: () => _operator,
 				end: () => _end
 			}
 		),
@@ -6047,8 +6167,8 @@ export function buildRangeExpressionPrefix(config: T.RangeExpressionPrefix.Confi
 	);
 }
 
-export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config) {
-	const _content = coerceKindEnumStorage(config.content, [
+function buildRangePatternPrefix$impl(config: T.RangePatternPrefix.Config) {
+	const _content = coerceKindEnumStorage<number>(config.content, [
 		['..=', TSKindId.DotDotEq] as const,
 		['..', TSKindId.DotDot] as const
 	]);
@@ -6062,9 +6182,9 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config) {
 				_content,
 				_right,
 				$with: {
-					content: (value: NonNullable<Parameters<typeof buildRangePatternPrefix>[0]>['content']) =>
-						buildRangePatternPrefix({ ...config, content: value }),
-					right: (value: T.LiteralPattern | T.Path) => buildRangePatternPrefix({ ...config, right: value })
+					content: (value: NonNullable<Parameters<typeof buildRangePatternPrefix$impl>[0]>['content']) =>
+						buildRangePatternPrefix$impl({ ...config, content: value }),
+					right: (value: T.LiteralPattern | T.Path) => buildRangePatternPrefix$impl({ ...config, right: value })
 				}
 			},
 			{
@@ -6076,8 +6196,15 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config) {
 	);
 }
 
-export function buildRangePatternLeftWithRight(config: T.RangePatternLeftWithRight.Config) {
-	const _content = coerceKindEnumStorage(config.content, [
+export const buildRangePatternPrefix = attachProps(buildRangePatternPrefix$impl, {
+	dotDotEq: (right: T.RangePatternPrefix.Config['right']) =>
+		buildRangePatternPrefix$impl({ right: right, content: TSKindId.DotDotEq }),
+	dotDot: (right: T.RangePatternPrefix.Config['right']) =>
+		buildRangePatternPrefix$impl({ right: right, content: TSKindId.DotDot })
+});
+
+function buildRangePatternLeftWithRight$impl(config: T.RangePatternLeftWithRight.Config) {
+	const _content = coerceKindEnumStorage<number>(config.content, [
 		['...', TSKindId.DotDotDot] as const,
 		['..=', TSKindId.DotDotEq] as const,
 		['..', TSKindId.DotDot] as const
@@ -6092,9 +6219,9 @@ export function buildRangePatternLeftWithRight(config: T.RangePatternLeftWithRig
 				_content,
 				_right,
 				$with: {
-					content: (value: NonNullable<Parameters<typeof buildRangePatternLeftWithRight>[0]>['content']) =>
-						buildRangePatternLeftWithRight({ ...config, content: value }),
-					right: (value: T.LiteralPattern | T.Path) => buildRangePatternLeftWithRight({ ...config, right: value })
+					content: (value: NonNullable<Parameters<typeof buildRangePatternLeftWithRight$impl>[0]>['content']) =>
+						buildRangePatternLeftWithRight$impl({ ...config, content: value }),
+					right: (value: T.LiteralPattern | T.Path) => buildRangePatternLeftWithRight$impl({ ...config, right: value })
 				}
 			},
 			{
@@ -6105,6 +6232,15 @@ export function buildRangePatternLeftWithRight(config: T.RangePatternLeftWithRig
 		methodsEngine
 	);
 }
+
+export const buildRangePatternLeftWithRight = attachProps(buildRangePatternLeftWithRight$impl, {
+	dotDotDot: (right: T.RangePatternLeftWithRight.Config['right']) =>
+		buildRangePatternLeftWithRight$impl({ right: right, content: TSKindId.DotDotDot }),
+	dotDotEq: (right: T.RangePatternLeftWithRight.Config['right']) =>
+		buildRangePatternLeftWithRight$impl({ right: right, content: TSKindId.DotDotEq }),
+	dotDot: (right: T.RangePatternLeftWithRight.Config['right']) =>
+		buildRangePatternLeftWithRight$impl({ right: right, content: TSKindId.DotDot })
+});
 
 export function buildStructItemBrace(config: T.StructItemBrace.Config) {
 	const _where_clause = config.whereClause;
@@ -6160,7 +6296,7 @@ export function buildVisibilityModifierPub(
 	child?: T.VisibilityModifierGroup
 ): ReturnType<typeof _buildVisibilityModifierPub>;
 export function buildVisibilityModifierPub(
-	...args: Parameters<typeof buildVisibilityModifierGroup>
+	child: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath
 ): ReturnType<typeof _buildVisibilityModifierPub>;
 export function buildVisibilityModifierPub(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {

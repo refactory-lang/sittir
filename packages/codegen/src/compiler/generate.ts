@@ -9,6 +9,7 @@ import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
 import { normalizeGrammar as normalize, NormalizeCtx } from './normalize.ts';
 import { assemble, AssembleCtx, hydrateSlotRefs } from './assemble.ts';
+import { pruneDeterminedSlots } from './model/node-map.ts';
 import { computeTransportSCC } from './scc.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
@@ -22,7 +23,11 @@ import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitEngine } from '../emitters/engine.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
-import { computeFieldStorageInfo, computeSlotClasses, computeSupertypeTransitiveParseKinds } from '../emitters/shared.ts';
+import {
+	computeFieldStorageInfo,
+	computeSlotClasses,
+	computeSupertypeTransitiveParseKinds
+} from '../emitters/shared.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
@@ -229,6 +234,13 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
 	computeFieldStorageInfo(nodeMap);
 
+	// Prune determined slots — a required singular slot with exactly one
+	// possible value leaves the slot record (no storage, transport, wrap,
+	// accessor, or from() surface) and renders as template text. Runs
+	// BEFORE node-model emission (so the serialized fields match the wire)
+	// and before hydration — unresolved refs resolve by name here.
+	pruneDeterminedSlots(nodeMap);
+
 	// Phase 5a: Serialize the unhydrated NodeMap. `node-model.json5` is
 	// JSON-stringified, so it MUST run BEFORE `hydrateSlotRefs` wires the
 	// slot graph cyclically. Capture the result here; the rest of the emit
@@ -242,8 +254,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	hydrateSlotRefs(nodeMap);
 
 	// Phase 5b½: Compute slot taxonomy (singleSlot vs multiSlot) on each
-	// branch/group node. Runs after hydration so stampExpressionFor can
-	// resolve parameterless-kind refs through the hydrated slot graph.
+	// branch/group node. Runs after hydration so parameterless-kind refs
+	// resolve through the hydrated slot graph.
 	computeSlotClasses(nodeMap);
 
 	// Phase 5b⅔: Stamp each supertype's transitive parse-kind closure once

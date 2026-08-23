@@ -873,13 +873,6 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "crate": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "name": {
         "unnamed": false,
         "slotCount": 1,
@@ -1517,13 +1510,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "self": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2730,13 +2716,6 @@
       }
     },
     "mut_pattern": {
-      "mutable_specifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "pattern": {
         "unnamed": false,
         "slotCount": 1,
@@ -3121,15 +3100,6 @@
         "nonEmpty": true
       }
     },
-    "_reference_expression_raw_mut": {
-      "mutable_specifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_impl_item_body": {
       "declaration_list": {
         "unnamed": false,
@@ -3330,23 +3300,9 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      },
-      "operator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
       }
     },
     "_range_expression_prefix": {
-      "operator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "end": {
         "unnamed": false,
         "slotCount": 1,
@@ -6741,6 +6697,38 @@
         "start",
         "operator",
         "end"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "dotDot",
+          "via": "member",
+          "slot": "operator",
+          "literal": "..",
+          "params": [
+            "start",
+            "end"
+          ]
+        },
+        {
+          "name": "dotDotDot",
+          "via": "member",
+          "slot": "operator",
+          "literal": "...",
+          "params": [
+            "start",
+            "end"
+          ]
+        },
+        {
+          "name": "dotDotEq",
+          "via": "member",
+          "slot": "operator",
+          "literal": "..=",
+          "params": [
+            "start",
+            "end"
+          ]
+        }
       ]
     },
     {
@@ -6774,35 +6762,19 @@
               "_expression"
             ]
           }
-        },
-        {
-          "name": "operator",
-          "propertyName": "operator",
-          "paramName": "operator",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_kw_operator",
-              "parseKind": "_kw_operator",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_operator"
-            ]
-          }
         }
       ],
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
         "start"
+      ],
+      "determinedSlots": [
+        {
+          "name": "operator",
+          "storageKey": "_operator",
+          "text": ".."
+        }
       ]
     },
     {
@@ -6814,29 +6786,6 @@
       "hidden": false,
       "name": "_range_expression_prefix",
       "fields": [
-        {
-          "name": "operator",
-          "propertyName": "operator",
-          "paramName": "operator",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_kw_operator",
-              "parseKind": "_kw_operator",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_operator"
-            ]
-          }
-        },
         {
           "name": "end",
           "propertyName": "end",
@@ -6865,6 +6814,13 @@
       "factoryShape": "config",
       "factoryFields": [
         "end"
+      ],
+      "determinedSlots": [
+        {
+          "name": "operator",
+          "storageKey": "_operator",
+          "text": ".."
+        }
       ]
     },
     {
@@ -7034,6 +6990,35 @@
       "factoryFields": [
         "content",
         "right"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "dotDotDot",
+          "via": "member",
+          "slot": "content",
+          "literal": "...",
+          "params": [
+            "right"
+          ]
+        },
+        {
+          "name": "dotDotEq",
+          "via": "member",
+          "slot": "content",
+          "literal": "..=",
+          "params": [
+            "right"
+          ]
+        },
+        {
+          "name": "dotDot",
+          "via": "member",
+          "slot": "content",
+          "literal": "..",
+          "params": [
+            "right"
+          ]
+        }
       ]
     },
     {
@@ -7108,6 +7093,26 @@
       "factoryFields": [
         "content",
         "right"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "dotDotEq",
+          "via": "member",
+          "slot": "content",
+          "literal": "..=",
+          "params": [
+            "right"
+          ]
+        },
+        {
+          "name": "dotDot",
+          "via": "member",
+          "slot": "content",
+          "literal": "..",
+          "params": [
+            "right"
+          ]
+        }
       ]
     },
     {
@@ -7146,34 +7151,16 @@
       "irKey": "referenceExpressionRawMut",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "buildReferenceExpressionRawMut()",
-      "fields": [
+      "fields": [],
+      "children": [],
+      "factoryShape": "config",
+      "determinedSlots": [
         {
           "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "mutable_specifier",
-              "parseKind": "mutable_specifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "mutable_specifier"
-            ]
-          }
+          "storageKey": "_mutable_specifier",
+          "text": "mut"
         }
-      ],
-      "children": [],
-      "factoryShape": "config"
+      ]
     },
     {
       "kind": "_reserved_identifier",
@@ -8613,6 +8600,22 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "semi",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_array_expression_semi",
+          "path": []
+        },
+        {
+          "name": "list",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_array_expression_list",
+          "path": []
+        }
       ]
     },
     {
@@ -9323,6 +9326,188 @@
         "left",
         "operator",
         "right"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "ampAmp",
+          "via": "member",
+          "slot": "operator",
+          "literal": "&&",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "pipePipe",
+          "via": "member",
+          "slot": "operator",
+          "literal": "||",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "amp",
+          "via": "member",
+          "slot": "operator",
+          "literal": "&",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "pipe",
+          "via": "member",
+          "slot": "operator",
+          "literal": "|",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "caret",
+          "via": "member",
+          "slot": "operator",
+          "literal": "^",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "eqEq",
+          "via": "member",
+          "slot": "operator",
+          "literal": "==",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "bangEq",
+          "via": "member",
+          "slot": "operator",
+          "literal": "!=",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "lt",
+          "via": "member",
+          "slot": "operator",
+          "literal": "<",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "ltEq",
+          "via": "member",
+          "slot": "operator",
+          "literal": "<=",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "gt",
+          "via": "member",
+          "slot": "operator",
+          "literal": ">",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "gtEq",
+          "via": "member",
+          "slot": "operator",
+          "literal": ">=",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "ltLt",
+          "via": "member",
+          "slot": "operator",
+          "literal": "<<",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "gtGt",
+          "via": "member",
+          "slot": "operator",
+          "literal": ">>",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "plus",
+          "via": "member",
+          "slot": "operator",
+          "literal": "+",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "dash",
+          "via": "member",
+          "slot": "operator",
+          "literal": "-",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "star",
+          "via": "member",
+          "slot": "operator",
+          "literal": "*",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "slash",
+          "via": "member",
+          "slot": "operator",
+          "literal": "/",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "percent",
+          "via": "member",
+          "slot": "operator",
+          "literal": "%",
+          "params": [
+            "left",
+            "right"
+          ]
+        }
       ]
     },
     {
@@ -10072,6 +10257,22 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "lineComment",
+          "via": "form",
+          "slot": "content",
+          "childKind": "line_comment",
+          "path": []
+        },
+        {
+          "name": "blockComment",
+          "via": "form",
+          "slot": "content",
+          "childKind": "block_comment",
+          "path": []
+        }
       ]
     },
     {
@@ -10602,6 +10803,29 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "paren",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_delim_token_tree_paren",
+          "path": []
+        },
+        {
+          "name": "bracket",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_delim_token_tree_bracket",
+          "path": []
+        },
+        {
+          "name": "brace",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_delim_token_tree_brace",
+          "path": []
+        }
       ]
     },
     {
@@ -10798,6 +11022,22 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "block",
+          "via": "form",
+          "slot": "content",
+          "childKind": "block",
+          "path": []
+        },
+        {
+          "name": "ifExpression",
+          "via": "form",
+          "slot": "content",
+          "childKind": "if_expression",
+          "path": []
+        }
       ]
     },
     {
@@ -11230,29 +11470,6 @@
           }
         },
         {
-          "name": "crate",
-          "propertyName": "crate",
-          "paramName": "crate",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "crate",
-              "parseKind": "crate",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "crate"
-            ]
-          }
-        },
-        {
           "name": "name",
           "propertyName": "name",
           "paramName": "name",
@@ -11305,6 +11522,13 @@
         "visibility_modifier",
         "name",
         "alias"
+      ],
+      "determinedSlots": [
+        {
+          "name": "crate",
+          "storageKey": "_crate",
+          "text": "crate"
+        }
       ]
     },
     {
@@ -14783,29 +15007,6 @@
       "hidden": false,
       "fields": [
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "mutable_specifier",
-              "parseKind": "mutable_specifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "mutable_specifier"
-            ]
-          }
-        },
-        {
           "name": "pattern",
           "propertyName": "pattern",
           "paramName": "pattern",
@@ -14833,6 +15034,13 @@
       "factoryShape": "direct",
       "factoryFields": [
         "pattern"
+      ],
+      "determinedSlots": [
+        {
+          "name": "mutable_specifier",
+          "storageKey": "_mutable_specifier",
+          "text": "mut"
+        }
       ]
     },
     {
@@ -14971,6 +15179,22 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "binary",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_or_pattern_binary",
+          "path": []
+        },
+        {
+          "name": "prefix",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_or_pattern_prefix",
+          "path": []
+        }
       ]
     },
     {
@@ -15481,6 +15705,40 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "arm2",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_range_pattern_arm2",
+          "path": []
+        },
+        {
+          "name": "prefix",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_range_pattern_prefix",
+          "path": []
+        },
+        {
+          "name": "dotDotEq",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_range_pattern_prefix",
+          "path": [
+            "dotDotEq"
+          ]
+        },
+        {
+          "name": "dotDot",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_range_pattern_prefix",
+          "path": [
+            "dotDot"
+          ]
+        }
       ]
     },
     {
@@ -16313,7 +16571,6 @@
       "irKey": "selfParameter",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "buildSelfParameter()",
       "fields": [
         {
           "name": "reference",
@@ -16380,35 +16637,19 @@
               "mutable_specifier"
             ]
           }
-        },
-        {
-          "name": "self",
-          "propertyName": "self",
-          "paramName": "self",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "self",
-              "parseKind": "self",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "self"
-            ]
-          }
         }
       ],
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
         "lifetime"
+      ],
+      "determinedSlots": [
+        {
+          "name": "self",
+          "storageKey": "_self",
+          "text": "self"
+        }
       ]
     },
     {
@@ -17347,6 +17588,35 @@
       "factoryFields": [
         "tokens",
         "operator"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "plus",
+          "via": "member",
+          "slot": "operator",
+          "literal": "+",
+          "params": [
+            "tokens"
+          ]
+        },
+        {
+          "name": "star",
+          "via": "member",
+          "slot": "operator",
+          "literal": "*",
+          "params": [
+            "tokens"
+          ]
+        },
+        {
+          "name": "qmark",
+          "via": "member",
+          "slot": "operator",
+          "literal": "?",
+          "params": [
+            "tokens"
+          ]
+        }
       ]
     },
     {
@@ -17437,6 +17707,35 @@
       "factoryFields": [
         "token_patterns",
         "operator"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "plus",
+          "via": "member",
+          "slot": "operator",
+          "literal": "+",
+          "params": [
+            "token_patterns"
+          ]
+        },
+        {
+          "name": "star",
+          "via": "member",
+          "slot": "operator",
+          "literal": "*",
+          "params": [
+            "token_patterns"
+          ]
+        },
+        {
+          "name": "qmark",
+          "via": "member",
+          "slot": "operator",
+          "literal": "?",
+          "params": [
+            "token_patterns"
+          ]
+        }
       ]
     },
     {
@@ -17515,6 +17814,50 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "paren",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_token_tree_paren",
+          "path": []
+        },
+        {
+          "name": "bracket",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_token_tree_bracket",
+          "path": []
+        },
+        {
+          "name": "brace",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_token_tree_brace",
+          "path": []
+        },
+        {
+          "name": "delimTokenTreeParen",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_delim_token_tree_paren",
+          "path": []
+        },
+        {
+          "name": "delimTokenTreeBracket",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_delim_token_tree_bracket",
+          "path": []
+        },
+        {
+          "name": "delimTokenTreeBrace",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_delim_token_tree_brace",
+          "path": []
+        }
       ]
     },
     {
@@ -17569,6 +17912,29 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "paren",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_token_tree_pattern_paren",
+          "path": []
+        },
+        {
+          "name": "bracket",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_token_tree_pattern_bracket",
+          "path": []
+        },
+        {
+          "name": "brace",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_token_tree_pattern_brace",
+          "path": []
+        }
       ]
     },
     {
@@ -17962,6 +18328,15 @@
       "factoryFields": [
         "attributes",
         "tuple_expression_elements"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "elements",
+          "via": "form",
+          "slot": "tuple_expression_elements",
+          "childKind": "_tuple_expression_elements",
+          "path": []
+        }
       ]
     },
     {
@@ -18670,6 +19045,35 @@
       "factoryFields": [
         "operator",
         "operand"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "dash",
+          "via": "member",
+          "slot": "operator",
+          "literal": "-",
+          "params": [
+            "operand"
+          ]
+        },
+        {
+          "name": "star",
+          "via": "member",
+          "slot": "operator",
+          "literal": "*",
+          "params": [
+            "operand"
+          ]
+        },
+        {
+          "name": "bang",
+          "via": "member",
+          "slot": "operator",
+          "literal": "!",
+          "params": [
+            "operand"
+          ]
+        }
       ]
     },
     {

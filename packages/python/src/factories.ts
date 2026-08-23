@@ -8,7 +8,8 @@ import {
 	withAccessors,
 	methodsEngine,
 	coerceBooleanKeywordStorage,
-	coerceKindEnumStorage
+	coerceKindEnumStorage,
+	attachProps
 } from './utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
@@ -46,7 +47,7 @@ export function buildModule(...children: T.Statement[]) {
 
 export function buildSimpleStatements(child: T.SimpleStatementsElements): ReturnType<typeof _buildSimpleStatements>;
 export function buildSimpleStatements(
-	...args: Parameters<typeof buildSimpleStatementsElements>
+	...args: ({ delimiter?: 2 } | T.SimpleStatement)[]
 ): ReturnType<typeof _buildSimpleStatements>;
 export function buildSimpleStatements(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -65,7 +66,6 @@ export function buildSimpleStatements(...args: unknown[]) {
 }
 function _buildSimpleStatements(child: T.SimpleStatementsElements) {
 	const _simple_statements_elements = child;
-	const _newline = coerceKindEnumStorage('\n' as const, [['\n', TSKindId.Newline] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -73,12 +73,10 @@ function _buildSimpleStatements(child: T.SimpleStatementsElements) {
 				$source: 2 as const,
 				$named: true as const,
 				_simple_statements_elements,
-				_newline,
 				$with: { $child: (v: T.SimpleStatementsElements) => buildSimpleStatements(v) }
 			},
 			{
-				simpleStatementsElements: () => _simple_statements_elements,
-				newline: () => _newline
+				simpleStatementsElements: () => _simple_statements_elements
 			}
 		),
 		methodsEngine
@@ -87,7 +85,7 @@ function _buildSimpleStatements(child: T.SimpleStatementsElements) {
 
 export function buildImportStatement(child: T.ImportList): ReturnType<typeof _buildImportStatement>;
 export function buildImportStatement(
-	...args: Parameters<typeof buildImportList>
+	...args: ({ delimiter?: 2 } | (T.DottedName | T.AliasedImport))[]
 ): ReturnType<typeof _buildImportStatement>;
 export function buildImportStatement(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -160,7 +158,7 @@ export function buildRelativeImport(config: T.RelativeImport.Config) {
 	);
 }
 
-export function buildFutureImportStatement(child: T.ImportList | T.FutureImportStatementArm) {
+function buildFutureImportStatement$impl(child: T.ImportList | T.FutureImportStatementArm) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -169,7 +167,7 @@ export function buildFutureImportStatement(child: T.ImportList | T.FutureImportS
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.ImportList | T.FutureImportStatementArm) => buildFutureImportStatement(v) }
+				$with: { $child: (v: T.ImportList | T.FutureImportStatementArm) => buildFutureImportStatement$impl(v) }
 			},
 			{
 				content: () => _content
@@ -178,6 +176,17 @@ export function buildFutureImportStatement(child: T.ImportList | T.FutureImportS
 		methodsEngine
 	);
 }
+
+export const buildFutureImportStatement = attachProps(buildFutureImportStatement$impl, {
+	importList: (...args: ({ delimiter?: 2 } | (T.DottedName | T.AliasedImport))[]) =>
+		buildFutureImportStatement$impl(
+			(buildImportList as (...a: unknown[]) => ReturnType<typeof buildImportList>)(...args)
+		),
+	arm: (...args: ({ delimiter?: 2 } | (T.DottedName | T.AliasedImport))[]) =>
+		buildFutureImportStatement$impl(
+			(buildFutureImportStatementArm as (...a: unknown[]) => ReturnType<typeof buildFutureImportStatementArm>)(...args)
+		)
+});
 
 export function buildImportFromStatement(config: T.ImportFromStatement.Config) {
 	const _module_name = config.moduleName;
@@ -274,7 +283,7 @@ export function buildAliasedImport(config: T.AliasedImport.Config) {
 	);
 }
 
-export function buildPrintStatement(child: T.PrintStatementArm1 | T.PrintStatementArm2) {
+function buildPrintStatement$impl(child: T.PrintStatementArm1 | T.PrintStatementArm2) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -283,7 +292,7 @@ export function buildPrintStatement(child: T.PrintStatementArm1 | T.PrintStateme
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.PrintStatementArm1 | T.PrintStatementArm2) => buildPrintStatement(v) }
+				$with: { $child: (v: T.PrintStatementArm1 | T.PrintStatementArm2) => buildPrintStatement$impl(v) }
 			},
 			{
 				content: () => _content
@@ -292,6 +301,14 @@ export function buildPrintStatement(child: T.PrintStatementArm1 | T.PrintStateme
 		methodsEngine
 	);
 }
+
+export const buildPrintStatement = attachProps(buildPrintStatement$impl, {
+	arm1: (config: T.PrintStatementArm1.Config) => buildPrintStatement$impl(buildPrintStatementArm1(config)),
+	arm2: (...args: ({ delimiter?: 2 } | T.Expression)[]) =>
+		buildPrintStatement$impl(
+			(buildPrintStatementArm2 as (...a: unknown[]) => ReturnType<typeof buildPrintStatementArm2>)(...args)
+		)
+});
 
 export function buildChevron(expression: T.Chevron.Config['expression']) {
 	const _expression = expression;
@@ -820,7 +837,7 @@ export function buildWithStatement(config: T.WithStatement.Config) {
 	);
 }
 
-export function buildWithClause(child: T.WithClauseBare | T.WithClauseParen) {
+function buildWithClause$impl(child: T.WithClauseBare | T.WithClauseParen) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -829,7 +846,7 @@ export function buildWithClause(child: T.WithClauseBare | T.WithClauseParen) {
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.WithClauseBare | T.WithClauseParen) => buildWithClause(v) }
+				$with: { $child: (v: T.WithClauseBare | T.WithClauseParen) => buildWithClause$impl(v) }
 			},
 			{
 				content: () => _content
@@ -838,6 +855,15 @@ export function buildWithClause(child: T.WithClauseBare | T.WithClauseParen) {
 		methodsEngine
 	);
 }
+
+export const buildWithClause = attachProps(buildWithClause$impl, {
+	bare: (...args: ({ delimiter?: 2 } | T.WithItem)[]) =>
+		buildWithClause$impl((buildWithClauseBare as (...a: unknown[]) => ReturnType<typeof buildWithClauseBare>)(...args)),
+	paren: (...args: ({ delimiter?: 2 } | T.WithItem)[]) =>
+		buildWithClause$impl(
+			(buildWithClauseParen as (...a: unknown[]) => ReturnType<typeof buildWithClauseParen>)(...args)
+		)
+});
 
 export function buildWithItem(value: T.WithItem.Config['value']) {
 	const _value = value;
@@ -904,7 +930,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config) {
 }
 
 export function buildParameters(child?: T._Parameters): ReturnType<typeof _buildParameters>;
-export function buildParameters(...args: Parameters<typeof build_Parameters>): ReturnType<typeof _buildParameters>;
+export function buildParameters(...args: ({ delimiter?: 2 } | T.Parameter)[]): ReturnType<typeof _buildParameters>;
 export function buildParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildParameters(args[0] as T._Parameters);
@@ -939,7 +965,7 @@ function _buildParameters(child?: T._Parameters) {
 
 export function buildLambdaParameters(child: T._Parameters): ReturnType<typeof _buildLambdaParameters>;
 export function buildLambdaParameters(
-	...args: Parameters<typeof build_Parameters>
+	...args: ({ delimiter?: 2 } | T.Parameter)[]
 ): ReturnType<typeof _buildLambdaParameters>;
 export function buildLambdaParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1140,7 +1166,7 @@ export function buildClassDefinition(config: T.ClassDefinition.Config) {
 }
 
 export function buildTypeParameter(child: T.Types): ReturnType<typeof _buildTypeParameter>;
-export function buildTypeParameter(...args: Parameters<typeof buildTypes>): ReturnType<typeof _buildTypeParameter>;
+export function buildTypeParameter(...args: ({ delimiter?: 2 } | T.Type)[]): ReturnType<typeof _buildTypeParameter>;
 export function buildTypeParameter(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildTypeParameter(args[0] as T.Types);
@@ -1173,7 +1199,7 @@ function _buildTypeParameter(child: T.Types) {
 	);
 }
 
-export function buildParenthesizedListSplat(child: T.ParenthesizedListSplat | T.ListSplat) {
+function buildParenthesizedListSplat$impl(child: T.ParenthesizedListSplat | T.ListSplat) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -1182,7 +1208,7 @@ export function buildParenthesizedListSplat(child: T.ParenthesizedListSplat | T.
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.ParenthesizedListSplat | T.ListSplat) => buildParenthesizedListSplat(v) }
+				$with: { $child: (v: T.ParenthesizedListSplat | T.ListSplat) => buildParenthesizedListSplat$impl(v) }
 			},
 			{
 				content: () => _content
@@ -1192,9 +1218,19 @@ export function buildParenthesizedListSplat(child: T.ParenthesizedListSplat | T.
 	);
 }
 
+export const buildParenthesizedListSplat = attachProps(buildParenthesizedListSplat$impl, {
+	parenthesizedListSplat: (child: T.ParenthesizedListSplat | T.ListSplat) =>
+		buildParenthesizedListSplat$impl(buildParenthesizedListSplat(child)),
+	listSplat: (expression: T.ListSplat.Config['expression']) =>
+		buildParenthesizedListSplat$impl(buildListSplat(expression))
+});
+
 export function buildArgumentList(child?: T.ArgumentList.Config['arguments']): ReturnType<typeof _buildArgumentList>;
 export function buildArgumentList(
-	...args: Parameters<typeof buildArgumentListElements>
+	...args: (
+		| { delimiter?: 2 }
+		| (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)
+	)[]
 ): ReturnType<typeof _buildArgumentList>;
 export function buildArgumentList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1261,7 +1297,6 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config) {
 
 export function buildDecorator(expression: T.Decorator.Config['expression']) {
 	const _expression = expression;
-	const _newline = coerceKindEnumStorage('\n' as const, [['\n', TSKindId.Newline] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -1269,14 +1304,12 @@ export function buildDecorator(expression: T.Decorator.Config['expression']) {
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				_newline,
 				$with: {
 					expression: (value: T.Decorator.Config['expression']) => buildDecorator(value)
 				}
 			},
 			{
-				expression: () => _expression,
-				newline: () => _newline
+				expression: () => _expression
 			}
 		),
 		methodsEngine
@@ -1388,7 +1421,7 @@ export function buildUnionPattern(...children: T.SimplePattern[]) {
 
 export function buildDictPattern(child?: T.DictPatternElements): ReturnType<typeof _buildDictPattern>;
 export function buildDictPattern(
-	...args: Parameters<typeof buildDictPatternElements>
+	...args: ({ delimiter?: 2 } | (T.KeyValuePattern | T.SplatPattern))[]
 ): ReturnType<typeof _buildDictPattern>;
 export function buildDictPattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1472,8 +1505,8 @@ export function buildKeywordPattern(config: T.KeywordPattern.Config) {
 	);
 }
 
-export function buildSplatPattern(config: T.SplatPattern.Config) {
-	const _operator = coerceKindEnumStorage(config.operator, [
+function buildSplatPattern$impl(config: T.SplatPattern.Config) {
+	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['*', TSKindId.Star] as const,
 		['**', TSKindId.StarStar] as const
 	]);
@@ -1487,9 +1520,9 @@ export function buildSplatPattern(config: T.SplatPattern.Config) {
 				_operator,
 				_identifier,
 				$with: {
-					operator: (value: NonNullable<Parameters<typeof buildSplatPattern>[0]>['operator']) =>
-						buildSplatPattern({ ...config, operator: value }),
-					identifier: (value: T.Identifier | '_') => buildSplatPattern({ ...config, identifier: value })
+					operator: (value: NonNullable<Parameters<typeof buildSplatPattern$impl>[0]>['operator']) =>
+						buildSplatPattern$impl({ ...config, operator: value }),
+					identifier: (value: T.Identifier | '_') => buildSplatPattern$impl({ ...config, identifier: value })
 				}
 			},
 			{
@@ -1500,6 +1533,13 @@ export function buildSplatPattern(config: T.SplatPattern.Config) {
 		methodsEngine
 	);
 }
+
+export const buildSplatPattern = attachProps(buildSplatPattern$impl, {
+	star: (identifier: T.SplatPattern.Config['identifier']) =>
+		buildSplatPattern$impl({ identifier: identifier, operator: TSKindId.Star }),
+	starStar: (identifier: T.SplatPattern.Config['identifier']) =>
+		buildSplatPattern$impl({ identifier: identifier, operator: TSKindId.StarStar })
+});
 
 export function buildClassPattern(config: T.ClassPattern.Config) {
 	const _dotted_name = config.dottedName;
@@ -1526,10 +1566,10 @@ export function buildClassPattern(config: T.ClassPattern.Config) {
 	);
 }
 
-export function buildComplexPattern(config: T.ComplexPattern.Config) {
+function buildComplexPattern$impl(config: T.ComplexPattern.Config) {
 	const _real = coerceBooleanKeywordStorage(config.real);
 	const _imaginary = config.imaginary;
-	const _operator = coerceKindEnumStorage(config.operator, [
+	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['-', TSKindId.Dash] as const
 	]);
@@ -1545,12 +1585,12 @@ export function buildComplexPattern(config: T.ComplexPattern.Config) {
 				_operator,
 				_content,
 				$with: {
-					real: (value?: NonNullable<Parameters<typeof buildComplexPattern>[0]>['real']) =>
-						buildComplexPattern({ ...config, real: value }),
-					imaginary: (value: T.Integer | T.Float) => buildComplexPattern({ ...config, imaginary: value }),
-					operator: (value: NonNullable<Parameters<typeof buildComplexPattern>[0]>['operator']) =>
-						buildComplexPattern({ ...config, operator: value }),
-					content: (value: T.Integer | T.Float) => buildComplexPattern({ ...config, content: value })
+					real: (value?: NonNullable<Parameters<typeof buildComplexPattern$impl>[0]>['real']) =>
+						buildComplexPattern$impl({ ...config, real: value }),
+					imaginary: (value: T.Integer | T.Float) => buildComplexPattern$impl({ ...config, imaginary: value }),
+					operator: (value: NonNullable<Parameters<typeof buildComplexPattern$impl>[0]>['operator']) =>
+						buildComplexPattern$impl({ ...config, operator: value }),
+					content: (value: T.Integer | T.Float) => buildComplexPattern$impl({ ...config, content: value })
 				}
 			},
 			{
@@ -1563,6 +1603,13 @@ export function buildComplexPattern(config: T.ComplexPattern.Config) {
 		methodsEngine
 	);
 }
+
+export const buildComplexPattern = attachProps(buildComplexPattern$impl, {
+	plus: (imaginary: T.ComplexPattern.Config['imaginary'], content: T.ComplexPattern.Config['content']) =>
+		buildComplexPattern$impl({ imaginary: imaginary, content: content, operator: TSKindId.Plus }),
+	dash: (imaginary: T.ComplexPattern.Config['imaginary'], content: T.ComplexPattern.Config['content']) =>
+		buildComplexPattern$impl({ imaginary: imaginary, content: content, operator: TSKindId.Dash })
+});
 
 export function build_Parameters(...elements: NonEmptyArray<T.Parameter>): ReturnType<typeof _build_Parameters>;
 export function build_Parameters(
@@ -1647,7 +1694,7 @@ function _buildPatterns(elements: NonEmptyArray<T.Pattern>, options: { delimiter
 }
 
 export function buildTuplePattern(child?: T.Patterns): ReturnType<typeof _buildTuplePattern>;
-export function buildTuplePattern(...args: Parameters<typeof buildPatterns>): ReturnType<typeof _buildTuplePattern>;
+export function buildTuplePattern(...args: ({ delimiter?: 2 } | T.Pattern)[]): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildTuplePattern(args[0] as T.Patterns);
@@ -1681,7 +1728,7 @@ function _buildTuplePattern(child?: T.Patterns) {
 }
 
 export function buildListPattern(child?: T.Patterns): ReturnType<typeof _buildListPattern>;
-export function buildListPattern(...args: Parameters<typeof buildPatterns>): ReturnType<typeof _buildListPattern>;
+export function buildListPattern(...args: ({ delimiter?: 2 } | T.Pattern)[]): ReturnType<typeof _buildListPattern>;
 export function buildListPattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildListPattern(args[0] as T.Patterns);
@@ -1856,9 +1903,9 @@ export function buildNotOperator(argument: T.NotOperator.Config['argument']) {
 	);
 }
 
-export function buildBooleanOperator(config: T.BooleanOperator.Config) {
+function buildBooleanOperator$impl(config: T.BooleanOperator.Config) {
 	const _left = config.left;
-	const _operator = coerceKindEnumStorage(config.operator, [
+	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['and', TSKindId.And] as const,
 		['or', TSKindId.Or] as const
 	]);
@@ -1873,10 +1920,10 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config) {
 				_operator,
 				_right,
 				$with: {
-					left: (value: T.Expression) => buildBooleanOperator({ ...config, left: value }),
-					operator: (value: NonNullable<Parameters<typeof buildBooleanOperator>[0]>['operator']) =>
-						buildBooleanOperator({ ...config, operator: value }),
-					right: (value: T.Expression) => buildBooleanOperator({ ...config, right: value })
+					left: (value: T.Expression) => buildBooleanOperator$impl({ ...config, left: value }),
+					operator: (value: NonNullable<Parameters<typeof buildBooleanOperator$impl>[0]>['operator']) =>
+						buildBooleanOperator$impl({ ...config, operator: value }),
+					right: (value: T.Expression) => buildBooleanOperator$impl({ ...config, right: value })
 				}
 			},
 			{
@@ -1889,9 +1936,16 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config) {
 	);
 }
 
-export function buildBinaryOperator(config: T.BinaryOperator.Config) {
+export const buildBooleanOperator = attachProps(buildBooleanOperator$impl, {
+	and: (left: T.BooleanOperator.Config['left'], right: T.BooleanOperator.Config['right']) =>
+		buildBooleanOperator$impl({ left: left, right: right, operator: TSKindId.And }),
+	or: (left: T.BooleanOperator.Config['left'], right: T.BooleanOperator.Config['right']) =>
+		buildBooleanOperator$impl({ left: left, right: right, operator: TSKindId.Or })
+});
+
+function buildBinaryOperator$impl(config: T.BinaryOperator.Config) {
 	const _left = config.left;
-	const _operator = coerceKindEnumStorage(config.operator, [
+	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['-', TSKindId.Dash] as const,
 		['*', TSKindId.Star] as const,
@@ -1917,10 +1971,10 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config) {
 				_operator,
 				_right,
 				$with: {
-					left: (value: T.PrimaryExpression) => buildBinaryOperator({ ...config, left: value }),
-					operator: (value: NonNullable<Parameters<typeof buildBinaryOperator>[0]>['operator']) =>
-						buildBinaryOperator({ ...config, operator: value }),
-					right: (value: T.PrimaryExpression) => buildBinaryOperator({ ...config, right: value })
+					left: (value: T.PrimaryExpression) => buildBinaryOperator$impl({ ...config, left: value }),
+					operator: (value: NonNullable<Parameters<typeof buildBinaryOperator$impl>[0]>['operator']) =>
+						buildBinaryOperator$impl({ ...config, operator: value }),
+					right: (value: T.PrimaryExpression) => buildBinaryOperator$impl({ ...config, right: value })
 				}
 			},
 			{
@@ -1933,8 +1987,37 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config) {
 	);
 }
 
+export const buildBinaryOperator = attachProps(buildBinaryOperator$impl, {
+	plus: (left: T.BinaryOperator.Config['left'], right: T.BinaryOperator.Config['right']) =>
+		buildBinaryOperator$impl({ left: left, right: right, operator: TSKindId.Plus }),
+	dash: (left: T.BinaryOperator.Config['left'], right: T.BinaryOperator.Config['right']) =>
+		buildBinaryOperator$impl({ left: left, right: right, operator: TSKindId.Dash }),
+	star: (left: T.BinaryOperator.Config['left'], right: T.BinaryOperator.Config['right']) =>
+		buildBinaryOperator$impl({ left: left, right: right, operator: TSKindId.Star }),
+	at: (left: T.BinaryOperator.Config['left'], right: T.BinaryOperator.Config['right']) =>
+		buildBinaryOperator$impl({ left: left, right: right, operator: TSKindId.At }),
+	slash: (left: T.BinaryOperator.Config['left'], right: T.BinaryOperator.Config['right']) =>
+		buildBinaryOperator$impl({ left: left, right: right, operator: TSKindId.Slash }),
+	percent: (left: T.BinaryOperator.Config['left'], right: T.BinaryOperator.Config['right']) =>
+		buildBinaryOperator$impl({ left: left, right: right, operator: TSKindId.Percent }),
+	slashSlash: (left: T.BinaryOperator.Config['left'], right: T.BinaryOperator.Config['right']) =>
+		buildBinaryOperator$impl({ left: left, right: right, operator: TSKindId.SlashSlash }),
+	starStar: (left: T.BinaryOperator.Config['left'], right: T.BinaryOperator.Config['right']) =>
+		buildBinaryOperator$impl({ left: left, right: right, operator: TSKindId.StarStar }),
+	pipe: (left: T.BinaryOperator.Config['left'], right: T.BinaryOperator.Config['right']) =>
+		buildBinaryOperator$impl({ left: left, right: right, operator: TSKindId.Pipe }),
+	amp: (left: T.BinaryOperator.Config['left'], right: T.BinaryOperator.Config['right']) =>
+		buildBinaryOperator$impl({ left: left, right: right, operator: TSKindId.Amp }),
+	caret: (left: T.BinaryOperator.Config['left'], right: T.BinaryOperator.Config['right']) =>
+		buildBinaryOperator$impl({ left: left, right: right, operator: TSKindId.Caret }),
+	ltLt: (left: T.BinaryOperator.Config['left'], right: T.BinaryOperator.Config['right']) =>
+		buildBinaryOperator$impl({ left: left, right: right, operator: TSKindId.LtLt }),
+	gtGt: (left: T.BinaryOperator.Config['left'], right: T.BinaryOperator.Config['right']) =>
+		buildBinaryOperator$impl({ left: left, right: right, operator: TSKindId.GtGt })
+});
+
 export function buildUnaryOperator(config: T.UnaryOperator.Config) {
-	const _operator = coerceKindEnumStorage(config.operator, [
+	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['-', TSKindId.Dash] as const,
 		['~', TSKindId.Tilde] as const
@@ -2095,7 +2178,7 @@ export function buildAssignment(config: T.Assignment.Config) {
 
 export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config) {
 	const _left = config.left;
-	const _operator = coerceKindEnumStorage(config.operator, [
+	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['+=', TSKindId.PlusEq] as const,
 		['-=', TSKindId.DashEq] as const,
 		['*=', TSKindId.StarEq] as const,
@@ -2231,7 +2314,7 @@ export function buildSubscript(config: T.Subscript.Config) {
 	);
 }
 
-export function buildSlice(config: Partial<T.Slice.Config> = {}) {
+function buildSlice$impl(config: Partial<T.Slice.Config> = {}) {
 	const _start = config.start;
 	const _stop = config.stop;
 	const _step = config.step;
@@ -2245,9 +2328,9 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}) {
 				_stop,
 				_step,
 				$with: {
-					start: (value?: T.Expression) => buildSlice({ ...config, start: value }),
-					stop: (value?: T.Expression) => buildSlice({ ...config, stop: value }),
-					step: (value?: T.SliceGroup) => buildSlice({ ...config, step: value })
+					start: (value?: T.Expression) => buildSlice$impl({ ...config, start: value }),
+					stop: (value?: T.Expression) => buildSlice$impl({ ...config, stop: value }),
+					step: (value?: T.SliceGroup) => buildSlice$impl({ ...config, step: value })
 				}
 			},
 			{
@@ -2259,6 +2342,10 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}) {
 		methodsEngine
 	);
 }
+
+export const buildSlice = attachProps(buildSlice$impl, {
+	group: (child?: T.Expression) => buildSlice$impl({ step: buildSliceGroup(child) })
+});
 
 export function buildCall(config: T.Call.Config) {
 	const _function = config.function;
@@ -2482,7 +2569,9 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config) {
 }
 
 export function buildList(child?: T.CollectionElements): ReturnType<typeof _buildList>;
-export function buildList(...args: Parameters<typeof buildCollectionElements>): ReturnType<typeof _buildList>;
+export function buildList(
+	...args: ({ delimiter?: 2 } | (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat))[]
+): ReturnType<typeof _buildList>;
 export function buildList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildList(args[0] as T.CollectionElements);
@@ -2516,7 +2605,9 @@ function _buildList(child?: T.CollectionElements) {
 }
 
 export function buildSet(child: T.CollectionElements): ReturnType<typeof _buildSet>;
-export function buildSet(...args: Parameters<typeof buildCollectionElements>): ReturnType<typeof _buildSet>;
+export function buildSet(
+	...args: ({ delimiter?: 2 } | (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat))[]
+): ReturnType<typeof _buildSet>;
 export function buildSet(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildSet(args[0] as T.CollectionElements);
@@ -2550,7 +2641,9 @@ function _buildSet(child: T.CollectionElements) {
 }
 
 export function buildTuple(child?: T.CollectionElements): ReturnType<typeof _buildTuple>;
-export function buildTuple(...args: Parameters<typeof buildCollectionElements>): ReturnType<typeof _buildTuple>;
+export function buildTuple(
+	...args: ({ delimiter?: 2 } | (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat))[]
+): ReturnType<typeof _buildTuple>;
 export function buildTuple(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildTuple(args[0] as T.CollectionElements);
@@ -2585,7 +2678,7 @@ function _buildTuple(child?: T.CollectionElements) {
 
 export function buildDictionary(child?: T.Dictionary.Config['entries']): ReturnType<typeof _buildDictionary>;
 export function buildDictionary(
-	...args: Parameters<typeof buildDictionaryElements>
+	...args: ({ delimiter?: 2 } | (T.Pair | T.DictionarySplat))[]
 ): ReturnType<typeof _buildDictionary>;
 export function buildDictionary(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -3729,7 +3822,7 @@ function _buildDictionaryElements(elements: NonEmptyArray<T.Pair | T.DictionaryS
 
 export function buildFutureImportStatementArm(child: T.ImportList): ReturnType<typeof _buildFutureImportStatementArm>;
 export function buildFutureImportStatementArm(
-	...args: Parameters<typeof buildImportList>
+	...args: ({ delimiter?: 2 } | (T.DottedName | T.AliasedImport))[]
 ): ReturnType<typeof _buildFutureImportStatementArm>;
 export function buildFutureImportStatementArm(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -3763,7 +3856,7 @@ function _buildFutureImportStatementArm(child: T.ImportList) {
 	);
 }
 
-export function buildExceptClauseArm(child: T.ExceptClauseAs | T.ExceptClauseList) {
+function buildExceptClauseArm$impl(child: T.ExceptClauseAs | T.ExceptClauseList) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -3772,7 +3865,7 @@ export function buildExceptClauseArm(child: T.ExceptClauseAs | T.ExceptClauseLis
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.ExceptClauseAs | T.ExceptClauseList) => buildExceptClauseArm(v) }
+				$with: { $child: (v: T.ExceptClauseAs | T.ExceptClauseList) => buildExceptClauseArm$impl(v) }
 			},
 			{
 				content: () => _content
@@ -3781,6 +3874,11 @@ export function buildExceptClauseArm(child: T.ExceptClauseAs | T.ExceptClauseLis
 		methodsEngine
 	);
 }
+
+export const buildExceptClauseArm = attachProps(buildExceptClauseArm$impl, {
+	exceptClauseAs: (config: T.ExceptClauseAs.Config) => buildExceptClauseArm$impl(buildExceptClauseAs(config)),
+	exceptClauseList: (...children: T.Expression[]) => buildExceptClauseArm$impl(buildExceptClauseList(...children))
+});
 
 export function buildSliceGroup(child?: T.Expression) {
 	const _expression = child;
@@ -3842,7 +3940,7 @@ export function buildExceptClauseAs(config: T.ExceptClauseAs.Config) {
 
 export function buildCaseTuplePattern(child?: T.ListPatternCasePatterns): ReturnType<typeof _buildCaseTuplePattern>;
 export function buildCaseTuplePattern(
-	...args: Parameters<typeof buildListPatternCasePatterns>
+	...args: ({ delimiter?: 2 } | T.CasePattern)[]
 ): ReturnType<typeof _buildCaseTuplePattern>;
 export function buildCaseTuplePattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -3880,7 +3978,7 @@ function _buildCaseTuplePattern(child?: T.ListPatternCasePatterns) {
 
 export function buildCaseListPattern(child?: T.ListPatternCasePatterns): ReturnType<typeof _buildCaseListPattern>;
 export function buildCaseListPattern(
-	...args: Parameters<typeof buildListPatternCasePatterns>
+	...args: ({ delimiter?: 2 } | T.CasePattern)[]
 ): ReturnType<typeof _buildCaseListPattern>;
 export function buildCaseListPattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -4072,7 +4170,7 @@ export function buildPrintStatementArm1(config: T.PrintStatementArm1.Config) {
 
 export function buildPrintStatementArm2(child: T.PrintArguments): ReturnType<typeof _buildPrintStatementArm2>;
 export function buildPrintStatementArm2(
-	...args: Parameters<typeof buildPrintArguments>
+	...args: ({ delimiter?: 2 } | T.Expression)[]
 ): ReturnType<typeof _buildPrintStatementArm2>;
 export function buildPrintStatementArm2(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -4259,7 +4357,7 @@ function _buildWithClauseBare(elements: NonEmptyArray<T.WithItem>, options: { de
 
 export function buildWithClauseParen(child: T.WithClauseWithItems): ReturnType<typeof _buildWithClauseParen>;
 export function buildWithClauseParen(
-	...args: Parameters<typeof buildWithClauseWithItems>
+	...args: ({ delimiter?: 2 } | T.WithItem)[]
 ): ReturnType<typeof _buildWithClauseParen>;
 export function buildWithClauseParen(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -4317,9 +4415,7 @@ export function buildMatchBlockBlock(config: Partial<T.MatchBlockBlock.Config> =
 }
 
 export function buildSuiteBlockWithIndent(child: T.Block): ReturnType<typeof _buildSuiteBlockWithIndent>;
-export function buildSuiteBlockWithIndent(
-	...args: Parameters<typeof buildBlock>
-): ReturnType<typeof _buildSuiteBlockWithIndent>;
+export function buildSuiteBlockWithIndent(...children: T.Statement[]): ReturnType<typeof _buildSuiteBlockWithIndent>;
 export function buildSuiteBlockWithIndent(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildSuiteBlockWithIndent(args[0] as T.Block);
@@ -4398,8 +4494,8 @@ export function buildExceptClauseList(...children: T.Expression[]) {
 	);
 }
 
-export function buildComparisonOperatorComparator(config: T.ComparisonOperatorComparator.Config) {
-	const _operators = coerceKindEnumStorage(config.operators, [
+function buildComparisonOperatorComparator$impl(config: T.ComparisonOperatorComparator.Config) {
+	const _operators = coerceKindEnumStorage<number>(config.operators, [
 		['<', TSKindId.Lt] as const,
 		['<=', TSKindId.LtEq] as const,
 		['==', TSKindId.EqEq] as const,
@@ -4422,10 +4518,10 @@ export function buildComparisonOperatorComparator(config: T.ComparisonOperatorCo
 				_operators,
 				_primary_expression,
 				$with: {
-					operators: (value: NonNullable<Parameters<typeof buildComparisonOperatorComparator>[0]>['operators']) =>
-						buildComparisonOperatorComparator({ ...config, operators: value }),
+					operators: (value: NonNullable<Parameters<typeof buildComparisonOperatorComparator$impl>[0]>['operators']) =>
+						buildComparisonOperatorComparator$impl({ ...config, operators: value }),
 					primaryExpression: (value: T.PrimaryExpression) =>
-						buildComparisonOperatorComparator({ ...config, primaryExpression: value })
+						buildComparisonOperatorComparator$impl({ ...config, primaryExpression: value })
 				}
 			},
 			{
@@ -4436,6 +4532,31 @@ export function buildComparisonOperatorComparator(config: T.ComparisonOperatorCo
 		methodsEngine
 	);
 }
+
+export const buildComparisonOperatorComparator = attachProps(buildComparisonOperatorComparator$impl, {
+	lt: (primaryExpression: T.ComparisonOperatorComparator.Config['primaryExpression']) =>
+		buildComparisonOperatorComparator$impl({ primaryExpression: primaryExpression, operators: TSKindId.Lt }),
+	ltEq: (primaryExpression: T.ComparisonOperatorComparator.Config['primaryExpression']) =>
+		buildComparisonOperatorComparator$impl({ primaryExpression: primaryExpression, operators: TSKindId.LtEq }),
+	eqEq: (primaryExpression: T.ComparisonOperatorComparator.Config['primaryExpression']) =>
+		buildComparisonOperatorComparator$impl({ primaryExpression: primaryExpression, operators: TSKindId.EqEq }),
+	bangEq: (primaryExpression: T.ComparisonOperatorComparator.Config['primaryExpression']) =>
+		buildComparisonOperatorComparator$impl({ primaryExpression: primaryExpression, operators: TSKindId.BangEq }),
+	gtEq: (primaryExpression: T.ComparisonOperatorComparator.Config['primaryExpression']) =>
+		buildComparisonOperatorComparator$impl({ primaryExpression: primaryExpression, operators: TSKindId.GtEq }),
+	gt: (primaryExpression: T.ComparisonOperatorComparator.Config['primaryExpression']) =>
+		buildComparisonOperatorComparator$impl({ primaryExpression: primaryExpression, operators: TSKindId.Gt }),
+	ltGt: (primaryExpression: T.ComparisonOperatorComparator.Config['primaryExpression']) =>
+		buildComparisonOperatorComparator$impl({ primaryExpression: primaryExpression, operators: TSKindId.LtGt }),
+	in: (primaryExpression: T.ComparisonOperatorComparator.Config['primaryExpression']) =>
+		buildComparisonOperatorComparator$impl({ primaryExpression: primaryExpression, operators: TSKindId.In }),
+	notIn: (primaryExpression: T.ComparisonOperatorComparator.Config['primaryExpression']) =>
+		buildComparisonOperatorComparator$impl({ primaryExpression: primaryExpression, operators: TSKindId.NotIn }),
+	is: (primaryExpression: T.ComparisonOperatorComparator.Config['primaryExpression']) =>
+		buildComparisonOperatorComparator$impl({ primaryExpression: primaryExpression, operators: TSKindId.Is }),
+	isNot: (primaryExpression: T.ComparisonOperatorComparator.Config['primaryExpression']) =>
+		buildComparisonOperatorComparator$impl({ primaryExpression: primaryExpression, operators: TSKindId.IsNot })
+});
 
 export function buildYieldFromClause(child: T.Expression) {
 	const _expression = child;

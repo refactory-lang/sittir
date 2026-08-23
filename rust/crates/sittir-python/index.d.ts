@@ -462,7 +462,6 @@ export interface DecoratorTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _expression: ExpressionTransport
-  _newline: NewlineTransport
 }
 
 export interface DefaultParameterTransport {
@@ -1425,7 +1424,6 @@ export interface SimpleStatementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _simple_statements_elements: SimpleStatementsElementsTransport
-  _newline: NewlineTransport
 }
 
 export interface SliceGroupTransport {

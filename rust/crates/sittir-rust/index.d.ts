@@ -760,7 +760,6 @@ export interface ExternCrateDeclarationTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _visibility_modifier?: VisibilityModifierTransport
-  _crate: CrateTransport
   _name: IdentifierTransport
   _alias?: IdentifierTransport
 }
@@ -1515,7 +1514,6 @@ export interface MutPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _mutable_specifier: MutableSpecifierTransport
   _pattern: Box<PatternTransport>
 }
 
@@ -1692,7 +1690,6 @@ export interface RangeExpressionPostfixTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _start: Box<ExpressionTransport>
-  _operator: KwOperatorTransport
 }
 
 export interface RangeExpressionPrefixTransport {
@@ -1703,7 +1700,6 @@ export interface RangeExpressionPrefixTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _operator: KwOperatorTransport
   _end: Box<ExpressionTransport>
 }
 
@@ -1786,7 +1782,6 @@ export interface ReferenceExpressionRawMutTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _mutable_specifier: MutableSpecifierTransport
 }
 
 export interface ReferenceExpressionTransport {
@@ -1918,7 +1913,6 @@ export interface SelfParameterTransport {
   _reference?: boolean
   _lifetime?: LifetimeTransport
   _mutable_specifier?: MutableSpecifierTransport
-  _self: Self_Transport
 }
 
 export interface ShorthandFieldInitializerTransport {

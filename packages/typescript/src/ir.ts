@@ -13,140 +13,195 @@
 
 import * as F from './factories.js';
 import * as FR from './from.js';
-
-function _attach<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(fn: T, props: P): T & P {
-	for (const key of Object.keys(props)) {
-		Object.defineProperty(fn, key, { value: props[key], writable: true, configurable: true, enumerable: true });
-	}
-	return fn as T & P;
-}
+import { attachProps } from './utils.js';
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
 export const moduleExportName = {
 	identifier: F.buildIdentifier,
-	string: _attach(FR.coerceToString, { from: FR.coerceToString, strict: F.buildString })
+	string: attachProps(FR.coerceToString, {
+		from: FR.coerceToString,
+		strict: F.buildString,
+		double: F.buildString.double,
+		single: F.buildString.single
+	})
 } as const;
 
 export const declaration = {
-	function: _attach(FR.coerceToFunctionDeclaration, {
+	function: attachProps(FR.coerceToFunctionDeclaration, {
 		from: FR.coerceToFunctionDeclaration,
 		strict: F.buildFunctionDeclaration
 	}),
-	generatorFunction: _attach(FR.coerceToGeneratorFunctionDeclaration, {
+	generatorFunction: attachProps(FR.coerceToGeneratorFunctionDeclaration, {
 		from: FR.coerceToGeneratorFunctionDeclaration,
 		strict: F.buildGeneratorFunctionDeclaration
 	}),
-	class: _attach(FR.coerceToClassDeclaration, { from: FR.coerceToClassDeclaration, strict: F.buildClassDeclaration }),
-	lexical: _attach(FR.coerceToLexicalDeclaration, {
+	class: attachProps(FR.coerceToClassDeclaration, {
+		from: FR.coerceToClassDeclaration,
+		strict: F.buildClassDeclaration
+	}),
+	lexical: attachProps(FR.coerceToLexicalDeclaration, {
 		from: FR.coerceToLexicalDeclaration,
 		strict: F.buildLexicalDeclaration
 	}),
-	variable: _attach(FR.coerceToVariableDeclaration, {
+	variable: attachProps(FR.coerceToVariableDeclaration, {
 		from: FR.coerceToVariableDeclaration,
 		strict: F.buildVariableDeclaration
 	}),
-	abstractClass: _attach(FR.coerceToAbstractClassDeclaration, {
+	abstractClass: attachProps(FR.coerceToAbstractClassDeclaration, {
 		from: FR.coerceToAbstractClassDeclaration,
 		strict: F.buildAbstractClassDeclaration
 	}),
-	module: _attach(FR.coerceToModule, { from: FR.coerceToModule, strict: F.buildModule }),
-	internal: _attach(FR.coerceToInternalModule, { from: FR.coerceToInternalModule, strict: F.buildInternalModule }),
-	typeAlias: _attach(FR.coerceToTypeAliasDeclaration, {
+	module: attachProps(FR.coerceToModule, { from: FR.coerceToModule, strict: F.buildModule }),
+	internal: attachProps(FR.coerceToInternalModule, { from: FR.coerceToInternalModule, strict: F.buildInternalModule }),
+	typeAlias: attachProps(FR.coerceToTypeAliasDeclaration, {
 		from: FR.coerceToTypeAliasDeclaration,
 		strict: F.buildTypeAliasDeclaration
 	}),
-	enum: _attach(FR.coerceToEnumDeclaration, { from: FR.coerceToEnumDeclaration, strict: F.buildEnumDeclaration }),
-	interface: _attach(FR.coerceToInterfaceDeclaration, {
+	enum: attachProps(FR.coerceToEnumDeclaration, { from: FR.coerceToEnumDeclaration, strict: F.buildEnumDeclaration }),
+	interface: attachProps(FR.coerceToInterfaceDeclaration, {
 		from: FR.coerceToInterfaceDeclaration,
 		strict: F.buildInterfaceDeclaration
 	}),
-	import: _attach(FR.coerceToImportAlias, { from: FR.coerceToImportAlias, strict: F.buildImportAlias }),
-	ambient: _attach(FR.coerceToAmbientDeclaration, {
+	import: attachProps(FR.coerceToImportAlias, { from: FR.coerceToImportAlias, strict: F.buildImportAlias }),
+	ambient: attachProps(FR.coerceToAmbientDeclaration, {
 		from: FR.coerceToAmbientDeclaration,
 		strict: F.buildAmbientDeclaration
 	})
 } as const;
 
 export const statement = {
-	export: _attach(FR.coerceToExportStatement, { from: FR.coerceToExportStatement, strict: F.buildExportStatement }),
-	import: _attach(FR.coerceToImportStatement, { from: FR.coerceToImportStatement, strict: F.buildImportStatement }),
-	debugger: _attach(FR.coerceToDebuggerStatement, {
+	export: attachProps(FR.coerceToExportStatement, {
+		from: FR.coerceToExportStatement,
+		strict: F.buildExportStatement,
+		default: F.buildExportStatement.default,
+		fromArm: F.buildExportStatement.fromArm,
+		declArm: F.buildExportStatement.declArm,
+		typeExport: F.buildExportStatement.typeExport,
+		equalsExport: F.buildExportStatement.equalsExport,
+		namespaceExport: F.buildExportStatement.namespaceExport
+	}),
+	import: attachProps(FR.coerceToImportStatement, {
+		from: FR.coerceToImportStatement,
+		strict: F.buildImportStatement,
+		type: F.buildImportStatement.type,
+		typeof: F.buildImportStatement.typeof
+	}),
+	debugger: attachProps(FR.coerceToDebuggerStatement, {
 		from: FR.coerceToDebuggerStatement,
 		strict: F.buildDebuggerStatement
 	}),
-	expression: _attach(FR.coerceToExpressionStatement, {
+	expression: attachProps(FR.coerceToExpressionStatement, {
 		from: FR.coerceToExpressionStatement,
 		strict: F.buildExpressionStatement
 	}),
-	statementBlock: _attach(FR.coerceToStatementBlock, {
+	statementBlock: attachProps(FR.coerceToStatementBlock, {
 		from: FR.coerceToStatementBlock,
 		strict: F.buildStatementBlock
 	}),
-	if: _attach(FR.coerceToIfStatement, { from: FR.coerceToIfStatement, strict: F.buildIfStatement }),
-	switch: _attach(FR.coerceToSwitchStatement, { from: FR.coerceToSwitchStatement, strict: F.buildSwitchStatement }),
-	for: _attach(FR.coerceToForStatement, { from: FR.coerceToForStatement, strict: F.buildForStatement }),
-	forIn: _attach(FR.coerceToForInStatement, { from: FR.coerceToForInStatement, strict: F.buildForInStatement }),
-	while: _attach(FR.coerceToWhileStatement, { from: FR.coerceToWhileStatement, strict: F.buildWhileStatement }),
-	do: _attach(FR.coerceToDoStatement, { from: FR.coerceToDoStatement, strict: F.buildDoStatement }),
-	try: _attach(FR.coerceToTryStatement, { from: FR.coerceToTryStatement, strict: F.buildTryStatement }),
-	with: _attach(FR.coerceToWithStatement, { from: FR.coerceToWithStatement, strict: F.buildWithStatement }),
-	break: _attach(FR.coerceToBreakStatement, { from: FR.coerceToBreakStatement, strict: F.buildBreakStatement }),
-	continue: _attach(FR.coerceToContinueStatement, {
+	if: attachProps(FR.coerceToIfStatement, { from: FR.coerceToIfStatement, strict: F.buildIfStatement }),
+	switch: attachProps(FR.coerceToSwitchStatement, { from: FR.coerceToSwitchStatement, strict: F.buildSwitchStatement }),
+	for: attachProps(FR.coerceToForStatement, { from: FR.coerceToForStatement, strict: F.buildForStatement }),
+	forIn: attachProps(FR.coerceToForInStatement, { from: FR.coerceToForInStatement, strict: F.buildForInStatement }),
+	while: attachProps(FR.coerceToWhileStatement, { from: FR.coerceToWhileStatement, strict: F.buildWhileStatement }),
+	do: attachProps(FR.coerceToDoStatement, { from: FR.coerceToDoStatement, strict: F.buildDoStatement }),
+	try: attachProps(FR.coerceToTryStatement, { from: FR.coerceToTryStatement, strict: F.buildTryStatement }),
+	with: attachProps(FR.coerceToWithStatement, { from: FR.coerceToWithStatement, strict: F.buildWithStatement }),
+	break: attachProps(FR.coerceToBreakStatement, { from: FR.coerceToBreakStatement, strict: F.buildBreakStatement }),
+	continue: attachProps(FR.coerceToContinueStatement, {
 		from: FR.coerceToContinueStatement,
 		strict: F.buildContinueStatement
 	}),
-	return: _attach(FR.coerceToReturnStatement, { from: FR.coerceToReturnStatement, strict: F.buildReturnStatement }),
-	throw: _attach(FR.coerceToThrowStatement, { from: FR.coerceToThrowStatement, strict: F.buildThrowStatement }),
-	labeled: _attach(FR.coerceToLabeledStatement, { from: FR.coerceToLabeledStatement, strict: F.buildLabeledStatement })
+	return: attachProps(FR.coerceToReturnStatement, { from: FR.coerceToReturnStatement, strict: F.buildReturnStatement }),
+	throw: attachProps(FR.coerceToThrowStatement, { from: FR.coerceToThrowStatement, strict: F.buildThrowStatement }),
+	labeled: attachProps(FR.coerceToLabeledStatement, {
+		from: FR.coerceToLabeledStatement,
+		strict: F.buildLabeledStatement
+	})
 } as const;
 
 export const expressions = {
-	sequence: _attach(FR.coerceToSequenceExpression, {
+	sequence: attachProps(FR.coerceToSequenceExpression, {
 		from: FR.coerceToSequenceExpression,
 		strict: F.buildSequenceExpression
 	})
 } as const;
 
 export const expression = {
-	as: _attach(FR.coerceToAsExpression, { from: FR.coerceToAsExpression, strict: F.buildAsExpression }),
-	satisfies: _attach(FR.coerceToSatisfiesExpression, {
+	as: attachProps(FR.coerceToAsExpression, { from: FR.coerceToAsExpression, strict: F.buildAsExpression }),
+	satisfies: attachProps(FR.coerceToSatisfiesExpression, {
 		from: FR.coerceToSatisfiesExpression,
 		strict: F.buildSatisfiesExpression
 	}),
-	instantiation: _attach(FR.coerceToInstantiationExpression, {
+	instantiation: attachProps(FR.coerceToInstantiationExpression, {
 		from: FR.coerceToInstantiationExpression,
 		strict: F.buildInstantiationExpression
 	}),
-	internal: _attach(FR.coerceToInternalModule, { from: FR.coerceToInternalModule, strict: F.buildInternalModule }),
-	type: _attach(FR.coerceToTypeAssertion, { from: FR.coerceToTypeAssertion, strict: F.buildTypeAssertion }),
-	assignment: _attach(FR.coerceToAssignmentExpression, {
+	internal: attachProps(FR.coerceToInternalModule, { from: FR.coerceToInternalModule, strict: F.buildInternalModule }),
+	type: attachProps(FR.coerceToTypeAssertion, { from: FR.coerceToTypeAssertion, strict: F.buildTypeAssertion }),
+	assignment: attachProps(FR.coerceToAssignmentExpression, {
 		from: FR.coerceToAssignmentExpression,
 		strict: F.buildAssignmentExpression
 	}),
-	augmentedAssignment: _attach(FR.coerceToAugmentedAssignmentExpression, {
+	augmentedAssignment: attachProps(FR.coerceToAugmentedAssignmentExpression, {
 		from: FR.coerceToAugmentedAssignmentExpression,
 		strict: F.buildAugmentedAssignmentExpression
 	}),
-	await: _attach(FR.coerceToAwaitExpression, { from: FR.coerceToAwaitExpression, strict: F.buildAwaitExpression }),
-	unary: _attach(FR.coerceToUnaryExpression, { from: FR.coerceToUnaryExpression, strict: F.buildUnaryExpression }),
-	binary: _attach(FR.coerceToBinaryExpression, { from: FR.coerceToBinaryExpression, strict: F.buildBinaryExpression }),
-	ternary: _attach(FR.coerceToTernaryExpression, {
+	await: attachProps(FR.coerceToAwaitExpression, { from: FR.coerceToAwaitExpression, strict: F.buildAwaitExpression }),
+	unary: attachProps(FR.coerceToUnaryExpression, { from: FR.coerceToUnaryExpression, strict: F.buildUnaryExpression }),
+	binary: attachProps(FR.coerceToBinaryExpression, {
+		from: FR.coerceToBinaryExpression,
+		strict: F.buildBinaryExpression,
+		arm: F.buildBinaryExpression.arm,
+		ampAmp: F.buildBinaryExpression.ampAmp,
+		pipePipe: F.buildBinaryExpression.pipePipe,
+		gtGt: F.buildBinaryExpression.gtGt,
+		gtGtGt: F.buildBinaryExpression.gtGtGt,
+		ltLt: F.buildBinaryExpression.ltLt,
+		amp: F.buildBinaryExpression.amp,
+		caret: F.buildBinaryExpression.caret,
+		pipe: F.buildBinaryExpression.pipe,
+		plus: F.buildBinaryExpression.plus,
+		dash: F.buildBinaryExpression.dash,
+		star: F.buildBinaryExpression.star,
+		slash: F.buildBinaryExpression.slash,
+		percent: F.buildBinaryExpression.percent,
+		starStar: F.buildBinaryExpression.starStar,
+		lt: F.buildBinaryExpression.lt,
+		ltEq: F.buildBinaryExpression.ltEq,
+		eqEq: F.buildBinaryExpression.eqEq,
+		eqEqEq: F.buildBinaryExpression.eqEqEq,
+		bangEq: F.buildBinaryExpression.bangEq,
+		bangEqEq: F.buildBinaryExpression.bangEqEq,
+		gtEq: F.buildBinaryExpression.gtEq,
+		gt: F.buildBinaryExpression.gt,
+		qmarkQmark: F.buildBinaryExpression.qmarkQmark,
+		instanceof: F.buildBinaryExpression.instanceof
+	}),
+	ternary: attachProps(FR.coerceToTernaryExpression, {
 		from: FR.coerceToTernaryExpression,
 		strict: F.buildTernaryExpression
 	}),
-	update: _attach(FR.coerceToUpdateExpression, { from: FR.coerceToUpdateExpression, strict: F.buildUpdateExpression }),
-	new: _attach(FR.coerceToNewExpression, { from: FR.coerceToNewExpression, strict: F.buildNewExpression }),
-	yield: _attach(FR.coerceToYieldExpression, { from: FR.coerceToYieldExpression, strict: F.buildYieldExpression })
+	update: attachProps(FR.coerceToUpdateExpression, {
+		from: FR.coerceToUpdateExpression,
+		strict: F.buildUpdateExpression,
+		postfix: F.buildUpdateExpression.postfix,
+		prefix: F.buildUpdateExpression.prefix
+	}),
+	new: attachProps(FR.coerceToNewExpression, { from: FR.coerceToNewExpression, strict: F.buildNewExpression }),
+	yield: attachProps(FR.coerceToYieldExpression, { from: FR.coerceToYieldExpression, strict: F.buildYieldExpression })
 } as const;
 
 export const primaryExpression = {
-	subscript: _attach(FR.coerceToSubscriptExpression, {
+	subscript: attachProps(FR.coerceToSubscriptExpression, {
 		from: FR.coerceToSubscriptExpression,
 		strict: F.buildSubscriptExpression
 	}),
-	member: _attach(FR.coerceToMemberExpression, { from: FR.coerceToMemberExpression, strict: F.buildMemberExpression }),
-	parenthesized: _attach(FR.coerceToParenthesizedExpression, {
+	member: attachProps(FR.coerceToMemberExpression, {
+		from: FR.coerceToMemberExpression,
+		strict: F.buildMemberExpression
+	}),
+	parenthesized: attachProps(FR.coerceToParenthesizedExpression, {
 		from: FR.coerceToParenthesizedExpression,
 		strict: F.buildParenthesizedExpression
 	}),
@@ -155,27 +210,38 @@ export const primaryExpression = {
 	this: F.buildThis,
 	super: F.buildSuper,
 	number: F.buildNumber,
-	string: _attach(FR.coerceToString, { from: FR.coerceToString, strict: F.buildString }),
-	template: _attach(FR.coerceToTemplateString, { from: FR.coerceToTemplateString, strict: F.buildTemplateString }),
-	regex: _attach(FR.coerceToRegex, { from: FR.coerceToRegex, strict: F.buildRegex }),
+	string: attachProps(FR.coerceToString, {
+		from: FR.coerceToString,
+		strict: F.buildString,
+		double: F.buildString.double,
+		single: F.buildString.single
+	}),
+	template: attachProps(FR.coerceToTemplateString, { from: FR.coerceToTemplateString, strict: F.buildTemplateString }),
+	regex: attachProps(FR.coerceToRegex, { from: FR.coerceToRegex, strict: F.buildRegex }),
 	true: F.buildTrue,
 	false: F.buildFalse,
 	null: F.buildNull,
-	object: _attach(FR.coerceToObject, { from: FR.coerceToObject, strict: F.buildObject }),
-	array: _attach(FR.coerceToArray, { from: FR.coerceToArray, strict: F.buildArray }),
-	function: _attach(FR.coerceToFunctionExpression, {
+	object: attachProps(FR.coerceToObject, { from: FR.coerceToObject, strict: F.buildObject }),
+	array: attachProps(FR.coerceToArray, { from: FR.coerceToArray, strict: F.buildArray }),
+	function: attachProps(FR.coerceToFunctionExpression, {
 		from: FR.coerceToFunctionExpression,
 		strict: F.buildFunctionExpression
 	}),
-	arrow: _attach(FR.coerceToArrowFunction, { from: FR.coerceToArrowFunction, strict: F.buildArrowFunction }),
-	generator: _attach(FR.coerceToGeneratorFunction, {
+	arrow: attachProps(FR.coerceToArrowFunction, { from: FR.coerceToArrowFunction, strict: F.buildArrowFunction }),
+	generator: attachProps(FR.coerceToGeneratorFunction, {
 		from: FR.coerceToGeneratorFunction,
 		strict: F.buildGeneratorFunction
 	}),
-	class: _attach(FR.coerceToClass, { from: FR.coerceToClass, strict: F.buildClass }),
-	meta: _attach(FR.coerceToMetaProperty, { from: FR.coerceToMetaProperty, strict: F.buildMetaProperty }),
-	call: _attach(FR.coerceToCallExpression, { from: FR.coerceToCallExpression, strict: F.buildCallExpression }),
-	nonNull: _attach(FR.coerceToNonNullExpression, {
+	class: attachProps(FR.coerceToClass, { from: FR.coerceToClass, strict: F.buildClass, body: F.buildClass.body }),
+	meta: attachProps(FR.coerceToMetaProperty, { from: FR.coerceToMetaProperty, strict: F.buildMetaProperty }),
+	call: attachProps(FR.coerceToCallExpression, {
+		from: FR.coerceToCallExpression,
+		strict: F.buildCallExpression,
+		call: F.buildCallExpression.call,
+		templateCall: F.buildCallExpression.templateCall,
+		member: F.buildCallExpression.member
+	}),
+	nonNull: attachProps(FR.coerceToNonNullExpression, {
 		from: FR.coerceToNonNullExpression,
 		strict: F.buildNonNullExpression
 	})
@@ -191,7 +257,10 @@ export const jsxIdentifier = {
 
 export const jsxElementName = {
 	identifier: F.buildIdentifier,
-	nested: _attach(FR.coerceToNestedIdentifier, { from: FR.coerceToNestedIdentifier, strict: F.buildNestedIdentifier })
+	nested: attachProps(FR.coerceToNestedIdentifier, {
+		from: FR.coerceToNestedIdentifier,
+		strict: F.buildNestedIdentifier
+	})
 } as const;
 
 export const jsxAttributeName = {
@@ -199,52 +268,58 @@ export const jsxAttributeName = {
 } as const;
 
 export const formalParameter = {
-	required: _attach(FR.coerceToRequiredParameter, {
+	required: attachProps(FR.coerceToRequiredParameter, {
 		from: FR.coerceToRequiredParameter,
 		strict: F.buildRequiredParameter
 	}),
-	optional: _attach(FR.coerceToOptionalParameter, {
+	optional: attachProps(FR.coerceToOptionalParameter, {
 		from: FR.coerceToOptionalParameter,
 		strict: F.buildOptionalParameter
 	})
 } as const;
 
 export const lhsExpression = {
-	member: _attach(FR.coerceToMemberExpression, { from: FR.coerceToMemberExpression, strict: F.buildMemberExpression }),
-	subscript: _attach(FR.coerceToSubscriptExpression, {
+	member: attachProps(FR.coerceToMemberExpression, {
+		from: FR.coerceToMemberExpression,
+		strict: F.buildMemberExpression
+	}),
+	subscript: attachProps(FR.coerceToSubscriptExpression, {
 		from: FR.coerceToSubscriptExpression,
 		strict: F.buildSubscriptExpression
 	}),
 	undefined: F.buildUndefined,
 	identifier: F.buildIdentifier,
-	object: _attach(FR.coerceToObjectPattern, { from: FR.coerceToObjectPattern, strict: F.buildObjectPattern }),
-	array: _attach(FR.coerceToArrayPattern, { from: FR.coerceToArrayPattern, strict: F.buildArrayPattern }),
-	nonNull: _attach(FR.coerceToNonNullExpression, {
+	object: attachProps(FR.coerceToObjectPattern, { from: FR.coerceToObjectPattern, strict: F.buildObjectPattern }),
+	array: attachProps(FR.coerceToArrayPattern, { from: FR.coerceToArrayPattern, strict: F.buildArrayPattern }),
+	nonNull: attachProps(FR.coerceToNonNullExpression, {
 		from: FR.coerceToNonNullExpression,
 		strict: F.buildNonNullExpression
 	})
 } as const;
 
 export const augmentedAssignmentLhs = {
-	member: _attach(FR.coerceToMemberExpression, { from: FR.coerceToMemberExpression, strict: F.buildMemberExpression }),
-	subscript: _attach(FR.coerceToSubscriptExpression, {
+	member: attachProps(FR.coerceToMemberExpression, {
+		from: FR.coerceToMemberExpression,
+		strict: F.buildMemberExpression
+	}),
+	subscript: attachProps(FR.coerceToSubscriptExpression, {
 		from: FR.coerceToSubscriptExpression,
 		strict: F.buildSubscriptExpression
 	}),
 	identifier: F.buildIdentifier,
-	parenthesized: _attach(FR.coerceToParenthesizedExpression, {
+	parenthesized: attachProps(FR.coerceToParenthesizedExpression, {
 		from: FR.coerceToParenthesizedExpression,
 		strict: F.buildParenthesizedExpression
 	}),
-	nonNull: _attach(FR.coerceToNonNullExpression, {
+	nonNull: attachProps(FR.coerceToNonNullExpression, {
 		from: FR.coerceToNonNullExpression,
 		strict: F.buildNonNullExpression
 	})
 } as const;
 
 export const destructuringPattern = {
-	object: _attach(FR.coerceToObjectPattern, { from: FR.coerceToObjectPattern, strict: F.buildObjectPattern }),
-	array: _attach(FR.coerceToArrayPattern, { from: FR.coerceToArrayPattern, strict: F.buildArrayPattern })
+	object: attachProps(FR.coerceToObjectPattern, { from: FR.coerceToObjectPattern, strict: F.buildObjectPattern }),
+	array: attachProps(FR.coerceToArrayPattern, { from: FR.coerceToArrayPattern, strict: F.buildArrayPattern })
 } as const;
 
 export const identifier = {
@@ -253,28 +328,36 @@ export const identifier = {
 } as const;
 
 export const pattern = {
-	member: _attach(FR.coerceToMemberExpression, { from: FR.coerceToMemberExpression, strict: F.buildMemberExpression }),
-	subscript: _attach(FR.coerceToSubscriptExpression, {
+	member: attachProps(FR.coerceToMemberExpression, {
+		from: FR.coerceToMemberExpression,
+		strict: F.buildMemberExpression
+	}),
+	subscript: attachProps(FR.coerceToSubscriptExpression, {
 		from: FR.coerceToSubscriptExpression,
 		strict: F.buildSubscriptExpression
 	}),
 	undefined: F.buildUndefined,
 	identifier: F.buildIdentifier,
-	object: _attach(FR.coerceToObjectPattern, { from: FR.coerceToObjectPattern, strict: F.buildObjectPattern }),
-	array: _attach(FR.coerceToArrayPattern, { from: FR.coerceToArrayPattern, strict: F.buildArrayPattern }),
-	nonNull: _attach(FR.coerceToNonNullExpression, {
+	object: attachProps(FR.coerceToObjectPattern, { from: FR.coerceToObjectPattern, strict: F.buildObjectPattern }),
+	array: attachProps(FR.coerceToArrayPattern, { from: FR.coerceToArrayPattern, strict: F.buildArrayPattern }),
+	nonNull: attachProps(FR.coerceToNonNullExpression, {
 		from: FR.coerceToNonNullExpression,
 		strict: F.buildNonNullExpression
 	}),
-	rest: _attach(FR.coerceToRestPattern, { from: FR.coerceToRestPattern, strict: F.buildRestPattern })
+	rest: attachProps(FR.coerceToRestPattern, { from: FR.coerceToRestPattern, strict: F.buildRestPattern })
 } as const;
 
 export const propertyName = {
 	identifier: F.buildIdentifier,
 	privateProperty: F.buildPrivatePropertyIdentifier,
-	string: _attach(FR.coerceToString, { from: FR.coerceToString, strict: F.buildString }),
+	string: attachProps(FR.coerceToString, {
+		from: FR.coerceToString,
+		strict: F.buildString,
+		double: F.buildString.double,
+		single: F.buildString.single
+	}),
 	number: F.buildNumber,
-	computedProperty: _attach(FR.coerceToComputedPropertyName, {
+	computedProperty: attachProps(FR.coerceToComputedPropertyName, {
 		from: FR.coerceToComputedPropertyName,
 		strict: F.buildComputedPropertyName
 	})
@@ -301,59 +384,59 @@ export const importIdentifier = {
 } as const;
 
 export const type = {
-	function: _attach(FR.coerceToFunctionType, { from: FR.coerceToFunctionType, strict: F.buildFunctionType }),
-	readonly: _attach(FR.coerceToReadonlyType, { from: FR.coerceToReadonlyType, strict: F.buildReadonlyType }),
-	constructor: _attach(FR.coerceToConstructorType, {
+	function: attachProps(FR.coerceToFunctionType, { from: FR.coerceToFunctionType, strict: F.buildFunctionType }),
+	readonly: attachProps(FR.coerceToReadonlyType, { from: FR.coerceToReadonlyType, strict: F.buildReadonlyType }),
+	constructor: attachProps(FR.coerceToConstructorType, {
 		from: FR.coerceToConstructorType,
 		strict: F.buildConstructorType
 	}),
-	infer: _attach(FR.coerceToInferType, { from: FR.coerceToInferType, strict: F.buildInferType })
+	infer: attachProps(FR.coerceToInferType, { from: FR.coerceToInferType, strict: F.buildInferType })
 } as const;
 
 export const tupleTypeMember = {
-	tuple: _attach(FR.coerceToTupleParameter, { from: FR.coerceToTupleParameter, strict: F.buildTupleParameter }),
-	optionalTuple: _attach(FR.coerceToOptionalTupleParameter, {
+	tuple: attachProps(FR.coerceToTupleParameter, { from: FR.coerceToTupleParameter, strict: F.buildTupleParameter }),
+	optionalTuple: attachProps(FR.coerceToOptionalTupleParameter, {
 		from: FR.coerceToOptionalTupleParameter,
 		strict: F.buildOptionalTupleParameter
 	}),
-	optional: _attach(FR.coerceToOptionalType, { from: FR.coerceToOptionalType, strict: F.buildOptionalType }),
-	rest: _attach(FR.coerceToRestType, { from: FR.coerceToRestType, strict: F.buildRestType })
+	optional: attachProps(FR.coerceToOptionalType, { from: FR.coerceToOptionalType, strict: F.buildOptionalType }),
+	rest: attachProps(FR.coerceToRestType, { from: FR.coerceToRestType, strict: F.buildRestType })
 } as const;
 
 export const primaryType = {
-	parenthesized: _attach(FR.coerceToParenthesizedType, {
+	parenthesized: attachProps(FR.coerceToParenthesizedType, {
 		from: FR.coerceToParenthesizedType,
 		strict: F.buildParenthesizedType
 	}),
 	predefined: F.buildPredefinedType,
 	identifier: F.buildIdentifier,
-	nestedType: _attach(FR.coerceToNestedTypeIdentifier, {
+	nestedType: attachProps(FR.coerceToNestedTypeIdentifier, {
 		from: FR.coerceToNestedTypeIdentifier,
 		strict: F.buildNestedTypeIdentifier
 	}),
-	generic: _attach(FR.coerceToGenericType, { from: FR.coerceToGenericType, strict: F.buildGenericType }),
-	object: _attach(FR.coerceToObjectType, { from: FR.coerceToObjectType, strict: F.buildObjectType }),
-	array: _attach(FR.coerceToArrayType, { from: FR.coerceToArrayType, strict: F.buildArrayType }),
-	tuple: _attach(FR.coerceToTupleType, { from: FR.coerceToTupleType, strict: F.buildTupleType }),
-	flowMaybe: _attach(FR.coerceToFlowMaybeType, { from: FR.coerceToFlowMaybeType, strict: F.buildFlowMaybeType }),
-	type: _attach(FR.coerceToTypeQuery, { from: FR.coerceToTypeQuery, strict: F.buildTypeQuery }),
-	indexType: _attach(FR.coerceToIndexTypeQuery, { from: FR.coerceToIndexTypeQuery, strict: F.buildIndexTypeQuery }),
+	generic: attachProps(FR.coerceToGenericType, { from: FR.coerceToGenericType, strict: F.buildGenericType }),
+	object: attachProps(FR.coerceToObjectType, { from: FR.coerceToObjectType, strict: F.buildObjectType }),
+	array: attachProps(FR.coerceToArrayType, { from: FR.coerceToArrayType, strict: F.buildArrayType }),
+	tuple: attachProps(FR.coerceToTupleType, { from: FR.coerceToTupleType, strict: F.buildTupleType }),
+	flowMaybe: attachProps(FR.coerceToFlowMaybeType, { from: FR.coerceToFlowMaybeType, strict: F.buildFlowMaybeType }),
+	type: attachProps(FR.coerceToTypeQuery, { from: FR.coerceToTypeQuery, strict: F.buildTypeQuery }),
+	indexType: attachProps(FR.coerceToIndexTypeQuery, { from: FR.coerceToIndexTypeQuery, strict: F.buildIndexTypeQuery }),
 	this: F.buildThis,
-	literal: _attach(FR.coerceToLiteralType, { from: FR.coerceToLiteralType, strict: F.buildLiteralType }),
-	lookup: _attach(FR.coerceToLookupType, { from: FR.coerceToLookupType, strict: F.buildLookupType }),
-	conditional: _attach(FR.coerceToConditionalType, {
+	literal: attachProps(FR.coerceToLiteralType, { from: FR.coerceToLiteralType, strict: F.buildLiteralType }),
+	lookup: attachProps(FR.coerceToLookupType, { from: FR.coerceToLookupType, strict: F.buildLookupType }),
+	conditional: attachProps(FR.coerceToConditionalType, {
 		from: FR.coerceToConditionalType,
 		strict: F.buildConditionalType
 	}),
-	templateLiteral: _attach(FR.coerceToTemplateLiteralType, {
+	templateLiteral: attachProps(FR.coerceToTemplateLiteralType, {
 		from: FR.coerceToTemplateLiteralType,
 		strict: F.buildTemplateLiteralType
 	}),
-	intersection: _attach(FR.coerceToIntersectionType, {
+	intersection: attachProps(FR.coerceToIntersectionType, {
 		from: FR.coerceToIntersectionType,
 		strict: F.buildIntersectionType
 	}),
-	union: _attach(FR.coerceToUnionType, { from: FR.coerceToUnionType, strict: F.buildUnionType })
+	union: attachProps(FR.coerceToUnionType, { from: FR.coerceToUnionType, strict: F.buildUnionType })
 } as const;
 
 // Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
@@ -398,433 +481,555 @@ export const from = {
 
 export const ir = {
 	// Node factories
-	program: _attach(FR.coerceToProgram, { from: FR.coerceToProgram, strict: F.buildProgram }),
-	exportStatement: _attach(FR.coerceToExportStatement, {
+	program: attachProps(FR.coerceToProgram, { from: FR.coerceToProgram, strict: F.buildProgram }),
+	exportStatement: attachProps(FR.coerceToExportStatement, {
 		from: FR.coerceToExportStatement,
-		strict: F.buildExportStatement
+		strict: F.buildExportStatement,
+		default: F.buildExportStatement.default,
+		fromArm: F.buildExportStatement.fromArm,
+		declArm: F.buildExportStatement.declArm,
+		typeExport: F.buildExportStatement.typeExport,
+		equalsExport: F.buildExportStatement.equalsExport,
+		namespaceExport: F.buildExportStatement.namespaceExport
 	}),
-	namespaceExport: _attach(FR.coerceToNamespaceExport, {
+	namespaceExport: attachProps(FR.coerceToNamespaceExport, {
 		from: FR.coerceToNamespaceExport,
 		strict: F.buildNamespaceExport
 	}),
-	exportClause: _attach(FR.coerceToExportClause, { from: FR.coerceToExportClause, strict: F.buildExportClause }),
-	exportSpecifier: _attach(FR.coerceToExportSpecifier, {
+	exportClause: attachProps(FR.coerceToExportClause, { from: FR.coerceToExportClause, strict: F.buildExportClause }),
+	exportSpecifier: attachProps(FR.coerceToExportSpecifier, {
 		from: FR.coerceToExportSpecifier,
-		strict: F.buildExportSpecifier
+		strict: F.buildExportSpecifier,
+		type: F.buildExportSpecifier.type,
+		typeof: F.buildExportSpecifier.typeof
 	}),
-	importStatement: _attach(FR.coerceToImportStatement, {
+	importStatement: attachProps(FR.coerceToImportStatement, {
 		from: FR.coerceToImportStatement,
-		strict: F.buildImportStatement
+		strict: F.buildImportStatement,
+		type: F.buildImportStatement.type,
+		typeof: F.buildImportStatement.typeof
 	}),
-	importClause: _attach(FR.coerceToImportClause, { from: FR.coerceToImportClause, strict: F.buildImportClause }),
-	namespaceImport: _attach(FR.coerceToNamespaceImport, {
+	importClause: attachProps(FR.coerceToImportClause, {
+		from: FR.coerceToImportClause,
+		strict: F.buildImportClause,
+		namespaceImport: F.buildImportClause.namespaceImport,
+		namedImports: F.buildImportClause.namedImports,
+		defaultImport: F.buildImportClause.defaultImport
+	}),
+	namespaceImport: attachProps(FR.coerceToNamespaceImport, {
 		from: FR.coerceToNamespaceImport,
 		strict: F.buildNamespaceImport
 	}),
-	namedImports: _attach(FR.coerceToNamedImports, { from: FR.coerceToNamedImports, strict: F.buildNamedImports }),
-	importSpecifier: _attach(FR.coerceToImportSpecifier, {
+	namedImports: attachProps(FR.coerceToNamedImports, { from: FR.coerceToNamedImports, strict: F.buildNamedImports }),
+	importSpecifier: attachProps(FR.coerceToImportSpecifier, {
 		from: FR.coerceToImportSpecifier,
-		strict: F.buildImportSpecifier
+		strict: F.buildImportSpecifier,
+		type: F.buildImportSpecifier.type,
+		typeof: F.buildImportSpecifier.typeof
 	}),
-	importAttribute: _attach(FR.coerceToImportAttribute, {
+	importAttribute: attachProps(FR.coerceToImportAttribute, {
 		from: FR.coerceToImportAttribute,
-		strict: F.buildImportAttribute
+		strict: F.buildImportAttribute,
+		with: F.buildImportAttribute.with,
+		assert: F.buildImportAttribute.assert
 	}),
-	expressionStatement: _attach(FR.coerceToExpressionStatement, {
+	expressionStatement: attachProps(FR.coerceToExpressionStatement, {
 		from: FR.coerceToExpressionStatement,
 		strict: F.buildExpressionStatement
 	}),
-	variableDeclaration: _attach(FR.coerceToVariableDeclaration, {
+	variableDeclaration: attachProps(FR.coerceToVariableDeclaration, {
 		from: FR.coerceToVariableDeclaration,
 		strict: F.buildVariableDeclaration
 	}),
-	lexicalDeclaration: _attach(FR.coerceToLexicalDeclaration, {
+	lexicalDeclaration: attachProps(FR.coerceToLexicalDeclaration, {
 		from: FR.coerceToLexicalDeclaration,
 		strict: F.buildLexicalDeclaration
 	}),
-	variableDeclarator: _attach(FR.coerceToVariableDeclarator, {
+	variableDeclarator: attachProps(FR.coerceToVariableDeclarator, {
 		from: FR.coerceToVariableDeclarator,
-		strict: F.buildVariableDeclarator
+		strict: F.buildVariableDeclarator,
+		arm1: F.buildVariableDeclarator.arm1,
+		arm2: F.buildVariableDeclarator.arm2
 	}),
-	statementBlock: _attach(FR.coerceToStatementBlock, {
+	statementBlock: attachProps(FR.coerceToStatementBlock, {
 		from: FR.coerceToStatementBlock,
 		strict: F.buildStatementBlock
 	}),
-	elseClause: _attach(FR.coerceToElseClause, { from: FR.coerceToElseClause, strict: F.buildElseClause }),
-	ifStatement: _attach(FR.coerceToIfStatement, { from: FR.coerceToIfStatement, strict: F.buildIfStatement }),
-	switchStatement: _attach(FR.coerceToSwitchStatement, {
+	elseClause: attachProps(FR.coerceToElseClause, { from: FR.coerceToElseClause, strict: F.buildElseClause }),
+	ifStatement: attachProps(FR.coerceToIfStatement, { from: FR.coerceToIfStatement, strict: F.buildIfStatement }),
+	switchStatement: attachProps(FR.coerceToSwitchStatement, {
 		from: FR.coerceToSwitchStatement,
 		strict: F.buildSwitchStatement
 	}),
-	forStatement: _attach(FR.coerceToForStatement, { from: FR.coerceToForStatement, strict: F.buildForStatement }),
-	forInStatement: _attach(FR.coerceToForInStatement, {
+	forStatement: attachProps(FR.coerceToForStatement, { from: FR.coerceToForStatement, strict: F.buildForStatement }),
+	forInStatement: attachProps(FR.coerceToForInStatement, {
 		from: FR.coerceToForInStatement,
 		strict: F.buildForInStatement
 	}),
-	whileStatement: _attach(FR.coerceToWhileStatement, {
+	whileStatement: attachProps(FR.coerceToWhileStatement, {
 		from: FR.coerceToWhileStatement,
 		strict: F.buildWhileStatement
 	}),
-	doStatement: _attach(FR.coerceToDoStatement, { from: FR.coerceToDoStatement, strict: F.buildDoStatement }),
-	tryStatement: _attach(FR.coerceToTryStatement, { from: FR.coerceToTryStatement, strict: F.buildTryStatement }),
-	withStatement: _attach(FR.coerceToWithStatement, { from: FR.coerceToWithStatement, strict: F.buildWithStatement }),
-	breakStatement: _attach(FR.coerceToBreakStatement, {
+	doStatement: attachProps(FR.coerceToDoStatement, { from: FR.coerceToDoStatement, strict: F.buildDoStatement }),
+	tryStatement: attachProps(FR.coerceToTryStatement, { from: FR.coerceToTryStatement, strict: F.buildTryStatement }),
+	withStatement: attachProps(FR.coerceToWithStatement, {
+		from: FR.coerceToWithStatement,
+		strict: F.buildWithStatement
+	}),
+	breakStatement: attachProps(FR.coerceToBreakStatement, {
 		from: FR.coerceToBreakStatement,
 		strict: F.buildBreakStatement
 	}),
-	continueStatement: _attach(FR.coerceToContinueStatement, {
+	continueStatement: attachProps(FR.coerceToContinueStatement, {
 		from: FR.coerceToContinueStatement,
 		strict: F.buildContinueStatement
 	}),
-	debuggerStatement: _attach(FR.coerceToDebuggerStatement, {
+	debuggerStatement: attachProps(FR.coerceToDebuggerStatement, {
 		from: FR.coerceToDebuggerStatement,
 		strict: F.buildDebuggerStatement
 	}),
-	returnStatement: _attach(FR.coerceToReturnStatement, {
+	returnStatement: attachProps(FR.coerceToReturnStatement, {
 		from: FR.coerceToReturnStatement,
 		strict: F.buildReturnStatement
 	}),
-	throwStatement: _attach(FR.coerceToThrowStatement, {
+	throwStatement: attachProps(FR.coerceToThrowStatement, {
 		from: FR.coerceToThrowStatement,
 		strict: F.buildThrowStatement
 	}),
-	labeledStatement: _attach(FR.coerceToLabeledStatement, {
+	labeledStatement: attachProps(FR.coerceToLabeledStatement, {
 		from: FR.coerceToLabeledStatement,
 		strict: F.buildLabeledStatement
 	}),
-	switchBody: _attach(FR.coerceToSwitchBody, { from: FR.coerceToSwitchBody, strict: F.buildSwitchBody }),
-	switchCase: _attach(FR.coerceToSwitchCase, { from: FR.coerceToSwitchCase, strict: F.buildSwitchCase }),
-	switchDefault: _attach(FR.coerceToSwitchDefault, { from: FR.coerceToSwitchDefault, strict: F.buildSwitchDefault }),
-	catchClause: _attach(FR.coerceToCatchClause, { from: FR.coerceToCatchClause, strict: F.buildCatchClause }),
-	finallyClause: _attach(FR.coerceToFinallyClause, { from: FR.coerceToFinallyClause, strict: F.buildFinallyClause }),
-	parenthesizedExpression: _attach(FR.coerceToParenthesizedExpression, {
+	switchBody: attachProps(FR.coerceToSwitchBody, { from: FR.coerceToSwitchBody, strict: F.buildSwitchBody }),
+	switchCase: attachProps(FR.coerceToSwitchCase, { from: FR.coerceToSwitchCase, strict: F.buildSwitchCase }),
+	switchDefault: attachProps(FR.coerceToSwitchDefault, {
+		from: FR.coerceToSwitchDefault,
+		strict: F.buildSwitchDefault
+	}),
+	catchClause: attachProps(FR.coerceToCatchClause, { from: FR.coerceToCatchClause, strict: F.buildCatchClause }),
+	finallyClause: attachProps(FR.coerceToFinallyClause, {
+		from: FR.coerceToFinallyClause,
+		strict: F.buildFinallyClause
+	}),
+	parenthesizedExpression: attachProps(FR.coerceToParenthesizedExpression, {
 		from: FR.coerceToParenthesizedExpression,
 		strict: F.buildParenthesizedExpression
 	}),
-	yieldExpression: _attach(FR.coerceToYieldExpression, {
+	yieldExpression: attachProps(FR.coerceToYieldExpression, {
 		from: FR.coerceToYieldExpression,
 		strict: F.buildYieldExpression
 	}),
-	object: _attach(FR.coerceToObject, { from: FR.coerceToObject, strict: F.buildObject }),
-	objectPattern: _attach(FR.coerceToObjectPattern, { from: FR.coerceToObjectPattern, strict: F.buildObjectPattern }),
-	assignmentPattern: _attach(FR.coerceToAssignmentPattern, {
+	object: attachProps(FR.coerceToObject, { from: FR.coerceToObject, strict: F.buildObject }),
+	objectPattern: attachProps(FR.coerceToObjectPattern, {
+		from: FR.coerceToObjectPattern,
+		strict: F.buildObjectPattern
+	}),
+	assignmentPattern: attachProps(FR.coerceToAssignmentPattern, {
 		from: FR.coerceToAssignmentPattern,
 		strict: F.buildAssignmentPattern
 	}),
-	objectAssignmentPattern: _attach(FR.coerceToObjectAssignmentPattern, {
+	objectAssignmentPattern: attachProps(FR.coerceToObjectAssignmentPattern, {
 		from: FR.coerceToObjectAssignmentPattern,
 		strict: F.buildObjectAssignmentPattern
 	}),
-	array: _attach(FR.coerceToArray, { from: FR.coerceToArray, strict: F.buildArray }),
-	arrayPattern: _attach(FR.coerceToArrayPattern, { from: FR.coerceToArrayPattern, strict: F.buildArrayPattern }),
-	nestedIdentifier: _attach(FR.coerceToNestedIdentifier, {
+	array: attachProps(FR.coerceToArray, { from: FR.coerceToArray, strict: F.buildArray }),
+	arrayPattern: attachProps(FR.coerceToArrayPattern, { from: FR.coerceToArrayPattern, strict: F.buildArrayPattern }),
+	nestedIdentifier: attachProps(FR.coerceToNestedIdentifier, {
 		from: FR.coerceToNestedIdentifier,
 		strict: F.buildNestedIdentifier
 	}),
-	class: _attach(FR.coerceToClass, { from: FR.coerceToClass, strict: F.buildClass }),
-	classDeclaration: _attach(FR.coerceToClassDeclaration, {
+	class: attachProps(FR.coerceToClass, { from: FR.coerceToClass, strict: F.buildClass, body: F.buildClass.body }),
+	classDeclaration: attachProps(FR.coerceToClassDeclaration, {
 		from: FR.coerceToClassDeclaration,
 		strict: F.buildClassDeclaration
 	}),
-	classHeritage: _attach(FR.coerceToClassHeritage, { from: FR.coerceToClassHeritage, strict: F.buildClassHeritage }),
-	functionExpression: _attach(FR.coerceToFunctionExpression, {
+	classHeritage: attachProps(FR.coerceToClassHeritage, {
+		from: FR.coerceToClassHeritage,
+		strict: F.buildClassHeritage,
+		extendsClause: F.buildClassHeritage.extendsClause,
+		implementsClause: F.buildClassHeritage.implementsClause
+	}),
+	functionExpression: attachProps(FR.coerceToFunctionExpression, {
 		from: FR.coerceToFunctionExpression,
 		strict: F.buildFunctionExpression
 	}),
-	functionDeclaration: _attach(FR.coerceToFunctionDeclaration, {
+	functionDeclaration: attachProps(FR.coerceToFunctionDeclaration, {
 		from: FR.coerceToFunctionDeclaration,
 		strict: F.buildFunctionDeclaration
 	}),
-	generatorFunction: _attach(FR.coerceToGeneratorFunction, {
+	generatorFunction: attachProps(FR.coerceToGeneratorFunction, {
 		from: FR.coerceToGeneratorFunction,
 		strict: F.buildGeneratorFunction
 	}),
-	generatorFunctionDeclaration: _attach(FR.coerceToGeneratorFunctionDeclaration, {
+	generatorFunctionDeclaration: attachProps(FR.coerceToGeneratorFunctionDeclaration, {
 		from: FR.coerceToGeneratorFunctionDeclaration,
 		strict: F.buildGeneratorFunctionDeclaration
 	}),
-	arrowFunction: _attach(FR.coerceToArrowFunction, { from: FR.coerceToArrowFunction, strict: F.buildArrowFunction }),
-	callExpression: _attach(FR.coerceToCallExpression, {
-		from: FR.coerceToCallExpression,
-		strict: F.buildCallExpression
+	arrowFunction: attachProps(FR.coerceToArrowFunction, {
+		from: FR.coerceToArrowFunction,
+		strict: F.buildArrowFunction
 	}),
-	newExpression: _attach(FR.coerceToNewExpression, { from: FR.coerceToNewExpression, strict: F.buildNewExpression }),
-	awaitExpression: _attach(FR.coerceToAwaitExpression, {
+	callExpression: attachProps(FR.coerceToCallExpression, {
+		from: FR.coerceToCallExpression,
+		strict: F.buildCallExpression,
+		call: F.buildCallExpression.call,
+		templateCall: F.buildCallExpression.templateCall,
+		member: F.buildCallExpression.member
+	}),
+	newExpression: attachProps(FR.coerceToNewExpression, {
+		from: FR.coerceToNewExpression,
+		strict: F.buildNewExpression
+	}),
+	awaitExpression: attachProps(FR.coerceToAwaitExpression, {
 		from: FR.coerceToAwaitExpression,
 		strict: F.buildAwaitExpression
 	}),
-	memberExpression: _attach(FR.coerceToMemberExpression, {
+	memberExpression: attachProps(FR.coerceToMemberExpression, {
 		from: FR.coerceToMemberExpression,
 		strict: F.buildMemberExpression
 	}),
-	subscriptExpression: _attach(FR.coerceToSubscriptExpression, {
+	subscriptExpression: attachProps(FR.coerceToSubscriptExpression, {
 		from: FR.coerceToSubscriptExpression,
 		strict: F.buildSubscriptExpression
 	}),
-	assignmentExpression: _attach(FR.coerceToAssignmentExpression, {
+	assignmentExpression: attachProps(FR.coerceToAssignmentExpression, {
 		from: FR.coerceToAssignmentExpression,
 		strict: F.buildAssignmentExpression
 	}),
-	augmentedAssignmentExpression: _attach(FR.coerceToAugmentedAssignmentExpression, {
+	augmentedAssignmentExpression: attachProps(FR.coerceToAugmentedAssignmentExpression, {
 		from: FR.coerceToAugmentedAssignmentExpression,
 		strict: F.buildAugmentedAssignmentExpression
 	}),
-	spreadElement: _attach(FR.coerceToSpreadElement, { from: FR.coerceToSpreadElement, strict: F.buildSpreadElement }),
-	ternaryExpression: _attach(FR.coerceToTernaryExpression, {
+	spreadElement: attachProps(FR.coerceToSpreadElement, {
+		from: FR.coerceToSpreadElement,
+		strict: F.buildSpreadElement
+	}),
+	ternaryExpression: attachProps(FR.coerceToTernaryExpression, {
 		from: FR.coerceToTernaryExpression,
 		strict: F.buildTernaryExpression
 	}),
-	binaryExpression: _attach(FR.coerceToBinaryExpression, {
+	binaryExpression: attachProps(FR.coerceToBinaryExpression, {
 		from: FR.coerceToBinaryExpression,
-		strict: F.buildBinaryExpression
+		strict: F.buildBinaryExpression,
+		arm: F.buildBinaryExpression.arm,
+		ampAmp: F.buildBinaryExpression.ampAmp,
+		pipePipe: F.buildBinaryExpression.pipePipe,
+		gtGt: F.buildBinaryExpression.gtGt,
+		gtGtGt: F.buildBinaryExpression.gtGtGt,
+		ltLt: F.buildBinaryExpression.ltLt,
+		amp: F.buildBinaryExpression.amp,
+		caret: F.buildBinaryExpression.caret,
+		pipe: F.buildBinaryExpression.pipe,
+		plus: F.buildBinaryExpression.plus,
+		dash: F.buildBinaryExpression.dash,
+		star: F.buildBinaryExpression.star,
+		slash: F.buildBinaryExpression.slash,
+		percent: F.buildBinaryExpression.percent,
+		starStar: F.buildBinaryExpression.starStar,
+		lt: F.buildBinaryExpression.lt,
+		ltEq: F.buildBinaryExpression.ltEq,
+		eqEq: F.buildBinaryExpression.eqEq,
+		eqEqEq: F.buildBinaryExpression.eqEqEq,
+		bangEq: F.buildBinaryExpression.bangEq,
+		bangEqEq: F.buildBinaryExpression.bangEqEq,
+		gtEq: F.buildBinaryExpression.gtEq,
+		gt: F.buildBinaryExpression.gt,
+		qmarkQmark: F.buildBinaryExpression.qmarkQmark,
+		instanceof: F.buildBinaryExpression.instanceof
 	}),
-	unaryExpression: _attach(FR.coerceToUnaryExpression, {
+	unaryExpression: attachProps(FR.coerceToUnaryExpression, {
 		from: FR.coerceToUnaryExpression,
 		strict: F.buildUnaryExpression
 	}),
-	updateExpression: _attach(FR.coerceToUpdateExpression, {
+	updateExpression: attachProps(FR.coerceToUpdateExpression, {
 		from: FR.coerceToUpdateExpression,
-		strict: F.buildUpdateExpression
+		strict: F.buildUpdateExpression,
+		postfix: F.buildUpdateExpression.postfix,
+		prefix: F.buildUpdateExpression.prefix
 	}),
-	sequenceExpression: _attach(FR.coerceToSequenceExpression, {
+	sequenceExpression: attachProps(FR.coerceToSequenceExpression, {
 		from: FR.coerceToSequenceExpression,
 		strict: F.buildSequenceExpression
 	}),
-	string: _attach(FR.coerceToString, { from: FR.coerceToString, strict: F.buildString }),
-	templateString: _attach(FR.coerceToTemplateString, {
+	string: attachProps(FR.coerceToString, {
+		from: FR.coerceToString,
+		strict: F.buildString,
+		double: F.buildString.double,
+		single: F.buildString.single
+	}),
+	templateString: attachProps(FR.coerceToTemplateString, {
 		from: FR.coerceToTemplateString,
 		strict: F.buildTemplateString
 	}),
-	templateSubstitution: _attach(FR.coerceToTemplateSubstitution, {
+	templateSubstitution: attachProps(FR.coerceToTemplateSubstitution, {
 		from: FR.coerceToTemplateSubstitution,
 		strict: F.buildTemplateSubstitution
 	}),
-	regex: _attach(FR.coerceToRegex, { from: FR.coerceToRegex, strict: F.buildRegex }),
-	metaProperty: _attach(FR.coerceToMetaProperty, { from: FR.coerceToMetaProperty, strict: F.buildMetaProperty }),
-	arguments: _attach(FR.coerceToArguments, { from: FR.coerceToArguments, strict: F.buildArguments }),
-	decorator: _attach(FR.coerceToDecorator, { from: FR.coerceToDecorator, strict: F.buildDecorator }),
-	decoratorMemberExpression: _attach(FR.coerceToDecoratorMemberExpression, {
+	regex: attachProps(FR.coerceToRegex, { from: FR.coerceToRegex, strict: F.buildRegex }),
+	metaProperty: attachProps(FR.coerceToMetaProperty, { from: FR.coerceToMetaProperty, strict: F.buildMetaProperty }),
+	arguments: attachProps(FR.coerceToArguments, { from: FR.coerceToArguments, strict: F.buildArguments }),
+	decorator: attachProps(FR.coerceToDecorator, { from: FR.coerceToDecorator, strict: F.buildDecorator }),
+	decoratorMemberExpression: attachProps(FR.coerceToDecoratorMemberExpression, {
 		from: FR.coerceToDecoratorMemberExpression,
 		strict: F.buildDecoratorMemberExpression
 	}),
-	decoratorCallExpression: _attach(FR.coerceToDecoratorCallExpression, {
+	decoratorCallExpression: attachProps(FR.coerceToDecoratorCallExpression, {
 		from: FR.coerceToDecoratorCallExpression,
 		strict: F.buildDecoratorCallExpression
 	}),
-	classBody: _attach(FR.coerceToClassBody, { from: FR.coerceToClassBody, strict: F.buildClassBody }),
-	formalParameters: _attach(FR.coerceToFormalParameters, {
+	classBody: attachProps(FR.coerceToClassBody, { from: FR.coerceToClassBody, strict: F.buildClassBody }),
+	formalParameters: attachProps(FR.coerceToFormalParameters, {
 		from: FR.coerceToFormalParameters,
 		strict: F.buildFormalParameters
 	}),
-	classStaticBlock: _attach(FR.coerceToClassStaticBlock, {
+	classStaticBlock: attachProps(FR.coerceToClassStaticBlock, {
 		from: FR.coerceToClassStaticBlock,
 		strict: F.buildClassStaticBlock
 	}),
-	restPattern: _attach(FR.coerceToRestPattern, { from: FR.coerceToRestPattern, strict: F.buildRestPattern }),
-	methodDefinition: _attach(FR.coerceToMethodDefinition, {
+	restPattern: attachProps(FR.coerceToRestPattern, { from: FR.coerceToRestPattern, strict: F.buildRestPattern }),
+	methodDefinition: attachProps(FR.coerceToMethodDefinition, {
 		from: FR.coerceToMethodDefinition,
-		strict: F.buildMethodDefinition
+		strict: F.buildMethodDefinition,
+		get: F.buildMethodDefinition.get,
+		set: F.buildMethodDefinition.set,
+		star: F.buildMethodDefinition.star
 	}),
-	pair: _attach(FR.coerceToPair, { from: FR.coerceToPair, strict: F.buildPair }),
-	pairPattern: _attach(FR.coerceToPairPattern, { from: FR.coerceToPairPattern, strict: F.buildPairPattern }),
-	computedPropertyName: _attach(FR.coerceToComputedPropertyName, {
+	pair: attachProps(FR.coerceToPair, { from: FR.coerceToPair, strict: F.buildPair }),
+	pairPattern: attachProps(FR.coerceToPairPattern, { from: FR.coerceToPairPattern, strict: F.buildPairPattern }),
+	computedPropertyName: attachProps(FR.coerceToComputedPropertyName, {
 		from: FR.coerceToComputedPropertyName,
 		strict: F.buildComputedPropertyName
 	}),
-	publicFieldDefinition: _attach(FR.coerceToPublicFieldDefinition, {
+	publicFieldDefinition: attachProps(FR.coerceToPublicFieldDefinition, {
 		from: FR.coerceToPublicFieldDefinition,
-		strict: F.buildPublicFieldDefinition
+		strict: F.buildPublicFieldDefinition,
+		qmark: F.buildPublicFieldDefinition.qmark,
+		bang: F.buildPublicFieldDefinition.bang
 	}),
-	nonNullExpression: _attach(FR.coerceToNonNullExpression, {
+	nonNullExpression: attachProps(FR.coerceToNonNullExpression, {
 		from: FR.coerceToNonNullExpression,
 		strict: F.buildNonNullExpression
 	}),
-	methodSignature: _attach(FR.coerceToMethodSignature, {
+	methodSignature: attachProps(FR.coerceToMethodSignature, {
 		from: FR.coerceToMethodSignature,
-		strict: F.buildMethodSignature
+		strict: F.buildMethodSignature,
+		get: F.buildMethodSignature.get,
+		set: F.buildMethodSignature.set,
+		star: F.buildMethodSignature.star
 	}),
-	abstractMethodSignature: _attach(FR.coerceToAbstractMethodSignature, {
+	abstractMethodSignature: attachProps(FR.coerceToAbstractMethodSignature, {
 		from: FR.coerceToAbstractMethodSignature,
-		strict: F.buildAbstractMethodSignature
+		strict: F.buildAbstractMethodSignature,
+		get: F.buildAbstractMethodSignature.get,
+		set: F.buildAbstractMethodSignature.set,
+		star: F.buildAbstractMethodSignature.star
 	}),
-	functionSignature: _attach(FR.coerceToFunctionSignature, {
+	functionSignature: attachProps(FR.coerceToFunctionSignature, {
 		from: FR.coerceToFunctionSignature,
 		strict: F.buildFunctionSignature
 	}),
-	decoratorParenthesizedExpression: _attach(FR.coerceToDecoratorParenthesizedExpression, {
+	decoratorParenthesizedExpression: attachProps(FR.coerceToDecoratorParenthesizedExpression, {
 		from: FR.coerceToDecoratorParenthesizedExpression,
 		strict: F.buildDecoratorParenthesizedExpression
 	}),
-	typeAssertion: _attach(FR.coerceToTypeAssertion, { from: FR.coerceToTypeAssertion, strict: F.buildTypeAssertion }),
-	asExpression: _attach(FR.coerceToAsExpression, { from: FR.coerceToAsExpression, strict: F.buildAsExpression }),
-	satisfiesExpression: _attach(FR.coerceToSatisfiesExpression, {
+	typeAssertion: attachProps(FR.coerceToTypeAssertion, {
+		from: FR.coerceToTypeAssertion,
+		strict: F.buildTypeAssertion
+	}),
+	asExpression: attachProps(FR.coerceToAsExpression, { from: FR.coerceToAsExpression, strict: F.buildAsExpression }),
+	satisfiesExpression: attachProps(FR.coerceToSatisfiesExpression, {
 		from: FR.coerceToSatisfiesExpression,
 		strict: F.buildSatisfiesExpression
 	}),
-	instantiationExpression: _attach(FR.coerceToInstantiationExpression, {
+	instantiationExpression: attachProps(FR.coerceToInstantiationExpression, {
 		from: FR.coerceToInstantiationExpression,
 		strict: F.buildInstantiationExpression
 	}),
-	importRequireClause: _attach(FR.coerceToImportRequireClause, {
+	importRequireClause: attachProps(FR.coerceToImportRequireClause, {
 		from: FR.coerceToImportRequireClause,
 		strict: F.buildImportRequireClause
 	}),
-	extendsClause: _attach(FR.coerceToExtendsClause, { from: FR.coerceToExtendsClause, strict: F.buildExtendsClause }),
-	implementsClause: _attach(FR.coerceToImplementsClause, {
+	extendsClause: attachProps(FR.coerceToExtendsClause, {
+		from: FR.coerceToExtendsClause,
+		strict: F.buildExtendsClause
+	}),
+	implementsClause: attachProps(FR.coerceToImplementsClause, {
 		from: FR.coerceToImplementsClause,
 		strict: F.buildImplementsClause
 	}),
-	ambientDeclaration: _attach(FR.coerceToAmbientDeclaration, {
+	ambientDeclaration: attachProps(FR.coerceToAmbientDeclaration, {
 		from: FR.coerceToAmbientDeclaration,
 		strict: F.buildAmbientDeclaration
 	}),
-	abstractClassDeclaration: _attach(FR.coerceToAbstractClassDeclaration, {
+	abstractClassDeclaration: attachProps(FR.coerceToAbstractClassDeclaration, {
 		from: FR.coerceToAbstractClassDeclaration,
 		strict: F.buildAbstractClassDeclaration
 	}),
-	module: _attach(FR.coerceToModule, { from: FR.coerceToModule, strict: F.buildModule }),
-	internalModule: _attach(FR.coerceToInternalModule, {
+	module: attachProps(FR.coerceToModule, { from: FR.coerceToModule, strict: F.buildModule }),
+	internalModule: attachProps(FR.coerceToInternalModule, {
 		from: FR.coerceToInternalModule,
 		strict: F.buildInternalModule
 	}),
-	importAlias: _attach(FR.coerceToImportAlias, { from: FR.coerceToImportAlias, strict: F.buildImportAlias }),
-	nestedTypeIdentifier: _attach(FR.coerceToNestedTypeIdentifier, {
+	importAlias: attachProps(FR.coerceToImportAlias, { from: FR.coerceToImportAlias, strict: F.buildImportAlias }),
+	nestedTypeIdentifier: attachProps(FR.coerceToNestedTypeIdentifier, {
 		from: FR.coerceToNestedTypeIdentifier,
 		strict: F.buildNestedTypeIdentifier
 	}),
-	interfaceDeclaration: _attach(FR.coerceToInterfaceDeclaration, {
+	interfaceDeclaration: attachProps(FR.coerceToInterfaceDeclaration, {
 		from: FR.coerceToInterfaceDeclaration,
 		strict: F.buildInterfaceDeclaration
 	}),
-	extendsTypeClause: _attach(FR.coerceToExtendsTypeClause, {
+	extendsTypeClause: attachProps(FR.coerceToExtendsTypeClause, {
 		from: FR.coerceToExtendsTypeClause,
 		strict: F.buildExtendsTypeClause
 	}),
-	enumDeclaration: _attach(FR.coerceToEnumDeclaration, {
+	enumDeclaration: attachProps(FR.coerceToEnumDeclaration, {
 		from: FR.coerceToEnumDeclaration,
 		strict: F.buildEnumDeclaration
 	}),
-	enumBody: _attach(FR.coerceToEnumBody, { from: FR.coerceToEnumBody, strict: F.buildEnumBody }),
-	enumAssignment: _attach(FR.coerceToEnumAssignment, {
+	enumBody: attachProps(FR.coerceToEnumBody, { from: FR.coerceToEnumBody, strict: F.buildEnumBody }),
+	enumAssignment: attachProps(FR.coerceToEnumAssignment, {
 		from: FR.coerceToEnumAssignment,
 		strict: F.buildEnumAssignment
 	}),
-	typeAliasDeclaration: _attach(FR.coerceToTypeAliasDeclaration, {
+	typeAliasDeclaration: attachProps(FR.coerceToTypeAliasDeclaration, {
 		from: FR.coerceToTypeAliasDeclaration,
 		strict: F.buildTypeAliasDeclaration
 	}),
-	requiredParameter: _attach(FR.coerceToRequiredParameter, {
+	requiredParameter: attachProps(FR.coerceToRequiredParameter, {
 		from: FR.coerceToRequiredParameter,
 		strict: F.buildRequiredParameter
 	}),
-	optionalParameter: _attach(FR.coerceToOptionalParameter, {
+	optionalParameter: attachProps(FR.coerceToOptionalParameter, {
 		from: FR.coerceToOptionalParameter,
 		strict: F.buildOptionalParameter
 	}),
-	omittingTypeAnnotation: _attach(FR.coerceToOmittingTypeAnnotation, {
+	omittingTypeAnnotation: attachProps(FR.coerceToOmittingTypeAnnotation, {
 		from: FR.coerceToOmittingTypeAnnotation,
 		strict: F.buildOmittingTypeAnnotation
 	}),
-	addingTypeAnnotation: _attach(FR.coerceToAddingTypeAnnotation, {
+	addingTypeAnnotation: attachProps(FR.coerceToAddingTypeAnnotation, {
 		from: FR.coerceToAddingTypeAnnotation,
 		strict: F.buildAddingTypeAnnotation
 	}),
-	optingTypeAnnotation: _attach(FR.coerceToOptingTypeAnnotation, {
+	optingTypeAnnotation: attachProps(FR.coerceToOptingTypeAnnotation, {
 		from: FR.coerceToOptingTypeAnnotation,
 		strict: F.buildOptingTypeAnnotation
 	}),
-	typeAnnotation: _attach(FR.coerceToTypeAnnotation, {
+	typeAnnotation: attachProps(FR.coerceToTypeAnnotation, {
 		from: FR.coerceToTypeAnnotation,
 		strict: F.buildTypeAnnotation
 	}),
-	asserts: _attach(FR.coerceToAsserts, { from: FR.coerceToAsserts, strict: F.buildAsserts }),
-	assertsAnnotation: _attach(FR.coerceToAssertsAnnotation, {
+	asserts: attachProps(FR.coerceToAsserts, { from: FR.coerceToAsserts, strict: F.buildAsserts }),
+	assertsAnnotation: attachProps(FR.coerceToAssertsAnnotation, {
 		from: FR.coerceToAssertsAnnotation,
 		strict: F.buildAssertsAnnotation
 	}),
-	tupleParameter: _attach(FR.coerceToTupleParameter, {
+	tupleParameter: attachProps(FR.coerceToTupleParameter, {
 		from: FR.coerceToTupleParameter,
 		strict: F.buildTupleParameter
 	}),
-	optionalTupleParameter: _attach(FR.coerceToOptionalTupleParameter, {
+	optionalTupleParameter: attachProps(FR.coerceToOptionalTupleParameter, {
 		from: FR.coerceToOptionalTupleParameter,
 		strict: F.buildOptionalTupleParameter
 	}),
-	optionalType: _attach(FR.coerceToOptionalType, { from: FR.coerceToOptionalType, strict: F.buildOptionalType }),
-	restType: _attach(FR.coerceToRestType, { from: FR.coerceToRestType, strict: F.buildRestType }),
-	constructorType: _attach(FR.coerceToConstructorType, {
+	optionalType: attachProps(FR.coerceToOptionalType, { from: FR.coerceToOptionalType, strict: F.buildOptionalType }),
+	restType: attachProps(FR.coerceToRestType, { from: FR.coerceToRestType, strict: F.buildRestType }),
+	constructorType: attachProps(FR.coerceToConstructorType, {
 		from: FR.coerceToConstructorType,
 		strict: F.buildConstructorType
 	}),
-	templateType: _attach(FR.coerceToTemplateType, { from: FR.coerceToTemplateType, strict: F.buildTemplateType }),
-	templateLiteralType: _attach(FR.coerceToTemplateLiteralType, {
+	templateType: attachProps(FR.coerceToTemplateType, { from: FR.coerceToTemplateType, strict: F.buildTemplateType }),
+	templateLiteralType: attachProps(FR.coerceToTemplateLiteralType, {
 		from: FR.coerceToTemplateLiteralType,
 		strict: F.buildTemplateLiteralType
 	}),
-	inferType: _attach(FR.coerceToInferType, { from: FR.coerceToInferType, strict: F.buildInferType }),
-	conditionalType: _attach(FR.coerceToConditionalType, {
+	inferType: attachProps(FR.coerceToInferType, { from: FR.coerceToInferType, strict: F.buildInferType }),
+	conditionalType: attachProps(FR.coerceToConditionalType, {
 		from: FR.coerceToConditionalType,
 		strict: F.buildConditionalType
 	}),
-	genericType: _attach(FR.coerceToGenericType, { from: FR.coerceToGenericType, strict: F.buildGenericType }),
-	typePredicate: _attach(FR.coerceToTypePredicate, { from: FR.coerceToTypePredicate, strict: F.buildTypePredicate }),
-	typePredicateAnnotation: _attach(FR.coerceToTypePredicateAnnotation, {
+	genericType: attachProps(FR.coerceToGenericType, { from: FR.coerceToGenericType, strict: F.buildGenericType }),
+	typePredicate: attachProps(FR.coerceToTypePredicate, {
+		from: FR.coerceToTypePredicate,
+		strict: F.buildTypePredicate
+	}),
+	typePredicateAnnotation: attachProps(FR.coerceToTypePredicateAnnotation, {
 		from: FR.coerceToTypePredicateAnnotation,
 		strict: F.buildTypePredicateAnnotation
 	}),
-	typeQuery: _attach(FR.coerceToTypeQuery, { from: FR.coerceToTypeQuery, strict: F.buildTypeQuery }),
-	indexTypeQuery: _attach(FR.coerceToIndexTypeQuery, {
+	typeQuery: attachProps(FR.coerceToTypeQuery, { from: FR.coerceToTypeQuery, strict: F.buildTypeQuery }),
+	indexTypeQuery: attachProps(FR.coerceToIndexTypeQuery, {
 		from: FR.coerceToIndexTypeQuery,
 		strict: F.buildIndexTypeQuery
 	}),
-	lookupType: _attach(FR.coerceToLookupType, { from: FR.coerceToLookupType, strict: F.buildLookupType }),
-	mappedTypeClause: _attach(FR.coerceToMappedTypeClause, {
+	lookupType: attachProps(FR.coerceToLookupType, { from: FR.coerceToLookupType, strict: F.buildLookupType }),
+	mappedTypeClause: attachProps(FR.coerceToMappedTypeClause, {
 		from: FR.coerceToMappedTypeClause,
 		strict: F.buildMappedTypeClause
 	}),
-	literalType: _attach(FR.coerceToLiteralType, { from: FR.coerceToLiteralType, strict: F.buildLiteralType }),
-	flowMaybeType: _attach(FR.coerceToFlowMaybeType, { from: FR.coerceToFlowMaybeType, strict: F.buildFlowMaybeType }),
-	parenthesizedType: _attach(FR.coerceToParenthesizedType, {
+	literalType: attachProps(FR.coerceToLiteralType, { from: FR.coerceToLiteralType, strict: F.buildLiteralType }),
+	flowMaybeType: attachProps(FR.coerceToFlowMaybeType, {
+		from: FR.coerceToFlowMaybeType,
+		strict: F.buildFlowMaybeType
+	}),
+	parenthesizedType: attachProps(FR.coerceToParenthesizedType, {
 		from: FR.coerceToParenthesizedType,
 		strict: F.buildParenthesizedType
 	}),
-	typeArguments: _attach(FR.coerceToTypeArguments, { from: FR.coerceToTypeArguments, strict: F.buildTypeArguments }),
-	objectType: _attach(FR.coerceToObjectType, {
+	typeArguments: attachProps(FR.coerceToTypeArguments, {
+		from: FR.coerceToTypeArguments,
+		strict: F.buildTypeArguments
+	}),
+	objectType: attachProps(FR.coerceToObjectType, {
 		from: FR.coerceToObjectType,
 		strict: F.buildObjectType,
 		curly: F.buildObjectTypeCurly,
 		flow: F.buildObjectTypeFlow
 	}),
-	callSignature: _attach(FR.coerceToCallSignature, { from: FR.coerceToCallSignature, strict: F.buildCallSignature }),
-	propertySignature: _attach(FR.coerceToPropertySignature, {
+	callSignature: attachProps(FR.coerceToCallSignature, {
+		from: FR.coerceToCallSignature,
+		strict: F.buildCallSignature
+	}),
+	propertySignature: attachProps(FR.coerceToPropertySignature, {
 		from: FR.coerceToPropertySignature,
 		strict: F.buildPropertySignature
 	}),
-	typeParameters: _attach(FR.coerceToTypeParameters, {
+	typeParameters: attachProps(FR.coerceToTypeParameters, {
 		from: FR.coerceToTypeParameters,
 		strict: F.buildTypeParameters
 	}),
-	typeParameter: _attach(FR.coerceToTypeParameter, { from: FR.coerceToTypeParameter, strict: F.buildTypeParameter }),
-	defaultType: _attach(FR.coerceToDefaultType, { from: FR.coerceToDefaultType, strict: F.buildDefaultType }),
-	constraint: _attach(FR.coerceToConstraint, { from: FR.coerceToConstraint, strict: F.buildConstraint }),
-	constructSignature: _attach(FR.coerceToConstructSignature, {
+	typeParameter: attachProps(FR.coerceToTypeParameter, {
+		from: FR.coerceToTypeParameter,
+		strict: F.buildTypeParameter
+	}),
+	defaultType: attachProps(FR.coerceToDefaultType, { from: FR.coerceToDefaultType, strict: F.buildDefaultType }),
+	constraint: attachProps(FR.coerceToConstraint, {
+		from: FR.coerceToConstraint,
+		strict: F.buildConstraint,
+		extends: F.buildConstraint.extends,
+		colon: F.buildConstraint.colon
+	}),
+	constructSignature: attachProps(FR.coerceToConstructSignature, {
 		from: FR.coerceToConstructSignature,
 		strict: F.buildConstructSignature
 	}),
-	indexSignature: _attach(FR.coerceToIndexSignature, {
+	indexSignature: attachProps(FR.coerceToIndexSignature, {
 		from: FR.coerceToIndexSignature,
-		strict: F.buildIndexSignature
+		strict: F.buildIndexSignature,
+		dash: F.buildIndexSignature.dash,
+		plus: F.buildIndexSignature.plus
 	}),
-	arrayType: _attach(FR.coerceToArrayType, { from: FR.coerceToArrayType, strict: F.buildArrayType }),
-	tupleType: _attach(FR.coerceToTupleType, { from: FR.coerceToTupleType, strict: F.buildTupleType }),
-	readonlyType: _attach(FR.coerceToReadonlyType, { from: FR.coerceToReadonlyType, strict: F.buildReadonlyType }),
-	unionType: _attach(FR.coerceToUnionType, { from: FR.coerceToUnionType, strict: F.buildUnionType }),
-	intersectionType: _attach(FR.coerceToIntersectionType, {
+	arrayType: attachProps(FR.coerceToArrayType, { from: FR.coerceToArrayType, strict: F.buildArrayType }),
+	tupleType: attachProps(FR.coerceToTupleType, { from: FR.coerceToTupleType, strict: F.buildTupleType }),
+	readonlyType: attachProps(FR.coerceToReadonlyType, { from: FR.coerceToReadonlyType, strict: F.buildReadonlyType }),
+	unionType: attachProps(FR.coerceToUnionType, { from: FR.coerceToUnionType, strict: F.buildUnionType }),
+	intersectionType: attachProps(FR.coerceToIntersectionType, {
 		from: FR.coerceToIntersectionType,
 		strict: F.buildIntersectionType
 	}),
-	functionType: _attach(FR.coerceToFunctionType, { from: FR.coerceToFunctionType, strict: F.buildFunctionType }),
-	objectTypeContent: _attach(FR.coerceToObjectTypeContent, {
+	functionType: attachProps(FR.coerceToFunctionType, { from: FR.coerceToFunctionType, strict: F.buildFunctionType }),
+	objectTypeContent: attachProps(FR.coerceToObjectTypeContent, {
 		from: FR.coerceToObjectTypeContent,
 		strict: F.buildObjectTypeContent
 	}),
@@ -856,159 +1061,216 @@ export const ir = {
 	jsxText: F.buildJsxText,
 
 	// Supertype-stripped short aliases
-	abstractClass: _attach(FR.coerceToAbstractClassDeclaration, {
+	abstractClass: attachProps(FR.coerceToAbstractClassDeclaration, {
 		from: FR.coerceToAbstractClassDeclaration,
 		strict: F.buildAbstractClassDeclaration
 	}),
-	ambient: _attach(FR.coerceToAmbientDeclaration, {
+	ambient: attachProps(FR.coerceToAmbientDeclaration, {
 		from: FR.coerceToAmbientDeclaration,
 		strict: F.buildAmbientDeclaration
 	}),
-	arrow: _attach(FR.coerceToArrowFunction, { from: FR.coerceToArrowFunction, strict: F.buildArrowFunction }),
-	as: _attach(FR.coerceToAsExpression, { from: FR.coerceToAsExpression, strict: F.buildAsExpression }),
-	assignment: _attach(FR.coerceToAssignmentExpression, {
+	arrow: attachProps(FR.coerceToArrowFunction, { from: FR.coerceToArrowFunction, strict: F.buildArrowFunction }),
+	as: attachProps(FR.coerceToAsExpression, { from: FR.coerceToAsExpression, strict: F.buildAsExpression }),
+	assignment: attachProps(FR.coerceToAssignmentExpression, {
 		from: FR.coerceToAssignmentExpression,
 		strict: F.buildAssignmentExpression
 	}),
-	augmentedAssignment: _attach(FR.coerceToAugmentedAssignmentExpression, {
+	augmentedAssignment: attachProps(FR.coerceToAugmentedAssignmentExpression, {
 		from: FR.coerceToAugmentedAssignmentExpression,
 		strict: F.buildAugmentedAssignmentExpression
 	}),
-	await: _attach(FR.coerceToAwaitExpression, { from: FR.coerceToAwaitExpression, strict: F.buildAwaitExpression }),
-	binary: _attach(FR.coerceToBinaryExpression, { from: FR.coerceToBinaryExpression, strict: F.buildBinaryExpression }),
-	break: _attach(FR.coerceToBreakStatement, { from: FR.coerceToBreakStatement, strict: F.buildBreakStatement }),
-	call: _attach(FR.coerceToCallExpression, { from: FR.coerceToCallExpression, strict: F.buildCallExpression }),
-	computedProperty: _attach(FR.coerceToComputedPropertyName, {
+	await: attachProps(FR.coerceToAwaitExpression, { from: FR.coerceToAwaitExpression, strict: F.buildAwaitExpression }),
+	binary: attachProps(FR.coerceToBinaryExpression, {
+		from: FR.coerceToBinaryExpression,
+		strict: F.buildBinaryExpression,
+		arm: F.buildBinaryExpression.arm,
+		ampAmp: F.buildBinaryExpression.ampAmp,
+		pipePipe: F.buildBinaryExpression.pipePipe,
+		gtGt: F.buildBinaryExpression.gtGt,
+		gtGtGt: F.buildBinaryExpression.gtGtGt,
+		ltLt: F.buildBinaryExpression.ltLt,
+		amp: F.buildBinaryExpression.amp,
+		caret: F.buildBinaryExpression.caret,
+		pipe: F.buildBinaryExpression.pipe,
+		plus: F.buildBinaryExpression.plus,
+		dash: F.buildBinaryExpression.dash,
+		star: F.buildBinaryExpression.star,
+		slash: F.buildBinaryExpression.slash,
+		percent: F.buildBinaryExpression.percent,
+		starStar: F.buildBinaryExpression.starStar,
+		lt: F.buildBinaryExpression.lt,
+		ltEq: F.buildBinaryExpression.ltEq,
+		eqEq: F.buildBinaryExpression.eqEq,
+		eqEqEq: F.buildBinaryExpression.eqEqEq,
+		bangEq: F.buildBinaryExpression.bangEq,
+		bangEqEq: F.buildBinaryExpression.bangEqEq,
+		gtEq: F.buildBinaryExpression.gtEq,
+		gt: F.buildBinaryExpression.gt,
+		qmarkQmark: F.buildBinaryExpression.qmarkQmark,
+		instanceof: F.buildBinaryExpression.instanceof
+	}),
+	break: attachProps(FR.coerceToBreakStatement, { from: FR.coerceToBreakStatement, strict: F.buildBreakStatement }),
+	call: attachProps(FR.coerceToCallExpression, {
+		from: FR.coerceToCallExpression,
+		strict: F.buildCallExpression,
+		call: F.buildCallExpression.call,
+		templateCall: F.buildCallExpression.templateCall,
+		member: F.buildCallExpression.member
+	}),
+	computedProperty: attachProps(FR.coerceToComputedPropertyName, {
 		from: FR.coerceToComputedPropertyName,
 		strict: F.buildComputedPropertyName
 	}),
-	conditional: _attach(FR.coerceToConditionalType, {
+	conditional: attachProps(FR.coerceToConditionalType, {
 		from: FR.coerceToConditionalType,
 		strict: F.buildConditionalType
 	}),
-	constructor: _attach(FR.coerceToConstructorType, {
+	constructor: attachProps(FR.coerceToConstructorType, {
 		from: FR.coerceToConstructorType,
 		strict: F.buildConstructorType
 	}),
-	continue: _attach(FR.coerceToContinueStatement, {
+	continue: attachProps(FR.coerceToContinueStatement, {
 		from: FR.coerceToContinueStatement,
 		strict: F.buildContinueStatement
 	}),
-	debugger: _attach(FR.coerceToDebuggerStatement, {
+	debugger: attachProps(FR.coerceToDebuggerStatement, {
 		from: FR.coerceToDebuggerStatement,
 		strict: F.buildDebuggerStatement
 	}),
-	do: _attach(FR.coerceToDoStatement, { from: FR.coerceToDoStatement, strict: F.buildDoStatement }),
-	enum: _attach(FR.coerceToEnumDeclaration, { from: FR.coerceToEnumDeclaration, strict: F.buildEnumDeclaration }),
-	export: _attach(FR.coerceToExportStatement, { from: FR.coerceToExportStatement, strict: F.buildExportStatement }),
-	flowMaybe: _attach(FR.coerceToFlowMaybeType, { from: FR.coerceToFlowMaybeType, strict: F.buildFlowMaybeType }),
-	for: _attach(FR.coerceToForStatement, { from: FR.coerceToForStatement, strict: F.buildForStatement }),
-	forIn: _attach(FR.coerceToForInStatement, { from: FR.coerceToForInStatement, strict: F.buildForInStatement }),
-	function: _attach(FR.coerceToFunctionDeclaration, {
+	do: attachProps(FR.coerceToDoStatement, { from: FR.coerceToDoStatement, strict: F.buildDoStatement }),
+	enum: attachProps(FR.coerceToEnumDeclaration, { from: FR.coerceToEnumDeclaration, strict: F.buildEnumDeclaration }),
+	export: attachProps(FR.coerceToExportStatement, {
+		from: FR.coerceToExportStatement,
+		strict: F.buildExportStatement,
+		default: F.buildExportStatement.default,
+		fromArm: F.buildExportStatement.fromArm,
+		declArm: F.buildExportStatement.declArm,
+		typeExport: F.buildExportStatement.typeExport,
+		equalsExport: F.buildExportStatement.equalsExport,
+		namespaceExport: F.buildExportStatement.namespaceExport
+	}),
+	flowMaybe: attachProps(FR.coerceToFlowMaybeType, { from: FR.coerceToFlowMaybeType, strict: F.buildFlowMaybeType }),
+	for: attachProps(FR.coerceToForStatement, { from: FR.coerceToForStatement, strict: F.buildForStatement }),
+	forIn: attachProps(FR.coerceToForInStatement, { from: FR.coerceToForInStatement, strict: F.buildForInStatement }),
+	function: attachProps(FR.coerceToFunctionDeclaration, {
 		from: FR.coerceToFunctionDeclaration,
 		strict: F.buildFunctionDeclaration
 	}),
-	generator: _attach(FR.coerceToGeneratorFunction, {
+	generator: attachProps(FR.coerceToGeneratorFunction, {
 		from: FR.coerceToGeneratorFunction,
 		strict: F.buildGeneratorFunction
 	}),
-	generic: _attach(FR.coerceToGenericType, { from: FR.coerceToGenericType, strict: F.buildGenericType }),
-	if: _attach(FR.coerceToIfStatement, { from: FR.coerceToIfStatement, strict: F.buildIfStatement }),
-	indexType: _attach(FR.coerceToIndexTypeQuery, { from: FR.coerceToIndexTypeQuery, strict: F.buildIndexTypeQuery }),
-	infer: _attach(FR.coerceToInferType, { from: FR.coerceToInferType, strict: F.buildInferType }),
-	instantiation: _attach(FR.coerceToInstantiationExpression, {
+	generic: attachProps(FR.coerceToGenericType, { from: FR.coerceToGenericType, strict: F.buildGenericType }),
+	if: attachProps(FR.coerceToIfStatement, { from: FR.coerceToIfStatement, strict: F.buildIfStatement }),
+	indexType: attachProps(FR.coerceToIndexTypeQuery, { from: FR.coerceToIndexTypeQuery, strict: F.buildIndexTypeQuery }),
+	infer: attachProps(FR.coerceToInferType, { from: FR.coerceToInferType, strict: F.buildInferType }),
+	instantiation: attachProps(FR.coerceToInstantiationExpression, {
 		from: FR.coerceToInstantiationExpression,
 		strict: F.buildInstantiationExpression
 	}),
-	interface: _attach(FR.coerceToInterfaceDeclaration, {
+	interface: attachProps(FR.coerceToInterfaceDeclaration, {
 		from: FR.coerceToInterfaceDeclaration,
 		strict: F.buildInterfaceDeclaration
 	}),
-	internal: _attach(FR.coerceToInternalModule, { from: FR.coerceToInternalModule, strict: F.buildInternalModule }),
-	intersection: _attach(FR.coerceToIntersectionType, {
+	internal: attachProps(FR.coerceToInternalModule, { from: FR.coerceToInternalModule, strict: F.buildInternalModule }),
+	intersection: attachProps(FR.coerceToIntersectionType, {
 		from: FR.coerceToIntersectionType,
 		strict: F.buildIntersectionType
 	}),
 	jsx: F.buildJsxText,
-	labeled: _attach(FR.coerceToLabeledStatement, { from: FR.coerceToLabeledStatement, strict: F.buildLabeledStatement }),
-	lexical: _attach(FR.coerceToLexicalDeclaration, {
+	labeled: attachProps(FR.coerceToLabeledStatement, {
+		from: FR.coerceToLabeledStatement,
+		strict: F.buildLabeledStatement
+	}),
+	lexical: attachProps(FR.coerceToLexicalDeclaration, {
 		from: FR.coerceToLexicalDeclaration,
 		strict: F.buildLexicalDeclaration
 	}),
-	literal: _attach(FR.coerceToLiteralType, { from: FR.coerceToLiteralType, strict: F.buildLiteralType }),
-	lookup: _attach(FR.coerceToLookupType, { from: FR.coerceToLookupType, strict: F.buildLookupType }),
-	member: _attach(FR.coerceToMemberExpression, { from: FR.coerceToMemberExpression, strict: F.buildMemberExpression }),
-	meta: _attach(FR.coerceToMetaProperty, { from: FR.coerceToMetaProperty, strict: F.buildMetaProperty }),
-	nested: _attach(FR.coerceToNestedIdentifier, { from: FR.coerceToNestedIdentifier, strict: F.buildNestedIdentifier }),
-	nestedType: _attach(FR.coerceToNestedTypeIdentifier, {
+	literal: attachProps(FR.coerceToLiteralType, { from: FR.coerceToLiteralType, strict: F.buildLiteralType }),
+	lookup: attachProps(FR.coerceToLookupType, { from: FR.coerceToLookupType, strict: F.buildLookupType }),
+	member: attachProps(FR.coerceToMemberExpression, {
+		from: FR.coerceToMemberExpression,
+		strict: F.buildMemberExpression
+	}),
+	meta: attachProps(FR.coerceToMetaProperty, { from: FR.coerceToMetaProperty, strict: F.buildMetaProperty }),
+	nested: attachProps(FR.coerceToNestedIdentifier, {
+		from: FR.coerceToNestedIdentifier,
+		strict: F.buildNestedIdentifier
+	}),
+	nestedType: attachProps(FR.coerceToNestedTypeIdentifier, {
 		from: FR.coerceToNestedTypeIdentifier,
 		strict: F.buildNestedTypeIdentifier
 	}),
-	new: _attach(FR.coerceToNewExpression, { from: FR.coerceToNewExpression, strict: F.buildNewExpression }),
-	nonNull: _attach(FR.coerceToNonNullExpression, {
+	new: attachProps(FR.coerceToNewExpression, { from: FR.coerceToNewExpression, strict: F.buildNewExpression }),
+	nonNull: attachProps(FR.coerceToNonNullExpression, {
 		from: FR.coerceToNonNullExpression,
 		strict: F.buildNonNullExpression
 	}),
-	optional: _attach(FR.coerceToOptionalParameter, {
+	optional: attachProps(FR.coerceToOptionalParameter, {
 		from: FR.coerceToOptionalParameter,
 		strict: F.buildOptionalParameter
 	}),
-	optionalTuple: _attach(FR.coerceToOptionalTupleParameter, {
+	optionalTuple: attachProps(FR.coerceToOptionalTupleParameter, {
 		from: FR.coerceToOptionalTupleParameter,
 		strict: F.buildOptionalTupleParameter
 	}),
-	parenthesized: _attach(FR.coerceToParenthesizedExpression, {
+	parenthesized: attachProps(FR.coerceToParenthesizedExpression, {
 		from: FR.coerceToParenthesizedExpression,
 		strict: F.buildParenthesizedExpression
 	}),
 	predefined: F.buildPredefinedType,
 	privateProperty: F.buildPrivatePropertyIdentifier,
-	readonly: _attach(FR.coerceToReadonlyType, { from: FR.coerceToReadonlyType, strict: F.buildReadonlyType }),
-	required: _attach(FR.coerceToRequiredParameter, {
+	readonly: attachProps(FR.coerceToReadonlyType, { from: FR.coerceToReadonlyType, strict: F.buildReadonlyType }),
+	required: attachProps(FR.coerceToRequiredParameter, {
 		from: FR.coerceToRequiredParameter,
 		strict: F.buildRequiredParameter
 	}),
-	rest: _attach(FR.coerceToRestPattern, { from: FR.coerceToRestPattern, strict: F.buildRestPattern }),
-	return: _attach(FR.coerceToReturnStatement, { from: FR.coerceToReturnStatement, strict: F.buildReturnStatement }),
-	satisfies: _attach(FR.coerceToSatisfiesExpression, {
+	rest: attachProps(FR.coerceToRestPattern, { from: FR.coerceToRestPattern, strict: F.buildRestPattern }),
+	return: attachProps(FR.coerceToReturnStatement, { from: FR.coerceToReturnStatement, strict: F.buildReturnStatement }),
+	satisfies: attachProps(FR.coerceToSatisfiesExpression, {
 		from: FR.coerceToSatisfiesExpression,
 		strict: F.buildSatisfiesExpression
 	}),
-	sequence: _attach(FR.coerceToSequenceExpression, {
+	sequence: attachProps(FR.coerceToSequenceExpression, {
 		from: FR.coerceToSequenceExpression,
 		strict: F.buildSequenceExpression
 	}),
-	subscript: _attach(FR.coerceToSubscriptExpression, {
+	subscript: attachProps(FR.coerceToSubscriptExpression, {
 		from: FR.coerceToSubscriptExpression,
 		strict: F.buildSubscriptExpression
 	}),
-	switch: _attach(FR.coerceToSwitchStatement, { from: FR.coerceToSwitchStatement, strict: F.buildSwitchStatement }),
-	template: _attach(FR.coerceToTemplateString, { from: FR.coerceToTemplateString, strict: F.buildTemplateString }),
-	templateLiteral: _attach(FR.coerceToTemplateLiteralType, {
+	switch: attachProps(FR.coerceToSwitchStatement, { from: FR.coerceToSwitchStatement, strict: F.buildSwitchStatement }),
+	template: attachProps(FR.coerceToTemplateString, { from: FR.coerceToTemplateString, strict: F.buildTemplateString }),
+	templateLiteral: attachProps(FR.coerceToTemplateLiteralType, {
 		from: FR.coerceToTemplateLiteralType,
 		strict: F.buildTemplateLiteralType
 	}),
-	ternary: _attach(FR.coerceToTernaryExpression, {
+	ternary: attachProps(FR.coerceToTernaryExpression, {
 		from: FR.coerceToTernaryExpression,
 		strict: F.buildTernaryExpression
 	}),
-	throw: _attach(FR.coerceToThrowStatement, { from: FR.coerceToThrowStatement, strict: F.buildThrowStatement }),
-	try: _attach(FR.coerceToTryStatement, { from: FR.coerceToTryStatement, strict: F.buildTryStatement }),
-	tuple: _attach(FR.coerceToTupleParameter, { from: FR.coerceToTupleParameter, strict: F.buildTupleParameter }),
-	typeAlias: _attach(FR.coerceToTypeAliasDeclaration, {
+	throw: attachProps(FR.coerceToThrowStatement, { from: FR.coerceToThrowStatement, strict: F.buildThrowStatement }),
+	try: attachProps(FR.coerceToTryStatement, { from: FR.coerceToTryStatement, strict: F.buildTryStatement }),
+	tuple: attachProps(FR.coerceToTupleParameter, { from: FR.coerceToTupleParameter, strict: F.buildTupleParameter }),
+	typeAlias: attachProps(FR.coerceToTypeAliasDeclaration, {
 		from: FR.coerceToTypeAliasDeclaration,
 		strict: F.buildTypeAliasDeclaration
 	}),
-	unary: _attach(FR.coerceToUnaryExpression, { from: FR.coerceToUnaryExpression, strict: F.buildUnaryExpression }),
-	union: _attach(FR.coerceToUnionType, { from: FR.coerceToUnionType, strict: F.buildUnionType }),
-	update: _attach(FR.coerceToUpdateExpression, { from: FR.coerceToUpdateExpression, strict: F.buildUpdateExpression }),
-	variable: _attach(FR.coerceToVariableDeclaration, {
+	unary: attachProps(FR.coerceToUnaryExpression, { from: FR.coerceToUnaryExpression, strict: F.buildUnaryExpression }),
+	union: attachProps(FR.coerceToUnionType, { from: FR.coerceToUnionType, strict: F.buildUnionType }),
+	update: attachProps(FR.coerceToUpdateExpression, {
+		from: FR.coerceToUpdateExpression,
+		strict: F.buildUpdateExpression,
+		postfix: F.buildUpdateExpression.postfix,
+		prefix: F.buildUpdateExpression.prefix
+	}),
+	variable: attachProps(FR.coerceToVariableDeclaration, {
 		from: FR.coerceToVariableDeclaration,
 		strict: F.buildVariableDeclaration
 	}),
-	while: _attach(FR.coerceToWhileStatement, { from: FR.coerceToWhileStatement, strict: F.buildWhileStatement }),
-	with: _attach(FR.coerceToWithStatement, { from: FR.coerceToWithStatement, strict: F.buildWithStatement }),
-	yield: _attach(FR.coerceToYieldExpression, { from: FR.coerceToYieldExpression, strict: F.buildYieldExpression }),
+	while: attachProps(FR.coerceToWhileStatement, { from: FR.coerceToWhileStatement, strict: F.buildWhileStatement }),
+	with: attachProps(FR.coerceToWithStatement, { from: FR.coerceToWithStatement, strict: F.buildWithStatement }),
+	yield: attachProps(FR.coerceToYieldExpression, { from: FR.coerceToYieldExpression, strict: F.buildYieldExpression }),
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	moduleExportName,

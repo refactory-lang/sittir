@@ -476,7 +476,7 @@ describe('ir emitter — per-form key attachment', () => {
 		]);
 		// The bundle expression should list curly and flow entries alongside `from`.
 		expect(irSrc).toMatch(
-			/ifaceBody: _attach\(FR\.coerceToIfaceBody, \{ from: FR\.coerceToIfaceBody, strict: F\.buildIfaceBody, "curly": F\.buildIfaceBodyCurly, "flow": F\.buildIfaceBodyFlow \}\)/
+			/ifaceBody: attachProps\(FR\.coerceToIfaceBody, \{ from: FR\.coerceToIfaceBody, strict: F\.buildIfaceBody, "curly": F\.buildIfaceBodyCurly, "flow": F\.buildIfaceBodyFlow \}\)/
 		);
 	});
 });

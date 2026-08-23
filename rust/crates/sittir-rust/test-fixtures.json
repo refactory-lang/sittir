@@ -4388,7 +4388,7 @@
           "$type": 185,
           "$source": 0,
           "$named": true,
-          "_crate": 134,
+          "_crate": "crate",
           "_name": "std",
           "$other": [
             55,
@@ -4408,7 +4408,7 @@
           "$type": 185,
           "$source": 0,
           "$named": true,
-          "_crate": 134,
+          "_crate": "crate",
           "_name": "std",
           "_alias": "ruststd",
           "$other": [
@@ -4452,7 +4452,7 @@
               "$nodeHandle": 10
             }
           },
-          "_crate": 134,
+          "_crate": "crate",
           "_name": "futures",
           "$other": [
             55,
@@ -4496,7 +4496,7 @@
       "$type": 185,
       "$source": 0,
       "$named": true,
-      "_crate": 134,
+      "_crate": "crate",
       "_name": "std",
       "$other": [
         55,
@@ -4532,7 +4532,7 @@
       "$type": 185,
       "$source": 0,
       "$named": true,
-      "_crate": 134,
+      "_crate": "crate",
       "_name": "std",
       "_alias": "ruststd",
       "$other": [
@@ -4592,7 +4592,7 @@
           "$nodeHandle": 12
         }
       },
-      "_crate": 134,
+      "_crate": "crate",
       "_name": "futures",
       "$other": [
         55,
@@ -5895,7 +5895,7 @@
                     "$type": 212,
                     "$source": 0,
                     "$named": true,
-                    "_self": 132,
+                    "_self": "self",
                     "$span": {
                       "start": 359,
                       "end": 363
@@ -7696,7 +7696,7 @@
                 "$type": 212,
                 "$source": 0,
                 "$named": true,
-                "_self": 132,
+                "_self": "self",
                 "$span": {
                   "start": 359,
                   "end": 363
@@ -8869,7 +8869,7 @@
               "$type": 212,
               "$source": 0,
               "$named": true,
-              "_self": 132,
+              "_self": "self",
               "$span": {
                 "start": 359,
                 "end": 363
@@ -14397,7 +14397,7 @@
                     "$source": 0,
                     "$named": true,
                     "_reference": true,
-                    "_self": 132,
+                    "_self": "self",
                     "$span": {
                       "start": 14,
                       "end": 19
@@ -14702,7 +14702,7 @@
                 "$source": 0,
                 "$named": true,
                 "_reference": true,
-                "_self": 132,
+                "_self": "self",
                 "$span": {
                   "start": 14,
                   "end": 19
@@ -15038,7 +15038,7 @@
               "$source": 0,
               "$named": true,
               "_reference": true,
-              "_self": 132,
+              "_self": "self",
               "$span": {
                 "start": 14,
                 "end": 19
@@ -15494,7 +15494,7 @@
                     "$source": 0,
                     "$named": true,
                     "_reference": true,
-                    "_self": 132,
+                    "_self": "self",
                     "$span": {
                       "start": 11,
                       "end": 16
@@ -15714,7 +15714,7 @@
                 "$source": 0,
                 "$named": true,
                 "_reference": true,
-                "_self": 132,
+                "_self": "self",
                 "$span": {
                   "start": 11,
                   "end": 16
@@ -15922,7 +15922,7 @@
               "$source": 0,
               "$named": true,
               "_reference": true,
-              "_self": 132,
+              "_self": "self",
               "$span": {
                 "start": 11,
                 "end": 16
@@ -29630,7 +29630,7 @@
                     "$named": true,
                     "_reference": true,
                     "_mutable_specifier": true,
-                    "_self": 132,
+                    "_self": "self",
                     "$span": {
                       "start": 29,
                       "end": 38
@@ -30141,7 +30141,7 @@
                 "$named": true,
                 "_reference": true,
                 "_mutable_specifier": true,
-                "_self": 132,
+                "_self": "self",
                 "$span": {
                   "start": 29,
                   "end": 38
@@ -31036,7 +31036,7 @@
               "$named": true,
               "_reference": true,
               "_mutable_specifier": true,
-              "_self": 132,
+              "_self": "self",
               "$span": {
                 "start": 29,
                 "end": 38
@@ -49216,7 +49216,7 @@
                             "$type": 212,
                             "$source": 0,
                             "$named": true,
-                            "_self": 132,
+                            "_self": "self",
                             "$span": {
                               "start": 54,
                               "end": 58
@@ -49295,7 +49295,7 @@
                             "$source": 0,
                             "$named": true,
                             "_mutable_specifier": true,
-                            "_self": 132,
+                            "_self": "self",
                             "$span": {
                               "start": 77,
                               "end": 85
@@ -49378,7 +49378,7 @@
                             "$source": 0,
                             "$named": true,
                             "_reference": true,
-                            "_self": 132,
+                            "_self": "self",
                             "$span": {
                               "start": 100,
                               "end": 106
@@ -49476,7 +49476,7 @@
                               "$nodeHandle": 67
                             },
                             "_mutable_specifier": true,
-                            "_self": 132,
+                            "_self": "self",
                             "$span": {
                               "start": 125,
                               "end": 137
@@ -49775,7 +49775,7 @@
                         "$type": 212,
                         "$source": 0,
                         "$named": true,
-                        "_self": 132,
+                        "_self": "self",
                         "$span": {
                           "start": 54,
                           "end": 58
@@ -49854,7 +49854,7 @@
                         "$source": 0,
                         "$named": true,
                         "_mutable_specifier": true,
-                        "_self": 132,
+                        "_self": "self",
                         "$span": {
                           "start": 77,
                           "end": 85
@@ -49937,7 +49937,7 @@
                         "$source": 0,
                         "$named": true,
                         "_reference": true,
-                        "_self": 132,
+                        "_self": "self",
                         "$span": {
                           "start": 100,
                           "end": 106
@@ -50035,7 +50035,7 @@
                           "$nodeHandle": 103
                         },
                         "_mutable_specifier": true,
-                        "_self": 132,
+                        "_self": "self",
                         "$span": {
                           "start": 125,
                           "end": 137
@@ -50333,7 +50333,7 @@
                 "$type": 212,
                 "$source": 0,
                 "$named": true,
-                "_self": 132,
+                "_self": "self",
                 "$span": {
                   "start": 54,
                   "end": 58
@@ -50428,7 +50428,7 @@
                 "$source": 0,
                 "$named": true,
                 "_mutable_specifier": true,
-                "_self": 132,
+                "_self": "self",
                 "$span": {
                   "start": 77,
                   "end": 85
@@ -50527,7 +50527,7 @@
                 "$source": 0,
                 "$named": true,
                 "_reference": true,
-                "_self": 132,
+                "_self": "self",
                 "$span": {
                   "start": 100,
                   "end": 106
@@ -50641,7 +50641,7 @@
                   "$nodeHandle": 186
                 },
                 "_mutable_specifier": true,
-                "_self": 132,
+                "_self": "self",
                 "$span": {
                   "start": 125,
                   "end": 137
@@ -50736,7 +50736,7 @@
               "$type": 212,
               "$source": 0,
               "$named": true,
-              "_self": 132,
+              "_self": "self",
               "$span": {
                 "start": 54,
                 "end": 58
@@ -50801,7 +50801,7 @@
               "$source": 0,
               "$named": true,
               "_mutable_specifier": true,
-              "_self": 132,
+              "_self": "self",
               "$span": {
                 "start": 77,
                 "end": 85
@@ -50870,7 +50870,7 @@
               "$source": 0,
               "$named": true,
               "_reference": true,
-              "_self": 132,
+              "_self": "self",
               "$span": {
                 "start": 100,
                 "end": 106
@@ -50954,7 +50954,7 @@
                 "$nodeHandle": 200
               },
               "_mutable_specifier": true,
-              "_self": 132,
+              "_self": "self",
               "$span": {
                 "start": 125,
                 "end": 137
@@ -51641,7 +51641,7 @@
                             "$source": 0,
                             "$named": true,
                             "_reference": true,
-                            "_self": 132,
+                            "_self": "self",
                             "$span": {
                               "start": 93,
                               "end": 98
@@ -52133,7 +52133,7 @@
                         "$source": 0,
                         "$named": true,
                         "_reference": true,
-                        "_self": 132,
+                        "_self": "self",
                         "$span": {
                           "start": 93,
                           "end": 98
@@ -52608,7 +52608,7 @@
                 "$source": 0,
                 "$named": true,
                 "_reference": true,
-                "_self": 132,
+                "_self": "self",
                 "$span": {
                   "start": 93,
                   "end": 98
@@ -52743,7 +52743,7 @@
               "$source": 0,
               "$named": true,
               "_reference": true,
-              "_self": 132,
+              "_self": "self",
               "$span": {
                 "start": 93,
                 "end": 98
@@ -56307,7 +56307,7 @@
                           "$source": 0,
                           "$named": true,
                           "_reference": true,
-                          "_self": 132,
+                          "_self": "self",
                           "$span": {
                             "start": 59,
                             "end": 64
@@ -56547,7 +56547,7 @@
                       "$source": 0,
                       "$named": true,
                       "_reference": true,
-                      "_self": 132,
+                      "_self": "self",
                       "$span": {
                         "start": 59,
                         "end": 64
@@ -56836,7 +56836,7 @@
                 "$source": 0,
                 "$named": true,
                 "_reference": true,
-                "_self": 132,
+                "_self": "self",
                 "$span": {
                   "start": 59,
                   "end": 64
@@ -56940,7 +56940,7 @@
               "$source": 0,
               "$named": true,
               "_reference": true,
-              "_self": 132,
+              "_self": "self",
               "$span": {
                 "start": 59,
                 "end": 64
@@ -57100,7 +57100,7 @@
                           "$type": 212,
                           "$source": 0,
                           "$named": true,
-                          "_self": 132,
+                          "_self": "self",
                           "$span": {
                             "start": 50,
                             "end": 54
@@ -57350,7 +57350,7 @@
                       "$type": 212,
                       "$source": 0,
                       "$named": true,
-                      "_self": 132,
+                      "_self": "self",
                       "$span": {
                         "start": 50,
                         "end": 54
@@ -57650,7 +57650,7 @@
                 "$type": 212,
                 "$source": 0,
                 "$named": true,
-                "_self": 132,
+                "_self": "self",
                 "$span": {
                   "start": 50,
                   "end": 54
@@ -57781,7 +57781,7 @@
               "$type": 212,
               "$source": 0,
               "$named": true,
-              "_self": 132,
+              "_self": "self",
               "$span": {
                 "start": 50,
                 "end": 54
@@ -60687,7 +60687,7 @@
                           "$source": 0,
                           "$named": true,
                           "_reference": true,
-                          "_self": 132,
+                          "_self": "self",
                           "$span": {
                             "start": 54,
                             "end": 59
@@ -60896,7 +60896,7 @@
                       "$source": 0,
                       "$named": true,
                       "_reference": true,
-                      "_self": 132,
+                      "_self": "self",
                       "$span": {
                         "start": 54,
                         "end": 59
@@ -61139,7 +61139,7 @@
                 "$source": 0,
                 "$named": true,
                 "_reference": true,
-                "_self": 132,
+                "_self": "self",
                 "$span": {
                   "start": 54,
                   "end": 59
@@ -61222,7 +61222,7 @@
               "$source": 0,
               "$named": true,
               "_reference": true,
-              "_self": 132,
+              "_self": "self",
               "$span": {
                 "start": 54,
                 "end": 59
@@ -70884,7 +70884,7 @@
                     "$source": 0,
                     "$named": true,
                     "_reference": true,
-                    "_self": 132,
+                    "_self": "self",
                     "$span": {
                       "start": 11,
                       "end": 16
@@ -73522,7 +73522,7 @@
                 "$source": 0,
                 "$named": true,
                 "_reference": true,
-                "_self": 132,
+                "_self": "self",
                 "$span": {
                   "start": 11,
                   "end": 16
@@ -75190,7 +75190,7 @@
               "$source": 0,
               "$named": true,
               "_reference": true,
-              "_self": 132,
+              "_self": "self",
               "$span": {
                 "start": 11,
                 "end": 16
@@ -83063,7 +83063,7 @@
                 "$type": 355,
                 "$source": 0,
                 "$named": true,
-                "_mutable_specifier": 79,
+                "_mutable_specifier": "mut",
                 "$other": [
                   143
                 ],
@@ -83274,7 +83274,7 @@
         "$type": 355,
         "$source": 0,
         "$named": true,
-        "_mutable_specifier": 79,
+        "_mutable_specifier": "mut",
         "$other": [
           143
         ],
@@ -112079,7 +112079,7 @@
                               "$type": 303,
                               "$source": 0,
                               "$named": true,
-                              "_mutable_specifier": 79,
+                              "_mutable_specifier": "mut",
                               "_pattern": "e",
                               "$span": {
                                 "start": 39,
@@ -112846,7 +112846,7 @@
                       "$type": 303,
                       "$source": 0,
                       "$named": true,
-                      "_mutable_specifier": 79,
+                      "_mutable_specifier": "mut",
                       "_pattern": "e",
                       "$span": {
                         "start": 39,
@@ -113745,7 +113745,7 @@
                     "$type": 303,
                     "$source": 0,
                     "$named": true,
-                    "_mutable_specifier": 79,
+                    "_mutable_specifier": "mut",
                     "_pattern": "e",
                     "$span": {
                       "start": 39,
@@ -114372,7 +114372,7 @@
             "$type": 303,
             "$source": 0,
             "$named": true,
-            "_mutable_specifier": 79,
+            "_mutable_specifier": "mut",
             "_pattern": "e",
             "$span": {
               "start": 39,
@@ -114710,7 +114710,7 @@
       "$type": 303,
       "$source": 0,
       "$named": true,
-      "_mutable_specifier": 79,
+      "_mutable_specifier": "mut",
       "_pattern": "e",
       "$span": {
         "start": 39,
@@ -131646,7 +131646,7 @@
                           "$type": 303,
                           "$source": 0,
                           "$named": true,
-                          "_mutable_specifier": 79,
+                          "_mutable_specifier": "mut",
                           "_pattern": "y",
                           "$span": {
                             "start": 35,
@@ -131946,7 +131946,7 @@
                     "$type": 303,
                     "$source": 0,
                     "$named": true,
-                    "_mutable_specifier": 79,
+                    "_mutable_specifier": "mut",
                     "_pattern": "y",
                     "$span": {
                       "start": 35,
@@ -132202,7 +132202,7 @@
         "$type": 303,
         "$source": 0,
         "$named": true,
-        "_mutable_specifier": 79,
+        "_mutable_specifier": "mut",
         "_pattern": "y",
         "$span": {
           "start": 35,
@@ -132278,7 +132278,7 @@
       "$type": 303,
       "$source": 0,
       "$named": true,
-      "_mutable_specifier": 79,
+      "_mutable_specifier": "mut",
       "_pattern": "y",
       "$span": {
         "start": 35,
@@ -141063,7 +141063,7 @@
               "$type": 303,
               "$source": 0,
               "$named": true,
-              "_mutable_specifier": 79,
+              "_mutable_specifier": "mut",
               "_pattern": {
                 "$type": 306,
                 "$source": 0,
@@ -145127,7 +145127,7 @@
           "$type": 303,
           "$source": 0,
           "$named": true,
-          "_mutable_specifier": 79,
+          "_mutable_specifier": "mut",
           "_pattern": {
             "$type": 306,
             "$source": 0,
@@ -145571,7 +145571,7 @@
         "$type": 303,
         "$source": 0,
         "$named": true,
-        "_mutable_specifier": 79,
+        "_mutable_specifier": "mut",
         "_pattern": {
           "$type": 306,
           "$source": 0,
@@ -146251,7 +146251,7 @@
       "$type": 303,
       "$source": 0,
       "$named": true,
-      "_mutable_specifier": 79,
+      "_mutable_specifier": "mut",
       "_pattern": {
         "$type": 306,
         "$source": 0,

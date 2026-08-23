@@ -2259,7 +2259,14 @@ function separatedListBodyInfo(body) {
       const flank = peelOptionalEitherSpelling(members[1]);
       const flankLit = flank && isStringType(flank.type) ? flank.value : null;
       if (flankLit === null || separatorLiteral !== null && flankLit !== separatorLiteral) return null;
-      return { elementName, flankCarrying: true, form: "leading", element: detected.content, separatorRule: detected.separator, flatMembers: members };
+      return {
+        elementName,
+        flankCarrying: true,
+        form: "leading",
+        element: detected.content,
+        separatorRule: detected.separator,
+        flatMembers: members
+      };
     }
     const head = members[repeatIdx - 1];
     if (separatedListElementName(head) !== elementName || elementName === null) {
@@ -2280,14 +2287,28 @@ function separatedListBodyInfo(body) {
       }
       return null;
     }
-    return { elementName, flankCarrying, form: "head", element: detected.content, separatorRule: detected.separator, flatMembers: members };
+    return {
+      elementName,
+      flankCarrying,
+      form: "head",
+      element: detected.content,
+      separatorRule: detected.separator,
+      flatMembers: members
+    };
   }
   if (repeatIdx !== 0 || members.length !== 2) return null;
   const tail = peelOptionalEitherSpelling(members[1]);
   if (tail === null) return null;
   if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
   if (elementName === null && ruleKey(tail) !== ruleKey(detected.content)) return null;
-  return { elementName, flankCarrying: true, form: "tail", element: detected.content, separatorRule: detected.separator, flatMembers: members };
+  return {
+    elementName,
+    flankCarrying: true,
+    form: "tail",
+    element: detected.content,
+    separatorRule: detected.separator,
+    flatMembers: members
+  };
 }
 function detectInlineSeparatedListRuns(members) {
   const carriesRepeat = (m) => {
@@ -2609,7 +2630,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         clauseGroupOwners,
         ambientPrec
       );
-      const promoted = mintStructuredChoiceArm(
+      const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
+      const promoted = literalOnlySplit ? null : mintStructuredChoiceArm(
         out,
         parentKind,
         rulesBag,
@@ -3029,6 +3051,51 @@ function armStartsWithSymbol(rule, collidingLeadingNames, rulesBag) {
   if (collidingLeadingNames.size === 0) return false;
   const name = armLeadingSymbolName(rule, rulesBag);
   return name !== void 0 && collidingLeadingNames.has(name);
+}
+function isLiteralChoiceContent(rule) {
+  if (isStringType(rule.type)) return true;
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    return Array.isArray(members) && members.every((m) => isLiteralChoiceContent(m));
+  }
+  return false;
+}
+function armsDifferOnlyByLiteralChoice(a, b) {
+  let literalDeltas = 0;
+  const peel = (r) => {
+    while (isPrecWrapper(r) && r.content) {
+      r = r.content;
+    }
+    return r;
+  };
+  const same = (x, y) => {
+    x = peel(x);
+    y = peel(y);
+    if (isLiteralChoiceContent(x) && isLiteralChoiceContent(y)) {
+      if (JSON.stringify(x) !== JSON.stringify(y)) literalDeltas++;
+      return true;
+    }
+    const tx = x.type;
+    const ty = y.type;
+    if (tx !== ty || typeof tx !== "string") return false;
+    if (isSymbolType(tx)) return x.name === y.name;
+    if (isFieldType(tx)) {
+      return x.name === y.name && same(x.content, y.content);
+    }
+    const mx = x.members;
+    const my = y.members;
+    if (Array.isArray(mx) || Array.isArray(my)) {
+      if (!Array.isArray(mx) || !Array.isArray(my) || mx.length !== my.length) return false;
+      return mx.every((m, i) => same(m, my[i]));
+    }
+    const cx = x.content;
+    const cy = y.content;
+    if (cx !== void 0 || cy !== void 0) {
+      return cx !== void 0 && cy !== void 0 && same(cx, cy);
+    }
+    return JSON.stringify(x) === JSON.stringify(y);
+  };
+  return same(a, b) && literalDeltas === 1;
 }
 function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, collidingLeadingNames, ambientPrec, enclosingFieldName) {
   const t = arm.type;
@@ -4557,6 +4624,9 @@ var grammar_sittir_default = grammar(
         role($._newline, "newline");
         return prev;
       },
+      expectTestFailures: {
+        "parenthesized_list_splat.parenthesizedListSplat": "dummy stub \u2014 the aliased inner parenthesized_list_splat is stubbed with an identifier content the transport rejects"
+      },
       conflicts: ($, previous) => [
         ...previous ?? [],
         [$.expression_statement, $._expression_statement_tuple],
@@ -4795,10 +4865,7 @@ var grammar_sittir_default = grammar(
         // clear that seam. (The text↔format_expression seams, by
         // contrast, are statically safe via the interpolation's fixed
         // non-word '{'/'}' flanks.)
-        format_specifier: ($) => seq(
-          ":",
-          repeat(choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression)))
-        ),
+        format_specifier: ($) => seq(":", repeat(choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression)))),
         parameters: ($) => seq("(", optional(alias($._parameters, $.parameters_elements)), ")"),
         lambda_parameters: ($) => alias($._parameters, $.parameters_elements),
         tuple_pattern: ($) => seq("(", optional(alias($._patterns, $.patterns)), ")"),
@@ -4906,17 +4973,9 @@ var grammar_sittir_default = grammar(
         // list extracts as `(',' arg)+ ','?` and the bare-`','` arm
         // stays behind in the optional choice so the language is
         // unchanged.
-        _print_arguments: ($) => seq(
-          field("argument", $.expression),
-          repeat(seq(",", field("argument", $.expression))),
-          optional(",")
-        ),
+        _print_arguments: ($) => seq(field("argument", $.expression), repeat(seq(",", field("argument", $.expression))), optional(",")),
         _print_chevron_arguments: ($) => seq(repeat1(seq(",", field("argument", $.expression))), optional(",")),
-        print_statement_arm1: ($) => seq(
-          "print",
-          $.chevron,
-          optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ","))
-        ),
+        print_statement_arm1: ($) => seq("print", $.chevron, optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ","))),
         print_statement_arm2: ($) => seq("print", alias($._print_arguments, $.print_arguments)),
         print_statement: ($) => choice(prec(1, $.print_statement_arm1), prec(-3, prec.dynamic(-1, $.print_statement_arm2))),
         // Base `_simple_pattern`'s last arm is the bare literal `'_'`

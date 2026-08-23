@@ -3,6 +3,7 @@ import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
+import { pruneDeterminedSlots } from '../model/node-map.ts';
 import { resolveGrammarJsPath } from '../resolve-grammar.ts';
 import { classifyBranchSlots } from '../../emitters/shared.ts';
 import type { NodeMap } from '../types.ts';
@@ -28,6 +29,9 @@ beforeAll(async () => {
 	const linked = link(raw);
 	const normalized = normalizeGrammar(linked);
 	nodeMap = assemble(AssembleCtx.from(normalized));
+	// Mirror the generate() pipeline: determined slots leave the record
+	// before any classification runs.
+	pruneDeterminedSlots(nodeMap);
 });
 
 describe('classifyBranchSlots', () => {
@@ -87,7 +91,7 @@ describe('classifyBranchSlots', () => {
 		expect(result.tag).toBe('multiSlot');
 	});
 
-	it('excludes auto-stamp children from slot count', () => {
+	it('excludes determined (grammar-fixed) children from slot count', () => {
 		// mut_pattern has child 'mutable_specifier' (required singular
 		// constant → auto-stamped) + child 'pattern' (non-stamp). After
 		// filtering, only 'pattern' survives → singleSlot singular,

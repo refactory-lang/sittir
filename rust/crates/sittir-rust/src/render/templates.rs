@@ -367,7 +367,6 @@ pub struct RangeExpressionBinaryTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_range_expression_postfix.jinja", escape = "none")]
 pub struct RangeExpressionPostfixTemplate<'a> {
-    pub operator: SingleNonterminalView<'a>,
     pub start: SingleNonterminalView<'a>,
 }
 
@@ -375,7 +374,6 @@ pub struct RangeExpressionPostfixTemplate<'a> {
 #[template(path = "_range_expression_prefix.jinja", escape = "none")]
 pub struct RangeExpressionPrefixTemplate<'a> {
     pub end: SingleNonterminalView<'a>,
-    pub operator: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -401,8 +399,7 @@ pub struct RangePatternPrefixTemplate<'a> {
 
 #[derive(::askama::Template)]
 #[template(path = "_reference_expression_raw_mut.jinja", escape = "none")]
-pub struct ReferenceExpressionRawMutTemplate<'a> {
-    pub mutable_specifier: SingleNonterminalView<'a>,
+pub struct ReferenceExpressionRawMutTemplate {
 }
 
 #[derive(::askama::Template)]
@@ -782,7 +779,6 @@ pub struct ExpressionStatementTemplate<'a> {
 #[template(path = "extern_crate_declaration.jinja", escape = "none")]
 pub struct ExternCrateDeclarationTemplate<'a> {
     pub alias: OptionalNonterminalView<'a>,
-    pub crate_: SingleNonterminalView<'a>,
     pub name: SingleNonterminalView<'a>,
     pub visibility_modifier: OptionalNonterminalView<'a>,
 }
@@ -1092,7 +1088,6 @@ pub struct ModItemTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "mut_pattern.jinja", escape = "none")]
 pub struct MutPatternTemplate<'a> {
-    pub mutable_specifier: SingleNonterminalView<'a>,
     pub pattern: SingleNonterminalView<'a>,
 }
 
@@ -1242,7 +1237,6 @@ pub struct SelfParameterTemplate<'a> {
     pub lifetime: OptionalNonterminalView<'a>,
     pub mutable_specifier: OptionalNonterminalView<'a>,
     pub reference: OptionalNonterminalView<'a>,
-    pub self_: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

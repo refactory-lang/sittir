@@ -1085,7 +1085,9 @@ export async function loadReadTreeNode(
  * `NativeNodeCoords.embeddedData`) that has no handle+child-index to read
  * through `readTreeNode` itself.
  */
-export async function loadWrapNode(grammar: string): Promise<((data: AnyNodeData, tree: TreeHandle) => unknown) | null> {
+export async function loadWrapNode(
+	grammar: string
+): Promise<((data: AnyNodeData, tree: TreeHandle) => unknown) | null> {
 	const p = WRAP_MODULE_PATHS[grammar];
 	if (!p) return null;
 	try {
@@ -1117,6 +1119,10 @@ const NODE_MODEL_PATHS: Record<string, string> = {
 export interface LoadedNodeModel {
 	readonly factoryShapes: Record<string, FactoryShape>;
 	readonly factoryFields: Record<string, readonly string[]>;
+	/** Per-kind storage keys of determined (grammar-fixed) slots — present
+	 *  on the read wire via tree-sitter field labels, absent from factory
+	 *  storage; comparisons skip them. */
+	readonly determinedStorageKeys: Record<string, readonly string[]>;
 	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
 	readonly polymorphVariants: PolymorphVariantMap;
@@ -1126,7 +1132,12 @@ export interface LoadedNodeModel {
  * validators consume. `factoryShape`/`factoryFields` are per-node;
  * `factorySlots`/`fieldAliasMap`/`polymorphVariants` are top-level. */
 interface ParsedNodeModel {
-	nodes?: ReadonlyArray<{ kind: string; factoryShape?: FactoryShape; factoryFields?: readonly string[] }>;
+	nodes?: ReadonlyArray<{
+		kind: string;
+		factoryShape?: FactoryShape;
+		factoryFields?: readonly string[];
+		determinedSlots?: ReadonlyArray<{ name: string; storageKey: string; text: string }>;
+	}>;
 	factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 	fieldAliasMap?: Record<string, Record<string, string>>;
 	polymorphVariants?: PolymorphVariantMap;
@@ -1134,6 +1145,7 @@ interface ParsedNodeModel {
 
 const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	factoryShapes: {},
+	determinedStorageKeys: {},
 	factoryFields: {},
 	factorySlots: {},
 	fieldAliasMap: {},
@@ -1161,13 +1173,18 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const model = JSON.parse(raw) as ParsedNodeModel;
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const factoryFields: Record<string, readonly string[]> = {};
+	const determinedStorageKeys: Record<string, readonly string[]> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.factoryShape !== undefined) factoryShapes[node.kind] = node.factoryShape;
 		if (node.factoryFields !== undefined) factoryFields[node.kind] = node.factoryFields;
+		if (node.determinedSlots !== undefined && node.determinedSlots.length > 0) {
+			determinedStorageKeys[node.kind] = node.determinedSlots.map((slot) => slot.storageKey);
+		}
 	}
 	return {
 		factoryShapes,
 		factoryFields,
+		determinedStorageKeys,
 		factorySlots: model.factorySlots ?? {},
 		fieldAliasMap: model.fieldAliasMap ?? {},
 		polymorphVariants: model.polymorphVariants ?? {}
@@ -1328,7 +1345,9 @@ function resolveWrappedStorageValue(
 				// investigation time on).
 				const message = (e as Error).message;
 				const type = (node as any).$type;
-				process.stderr.write(`[accessor-throw] key=${storageKey} accessor=${accessorName} type=${type} err=${message}\n`);
+				process.stderr.write(
+					`[accessor-throw] key=${storageKey} accessor=${accessorName} type=${type} err=${message}\n`
+				);
 				onAccessorThrow?.({ key: storageKey, accessor: accessorName, type, message });
 				return node[storageKey];
 			}
@@ -2814,7 +2833,8 @@ export function dedupeMismatchesByContainment<T extends { entry?: string; start:
 	return mismatches.filter(
 		(m, i) =>
 			!mismatches.some(
-				(n, j) => j !== i && n.entry === m.entry && n.start >= m.start && n.end <= m.end && (n.start > m.start || n.end < m.end)
+				(n, j) =>
+					j !== i && n.entry === m.entry && n.start >= m.start && n.end <= m.end && (n.start > m.start || n.end < m.end)
 			)
 	);
 }

@@ -22,7 +22,6 @@ import type { AssembledNode, AssembledNonterminal, AssembledSeparatedList } from
 
 type BranchLikeForFrom = Extract<AssembledNode, { modelType: 'branch' }>;
 import {
-	isAutoStampField,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
@@ -31,7 +30,6 @@ import {
 	keywordPresenceKind,
 	resolveSingleFieldFactorySlot,
 	resolveFieldStorageInfo,
-	stampExpressionFor,
 	isHiddenInfraSlot,
 	configurableFactoryFields,
 	type BranchSlotClass,
@@ -294,7 +292,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 		return null;
 	}
 	const targetFields = targetNode.fields;
-	const hasBlockingField = targetFields.some((f) => isRequired(f) && stampExpressionFor(f, nodeMap) === undefined);
+	const hasBlockingField = targetFields.some((f) => isRequired(f));
 	if (hasBlockingField) return null;
 	return targetNode.rawFactoryName;
 }
@@ -363,7 +361,6 @@ function emitBranchFrom(
 		const needsNonEmptyHoist = (f: AssembledNonterminal): boolean =>
 			isNonEmpty(f) && isMultiple(f) && keywordPresenceKind(f, nodeMap) === null;
 		for (const f of fields) {
-			if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 			if (needsNonEmptyHoist(f)) {
 				const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional, kindEntries);
 				lines.push(`  const ${neName(f)} = ${call};`);
@@ -396,7 +393,6 @@ function emitBranchFrom(
 		} else {
 			lines.push(`  return ${factory}({`);
 			for (const f of fields) {
-				if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 				if (needsNonEmptyHoist(f)) {
 					lines.push(`    ${f.configKey}: ${neName(f)},`);
 				} else {

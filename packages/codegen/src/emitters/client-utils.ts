@@ -43,7 +43,23 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push(...emitNodeGuards());
 	lines.push('');
 	lines.push(...emitTransportHelpers());
+	lines.push('');
+	lines.push(...emitAttachProps());
 	return lines.join('\n');
+}
+
+function emitAttachProps(): string[] {
+	// defineProperty rather than Object.assign: a function's reserved
+	// read-only properties (name, length, arguments, caller) make [[Set]]
+	// throw, and a namespaced constructor may legitimately be called `name`.
+	return [
+		'export function attachProps<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(fn: T, props: P): T & P {',
+		'  for (const key of Object.keys(props)) {',
+		'    Object.defineProperty(fn, key, { value: props[key], writable: true, configurable: true, enumerable: true });',
+		'  }',
+		'  return fn as T & P;',
+		'}'
+	];
 }
 
 function emitMethodsEngine(): string[] {

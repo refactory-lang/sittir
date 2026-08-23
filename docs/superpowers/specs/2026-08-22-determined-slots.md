@@ -1,6 +1,6 @@
 # Determined Slots — No Storage for Grammar-Fixed Values
 
-**Status:** Draft (design settled 2026-08-22; implementation pending)
+**Status:** Realized (design settled 2026-08-22)
 
 ## Problem
 
@@ -85,3 +85,39 @@ an enum-discriminated kind exposes one constructor per member —
 `binaryExpression.plus(x, y)`, `binaryExpression.in(...)` — fixing the
 enum member by method name. Parameters are the form's parameters; storage
 is the form's node. Specified separately once determined slots land.
+
+## Realization notes
+
+- Classification and text share one derivation (`determinedSlotText`,
+  node-map). `pruneDeterminedSlots` runs in generate before node-model
+  emission and hydration: determined slots leave the slot record (every
+  record-driven emitter — factories, types, wrap, transport, from — drops
+  them atomically) and land on `node.determinedSlots`, stamped
+  `determined`; `slotByRuleId` still resolves them, which is how the
+  template emitter inlines their text (`emitSlotReference`;
+  whitespace-only text emits as an expression tag). Ref targets are leaf
+  kinds only (keyword / string-bodied token) — a parameterless compound
+  target stays a real slot.
+- Realized population: rust 6, typescript 6, python 2 (the spec's other
+  three — `turbofish`, `pub`, `type` — left with the dropped
+  override-fielded keywords). A fully-static template (rust
+  `_reference_expression_raw_mut` → `raw mut`) emits its askama struct
+  without the now-unused lifetime.
+- The READ wire keeps the keys: tree-sitter field labels are load-bearing
+  (the parser's own surface, and form dispatch routes
+  `binary_expression`'s `in` arm by the `operator` field), so "drop
+  atomically" is realized at the storage contract and the comparison
+  contract — node-model serializes `determinedSlots` (name, storageKey,
+  text) and the validators consume the stamped fact: factory-render-parse
+  skips determined storage keys, template-coverage exempts determined
+  fields from the missing-placeholder check.
+- `mintStructuredChoiceArm`'s callers decline an arm whose delta against a
+  sibling is EXACTLY one literal-choice position
+  (`armsDifferOnlyByLiteralChoice`) — one enum slot expresses it. Arms
+  differing at two literal positions (`new . target` vs `import . meta`)
+  are distinct forms and stay split.
+- `stampExpressionFor` / `autoStampExpression` / `stampedExtras` /
+  `isAutoStampField` / `resolveEffectiveLiteral` and the compound-level
+  `stampExpression` are deleted; the `AutoStamp` brand is no longer
+  emitted. `parameterless` is computed from `determinedSlots` + the
+  remaining record.

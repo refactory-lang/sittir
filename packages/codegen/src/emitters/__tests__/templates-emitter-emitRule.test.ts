@@ -567,3 +567,44 @@ describe('emitRule — exhaustive default', () => {
 		expect(emitRule(rule, makeCtx())).toBe('');
 	});
 });
+
+describe('emitRule — tag-boundary seams', () => {
+	// The fixed×fixed join already bakes the writer's invariant into literal
+	// text. A tag boundary whose BOTH edge classes are statically known has
+	// a constant outcome under the same invariant, so it is baked too; a
+	// boundary with a `varies` edge stays glued for the runtime writer.
+	const slot = makeSlot({ name: 'left', propertyName: 'left', storageName: 'left' });
+	const nodeMap = {
+		slotByRuleId: new Map([['r-left', slot]]),
+		nodeByRuleId: new Map(),
+		nodes: new Map()
+	} as unknown as EmitCtx['nodeMap'];
+	const seq = (kind: string): SeqRule => ({
+		type: SEQ,
+		members: [
+			{ type: STRING, value: 'type' },
+			{ type: SYMBOL, name: kind, id: 'r-left', fieldName: 'left' }
+		]
+	});
+
+	it('bakes the space when both edge classes are statically word-class', () => {
+		const ctx = makeCtx({ nodeMap, rules: { identifier: { type: PATTERN, value: '[a-z]+' } } });
+		expect(emitRule(seq('identifier'), ctx)).toBe('type {{ left }}');
+	});
+
+	it('leaves the boundary glued when the slot edge varies', () => {
+		const ctx = makeCtx({
+			nodeMap,
+			rules: {
+				operand: {
+					type: CHOICE,
+					members: [
+						{ type: PATTERN, value: '[a-z]+' },
+						{ type: SEQ, members: [{ type: STRING, value: '(' }, { type: STRING, value: ')' }] }
+					]
+				}
+			}
+		});
+		expect(emitRule(seq('operand'), ctx)).toBe('type{{ left }}');
+	});
+});

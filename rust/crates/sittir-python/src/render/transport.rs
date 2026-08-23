@@ -5350,90 +5350,6 @@ impl RenderableTransport for KeywordIdentifierTransport {
 
 
 #[derive(Debug, Clone)]
-pub enum SimpleStatementsNewlineTransportSlot {
-    Literal0_5f_6e_65_77_6c_69_6e_65,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for SimpleStatementsNewlineTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in SimpleStatementsNewlineTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in SimpleStatementsNewlineTransportSlot")
-                )?;
-                match kind_id {
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in SimpleStatementsNewlineTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("SimpleStatementsNewlineTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SimpleStatementsNewlineTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SimpleStatementsNewlineTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<SimpleStatementsNewlineTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        SimpleStatementsNewlineTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<SimpleStatementsNewlineTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        SimpleStatementsNewlineTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn simple_statements_newline_transport_slot_to_any(t: SimpleStatementsNewlineTransportSlot) -> AnyTransport {
-    match t {
-        SimpleStatementsNewlineTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
-impl RenderableTransport for SimpleStatementsNewlineTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            SimpleStatementsNewlineTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum FutureImportStatementContentTransportSlot {
     ImportList(ImportListTransport),
     FutureImportStatementArm(FutureImportStatementArmTransport),
@@ -8556,90 +8472,6 @@ impl RenderableTransport for DecoratedDefinitionDefinitionTransportSlot {
         match self {
             DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(inner) => inner.render_into(dest),
             DecoratedDefinitionDefinitionTransportSlot::FunctionDefinition(inner) => inner.render_into(dest),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum DecoratorNewlineTransportSlot {
-    Literal0_5f_6e_65_77_6c_69_6e_65,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for DecoratorNewlineTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in DecoratorNewlineTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in DecoratorNewlineTransportSlot")
-                )?;
-                match kind_id {
-                    101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in DecoratorNewlineTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("DecoratorNewlineTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DecoratorNewlineTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("DecoratorNewlineTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DecoratorNewlineTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        DecoratorNewlineTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DecoratorNewlineTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        DecoratorNewlineTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn decorator_newline_transport_slot_to_any(t: DecoratorNewlineTransportSlot) -> AnyTransport {
-    match t {
-        DecoratorNewlineTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
-impl RenderableTransport for DecoratorNewlineTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            DecoratorNewlineTransportSlot::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
 }
@@ -14998,8 +14830,6 @@ pub struct SimpleStatementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements_elements"))]
     pub simple_statements_elements: SimpleStatementsElementsTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_newline"))]
-    pub newline: NewlineTransport,
 }
 
 impl RenderableTransport for SimpleStatementsTransport {
@@ -17745,8 +17575,6 @@ pub struct DecoratorTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ExpressionTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_newline"))]
-    pub newline: NewlineTransport,
 }
 
 impl RenderableTransport for DecoratorTransport {
@@ -33527,7 +33355,6 @@ fn render_module(node: &ModuleTransport, dest: &mut dyn ::std::fmt::Write) -> Re
 
 fn render_simple_statements(node: &SimpleStatementsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = SimpleStatementsTemplate {
-        newline: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.newline)),
         simple_statements_elements: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.simple_statements_elements)),
     };
     template.render_into(dest)
@@ -34053,7 +33880,6 @@ fn render_decorated_definition(node: &DecoratedDefinitionTransport, dest: &mut d
 fn render_decorator(node: &DecoratorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = DecoratorTemplate {
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
-        newline: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.newline)),
     };
     template.render_into(dest)
 }

@@ -829,7 +829,6 @@ export function wrapStatement(
 }
 
 export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.SimpleStatements as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -841,28 +840,13 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'simple_statements_elements', span: (data as _NodeData).$span }
 			),
-			_newline: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._newline ?? readTerminalFromOther(data, [TSKindId.Newline]),
-					'newline',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'newline', span: (data as _NodeData).$span }
-				),
-				{ '\n': 101 }
-			),
 
 			simpleStatementsElements() {
 				return drillIn<T.SimpleStatementsElements>(this._simple_statements_elements, tree);
 			},
-			newline() {
-				return this._newline;
-			},
 			$with: {
 				simpleStatementsElements: (v: NonNullable<T.SimpleStatements['_simple_statements_elements']>) =>
-					wrapSimpleStatements({ ...data, _simple_statements_elements: v }, tree),
-				newline: (v: NonNullable<T.SimpleStatements['_newline']>) =>
-					wrapSimpleStatements({ ...data, _newline: v }, tree)
+					wrapSimpleStatements({ ...data, _simple_statements_elements: v }, tree)
 			}
 		},
 		methodsEngine
@@ -2962,7 +2946,6 @@ export function wrapDecoratedDefinition(data: T.DecoratedDefinition, tree: TreeH
 }
 
 export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Decorator as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -2973,26 +2956,12 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
 				slotName: 'expression',
 				span: (data as _NodeData).$span
 			}),
-			_newline: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._newline ?? readTerminalFromOther(data, [TSKindId.Newline]),
-					'newline',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'newline', span: (data as _NodeData).$span }
-				),
-				{ '\n': 101 }
-			),
 
 			expression() {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
-			newline() {
-				return this._newline;
-			},
 			$with: {
-				expression: (v: NonNullable<T.Decorator['_expression']>) => wrapDecorator({ ...data, _expression: v }, tree),
-				newline: (v: NonNullable<T.Decorator['_newline']>) => wrapDecorator({ ...data, _newline: v }, tree)
+				expression: (v: NonNullable<T.Decorator['_expression']>) => wrapDecorator({ ...data, _expression: v }, tree)
 			}
 		},
 		methodsEngine

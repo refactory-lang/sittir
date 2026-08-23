@@ -52,7 +52,8 @@ import {
 	edgeClassesOfKind,
 	edgeCharSetsOfKind,
 	patternLeadingEdgeClass,
-	storageKindOfValue
+	storageKindOfValue,
+	determinedSlotText
 } from '../compiler/model/node-map.ts';
 import type {
 	AssembledBranch,
@@ -81,13 +82,15 @@ export interface EmittedTemplates {
 /**
  * One template boundary the SEQ join classified. `left`/`right` are the
  * seam's adjacent characters in template text — a `'}'` left or `'{'`
- * right is template syntax (a slot/tag boundary), decided by the
- * render-time SpacingWriter. Tag boundaries subdivide by edge classes:
- * `runtime-derivable` means both sides' edge character classes are
- * statically known (the check's outcome is a constant — a candidate for
- * static resolution), `runtime-varying` means at least one edge varies
- * per instance (or a literal-merge pair is possible for the class combo,
- * which only concrete characters can decide) — the true residue.
+ * right is template syntax (a slot/tag boundary). A boundary whose
+ * outcome is statically constant — fixed×fixed chars, or a tag boundary
+ * whose both edge CLASSES are known — is baked into template text
+ * (`static-spaced` / `static-glued`). `runtime-varying` is a tag boundary
+ * at least one of whose edges varies per instance (or a literal-merge pair
+ * is possible for the class combo, which only concrete characters can
+ * decide) — the writer's true residue. `runtime-derivable` survives only
+ * for list interiors (`staticListInterior`), where baking is still
+ * blocked on trailing-trivia edges.
  */
 export interface SeamBoundaryRecord {
 	readonly kind: string;
@@ -329,6 +332,20 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 }
 
 /**
+ * The SpacingWriter's word-seam law over edge CLASSES: a space is owed
+ * exactly where word-class text meets word-class text. The one seam
+ * decision shared by every static bake — fixed×fixed (classes of the
+ * concrete chars) and tag boundaries (classes derived per kind) — so a
+ * baked outcome can never disagree with the runtime writer's.
+ * Punctuation merge-hazard pairs are decided from concrete characters
+ * (`isLiteralMergePair`), never from classes, and are layered on by the
+ * caller where characters are known.
+ */
+export function seamNeedsSpace(left: SeamEdgeClass, right: SeamEdgeClass): boolean {
+	return left === 'word' && right === 'word';
+}
+
+/**
  * Edge class of a RenderRule member's EMITTED form — the tag-boundary side
  * of the seam census. Mirrors `edgeClassesOfKind`'s lattice with one extra
  * value: `'empty'` marks members whose canonical emission is nothing (an
@@ -392,6 +409,19 @@ function renderRuleEdge(
 	}
 }
 
+/** The owner's slots keyed by name for `lookupSlot`'s fallbacks —
+ *  including determined slots, which left the record but still ARE the
+ *  field's slot at their template position. */
+function ownerSlotsFor(node: {
+	slots?: Readonly<Record<string, AssembledNonterminal>>;
+	determinedSlots?: readonly AssembledNonterminal[];
+}): Readonly<Record<string, AssembledNonterminal>> | undefined {
+	if (!node.slots) return undefined;
+	const determined = node.determinedSlots ?? [];
+	if (determined.length === 0) return node.slots;
+	return { ...node.slots, ...Object.fromEntries(determined.map((s) => [s.name, s])) };
+}
+
 function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 	// currentKind always populated — the seam census attributes every
 	// boundary to its owning kind (was DBG_SLOT_MISS-gated).
@@ -447,14 +477,14 @@ export function emitBranchTemplate(node: AssembledBranch | AssembledSeparatedLis
 	// Populate ownerSlots so emitSymbol can fall back to name-based slot
 	// lookup when slotByRuleId lookup fails (gap: simplifyRule may create
 	// new rule objects without preserving IDs, breaking slotByRuleId).
-	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: node.slots };
+	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: ownerSlotsFor(node) };
 	return emitRule(node.renderRule, ctxWithSlots);
 }
 
 export function emitGroupTemplate(node: AssembledGroup, ctx: EmitCtx): string {
 	// PR2 Task 3.B3: consume renderRule (RenderRule, wrapper-free).
 	// Populate ownerSlots for the same reason as emitBranchTemplate.
-	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: node.slots };
+	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: ownerSlotsFor(node) };
 	return emitRule(node.renderRule, ctxWithSlots);
 }
 
@@ -575,8 +605,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 				partRules.push(m);
 			});
 			if (parts.length === 0) return '';
-			// Static-static seams only (spec v2 note: "space baked into the
-			// literal"): askama compiles adjacent template literals into ONE
+			// Static seams: askama compiles adjacent template literals into ONE
 			// write, so the render-time writer never sees a seam between two
 			// static tokens — neither two words ('abstract' + 'class' glued to
 			// 'abstractclass') nor a punctuation merge-hazard pair ('..' +
@@ -586,26 +615,26 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			// A '}' left edge or '{' right edge is always TEMPLATE SYNTAX
 			// ('}}'/'%}' and '{{'/'{%'), never a real brace: escapeLiteral pads
 			// real braces with spaces ('{ '/' }'), which makes them seam-inert.
-			// Tag boundaries are dynamic and belong to the runtime writer,
-			// which sees the real rendered characters.
+			// A tag boundary is baked too when both edge classes are known
+			// (the writer would decide identically); otherwise it is left
+			// glued for the writer, which sees the real rendered characters.
 			const recordSeam = (l: string, r: string, resolution: SeamBoundaryRecord['resolution']): void => {
 				ctx.seamBoundaries?.push({ kind: ctx.currentKind ?? '(unknown)', left: l, right: r, resolution });
 			};
-			// Tag-boundary subdivision: a seam whose template chars are tag
-			// syntax is decided by the runtime writer, but when both sides'
-			// edge CLASSES are statically known the check's outcome is a
-			// constant — `runtime-derivable`, the static-resolution candidate
-			// pool. word×word would always space; a no-word-seam combo is
+			// Tag-boundary subdivision: when both sides' edge CLASSES are
+			// statically known the writer's outcome is a constant — derivable,
+			// and baked. word×word always spaces; a no-word-seam combo is
 			// glued only if no literal-merge pair exists for the class combo
 			// (concrete characters alone decide a possible pair — varying).
-			const classifyTagSeam = (leftE: SeamEdgeClass, rightE: SeamEdgeClass): SeamBoundaryRecord['resolution'] => {
+			const classifyTagSeam = (leftE: SeamEdgeClass, rightE: SeamEdgeClass): 'derivable' | 'runtime-varying' => {
 				if (leftE === 'varies' || rightE === 'varies') return 'runtime-varying';
-				if (leftE === 'word' && rightE === 'word') return 'runtime-derivable';
-				return ctx.mergePairClassCombos?.has(`${leftE}\0${rightE}`) ? 'runtime-varying' : 'runtime-derivable';
+				if (seamNeedsSpace(leftE, rightE)) return 'derivable';
+				return ctx.mergePairClassCombos?.has(`${leftE}\0${rightE}`) ? 'runtime-varying' : 'derivable';
 			};
+			const charClass = (c: string): SeamEdgeClass => (ctx.isWordChar(c) ? 'word' : 'not-word');
 			const partEdge = (idx: number, side: 'starts' | 'ends', text: string): SeamEdgeClass => {
 				const c = side === 'starts' ? text[0]! : text[text.length - 1]!;
-				if (side === 'starts' ? c !== '{' : c !== '}') return ctx.isWordChar(c) ? 'word' : 'not-word';
+				if (side === 'starts' ? c !== '{' : c !== '}') return charClass(c);
 				const e = renderRuleEdge(partRules[idx]!, side, ctx, new Set());
 				return e === 'empty' ? 'varies' : e;
 			};
@@ -614,22 +643,25 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 				for (let i = 1; i < segments.length; i++) {
 					const l = body[body.length - 1]!;
 					const r = segments[i]![0]!;
+					let spaced: boolean;
 					if (l === '}' || r === '{') {
-						recordSeam(
-							l,
-							r,
-							classifyTagSeam(
-								partEdge(firstIdx + i - 1, 'ends', segments[i - 1]!),
-								partEdge(firstIdx + i, 'starts', segments[i]!)
-							)
-						);
-						body += segments[i]!;
-						continue;
+						// Tag boundary: decide from edge CLASSES. A derivable
+						// outcome is baked exactly like a fixed×fixed seam —
+						// same predicate, so the runtime writer (which sees a
+						// baked space as a not-word left char) agrees with it.
+						const leftE = partEdge(firstIdx + i - 1, 'ends', segments[i - 1]!);
+						const rightE = partEdge(firstIdx + i, 'starts', segments[i]!);
+						if (classifyTagSeam(leftE, rightE) === 'runtime-varying') {
+							recordSeam(l, r, 'runtime-varying');
+							body += segments[i]!;
+							continue;
+						}
+						spaced = seamNeedsSpace(leftE, rightE);
+					} else {
+						spaced = seamNeedsSpace(charClass(l), charClass(r)) || (l !== r && ctx.isLiteralMergePair(l, r));
 					}
-					const wordSeam = ctx.isWordChar(l) && ctx.isWordChar(r);
-					const symbolSeam = l !== r && ctx.isLiteralMergePair(l, r);
-					recordSeam(l, r, wordSeam || symbolSeam ? 'static-spaced' : 'static-glued');
-					if (wordSeam || symbolSeam) body += ' ';
+					recordSeam(l, r, spaced ? 'static-spaced' : 'static-glued');
+					if (spaced) body += ' ';
 					body += segments[i]!;
 				}
 				return body;
@@ -1032,6 +1064,16 @@ function emitScalarSlot(slotName: string): string {
 }
 
 function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal, ctx: EmitCtx): string {
+	// A determined slot is not a slot: its grammar-fixed value IS the
+	// template text (`pruneDeterminedSlots` removed it from the record; it
+	// still resolves here through slotByRuleId). Whitespace-only text (the
+	// newline externals) is emitted as an expression tag — raw template
+	// whitespace adjacent to the header comment's `-#}` trim would be eaten
+	// (see the INDENT case).
+	if (slot.determined) {
+		const text = determinedSlotText(slot, { nodes: ctx.nodeMap.nodes })!;
+		return text.trim() === '' ? `{{ ${JSON.stringify(text)} }}` : escapeLiteral(text);
+	}
 	const slotName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
 	const mult = (rule as { multiplicity?: string }).multiplicity;
 	if (mult === 'array' || mult === 'nonEmptyArray' || isMultiple(slot)) {
@@ -1202,7 +1244,10 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 				// collide with one of the outer node's own field names.
 				// slotByRuleId (lookupSlot's primary path) is unaffected —
 				// this only matters for its ownerSlots fallback.
-				const helperCtx: EmitCtx = { ...ctx, ownerSlots: (targetNode as { slots?: EmitCtx['ownerSlots'] }).slots };
+				const helperCtx: EmitCtx = {
+					...ctx,
+					ownerSlots: ownerSlotsFor(targetNode as Parameters<typeof ownerSlotsFor>[0])
+				};
 				const helperBody = emitRule(helperRenderRule, helperCtx);
 				const multiplicity = (rule as { multiplicity?: Multiplicity }).multiplicity;
 				// Multiplicity is applied at the inlined SEQ UNIT (never the leaves —
@@ -1234,7 +1279,8 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 				if (multiplicity === 'optional' && helperBody) {
 					const symbolFieldKey = symbolFieldName?.toLowerCase();
 					const addressableFieldKey =
-						symbolFieldKey !== undefined && (ctx.ownerSlots === undefined || ctx.ownerSlots[symbolFieldKey] !== undefined)
+						symbolFieldKey !== undefined &&
+						(ctx.ownerSlots === undefined || ctx.ownerSlots[symbolFieldKey] !== undefined)
 							? symbolFieldKey
 							: undefined;
 					const condKey =
@@ -1436,7 +1482,11 @@ function commonBalancedTrailingTail(bodies: readonly string[]): string {
 	return '';
 }
 
-function scanArmBody(body: string): { key: string | undefined; needsGate: boolean; discriminatorKey: string | undefined } {
+function scanArmBody(body: string): {
+	key: string | undefined;
+	needsGate: boolean;
+	discriminatorKey: string | undefined;
+} {
 	const tagRe = /\{\{-?\s*([A-Za-z_]\w*)[^}]*\}\}|\{%-?\s*(if|endif)\b[^%]*?%\}/g;
 	let depth = 0;
 	let last = 0;
@@ -1666,9 +1716,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			// well-formed node (exactly one arm present) the output is the
 			// same text, one tail render either way.
 			const sharedTailKey =
-				armInfos.length >= 2 && countByKey.size === 1 && literalFallback === undefined
-					? armInfos[0]!.key
-					: undefined;
+				armInfos.length >= 2 && countByKey.size === 1 && literalFallback === undefined ? armInfos[0]!.key : undefined;
 			for (const info of armInfos) {
 				if (
 					(countByKey.get(info.key) ?? 0) > 1 &&

@@ -2349,9 +2349,17 @@ function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null {
 			if (!typeEq((members[0] as { type?: string }).type, 'REPEAT1')) return null;
 			if (members.length !== 2) return null;
 			const flank = peelOptionalEitherSpelling(members[1]!);
-			const flankLit = flank && isStringType((flank as { type?: string }).type) ? (flank as { value?: unknown }).value : null;
+			const flankLit =
+				flank && isStringType((flank as { type?: string }).type) ? (flank as { value?: unknown }).value : null;
 			if (flankLit === null || (separatorLiteral !== null && flankLit !== separatorLiteral)) return null;
-			return { elementName, flankCarrying: true, form: 'leading' as const, element: detected.content as Rule, separatorRule: detected.separator as Rule, flatMembers: members };
+			return {
+				elementName,
+				flankCarrying: true,
+				form: 'leading' as const,
+				element: detected.content as Rule,
+				separatorRule: detected.separator as Rule,
+				flatMembers: members
+			};
 		}
 		const head = members[repeatIdx - 1]!;
 		if (separatedListElementName(head) !== elementName || elementName === null) {
@@ -2368,14 +2376,18 @@ function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null {
 				continue;
 			}
 			const inner = peelOptionalEitherSpelling(m);
-			const innerLit = inner && isStringType((inner as { type?: string }).type) ? (inner as { value?: unknown }).value : null;
+			const innerLit =
+				inner && isStringType((inner as { type?: string }).type) ? (inner as { value?: unknown }).value : null;
 			// A choice-of-separators flank next to a choice-separator list — the
 			// two spellings routinely diverge in decoration (one side may hold
 			// substituted symbol refs), so match on both being choices rather
 			// than exact keys.
 			const innerMatchesChoiceSep =
 				inner !== null && separatorIsChoice && isChoiceType((inner as { type?: string }).type ?? '');
-			if ((innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral)) || innerMatchesChoiceSep) {
+			if (
+				(innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral)) ||
+				innerMatchesChoiceSep
+			) {
 				flankCarrying = true;
 				continue;
 			}
@@ -2383,7 +2395,14 @@ function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null {
 			// the "whole body is one list" reading.
 			return null;
 		}
-		return { elementName, flankCarrying, form: 'head' as const, element: detected.content as Rule, separatorRule: detected.separator as Rule, flatMembers: members };
+		return {
+			elementName,
+			flankCarrying,
+			form: 'head' as const,
+			element: detected.content as Rule,
+			separatorRule: detected.separator as Rule,
+			flatMembers: members
+		};
 	}
 
 	// Tail-form: repeat is seq(elem, SEP); the optional(elem) member after the
@@ -2395,7 +2414,14 @@ function separatedListBodyInfo(body: Rule): SeparatedListBodyInfo | null {
 	if (tail === null) return null;
 	if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
 	if (elementName === null && ruleKey(tail as RuntimeRule) !== ruleKey(detected.content as RuntimeRule)) return null;
-	return { elementName, flankCarrying: true, form: 'tail' as const, element: detected.content as Rule, separatorRule: detected.separator as Rule, flatMembers: members };
+	return {
+		elementName,
+		flankCarrying: true,
+		form: 'tail' as const,
+		element: detected.content as Rule,
+		separatorRule: detected.separator as Rule,
+		flatMembers: members
+	};
 }
 
 interface InlineSeparatedListRun {
@@ -2936,18 +2962,27 @@ function applyClauseHoist(
 			// hidden rule to) a visible alias, same mechanism as the
 			// inline-unsafe optional(seq) path above, just without the
 			// optional wrapper: the arm position is replaced directly.
-			const promoted = mintStructuredChoiceArm(
-				out,
-				parentKind,
-				rulesBag,
-				clauseGroupRules,
-				counter,
-				groupDedupeMap,
-				visibleGroupHiddenNames,
-				clauseGroupOwners,
-				collidingLeadingNames,
-				ambientPrec
-			);
+			//
+			// Split justification: an arm that differs from a SIBLING only at
+			// a literal-choice position stays unminted — extracting it would
+			// create a form whose sole difference is a cardinality-1
+			// (determined) enum; the literal belongs in the parent's own
+			// enum slot instead.
+			const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
+			const promoted = literalOnlySplit
+				? null
+				: mintStructuredChoiceArm(
+						out,
+						parentKind,
+						rulesBag,
+						clauseGroupRules,
+						counter,
+						groupDedupeMap,
+						visibleGroupHiddenNames,
+						clauseGroupOwners,
+						collidingLeadingNames,
+						ambientPrec
+					);
 			const final = promoteHiddenListRef(promoted ?? out, rulesBag);
 			if (final !== m) changed = true;
 			return final;
@@ -3372,7 +3407,6 @@ function clauseHoistSynthName(
 	return name;
 }
 
-
 // Singleton-ordinal collapse — see docs/glossary/dsl.md (`collapseSingletonMintOrdinals`).
 function collapseSingletonMintOrdinals(
 	mergedRules: Record<string, Rule>,
@@ -3524,11 +3558,7 @@ function visibleGroupSynthName(
 		// parent both wrapped in `field('body', ...)`) — `rulesBag` alone
 		// can't see this, since a synthesized hidden name only ever lands in
 		// `clauseGroupRules`, never the base grammar.
-		if (
-			!(visibleName in rulesBag) &&
-			!(`_${visibleName}` in rulesBag) &&
-			!(`_${visibleName}` in clauseGroupRules)
-		) {
+		if (!(visibleName in rulesBag) && !(`_${visibleName}` in rulesBag) && !(`_${visibleName}` in clauseGroupRules)) {
 			return register(visibleName);
 		}
 	}
@@ -3627,6 +3657,70 @@ function armStartsWithSymbol(
 	if (collidingLeadingNames.size === 0) return false;
 	const name = armLeadingSymbolName(rule, rulesBag);
 	return name !== undefined && collidingLeadingNames.has(name);
+}
+
+/** A position whose content is a literal choice: one string, or a choice
+ *  of strings — the shape a kind-enum slot carries. */
+function isLiteralChoiceContent(rule: Rule): boolean {
+	if (isStringType((rule as { type?: string }).type as string)) return true;
+	if (isChoiceType((rule as { type?: string }).type as string)) {
+		const members = (rule as unknown as { members?: Rule[] }).members;
+		return Array.isArray(members) && members.every((m) => isLiteralChoiceContent(m));
+	}
+	return false;
+}
+
+/**
+ * Two choice arms that differ ONLY at literal-choice positions must stay
+ * one kind with an enum slot — splitting them would mint a form whose
+ * sole difference is a cardinality-1 (determined) enum.
+ * `mintStructuredChoiceArm`'s callers decline such arms. Returns true
+ * when the arms are structurally identical except for at least one
+ * literal-choice position whose texts differ.
+ */
+export function armsDifferOnlyByLiteralChoice(a: Rule, b: Rule): boolean {
+	let literalDeltas = 0;
+	const peel = (r: Rule): Rule => {
+		while (isPrecWrapper(r as { type: string }) && (r as { content?: Rule }).content) {
+			r = (r as { content: Rule }).content;
+		}
+		return r;
+	};
+	const same = (x: Rule, y: Rule): boolean => {
+		x = peel(x);
+		y = peel(y);
+		if (isLiteralChoiceContent(x) && isLiteralChoiceContent(y)) {
+			if (JSON.stringify(x) !== JSON.stringify(y)) literalDeltas++;
+			return true;
+		}
+		const tx = (x as { type?: string }).type;
+		const ty = (y as { type?: string }).type;
+		if (tx !== ty || typeof tx !== 'string') return false;
+		if (isSymbolType(tx)) return (x as { name?: string }).name === (y as { name?: string }).name;
+		if (isFieldType(tx)) {
+			return (
+				(x as { name?: string }).name === (y as { name?: string }).name &&
+				same((x as unknown as { content: Rule }).content, (y as unknown as { content: Rule }).content)
+			);
+		}
+		const mx = (x as unknown as { members?: Rule[] }).members;
+		const my = (y as unknown as { members?: Rule[] }).members;
+		if (Array.isArray(mx) || Array.isArray(my)) {
+			if (!Array.isArray(mx) || !Array.isArray(my) || mx.length !== my.length) return false;
+			return mx.every((m, i) => same(m, my[i]!));
+		}
+		const cx = (x as { content?: Rule }).content;
+		const cy = (y as { content?: Rule }).content;
+		if (cx !== undefined || cy !== undefined) {
+			return cx !== undefined && cy !== undefined && same(cx, cy);
+		}
+		return JSON.stringify(x) === JSON.stringify(y);
+	};
+	// EXACTLY one differing position: the delta must be expressible as ONE
+	// enum slot. Arms differing at two literal positions (`new.target` vs
+	// `import.meta`) are distinct forms — folding them would cross-combine
+	// the literals.
+	return same(a, b) && literalDeltas === 1;
 }
 
 function mintStructuredChoiceArm(
@@ -3886,12 +3980,7 @@ function collectFieldEnumOccurrences(rules: Record<string, Rule>): FieldEnumOccu
 	return occurrences;
 }
 
-function walkFieldEnums(
-	rule: Rule,
-	rules: Record<string, Rule>,
-	parentKind: string,
-	out: FieldEnumOccurrence[]
-): void {
+function walkFieldEnums(rule: Rule, rules: Record<string, Rule>, parentKind: string, out: FieldEnumOccurrence[]): void {
 	switch (rule.type as string) {
 		case 'FIELD': {
 			const fieldRule = rule as unknown as { name: string; content: Rule };

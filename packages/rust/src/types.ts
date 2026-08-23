@@ -10,7 +10,6 @@ import type {
 	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
 	NonEmptyArray,
-	AutoStamp,
 	BooleanKeyword,
 	KindEnum
 } from '@sittir/types';
@@ -3679,14 +3678,9 @@ export interface OrderedFieldDeclarationList {
 export interface ExternCrateDeclaration {
 	readonly $type: TSKindId.ExternCrateDeclaration;
 	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _crate: number;
 	readonly _name: Identifier;
 	readonly _alias?: Identifier;
-	readonly __inputHints__?: {
-		readonly crate: KindEnum<'crate', TSKindId.Crate>;
-	};
 	visibilityModifier(): VisibilityModifier | undefined;
-	crate(): number;
 	name(): Identifier;
 	alias(): Identifier | undefined;
 }
@@ -3987,16 +3981,13 @@ export interface SelfParameter {
 	readonly _reference?: boolean;
 	readonly _lifetime?: Lifetime;
 	readonly _mutable_specifier?: boolean;
-	readonly _self: number;
 	readonly __inputHints__?: {
 		readonly reference?: BooleanKeyword<'&'>;
 		readonly mutable_specifier?: BooleanKeyword<'mut'>;
-		readonly self: KindEnum<'self', TSKindId.Self>;
 	};
 	reference(): boolean | undefined;
 	lifetime(): Lifetime | undefined;
 	mutableSpecifier(): boolean | undefined;
-	self(): number;
 }
 
 export interface VariadicParameter {
@@ -4693,12 +4684,7 @@ export interface FieldPattern {
 
 export interface MutPattern {
 	readonly $type: TSKindId.MutPattern;
-	readonly _mutable_specifier: number;
 	readonly _pattern: Pattern;
-	readonly __inputHints__?: {
-		readonly mutable_specifier: KindEnum<'mut', TSKindId.MutableSpecifier>;
-	};
-	mutableSpecifier(): number;
 	pattern(): Pattern;
 }
 
@@ -5013,11 +4999,6 @@ export interface UseWildcardClause {
 
 export interface ReferenceExpressionRawMut {
 	readonly $type: TSKindId.ReferenceExpressionRawMut;
-	readonly _mutable_specifier: number;
-	readonly __inputHints__?: {
-		readonly mutable_specifier: KindEnum<'mut', TSKindId.MutableSpecifier>;
-	};
-	mutableSpecifier(): number;
 }
 
 export interface ImplItemBody {
@@ -5136,22 +5117,12 @@ export interface RangeExpressionBinary {
 export interface RangeExpressionPostfix {
 	readonly $type: TSKindId.RangeExpressionPostfix;
 	readonly _start: Expression;
-	readonly _operator: AutoStamp<number>;
-	readonly __inputHints__?: {
-		readonly operator: AutoStamp<KindEnum<'..', TSKindId.DotDot>>;
-	};
 	start(): Expression;
-	operator(): AutoStamp<number>;
 }
 
 export interface RangeExpressionPrefix {
 	readonly $type: TSKindId.RangeExpressionPrefix;
-	readonly _operator: AutoStamp<number>;
 	readonly _end: Expression;
-	readonly __inputHints__?: {
-		readonly operator: AutoStamp<KindEnum<'..', TSKindId.DotDot>>;
-	};
-	operator(): AutoStamp<number>;
 	end(): Expression;
 }
 

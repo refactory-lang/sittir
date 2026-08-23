@@ -1362,11 +1362,6 @@ export function coerceToExternCrateDeclaration(
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExternCrateDeclaration>;
 	return F.buildExternCrateDeclaration({
 		visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, 'visibility_modifier'),
-		crate: _requireField(
-			'extern_crate_declaration',
-			'crate',
-			coerceKindEnumStorage(_resolveOneLeaf<T.Crate>(input.crate, 'crate'), [['crate', TSKindId.Crate] as const])
-		),
 		name: _requireField('extern_crate_declaration', 'name', _resolveOneLeaf<T.Identifier>(input.name, 'identifier')),
 		alias: _resolveOneLeaf<T.Identifier>(input.alias, 'identifier')
 	});
@@ -1713,12 +1708,7 @@ export function coerceToSelfParameter(input?: T.SelfParameter.Loose): ReturnType
 	return F.buildSelfParameter({
 		reference: _resolveBooleanKeyword(input?.reference),
 		lifetime: _resolveOneBranch<T.Lifetime>(input?.lifetime, 'lifetime'),
-		mutableSpecifier: _resolveBooleanKeyword(input?.mutableSpecifier),
-		self: _requireField(
-			'self_parameter',
-			'self',
-			coerceKindEnumStorage(_resolveOneLeaf<T.Self>(input?.self, 'self'), [['self', TSKindId.Self] as const])
-		)
+		mutableSpecifier: _resolveBooleanKeyword(input?.mutableSpecifier)
 	});
 }
 

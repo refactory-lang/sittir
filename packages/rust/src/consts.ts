@@ -2120,7 +2120,6 @@ export const enum TSFieldId {
 	FieldComma = 11,
 	FieldCondition = 12,
 	FieldConsequence = 13,
-	FieldCrate = 14,
 	FieldDeclarationStatements = 15,
 	FieldDefaultType = 16,
 	FieldDelimTokens = 17,
@@ -2164,7 +2163,6 @@ export const enum TSFieldId {
 	FieldReference = 55,
 	FieldReturnType = 56,
 	FieldRight = 57,
-	FieldSelf = 58,
 	FieldSeparator = 59,
 	FieldShebang = 60,
 	FieldStart = 61,
@@ -2205,7 +2203,6 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	comma: TSFieldId.FieldComma,
 	condition: TSFieldId.FieldCondition,
 	consequence: TSFieldId.FieldConsequence,
-	crate: TSFieldId.FieldCrate,
 	declaration_statements: TSFieldId.FieldDeclarationStatements,
 	default_type: TSFieldId.FieldDefaultType,
 	delim_tokens: TSFieldId.FieldDelimTokens,
@@ -2249,7 +2246,6 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	reference: TSFieldId.FieldReference,
 	return_type: TSFieldId.FieldReturnType,
 	right: TSFieldId.FieldRight,
-	self: TSFieldId.FieldSelf,
 	separator: TSFieldId.FieldSeparator,
 	shebang: TSFieldId.FieldShebang,
 	start: TSFieldId.FieldStart,
@@ -2290,7 +2286,6 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldComma]: 'comma',
 	[TSFieldId.FieldCondition]: 'condition',
 	[TSFieldId.FieldConsequence]: 'consequence',
-	[TSFieldId.FieldCrate]: 'crate',
 	[TSFieldId.FieldDeclarationStatements]: 'declaration_statements',
 	[TSFieldId.FieldDefaultType]: 'default_type',
 	[TSFieldId.FieldDelimTokens]: 'delim_tokens',
@@ -2334,7 +2329,6 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldReference]: 'reference',
 	[TSFieldId.FieldReturnType]: 'return_type',
 	[TSFieldId.FieldRight]: 'right',
-	[TSFieldId.FieldSelf]: 'self',
 	[TSFieldId.FieldSeparator]: 'separator',
 	[TSFieldId.FieldShebang]: 'shebang',
 	[TSFieldId.FieldStart]: 'start',
@@ -2375,7 +2369,6 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'comma', id: 11, enumName: 'FieldComma', cName: 'field_comma' },
 	{ name: 'condition', id: 12, enumName: 'FieldCondition', cName: 'field_condition' },
 	{ name: 'consequence', id: 13, enumName: 'FieldConsequence', cName: 'field_consequence' },
-	{ name: 'crate', id: 14, enumName: 'FieldCrate', cName: 'field_crate' },
 	{
 		name: 'declaration_statements',
 		id: 15,
@@ -2434,7 +2427,6 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'reference', id: 55, enumName: 'FieldReference', cName: 'field_reference' },
 	{ name: 'return_type', id: 56, enumName: 'FieldReturnType', cName: 'field_return_type' },
 	{ name: 'right', id: 57, enumName: 'FieldRight', cName: 'field_right' },
-	{ name: 'self', id: 58, enumName: 'FieldSelf', cName: 'field_self' },
 	{ name: 'separator', id: 59, enumName: 'FieldSeparator', cName: 'field_separator' },
 	{ name: 'shebang', id: 60, enumName: 'FieldShebang', cName: 'field_shebang' },
 	{ name: 'start', id: 61, enumName: 'FieldStart', cName: 'field_start' },
@@ -2514,7 +2506,7 @@ export const FIELD_MAP: Record<
 	_ordered_field_declaration_list_elements: [{ name: 'elements', required: true, multiple: true }],
 	_parameters_elements: [{ name: 'elements', required: true, multiple: true }],
 	_patterns: [{ name: 'patterns', required: true, multiple: true }],
-	_reference_expression_raw_mut: [{ name: 'mutableSpecifier', required: true, multiple: false }],
+	_reference_expression_raw_mut: [],
 	_struct_pattern_elements: [{ name: 'elements', required: true, multiple: true }],
 	_tuple_expression_elements: [{ name: 'elements', required: true, multiple: true }],
 	_tuple_pattern_elements: [{ name: 'elements', required: true, multiple: true }],
@@ -2638,7 +2630,6 @@ export const FIELD_MAP: Record<
 	expression_statement: [{ name: 'content', required: true, multiple: false }],
 	extern_crate_declaration: [
 		{ name: 'visibilityModifier', required: false, multiple: false },
-		{ name: 'crate', required: true, multiple: false },
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'alias', required: false, multiple: false }
 	],
@@ -2804,10 +2795,7 @@ export const FIELD_MAP: Record<
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'content', required: true, multiple: false }
 	],
-	mut_pattern: [
-		{ name: 'mutableSpecifier', required: true, multiple: false },
-		{ name: 'pattern', required: true, multiple: false }
-	],
+	mut_pattern: [{ name: 'pattern', required: true, multiple: false }],
 	negative_literal: [{ name: 'value', required: true, multiple: false }],
 	or_pattern: [{ name: 'content', required: true, multiple: false }],
 	ordered_field_declaration_list: [{ name: 'attributes', required: false, multiple: false }],
@@ -2868,8 +2856,7 @@ export const FIELD_MAP: Record<
 	self_parameter: [
 		{ name: 'reference', required: false, multiple: false },
 		{ name: 'lifetime', required: false, multiple: false },
-		{ name: 'mutableSpecifier', required: false, multiple: false },
-		{ name: 'self', required: true, multiple: false }
+		{ name: 'mutableSpecifier', required: false, multiple: false }
 	],
 	shorthand_field_initializer: [
 		{ name: 'attributes', required: false, multiple: true },
