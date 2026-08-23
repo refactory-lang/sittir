@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "bb3c0e0ef0b61aaf2e39898c4410c4730732aa10d311fed30e85068dd72f5da5",
+  "source_hash": "c4af34da4c72403153af8a409f128093fac0f02592dfa324ebc6e59a69d814d5",
   "files": {
     "packages/rust/.sittir/grammar-diagnostics.json": "2dc5211c972ab2250b7096010d31239ad3e0456f4140c5db3aa6b1448da62e54",
     "packages/rust/.sittir/grammar.js": "f6771cb0c53b484a61d4c699286440fc2780807349bbf5af146e23c188a17b0e",
@@ -20,8 +20,8 @@
     "packages/rust/src/boundary.ts": "7afd529ffef4b6ea432fc8d10ad21ea31fb55119d4101d4c9dff39b020d827ba",
     "packages/rust/src/consts.ts": "e62ed95bd8bfae10cd121e76f5b58b868d090c5f3f3df6e8de62e24bf66557dc",
     "packages/rust/src/engine.ts": "92808a26b2ef44a0046984e41a76bc7471fc0e97639ccdddb201eca5b67ae03a",
-    "packages/rust/src/factories.ts": "1ce3ec30442a8bd244f6c957cde53b6a19e6835ab6867de588e093deb543839f",
-    "packages/rust/src/from.ts": "35cbd6d8f18580fa08a4883ab36894469bef7712533d0a33baac4d172ce4bb19",
+    "packages/rust/src/factories.ts": "09921acedf59e02390d4c62bb8a0b2c8cc0da0328481497727dc9e0cf43a1343",
+    "packages/rust/src/from.ts": "f9396779d176135fb38fa124003ff4d913834501dfe26831dcba4eec748453ce",
     "packages/rust/src/grammar.ts": "ca7ca54d374dcbb8382b8f4ec03f71bc7d4ad30ffcc0bd431f15fafb011126ae",
     "packages/rust/src/hash.ts": "7432d94407420eefa9fb812e418ca03c5fcb0269872f1a9789cfeafb219718df",
     "packages/rust/src/index.ts": "880825c1918b377123a9d40694e8e53aff1483cb384c8a0e4a025e1e23f4de0c",
@@ -29,7 +29,7 @@
     "packages/rust/src/is.ts": "3fd5ab44196cd2ea70dec1128163f1430bf9c2efb21273f98d3eb902e5bc0cfc",
     "packages/rust/src/node-model.json5": "c0dbbc21a5735b0d0dfe6830584004d27e9399415d6bb392d29d8d86c77e1974",
     "packages/rust/src/type-test.ts": "791f17f546b07c90ab4a77542c4477c143bfd3a8b36de74a0d21a79033029445",
-    "packages/rust/src/types.ts": "92d983db62f27f319bce8de3298a904129cba25bfe1963a0b89a2c201b69c7a8",
+    "packages/rust/src/types.ts": "ed22e00940cf2d5d712fcdf92709ec6dfb85ae6383e01f63a78b27e030374441",
     "packages/rust/src/utils.ts": "cdb1a0db7402186bcd2815f2ee69f117fffda8adc4f8464465e8fd19eee25b48",
     "packages/rust/src/wrap.ts": "73f10c2734a9cae471d4d54ebaf0c58111a30af92382c8328127d590771c7915",
     "packages/rust/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",

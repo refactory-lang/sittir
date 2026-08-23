@@ -3029,7 +3029,7 @@ export function buildEscapeSequence(text: string) {
 	);
 }
 
-export function buildFormatSpecifier(...children: T.Interpolation[]) {
+export function buildFormatSpecifier(...children: ('[^{}\\n]+' | T.Interpolation)[]) {
 	const _content = children;
 	return withMethods(
 		withAccessors(
@@ -3038,7 +3038,7 @@ export function buildFormatSpecifier(...children: T.Interpolation[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $children: (...vs: T.Interpolation[]) => buildFormatSpecifier(...vs) }
+				$with: { $children: (...vs: ('[^{}\\n]+' | T.Interpolation)[]) => buildFormatSpecifier(...vs) }
 			},
 			{
 				contents: () => _content

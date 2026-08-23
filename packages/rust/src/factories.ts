@@ -1058,7 +1058,7 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 	);
 }
 
-export function buildFunctionModifiers(...children: T.ExternModifier[]) {
+export function buildFunctionModifiers(...children: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]) {
 	_assertNonEmpty(children, 'function_modifiers.children');
 	const _modifier = children;
 	return withMethods(
@@ -1068,7 +1068,10 @@ export function buildFunctionModifiers(...children: T.ExternModifier[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_modifier,
-				$with: { $children: (...vs: T.ExternModifier[]) => buildFunctionModifiers(...vs) }
+				$with: {
+					$children: (...vs: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]) =>
+						buildFunctionModifiers(...vs)
+				}
 			},
 			{
 				modifiers: () => _modifier

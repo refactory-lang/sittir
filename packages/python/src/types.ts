@@ -3876,6 +3876,7 @@ export interface PrintTree extends AnyTreeNode {
 // Supertype unions
 export type Statement =
 	| SimpleStatements
+	| CompoundStatement
 	| IfStatement
 	| ForStatement
 	| WhileStatement
@@ -3934,11 +3935,11 @@ export type SimpleStatementTree =
 	| ExecStatementTree
 	| TypeAliasStatementTree;
 
-export type NamedExpressionLhs = Identifier;
+export type NamedExpressionLhs = Identifier | KeywordIdentifier;
 
 export type NamedExpressionLhsTree = IdentifierTree;
 
-export type Expressions = ExpressionList;
+export type Expressions = Expression | ExpressionList;
 
 export type ExpressionsTree = ExpressionListTree;
 
@@ -4014,7 +4015,14 @@ export type ParameterTree =
 	| TuplePatternTree
 	| DictionarySplatPatternTree;
 
-export type Pattern = Identifier | Subscript | Attribute | ListSplatPattern | TuplePattern | ListPattern;
+export type Pattern =
+	| Identifier
+	| KeywordIdentifier
+	| Subscript
+	| Attribute
+	| ListSplatPattern
+	| TuplePattern
+	| ListPattern;
 
 export type PatternTree =
 	| IdentifierTree
@@ -4024,7 +4032,7 @@ export type PatternTree =
 	| TuplePatternTree
 	| ListPatternTree;
 
-export type ExpressionWithinForInClause = LambdaWithinForInClause;
+export type ExpressionWithinForInClause = Expression | LambdaWithinForInClause;
 
 export type ExpressionWithinForInClauseTree = LambdaWithinForInClauseTree;
 
@@ -4033,6 +4041,7 @@ export type Expression =
 	| NotOperator
 	| BooleanOperator
 	| Lambda
+	| PrimaryExpression
 	| ConditionalExpression
 	| NamedExpression
 	| AsPattern;
@@ -4050,6 +4059,7 @@ export type PrimaryExpression =
 	| Await
 	| BinaryOperator
 	| Identifier
+	| KeywordIdentifier
 	| String
 	| ConcatenatedString
 	| Integer
@@ -4100,12 +4110,11 @@ export type PrimaryExpressionTree =
 
 export type LeftHandSide = Pattern | PatternList;
 
-export type LeftHandSideTree = PatternTree | PatternListTree;
+export type LeftHandSideTree = PatternListTree;
 
 export type RightHandSide = Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
 
 export type RightHandSideTree =
-	| ExpressionTree
 	| ExpressionListTree
 	| AssignmentTree
 	| AugmentedAssignmentTree
@@ -4114,7 +4123,7 @@ export type RightHandSideTree =
 
 export type FExpression = Expression | ExpressionList | PatternList | Yield;
 
-export type FExpressionTree = ExpressionTree | ExpressionListTree | PatternListTree | YieldTree;
+export type FExpressionTree = ExpressionListTree | PatternListTree | YieldTree;
 
 export type KeywordIdentifier = Identifier;
 

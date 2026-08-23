@@ -29,7 +29,8 @@ kind-edged slot, which is exactly this class).
 - Byte-identical gate by construction: every static decision must equal the
   writer's decision for the same adjacent characters; floors, `validate
   history`, suite, and baseline (9716/23) must not move. Any movement is a
-  classifier bug or a latent runtime divergence — stop and review (5b).
+  classifier bug or a latent runtime divergence — stop and review (coding
+  standard 5b: a failed gate stops the work for review; never auto-revert).
 - `wordMatcher` is the only word-class source (`ctx.isWordChar`); no local
   character heuristics.
 - Sequence BEFORE the determined-slots implementation so its new literal

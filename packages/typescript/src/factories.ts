@@ -2580,7 +2580,7 @@ export function buildDecoratorCallExpression(config: T.DecoratorCallExpression.C
 }
 
 export function buildClassBody(
-	...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]
+	...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[]
 ) {
 	const _content = children;
 	return withMethods(
@@ -2591,8 +2591,9 @@ export function buildClassBody(
 				$named: true as const,
 				_content,
 				$with: {
-					$children: (...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]) =>
-						buildClassBody(...vs)
+					$children: (
+						...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[]
+					) => buildClassBody(...vs)
 				}
 			},
 			{

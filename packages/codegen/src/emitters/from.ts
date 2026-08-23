@@ -27,6 +27,7 @@ import {
 	isMultiple,
 	isNonEmpty,
 	slotKindNames,
+	slotLiteralValues,
 	keywordPresenceKind,
 	resolveSingleFieldFactorySlot,
 	resolveFieldStorageInfo,
@@ -315,7 +316,8 @@ function emitBranchFrom(
 				childSlotFacts: soleSlotFacts(node, nodeMap)
 			},
 			kindEntries,
-			nodeMap
+			nodeMap,
+			intern
 		);
 	}
 
@@ -457,6 +459,10 @@ function emitRestParamFromResolver(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap,
 	storageKey: string,
+	// The slot's config key, when the resolver should ALSO accept the
+	// legacy named-field object shape (`from({ identifier: [...] })`) — a
+	// single non-NodeData object carrying the key unwraps to its elements.
+	unwrapConfigKey: string | undefined,
 	// `isSelfUnwrap` distinguishes the two call sites below: `true` inside
 	// the self-NodeData-unwrap branch (a `data` local naming the original
 	// wrapped node is in scope, so a caller like `emitSeparatedListFrom` can
@@ -472,10 +478,28 @@ function emitRestParamFromResolver(
 	// requires numeric $type). Skip the node-data pass-through guard entirely
 	// — the check would always be false at runtime anyway.
 	const hasNumericDiscriminant = kindEntries?.some((e) => e.kind === kind) ?? false;
+	const unwrap =
+		unwrapConfigKey === undefined
+			? []
+			: [
+					`  const _elems: readonly unknown[] = (() => {`,
+					`    if (input.length !== 1) return input;`,
+					`    const head: unknown = input[0];`,
+					`    if (typeof head !== 'object' || head === null || isNodeData(head) || !(${JSON.stringify(unwrapConfigKey)} in head)) return input;`,
+					`    const v = (head as Record<string, unknown>)[${JSON.stringify(unwrapConfigKey)}];`,
+					`    return Array.isArray(v) ? v : [v];`,
+					`  })();`
+				];
+	const configShape =
+		unwrapConfigKey === undefined
+			? ''
+			: ` | { ${SAFE_IDENT_KEY.test(unwrapConfigKey) ? unwrapConfigKey : JSON.stringify(unwrapConfigKey)}: ${elementType} | readonly (${elementType})[] }`;
+	const freshVar = unwrapConfigKey === undefined ? 'input' : '_elems';
 	if (!hasNumericDiscriminant) {
 		return [
-			`export function ${fn}(...input: readonly (${elementType} | ${tName})[]): ${factoryReturnTypeExpr(factory)} {`,
-			`  return ${buildCallExpr('input', false)};`,
+			`export function ${fn}(...input: readonly (${elementType} | ${tName}${configShape})[]): ${factoryReturnTypeExpr(factory)} {`,
+			...unwrap,
+			`  return ${buildCallExpr(freshVar, false)};`,
 			'}'
 		].join('\n');
 	}
@@ -489,14 +513,15 @@ function emitRestParamFromResolver(
 		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
-		`export function ${fn}(...input: readonly (${elementType} | ${tName})[]): ${factoryReturnTypeExpr(factory)} {`,
+		`export function ${fn}(...input: readonly (${elementType} | ${tName}${configShape})[]): ${factoryReturnTypeExpr(factory)} {`,
 		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
 		`    const data = input[0];`,
 		`    const stored = ${storageAccess};`,
 		`    const children${childrenTypeAnnotation} = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];`,
 		`    return ${buildCallExpr('children', true)};`,
 		`  }`,
-		`  return ${buildCallExpr('input', false)};`,
+		...unwrap,
+		`  return ${buildCallExpr(freshVar, false)};`,
 		'}'
 	].join('\n');
 }
@@ -506,25 +531,51 @@ function emitRepeatedContainerFrom(
 	factory: string,
 	tName: string,
 	elementType: string,
+	slot: AssembledNonterminal,
 	kind: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap,
+	intern: KindInterner,
 	storageKey: string
 ): string {
+	// Each rest element runs through the slot's normal field resolver —
+	// the same leaf/branch coercion a named config field gets (a loose
+	// identifier string still becomes an Identifier node) — instead of a
+	// raw cast into the strict factory. A slot with inline literal MEMBERS
+	// ('async' beside extern_modifier) keeps the passthrough: a bare string
+	// is a valid element there, and the branch resolver would wrongly wrap
+	// it into the node kind.
 	// as unknown as Parameters<>: elementType/children may include separator
 	// literals (e.g. ",") the factory doesn't accept directly as a spread
 	// element. Route through unknown.
+	const resolvable = slotLiteralValues(slot).length === 0;
 	return emitRestParamFromResolver(
 		fn,
 		factory,
 		tName,
-		elementType,
+		resolvable ? looseElementType(elementType, slot, nodeMap) : elementType,
 		kind,
 		kindEntries,
 		nodeMap,
 		storageKey,
-		(varExpr) => `${factory}(...(${varExpr} as unknown as Parameters<typeof ${factory}>))`
+		slot.configKey,
+		(varExpr) =>
+			resolvable
+				? `${factory}(...(${resolveFieldCall(varExpr, slot, true, nodeMap, intern, false, elementType, kindEntries)} as unknown as Parameters<typeof ${factory}>))`
+				: `${factory}(...(${varExpr} as unknown as Parameters<typeof ${factory}>))`
 	);
+}
+
+/**
+ * The accepted per-element input union for a container's `from()` rest
+ * parameter: the strict element type, widened by `string` when every kind
+ * the slot accepts is leaf-shaped — the resolver coerces loose text into
+ * the leaf node exactly as a named config field would.
+ */
+function looseElementType(elementType: string, slot: AssembledNonterminal, nodeMap: NodeMap): string {
+	const expanded = expandAndDedupeContentTypes(slotKindNames(slot), nodeMap, storageKindIdByNameOf(slot));
+	const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap);
+	return leafKinds.length > 0 && branchKinds.length === 0 ? `${elementType} | string` : elementType;
 }
 
 function emitSingularContainerFrom(
@@ -532,6 +583,8 @@ function emitSingularContainerFrom(
 	factory: string,
 	tName: string,
 	elementType: string,
+	slot: AssembledNonterminal,
+	intern: KindInterner,
 	kind: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap,
@@ -558,16 +611,25 @@ function emitSingularContainerFrom(
 		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
-		`export function ${fn}(input?: ${elementType} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
+		`export function ${fn}(input?: ${slotLiteralValues(slot).length === 0 ? looseElementType(elementType, slot, nodeMap) : elementType} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
 		`  if (isNodeData(input) && input.$type === ${typeCheck}) {`,
 		`    const data = input;`,
 		`    const child = ${storageAccess};`,
 		`    return ${factory}(child as Parameters<typeof ${factory}>[0]);`,
 		`  }`,
-		// Post-guard `input` is necessarily an `${elementType}` (the self-
-		// NodeData branch is the only path the union's `${tName}` arm
-		// could reach this function through). Narrow at the boundary.
-		`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
+		// Post-guard `input` is one of the element union's members; the
+		// slot's normal field resolver coerces it (loose leaf text
+		// included) exactly as a named config field would. Literal-bearing
+		// slots keep the passthrough — a bare string is a valid member.
+		// No cast on the resolved value: the resolver's return is already
+		// the element type, and a forwarded factory's pre-built-node
+		// overload must resolve naturally (a `Parameters<typeof f>[0]`
+		// cast would force the LAST overload — the forwarding-args form).
+		`  return ${factory}(${
+			slotLiteralValues(slot).length === 0
+				? resolveFieldCall('input', slot, false, nodeMap, intern, false, elementType, kindEntries)
+				: `input as Parameters<typeof ${factory}>[0]`
+		});`,
 		'}'
 	].join('\n');
 }
@@ -575,7 +637,8 @@ function emitSingularContainerFrom(
 function emitContainerFrom(
 	node: ContainerFromNode,
 	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	intern: KindInterner
 ): string {
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
@@ -588,10 +651,41 @@ function emitContainerFrom(
 		? childElementType({ children: node.fields ?? [] }, nodeMap)
 		: `NonNullable<T.${node.typeName}['$other']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$other']>`;
 	const storageKey = facts ? facts.slot.storageKey : '$other';
-	if (facts?.multiple) {
-		return emitRepeatedContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap, storageKey);
+	if (facts === null) {
+		// No classified sole slot — the legacy `$other` passthrough has no
+		// slot whose resolver could coerce; keep the direct call.
+		return [
+			`export function ${fn}(input?: ${elementType} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
+			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
+			'}'
+		].join('\n');
 	}
-	return emitSingularContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap, storageKey);
+	if (facts.multiple) {
+		return emitRepeatedContainerFrom(
+			fn,
+			factory,
+			tName,
+			elementType,
+			facts.slot,
+			node.kind,
+			kindEntries,
+			nodeMap,
+			intern,
+			storageKey
+		);
+	}
+	return emitSingularContainerFrom(
+		fn,
+		factory,
+		tName,
+		elementType,
+		facts.slot,
+		intern,
+		node.kind,
+		kindEntries,
+		nodeMap,
+		storageKey
+	);
 }
 
 function emitSeparatedListFrom(
@@ -635,8 +729,7 @@ function emitSeparatedListFrom(
 		// `storageAccess` above needs its own `unknown` cast) — read the
 		// three per-instance fields through one shared cast rather than
 		// three separate ones.
-		const sourceFields =
-			'(data as unknown as { _separator?: number; _delimiter?: number })';
+		const sourceFields = '(data as unknown as { _separator?: number; _delimiter?: number })';
 		const optionParts: string[] = [];
 		if (candidateKindNames.length > 0) {
 			// `KIND_LITERAL_TEXT` (types.ts) is the single stamped source for
@@ -658,10 +751,9 @@ function emitSeparatedListFrom(
 		kindEntries,
 		nodeMap,
 		contentStorageKey,
+		undefined,
 		(varExpr, isSelfUnwrap) =>
-			isSelfUnwrap && hasOptions
-				? buildOptionsPreservingCall(varExpr)
-				: `${factory}(${spreadElements(varExpr)})`,
+			isSelfUnwrap && hasOptions ? buildOptionsPreservingCall(varExpr) : `${factory}(${spreadElements(varExpr)})`,
 		': readonly unknown[]'
 	);
 }
