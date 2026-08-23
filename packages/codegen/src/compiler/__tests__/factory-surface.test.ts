@@ -3,6 +3,7 @@ import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
+import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { existsSync } from 'node:fs';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../resolve-grammar.ts';
 import type { NodeMap } from '../types.ts';
@@ -156,5 +157,19 @@ describe('factory field metadata', () => {
 		expect(map.factoryFields.reference_expression).toEqual(['content', 'value']);
 		expect(map.factoryFields.binary_expression).toEqual(['left', 'operator', 'right']);
 		expect(map.factoryFields.attribute).toEqual(['path', 'attribute_arm']);
+	});
+});
+
+describe('terminated separated lists', () => {
+	it('rust tuple_expression_elements asserts the single-element trailing delimiter (terminated-list invariant)', () => {
+		const src = emitFactories({ grammar: 'rust', nodeMap });
+		const fnStart = src.indexOf('function _buildTupleExpressionElements(');
+		expect(fnStart).toBeGreaterThan(-1);
+		const body = src.slice(fnStart, src.indexOf('\n}\n', fnStart));
+		expect(body).toContain("elements.length === 1 && ((options.delimiter ?? 0) & 2) === 0");
+		expect(body).toContain('requires a trailing delimiter');
+		// A prefix-style list (optional trailing comma, no mandatory head) must NOT carry the assert.
+		const tt = src.indexOf('function _buildTupleTypeElements(');
+		expect(src.slice(tt, src.indexOf('\n}\n', tt))).not.toContain('requires a trailing delimiter');
 	});
 });
