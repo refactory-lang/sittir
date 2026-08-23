@@ -4557,6 +4557,9 @@ var grammar_sittir_default = grammar(
         role($._newline, "newline");
         return prev;
       },
+      expectTestFailures: {
+        "parenthesized_list_splat.parenthesizedListSplat": "dummy stub \u2014 the aliased inner parenthesized_list_splat is stubbed with an identifier content the transport rejects"
+      },
       conflicts: ($, previous) => [
         ...previous ?? [],
         [$.expression_statement, $._expression_statement_tuple],
@@ -4795,10 +4798,7 @@ var grammar_sittir_default = grammar(
         // clear that seam. (The text↔format_expression seams, by
         // contrast, are statically safe via the interpolation's fixed
         // non-word '{'/'}' flanks.)
-        format_specifier: ($) => seq(
-          ":",
-          repeat(choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression)))
-        ),
+        format_specifier: ($) => seq(":", repeat(choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression)))),
         parameters: ($) => seq("(", optional(alias($._parameters, $.parameters_elements)), ")"),
         lambda_parameters: ($) => alias($._parameters, $.parameters_elements),
         tuple_pattern: ($) => seq("(", optional(alias($._patterns, $.patterns)), ")"),
@@ -4906,17 +4906,9 @@ var grammar_sittir_default = grammar(
         // list extracts as `(',' arg)+ ','?` and the bare-`','` arm
         // stays behind in the optional choice so the language is
         // unchanged.
-        _print_arguments: ($) => seq(
-          field("argument", $.expression),
-          repeat(seq(",", field("argument", $.expression))),
-          optional(",")
-        ),
+        _print_arguments: ($) => seq(field("argument", $.expression), repeat(seq(",", field("argument", $.expression))), optional(",")),
         _print_chevron_arguments: ($) => seq(repeat1(seq(",", field("argument", $.expression))), optional(",")),
-        print_statement_arm1: ($) => seq(
-          "print",
-          $.chevron,
-          optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ","))
-        ),
+        print_statement_arm1: ($) => seq("print", $.chevron, optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ","))),
         print_statement_arm2: ($) => seq("print", alias($._print_arguments, $.print_arguments)),
         print_statement: ($) => choice(prec(1, $.print_statement_arm1), prec(-3, prec.dynamic(-1, $.print_statement_arm2))),
         // Base `_simple_pattern`'s last arm is the bare literal `'_'`

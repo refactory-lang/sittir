@@ -29,6 +29,8 @@ import {
 	escForSource
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
+import { emittedByCatalog, namespacedConstructors, type NamespacedConstructor } from './namespaced-constructors.ts';
+import { constructorTargetKind, kindEnumConfigValue } from './factories.ts';
 
 export interface EmitTestsConfig {
 	grammar: string;
@@ -105,6 +107,7 @@ export function emitTests(config: EmitTestsConfig): string {
 		switch (node.modelType) {
 			case 'branch':
 				emitBranchTest(target, node, kind, key, nodeMap, kindEntries);
+				emitNamespacedTests(target, node, kind, key, nodeMap, kindEntries, config.expectTestFailures);
 				break;
 			case 'separatedList':
 				emitSeparatedListTest(target, node, kind, key, kindEntries, nodeMap);
@@ -145,60 +148,9 @@ function emitBranchTest(
 		return;
 	}
 
+	const { typeConfigArg, renderConfigArg } = factoryCallArgs(node, nodeMap, kindEntries);
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
-
-	// Build two configs. The type-check test uses the minimal config — only
-	// required, non-auto-stamp fields/children. Auto-stamp slots are excluded
-	// (the factory stamps them directly; supplying would be a type error).
-	//
-	// The render test needs NON-EMPTY output, which the minimal config can
-	// fail to produce for kinds whose children are all optional (repeat(...)
-	// with every alt optional — calling ir.k({}) produces an empty repeat
-	// that renders to ""). So the render test unconditionally injects a dummy
-	// children element when the kind has a children slot at all, escaping
-	// the type via `as any`.
-	const typeConfigParts: string[] = [];
-	for (const f of node.fields) {
-		if (isRequired(f) && !isAutoStampField(f, nodeMap)) {
-			typeConfigParts.push(`${f.configKey}: ${dummyValue(f, nodeMap, kindEntries)}`);
-		}
-	}
-	const renderConfigParts = [...typeConfigParts];
-
-	// Gap 5: single-field-no-children factories take the value directly.
-	// Detect and emit a direct-value call instead of a config-object.
-	// `resolveDirectFactorySlot` is the same derivation the factories and
-	// from emitters use for the calling convention — a marker-carrying kind
-	// (e.g. class_static_block's automatic_semicolon) is config-shaped, and
-	// a direct-value call against its config coercion would hit the
-	// NodeData passthrough and return the child unchanged.
-	//
-	// Excludes a sole field backed by a KindEnum (e.g. debugger_statement's
-	// `semicolon`, coerced via coerceKindEnumStorage in the emitted
-	// coerceToXxx — kindEnumTextIdPairs is non-empty for it): `ir.<key>`
-	// resolves to that coerce function, whose declared parameter type is
-	// `Xxx | {config}` (no bare-value variant), even though `Xxx`'s own
-	// builder does take the value directly — only `ir.<key>.strict(...)`
-	// (untested here) matches Gap 5's premise for that shape. The
-	// object-config form below is always type-correct regardless of field
-	// shape, since coerceToXxx checks `input.<fieldName>` first.
-	const singleFieldSlot = resolveDirectFactorySlot(node, nodeMap);
-	const singleFieldIsKindEnum =
-		singleFieldSlot !== undefined && kindEnumTextIdPairs(singleFieldSlot, nodeMap, kindEntries).length > 0;
-
-	let typeConfigArg: string;
-	let renderConfigArg: string;
-	if (singleFieldSlot && !singleFieldIsKindEnum) {
-		const sole = singleFieldSlot;
-		const dummy = dummyValue(sole, nodeMap, kindEntries);
-		// Optional field: type test passes no arg; render test passes dummy.
-		typeConfigArg = isRequired(sole) ? dummy : '';
-		renderConfigArg = dummy;
-	} else {
-		typeConfigArg = typeConfigParts.length > 0 ? `{ ${typeConfigParts.join(', ')} }` : '{}';
-		renderConfigArg = renderConfigParts.length > 0 ? `{ ${renderConfigParts.join(', ')} }` : '{}';
-	}
 	lines.push(`    const node = ir.${key}(${typeConfigArg});`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push(`    expect(node.$source).toBe(2);`);
@@ -234,6 +186,109 @@ function emitBranchTest(
 	lines.push('');
 }
 
+/**
+ * The arguments a kind's factory call takes in the emitted tests: the
+ * minimal (required-only) form for the type check and the render form.
+ * Shared by the kind's own test and by the namespaced-constructor tests
+ * that build a child through its parent.
+ */
+function factoryCallArgs(
+	node: Extract<AssembledNode, { modelType: 'branch' | 'group' }>,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	strict = false
+): { typeConfigArg: string; renderConfigArg: string } {
+	// Build two configs. The type-check test uses the minimal config — only
+	// required, non-auto-stamp fields/children. Auto-stamp slots are excluded
+	// (the factory stamps them directly; supplying would be a type error).
+	//
+	// The render test needs NON-EMPTY output, which the minimal config can
+	// fail to produce for kinds whose children are all optional (repeat(...)
+	// with every alt optional — calling ir.k({}) produces an empty repeat
+	// that renders to ""). So the render test unconditionally injects a dummy
+	// children element when the kind has a children slot at all, escaping
+	// the type via `as any`.
+	const typeConfigParts: string[] = [];
+	for (const f of node.fields) {
+		if (isRequired(f) && !isAutoStampField(f, nodeMap)) {
+			typeConfigParts.push(`${f.configKey}: ${dummyValue(f, nodeMap, kindEntries, strict)}`);
+		}
+	}
+	const renderConfigParts = [...typeConfigParts];
+
+	// Gap 5: single-field-no-children factories take the value directly.
+	// Detect and emit a direct-value call instead of a config-object.
+	// `resolveDirectFactorySlot` is the same derivation the factories and
+	// from emitters use for the calling convention — a marker-carrying kind
+	// (e.g. class_static_block's automatic_semicolon) is config-shaped, and
+	// a direct-value call against its config coercion would hit the
+	// NodeData passthrough and return the child unchanged.
+	//
+	// Excludes a sole field backed by a KindEnum (e.g. debugger_statement's
+	// `semicolon`, coerced via coerceKindEnumStorage in the emitted
+	// coerceToXxx — kindEnumTextIdPairs is non-empty for it): `ir.<key>`
+	// resolves to that coerce function, whose declared parameter type is
+	// `Xxx | {config}` (no bare-value variant), even though `Xxx`'s own
+	// builder does take the value directly — only `ir.<key>.strict(...)`
+	// (untested here) matches Gap 5's premise for that shape. The
+	// object-config form below is always type-correct regardless of field
+	// shape, since coerceToXxx checks `input.<fieldName>` first.
+	const singleFieldSlot = resolveDirectFactorySlot(node, nodeMap);
+	const singleFieldIsKindEnum =
+		!strict && singleFieldSlot !== undefined && kindEnumTextIdPairs(singleFieldSlot, nodeMap, kindEntries).length > 0;
+
+	let typeConfigArg: string;
+	let renderConfigArg: string;
+	if (singleFieldSlot && !singleFieldIsKindEnum) {
+		const sole = singleFieldSlot;
+		const dummy = dummyValue(sole, nodeMap, kindEntries, strict);
+		// Optional field: type test passes no arg; render test passes dummy.
+		typeConfigArg = isRequired(sole) ? dummy : '';
+		renderConfigArg = dummy;
+	} else {
+		typeConfigArg = typeConfigParts.length > 0 ? `{ ${typeConfigParts.join(', ')} }` : '{}';
+		renderConfigArg = renderConfigParts.length > 0 ? `{ ${renderConfigParts.join(', ')} }` : '{}';
+	}
+	return { typeConfigArg, renderConfigArg };
+}
+
+/** The positional argument a container-shape factory call takes in the
+ *  emitted tests — a recursively-built dummy when the slot demands one. */
+function containerCallArgs(
+	node: Extract<AssembledNode, { modelType: 'branch' }>,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	const facts = soleSlotFacts(node, nodeMap);
+	const requiredSingular = facts && !facts.multiple && facts.required;
+	const anyNonEmpty = facts?.nonEmpty ?? false;
+	// Candidate kind names for the slot, preferring each value's `parseKind`
+	// (the tree-sitter-facing, constructable name) over `slotKindNames`'
+	// storage kind: for an alias-promoted slot (e.g. a hidden rule later
+	// exposed as its own visible kind), the storage kind is the
+	// pre-promotion hidden name, which the factory surface no longer
+	// accepts. Routed through `resolveConcreteKind` exactly like
+	// `dummyValueForField` — a bare supertype name (e.g. `type`) isn't
+	// itself constructable; it needs expanding to one of its subtypes.
+	const candidateKindNames = facts
+		? facts.slot.values
+				.map((v) => v.parseKind?.name ?? (isNodeRef(v) ? storageKindOfRef(v.node) : undefined))
+				.filter((n) => n !== undefined)
+		: [];
+	const firstKindName =
+		candidateKindNames.length > 0 ? resolveConcreteKind(candidateKindNames, nodeMap, kindEntries) : undefined;
+	// A recursively-built dummy (populating the child's own required fields,
+	// not just its type discriminant) rather than a bare `{ type: X }` —
+	// the factory's real signature expects full NodeData for this slot, not
+	// a type tag.
+	const placeholder =
+		(requiredSingular || anyNonEmpty) && firstKindName
+			? buildDummyStub(firstKindName, nodeMap, kindEntries, 0, new Set())
+			: '';
+
+	return placeholder;
+}
+
 function emitContainerTest(
 	lines: string[],
 	node: AssembledNode,
@@ -257,37 +312,90 @@ function emitContainerTest(
 	// `emitFieldCarryingFactory` (factories.ts) bases its real signature
 	// on. Read it here too, so the test placeholder matches what the
 	// factory actually requires.
-	const facts = soleSlotFacts(node, nodeMap);
-	const requiredSingular = facts && !facts.multiple && facts.required;
-	const anyNonEmpty = facts?.nonEmpty ?? false;
-	// Candidate kind names for the slot, preferring each value's `parseKind`
-	// (the tree-sitter-facing, constructable name) over `slotKindNames`'
-	// storage kind: for an alias-promoted slot (e.g. a hidden rule later
-	// exposed as its own visible kind), the storage kind is the
-	// pre-promotion hidden name, which the factory surface no longer
-	// accepts. Routed through `resolveConcreteKind` exactly like
-	// `dummyValueForField` — a bare supertype name (e.g. `type`) isn't
-	// itself constructable; it needs expanding to one of its subtypes.
-	const candidateKindNames = facts
-		? facts.slot.values.map((v) => v.parseKind?.name ?? (isNodeRef(v) ? storageKindOfRef(v.node) : undefined)).filter((n) => n !== undefined)
-		: [];
-	const firstKindName =
-		candidateKindNames.length > 0 ? resolveConcreteKind(candidateKindNames, nodeMap, kindEntries) : undefined;
-	// A recursively-built dummy (populating the child's own required fields,
-	// not just its type discriminant) rather than a bare `{ type: X }` —
-	// the factory's real signature expects full NodeData for this slot, not
-	// a type tag.
-	const placeholder =
-		(requiredSingular || anyNonEmpty) && firstKindName
-			? buildDummyStub(firstKindName, nodeMap, kindEntries, 0, new Set())
-			: '';
-
+	const placeholder = containerCallArgs(node, nodeMap, kindEntries);
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
 	lines.push(`    const node = ir.${key}(${placeholder});`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
+	lines.push('});');
+	lines.push('');
+}
+
+/**
+ * The arguments a namespaced constructor takes in the emitted tests — a
+ * form constructor takes what its child's factory (or hoisted
+ * sub-constructor) takes; a member constructor takes its parameters'
+ * dummies positionally.
+ */
+function namespacedCallArgs(
+	entry: NamespacedConstructor,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	isEmitted: (kind: string) => boolean
+): string | undefined {
+	if (entry.via === 'member') return entry.params.map((p) => dummyValue(p, nodeMap, kindEntries, true)).join(', ');
+	if (entry.path.length > 0) {
+		const child = nodeMap.nodes.get(entry.childKind);
+		const sub =
+			child === undefined
+				? undefined
+				: namespacedConstructors(child, nodeMap, { isEmitted }).entries.find((e) => e.name === entry.path[0]);
+		return sub === undefined ? undefined : namespacedCallArgs(sub, nodeMap, kindEntries, isEmitted);
+	}
+	// A form constructor declares its forwarding target's parameters
+	// (`constructorTargetKind`, factories.ts) — build the dummies for that.
+	const target = nodeMap.nodes.get(constructorTargetKind(entry.childKind, nodeMap));
+	if (target === undefined) return undefined;
+	switch (target.modelType) {
+		case 'branch':
+			return classifyChildFactorySurface(target, nodeMap) !== null
+				? containerCallArgs(target, nodeMap, kindEntries)
+				: factoryCallArgs(target, nodeMap, kindEntries, true).renderConfigArg;
+		case 'group':
+			return factoryCallArgs(target, nodeMap, kindEntries, true).renderConfigArg;
+		case 'separatedList': {
+			// Two elements: a lone element can be a grammar's special case
+			// (rust's single-element tuple demands a trailing comma).
+			const element = dummyValueForField(buildSeparatedListContentSlot(target), nodeMap, kindEntries, 0, new Set());
+			return `${element}, ${element}`;
+		}
+		default:
+			return undefined;
+	}
+}
+
+function emitNamespacedTests(
+	lines: string[],
+	node: AssembledNode,
+	kind: string,
+	key: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	expectTestFailures: Readonly<Record<string, string>> | undefined
+): void {
+	const isEmitted = emittedByCatalog(kindEntries);
+	const entries = namespacedConstructors(node, nodeMap, { isEmitted }).entries;
+	if (entries.length === 0) return;
+	lines.push(`describe('${kind} namespaced constructors', () => {`);
+	for (const entry of entries) {
+		const args = namespacedCallArgs(entry, nodeMap, kindEntries, isEmitted);
+		if (args === undefined) continue;
+		const access = isValidIdent(entry.name) ? `.${entry.name}` : `[${JSON.stringify(entry.name)}]`;
+		// A `<kind>.<constructor>` key in `expectTestFailures:` pins one
+		// constructor's test as known-failing (the dummy builder cannot
+		// stub every child shape), without skipping the kind's own tests.
+		const knownFailure = expectTestFailures?.[`${kind}.${entry.name}`];
+		if (knownFailure !== undefined) lines.push(`  // known-failing: ${knownFailure}`);
+		lines.push(
+			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(entry.name)} builds the parent', () => {`
+		);
+		lines.push(`    const node = ir.${key}${access}(${args});`);
+		lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
+		lines.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
+		lines.push('  });');
+	}
 	lines.push('});');
 	lines.push('');
 }
@@ -583,7 +691,18 @@ function buildDummyStub(
 	return base.replace(/\}\s*as any$/, `, ${fieldParts.join(', ')} } as any`);
 }
 
-function dummyValue(field: AssembledNonterminal, nodeMap?: NodeMap, kindEntries?: readonly KindEnumEntry[]): string {
+/**
+ * A Config-surface dummy for one field. `strict` targets the factory's own
+ * Config (a namespaced constructor calls `F.buildX` directly), where a
+ * kind-enum slot takes its member's discriminant; the `ir.<kind>` coerce
+ * path also accepts the member text.
+ */
+function dummyValue(
+	field: AssembledNonterminal,
+	nodeMap?: NodeMap,
+	kindEntries?: readonly KindEnumEntry[],
+	strict = false
+): string {
 	// Keyword-presence brands (boolean / bitflag) take a number / scalar at
 	// the Config surface, not a NodeData / array. Pre-empt the generic
 	// structural fallback below.
@@ -591,6 +710,11 @@ function dummyValue(field: AssembledNonterminal, nodeMap?: NodeMap, kindEntries?
 		const kw = keywordPresenceKind(field, nodeMap);
 		if (kw === 'boolean') return 'true';
 		if (kw === 'bitflag') return '0 as never';
+		if (strict) {
+			const storageInfo = resolveFieldStorageInfo(field, nodeMap, kindEntries);
+			const text = storageInfo.texts[0];
+			if (storageInfo.kind === 'kindEnum' && text !== undefined) return kindEnumConfigValue(text, kindEntries);
+		}
 	}
 	// Multiple fields need a non-empty dummy array so templates with
 	// `$FIELD`/`joinBy` produce non-empty output; otherwise the generated

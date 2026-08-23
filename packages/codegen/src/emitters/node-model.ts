@@ -43,6 +43,7 @@ import {
 	storageKindOfRef
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
+import { namespacedConstructors, type NamespacedConstructor } from './namespaced-constructors.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 
@@ -74,6 +75,16 @@ interface SerializedField extends SerializedSlot {
 	projection: { typeName: string; kinds: string[] };
 }
 
+interface SerializedNamespacedConstructor {
+	name: string;
+	via: 'form' | 'member';
+	slot: string;
+	childKind?: string;
+	path?: string[];
+	literal?: string;
+	params?: string[];
+}
+
 interface SerializedNodeBase {
 	kind: string;
 	modelType: string;
@@ -88,6 +99,11 @@ interface SerializedNodeBase {
 	 *  this kind's factory forwards (see buildFactoryMap.forwardsTo). */
 	forwardsTo?: string;
 	factoryFields?: string[];
+	/** The factory's namespaced constructors (`buildX.<name>(...)`) — see
+	 *  `namespacedConstructors`. A form entry builds the parent around the
+	 *  child kind's factory (or its own `path` sub-constructor); a member
+	 *  entry fixes `slot` to `literal` and takes `params` positionally. */
+	namespacedConstructors?: SerializedNamespacedConstructor[];
 }
 
 interface SerializedBranch extends SerializedNodeBase {
@@ -195,6 +211,8 @@ export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
 		if (forwardsTo !== undefined) serialized.forwardsTo = forwardsTo;
 		const factoryFields = factoryData.factoryFields[kind];
 		if (factoryFields !== undefined) serialized.factoryFields = [...factoryFields];
+		const namespace = namespacedConstructors(node, nodeMap).entries;
+		if (namespace.length > 0) serialized.namespacedConstructors = namespace.map(serializeNamespacedConstructor);
 		nodes.push(serialized);
 	}
 
@@ -216,6 +234,18 @@ export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
 		factorySlots: factoryData.factorySlots,
 		nodes
 	};
+}
+
+function serializeNamespacedConstructor(entry: NamespacedConstructor): SerializedNamespacedConstructor {
+	return entry.via === 'form'
+		? { name: entry.name, via: 'form', slot: entry.slot.name, childKind: entry.childKind, path: [...entry.path] }
+		: {
+				name: entry.name,
+				via: 'member',
+				slot: entry.slot.name,
+				literal: entry.literal,
+				params: entry.params.map((p) => p.name)
+			};
 }
 
 function serializeNode(node: AssembledNode): SerializedNode {

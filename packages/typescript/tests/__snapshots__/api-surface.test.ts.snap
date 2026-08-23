@@ -64,6 +64,7 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "_fromMap": "object",
   "applyEdits": "function",
   "assert": "object",
+  "attachProps": "function",
   "augmentedAssignmentLhs": "object",
   "coerceBitflagStorage": "function",
   "coerceBooleanKeywordStorage": "function",

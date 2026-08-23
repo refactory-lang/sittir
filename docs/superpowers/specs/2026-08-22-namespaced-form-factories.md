@@ -1,7 +1,7 @@
 # Namespaced Form Factories — Hiding Form Kinds in the Factory API
 
-**Status:** Draft (design settled 2026-08-22; sequenced after the
-determined-slots spec)
+**Status:** Realized (design settled 2026-08-22; landed ahead of the
+determined-slots spec — see "Realization notes")
 
 ## Problem
 
@@ -107,3 +107,33 @@ generated api-surface snapshots change by addition only (new properties on
 existing factories); a namespaced-constructor round-trip probe per eligible
 parent in each grammar (render → reparse → AST match) alongside the
 direct-construction path.
+
+## Realization notes
+
+- The derivation is one module (`namespacedConstructors`, emitters); the
+  factory, `ir`, node-model (`namespacedConstructors` per node) and
+  generated-test emitters consume it. A parent's factory is exported as
+  `export const buildX = attachProps(buildX$impl, {...})`; `ir.x.<name>`
+  carries the same entries.
+- Eligibility is structural: the sole user slot holding ≥2 concrete kinds
+  with factories, **or** a slot holding only the parent's own arms
+  (registered polymorph forms, or kinds minted under the parent's name)
+  beside siblings that are all optional — the arm is a complete
+  alternative, so the parent builds from it alone.
+- A form constructor declares its child's own calling convention
+  (`constructorSurface`, the factory signature derivation), following a
+  forwarding factory through to its target: a list-backed form is
+  `parent.form(...elements)`.
+- Minted arms are named by their suffix (`exportStatement.typeExport`,
+  `binaryExpression.arm`); a registered form by its variant name. The
+  `binaryExpression.in` spelling arrives with determined slots, which fold
+  a literal-only arm into the parent's enum.
+- A member constructor's parameters follow slot order; once a parameter is
+  optional every later one must be too, so a required slot after an
+  optional one is typed `| undefined` instead. A kind-enum member is passed
+  as its kind discriminant (the strict Config surface).
+- Realized population: rust 15 parents / 59 constructors, typescript 22 /
+  75, python 10 / 40. No ambiguity diagnostics fired.
+- `expectTestFailures:` accepts `<kind>.<constructor>` keys to pin one
+  constructor's generated test (python's
+  `parenthesized_list_splat.parenthesizedListSplat` — a dummy-builder gap).

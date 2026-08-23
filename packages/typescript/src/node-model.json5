@@ -5728,6 +5728,22 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "fromArm",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default_from_arm",
+          "path": []
+        },
+        {
+          "name": "declArm",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default_decl_arm",
+          "path": []
+        }
       ]
     },
     {
@@ -6966,6 +6982,22 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "namespaceImport",
+          "via": "form",
+          "slot": "content",
+          "childKind": "namespace_import",
+          "path": []
+        },
+        {
+          "name": "namedImports",
+          "via": "form",
+          "slot": "content",
+          "childKind": "named_imports",
+          "path": []
+        }
       ]
     },
     {
@@ -7260,7 +7292,23 @@
           }
         }
       ],
-      "children": []
+      "children": [],
+      "namespacedConstructors": [
+        {
+          "name": "dash",
+          "via": "member",
+          "slot": "sign",
+          "literal": "-",
+          "params": []
+        },
+        {
+          "name": "plus",
+          "via": "member",
+          "slot": "sign",
+          "literal": "+",
+          "params": []
+        }
+      ]
     },
     {
       "kind": "_infer_type_optional1",
@@ -9164,6 +9212,28 @@
         "object",
         "content",
         "property"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "dot",
+          "via": "member",
+          "slot": "content",
+          "literal": ".",
+          "params": [
+            "object",
+            "property"
+          ]
+        },
+        {
+          "name": "qmarkDot",
+          "via": "member",
+          "slot": "content",
+          "literal": "?.",
+          "params": [
+            "object",
+            "property"
+          ]
+        }
       ]
     },
     {
@@ -10057,6 +10127,47 @@
         "type_parameters",
         "parameters",
         "return_type"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "get",
+          "via": "member",
+          "slot": "accessor_kind",
+          "literal": "get",
+          "params": [
+            "accessibility_modifier",
+            "name",
+            "type_parameters",
+            "parameters",
+            "return_type"
+          ]
+        },
+        {
+          "name": "set",
+          "via": "member",
+          "slot": "accessor_kind",
+          "literal": "set",
+          "params": [
+            "accessibility_modifier",
+            "name",
+            "type_parameters",
+            "parameters",
+            "return_type"
+          ]
+        },
+        {
+          "name": "star",
+          "via": "member",
+          "slot": "accessor_kind",
+          "literal": "*",
+          "params": [
+            "accessibility_modifier",
+            "name",
+            "type_parameters",
+            "parameters",
+            "return_type"
+          ]
+        }
       ]
     },
     {
@@ -11281,6 +11392,255 @@
         "operator",
         "right",
         "binary_expression_arm"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "arm",
+          "via": "form",
+          "slot": "binary_expression_arm",
+          "childKind": "_binary_expression_arm",
+          "path": []
+        },
+        {
+          "name": "ampAmp",
+          "via": "member",
+          "slot": "operator",
+          "literal": "&&",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "pipePipe",
+          "via": "member",
+          "slot": "operator",
+          "literal": "||",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "gtGt",
+          "via": "member",
+          "slot": "operator",
+          "literal": ">>",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "gtGtGt",
+          "via": "member",
+          "slot": "operator",
+          "literal": ">>>",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "ltLt",
+          "via": "member",
+          "slot": "operator",
+          "literal": "<<",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "amp",
+          "via": "member",
+          "slot": "operator",
+          "literal": "&",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "caret",
+          "via": "member",
+          "slot": "operator",
+          "literal": "^",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "pipe",
+          "via": "member",
+          "slot": "operator",
+          "literal": "|",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "plus",
+          "via": "member",
+          "slot": "operator",
+          "literal": "+",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "dash",
+          "via": "member",
+          "slot": "operator",
+          "literal": "-",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "star",
+          "via": "member",
+          "slot": "operator",
+          "literal": "*",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "slash",
+          "via": "member",
+          "slot": "operator",
+          "literal": "/",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "percent",
+          "via": "member",
+          "slot": "operator",
+          "literal": "%",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "starStar",
+          "via": "member",
+          "slot": "operator",
+          "literal": "**",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "lt",
+          "via": "member",
+          "slot": "operator",
+          "literal": "<",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "ltEq",
+          "via": "member",
+          "slot": "operator",
+          "literal": "<=",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "eqEq",
+          "via": "member",
+          "slot": "operator",
+          "literal": "==",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "eqEqEq",
+          "via": "member",
+          "slot": "operator",
+          "literal": "===",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "bangEq",
+          "via": "member",
+          "slot": "operator",
+          "literal": "!=",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "bangEqEq",
+          "via": "member",
+          "slot": "operator",
+          "literal": "!==",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "gtEq",
+          "via": "member",
+          "slot": "operator",
+          "literal": ">=",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "gt",
+          "via": "member",
+          "slot": "operator",
+          "literal": ">",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "qmarkQmark",
+          "via": "member",
+          "slot": "operator",
+          "literal": "??",
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "instanceof",
+          "via": "member",
+          "slot": "operator",
+          "literal": "instanceof",
+          "params": [
+            "left",
+            "right"
+          ]
+        }
       ]
     },
     {
@@ -11418,6 +11778,29 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "call",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_call_expression_call",
+          "path": []
+        },
+        {
+          "name": "templateCall",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_call_expression_template_call",
+          "path": []
+        },
+        {
+          "name": "member",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_call_expression_member",
+          "path": []
+        }
       ]
     },
     {
@@ -11748,6 +12131,15 @@
         "type_parameters",
         "class_heritage",
         "body"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "body",
+          "via": "form",
+          "slot": "body",
+          "childKind": "class_body",
+          "path": []
+        }
       ]
     },
     {
@@ -12019,6 +12411,22 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "extendsClause",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_class_heritage_extends_clause",
+          "path": []
+        },
+        {
+          "name": "implementsClause",
+          "via": "form",
+          "slot": "content",
+          "childKind": "implements_clause",
+          "path": []
+        }
       ]
     },
     {
@@ -12333,6 +12741,26 @@
       "factoryFields": [
         "content",
         "type"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "extends",
+          "via": "member",
+          "slot": "content",
+          "literal": "extends",
+          "params": [
+            "type"
+          ]
+        },
+        {
+          "name": "colon",
+          "via": "member",
+          "slot": "content",
+          "literal": ":",
+          "params": [
+            "type"
+          ]
+        }
       ]
     },
     {
@@ -13648,6 +14076,28 @@
         "export_kind",
         "name",
         "alias"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "type",
+          "via": "member",
+          "slot": "export_kind",
+          "literal": "type",
+          "params": [
+            "name",
+            "alias"
+          ]
+        },
+        {
+          "name": "typeof",
+          "via": "member",
+          "slot": "export_kind",
+          "literal": "typeof",
+          "params": [
+            "name",
+            "alias"
+          ]
+        }
       ]
     },
     {
@@ -13710,6 +14160,54 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "default",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default",
+          "path": []
+        },
+        {
+          "name": "fromArm",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default",
+          "path": [
+            "fromArm"
+          ]
+        },
+        {
+          "name": "declArm",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_default",
+          "path": [
+            "declArm"
+          ]
+        },
+        {
+          "name": "typeExport",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_type_export",
+          "path": []
+        },
+        {
+          "name": "equalsExport",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_equals_export",
+          "path": []
+        },
+        {
+          "name": "namespaceExport",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_export_statement_namespace_export",
+          "path": []
+        }
       ]
     },
     {
@@ -15965,6 +16463,26 @@
       "factoryFields": [
         "attribute_kind",
         "object"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "with",
+          "via": "member",
+          "slot": "attribute_kind",
+          "literal": "with",
+          "params": [
+            "object"
+          ]
+        },
+        {
+          "name": "assert",
+          "via": "member",
+          "slot": "attribute_kind",
+          "literal": "assert",
+          "params": [
+            "object"
+          ]
+        }
       ]
     },
     {
@@ -16019,6 +16537,29 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "namespaceImport",
+          "via": "form",
+          "slot": "content",
+          "childKind": "namespace_import",
+          "path": []
+        },
+        {
+          "name": "namedImports",
+          "via": "form",
+          "slot": "content",
+          "childKind": "named_imports",
+          "path": []
+        },
+        {
+          "name": "defaultImport",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_import_clause_default_import",
+          "path": []
+        }
       ]
     },
     {
@@ -16154,6 +16695,26 @@
       "factoryFields": [
         "import_kind",
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "type",
+          "via": "member",
+          "slot": "import_kind",
+          "literal": "type",
+          "params": [
+            "content"
+          ]
+        },
+        {
+          "name": "typeof",
+          "via": "member",
+          "slot": "import_kind",
+          "literal": "typeof",
+          "params": [
+            "content"
+          ]
+        }
       ]
     },
     {
@@ -16283,6 +16844,30 @@
         "from_clause",
         "import_attribute",
         "semicolon"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "type",
+          "via": "member",
+          "slot": "import_clause",
+          "literal": "type",
+          "params": [
+            "from_clause",
+            "import_attribute",
+            "semicolon"
+          ]
+        },
+        {
+          "name": "typeof",
+          "via": "member",
+          "slot": "import_clause",
+          "literal": "typeof",
+          "params": [
+            "from_clause",
+            "import_attribute",
+            "semicolon"
+          ]
+        }
       ]
     },
     {
@@ -16438,6 +17023,28 @@
         "sign",
         "content",
         "type"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "dash",
+          "via": "member",
+          "slot": "sign",
+          "literal": "-",
+          "params": [
+            "content",
+            "type"
+          ]
+        },
+        {
+          "name": "plus",
+          "via": "member",
+          "slot": "sign",
+          "literal": "+",
+          "params": [
+            "content",
+            "type"
+          ]
+        }
       ]
     },
     {
@@ -18249,6 +18856,50 @@
         "parameters",
         "return_type",
         "body"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "get",
+          "via": "member",
+          "slot": "accessor_kind",
+          "literal": "get",
+          "params": [
+            "accessibility_modifier",
+            "name",
+            "type_parameters",
+            "parameters",
+            "return_type",
+            "body"
+          ]
+        },
+        {
+          "name": "set",
+          "via": "member",
+          "slot": "accessor_kind",
+          "literal": "set",
+          "params": [
+            "accessibility_modifier",
+            "name",
+            "type_parameters",
+            "parameters",
+            "return_type",
+            "body"
+          ]
+        },
+        {
+          "name": "star",
+          "via": "member",
+          "slot": "accessor_kind",
+          "literal": "*",
+          "params": [
+            "accessibility_modifier",
+            "name",
+            "type_parameters",
+            "parameters",
+            "return_type",
+            "body"
+          ]
+        }
       ]
     },
     {
@@ -18547,6 +19198,47 @@
         "type_parameters",
         "parameters",
         "return_type"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "get",
+          "via": "member",
+          "slot": "accessor_kind",
+          "literal": "get",
+          "params": [
+            "accessibility_modifier",
+            "name",
+            "type_parameters",
+            "parameters",
+            "return_type"
+          ]
+        },
+        {
+          "name": "set",
+          "via": "member",
+          "slot": "accessor_kind",
+          "literal": "set",
+          "params": [
+            "accessibility_modifier",
+            "name",
+            "type_parameters",
+            "parameters",
+            "return_type"
+          ]
+        },
+        {
+          "name": "star",
+          "via": "member",
+          "slot": "accessor_kind",
+          "literal": "*",
+          "params": [
+            "accessibility_modifier",
+            "name",
+            "type_parameters",
+            "parameters",
+            "return_type"
+          ]
+        }
       ]
     },
     {
@@ -20624,6 +21316,34 @@
         "optionality_marker",
         "type",
         "value"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "qmark",
+          "via": "member",
+          "slot": "optionality_marker",
+          "literal": "?",
+          "params": [
+            "decorator",
+            "content",
+            "name",
+            "type",
+            "value"
+          ]
+        },
+        {
+          "name": "bang",
+          "via": "member",
+          "slot": "optionality_marker",
+          "literal": "!",
+          "params": [
+            "decorator",
+            "content",
+            "name",
+            "type",
+            "value"
+          ]
+        }
       ]
     },
     {
@@ -21518,6 +22238,22 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "double",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_string_double",
+          "path": []
+        },
+        {
+          "name": "single",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_string_single",
+          "path": []
+        }
       ]
     },
     {
@@ -23256,6 +23992,22 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "postfix",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_update_expression_postfix",
+          "path": []
+        },
+        {
+          "name": "prefix",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_update_expression_prefix",
+          "path": []
+        }
       ]
     },
     {
@@ -23386,6 +24138,22 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "namespacedConstructors": [
+        {
+          "name": "arm1",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_variable_declarator_arm1",
+          "path": []
+        },
+        {
+          "name": "arm2",
+          "via": "form",
+          "slot": "content",
+          "childKind": "_variable_declarator_arm2",
+          "path": []
+        }
       ]
     },
     {

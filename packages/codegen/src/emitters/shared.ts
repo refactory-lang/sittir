@@ -335,7 +335,12 @@ export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMa
 			// leaf's `resolvedKindId` (the anon token's row, for
 			// compile-synthesized kinds like evaluate's field-enum names that
 			// have no parser symbol of their own).
-			out.push({ kind: 'literal', value: leaf.text, rawKind: t, resolvedKindId: v.storageKindId ?? leaf.resolvedKindId });
+			out.push({
+				kind: 'literal',
+				value: leaf.text,
+				rawKind: t,
+				resolvedKindId: v.storageKindId ?? leaf.resolvedKindId
+			});
 			continue;
 		}
 		const node = nodeMap.nodes.get(t);
@@ -657,19 +662,28 @@ export type { BranchSlotClass } from '../compiler/model/node-map.ts';
 export type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements' | 'forwarded';
 export type ChildFactorySurface = 'direct' | 'spread';
 
+/**
+ * The user-facing slots of a slot-bearing compound: every field that is
+ * neither auto-stamped, hidden-infra, nor a keyword-presence marker. The
+ * single derivation behind the single-/multi-slot taxonomy and the
+ * namespaced-constructor surface.
+ */
+export function userSlotsOf(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal[] {
+	if (!isSlotBearingCompound(node)) return [];
+	return node.fields.filter(
+		(f) =>
+			stampExpressionFor(f, nodeMap) === undefined &&
+			!isHiddenInfraSlot(f, nodeMap) &&
+			keywordPresenceKind(f, nodeMap) === null
+	);
+}
+
 export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): BranchSlotClass {
 	if (!isSlotBearingCompound(node)) {
 		return { tag: 'multiSlot' };
 	}
 
-	const userSlots: AssembledNonterminal[] = [];
-
-	for (const f of node.fields) {
-		if (stampExpressionFor(f, nodeMap) !== undefined) continue;
-		if (isHiddenInfraSlot(f, nodeMap)) continue;
-		if (keywordPresenceKind(f, nodeMap) !== null) continue;
-		userSlots.push(f);
-	}
+	const userSlots = userSlotsOf(node, nodeMap);
 
 	if (userSlots.length !== 1) return { tag: 'multiSlot' };
 
