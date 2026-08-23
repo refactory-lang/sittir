@@ -694,7 +694,10 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 	for (const s of structs) {
 		lines.push(`#[derive(::askama::Template)]`);
 		lines.push(`#[template(path = ${JSON.stringify(`${s.kind}.jinja`)}, escape = "none")]`);
-		lines.push(`pub struct ${s.name}<'a> {`);
+		// A fully-static template (every slot determined) has no borrowed
+		// fields — an unused lifetime parameter is a hard rustc error (E0392).
+		const hasBorrows = s.hasChildren || s.hasVariant || s.hasText || s.fields.length > 0;
+		lines.push(`pub struct ${s.name}${hasBorrows ? "<'a>" : ''} {`);
 		if (s.hasChildren) {
 			lines.push(`    pub children: ${childrenFieldType(s)},`);
 		}
@@ -1325,7 +1328,9 @@ function buildTypedTemplateBody(
 			slotModel !== undefined
 				? [...slotModel.named, ...slotModel.unnamed].find((s) => s.storageName === f.storageName)
 				: undefined;
-		lines.push(...emitListSlotBuffer(rIdent, f.required, false, slotForBuf !== undefined && hasOptionalElements(slotForBuf)));
+		lines.push(
+			...emitListSlotBuffer(rIdent, f.required, false, slotForBuf !== undefined && hasOptionalElements(slotForBuf))
+		);
 	}
 
 	// Build template struct — all single-value fields use Renderable::Transport.
@@ -2294,7 +2299,14 @@ function emitSupertypeTransportEnum(
 					kindEntries,
 					parseName: parseNames.get(subKind)
 				});
-				assertRoutableTransportIds(acceptedIds, subKind, variant, enumName, `under supertype '${ownerKind}'`, kindEntries);
+				assertRoutableTransportIds(
+					acceptedIds,
+					subKind,
+					variant,
+					enumName,
+					`under supertype '${ownerKind}'`,
+					kindEntries
+				);
 				const boxed = isBoxed(subKind, subNode);
 				for (const id of acceptedIds) {
 					if (emittedIds.has(id)) continue;
@@ -3023,7 +3035,14 @@ function emitPerSlotChildEnum(
 				stampedIds: entry.acceptedIdsByKind.get(kind),
 				parseAliases: entry.parseAliases
 			});
-			assertRoutableTransportIds(acceptedIds, kind, variant, enumName, `in ${ownerKind}.${entry.fieldName}`, kindEntries);
+			assertRoutableTransportIds(
+				acceptedIds,
+				kind,
+				variant,
+				enumName,
+				`in ${ownerKind}.${entry.fieldName}`,
+				kindEntries
+			);
 			const boxed = isBoxed(kind, node);
 			for (const id of acceptedIds) {
 				if (emittedIds.has(id)) continue;
@@ -3200,9 +3219,10 @@ function emitPerSlotChildEnum(
 			// terminals carry the stamp on the literal itself (no kind of
 			// their own to look up); kind-named literals resolve it through
 			// their kind.
-			const arm = (literal.immediate === true || isImmediateLeafKind(literal.kind, nodeMap))
-				? `{ ::sittir_core::spacing::mark_adjacent(); dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from) }`
-				: `dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from)`;
+			const arm =
+				literal.immediate === true || isImmediateLeafKind(literal.kind, nodeMap)
+					? `{ ::sittir_core::spacing::mark_adjacent(); dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from) }`
+					: `dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from)`;
 			lines.push(`            ${enumName}::${variant} => ${arm},`);
 		}
 	}
@@ -3455,10 +3475,7 @@ function emitTriviaKindIdArm(id: number, variant: string, structName: string): s
 	];
 }
 
-function renderTriviaTransportSupport(
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): string[] {
+function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
 	const extrasKindNames = nodeMap.extras ?? new Set<string>();
 	const extrasNodes: AssembledNode[] = [];
 	for (const kindName of extrasKindNames) {

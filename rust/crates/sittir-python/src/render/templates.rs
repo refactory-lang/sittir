@@ -260,7 +260,6 @@ pub struct SimpleStatementsElementsTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_simple_statements.jinja", escape = "none")]
 pub struct SimpleStatementsTemplate<'a> {
-    pub newline: SingleNonterminalView<'a>,
     pub simple_statements_elements: SingleNonterminalView<'a>,
 }
 
@@ -510,7 +509,6 @@ pub struct DecoratedDefinitionTemplate<'a> {
 #[template(path = "decorator.jinja", escape = "none")]
 pub struct DecoratorTemplate<'a> {
     pub expression: SingleNonterminalView<'a>,
-    pub newline: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

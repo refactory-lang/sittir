@@ -22,7 +22,6 @@ import type { AssembledNode, AssembledNonterminal, AssembledSeparatedList } from
 
 type BranchLikeForFrom = Extract<AssembledNode, { modelType: 'branch' }>;
 import {
-	isAutoStampField,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
@@ -30,7 +29,6 @@ import {
 	keywordPresenceKind,
 	resolveSingleFieldFactorySlot,
 	resolveFieldStorageInfo,
-	stampExpressionFor,
 	isHiddenInfraSlot,
 	configurableFactoryFields,
 	type BranchSlotClass,
@@ -293,7 +291,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 		return null;
 	}
 	const targetFields = targetNode.fields;
-	const hasBlockingField = targetFields.some((f) => isRequired(f) && stampExpressionFor(f, nodeMap) === undefined);
+	const hasBlockingField = targetFields.some((f) => isRequired(f));
 	if (hasBlockingField) return null;
 	return targetNode.rawFactoryName;
 }
@@ -361,7 +359,6 @@ function emitBranchFrom(
 		const needsNonEmptyHoist = (f: AssembledNonterminal): boolean =>
 			isNonEmpty(f) && isMultiple(f) && keywordPresenceKind(f, nodeMap) === null;
 		for (const f of fields) {
-			if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 			if (needsNonEmptyHoist(f)) {
 				const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional, kindEntries);
 				lines.push(`  const ${neName(f)} = ${call};`);
@@ -394,7 +391,6 @@ function emitBranchFrom(
 		} else {
 			lines.push(`  return ${factory}({`);
 			for (const f of fields) {
-				if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 				if (needsNonEmptyHoist(f)) {
 					lines.push(`    ${f.configKey}: ${neName(f)},`);
 				} else {
@@ -635,8 +631,7 @@ function emitSeparatedListFrom(
 		// `storageAccess` above needs its own `unknown` cast) — read the
 		// three per-instance fields through one shared cast rather than
 		// three separate ones.
-		const sourceFields =
-			'(data as unknown as { _separator?: number; _delimiter?: number })';
+		const sourceFields = '(data as unknown as { _separator?: number; _delimiter?: number })';
 		const optionParts: string[] = [];
 		if (candidateKindNames.length > 0) {
 			// `KIND_LITERAL_TEXT` (types.ts) is the single stamped source for
@@ -659,9 +654,7 @@ function emitSeparatedListFrom(
 		nodeMap,
 		contentStorageKey,
 		(varExpr, isSelfUnwrap) =>
-			isSelfUnwrap && hasOptions
-				? buildOptionsPreservingCall(varExpr)
-				: `${factory}(${spreadElements(varExpr)})`,
+			isSelfUnwrap && hasOptions ? buildOptionsPreservingCall(varExpr) : `${factory}(${spreadElements(varExpr)})`,
 		': readonly unknown[]'
 	);
 }

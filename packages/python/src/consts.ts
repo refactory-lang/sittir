@@ -1505,7 +1505,6 @@ export const enum TSFieldId {
 	FieldLeft = 36,
 	FieldModuleName = 37,
 	FieldName = 38,
-	FieldNewline = 39,
 	FieldObject = 40,
 	FieldOperator = 41,
 	FieldOperators = 42,
@@ -1578,7 +1577,6 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	left: TSFieldId.FieldLeft,
 	module_name: TSFieldId.FieldModuleName,
 	name: TSFieldId.FieldName,
-	newline: TSFieldId.FieldNewline,
 	object: TSFieldId.FieldObject,
 	operator: TSFieldId.FieldOperator,
 	operators: TSFieldId.FieldOperators,
@@ -1651,7 +1649,6 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldLeft]: 'left',
 	[TSFieldId.FieldModuleName]: 'module_name',
 	[TSFieldId.FieldName]: 'name',
-	[TSFieldId.FieldNewline]: 'newline',
 	[TSFieldId.FieldObject]: 'object',
 	[TSFieldId.FieldOperator]: 'operator',
 	[TSFieldId.FieldOperators]: 'operators',
@@ -1724,7 +1721,6 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'left', id: 36, enumName: 'FieldLeft', cName: 'field_left' },
 	{ name: 'module_name', id: 37, enumName: 'FieldModuleName', cName: 'field_module_name' },
 	{ name: 'name', id: 38, enumName: 'FieldName', cName: 'field_name' },
-	{ name: 'newline', id: 39, enumName: 'FieldNewline', cName: 'field_newline' },
 	{ name: 'object', id: 40, enumName: 'FieldObject', cName: 'field_object' },
 	{ name: 'operator', id: 41, enumName: 'FieldOperator', cName: 'field_operator' },
 	{ name: 'operators', id: 42, enumName: 'FieldOperators', cName: 'field_operators' },
@@ -1785,10 +1781,7 @@ export const FIELD_MAP: Record<
 	_patterns: [{ name: 'patterns', required: true, multiple: true }],
 	_print_arguments: [{ name: 'arguments', required: true, multiple: true }],
 	_print_chevron_arguments: [{ name: 'arguments', required: true, multiple: true }],
-	_simple_statements: [
-		{ name: 'simpleStatementsElements', required: true, multiple: false },
-		{ name: 'newline', required: true, multiple: false }
-	],
+	_simple_statements: [{ name: 'simpleStatementsElements', required: true, multiple: false }],
 	_simple_statements_elements: [{ name: 'simpleStatements', required: true, multiple: true }],
 	_slice_group: [{ name: 'expression', required: false, multiple: false }],
 	_subjects: [{ name: 'subjects', required: true, multiple: true }],
@@ -1887,10 +1880,7 @@ export const FIELD_MAP: Record<
 		{ name: 'decorators', required: true, multiple: true },
 		{ name: 'definition', required: true, multiple: false }
 	],
-	decorator: [
-		{ name: 'expression', required: true, multiple: false },
-		{ name: 'newline', required: true, multiple: false }
-	],
+	decorator: [{ name: 'expression', required: true, multiple: false }],
 	default_parameter: [
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'value', required: true, multiple: false }

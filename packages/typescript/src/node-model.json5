@@ -3723,13 +3723,6 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "operator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "right": {
         "unnamed": false,
         "slotCount": 1,
@@ -4063,13 +4056,6 @@
       }
     },
     "_for_header_var_kind": {
-      "kind": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "left": {
         "unnamed": false,
         "slotCount": 1,
@@ -4134,13 +4120,6 @@
       }
     },
     "_public_field_definition_static_mods": {
-      "static_marker": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "override_modifier": {
         "unnamed": false,
         "slotCount": 1,
@@ -4157,13 +4136,6 @@
       }
     },
     "_public_field_definition_abstract_first": {
-      "abstract_marker": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "readonly_marker": {
         "unnamed": false,
         "slotCount": 1,
@@ -4173,13 +4145,6 @@
       }
     },
     "_public_field_definition_readonly_first": {
-      "readonly_marker": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "abstract_marker": {
         "unnamed": false,
         "slotCount": 1,
@@ -4817,26 +4782,6 @@
           }
         },
         {
-          "name": "operator",
-          "propertyName": "operator",
-          "paramName": "operator",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "in",
-              "parseKind": "in"
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
-        {
           "name": "right",
           "propertyName": "right",
           "paramName": "right",
@@ -4865,6 +4810,13 @@
       "factoryFields": [
         "left",
         "right"
+      ],
+      "determinedSlots": [
+        {
+          "name": "operator",
+          "storageKey": "_operator",
+          "text": "in"
+        }
       ]
     },
     {
@@ -6709,26 +6661,6 @@
       "name": "_for_header_var_kind",
       "fields": [
         {
-          "name": "kind",
-          "propertyName": "kind",
-          "paramName": "kind",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "var",
-              "parseKind": "var"
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
-        {
           "name": "left",
           "propertyName": "left",
           "paramName": "left",
@@ -6788,6 +6720,13 @@
       "factoryFields": [
         "left",
         "value"
+      ],
+      "determinedSlots": [
+        {
+          "name": "kind",
+          "storageKey": "_kind",
+          "text": "var"
+        }
       ]
     },
     {
@@ -7239,7 +7178,6 @@
       "irKey": "indexSignatureOptional1",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "buildIndexSignatureOptional1()",
       "name": "_index_signature_optional1",
       "fields": [
         {
@@ -7267,32 +7205,16 @@
             "typeName": "",
             "kinds": []
           }
-        },
-        {
-          "name": "readonly_marker",
-          "propertyName": "readonlyMarker",
-          "paramName": "readonlyMarker",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_kw_readonly_marker",
-              "parseKind": "_kw_readonly_marker",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_readonly_marker"
-            ]
-          }
         }
       ],
       "children": [],
+      "determinedSlots": [
+        {
+          "name": "readonly_marker",
+          "storageKey": "_readonly_marker",
+          "text": "readonly"
+        }
+      ],
       "namespacedConstructors": [
         {
           "name": "dash",
@@ -8293,32 +8215,8 @@
       "irKey": "publicFieldDefinitionAbstractFirst",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "buildPublicFieldDefinitionAbstractFirst()",
       "name": "_public_field_definition_abstract_first",
       "fields": [
-        {
-          "name": "abstract_marker",
-          "propertyName": "abstractMarker",
-          "paramName": "abstractMarker",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_kw_abstract_marker",
-              "parseKind": "_kw_abstract_marker",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_abstract_marker"
-            ]
-          }
-        },
         {
           "name": "readonly_marker",
           "propertyName": "readonlyMarker",
@@ -8344,7 +8242,14 @@
         }
       ],
       "children": [],
-      "factoryShape": "config"
+      "factoryShape": "config",
+      "determinedSlots": [
+        {
+          "name": "abstract_marker",
+          "storageKey": "_abstract_marker",
+          "text": "abstract"
+        }
+      ]
     },
     {
       "kind": "_public_field_definition_access_first",
@@ -8452,32 +8357,8 @@
       "irKey": "publicFieldDefinitionReadonlyFirst",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "buildPublicFieldDefinitionReadonlyFirst()",
       "name": "_public_field_definition_readonly_first",
       "fields": [
-        {
-          "name": "readonly_marker",
-          "propertyName": "readonlyMarker",
-          "paramName": "readonlyMarker",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_kw_readonly_marker",
-              "parseKind": "_kw_readonly_marker",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_readonly_marker"
-            ]
-          }
-        },
         {
           "name": "abstract_marker",
           "propertyName": "abstractMarker",
@@ -8503,7 +8384,14 @@
         }
       ],
       "children": [],
-      "factoryShape": "config"
+      "factoryShape": "config",
+      "determinedSlots": [
+        {
+          "name": "readonly_marker",
+          "storageKey": "_readonly_marker",
+          "text": "readonly"
+        }
+      ]
     },
     {
       "kind": "_public_field_definition_static_mods",
@@ -8513,32 +8401,8 @@
       "irKey": "publicFieldDefinitionStaticMods",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "buildPublicFieldDefinitionStaticMods()",
       "name": "_public_field_definition_static_mods",
       "fields": [
-        {
-          "name": "static_marker",
-          "propertyName": "staticMarker",
-          "paramName": "staticMarker",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_kw_static_marker",
-              "parseKind": "_kw_static_marker",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_static_marker"
-            ]
-          }
-        },
         {
           "name": "override_modifier",
           "propertyName": "overrideModifier",
@@ -8587,7 +8451,14 @@
         }
       ],
       "children": [],
-      "factoryShape": "config"
+      "factoryShape": "config",
+      "determinedSlots": [
+        {
+          "name": "static_marker",
+          "storageKey": "_static_marker",
+          "text": "static"
+        }
+      ]
     },
     {
       "kind": "_reserved_identifier",

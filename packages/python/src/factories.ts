@@ -66,7 +66,6 @@ export function buildSimpleStatements(...args: unknown[]) {
 }
 function _buildSimpleStatements(child: T.SimpleStatementsElements) {
 	const _simple_statements_elements = child;
-	const _newline = coerceKindEnumStorage<number>('\n' as const, [['\n', TSKindId.Newline] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -74,12 +73,10 @@ function _buildSimpleStatements(child: T.SimpleStatementsElements) {
 				$source: 2 as const,
 				$named: true as const,
 				_simple_statements_elements,
-				_newline,
 				$with: { $child: (v: T.SimpleStatementsElements) => buildSimpleStatements(v) }
 			},
 			{
-				simpleStatementsElements: () => _simple_statements_elements,
-				newline: () => _newline
+				simpleStatementsElements: () => _simple_statements_elements
 			}
 		),
 		methodsEngine
@@ -1300,7 +1297,6 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config) {
 
 export function buildDecorator(expression: T.Decorator.Config['expression']) {
 	const _expression = expression;
-	const _newline = coerceKindEnumStorage<number>('\n' as const, [['\n', TSKindId.Newline] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -1308,14 +1304,12 @@ export function buildDecorator(expression: T.Decorator.Config['expression']) {
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				_newline,
 				$with: {
 					expression: (value: T.Decorator.Config['expression']) => buildDecorator(value)
 				}
 			},
 			{
-				expression: () => _expression,
-				newline: () => _newline
+				expression: () => _expression
 			}
 		),
 		methodsEngine

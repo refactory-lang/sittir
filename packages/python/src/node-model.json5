@@ -124,13 +124,6 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      },
-      "newline": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
       }
     },
     "import_statement": {
@@ -758,13 +751,6 @@
     },
     "decorator": {
       "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "newline": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3572,29 +3558,6 @@
               "_simple_statements_elements"
             ]
           }
-        },
-        {
-          "name": "newline",
-          "propertyName": "newline",
-          "paramName": "newline",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_newline",
-              "parseKind": "newline",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_newline"
-            ]
-          }
         }
       ],
       "children": [],
@@ -3602,6 +3565,13 @@
       "forwardsTo": "_simple_statements_elements",
       "factoryFields": [
         "simple_statements_elements"
+      ],
+      "determinedSlots": [
+        {
+          "name": "newline",
+          "storageKey": "_newline",
+          "text": "\n"
+        }
       ]
     },
     {
@@ -6267,35 +6237,19 @@
               "expression"
             ]
           }
-        },
-        {
-          "name": "newline",
-          "propertyName": "newline",
-          "paramName": "newline",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_newline",
-              "parseKind": "newline",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_newline"
-            ]
-          }
         }
       ],
       "children": [],
       "factoryShape": "direct",
       "factoryFields": [
         "expression"
+      ],
+      "determinedSlots": [
+        {
+          "name": "newline",
+          "storageKey": "_newline",
+          "text": "\n"
+        }
       ]
     },
     {

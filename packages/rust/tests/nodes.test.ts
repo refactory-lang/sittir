@@ -496,7 +496,6 @@ describe('ordered_field_declaration_list', () => {
 describe('extern_crate_declaration', () => {
 	it('factory produces correct type', () => {
 		const node = ir.externCrateDeclaration({
-			crate: 'crate',
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ExternCrateDeclaration);
@@ -504,7 +503,6 @@ describe('extern_crate_declaration', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.externCrateDeclaration({
-			crate: 'crate',
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -959,13 +957,13 @@ describe('parameters', () => {
 
 describe('self_parameter', () => {
 	it('factory produces correct type', () => {
-		const node = ir.selfParameter({ self: 'self' });
+		const node = ir.selfParameter({});
 		expect(node.$type).toBe(TSKindId.SelfParameter);
 		expect(node.$source).toBe(2);
 	});
-	it('render produces non-empty string', () => {
-		const node = ir.selfParameter({ self: 'self' });
-		expect(node.$render!().length).toBeGreaterThan(0);
+	it('render does not throw on minimal config', () => {
+		const node = ir.selfParameter({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 

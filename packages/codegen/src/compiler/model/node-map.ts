@@ -881,7 +881,9 @@ function _deriveSlotsInternal(rule: Rule<'link'>, ctx?: DeriveCtx): AssembledNon
  * `collect-slots.ts` already imports `AssembledNonterminal` from this file
  * — the reverse import would cycle.
  */
-export function mergeDelimiterMode(modes: readonly ['mandatory' | 'optional' | 'none', 'mandatory' | 'optional' | 'none']): 'mandatory' | 'optional' | 'none' {
+export function mergeDelimiterMode(
+	modes: readonly ['mandatory' | 'optional' | 'none', 'mandatory' | 'optional' | 'none']
+): 'mandatory' | 'optional' | 'none' {
 	const [a, b] = modes;
 	return a === b ? a : 'optional';
 }
@@ -1221,7 +1223,8 @@ export function deriveValuesForRule(
 			}
 			const storageEntry = findEntryForKindName(ctx?.kindEntries ?? [], refName);
 			const parseEntry = refName === rule.name ? storageEntry : findEntryForKindName(ctx?.kindEntries ?? [], rule.name);
-			if (storageEntry !== undefined || parseEntry !== undefined) noteKindIdFallbackHit({ site: 'SYMBOL(ref)', name: refName });
+			if (storageEntry !== undefined || parseEntry !== undefined)
+				noteKindIdFallbackHit({ site: 'SYMBOL(ref)', name: refName });
 			return [
 				{
 					node: { kind: 'unresolved-ref', name: refName },
@@ -1261,7 +1264,8 @@ export function deriveValuesForRule(
 				// case's aliasedFrom/name pair above.
 				const parseName = subRef.name !== name ? subRef.name : undefined;
 				const parseEntry = parseName === undefined ? entry : findEntryForKindName(ctx?.kindEntries ?? [], parseName);
-				if (entry !== undefined || parseEntry !== undefined) noteKindIdFallbackHit({ site: 'SUPERTYPE(subtype)', name });
+				if (entry !== undefined || parseEntry !== undefined)
+					noteKindIdFallbackHit({ site: 'SUPERTYPE(subtype)', name });
 				return {
 					node: { kind: 'unresolved-ref' as const, name },
 					storageKindId: entry?.id,
@@ -1693,6 +1697,9 @@ export function mergeSourceRuleIds(...groups: readonly (readonly RuleId[] | unde
 }
 
 export class AssembledNonterminal {
+	/** Stamped by `pruneDeterminedSlots`: this slot's value is grammar-fixed
+	 *  and it renders as template text — it is no longer in any slot record. */
+	determined?: true;
 	readonly values: readonly NodeOrTerminal[];
 	readonly fieldName?: string;
 	readonly hasTrailingDelimiter: boolean;
@@ -2106,13 +2113,10 @@ function existingSupertypeClosureOf(slot: AssembledNonterminal, ctx: KindedDeriv
 	for (const existing of slot.values) {
 		const name = existing.parseKind?.name;
 		if (name === undefined) continue;
-		for (const n of transitiveParseKinds(
-			name,
-			(n) => {
-				const r = ctx.simplifiedRules?.[n];
-				return r?.type === SUPERTYPE ? r : undefined;
-			}
-		).keys()) {
+		for (const n of transitiveParseKinds(name, (n) => {
+			const r = ctx.simplifiedRules?.[n];
+			return r?.type === SUPERTYPE ? r : undefined;
+		}).keys()) {
 			closure.add(n);
 		}
 	}
@@ -2212,29 +2216,52 @@ function buildSlotsRecord(
 	return Object.freeze(out);
 }
 
-function _isAutoStampSlotForParameterless(slot: AssembledNonterminal, ctx?: DeriveCtx): boolean {
-	const nodes = ctx?.nodes;
-	if (!isRequired(slot)) return true; // optional — does not block
-	if (isMultiple(slot)) return false; // required repeated — user must supply
+/**
+ * A determined slot is an enum of cardinality 1: a required, singular slot
+ * whose value set has exactly one member — an inline literal, or a
+ * reference to a leaf whose rendered text is a constant (keyword, or a
+ * string-bodied token). Such a slot carries zero information per instance;
+ * it is not a slot: `pruneDeterminedSlots` moves it out of the slot record
+ * (no storage, transport, wrap capture, accessor, or `from()` handling) and
+ * its text renders as template text (`determinedSlotText`).
+ */
+export function isDeterminedSlot(slot: AssembledNonterminal, ctx?: DeriveCtx): boolean {
+	return determinedSlotText(slot, ctx) !== undefined;
+}
 
-	if (slot.values.length !== 1) return false;
+/** The constant text a determined slot renders as — `undefined` when the
+ *  slot is not determined. The single classification AND text source. */
+export function determinedSlotText(slot: AssembledNonterminal, ctx?: DeriveCtx): string | undefined {
+	if (!isRequired(slot) || isMultiple(slot)) return undefined;
+	if (slot.values.length !== 1) return undefined;
 	const v = slot.values[0]!;
+	if (isTerminalValue(v)) return v.value;
+	if (!isNodeRef(v)) return undefined;
+	const target = isUnresolvedRef(v.node) ? ctx?.nodes?.get(v.node.name) : v.node;
+	// Leaf targets only: a keyword or a string-bodied token has one constant
+	// render. A parameterless COMPOUND target is deliberately excluded — its
+	// render is its own template, and inlining that here would re-derive it;
+	// no current grammar has such a slot, and one that appears stays a real
+	// (caller-supplied) slot, surfacing loudly in the factory Config.
+	if (target instanceof AssembledKeyword) return target.text;
+	// A token is parameterless exactly when its body is a single string.
+	if (target instanceof AssembledToken && target.parameterless) return target.text;
+	return undefined;
+}
 
-	if (isTerminalValue(v)) return true;
-
-	if (isNodeRef(v)) {
-		if (isUnresolvedRef(v.node)) {
-			// Pre-hydration path: resolve by name via the node map, exactly
-			// as the former markParameterlessKinds fixpoint did.
-			if (!nodes) return false; // no map available (test fixture) — conservative false
-			const target = nodes.get(v.node.name);
-			if (!target) return false; // unknown kind — conservative false
-			return target.parameterless; // cascade: recurse into child node
-		}
-		return v.node.parameterless; // cascade: recurse into child node
+/**
+ * The determined-slot pruning pass — runs post-hydration (a ref target is
+ * not resolvable at construction). Determined slots leave the slot record
+ * (every record-driven emitter drops them atomically) and land on the
+ * node's `determinedSlots`, each stamped `determined` so the template
+ * emitter — which still reaches them through `slotByRuleId` — inlines
+ * their text instead of a slot reference.
+ */
+export function pruneDeterminedSlots(nodeMap: { nodes: ReadonlyMap<string, AssembledNode> }): void {
+	for (const node of nodeMap.nodes.values()) {
+		if (node.modelType !== 'branch' && node.modelType !== 'group') continue;
+		node.pruneDeterminedSlots(nodeMap.nodes);
 	}
-
-	return false;
 }
 
 // ============================================================================
@@ -2312,7 +2339,8 @@ export class AssembledBranch<
 	 *     keys retained, collisions don't naturally occur in the current
 	 *     grammars.
 	 */
-	protected readonly _slots: Readonly<Record<string, AssembledNonterminal>>;
+	protected _slots: Readonly<Record<string, AssembledNonterminal>>;
+	#determinedSlots: AssembledNonterminal[] = [];
 
 	constructor(
 		kind: string,
@@ -2351,6 +2379,25 @@ export class AssembledBranch<
 
 	get slots(): Readonly<Record<string, AssembledNonterminal>> {
 		return this._slots;
+	}
+
+	/** The slots `pruneDeterminedSlots` removed from the record — their
+	 *  value is grammar-fixed and renders as template text. */
+	get determinedSlots(): readonly AssembledNonterminal[] {
+		return this.#determinedSlots;
+	}
+
+	pruneDeterminedSlots(nodes: ReadonlyMap<string, AssembledNode>): void {
+		const kept: Record<string, AssembledNonterminal> = {};
+		for (const [name, slot] of Object.entries(this._slots)) {
+			if (isDeterminedSlot(slot, { nodes })) {
+				slot.determined = true;
+				this.#determinedSlots.push(slot);
+			} else {
+				kept[name] = slot;
+			}
+		}
+		if (this.#determinedSlots.length > 0) this._slots = kept;
 	}
 
 	get members(): readonly Rule<'link'>[] {
@@ -2395,15 +2442,13 @@ export class AssembledBranch<
 
 	#computeParameterless(): boolean {
 		if (!this.rawFactoryName) return false; // hidden nodes have no factory
-		const allSlots = Object.values(this._slots);
-		const requiredSlots = allSlots.filter((s) => isRequired(s));
-		if (requiredSlots.length === 0) return false; // no determined content — not parameterless
-		return allSlots.every((s) => _isAutoStampSlotForParameterless(s, { nodes: this.#nodes }));
-	}
-
-	override get stampExpression(): string | undefined {
-		const fn = this.rawFactoryName;
-		return this.parameterless && fn ? `${fn}()` : undefined;
+		// Determined content is the whole point: with none, an all-optional
+		// kind is configurable, not parameterless. Pre-prune (or in a test
+		// fixture) determined slots still sit in the record — classify them
+		// in place.
+		const pending = Object.values(this._slots).filter((s) => isDeterminedSlot(s, { nodes: this.#nodes }));
+		if (this.determinedSlots.length + pending.length === 0) return false;
+		return Object.values(this._slots).every((s) => !isRequired(s) || isDeterminedSlot(s, { nodes: this.#nodes }));
 	}
 
 	get fields(): readonly AssembledNonterminal[] {
@@ -2792,11 +2837,13 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 	constructor(kind: string, rule: SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes: readonly SubtypeRef[]) {
 		// Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
 		super(kind, rule as SupertypeRule<'link'>, { hidden: true });
-		this.#subtypes = subtypes.map((s): NodeOrTerminal => ({
-			node: { kind: 'unresolved-ref', name: s.name },
-			storageKindId: s.storageKindId,
-			multiplicity: 'single'
-		}));
+		this.#subtypes = subtypes.map(
+			(s): NodeOrTerminal => ({
+				node: { kind: 'unresolved-ref', name: s.name },
+				storageKindId: s.storageKindId,
+				multiplicity: 'single'
+			})
+		);
 	}
 
 	get subtypes(): readonly NodeOrTerminal[] {
@@ -2889,7 +2936,30 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 	 * Mirrors `AssembledBranch.slots` — group consumers use this instead
 	 * of `.fields` directly.
 	 */
-	readonly slots: Readonly<Record<string, AssembledNonterminal>>;
+	protected _slots: Readonly<Record<string, AssembledNonterminal>>;
+	#determinedSlots: AssembledNonterminal[] = [];
+
+	get slots(): Readonly<Record<string, AssembledNonterminal>> {
+		return this._slots;
+	}
+
+	/** See {@link AssembledBranch.determinedSlots}. */
+	get determinedSlots(): readonly AssembledNonterminal[] {
+		return this.#determinedSlots;
+	}
+
+	pruneDeterminedSlots(nodes: ReadonlyMap<string, AssembledNode>): void {
+		const kept: Record<string, AssembledNonterminal> = {};
+		for (const [name, slot] of Object.entries(this._slots)) {
+			if (isDeterminedSlot(slot, { nodes })) {
+				slot.determined = true;
+				this.#determinedSlots.push(slot);
+			} else {
+				kept[name] = slot;
+			}
+		}
+		if (this.#determinedSlots.length > 0) this._slots = kept;
+	}
 
 	constructor(
 		kind: string,
@@ -2924,7 +2994,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 		this.name = opts?.name ?? kind;
 		this.parentKind = opts?.parentKind;
 		this.overridePassthrough = opts?.overridePassthrough;
-		this.slots = buildSlotsRecord(
+		this._slots = buildSlotsRecord(
 			simplifiedRule,
 			{ kindName: kind, kindEntries: opts?.kindEntries, collision: opts?.parseKindCollisionContext },
 			renderRule
@@ -2955,15 +3025,10 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 
 	#computeParameterless(): boolean {
 		if (!this.rawFactoryName) return false; // hidden nodes have no factory
-		const allSlots = Object.values(this.slots);
-		const requiredSlots = allSlots.filter((s) => isRequired(s));
-		if (requiredSlots.length === 0) return false; // no determined content — not parameterless
-		return allSlots.every((s) => _isAutoStampSlotForParameterless(s, { nodes: this.#nodes }));
-	}
-
-	override get stampExpression(): string | undefined {
-		const fn = this.rawFactoryName;
-		return this.parameterless && fn ? `${fn}()` : undefined;
+		// See AssembledBranch.#computeParameterless.
+		const pending = Object.values(this._slots).filter((s) => isDeterminedSlot(s, { nodes: this.#nodes }));
+		if (this.determinedSlots.length + pending.length === 0) return false;
+		return Object.values(this._slots).every((s) => !isRequired(s) || isDeterminedSlot(s, { nodes: this.#nodes }));
 	}
 
 	get fields(): readonly AssembledNonterminal[] {
@@ -3207,9 +3272,7 @@ function leftmostTerminalImmediate(rule: Rule<'link'> | undefined, ctx: Leftmost
 			// immediacy suppression, not just census noise).
 			return (
 				rule.members.length > 0 &&
-				rule.members.every((m) =>
-					leftmostTerminalImmediate(m, { rules: ctx.rules, visiting: new Set(ctx.visiting) })
-				)
+				rule.members.every((m) => leftmostTerminalImmediate(m, { rules: ctx.rules, visiting: new Set(ctx.visiting) }))
 			);
 		case 'REPEAT1':
 		case 'FIELD':
@@ -3534,4 +3597,3 @@ export const DelimiterFlags = {
 	trailing: 2,
 	both: 3
 } as const;
-

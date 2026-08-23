@@ -847,7 +847,6 @@ function _buildOrderedFieldDeclarationList(attributes?: T.OrderedFieldDeclaratio
 
 export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Config) {
 	const _visibility_modifier = config.visibilityModifier;
-	const _crate = coerceKindEnumStorage<number>('crate' as const, [['crate', TSKindId.Crate] as const]);
 	const _name = config.name;
 	const _alias = config.alias;
 	return withMethods(
@@ -857,7 +856,6 @@ export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Con
 				$source: 2 as const,
 				$named: true as const,
 				_visibility_modifier,
-				_crate,
 				_name,
 				_alias,
 				$with: {
@@ -869,7 +867,6 @@ export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Con
 			},
 			{
 				visibilityModifier: () => _visibility_modifier,
-				crate: () => _crate,
 				name: () => _name,
 				alias: () => _alias
 			}
@@ -1710,7 +1707,6 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 	const _reference = coerceBooleanKeywordStorage(config.reference);
 	const _lifetime = config.lifetime;
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
-	const _self = coerceKindEnumStorage<number>('self' as const, [['self', TSKindId.Self] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -1720,7 +1716,6 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 				_reference,
 				_lifetime,
 				_mutable_specifier,
-				_self,
 				$with: {
 					reference: (value?: NonNullable<Parameters<typeof buildSelfParameter>[0]>['reference']) =>
 						buildSelfParameter({ ...config, reference: value }),
@@ -1732,8 +1727,7 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 			{
 				reference: () => _reference,
 				lifetime: () => _lifetime,
-				mutableSpecifier: () => _mutable_specifier,
-				self: () => _self
+				mutableSpecifier: () => _mutable_specifier
 			}
 		),
 		methodsEngine
@@ -4129,9 +4123,6 @@ export function buildFieldPattern(config: T.FieldPattern.Config) {
 }
 
 export function buildMutPattern(pattern: T.MutPattern.Config['pattern']) {
-	const _mutable_specifier = coerceKindEnumStorage<number>('mut' as const, [
-		['mut', TSKindId.MutableSpecifier] as const
-	]);
 	const _pattern = pattern;
 	return withMethods(
 		withAccessors(
@@ -4139,14 +4130,12 @@ export function buildMutPattern(pattern: T.MutPattern.Config['pattern']) {
 				$type: TSKindId.MutPattern as const,
 				$source: 2 as const,
 				$named: true as const,
-				_mutable_specifier,
 				_pattern,
 				$with: {
 					pattern: (value: T.MutPattern.Config['pattern']) => buildMutPattern(value)
 				}
 			},
 			{
-				mutableSpecifier: () => _mutable_specifier,
 				pattern: () => _pattern
 			}
 		),
@@ -5661,21 +5650,15 @@ export function buildReferenceExpressionRawConst(text: string) {
 }
 
 export function buildReferenceExpressionRawMut(_config?: T.ReferenceExpressionRawMut.Config) {
-	const _mutable_specifier = coerceKindEnumStorage<number>('mut' as const, [
-		['mut', TSKindId.MutableSpecifier] as const
-	]);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ReferenceExpressionRawMut as const,
 				$source: 2 as const,
 				$named: true as const,
-				_mutable_specifier,
 				$with: {}
 			},
-			{
-				mutableSpecifier: () => _mutable_specifier
-			}
+			{}
 		),
 		methodsEngine
 	);
@@ -6139,7 +6122,6 @@ export const buildRangeExpressionBinary = attachProps(buildRangeExpressionBinary
 
 export function buildRangeExpressionPostfix(config: T.RangeExpressionPostfix.Config) {
 	const _start = config.start;
-	const _operator = coerceKindEnumStorage<number>('..' as const, [['..', TSKindId.DotDot] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -6147,14 +6129,12 @@ export function buildRangeExpressionPostfix(config: T.RangeExpressionPostfix.Con
 				$source: 2 as const,
 				$named: true as const,
 				_start,
-				_operator,
 				$with: {
 					start: (value: T.Expression) => buildRangeExpressionPostfix({ ...config, start: value })
 				}
 			},
 			{
-				start: () => _start,
-				operator: () => _operator
+				start: () => _start
 			}
 		),
 		methodsEngine
@@ -6162,7 +6142,6 @@ export function buildRangeExpressionPostfix(config: T.RangeExpressionPostfix.Con
 }
 
 export function buildRangeExpressionPrefix(config: T.RangeExpressionPrefix.Config) {
-	const _operator = coerceKindEnumStorage<number>('..' as const, [['..', TSKindId.DotDot] as const]);
 	const _end = config.end;
 	return withMethods(
 		withAccessors(
@@ -6170,14 +6149,12 @@ export function buildRangeExpressionPrefix(config: T.RangeExpressionPrefix.Confi
 				$type: TSKindId.RangeExpressionPrefix as const,
 				$source: 2 as const,
 				$named: true as const,
-				_operator,
 				_end,
 				$with: {
 					end: (value: T.Expression) => buildRangeExpressionPrefix({ ...config, end: value })
 				}
 			},
 			{
-				operator: () => _operator,
 				end: () => _end
 			}
 		),

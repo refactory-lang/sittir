@@ -2762,16 +2762,6 @@ export function wrapExternCrateDeclaration(data: T.ExternCrateDeclaration, tree:
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'visibility_modifier', span: (data as _NodeData).$span }
 			),
-			_crate: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._crate ?? readTerminalFromOther(data, [TSKindId.Crate]),
-					'crate',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'crate', span: (data as _NodeData).$span }
-				),
-				{ crate: 134 }
-			),
 			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -2788,9 +2778,6 @@ export function wrapExternCrateDeclaration(data: T.ExternCrateDeclaration, tree:
 			visibilityModifier() {
 				return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree);
 			},
-			crate() {
-				return this._crate;
-			},
 			name() {
 				return drillIn<T.Identifier>(this._name, tree);
 			},
@@ -2800,8 +2787,6 @@ export function wrapExternCrateDeclaration(data: T.ExternCrateDeclaration, tree:
 			$with: {
 				visibilityModifier: (v: NonNullable<T.ExternCrateDeclaration['_visibility_modifier']>) =>
 					wrapExternCrateDeclaration({ ...data, _visibility_modifier: v }, tree),
-				crate: (v: NonNullable<T.ExternCrateDeclaration['_crate']>) =>
-					wrapExternCrateDeclaration({ ...data, _crate: v }, tree),
 				name: (v: NonNullable<T.ExternCrateDeclaration['_name']>) =>
 					wrapExternCrateDeclaration({ ...data, _name: v }, tree),
 				alias: (v: NonNullable<T.ExternCrateDeclaration['_alias']>) =>
@@ -4142,16 +4127,6 @@ export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle) {
 					span: (data as _NodeData).$span
 				})
 			),
-			_self: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._self ?? readTerminalFromOther(data, [TSKindId.Self]),
-					'self',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'self', span: (data as _NodeData).$span }
-				),
-				{ self: 132 }
-			),
 
 			reference() {
 				return this._reference;
@@ -4162,16 +4137,12 @@ export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle) {
 			mutableSpecifier() {
 				return this._mutable_specifier;
 			},
-			self() {
-				return this._self;
-			},
 			$with: {
 				reference: (v: NonNullable<T.SelfParameter['_reference']>) =>
 					wrapSelfParameter({ ...data, _reference: v }, tree),
 				lifetime: (v: NonNullable<T.SelfParameter['_lifetime']>) => wrapSelfParameter({ ...data, _lifetime: v }, tree),
 				mutableSpecifier: (v: NonNullable<T.SelfParameter['_mutable_specifier']>) =>
-					wrapSelfParameter({ ...data, _mutable_specifier: v }, tree),
-				self: (v: NonNullable<T.SelfParameter['_self']>) => wrapSelfParameter({ ...data, _self: v }, tree)
+					wrapSelfParameter({ ...data, _mutable_specifier: v }, tree)
 			}
 		},
 		methodsEngine
@@ -8071,16 +8042,6 @@ export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.MutPattern as const,
-			_mutable_specifier: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._mutable_specifier ?? readTerminalFromOther(data, [TSKindId.MutableSpecifier]),
-					'mutable_specifier',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'mutable_specifier', span: (data as _NodeData).$span }
-				),
-				{ mut: 79 }
-			),
 			_pattern: normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -8088,15 +8049,10 @@ export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle) {
 				span: (data as _NodeData).$span
 			}),
 
-			mutableSpecifier() {
-				return this._mutable_specifier;
-			},
 			pattern() {
 				return drillIn<T.Pattern>(this._pattern, tree);
 			},
 			$with: {
-				mutableSpecifier: (v: NonNullable<T.MutPattern['_mutable_specifier']>) =>
-					wrapMutPattern({ ...data, _mutable_specifier: v }, tree),
 				pattern: (v: NonNullable<T.MutPattern['_pattern']>) => wrapMutPattern({ ...data, _pattern: v }, tree)
 			}
 		},
@@ -9405,32 +9361,15 @@ export function wrapUseWildcardClause(data: T.UseWildcardClause, tree: TreeHandl
 }
 
 export function wrapReferenceExpressionRawMut(data: T.ReferenceExpressionRawMut, tree: TreeHandle) {
-	const _node = withMethods(
+	return withMethods(
 		{
 			...data,
 			$type: TSKindId.ReferenceExpressionRawMut as const,
-			_mutable_specifier: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._mutable_specifier ?? readTerminalFromOther(data, [TSKindId.MutableSpecifier]),
-					'mutable_specifier',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'mutable_specifier', span: (data as _NodeData).$span }
-				),
-				{ mut: 79 }
-			),
 
-			mutableSpecifier() {
-				return this._mutable_specifier;
-			},
-			$with: {
-				mutableSpecifier: (v: NonNullable<T.ReferenceExpressionRawMut['_mutable_specifier']>) =>
-					wrapReferenceExpressionRawMut({ ...data, _mutable_specifier: v }, tree)
-			}
+			$with: {}
 		},
 		methodsEngine
 	);
-	return _node;
 }
 
 export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle) {
@@ -9917,8 +9856,6 @@ export function wrapRangeExpressionBinary(data: T.RangeExpressionBinary, tree: T
 }
 
 export function wrapRangeExpressionPostfix(data: T.RangeExpressionPostfix, tree: TreeHandle) {
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.RangeExpressionPostfix as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -9929,28 +9866,13 @@ export function wrapRangeExpressionPostfix(data: T.RangeExpressionPostfix, tree:
 				slotName: 'start',
 				span: (data as _NodeData).$span
 			}),
-			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.DotDot]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
-				{ '..': 105 }
-			),
 
 			start() {
 				return drillIn<T.Expression>(this._start, tree);
 			},
-			operator() {
-				return this._operator;
-			},
 			$with: {
 				start: (v: NonNullable<T.RangeExpressionPostfix['_start']>) =>
-					wrapRangeExpressionPostfix({ ...data, _start: v }, tree),
-				operator: (v: NonNullable<T.RangeExpressionPostfix['_operator']>) =>
-					wrapRangeExpressionPostfix({ ...data, _operator: v }, tree)
+					wrapRangeExpressionPostfix({ ...data, _start: v }, tree)
 			}
 		},
 		methodsEngine
@@ -9959,22 +9881,10 @@ export function wrapRangeExpressionPostfix(data: T.RangeExpressionPostfix, tree:
 }
 
 export function wrapRangeExpressionPrefix(data: T.RangeExpressionPrefix, tree: TreeHandle) {
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.RangeExpressionPrefix as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
 			$type: TSKindId.RangeExpressionPrefix as const,
-			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.DotDot]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
-				{ '..': 105 }
-			),
 			_end: normalizeSingularWrapSlot(data._end, 'end', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -9982,15 +9892,10 @@ export function wrapRangeExpressionPrefix(data: T.RangeExpressionPrefix, tree: T
 				span: (data as _NodeData).$span
 			}),
 
-			operator() {
-				return this._operator;
-			},
 			end() {
 				return drillIn<T.Expression>(this._end, tree);
 			},
 			$with: {
-				operator: (v: NonNullable<T.RangeExpressionPrefix['_operator']>) =>
-					wrapRangeExpressionPrefix({ ...data, _operator: v }, tree),
 				end: (v: NonNullable<T.RangeExpressionPrefix['_end']>) => wrapRangeExpressionPrefix({ ...data, _end: v }, tree)
 			}
 		},

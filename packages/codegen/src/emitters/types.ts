@@ -57,7 +57,6 @@ import {
 } from '../compiler/model/node-map.ts';
 import { loadRawEntries } from '../validate/node-types-loader.ts';
 import {
-	isAutoStampField,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
@@ -344,14 +343,12 @@ export function emitTypes(config: EmitTypesConfig): string {
 	// emitted body. Always-used: NodeData/NodeConfig/TreeNode/NodeKind/NodeNs/
 	// AnyTreeNodeOf/Terminal/NonEmptyArray/BooleanKeyword. Optional: ConfigOf
 	// (used by polymorph dispatcher signatures), Bitflag / KindEnum (used by
-	// bitflag-typed fields), AutoStamp (used by auto-stamp fields, see
-	// isAutoStampField). Empty grammars don't pull any of these, so emitting
+	// bitflag-typed fields). Empty grammars don't pull any of these, so emitting
 	// them unconditionally trips `no-unused-vars` on the generated package.
 	const body = lines.slice(sittirImportIndex + 1).join('\n');
 	const usesConfigOf = /\bConfigOf\b/.test(body);
 	const usesBitflag = /\bBitflag\b/.test(body);
 	const usesKindEnum = /\bKindEnum\b/.test(body);
-	const usesAutoStamp = /\bAutoStamp\b/.test(body);
 	const importedNames = [
 		'NodeData as BaseNodeData',
 		'NodeConfig as BaseNodeConfig',
@@ -362,7 +359,6 @@ export function emitTypes(config: EmitTypesConfig): string {
 		'AnyTreeNodeOf as AnyTreeNode',
 		'Terminal',
 		'NonEmptyArray',
-		...(usesAutoStamp ? ['AutoStamp'] : []),
 		'BooleanKeyword',
 		...(usesBitflag ? ['Bitflag'] : []),
 		...(usesKindEnum ? ['KindEnum'] : [])
@@ -558,7 +554,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	lines.push('');
 
 	lines.push(
-		'/** Reverse of a separatedList kind\'s own separator-candidate resolution (factories.ts\'s emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter\'s raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust\'s primitive_type family), so it is deliberately not used here. Built by walking every separatedList\'s separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */'
+		"/** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */"
 	);
 	lines.push('export const KIND_LITERAL_TEXT: ReadonlyMap<number, string> = new Map([');
 	const literalTextById = new Map<number, string>();
@@ -1044,17 +1040,8 @@ function storageFieldTypeExpr(
 		return 'number';
 	}
 	if (storageInfo.kind === 'kindEnum') {
-		// A single-member kindEnum (e.g. python's type_alias_statement.type,
-		// whose only candidate text is "type") is ALSO auto-stamp-eligible —
-		// isAutoStampField's resolveEffectiveLiteral resolves it to that one
-		// literal. Brand it here too, or ConfigOf/FromInputOf's key filter
-		// (which reads THIS raw storage type via FieldsOf<T>[K], not the
-		// __inputHints__ value type) never excludes the key, wrongly
-		// requiring callers to supply a field the factory always stamps
-		// itself and never reads from Config.
-		return isAutoStampField(f, nodeMap) ? 'AutoStamp<number>' : 'number';
+		return 'number';
 	}
-	if (isAutoStampField(f, nodeMap)) return `AutoStamp<${typeExpr}>`;
 	return typeExpr;
 }
 
@@ -1079,7 +1066,7 @@ function fieldInputHintTypeExpr(
 		// kindEnum can also be auto-stamp-eligible; brand its hint the same
 		// way so FieldInputType (which prefers this hint over raw storage)
 		// stays consistent with the (now-excluded) Config/Loose key.
-		return isAutoStampField(f, nodeMap) ? `AutoStamp<${kindEnumExpr}>` : kindEnumExpr;
+		return kindEnumExpr;
 	}
 	return undefined;
 }

@@ -10512,8 +10512,6 @@ export function wrapCatchClauseGroup(data: T.CatchClauseGroup, tree: TreeHandle)
 }
 
 export function wrapBinaryExpressionArm(data: T.BinaryExpressionArm, tree: TreeHandle) {
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.BinaryExpressionArm as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
@@ -10524,16 +10522,6 @@ export function wrapBinaryExpressionArm(data: T.BinaryExpressionArm, tree: TreeH
 				slotName: 'left',
 				span: (data as _NodeData).$span
 			}),
-			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.In]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
-				{ in: 144 }
-			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -10544,16 +10532,11 @@ export function wrapBinaryExpressionArm(data: T.BinaryExpressionArm, tree: TreeH
 			left() {
 				return drillIn<T.Expression | T.PrivatePropertyIdentifier>(this._left, tree);
 			},
-			operator() {
-				return this._operator;
-			},
 			right() {
 				return drillIn<T.Expression>(this._right, tree);
 			},
 			$with: {
 				left: (v: NonNullable<T.BinaryExpressionArm['_left']>) => wrapBinaryExpressionArm({ ...data, _left: v }, tree),
-				operator: (v: NonNullable<T.BinaryExpressionArm['_operator']>) =>
-					wrapBinaryExpressionArm({ ...data, _operator: v }, tree),
 				right: (v: NonNullable<T.BinaryExpressionArm['_right']>) =>
 					wrapBinaryExpressionArm({ ...data, _right: v }, tree)
 			}
@@ -11489,20 +11472,10 @@ export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle) {
 }
 
 export function wrapForHeaderVarKind(data: T.ForHeaderVarKind, tree: TreeHandle) {
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ForHeaderVarKind as const }, methodsEngine);
 	const _node = withMethods(
 		{
 			...data,
 			$type: TSKindId.ForHeaderVarKind as const,
-			_kind: projectKindEnumStorage(
-				normalizeSingularWrapSlot(data._kind ?? readTerminalFromOther(data, [TSKindId.Var]), 'kind', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'kind',
-					span: (data as _NodeData).$span
-				}),
-				{ var: 13 }
-			),
 			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -11516,9 +11489,6 @@ export function wrapForHeaderVarKind(data: T.ForHeaderVarKind, tree: TreeHandle)
 				span: (data as _NodeData).$span
 			}),
 
-			kind() {
-				return this._kind;
-			},
 			left() {
 				return drillIn<T.Identifier | T.DestructuringPattern>(this._left, tree);
 			},
@@ -11526,7 +11496,6 @@ export function wrapForHeaderVarKind(data: T.ForHeaderVarKind, tree: TreeHandle)
 				return drillIn<T.Expression | undefined>(this._value, tree);
 			},
 			$with: {
-				kind: (v: NonNullable<T.ForHeaderVarKind['_kind']>) => wrapForHeaderVarKind({ ...data, _kind: v }, tree),
 				left: (v: NonNullable<T.ForHeaderVarKind['_left']>) => wrapForHeaderVarKind({ ...data, _left: v }, tree),
 				value: (v: NonNullable<T.ForHeaderVarKind['_value']>) => wrapForHeaderVarKind({ ...data, _value: v }, tree)
 			}
@@ -11673,16 +11642,6 @@ export function wrapPublicFieldDefinitionStaticMods(data: T.PublicFieldDefinitio
 		{
 			...data,
 			$type: TSKindId.PublicFieldDefinitionStaticMods as const,
-			_static_marker: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._static_marker ?? readTerminalFromOther(data, [TSKindId.Static]),
-					'static_marker',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'static_marker', span: (data as _NodeData).$span }
-				),
-				{ static: 107 }
-			),
 			_override_modifier: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
 					tree,
@@ -11700,9 +11659,6 @@ export function wrapPublicFieldDefinitionStaticMods(data: T.PublicFieldDefinitio
 				})
 			),
 
-			staticMarker() {
-				return this._static_marker;
-			},
 			overrideModifier() {
 				return this._override_modifier;
 			},
@@ -11710,8 +11666,6 @@ export function wrapPublicFieldDefinitionStaticMods(data: T.PublicFieldDefinitio
 				return this._readonly_marker;
 			},
 			$with: {
-				staticMarker: (v: NonNullable<T.PublicFieldDefinitionStaticMods['_static_marker']>) =>
-					wrapPublicFieldDefinitionStaticMods({ ...data, _static_marker: v }, tree),
 				overrideModifier: (v: NonNullable<T.PublicFieldDefinitionStaticMods['_override_modifier']>) =>
 					wrapPublicFieldDefinitionStaticMods({ ...data, _override_modifier: v }, tree),
 				readonlyMarker: (v: NonNullable<T.PublicFieldDefinitionStaticMods['_readonly_marker']>) =>
@@ -11730,16 +11684,6 @@ export function wrapPublicFieldDefinitionAbstractFirst(data: T.PublicFieldDefini
 		{
 			...data,
 			$type: TSKindId.PublicFieldDefinitionAbstractFirst as const,
-			_abstract_marker: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._abstract_marker ?? readTerminalFromOther(data, [TSKindId.Abstract]),
-					'abstract_marker',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'abstract_marker', span: (data as _NodeData).$span }
-				),
-				{ abstract: 128 }
-			),
 			_readonly_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
 					tree,
@@ -11749,15 +11693,10 @@ export function wrapPublicFieldDefinitionAbstractFirst(data: T.PublicFieldDefini
 				})
 			),
 
-			abstractMarker() {
-				return this._abstract_marker;
-			},
 			readonlyMarker() {
 				return this._readonly_marker;
 			},
 			$with: {
-				abstractMarker: (v: NonNullable<T.PublicFieldDefinitionAbstractFirst['_abstract_marker']>) =>
-					wrapPublicFieldDefinitionAbstractFirst({ ...data, _abstract_marker: v }, tree),
 				readonlyMarker: (v: NonNullable<T.PublicFieldDefinitionAbstractFirst['_readonly_marker']>) =>
 					wrapPublicFieldDefinitionAbstractFirst({ ...data, _readonly_marker: v }, tree)
 			}
@@ -11774,16 +11713,6 @@ export function wrapPublicFieldDefinitionReadonlyFirst(data: T.PublicFieldDefini
 		{
 			...data,
 			$type: TSKindId.PublicFieldDefinitionReadonlyFirst as const,
-			_readonly_marker: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._readonly_marker ?? readTerminalFromOther(data, [TSKindId.Readonly]),
-					'readonly_marker',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'readonly_marker', span: (data as _NodeData).$span }
-				),
-				{ readonly: 116 }
-			),
 			_abstract_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._abstract_marker, 'abstract_marker', false, data.$type, {
 					tree,
@@ -11793,15 +11722,10 @@ export function wrapPublicFieldDefinitionReadonlyFirst(data: T.PublicFieldDefini
 				})
 			),
 
-			readonlyMarker() {
-				return this._readonly_marker;
-			},
 			abstractMarker() {
 				return this._abstract_marker;
 			},
 			$with: {
-				readonlyMarker: (v: NonNullable<T.PublicFieldDefinitionReadonlyFirst['_readonly_marker']>) =>
-					wrapPublicFieldDefinitionReadonlyFirst({ ...data, _readonly_marker: v }, tree),
 				abstractMarker: (v: NonNullable<T.PublicFieldDefinitionReadonlyFirst['_abstract_marker']>) =>
 					wrapPublicFieldDefinitionReadonlyFirst({ ...data, _abstract_marker: v }, tree)
 			}

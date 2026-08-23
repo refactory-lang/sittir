@@ -2259,7 +2259,14 @@ function separatedListBodyInfo(body) {
       const flank = peelOptionalEitherSpelling(members[1]);
       const flankLit = flank && isStringType(flank.type) ? flank.value : null;
       if (flankLit === null || separatorLiteral !== null && flankLit !== separatorLiteral) return null;
-      return { elementName, flankCarrying: true, form: "leading", element: detected.content, separatorRule: detected.separator, flatMembers: members };
+      return {
+        elementName,
+        flankCarrying: true,
+        form: "leading",
+        element: detected.content,
+        separatorRule: detected.separator,
+        flatMembers: members
+      };
     }
     const head = members[repeatIdx - 1];
     if (separatedListElementName(head) !== elementName || elementName === null) {
@@ -2280,14 +2287,28 @@ function separatedListBodyInfo(body) {
       }
       return null;
     }
-    return { elementName, flankCarrying, form: "head", element: detected.content, separatorRule: detected.separator, flatMembers: members };
+    return {
+      elementName,
+      flankCarrying,
+      form: "head",
+      element: detected.content,
+      separatorRule: detected.separator,
+      flatMembers: members
+    };
   }
   if (repeatIdx !== 0 || members.length !== 2) return null;
   const tail = peelOptionalEitherSpelling(members[1]);
   if (tail === null) return null;
   if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
   if (elementName === null && ruleKey(tail) !== ruleKey(detected.content)) return null;
-  return { elementName, flankCarrying: true, form: "tail", element: detected.content, separatorRule: detected.separator, flatMembers: members };
+  return {
+    elementName,
+    flankCarrying: true,
+    form: "tail",
+    element: detected.content,
+    separatorRule: detected.separator,
+    flatMembers: members
+  };
 }
 function detectInlineSeparatedListRuns(members) {
   const carriesRepeat = (m) => {
@@ -2609,7 +2630,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         clauseGroupOwners,
         ambientPrec
       );
-      const promoted = mintStructuredChoiceArm(
+      const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
+      const promoted = literalOnlySplit ? null : mintStructuredChoiceArm(
         out,
         parentKind,
         rulesBag,
@@ -3029,6 +3051,51 @@ function armStartsWithSymbol(rule, collidingLeadingNames, rulesBag) {
   if (collidingLeadingNames.size === 0) return false;
   const name = armLeadingSymbolName(rule, rulesBag);
   return name !== void 0 && collidingLeadingNames.has(name);
+}
+function isLiteralChoiceContent(rule) {
+  if (isStringType(rule.type)) return true;
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    return Array.isArray(members) && members.every((m) => isLiteralChoiceContent(m));
+  }
+  return false;
+}
+function armsDifferOnlyByLiteralChoice(a, b) {
+  let literalDeltas = 0;
+  const peel = (r) => {
+    while (isPrecWrapper(r) && r.content) {
+      r = r.content;
+    }
+    return r;
+  };
+  const same = (x, y) => {
+    x = peel(x);
+    y = peel(y);
+    if (isLiteralChoiceContent(x) && isLiteralChoiceContent(y)) {
+      if (JSON.stringify(x) !== JSON.stringify(y)) literalDeltas++;
+      return true;
+    }
+    const tx = x.type;
+    const ty = y.type;
+    if (tx !== ty || typeof tx !== "string") return false;
+    if (isSymbolType(tx)) return x.name === y.name;
+    if (isFieldType(tx)) {
+      return x.name === y.name && same(x.content, y.content);
+    }
+    const mx = x.members;
+    const my = y.members;
+    if (Array.isArray(mx) || Array.isArray(my)) {
+      if (!Array.isArray(mx) || !Array.isArray(my) || mx.length !== my.length) return false;
+      return mx.every((m, i) => same(m, my[i]));
+    }
+    const cx = x.content;
+    const cy = y.content;
+    if (cx !== void 0 || cy !== void 0) {
+      return cx !== void 0 && cy !== void 0 && same(cx, cy);
+    }
+    return JSON.stringify(x) === JSON.stringify(y);
+  };
+  return same(a, b) && literalDeltas === 1;
 }
 function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, collidingLeadingNames, ambientPrec, enclosingFieldName) {
   const t = arm.type;

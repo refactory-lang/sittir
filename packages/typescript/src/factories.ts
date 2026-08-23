@@ -6213,7 +6213,6 @@ export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config) {
 
 export function buildBinaryExpressionArm(config: T.BinaryExpressionArm.Config) {
 	const _left = config.left;
-	const _operator = coerceKindEnumStorage<number>('in' as const, [['in', TSKindId.In] as const]);
 	const _right = config.right;
 	return withMethods(
 		withAccessors(
@@ -6222,7 +6221,6 @@ export function buildBinaryExpressionArm(config: T.BinaryExpressionArm.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_left,
-				_operator,
 				_right,
 				$with: {
 					left: (value: T.Expression | T.PrivatePropertyIdentifier) =>
@@ -6232,7 +6230,6 @@ export function buildBinaryExpressionArm(config: T.BinaryExpressionArm.Config) {
 			},
 			{
 				left: () => _left,
-				operator: () => _operator,
 				right: () => _right
 			}
 		),
@@ -6904,7 +6901,6 @@ export function buildForHeaderLhs(config: T.ForHeaderLhs.Config) {
 }
 
 export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config) {
-	const _kind = coerceKindEnumStorage<number>('var' as const, [['var', TSKindId.Var] as const]);
 	const _left = config.left;
 	const _value = config.value;
 	return withMethods(
@@ -6913,7 +6909,6 @@ export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config) {
 				$type: TSKindId.ForHeaderVarKind as const,
 				$source: 2 as const,
 				$named: true as const,
-				_kind,
 				_left,
 				_value,
 				$with: {
@@ -6922,7 +6917,6 @@ export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config) {
 				}
 			},
 			{
-				kind: () => _kind,
 				left: () => _left,
 				value: () => _value
 			}
@@ -7041,7 +7035,6 @@ export function buildPublicFieldDefinitionAccessFirst(config: T.PublicFieldDefin
 }
 
 export function buildPublicFieldDefinitionStaticMods(config: Partial<T.PublicFieldDefinitionStaticMods.Config> = {}) {
-	const _static_marker = coerceKindEnumStorage<number>('static' as const, [['static', TSKindId.Static] as const]);
 	const _override_modifier = coerceBooleanKeywordStorage(config.overrideModifier);
 	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
 	return withMethods(
@@ -7050,7 +7043,6 @@ export function buildPublicFieldDefinitionStaticMods(config: Partial<T.PublicFie
 				$type: TSKindId.PublicFieldDefinitionStaticMods as const,
 				$source: 2 as const,
 				$named: true as const,
-				_static_marker,
 				_override_modifier,
 				_readonly_marker,
 				$with: {
@@ -7063,7 +7055,6 @@ export function buildPublicFieldDefinitionStaticMods(config: Partial<T.PublicFie
 				}
 			},
 			{
-				staticMarker: () => _static_marker,
 				overrideModifier: () => _override_modifier,
 				readonlyMarker: () => _readonly_marker
 			}
@@ -7075,9 +7066,6 @@ export function buildPublicFieldDefinitionStaticMods(config: Partial<T.PublicFie
 export function buildPublicFieldDefinitionAbstractFirst(
 	config: Partial<T.PublicFieldDefinitionAbstractFirst.Config> = {}
 ) {
-	const _abstract_marker = coerceKindEnumStorage<number>('abstract' as const, [
-		['abstract', TSKindId.Abstract] as const
-	]);
 	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
 	return withMethods(
 		withAccessors(
@@ -7085,7 +7073,6 @@ export function buildPublicFieldDefinitionAbstractFirst(
 				$type: TSKindId.PublicFieldDefinitionAbstractFirst as const,
 				$source: 2 as const,
 				$named: true as const,
-				_abstract_marker,
 				_readonly_marker,
 				$with: {
 					readonlyMarker: (
@@ -7094,7 +7081,6 @@ export function buildPublicFieldDefinitionAbstractFirst(
 				}
 			},
 			{
-				abstractMarker: () => _abstract_marker,
 				readonlyMarker: () => _readonly_marker
 			}
 		),
@@ -7105,9 +7091,6 @@ export function buildPublicFieldDefinitionAbstractFirst(
 export function buildPublicFieldDefinitionReadonlyFirst(
 	config: Partial<T.PublicFieldDefinitionReadonlyFirst.Config> = {}
 ) {
-	const _readonly_marker = coerceKindEnumStorage<number>('readonly' as const, [
-		['readonly', TSKindId.Readonly] as const
-	]);
 	const _abstract_marker = coerceBooleanKeywordStorage(config.abstractMarker);
 	return withMethods(
 		withAccessors(
@@ -7115,7 +7098,6 @@ export function buildPublicFieldDefinitionReadonlyFirst(
 				$type: TSKindId.PublicFieldDefinitionReadonlyFirst as const,
 				$source: 2 as const,
 				$named: true as const,
-				_readonly_marker,
 				_abstract_marker,
 				$with: {
 					abstractMarker: (
@@ -7124,7 +7106,6 @@ export function buildPublicFieldDefinitionReadonlyFirst(
 				}
 			},
 			{
-				readonlyMarker: () => _readonly_marker,
 				abstractMarker: () => _abstract_marker
 			}
 		),

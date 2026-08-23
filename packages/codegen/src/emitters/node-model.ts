@@ -44,6 +44,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import { namespacedConstructors, type NamespacedConstructor } from './namespaced-constructors.ts';
+import { determinedSlotText } from '../compiler/model/node-map.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 
@@ -99,6 +100,9 @@ interface SerializedNodeBase {
 	 *  this kind's factory forwards (see buildFactoryMap.forwardsTo). */
 	forwardsTo?: string;
 	factoryFields?: string[];
+	/** Grammar-fixed slots `pruneDeterminedSlots` removed from the record —
+	 *  each renders as template text, never stored on the wire. */
+	determinedSlots?: { name: string; storageKey: string; text: string }[];
 	/** The factory's namespaced constructors (`buildX.<name>(...)`) — see
 	 *  `namespacedConstructors`. A form entry builds the parent around the
 	 *  child kind's factory (or its own `path` sub-constructor); a member
@@ -211,6 +215,13 @@ export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
 		if (forwardsTo !== undefined) serialized.forwardsTo = forwardsTo;
 		const factoryFields = factoryData.factoryFields[kind];
 		if (factoryFields !== undefined) serialized.factoryFields = [...factoryFields];
+		if ((node.modelType === 'branch' || node.modelType === 'group') && node.determinedSlots.length > 0) {
+			serialized.determinedSlots = node.determinedSlots.map((slot) => ({
+				name: slot.name,
+				storageKey: slot.storageKey,
+				text: determinedSlotText(slot, { nodes: nodeMap.nodes })!
+			}));
+		}
 		const namespace = namespacedConstructors(node, nodeMap).entries;
 		if (namespace.length > 0) serialized.namespacedConstructors = namespace.map(serializeNamespacedConstructor);
 		nodes.push(serialized);

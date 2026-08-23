@@ -52,7 +52,8 @@ import {
 	edgeClassesOfKind,
 	edgeCharSetsOfKind,
 	patternLeadingEdgeClass,
-	storageKindOfValue
+	storageKindOfValue,
+	determinedSlotText
 } from '../compiler/model/node-map.ts';
 import type {
 	AssembledBranch,
@@ -408,6 +409,19 @@ function renderRuleEdge(
 	}
 }
 
+/** The owner's slots keyed by name for `lookupSlot`'s fallbacks —
+ *  including determined slots, which left the record but still ARE the
+ *  field's slot at their template position. */
+function ownerSlotsFor(node: {
+	slots?: Readonly<Record<string, AssembledNonterminal>>;
+	determinedSlots?: readonly AssembledNonterminal[];
+}): Readonly<Record<string, AssembledNonterminal>> | undefined {
+	if (!node.slots) return undefined;
+	const determined = node.determinedSlots ?? [];
+	if (determined.length === 0) return node.slots;
+	return { ...node.slots, ...Object.fromEntries(determined.map((s) => [s.name, s])) };
+}
+
 function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 	// currentKind always populated — the seam census attributes every
 	// boundary to its owning kind (was DBG_SLOT_MISS-gated).
@@ -463,14 +477,14 @@ export function emitBranchTemplate(node: AssembledBranch | AssembledSeparatedLis
 	// Populate ownerSlots so emitSymbol can fall back to name-based slot
 	// lookup when slotByRuleId lookup fails (gap: simplifyRule may create
 	// new rule objects without preserving IDs, breaking slotByRuleId).
-	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: node.slots };
+	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: ownerSlotsFor(node) };
 	return emitRule(node.renderRule, ctxWithSlots);
 }
 
 export function emitGroupTemplate(node: AssembledGroup, ctx: EmitCtx): string {
 	// PR2 Task 3.B3: consume renderRule (RenderRule, wrapper-free).
 	// Populate ownerSlots for the same reason as emitBranchTemplate.
-	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: node.slots };
+	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: ownerSlotsFor(node) };
 	return emitRule(node.renderRule, ctxWithSlots);
 }
 
@@ -1050,6 +1064,16 @@ function emitScalarSlot(slotName: string): string {
 }
 
 function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal, ctx: EmitCtx): string {
+	// A determined slot is not a slot: its grammar-fixed value IS the
+	// template text (`pruneDeterminedSlots` removed it from the record; it
+	// still resolves here through slotByRuleId). Whitespace-only text (the
+	// newline externals) is emitted as an expression tag — raw template
+	// whitespace adjacent to the header comment's `-#}` trim would be eaten
+	// (see the INDENT case).
+	if (slot.determined) {
+		const text = determinedSlotText(slot, { nodes: ctx.nodeMap.nodes })!;
+		return text.trim() === '' ? `{{ ${JSON.stringify(text)} }}` : escapeLiteral(text);
+	}
 	const slotName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
 	const mult = (rule as { multiplicity?: string }).multiplicity;
 	if (mult === 'array' || mult === 'nonEmptyArray' || isMultiple(slot)) {
@@ -1220,7 +1244,10 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 				// collide with one of the outer node's own field names.
 				// slotByRuleId (lookupSlot's primary path) is unaffected —
 				// this only matters for its ownerSlots fallback.
-				const helperCtx: EmitCtx = { ...ctx, ownerSlots: (targetNode as { slots?: EmitCtx['ownerSlots'] }).slots };
+				const helperCtx: EmitCtx = {
+					...ctx,
+					ownerSlots: ownerSlotsFor(targetNode as Parameters<typeof ownerSlotsFor>[0])
+				};
 				const helperBody = emitRule(helperRenderRule, helperCtx);
 				const multiplicity = (rule as { multiplicity?: Multiplicity }).multiplicity;
 				// Multiplicity is applied at the inlined SEQ UNIT (never the leaves —
@@ -1252,7 +1279,8 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 				if (multiplicity === 'optional' && helperBody) {
 					const symbolFieldKey = symbolFieldName?.toLowerCase();
 					const addressableFieldKey =
-						symbolFieldKey !== undefined && (ctx.ownerSlots === undefined || ctx.ownerSlots[symbolFieldKey] !== undefined)
+						symbolFieldKey !== undefined &&
+						(ctx.ownerSlots === undefined || ctx.ownerSlots[symbolFieldKey] !== undefined)
 							? symbolFieldKey
 							: undefined;
 					const condKey =
@@ -1454,7 +1482,11 @@ function commonBalancedTrailingTail(bodies: readonly string[]): string {
 	return '';
 }
 
-function scanArmBody(body: string): { key: string | undefined; needsGate: boolean; discriminatorKey: string | undefined } {
+function scanArmBody(body: string): {
+	key: string | undefined;
+	needsGate: boolean;
+	discriminatorKey: string | undefined;
+} {
 	const tagRe = /\{\{-?\s*([A-Za-z_]\w*)[^}]*\}\}|\{%-?\s*(if|endif)\b[^%]*?%\}/g;
 	let depth = 0;
 	let last = 0;
@@ -1684,9 +1716,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			// well-formed node (exactly one arm present) the output is the
 			// same text, one tail render either way.
 			const sharedTailKey =
-				armInfos.length >= 2 && countByKey.size === 1 && literalFallback === undefined
-					? armInfos[0]!.key
-					: undefined;
+				armInfos.length >= 2 && countByKey.size === 1 && literalFallback === undefined ? armInfos[0]!.key : undefined;
 			for (const info of armInfos) {
 				if (
 					(countByKey.get(info.key) ?? 0) > 1 &&

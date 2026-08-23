@@ -903,8 +903,7 @@ describe('decorated_definition', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					_newline: TSKindId.Newline as never
+					_expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 				} as any
 			],
 			definition: {
@@ -927,8 +926,7 @@ describe('decorated_definition', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					_newline: TSKindId.Newline as never
+					_expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 				} as any
 			],
 			definition: {

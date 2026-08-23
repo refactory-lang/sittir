@@ -170,47 +170,6 @@ function _identOrQuoted(name: string): string {
 	return IDENT_RE.test(name) ? name : JSON.stringify(name);
 }
 
-export function resolveEffectiveLiteral(field: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
-	// Only required fields are auto-stamped — optional fields control
-	// whether a keyword is present at all, which must remain user choice.
-	if (!isRequired(field)) return undefined;
-
-	// Repeated fields are never auto-stamped — they represent 0..N occurrences.
-	if (isMultiple(field)) return undefined;
-
-	// Must be a single value entry to auto-stamp
-	if (field.values.length !== 1) return undefined;
-	const v = field.values[0]!;
-
-	// Source A: inline literal (bare STRING or choice-of-one-string field)
-	if (isTerminalValue(v)) return v.value;
-
-	// Source B: field references a single hidden kind (`_kw_*` / `_*` pattern).
-	// Restricted to hidden kinds (name starts with `_`) to avoid false-positives
-	// from visible keyword nodes that may appear inside mixed-choice overrides
-	// (e.g. pointer_type's `choice('const', $.mutable_specifier)` where the
-	// string alternative is now explicitly present in values — both entries
-	// prevent single-value auto-stamp, which is the correct behavior).
-	//
-	// Handled sub-cases:
-	//   - AssembledKeyword (literal keyword rule)
-	//   - AssembledToken with a single string body
-	if (isNodeRef(v)) {
-		const kindName = storageKindOfRef(v.node);
-		if (kindName.startsWith('_')) {
-			const ref = nodeMap.nodes.get(kindName);
-			if (ref instanceof AssembledKeyword) return ref.text;
-			if (ref instanceof AssembledToken) return ref.text;
-		}
-	}
-
-	return undefined;
-}
-
-export function isAutoStampField(field: AssembledNonterminal, nodeMap: NodeMap): boolean {
-	return resolveEffectiveLiteral(field, nodeMap) !== undefined;
-}
-
 export function resolveHiddenKeywordLeaf(
 	kindName: string,
 	nodeMap: NodeMap
@@ -251,52 +210,6 @@ function isHiddenInfraKind(kindName: string, nodeMap: NodeMap): boolean {
 	if (!(node instanceof AssembledSupertype)) return false;
 	if (node.subtypeNames.length === 0) return false;
 	return node.subtypeNames.every((subtype) => isHiddenInfraKind(subtype, nodeMap));
-}
-
-// ---------------------------------------------------------------------------
-// Generic slot helpers — work on AssembledNonterminal (unified slot type).
-// ---------------------------------------------------------------------------
-
-export function stampExpressionFor(
-	slot: AssembledNonterminal,
-	nodeMap: NodeMap,
-	context: 'field' | 'child' = 'field'
-): string | undefined {
-	if (!isRequired(slot)) return undefined; // optional — no stamp
-	if (isMultiple(slot)) return undefined; // repeated — no stamp
-
-	// Must be single-value to stamp
-	if (slot.values.length !== 1) return undefined;
-	const v = slot.values[0]!;
-
-	// Source A: inline literal TerminalValue. Field context emits the
-	// plain literal; child context wraps in a NodeData literal so the
-	// parent's `$children` matches the UForm interface shape
-	// (`readonly [Terminal<"text">]` = `{ $type, $text, ... }`, not a
-	// bare string).
-	if (isTerminalValue(v)) {
-		if (context === 'child') {
-			const text = JSON.stringify(v.value);
-			return `{ $type: ${text} as const, $text: ${text} as const, $source: 2 as const, $named: false as const }`;
-		}
-		return `${JSON.stringify(v.value)} as const`;
-	}
-
-	// Source B/C: single NodeRef to a parameterless kind. The kind
-	// owns both stamp expressions (`stampExpression` for field
-	// context, `stampChildExpression` for child context) — the
-	// emitter just reads the right one. Compounds have the same
-	// NodeData-returning factory-call expression for both contexts;
-	// only terminals differentiate.
-	if (isNodeRef(v)) {
-		const kindName = storageKindOfRef(v.node);
-		const ref = nodeMap.nodes.get(kindName);
-		if (ref?.parameterless) {
-			return context === 'child' ? ref.stampChildExpression : ref.stampExpression;
-		}
-	}
-
-	return undefined;
 }
 
 // ---------------------------------------------------------------------------
@@ -670,12 +583,7 @@ export type ChildFactorySurface = 'direct' | 'spread';
  */
 export function userSlotsOf(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal[] {
 	if (!isSlotBearingCompound(node)) return [];
-	return node.fields.filter(
-		(f) =>
-			stampExpressionFor(f, nodeMap) === undefined &&
-			!isHiddenInfraSlot(f, nodeMap) &&
-			keywordPresenceKind(f, nodeMap) === null
-	);
+	return node.fields.filter((f) => !isHiddenInfraSlot(f, nodeMap) && keywordPresenceKind(f, nodeMap) === null);
 }
 
 export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): BranchSlotClass {
@@ -730,8 +638,7 @@ export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: Node
 export function resolveDirectFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
 	const slot = resolveSingleFieldFactorySlot(node, nodeMap);
 	if (!slot) return undefined;
-	const nonStampFields = node.fields.filter((f) => stampExpressionFor(f, nodeMap) === undefined);
-	return nonStampFields.length === 1 ? slot : undefined;
+	return node.fields.length === 1 ? slot : undefined;
 }
 
 /**
@@ -770,12 +677,7 @@ export function configurableFactoryFields(
 	fields: readonly AssembledNonterminal[],
 	nodeMap: NodeMap
 ): AssembledNonterminal[] {
-	return fields.filter(
-		(field) =>
-			stampExpressionFor(field, nodeMap) === undefined &&
-			!isHiddenInfraSlot(field, nodeMap) &&
-			keywordPresenceKind(field, nodeMap) === null
-	);
+	return fields.filter((field) => !isHiddenInfraSlot(field, nodeMap) && keywordPresenceKind(field, nodeMap) === null);
 }
 
 export function resolveFactoryFieldNames(node: AssembledNode, nodeMap: NodeMap): readonly string[] | undefined {
@@ -855,12 +757,10 @@ export function classifyFactoryShape(
 			if (slotClass.tag === 'singleSlot') {
 				// A configurable field beside the sole user slot (a keyword
 				// marker, a bitflag, an enum) makes the kind multi-slot for
-				// surface purposes — the config object is its home. Fixed-value
-				// auto-stamped fields don't count: they are never configurable
-				// (the same filter the container emission's stampedExtras uses).
-				const configurableExtras = allSlotsOf(node).filter(
-					(f) => f !== slotClass.slot && stampExpressionFor(f, nodeMap) === undefined
-				);
+				// surface purposes — the config object is its home. Determined
+				// slots left the record entirely (`pruneDeterminedSlots`), so
+				// every remaining field counts.
+				const configurableExtras = allSlotsOf(node).filter((f) => f !== slotClass.slot);
 				if (configurableExtras.length > 0) return 'config';
 				// A sole slot's real arity decides the surface, for named and
 				// unnamed slots alike (per the rust-slot-surface-contract

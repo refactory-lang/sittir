@@ -2312,13 +2312,7 @@ describe('public_field_definition namespaced constructors', () => {
 					_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 				} as any
 			],
-			{
-				$type: TSKindId.PublicFieldDefinitionStaticMods,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_static_marker: TSKindId.Static as never
-			} as any,
+			{ $type: TSKindId.PublicFieldDefinitionStaticMods, $text: 'test', $source: 2, $named: true } as any,
 			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			{
 				$type: TSKindId.TypeAnnotation,
@@ -2343,13 +2337,7 @@ describe('public_field_definition namespaced constructors', () => {
 					_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 				} as any
 			],
-			{
-				$type: TSKindId.PublicFieldDefinitionStaticMods,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_static_marker: TSKindId.Static as never
-			} as any,
+			{ $type: TSKindId.PublicFieldDefinitionStaticMods, $text: 'test', $source: 2, $named: true } as any,
 			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			{
 				$type: TSKindId.TypeAnnotation,

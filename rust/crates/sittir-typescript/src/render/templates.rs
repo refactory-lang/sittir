@@ -122,7 +122,6 @@ pub struct ArrowFunctionParameterTemplate<'a> {
 #[template(path = "_binary_expression_arm.jinja", escape = "none")]
 pub struct BinaryExpressionArmTemplate<'a> {
     pub left: SingleNonterminalView<'a>,
-    pub operator: SingleNonterminalView<'a>,
     pub right: SingleNonterminalView<'a>,
 }
 
@@ -294,7 +293,6 @@ pub struct ForHeaderLhsTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_for_header_var_kind.jinja", escape = "none")]
 pub struct ForHeaderVarKindTemplate<'a> {
-    pub kind: SingleNonterminalView<'a>,
     pub left: SingleNonterminalView<'a>,
     pub value: OptionalNonterminalView<'a>,
 }
@@ -377,7 +375,6 @@ pub struct ParenthesizedExpressionTypedTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_public_field_definition_abstract_first.jinja", escape = "none")]
 pub struct PublicFieldDefinitionAbstractFirstTemplate<'a> {
-    pub abstract_marker: SingleNonterminalView<'a>,
     pub readonly_marker: OptionalNonterminalView<'a>,
 }
 
@@ -398,7 +395,6 @@ pub struct PublicFieldDefinitionDeclareFirstTemplate<'a> {
 #[template(path = "_public_field_definition_readonly_first.jinja", escape = "none")]
 pub struct PublicFieldDefinitionReadonlyFirstTemplate<'a> {
     pub abstract_marker: OptionalNonterminalView<'a>,
-    pub readonly_marker: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -406,7 +402,6 @@ pub struct PublicFieldDefinitionReadonlyFirstTemplate<'a> {
 pub struct PublicFieldDefinitionStaticModsTemplate<'a> {
     pub override_modifier: OptionalNonterminalView<'a>,
     pub readonly_marker: OptionalNonterminalView<'a>,
-    pub static_marker: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

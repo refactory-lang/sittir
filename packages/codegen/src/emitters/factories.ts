@@ -29,7 +29,6 @@ import {
 } from '../compiler/model/node-map.ts';
 import { isNodeRef, isTerminalValue, allSlotsOf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import {
-	stampExpressionFor,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
@@ -438,11 +437,6 @@ export function childElementType(node: { children: readonly AssembledNonterminal
 	return parts.size > 1 ? `(${union})` : union;
 }
 
-function autoStampExpression(f: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
-	// Delegates to the shared stampExpressionFor which uses the new values model.
-	return stampExpressionFor(f, nodeMap);
-}
-
 function bitflagTextsExpr(texts: readonly string[]): string {
 	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
 }
@@ -716,13 +710,12 @@ function resolveFactorySurface(node: FieldCarryingNode, nodeMap: NodeMap): Facto
 		};
 	}
 	const fields = node.fields;
-	const opt = resolveConfigOptional(fields, nodeMap);
+	const opt = resolveConfigOptional(fields);
 	const configType = resolveConfigType(node, nodeMap.refineForms?.has(node.kind) ?? false);
 	// When opt is '?' (all fields optional), a local `_config` default lets
-	// property access use `config.x` (no optional chaining). Only when the
-	// body actually reads from config — avoids dead code when all fields
-	// auto-stamp.
-	const hasConfigReads = fields.some((f) => autoStampExpression(f, nodeMap) === undefined);
+	// property access use `config.x` (no optional chaining) — only when the
+	// body actually reads from config.
+	const hasConfigReads = fields.length > 0;
 	return {
 		containerFacts,
 		singleField,
@@ -823,33 +816,19 @@ function emitFieldCarryingFactory(
 	let fieldsToEmit: readonly AssembledNonterminal[] = fields;
 
 	if (containerFacts) {
-		// The container's ONE user slot takes the positional child value; any
-		// OTHER field with an auto-stamp expression (a fixed-value enum slot
-		// like python `_simple_statements`' newline) still gets its stamped
-		// storage — same treatment the single-field and config shapes below
-		// give such fields. Fields that are neither (markers the single-slot
-		// classification excluded) stay un-emitted, as before.
-		const stampedExtras = fields.filter(
-			(f) => f !== containerFacts.slot && autoStampExpression(f, nodeMap) !== undefined
-		);
-		fieldsToEmit = [containerFacts.slot, ...stampedExtras];
+		// The container's ONE user slot takes the positional child value.
+		// Other fields (markers the single-slot classification excluded)
+		// stay un-emitted, as before.
+		fieldsToEmit = [containerFacts.slot];
 		const elementType = surface.elementType!;
-		valueSourceFor = (f) =>
-			f === containerFacts.slot
-				? containerFacts.multiple
-					? 'children'
-					: 'child'
-				: slotStorageFromValueExpr(f, autoStampExpression(f, nodeMap)!, nodeMap, kindEntries);
+		valueSourceFor = (f) => (f === containerFacts.slot ? (containerFacts.multiple ? 'children' : 'child') : '');
 		withLines = containerFacts.multiple
 			? [`    $with: { $children: (...vs: ${elementType}[]) => ${fn}(...vs) },`]
 			: [`    $with: { $child: (v: ${elementType}) => ${fn}(v) },`];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
 		const paramName = singleField.paramName;
-		valueSourceFor = (f) =>
-			f === singleField
-				? slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries)
-				: slotStorageFromValueExpr(f, autoStampExpression(f, nodeMap)!, nodeMap, kindEntries);
+		valueSourceFor = (f) => slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries);
 		const setterType = setterElemType(singleField, elemType, fn, nodeMap, true);
 		withLines = [
 			'    $with: {',
@@ -858,12 +837,7 @@ function emitFieldCarryingFactory(
 		];
 	} else {
 		const configAccess = 'config';
-		valueSourceFor = (f) => {
-			const stamp = autoStampExpression(f, nodeMap);
-			return stamp !== undefined
-				? slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)
-				: slotStorageExpr(f, configAccess, nodeMap, kindEntries);
-		};
+		valueSourceFor = (f) => slotStorageExpr(f, configAccess, nodeMap, kindEntries);
 		// $with: setters call the factory directly with a patched config —
 		// `(value) => factory({ ...config, <key>: value })`. No `_setField` /
 		// `_setFields` indirection (those were old helpers serving
@@ -872,7 +846,6 @@ function emitFieldCarryingFactory(
 		// setter exposed because the value is fixed.
 		withLines = ['    $with: {'];
 		for (const f of fields) {
-			if (autoStampExpression(f, nodeMap) !== undefined) continue;
 			const method = f.propertyName;
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 			if (isMultiple(f) && storageInfo.kind === 'verbatim') {
@@ -931,7 +904,13 @@ function emitFieldCarryingFactory(
 	// above becomes the private tail; chains compose transitively because a
 	// forwarded TARGET factory performs the same dispatch itself.
 	const { directParamType, directParamOptional } = surface;
-	const forwardTarget = directParamType !== undefined ? forwardedTargetKind(node, nodeMap) : null;
+	// A catalog-less target (tree-sitter-inlined kind) gets no factory to
+	// forward to — the kind keeps the plain direct surface.
+	const resolvedForwardTarget = directParamType !== undefined ? forwardedTargetKind(node, nodeMap) : null;
+	const forwardTarget =
+		resolvedForwardTarget !== null && kindEntries !== undefined && !hasCatalogEntry(kindEntries, resolvedForwardTarget)
+			? null
+			: resolvedForwardTarget;
 	if (forwardTarget !== null) {
 		const targetFn = nodeMap.nodes.get(forwardTarget)!.rawFactoryName!;
 		lines[0] = lines[0]!.replace(`${exportKw}function ${fn}(`, `function _${fn}(`);
@@ -1105,11 +1084,6 @@ function emitRefineFormFactory(
 			);
 			continue;
 		}
-		const stamp = autoStampExpression(f, nodeMap);
-		if (stamp !== undefined) {
-			lines.push(`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
-			continue;
-		}
 		lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
 	}
 	lines.push('  return withMethods(withAccessors({');
@@ -1121,10 +1095,9 @@ function emitRefineFormFactory(
 	}
 	lines.push('    $with: {');
 	for (const f of fields) {
-		// Narrowed-literal fields and auto-stamp fields are read-only —
-		// their value is fixed by the form, no setter is exposed.
+		// Narrowed-literal fields are read-only — their value is fixed by
+		// the form, no setter is exposed.
 		if (narrowed.has(f.name)) continue;
-		if (autoStampExpression(f, nodeMap) !== undefined) continue;
 		const method = f.propertyName;
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		if (isMultiple(f) && storageInfo.kind === 'verbatim') {
@@ -1157,15 +1130,13 @@ function resolveRefineFormConfigOptional(
 	nodeMap: NodeMap,
 	narrowed: ReadonlyMap<string, string>
 ): '' | '?' {
-	const hasRequired = fields.some(
-		(f) => isRequired(f) && autoStampExpression(f, nodeMap) === undefined && !narrowed.has(f.name)
-	);
+	const hasRequired = fields.some((f) => isRequired(f) && !narrowed.has(f.name));
 	return hasRequired ? '' : '?';
 }
 
-function resolveConfigOptional(fields: readonly AssembledNonterminal[], nodeMap: NodeMap): '' | '?' {
+function resolveConfigOptional(fields: readonly AssembledNonterminal[]): '' | '?' {
 	fields = fields ?? [];
-	const hasRequired = fields.some((f) => isRequired(f) && autoStampExpression(f, nodeMap) === undefined);
+	const hasRequired = fields.some((f) => isRequired(f));
 	return hasRequired ? '' : '?';
 }
 
