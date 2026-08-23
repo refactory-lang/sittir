@@ -81,13 +81,15 @@ export interface EmittedTemplates {
 /**
  * One template boundary the SEQ join classified. `left`/`right` are the
  * seam's adjacent characters in template text — a `'}'` left or `'{'`
- * right is template syntax (a slot/tag boundary), decided by the
- * render-time SpacingWriter. Tag boundaries subdivide by edge classes:
- * `runtime-derivable` means both sides' edge character classes are
- * statically known (the check's outcome is a constant — a candidate for
- * static resolution), `runtime-varying` means at least one edge varies
- * per instance (or a literal-merge pair is possible for the class combo,
- * which only concrete characters can decide) — the true residue.
+ * right is template syntax (a slot/tag boundary). A boundary whose
+ * outcome is statically constant — fixed×fixed chars, or a tag boundary
+ * whose both edge CLASSES are known — is baked into template text
+ * (`static-spaced` / `static-glued`). `runtime-varying` is a tag boundary
+ * at least one of whose edges varies per instance (or a literal-merge pair
+ * is possible for the class combo, which only concrete characters can
+ * decide) — the writer's true residue. `runtime-derivable` survives only
+ * for list interiors (`staticListInterior`), where baking is still
+ * blocked on trailing-trivia edges.
  */
 export interface SeamBoundaryRecord {
 	readonly kind: string;
@@ -326,6 +328,20 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		}
 		this.#bodies.set(node.kind, `${GENERATED_HEADER}\n${newBody}`);
 	}
+}
+
+/**
+ * The SpacingWriter's word-seam law over edge CLASSES: a space is owed
+ * exactly where word-class text meets word-class text. The one seam
+ * decision shared by every static bake — fixed×fixed (classes of the
+ * concrete chars) and tag boundaries (classes derived per kind) — so a
+ * baked outcome can never disagree with the runtime writer's.
+ * Punctuation merge-hazard pairs are decided from concrete characters
+ * (`isLiteralMergePair`), never from classes, and are layered on by the
+ * caller where characters are known.
+ */
+export function seamNeedsSpace(left: SeamEdgeClass, right: SeamEdgeClass): boolean {
+	return left === 'word' && right === 'word';
 }
 
 /**
@@ -575,8 +591,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 				partRules.push(m);
 			});
 			if (parts.length === 0) return '';
-			// Static-static seams only (spec v2 note: "space baked into the
-			// literal"): askama compiles adjacent template literals into ONE
+			// Static seams: askama compiles adjacent template literals into ONE
 			// write, so the render-time writer never sees a seam between two
 			// static tokens — neither two words ('abstract' + 'class' glued to
 			// 'abstractclass') nor a punctuation merge-hazard pair ('..' +
@@ -586,26 +601,26 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			// A '}' left edge or '{' right edge is always TEMPLATE SYNTAX
 			// ('}}'/'%}' and '{{'/'{%'), never a real brace: escapeLiteral pads
 			// real braces with spaces ('{ '/' }'), which makes them seam-inert.
-			// Tag boundaries are dynamic and belong to the runtime writer,
-			// which sees the real rendered characters.
+			// A tag boundary is baked too when both edge classes are known
+			// (the writer would decide identically); otherwise it is left
+			// glued for the writer, which sees the real rendered characters.
 			const recordSeam = (l: string, r: string, resolution: SeamBoundaryRecord['resolution']): void => {
 				ctx.seamBoundaries?.push({ kind: ctx.currentKind ?? '(unknown)', left: l, right: r, resolution });
 			};
-			// Tag-boundary subdivision: a seam whose template chars are tag
-			// syntax is decided by the runtime writer, but when both sides'
-			// edge CLASSES are statically known the check's outcome is a
-			// constant — `runtime-derivable`, the static-resolution candidate
-			// pool. word×word would always space; a no-word-seam combo is
+			// Tag-boundary subdivision: when both sides' edge CLASSES are
+			// statically known the writer's outcome is a constant — derivable,
+			// and baked. word×word always spaces; a no-word-seam combo is
 			// glued only if no literal-merge pair exists for the class combo
 			// (concrete characters alone decide a possible pair — varying).
-			const classifyTagSeam = (leftE: SeamEdgeClass, rightE: SeamEdgeClass): SeamBoundaryRecord['resolution'] => {
+			const classifyTagSeam = (leftE: SeamEdgeClass, rightE: SeamEdgeClass): 'derivable' | 'runtime-varying' => {
 				if (leftE === 'varies' || rightE === 'varies') return 'runtime-varying';
-				if (leftE === 'word' && rightE === 'word') return 'runtime-derivable';
-				return ctx.mergePairClassCombos?.has(`${leftE}\0${rightE}`) ? 'runtime-varying' : 'runtime-derivable';
+				if (seamNeedsSpace(leftE, rightE)) return 'derivable';
+				return ctx.mergePairClassCombos?.has(`${leftE}\0${rightE}`) ? 'runtime-varying' : 'derivable';
 			};
+			const charClass = (c: string): SeamEdgeClass => (ctx.isWordChar(c) ? 'word' : 'not-word');
 			const partEdge = (idx: number, side: 'starts' | 'ends', text: string): SeamEdgeClass => {
 				const c = side === 'starts' ? text[0]! : text[text.length - 1]!;
-				if (side === 'starts' ? c !== '{' : c !== '}') return ctx.isWordChar(c) ? 'word' : 'not-word';
+				if (side === 'starts' ? c !== '{' : c !== '}') return charClass(c);
 				const e = renderRuleEdge(partRules[idx]!, side, ctx, new Set());
 				return e === 'empty' ? 'varies' : e;
 			};
@@ -614,22 +629,25 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 				for (let i = 1; i < segments.length; i++) {
 					const l = body[body.length - 1]!;
 					const r = segments[i]![0]!;
+					let spaced: boolean;
 					if (l === '}' || r === '{') {
-						recordSeam(
-							l,
-							r,
-							classifyTagSeam(
-								partEdge(firstIdx + i - 1, 'ends', segments[i - 1]!),
-								partEdge(firstIdx + i, 'starts', segments[i]!)
-							)
-						);
-						body += segments[i]!;
-						continue;
+						// Tag boundary: decide from edge CLASSES. A derivable
+						// outcome is baked exactly like a fixed×fixed seam —
+						// same predicate, so the runtime writer (which sees a
+						// baked space as a not-word left char) agrees with it.
+						const leftE = partEdge(firstIdx + i - 1, 'ends', segments[i - 1]!);
+						const rightE = partEdge(firstIdx + i, 'starts', segments[i]!);
+						if (classifyTagSeam(leftE, rightE) === 'runtime-varying') {
+							recordSeam(l, r, 'runtime-varying');
+							body += segments[i]!;
+							continue;
+						}
+						spaced = seamNeedsSpace(leftE, rightE);
+					} else {
+						spaced = seamNeedsSpace(charClass(l), charClass(r)) || (l !== r && ctx.isLiteralMergePair(l, r));
 					}
-					const wordSeam = ctx.isWordChar(l) && ctx.isWordChar(r);
-					const symbolSeam = l !== r && ctx.isLiteralMergePair(l, r);
-					recordSeam(l, r, wordSeam || symbolSeam ? 'static-spaced' : 'static-glued');
-					if (wordSeam || symbolSeam) body += ' ';
+					recordSeam(l, r, spaced ? 'static-spaced' : 'static-glued');
+					if (spaced) body += ' ';
 					body += segments[i]!;
 				}
 				return body;

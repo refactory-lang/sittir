@@ -1,12 +1,12 @@
 {
   "grammar": "python",
-  "source_hash": "728e43180ecc9848eb618068cb2481e98ea2bcc6b0255aa0715229a691e76f51",
+  "source_hash": "5c82d1009d27015d8854d149dcb1f32f1c8eaacaa8ae9cb90c03dd507a501858",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "913b954ae204d46dc4e35c41d1a5738f8f65cbd4f32a0b38bf6c0ffad392bfdc",
     "packages/python/.sittir/grammar.js": "95667f1c88a280ef34a471a9812ab6e3bedf157c95092d9aa4de2ba733fbe160",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
     "packages/python/.sittir/parser.wasm": "a896a15c52e7376d14004504b51c8e8d0c0d8fb23a7ed468262e5564a3ab8f24",
-    "packages/python/.sittir/seam-census.json": "0aaec69cddf91a96042bc3596d573a8043b7448bd9519a11381289a2557f2712",
+    "packages/python/.sittir/seam-census.json": "be7abc7935f2e9ab6b38ddef3a877d5d61160656df143127485ffecc696a1f86",
     "packages/python/.sittir/src/grammar.json": "181ebee509442f8811338e6cfc8ab100f60a1ab8081a344b87040b56995f05e8",
     "packages/python/.sittir/src/node-types.json": "0196828824e038a50dde6cf419a4a1654303c78e527357a511fbe58315a420d3",
     "packages/python/.sittir/src/parser.c": "444455c133d0a568f9b4abd27d5cf1906cf1dc888c1ce002b4c9d2e820b7c843",

@@ -129,18 +129,20 @@ baseline compare (fail ceiling never rises).
 - **fixed × fixed** — realized (predates this spec): the template SEQ join
   applies the writer's invariant to statically known seam chars and bakes
   the space (`joinParts` in the template emitter).
-- **class-derivable, tag boundaries** — measured, and nearly empty:
-  per-kind edge classes (`edgeClassesOfKind`) plus the emitted-form walker
-  (`renderRuleEdge`) subdivide every tag-adjacent SEQ boundary. Only
-  rust 5, typescript 12, python 1 have statically knowable outcomes —
-  per-instance PRESENCE (optional and array slots) and pattern trailing
-  edges dominate, which no class analysis can resolve. Baking this bucket
-  is scheduled (`docs/superpowers/plans/2026-08-23-static-seam-bake-plan.md`):
-  no template-position mark is needed — the decision goes into the
-  template text through the same `joinParts` invariant the fixed × fixed
-  class already uses, and the writer's check is idempotent with a baked
-  space. Determined slots (keywords becoming fixed literals) enlarge this
-  bucket, which is what makes it worth its mechanism now.
+- **class-derivable, tag boundaries** — realized: per-kind edge classes
+  (`edgeClassesOfKind`) plus the emitted-form walker (`renderRuleEdge`)
+  subdivide every tag-adjacent SEQ boundary, and a boundary whose both
+  edge classes are known is baked into template text by the same
+  `seamNeedsSpace` predicate the fixed × fixed join uses (`joinParts` in
+  the template emitter) — no template-position mark, and the writer's
+  check is idempotent with a baked space. Per grammar this moved rust 5,
+  typescript 12, python 1 boundaries from derivable to static (rust's two
+  word × word seams now read `raw {{ mutable_specifier }}` and
+  `extern {{ crate }}`; every other one was a glued outcome, so its text
+  is unchanged). Per-instance PRESENCE (optional and array slots) and
+  pattern trailing edges dominate the residue, which no class analysis
+  can resolve. Determined slots (keywords becoming fixed literals) enlarge
+  the baked bucket on arrival.
 - **class-derivable, list interiors** — realized, with a settled
   representation principle: **the separator string captures the
   resolution** — presence or absence of the space character, never a
@@ -153,8 +155,9 @@ baseline compare (fail ceiling never rises).
   INSERT — that fact has no character to carry it, and its boolean-free
   form is the writer-layer split below.
 - **residue report** — realized, covering SEQ boundaries and list
-  interiors. Current: rust 10 static + 24 derivable / 450, typescript
-  16 + 23 / 546, python 5 + 11 / 242. No current list qualifies for a
+  interiors. Current: rust 15 static + 19 derivable / 468, typescript
+  28 + 11 / 567, python 6 + 10 / 253 — every remaining derivable entry
+  is a list interior. No current list qualifies for a
   baked space — rust `function_modifiers` is genuinely mixed
   (`extern_modifier` can end `"`), the honest refusal.
 - **mark rename** (`mark_adjacent` → resolved-boundary contract) — open;

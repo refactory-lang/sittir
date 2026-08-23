@@ -1,13 +1,13 @@
 {
   "grammar": "typescript",
-  "source_hash": "db4f00ee514a130fd3dcdee5677fb28ec19a30ac0347cb45cf96bc776323bc50",
+  "source_hash": "f73feed689cb95be4f5f25dbc211c59afd4849b414652ad4d6a27005d1d1344f",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "1caa3006583784e78747ca599b3cd41f038d6ef98a80fa83c159aade0fd98989",
     "packages/typescript/.sittir/grammar.js": "926b281360f86f7d93e0fa31e9a8eb5df45ca8d756845ebc088eea06e8ec03bf",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
     "packages/typescript/.sittir/parser.dylib": "ba2a18d17e8b298756438461cd47288057ebc3220d75d115e9afa46a5f48ed89",
     "packages/typescript/.sittir/parser.wasm": "d10cf224e0abb98ea7087655ad5840b94326be6055d03f225b7d72bdd6e10187",
-    "packages/typescript/.sittir/seam-census.json": "1b414de6fac6ac2ae66d59c32778caad4c733fa5f65522dd510f4561122e316a",
+    "packages/typescript/.sittir/seam-census.json": "f3fc2721c14af6c027e3c87ab30acc6cc6d05ea2a8184e7cfe619d7ae72b453f",
     "packages/typescript/.sittir/src/grammar.json": "efc0f3a4f7ba92f8e46c3b454b330fccbc58e09ffe10484b60c341b55acac431",
     "packages/typescript/.sittir/src/node-types.json": "fc5047d9ae984efb463fc1b32fee1508eb5f53a96a1ffa6fb7bbe8a6d4f9b7be",
     "packages/typescript/.sittir/src/parser.c": "1449052ddeee30f180448385165bb149af1ff90fd25912eb767f1c0688495721",
