@@ -2894,6 +2894,10 @@ function collapseSingletonMintOrdinals(mergedRules, mintedRules, visibleGroupHid
       mergedRules[newName] = mergedRules[oldName];
       delete mergedRules[oldName];
     }
+    if (oldName.startsWith("_") && oldName in mintedRules) {
+      mintedRules[newName] = mintedRules[oldName];
+      delete mintedRules[oldName];
+    }
     if (visibleGroupHiddenNames.delete(oldName)) visibleGroupHiddenNames.add(newName);
     const owner = clauseGroupOwners.get(oldName);
     if (owner !== void 0) {
@@ -4647,7 +4651,7 @@ var grammar_sittir_default = grammar(
         [$.await_expression, $._binary_expression_arm],
         [$.as_expression, $._binary_expression_arm],
         [$._call_expression_call, $._binary_expression_arm],
-        // _binary_expression_arm1 (the `in`-operator arm, freshly extracted —
+        // _binary_expression_arm (the `in`-operator arm, freshly extracted —
         // same PREC-descent mechanism as call_expression's arms above) mirrors
         // binary_expression's own conflict set: every continuation that used to
         // share LR state with the whole (unsplit) binary_expression choice needs

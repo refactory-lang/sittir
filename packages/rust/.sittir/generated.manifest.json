@@ -1,13 +1,13 @@
 {
   "grammar": "rust",
-  "source_hash": "258b9fe3efdf775d77ccfe2d97bfdb30ef91ddd2778b4b5234b6f6ecf406ea97",
+  "source_hash": "50d719023dbc72f06b1396d32429d61609ab91b307f91798495be0aa6d1fd067",
   "files": {
     "packages/rust/.sittir/grammar-diagnostics.json": "5993dd94d90cd14ebdfd1a6beec4b4d5e12b7354390cbfaeba9d1ed68fc05cd6",
-    "packages/rust/.sittir/grammar.js": "0ea6f6ca23e43cfbb443baf829da5eccc91b64e093c49be77cb9a9ae0b9c6c5d",
+    "packages/rust/.sittir/grammar.js": "0fa5661644b47079dd5d4c57603dc0a3d6d36599dd08dd0a4d26a618bd2f982a",
     "packages/rust/.sittir/package.json": "bdab057c3301bd235e9a388063623685881661f0809682fc361a510fd47f531a",
     "packages/rust/.sittir/parser.wasm": "c9e71fa0e8c833159c2f8c9a037d7393f171463a1a4b795bd4a6ea49bba8ae47",
     "packages/rust/.sittir/seam-census.json": "9b5d1646aace147df32b0a561cff84ca3f6069ff1d6ba4dd9794d707294d01a8",
-    "packages/rust/.sittir/src/grammar.json": "0bb8abfdc5208294c20a9a6d596fab69e77f0c46804ef60e021fc1a0c1f70607",
+    "packages/rust/.sittir/src/grammar.json": "e2588384c455ecf23047b4152d32617ac22ec4b6f9fe210ddb01fb0ee830c869",
     "packages/rust/.sittir/src/node-types.json": "0199f79751bcdeb73639bffa4b9c6734cc2f92ed780229f71dd9e0bd830188fe",
     "packages/rust/.sittir/src/parser.c": "d1e95f4fd39065cc428ac9b3348f24c047170e24ba041b9ba8ca96e477bff165",
     "packages/rust/.sittir/src/scanner.c": "77faa4943da96dcb17d9c2a735bdbf7702287b52a1d2971117b167e47e318620",
