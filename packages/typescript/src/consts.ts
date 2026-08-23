@@ -3,6 +3,7 @@
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
 	'_arrow_function_parameter',
+	'_enum_body_elements',
 	'_export_specifiers',
 	'_export_statement_default',
 	'_export_statement_default_clause_from',
@@ -2569,6 +2570,7 @@ export const FIELD_MAP: Record<
 	}>
 > = {
 	_arrow_function_parameter: [{ name: 'parameter', required: true, multiple: false }],
+	_enum_body_elements: [{ name: 'contents', required: false, multiple: true }],
 	_export_specifiers: [{ name: 'exportSpecifiers', required: true, multiple: true }],
 	_export_statement_default: [{ name: 'content', required: true, multiple: false }],
 	_export_statement_default_clause_from: [

@@ -593,6 +593,19 @@ export function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): str
 	return [...new Set(parts)].join(' | ');
 }
 
+
+/** The `delimiter` option's type for a list with these flank modes — the
+ *  bitflag values the grammar permits a caller to select (leading = 1,
+ *  trailing = 2, both = 3); empty when neither flank is optional. */
+function delimiterUnionFor(list: {
+	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
+	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
+}): string {
+	const l = list.leadingDelimiter === 'optional';
+	const t = list.trailingDelimiter === 'optional';
+	return [...(l ? ['1'] : []), ...(t ? ['2'] : []), ...(l && t ? ['3'] : [])].join(' | ');
+}
+
 function emitFieldCarryingFactory(
 	node: FieldCarryingNode,
 	fields: readonly AssembledNonterminal[],
@@ -621,28 +634,18 @@ function emitFieldCarryingFactory(
 	// signature and the shape metadata can never disagree.
 	const singleField = !containerFacts ? resolveDirectFactorySlot(node, nodeMap) : undefined;
 
-	// Fields whose own separator flank is genuinely `'optional'` need a
-	// caller-facing override — a factory has no real parse to capture a
-	// per-instance fact from, and a fixed default can't be right for every
-	// caller (e.g. rust `tuple_expression`'s single-element case structurally
-	// NEEDS `trailing: true` to disambiguate from a parenthesized
-	// expression, while a 3-element tuple structurally wants `false`).
-	// Mirrors `emitSeparatedListFactory`'s existing `options: {leading?,
-	// trailing?}` pattern for the kind-level case — same flat shape,
-	// scoped to the (today, always singular) flank-optional field on this
-	// factory. Only wired for the `singleField`/`config` shapes below;
-	// `containerFacts` factories have no flank-optional field in any
-	// current grammar and keep today's un-configurable `false` default.
-	const flankOptionField = fields.find((f) => f.trailingMode === 'optional' || f.leadingMode === 'optional');
-	const hasLeadingOption = flankOptionField?.leadingMode === 'optional';
-	const hasTrailingOption = flankOptionField?.trailingMode === 'optional';
-	const hasFlankOptions = !containerFacts && flankOptionField !== undefined;
-	const flankOptionsTypeParts: string[] = [];
-	if (hasLeadingOption) flankOptionsTypeParts.push('leading?: boolean');
-	if (hasTrailingOption) flankOptionsTypeParts.push('trailing?: boolean');
-	const flankOptionsType = `{ ${flankOptionsTypeParts.join('; ')} }`;
-	const flankSourceFor = (f: AssembledNonterminal, side: 'leading' | 'trailing'): string =>
-		hasFlankOptions && f === flankOptionField ? `options.${side} ?? false` : 'false';
+	// A field with an optional delimiter flank cannot reach this emitter: a
+	// delimiter-bearing list is a separatedList KIND (classifyNode routes it
+	// there, peeling group wrappers), and the delimiter is stored kind-level
+	// on that kind — field-prefixed delimiter storage is retired. Fail fast
+	// if classification ever regresses.
+	const flankField = fields.find((f) => f.trailingDelimiter === 'optional' || f.leadingDelimiter === 'optional');
+	if (flankField !== undefined) {
+		throw new Error(
+			`emitFieldCarryingFactory: '${typeKind}' field '${flankField.name}' carries an optional delimiter — ` +
+				`a delimiter-bearing list must classify as its own separatedList kind (kind-level _delimiter storage)`
+		);
+	}
 
 	let signature: string;
 	let valueSourceFor: (f: AssembledNonterminal) => string;
@@ -703,13 +706,9 @@ function emitFieldCarryingFactory(
 		const elemType = `T.${node.typeName}.Config['${singleField.configKey}']`;
 		const paramName = singleField.paramName;
 		const optMark = isRequired(singleField) ? '' : '?';
-		signature = hasFlankOptions
-			? `export function ${fn}(${paramName}${optMark}: ${elemType}, options: ${flankOptionsType} = {}) {`
-			: `export function ${fn}(${paramName}${optMark}: ${elemType}) {`;
-		if (!hasFlankOptions) {
-			directParamType = elemType;
-			directParamOptional = !isRequired(singleField);
-		}
+		signature = `export function ${fn}(${paramName}${optMark}: ${elemType}) {`;
+		directParamType = elemType;
+		directParamOptional = !isRequired(singleField);
 		valueSourceFor = (f) =>
 			f === singleField
 				? slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries)
@@ -717,17 +716,7 @@ function emitFieldCarryingFactory(
 		const setterType = setterElemType(singleField, elemType, fn, nodeMap, true);
 		withLines = [
 			'    $with: {',
-			`      ${singleField.propertyName}: (${setterValueSignature(singleField, setterType)}) => ${fn}(value${hasFlankOptions ? ', options' : ''}),`,
-			...(hasFlankOptions
-				? [
-						...(hasLeadingOption
-							? [`      leading: (v: boolean) => ${fn}(${paramName}, { ...options, leading: v }),`]
-							: []),
-						...(hasTrailingOption
-							? [`      trailing: (v: boolean) => ${fn}(${paramName}, { ...options, trailing: v }),`]
-							: [])
-					]
-				: []),
+			`      ${singleField.propertyName}: (${setterValueSignature(singleField, setterType)}) => ${fn}(value),`,
 			'    },'
 		];
 	} else {
@@ -738,11 +727,10 @@ function emitFieldCarryingFactory(
 		// the default when the body actually reads from config — avoids dead code
 		// when all fields auto-stamp.
 		const hasConfigReads = fields.some((f) => autoStampExpression(f, nodeMap) === undefined);
-		const flankOptionsParam = hasFlankOptions ? `, options: ${flankOptionsType} = {}` : '';
 		signature =
 			opt === '?' && hasConfigReads
-				? `export function ${fn}(config: Partial<${configType}> = {}${flankOptionsParam}) {`
-				: `export function ${fn}(config${opt}: ${configType}${flankOptionsParam}) {`;
+				? `export function ${fn}(config: Partial<${configType}> = {}) {`
+				: `export function ${fn}(config${opt}: ${configType}) {`;
 		const configAccess = 'config';
 		valueSourceFor = (f) => {
 			const stamp = autoStampExpression(f, nodeMap);
@@ -756,7 +744,6 @@ function emitFieldCarryingFactory(
 		// the combined getter/setter method; under shape A getters are pure and
 		// the setter is purely a rebuild). Auto-stamp fields are skipped — no
 		// setter exposed because the value is fixed.
-		const flankOptionsArg = hasFlankOptions ? ', options' : '';
 		withLines = ['    $with: {'];
 		for (const f of fields) {
 			if (autoStampExpression(f, nodeMap) !== undefined) continue;
@@ -767,21 +754,13 @@ function emitFieldCarryingFactory(
 				const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
 				const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
 				withLines.push(
-					`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }${flankOptionsArg}),`
+					`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }),`
 				);
 			} else {
 				const elemType = setterElemType(f, fieldElementType(f, nodeMap), fn, nodeMap);
 				withLines.push(
-					`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }${flankOptionsArg}),`
+					`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }),`
 				);
-			}
-		}
-		if (hasFlankOptions) {
-			if (hasLeadingOption) {
-				withLines.push(`      leading: (v: boolean) => ${fn}(${configAccess}, { ...options, leading: v }),`);
-			}
-			if (hasTrailingOption) {
-				withLines.push(`      trailing: (v: boolean) => ${fn}(${configAccess}, { ...options, trailing: v }),`);
 			}
 		}
 		// Post-unification: the legacy `children` setter is gone — per-slot setters
@@ -808,21 +787,6 @@ function emitFieldCarryingFactory(
 	if (variantName) lines.push(`    $variant: '${variantName}' as const,`);
 	for (const f of fieldsToEmit) {
 		lines.push(`    ${f.storageKey},`);
-		// Factory-constructed elements carry no captured wire data — the
-		// per-instance flank facts wrap.ts populates from a real parse (see
-		// emitFieldFlankCaptureLines' doc comment) default to `false` unless
-		// the caller overrides via `options` (only wired for the field
-		// `flankOptionField` resolved to — see its doc comment above; no
-		// current kind has more than one such field per factory). Mirrors
-		// `emitSeparatedListFactory`'s `options.trailing ?? false` for the
-		// kind-level case. Without this the field is simply absent, which
-		// the validator's factory-vs-read storage comparison flags as a
-		// structural gap — and for a kind like rust `tuple_expression`,
-		// where a single-element instance structurally REQUIRES `trailing:
-		// true` to disambiguate from a parenthesized expression, a fixed
-		// `false` default is actively wrong, not just incomplete.
-		if (f.trailingMode === 'optional') lines.push(`    ${f.storageKey}_trailing_sep: ${flankSourceFor(f, 'trailing')},`);
-		if (f.leadingMode === 'optional') lines.push(`    ${f.storageKey}_leading_sep: ${flankSourceFor(f, 'leading')},`);
 	}
 	lines.push(...withLines);
 	lines.push('  }, {');
@@ -1065,9 +1029,11 @@ function emitSeparatedListFactory(
 	const candidateKindNames = hasSeparatorKindOption
 		? collectSeparatorCandidateKindNames(node.separatorRule!).filter((k) => hasCatalogEntry(kindEntries, k))
 		: [];
-	const hasLeadingOption = node.leadingMode === 'optional';
-	const hasTrailingOption = node.trailingMode === 'optional';
-	const hasOptions = hasSeparatorKindOption || hasLeadingOption || hasTrailingOption;
+	const hasLeadingOption = node.leadingDelimiter === 'optional';
+	const hasTrailingOption = node.trailingDelimiter === 'optional';
+	const hasDelimiterOption = hasLeadingOption || hasTrailingOption;
+	const delimiterUnion = delimiterUnionFor(node);
+	const hasOptions = hasSeparatorKindOption || hasDelimiterOption;
 
 	// `never` when the separator is nonterminal but zero candidates resolve
 	// in the catalog (mirrors `childElementType`/`fieldElementType`'s own
@@ -1077,9 +1043,8 @@ function emitSeparatedListFactory(
 		candidateKindNames.length > 0 ? candidateKindNames.map((k) => JSON.stringify(k)).join(' | ') : 'never';
 
 	const optionsTypeParts: string[] = [];
-	if (hasSeparatorKindOption) optionsTypeParts.push(`separatorKind?: ${separatorKindUnion}`);
-	if (hasLeadingOption) optionsTypeParts.push('leading?: boolean');
-	if (hasTrailingOption) optionsTypeParts.push('trailing?: boolean');
+	if (hasSeparatorKindOption) optionsTypeParts.push(`separator?: ${separatorKindUnion}`);
+	if (hasDelimiterOption) optionsTypeParts.push(`delimiter?: ${delimiterUnion}`);
 	const optionsType = `{ ${optionsTypeParts.join('; ')} }`;
 
 	const lines: string[] = [];
@@ -1092,8 +1057,12 @@ function emitSeparatedListFactory(
 		lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
 		lines.push(`export function ${fn}(options: ${optionsType}, ...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
 		lines.push(`export function ${fn}(...args: (${optionsType} | ${elemTypeForArray})[]) {`);
+		const permittedKeys = [...(hasSeparatorKindOption ? ['separator'] : []), ...(hasDelimiterOption ? ['delimiter'] : [])];
+		// Options are recognized by shape: a plain object (not an array, not a
+		// node — no `$type`) whose keys are all permitted option names.
 		lines.push(
-			`  const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));`
+			`  const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !Array.isArray(args[0]) && !('$type' in (args[0] as object)) && ` +
+				`Object.keys(args[0] as object).every((k) => ${JSON.stringify(permittedKeys)}.includes(k));`
 		);
 		lines.push(`  const options = (_optsFirst ? args[0] : {}) as ${optionsType};`);
 		lines.push(`  const elements = (_optsFirst ? args.slice(1) : args) as unknown as ${elementsType};`);
@@ -1106,6 +1075,17 @@ function emitSeparatedListFactory(
 	if (node.nonEmpty) {
 		lines.push(`  _assertNonEmpty(elements, '${node.kind}.elements');`);
 	}
+	// Terminated-list validity invariant (see AssembledSeparatedList.
+	// terminatedSeparator): a single element must carry the trailing
+	// delimiter — the undelimited one-element rendering parses as a
+	// different construct.
+	if (node.terminatedSeparator && hasTrailingOption) {
+		lines.push(`  if (elements.length === 1 && ((options.delimiter ?? 0) & 2) === 0) {`);
+		lines.push(
+			`    throw new Error('${node.kind}: a single element requires a trailing delimiter (delimiter: 2)');`
+		);
+		lines.push('  }');
+	}
 	lines.push(`  const ${contentStorageKey} = elements;`);
 	if (hasSeparatorKindOption) {
 		if (candidateKindNames.length > 0) {
@@ -1113,23 +1093,23 @@ function emitSeparatedListFactory(
 				.map((k) => `${JSON.stringify(k)}: ${kindDiscriminantExpr(k, nodeMap, kindEntries)}`)
 				.join(', ');
 			lines.push(
-				`  const _separator_kind = ({ ${arms} } as Record<string, number>)[options.separatorKind ?? ${JSON.stringify(candidateKindNames[0])}];`
+				`  const _separator = ({ ${arms} } as Record<string, number>)[options.separator ?? ${JSON.stringify(candidateKindNames[0])}];`
 			);
 		} else {
-			lines.push('  const _separator_kind = undefined;');
+			lines.push('  const _separator = undefined;');
 		}
 	}
-	if (hasLeadingOption) lines.push('  const _leading_sep = options.leading ?? false;');
-	if (hasTrailingOption) lines.push('  const _trailing_sep = options.trailing ?? false;');
+	if (hasDelimiterOption) {
+		lines.push('  const _delimiter = options.delimiter ?? 0;');
+	}
 
 	lines.push('  return withMethods(withAccessors({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push('    $source: 2 as const,');
 	lines.push('    $named: true as const,');
 	lines.push(`    ${contentStorageKey},`);
-	if (hasSeparatorKindOption) lines.push('    _separator_kind,');
-	if (hasLeadingOption) lines.push('    _leading_sep,');
-	if (hasTrailingOption) lines.push('    _trailing_sep,');
+	if (hasSeparatorKindOption) lines.push('    _separator,');
+	if (hasDelimiterOption) lines.push('    _delimiter,');
 	lines.push('    $with: {');
 	const optionsArg = hasOptions ? 'options, ' : '';
 	// Rest param type must match `elementsType` exactly (`NonEmptyArray<T>`
@@ -1150,12 +1130,11 @@ function emitSeparatedListFactory(
 	// off `rule.type`, never off the derived value count.
 	lines.push(`      $children: (...vs: ${elementsType}) => ${fn}(${optionsArg}...vs),`);
 	if (hasSeparatorKindOption) {
-		lines.push(
-			`      separatorKind: (v: ${separatorKindUnion}) => ${fn}({ ...options, separatorKind: v }, ...elements),`
-		);
+		lines.push(`      separator: (v: ${separatorKindUnion}) => ${fn}({ ...options, separator: v }, ...elements),`);
 	}
-	if (hasLeadingOption) lines.push(`      leading: (v: boolean) => ${fn}({ ...options, leading: v }, ...elements),`);
-	if (hasTrailingOption) lines.push(`      trailing: (v: boolean) => ${fn}({ ...options, trailing: v }, ...elements),`);
+	if (hasDelimiterOption) {
+		lines.push(`      delimiter: (v?: ${delimiterUnion}) => ${fn}({ ...options, delimiter: v }, ...elements),`);
+	}
 	lines.push('    },');
 	lines.push('  }, {');
 	lines.push(`    ${contentAccessorName}: () => ${contentStorageKey},`);

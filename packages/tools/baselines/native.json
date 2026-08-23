@@ -1,29 +1,29 @@
 {
     "backend": "native",
-    "commit": "385a577",
+    "commit": "06900d1",
     "grammars": {
         "python": {
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
-                "pass": 1304,
-                "total": 1304
+                "pass": 1307,
+                "total": 1307
             },
             "validators": {
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 138,
-                    "total": 138
+                    "pass": 140,
+                    "total": 140
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1376,
+                    "astMatchPass": 1385,
                     "failingKinds": [
                         "_simple_pattern_negative"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 1376,
-                    "total": 1381
+                    "pass": 1385,
+                    "total": 1390
                 },
                 "from": {
                     "failingKinds": [],
@@ -32,12 +32,12 @@
                     "total": 122
                 },
                 "roundtrip": {
-                    "astMatchPass": 112,
+                    "astMatchPass": 113,
                     "failingKinds": [
                         "module"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 112,
+                    "pass": 113,
                     "total": 116
                 }
             }
@@ -53,15 +53,15 @@
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 204,
-                    "total": 204
+                    "pass": 206,
+                    "total": 206
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1507,
+                    "astMatchPass": 1519,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1507,
-                    "total": 1507
+                    "pass": 1519,
+                    "total": 1519
                 },
                 "from": {
                     "failingKinds": [],
@@ -120,8 +120,8 @@
         }
     },
     "totals": {
-        "fail": 24,
-        "pass": 9685,
-        "total": 9709
+        "fail": 23,
+        "pass": 9714,
+        "total": 9737
     }
 }

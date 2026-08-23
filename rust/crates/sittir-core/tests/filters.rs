@@ -190,105 +190,47 @@ fn joinby_preserves_empty_string_elements() {
 }
 
 // -------------------------------------------------------------------
-// Flank-aware filter wrappers — TS parity for joinWith{Trailing,Leading,Flanks}
+// Flank-aware filter wrappers — joinWith{Trailing,Leading,Flanks}
 // -------------------------------------------------------------------
 //
-// The TS Nunjucks env carries flank metadata as side-channel
-// properties on the children array (`_leading_anon` /
-// `_trailing_anon`). The filter compares against its `sep` arg and
-// emits the flank only on a text match. The Rust filters mirror this
-// via askama `Values` — `joinWithTrailing` reads `trailing_anon` from
-// the per-render value bag, downcasts the `Option<String>` and
-// compares with `sep`.
+// The view's own `leading`/`trailing` flags (populated from the wire's
+// `_delimiter` bitflag) are the sole flank source; the filters emit each
+// flank iff its flag is set.
 //
-// Post-Task 3: `joinWithTrailing` / `joinWithLeading` / `joinWithFlanks`
-// return `Safe<Joined<'a>>` — call sites use `.0.to_string()` to
-// compare the rendered output.
+// `joinWithTrailing` / `joinWithLeading` / `joinWithFlanks` return
+// `Safe<Joined<'a>>` — call sites use `.0.to_string()` to compare the
+// rendered output.
 
-use sittir_core::filters::{joinWithFlanks, joinWithLeading, joinWithTrailing, FlankValues};
+use sittir_core::filters::{joinWithFlanks, joinWithLeading, joinWithTrailing};
 
 #[test]
-fn join_with_trailing_emits_flank_when_anon_text_matches_sep() {
-    // filters.rs:140 — updated: &["a", "b"] → ListNonterminalView
-    let values = FlankValues {
-        trailing_anon: Some(",".into()),
-        ..FlankValues::default()
-    };
-    let view = text_view!(",", false, false, "a", "b");
-    assert_eq!(
-        joinWithTrailing(&view, &values, ",").unwrap().0.to_string(),
-        "a,b,"
-    );
+fn join_with_trailing_emits_flank_from_view_flag() {
+    let view = text_view!(",", false, true, "a", "b");
+    assert_eq!(joinWithTrailing(&view, ",").unwrap().0.to_string(), "a,b,");
 }
 
 #[test]
-fn join_with_trailing_skips_flank_when_anon_text_differs() {
-    // `;`-anon flanking a `,`-joined list contributes nothing.
-    // filters.rs:152 — updated: &["a", "b"] → ListNonterminalView
-    let values = FlankValues {
-        trailing_anon: Some(";".into()),
-        ..FlankValues::default()
-    };
+fn join_with_trailing_plain_when_flag_unset() {
     let view = text_view!(",", false, false, "a", "b");
-    assert_eq!(
-        joinWithTrailing(&view, &values, ",").unwrap().0.to_string(),
-        "a,b"
-    );
-}
-
-#[test]
-fn join_with_trailing_skips_flank_when_anon_absent() {
-    // Default ctx has trailing_anon: None — degrades to plain join.
-    // filters.rs:162 — updated: &["a", "b"] → ListNonterminalView
-    let values = FlankValues::default();
-    let view = text_view!(",", false, false, "a", "b");
-    assert_eq!(
-        joinWithTrailing(&view, &values, ",").unwrap().0.to_string(),
-        "a,b"
-    );
+    assert_eq!(joinWithTrailing(&view, ",").unwrap().0.to_string(), "a,b");
 }
 
 #[test]
 fn join_with_leading_mirrors_trailing_semantics() {
-    // filters.rs:169 — updated: &["a", "b"] → ListNonterminalView
-    let values = FlankValues {
-        leading_anon: Some(",".into()),
-        ..FlankValues::default()
-    };
-    let view = text_view!(",", false, false, "a", "b");
-    assert_eq!(
-        joinWithLeading(&view, &values, ",").unwrap().0.to_string(),
-        ",a,b"
-    );
+    let view = text_view!(",", true, false, "a", "b");
+    assert_eq!(joinWithLeading(&view, ",").unwrap().0.to_string(), ",a,b");
 }
 
 #[test]
 fn join_with_flanks_independent_per_side() {
-    // Only one flank set — only that side emits.
-    // filters.rs:179 — updated: &["a"] → ListNonterminalView
-    let values = FlankValues {
-        trailing_anon: Some(",".into()),
-        leading_anon: None,
-    };
-    let view = text_view!(",", false, false, "a");
-    assert_eq!(
-        joinWithFlanks(&view, &values, ",").unwrap().0.to_string(),
-        "a,"
-    );
+    let view = text_view!(",", false, true, "a");
+    assert_eq!(joinWithFlanks(&view, ",").unwrap().0.to_string(), "a,");
 }
 
 #[test]
-fn join_with_flanks_both_sides_match() {
-    // filters.rs:189 — updated: &["a", "b"] → ListNonterminalView
-    let values = FlankValues {
-        trailing_anon: Some(",".into()),
-        leading_anon: Some(",".into()),
-    };
-    let view = text_view!(",", false, false, "a", "b");
-    assert_eq!(
-        joinWithFlanks(&view, &values, ",").unwrap().0.to_string(),
-        ",a,b,"
-    );
+fn join_with_flanks_both_sides() {
+    let view = text_view!(",", true, true, "a", "b");
+    assert_eq!(joinWithFlanks(&view, ",").unwrap().0.to_string(), ",a,b,");
 }
 
 // -------------------------------------------------------------------

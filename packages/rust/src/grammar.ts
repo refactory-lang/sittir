@@ -2146,10 +2146,13 @@ export type RustGrammar = {
 	readonly tuple_expression: {
 		type: 'tuple_expression';
 		named: true;
-		fields: {
-			attributes: { multiple: true; required: false; types: [{ type: 'attribute_item'; named: true }] };
-			elements: { multiple: true; required: true; types: [{ type: '_expression'; named: true }] };
-		};
+		fields: { attributes: { multiple: true; required: false; types: [{ type: 'attribute_item'; named: true }] } };
+		children: { multiple: false; required: true; types: [{ type: 'tuple_expression_elements'; named: true }] };
+	};
+	readonly tuple_expression_elements: {
+		type: 'tuple_expression_elements';
+		named: true;
+		fields: { element: { multiple: true; required: true; types: [{ type: '_expression'; named: true }] } };
 	};
 	readonly tuple_pattern: {
 		type: 'tuple_pattern';
@@ -2187,6 +2190,12 @@ export type RustGrammar = {
 	};
 	readonly tuple_type: {
 		type: 'tuple_type';
+		named: true;
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'tuple_type_elements'; named: true }] };
+	};
+	readonly tuple_type_elements: {
+		type: 'tuple_type_elements';
 		named: true;
 		fields: { type: { multiple: true; required: true; types: [{ type: '_type'; named: true }] } };
 	};

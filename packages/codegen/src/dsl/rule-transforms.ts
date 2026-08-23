@@ -21,7 +21,7 @@ import {
 	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, SeparatorFlankMode } from '../types/rule.ts';
+import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { RuleWalker } from './rule-walker.ts';
 
@@ -93,11 +93,11 @@ export function findRepeatFlag(rule: AnyRule, flag: 'trailing' | 'leading'): boo
 		flagWalker.find(rule, (r) => {
 			const sep = (r as { separator?: RuleBase<'normalize'>['separator'] }).separator;
 			if (typeof sep === 'object' && !Array.isArray(sep) && sep !== null) {
-				if ((sep as { trailing?: SeparatorFlankMode; leading?: SeparatorFlankMode })[flag] !== undefined) return true;
+				if ((sep as { trailing?: DelimiterMode; leading?: DelimiterMode })[flag] !== undefined) return true;
 			}
 			return (
 				(r.type === REPEAT || r.type === REPEAT1) &&
-				(r as { trailing?: SeparatorFlankMode; leading?: SeparatorFlankMode })[flag] !== undefined
+				(r as { trailing?: DelimiterMode; leading?: DelimiterMode })[flag] !== undefined
 			);
 		}) !== undefined
 	);

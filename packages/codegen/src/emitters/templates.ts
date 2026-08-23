@@ -853,12 +853,12 @@ function selectJoinFilter(
 	// trailing/leading now live NESTED inside `separator` (PR-S) — no more
 	// top-level siblings on the rule to check directly.
 	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
-	// Presence check, not a specific `SeparatorFlankMode` value: a rule
+	// Presence check, not a specific `DelimiterMode` value: a rule
 	// reaching this (non-`'separatedList'`-classified) function can only
 	// carry a `'mandatory'` flank here (a genuinely `'optional'` one would
 	// already have routed the rule to `'separatedList'` classification
 	// instead, see `isSeparatedListShape`, assemble.ts) — mirrors
-	// `collect-slots.ts`'s `hasTrailing`/`hasLeading` derivation.
+	// `collect-slots.ts`'s `hasTrailingDelimiter`/`hasLeadingDelimiter` derivation.
 	const trailing = sep?.trailing !== undefined;
 	const leading = sep?.leading !== undefined;
 	if (trailing && leading) return 'joinWithFlanks';
@@ -877,10 +877,10 @@ function selectJoinFilter(
 			if (t) return 'joinWithTrailing';
 			if (l) return 'joinWithLeading';
 		}
-		// Also check the AssembledNonterminal's own hasTrailing/hasLeading flags.
-		if (slot.hasTrailing && slot.hasLeading) return 'joinWithFlanks';
-		if (slot.hasTrailing) return 'joinWithTrailing';
-		if (slot.hasLeading) return 'joinWithLeading';
+		// Also check the AssembledNonterminal's own hasTrailingDelimiter/hasLeadingDelimiter flags.
+		if (slot.hasTrailingDelimiter && slot.hasLeadingDelimiter) return 'joinWithFlanks';
+		if (slot.hasTrailingDelimiter) return 'joinWithTrailing';
+		if (slot.hasLeadingDelimiter) return 'joinWithLeading';
 	}
 	return 'join';
 }
@@ -995,7 +995,7 @@ function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonter
 	// not because there's no separator at all. Reference the transport
 	// struct's own `.separator` field (a runtime-resolved `&str`, populated
 	// by render-module.ts's `buildSeparatorKindMatchLines` from the wire-
-	// captured `_separator_kind`) instead of falling through to
+	// captured `_separator`) instead of falling through to
 	// `DEFAULT_JOIN_SEPARATOR` — which would silently drop every separator
 	// occurrence (see docs/superpowers/specs/2026-07-12-separator-as-slot-design.md).
 	if (!allImmediate && ruleSep === undefined && isNonterminalSeparatorRule(rule)) {

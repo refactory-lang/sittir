@@ -460,8 +460,8 @@ function emitRestParamFromResolver(
 	// `isSelfUnwrap` distinguishes the two call sites below: `true` inside
 	// the self-NodeData-unwrap branch (a `data` local naming the original
 	// wrapped node is in scope, so a caller like `emitSeparatedListFrom` can
-	// read per-instance facts off it — e.g. preserving `_separator_kind`/
-	// `_leading_sep`/`_trailing_sep` when reconstructing an already-wrapped
+	// read per-instance facts off it — e.g. preserving `_separator`/
+	// `_delimiter` when reconstructing an already-wrapped
 	// separatedList node); `false` for the fresh-input path, where no such
 	// source node exists to read facts from.
 	buildCallExpr: (varExpr: string, isSelfUnwrap: boolean) => string,
@@ -618,8 +618,8 @@ function emitSeparatedListFrom(
 	const candidateKindNames = hasSeparatorKindOption
 		? collectSeparatorCandidateKindNames(node.separatorRule!).filter((k) => hasCatalogEntry(kindEntries, k))
 		: [];
-	const hasLeadingOption = node.leadingMode === 'optional';
-	const hasTrailingOption = node.trailingMode === 'optional';
+	const hasLeadingOption = node.leadingDelimiter === 'optional';
+	const hasTrailingOption = node.trailingDelimiter === 'optional';
 	const hasOptions = hasSeparatorKindOption || hasLeadingOption || hasTrailingOption;
 
 	// The factory's spread signature — `fn(...elements)` / `fn(options,
@@ -636,17 +636,16 @@ function emitSeparatedListFrom(
 		// three per-instance fields through one shared cast rather than
 		// three separate ones.
 		const sourceFields =
-			'(data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })';
+			'(data as unknown as { _separator?: number; _delimiter?: number })';
 		const optionParts: string[] = [];
 		if (candidateKindNames.length > 0) {
 			// `KIND_LITERAL_TEXT` (types.ts) is the single stamped source for
 			// kindId→literal-text — no per-kind reverse-arms table to build here.
 			optionParts.push(
-				`separatorKind: (() => { const sk = ${sourceFields}._separator_kind; return sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk); })()`
+				`separator: (() => { const sk = ${sourceFields}._separator; return sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk); })()`
 			);
 		}
-		if (hasLeadingOption) optionParts.push(`leading: ${sourceFields}._leading_sep`);
-		if (hasTrailingOption) optionParts.push(`trailing: ${sourceFields}._trailing_sep`);
+		if (hasLeadingOption || hasTrailingOption) optionParts.push(`delimiter: ${sourceFields}._delimiter`);
 		return `${factory}({ ${optionParts.join(', ')} }, ${spreadElements(varExpr)})`;
 	};
 

@@ -34,6 +34,11 @@ interface ReadNodeLike {
 }
 
 interface CommonModule {
+	separatedListFactoryOptions(
+		data: unknown,
+		kindLiteralText: ReadonlyMap<number, string> | undefined
+	): { separator?: string; delimiter?: number } | undefined;
+
 	loadLanguageForGrammar(grammar: string): Promise<{
 		Parser: new () => {
 			setLanguage(language: unknown): void;
@@ -273,22 +278,12 @@ export function buildFactoryNode(
 		return factory(value);
 	}
 	if (shape === 'elements') {
-		// separatedList factory: `(elements, options?: {separatorKind?, leading?, trailing?})`
-		// — distinct calling convention from 'spread's rest-param factories.
-		const separatorSourceKind = (readData as { _separator_kind?: number })._separator_kind;
-		const separatorKind = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
-		const leading = (readData as { _leading_sep?: boolean })._leading_sep === true;
-		const trailing = (readData as { _trailing_sep?: boolean })._trailing_sep === true;
-		const options: { separatorKind?: string; leading?: boolean; trailing?: boolean } = {};
-		if (separatorKind !== undefined) options.separatorKind = separatorKind;
-		if (leading) options.leading = true;
-		if (trailing) options.trailing = true;
-		return (
-			factory as (
-				elements: readonly unknown[],
-				options?: { separatorKind?: string; leading?: boolean; trailing?: boolean }
-			) => unknown
-		)(childArgs, Object.keys(options).length > 0 ? options : undefined);
+		// separatedList factory: spread elements with a LEADING optional
+		// options bag — `(...elements)` / `({ separator?, delimiter? }, ...elements)`
+		// — the options derived by the validator's own helper (one derivation).
+		const options = common.separatedListFactoryOptions(readData, kindLiteralText);
+		const listFactory = factory as unknown as (...args: unknown[]) => unknown;
+		return options !== undefined ? listFactory(options, ...childArgs) : listFactory(...childArgs);
 	}
 	return factory(config);
 }

@@ -74,7 +74,7 @@ describe('from emitter — separatedList', () => {
 		// (that's the 'direct'/singular container shape, wrong for a
 		// genuinely multi-element list).
 		expect(emitted).not.toContain('children[0] as Parameters<typeof F.buildMemberList>[0]');
-		expect(emitted).toMatch(/F\.buildMemberList\(\{ trailing: .*\}, \.\.\.\(children as unknown as NonEmptyArray<T\.Member>\)\)/);
+		expect(emitted).toMatch(/F\.buildMemberList\(\{ delimiter: .*\}, \.\.\.\(children as unknown as NonEmptyArray<T\.Member>\)\)/);
 		expect(emitted).toMatch(/F\.buildMemberList\(\.\.\.\(input as unknown as NonEmptyArray<T\.Member>\)\)/);
 	});
 

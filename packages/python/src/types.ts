@@ -223,6 +223,8 @@ export const enum SyntaxKind {
 	CaseListPattern = 'case_list_pattern',
 	CaseAsPattern = 'case_as_pattern',
 	ComprehensionClauses = 'comprehension_clauses',
+	PrintArguments = '_print_arguments',
+	PrintChevronArguments = '_print_chevron_arguments',
 	PrintStatementGroup1 = 'print_statement_group1',
 	PrintStatementGroup2 = 'print_statement_group2',
 	AssignmentEq = '_assignment_eq',
@@ -567,59 +569,61 @@ export const enum TSKindId {
 	CaseListPattern = 255,
 	CaseAsPattern = 256,
 	ComprehensionClauses = 257,
-	PrintStatementGroup1 = 258,
-	PrintStatementGroup2 = 259,
-	WildcardPattern = 260,
-	AssignmentEq = 261,
-	AssignmentType = 262,
-	AssignmentTyped = 263,
-	ExpressionStatementTuple = 264,
-	WithClauseBare = 265,
-	WithClauseParen = 266,
-	MatchBlockBlock = 267,
-	SuiteBlockWithIndent = 268,
-	SimplePatternNegative = 269,
-	ExceptClauseList = 270,
-	ComparisonOperatorComparator = 271,
-	YieldFromClause = 272,
-	ModuleRepeat1 = 273,
-	ImportPrefixRepeat1 = 274,
-	_ImportListRepeat1 = 275,
-	AssertStatementRepeat1 = 276,
-	IfStatementRepeat1 = 277,
-	TryStatementRepeat1 = 278,
-	GlobalStatementRepeat1 = 279,
-	DecoratedDefinitionRepeat1 = 280,
-	DottedNameRepeat1 = 281,
-	UnionPatternRepeat1 = 282,
-	_ParametersRepeat1 = 283,
-	_PatternsRepeat1 = 284,
-	ComparisonOperatorRepeat1 = 285,
-	_CollectionElementsRepeat1 = 286,
-	ForInClauseRepeat1 = 287,
-	ConcatenatedStringRepeat1 = 288,
-	StringRepeat1 = 289,
-	StringContentRepeat1 = 290,
-	FormatSpecifierRepeat1 = 291,
-	_SimpleStatementsElementsRepeat1 = 292,
-	_SubjectsRepeat1 = 293,
-	_CasePatternsRepeat1 = 294,
-	_WithClauseWithItemsRepeat1 = 295,
-	_ExecStatementOptional1Repeat1 = 296,
-	_TypesRepeat1 = 297,
-	_ArgumentListElementsRepeat1 = 298,
-	_ExpressionListExpressionsRepeat1 = 299,
-	_DictPatternElementsRepeat1 = 300,
-	_PatternListPatternsRepeat1 = 301,
-	_SubscriptsRepeat1 = 302,
-	_DictionaryElementsRepeat1 = 303,
-	ComprehensionClausesRepeat1 = 304,
-	PrintStatementGroup1Repeat1 = 305,
-	_MatchBlockBlockRepeat1 = 306,
-	_ExceptClauseListRepeat1 = 307,
-	_AsPatternTarget = 308,
-	_FormatExpression = 309,
-	_Names = 310
+	PrintArguments = 258,
+	PrintChevronArguments = 259,
+	PrintStatementGroup1 = 260,
+	PrintStatementGroup2 = 261,
+	WildcardPattern = 262,
+	AssignmentEq = 263,
+	AssignmentType = 264,
+	AssignmentTyped = 265,
+	ExpressionStatementTuple = 266,
+	WithClauseBare = 267,
+	WithClauseParen = 268,
+	MatchBlockBlock = 269,
+	SuiteBlockWithIndent = 270,
+	SimplePatternNegative = 271,
+	ExceptClauseList = 272,
+	ComparisonOperatorComparator = 273,
+	YieldFromClause = 274,
+	ModuleRepeat1 = 275,
+	ImportPrefixRepeat1 = 276,
+	_ImportListRepeat1 = 277,
+	AssertStatementRepeat1 = 278,
+	IfStatementRepeat1 = 279,
+	TryStatementRepeat1 = 280,
+	GlobalStatementRepeat1 = 281,
+	DecoratedDefinitionRepeat1 = 282,
+	DottedNameRepeat1 = 283,
+	UnionPatternRepeat1 = 284,
+	_ParametersRepeat1 = 285,
+	_PatternsRepeat1 = 286,
+	ComparisonOperatorRepeat1 = 287,
+	_CollectionElementsRepeat1 = 288,
+	ForInClauseRepeat1 = 289,
+	ConcatenatedStringRepeat1 = 290,
+	StringRepeat1 = 291,
+	StringContentRepeat1 = 292,
+	FormatSpecifierRepeat1 = 293,
+	_SimpleStatementsElementsRepeat1 = 294,
+	_SubjectsRepeat1 = 295,
+	_CasePatternsRepeat1 = 296,
+	_WithClauseWithItemsRepeat1 = 297,
+	_ExecStatementOptional1Repeat1 = 298,
+	_TypesRepeat1 = 299,
+	_ArgumentListElementsRepeat1 = 300,
+	_ExpressionListExpressionsRepeat1 = 301,
+	_DictPatternElementsRepeat1 = 302,
+	_PatternListPatternsRepeat1 = 303,
+	_SubscriptsRepeat1 = 304,
+	_DictionaryElementsRepeat1 = 305,
+	ComprehensionClausesRepeat1 = 306,
+	_PrintArgumentsRepeat1 = 307,
+	_MatchBlockBlockRepeat1 = 308,
+	_ExceptClauseListRepeat1 = 309,
+	_AsPatternTarget = 310,
+	_FormatExpression = 311,
+	_Names = 312
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -880,59 +884,61 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[255, 'case_list_pattern'],
 	[256, 'case_as_pattern'],
 	[257, 'comprehension_clauses'],
-	[258, 'print_statement_group1'],
-	[259, 'print_statement_group2'],
-	[260, '_wildcard_pattern'],
-	[261, '_assignment_eq'],
-	[262, '_assignment_type'],
-	[263, '_assignment_typed'],
-	[264, '_expression_statement_tuple'],
-	[265, '_with_clause_bare'],
-	[266, '_with_clause_paren'],
-	[267, '_match_block_block'],
-	[268, '_suite_block_with_indent'],
-	[269, '_simple_pattern_negative'],
-	[270, '_except_clause_list'],
-	[271, '_comparison_operator_comparator'],
-	[272, '_yield_from_clause'],
-	[273, 'module_repeat1'],
-	[274, 'import_prefix_repeat1'],
-	[275, '_import_list_repeat1'],
-	[276, 'assert_statement_repeat1'],
-	[277, 'if_statement_repeat1'],
-	[278, 'try_statement_repeat1'],
-	[279, 'global_statement_repeat1'],
-	[280, 'decorated_definition_repeat1'],
-	[281, 'dotted_name_repeat1'],
-	[282, 'union_pattern_repeat1'],
-	[283, '_parameters_repeat1'],
-	[284, '_patterns_repeat1'],
-	[285, 'comparison_operator_repeat1'],
-	[286, '_collection_elements_repeat1'],
-	[287, 'for_in_clause_repeat1'],
-	[288, 'concatenated_string_repeat1'],
-	[289, 'string_repeat1'],
-	[290, 'string_content_repeat1'],
-	[291, 'format_specifier_repeat1'],
-	[292, '_simple_statements_elements_repeat1'],
-	[293, '_subjects_repeat1'],
-	[294, '_case_patterns_repeat1'],
-	[295, '_with_clause_with_items_repeat1'],
-	[296, '_exec_statement_optional1_repeat1'],
-	[297, '_types_repeat1'],
-	[298, '_argument_list_elements_repeat1'],
-	[299, '_expression_list_expressions_repeat1'],
-	[300, '_dict_pattern_elements_repeat1'],
-	[301, '_pattern_list_patterns_repeat1'],
-	[302, '_subscripts_repeat1'],
-	[303, '_dictionary_elements_repeat1'],
-	[304, 'comprehension_clauses_repeat1'],
-	[305, 'print_statement_group1_repeat1'],
-	[306, '_match_block_block_repeat1'],
-	[307, '_except_clause_list_repeat1'],
-	[308, '_as_pattern_target'],
-	[309, '_format_expression'],
-	[310, '_names']
+	[258, '_print_arguments'],
+	[259, '_print_chevron_arguments'],
+	[260, 'print_statement_group1'],
+	[261, 'print_statement_group2'],
+	[262, '_wildcard_pattern'],
+	[263, '_assignment_eq'],
+	[264, '_assignment_type'],
+	[265, '_assignment_typed'],
+	[266, '_expression_statement_tuple'],
+	[267, '_with_clause_bare'],
+	[268, '_with_clause_paren'],
+	[269, '_match_block_block'],
+	[270, '_suite_block_with_indent'],
+	[271, '_simple_pattern_negative'],
+	[272, '_except_clause_list'],
+	[273, '_comparison_operator_comparator'],
+	[274, '_yield_from_clause'],
+	[275, 'module_repeat1'],
+	[276, 'import_prefix_repeat1'],
+	[277, '_import_list_repeat1'],
+	[278, 'assert_statement_repeat1'],
+	[279, 'if_statement_repeat1'],
+	[280, 'try_statement_repeat1'],
+	[281, 'global_statement_repeat1'],
+	[282, 'decorated_definition_repeat1'],
+	[283, 'dotted_name_repeat1'],
+	[284, 'union_pattern_repeat1'],
+	[285, '_parameters_repeat1'],
+	[286, '_patterns_repeat1'],
+	[287, 'comparison_operator_repeat1'],
+	[288, '_collection_elements_repeat1'],
+	[289, 'for_in_clause_repeat1'],
+	[290, 'concatenated_string_repeat1'],
+	[291, 'string_repeat1'],
+	[292, 'string_content_repeat1'],
+	[293, 'format_specifier_repeat1'],
+	[294, '_simple_statements_elements_repeat1'],
+	[295, '_subjects_repeat1'],
+	[296, '_case_patterns_repeat1'],
+	[297, '_with_clause_with_items_repeat1'],
+	[298, '_exec_statement_optional1_repeat1'],
+	[299, '_types_repeat1'],
+	[300, '_argument_list_elements_repeat1'],
+	[301, '_expression_list_expressions_repeat1'],
+	[302, '_dict_pattern_elements_repeat1'],
+	[303, '_pattern_list_patterns_repeat1'],
+	[304, '_subscripts_repeat1'],
+	[305, '_dictionary_elements_repeat1'],
+	[306, 'comprehension_clauses_repeat1'],
+	[307, '_print_arguments_repeat1'],
+	[308, '_match_block_block_repeat1'],
+	[309, '_except_clause_list_repeat1'],
+	[310, '_as_pattern_target'],
+	[311, '_format_expression'],
+	[312, '_names']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1194,59 +1200,61 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[255, 'case_list_pattern'],
 	[256, 'case_as_pattern'],
 	[257, 'comprehension_clauses'],
-	[258, 'print_statement_group1'],
-	[259, 'print_statement_group2'],
-	[260, 'wildcard_pattern'],
-	[261, 'assignment_eq'],
-	[262, 'assignment_type'],
-	[263, 'assignment_typed'],
-	[264, 'expression_statement_tuple'],
-	[265, 'with_clause_bare'],
-	[266, 'with_clause_paren'],
-	[267, 'match_block_block'],
-	[268, 'suite_block_with_indent'],
-	[269, 'simple_pattern_negative'],
-	[270, 'except_clause_list'],
-	[271, 'comparison_operator_comparator'],
-	[272, 'yield_from_clause'],
-	[273, 'module_repeat1'],
-	[274, 'import_prefix_repeat1'],
-	[275, '_import_list_repeat1'],
-	[276, 'assert_statement_repeat1'],
-	[277, 'if_statement_repeat1'],
-	[278, 'try_statement_repeat1'],
-	[279, 'global_statement_repeat1'],
-	[280, 'decorated_definition_repeat1'],
-	[281, 'dotted_name_repeat1'],
-	[282, 'union_pattern_repeat1'],
-	[283, '_parameters_repeat1'],
-	[284, '_patterns_repeat1'],
-	[285, 'comparison_operator_repeat1'],
-	[286, '_collection_elements_repeat1'],
-	[287, 'for_in_clause_repeat1'],
-	[288, 'concatenated_string_repeat1'],
-	[289, 'string_repeat1'],
-	[290, 'string_content_repeat1'],
-	[291, 'format_specifier_repeat1'],
-	[292, '_simple_statements_elements_repeat1'],
-	[293, '_subjects_repeat1'],
-	[294, '_case_patterns_repeat1'],
-	[295, '_with_clause_with_items_repeat1'],
-	[296, '_exec_statement_optional1_repeat1'],
-	[297, '_types_repeat1'],
-	[298, '_argument_list_elements_repeat1'],
-	[299, '_expression_list_expressions_repeat1'],
-	[300, '_dict_pattern_elements_repeat1'],
-	[301, '_pattern_list_patterns_repeat1'],
-	[302, '_subscripts_repeat1'],
-	[303, '_dictionary_elements_repeat1'],
-	[304, 'comprehension_clauses_repeat1'],
-	[305, 'print_statement_group1_repeat1'],
-	[306, '_match_block_block_repeat1'],
-	[307, '_except_clause_list_repeat1'],
-	[308, 'as_pattern_target'],
-	[309, 'format_expression'],
-	[310, 'names']
+	[258, 'print_arguments'],
+	[259, 'print_chevron_arguments'],
+	[260, 'print_statement_group1'],
+	[261, 'print_statement_group2'],
+	[262, 'wildcard_pattern'],
+	[263, 'assignment_eq'],
+	[264, 'assignment_type'],
+	[265, 'assignment_typed'],
+	[266, 'expression_statement_tuple'],
+	[267, 'with_clause_bare'],
+	[268, 'with_clause_paren'],
+	[269, 'match_block_block'],
+	[270, 'suite_block_with_indent'],
+	[271, 'simple_pattern_negative'],
+	[272, 'except_clause_list'],
+	[273, 'comparison_operator_comparator'],
+	[274, 'yield_from_clause'],
+	[275, 'module_repeat1'],
+	[276, 'import_prefix_repeat1'],
+	[277, '_import_list_repeat1'],
+	[278, 'assert_statement_repeat1'],
+	[279, 'if_statement_repeat1'],
+	[280, 'try_statement_repeat1'],
+	[281, 'global_statement_repeat1'],
+	[282, 'decorated_definition_repeat1'],
+	[283, 'dotted_name_repeat1'],
+	[284, 'union_pattern_repeat1'],
+	[285, '_parameters_repeat1'],
+	[286, '_patterns_repeat1'],
+	[287, 'comparison_operator_repeat1'],
+	[288, '_collection_elements_repeat1'],
+	[289, 'for_in_clause_repeat1'],
+	[290, 'concatenated_string_repeat1'],
+	[291, 'string_repeat1'],
+	[292, 'string_content_repeat1'],
+	[293, 'format_specifier_repeat1'],
+	[294, '_simple_statements_elements_repeat1'],
+	[295, '_subjects_repeat1'],
+	[296, '_case_patterns_repeat1'],
+	[297, '_with_clause_with_items_repeat1'],
+	[298, '_exec_statement_optional1_repeat1'],
+	[299, '_types_repeat1'],
+	[300, '_argument_list_elements_repeat1'],
+	[301, '_expression_list_expressions_repeat1'],
+	[302, '_dict_pattern_elements_repeat1'],
+	[303, '_pattern_list_patterns_repeat1'],
+	[304, '_subscripts_repeat1'],
+	[305, '_dictionary_elements_repeat1'],
+	[306, 'comprehension_clauses_repeat1'],
+	[307, '_print_arguments_repeat1'],
+	[308, '_match_block_block_repeat1'],
+	[309, '_except_clause_list_repeat1'],
+	[310, 'as_pattern_target'],
+	[311, 'format_expression'],
+	[312, 'names']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -1768,6 +1776,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.CaseAsPattern;
 		case 'comprehension_clauses':
 			return TSKindId.ComprehensionClauses;
+		case '_print_arguments':
+			return TSKindId.PrintArguments;
+		case '_print_chevron_arguments':
+			return TSKindId.PrintChevronArguments;
 		case 'print_statement_group1':
 			return TSKindId.PrintStatementGroup1;
 		case 'print_statement_group2':
@@ -1862,8 +1874,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._DictionaryElementsRepeat1;
 		case 'comprehension_clauses_repeat1':
 			return TSKindId.ComprehensionClausesRepeat1;
-		case 'print_statement_group1_repeat1':
-			return TSKindId.PrintStatementGroup1Repeat1;
+		case '_print_arguments_repeat1':
+			return TSKindId._PrintArgumentsRepeat1;
 		case '_match_block_block_repeat1':
 			return TSKindId._MatchBlockBlockRepeat1;
 		case '_except_clause_list_repeat1':
@@ -2024,6 +2036,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DictionaryElements;
 		case 'except_clause_as':
 			return TSKindId.ExceptClauseAs;
+		case 'print_arguments':
+			return TSKindId.PrintArguments;
+		case 'print_chevron_arguments':
+			return TSKindId.PrintChevronArguments;
 		case 'wildcard_pattern':
 			return TSKindId.WildcardPattern;
 		case 'assignment_eq':
@@ -3283,18 +3299,30 @@ export interface ComprehensionClauses {
 	contents(): readonly (ForInClause | IfClause)[];
 }
 
+export interface PrintArguments {
+	readonly $type: TSKindId.PrintArguments;
+	readonly _argument: NonEmptyArray<Expression>;
+	arguments(): NonEmptyArray<Expression>;
+}
+
+export interface PrintChevronArguments {
+	readonly $type: TSKindId.PrintChevronArguments;
+	readonly _argument: NonEmptyArray<Expression>;
+	arguments(): NonEmptyArray<Expression>;
+}
+
 export interface PrintStatementGroup1 {
 	readonly $type: TSKindId.PrintStatementGroup1;
 	readonly _chevron: Chevron;
-	readonly _argument?: readonly Expression[];
+	readonly _print_chevron_arguments?: PrintChevronArguments | ',';
 	chevron(): Chevron;
-	arguments(): readonly Expression[];
+	printChevronArguments(): PrintChevronArguments | ',' | undefined;
 }
 
 export interface PrintStatementGroup2 {
 	readonly $type: TSKindId.PrintStatementGroup2;
-	readonly _argument?: readonly Expression[];
-	arguments(): readonly Expression[];
+	readonly _print_arguments: PrintArguments;
+	printArguments(): PrintArguments;
 }
 
 export interface AssignmentEq {
@@ -3629,6 +3657,12 @@ export interface CaseTuplePatternTree extends TreeNode<'case_tuple_pattern'> {}
 export interface CaseListPatternTree extends TreeNode<'case_list_pattern'> {}
 export interface CaseAsPatternTree extends TreeNode<'case_as_pattern'> {}
 export interface ComprehensionClausesTree extends TreeNode<'comprehension_clauses'> {}
+export interface PrintArgumentsTree extends AnyTreeNode {
+	readonly type: '_print_arguments';
+}
+export interface PrintChevronArgumentsTree extends AnyTreeNode {
+	readonly type: '_print_chevron_arguments';
+}
 export interface PrintStatementGroup1Tree extends TreeNode<'print_statement_group1'> {}
 export interface PrintStatementGroup2Tree extends TreeNode<'print_statement_group2'> {}
 export interface AssignmentEqTree extends AnyTreeNode {
@@ -4243,6 +4277,8 @@ export type PythonNode =
 	| CaseListPattern
 	| CaseAsPattern
 	| ComprehensionClauses
+	| PrintArguments
+	| PrintChevronArguments
 	| PrintStatementGroup1
 	| PrintStatementGroup2
 	| AssignmentEq
@@ -4392,6 +4428,8 @@ export interface KindMap {
 	case_list_pattern: CaseListPattern;
 	case_as_pattern: CaseAsPattern;
 	comprehension_clauses: ComprehensionClauses;
+	_print_arguments: PrintArguments;
+	_print_chevron_arguments: PrintChevronArguments;
 	print_statement_group1: PrintStatementGroup1;
 	print_statement_group2: PrintStatementGroup2;
 	_assignment_eq: AssignmentEq;
@@ -4700,6 +4738,13 @@ export interface ComprehensionClausesNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
+export interface PrintArgumentsNs extends NodeNs<PrintArguments, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PrintChevronArgumentsNs extends NodeNs<
+	PrintChevronArguments,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
 export interface PrintStatementGroup1Ns extends NodeNs<
 	PrintStatementGroup1,
 	LeafScalarMap,
@@ -4879,6 +4924,8 @@ export interface NamespaceMap {
 	case_list_pattern: CaseListPatternNs;
 	case_as_pattern: CaseAsPatternNs;
 	comprehension_clauses: ComprehensionClausesNs;
+	_print_arguments: PrintArgumentsNs;
+	_print_chevron_arguments: PrintChevronArgumentsNs;
 	print_statement_group1: PrintStatementGroup1Ns;
 	print_statement_group2: PrintStatementGroup2Ns;
 	_assignment_eq: AssignmentEqNs;
@@ -5832,6 +5879,20 @@ export namespace ComprehensionClauses {
 	export type Loose = LooseFor<'comprehension_clauses'>;
 	export type Tree = TreeFor<'comprehension_clauses'>;
 	export type Kind = 'comprehension_clauses';
+}
+export namespace PrintArguments {
+	export type Config = ConfigFor<'_print_arguments'>;
+	export type Fluent = FluentFor<'_print_arguments'>;
+	export type Loose = LooseFor<'_print_arguments'>;
+	export type Tree = TreeFor<'_print_arguments'>;
+	export type Kind = '_print_arguments';
+}
+export namespace PrintChevronArguments {
+	export type Config = ConfigFor<'_print_chevron_arguments'>;
+	export type Fluent = FluentFor<'_print_chevron_arguments'>;
+	export type Loose = LooseFor<'_print_chevron_arguments'>;
+	export type Tree = TreeFor<'_print_chevron_arguments'>;
+	export type Kind = '_print_chevron_arguments';
 }
 export namespace PrintStatementGroup1 {
 	export type Config = ConfigFor<'print_statement_group1'>;

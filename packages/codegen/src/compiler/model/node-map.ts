@@ -70,7 +70,7 @@ import type {
 	SupertypeRule,
 	Multiplicity,
 	RuleId,
-	SeparatorFlankMode
+	DelimiterMode
 } from '../../types/rule.ts';
 import {
 	isSeq,
@@ -490,12 +490,12 @@ export interface RenderTemplateSlot {
 	readonly name: string;
 	readonly view: 'scalar' | 'list' | 'field';
 	readonly required: boolean;
-	readonly hasLeading: boolean;
-	readonly hasTrailing: boolean;
-	/** See `AssembledNonterminalInit.trailingMode`'s doc comment. */
-	readonly trailingMode: 'mandatory' | 'optional' | 'none';
-	/** See `AssembledNonterminalInit.leadingMode`'s doc comment. */
-	readonly leadingMode: 'mandatory' | 'optional' | 'none';
+	readonly hasLeadingDelimiter: boolean;
+	readonly hasTrailingDelimiter: boolean;
+	/** See `AssembledNonterminalInit.trailingDelimiter`'s doc comment. */
+	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
+	/** See `AssembledNonterminalInit.leadingDelimiter`'s doc comment. */
+	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
 }
 
 // ---------------------------------------------------------------------------
@@ -875,15 +875,13 @@ function _deriveSlotsInternal(rule: Rule<'link'>, ctx?: DeriveCtx): AssembledNon
  * field within one rule (e.g. python `if_statement`'s `alternative` in both
  * a repeat and an optional). Widen to `'optional'` on any disagreement: the
  * merged field's actual flank presence then genuinely varies depending on
- * which occurrence a real parse reached, which is exactly what `'optional'`
- * mode triggers real per-instance wire capture for (see
- * `emitFieldFlankCaptureLines`, wrap.ts) — picking either single
+ * which occurrence a real parse reached — picking either single
  * occurrence's fixed mode would be wrong for a parse that reached the
  * other. Defined here (not `collect-slots.ts`, its other call site) since
  * `collect-slots.ts` already imports `AssembledNonterminal` from this file
  * — the reverse import would cycle.
  */
-export function mergeFlankMode(modes: readonly ['mandatory' | 'optional' | 'none', 'mandatory' | 'optional' | 'none']): 'mandatory' | 'optional' | 'none' {
+export function mergeDelimiterMode(modes: readonly ['mandatory' | 'optional' | 'none', 'mandatory' | 'optional' | 'none']): 'mandatory' | 'optional' | 'none' {
 	const [a, b] = modes;
 	return a === b ? a : 'optional';
 }
@@ -912,10 +910,10 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 		const existing = out[idx]!;
 		out[idx] = existing.with({
 			values: dedupeValues([...existing.values, ...f.values]),
-			hasTrailing: existing.hasTrailing || f.hasTrailing,
-			hasLeading: existing.hasLeading || f.hasLeading,
-			trailingMode: mergeFlankMode([existing.trailingMode, f.trailingMode]),
-			leadingMode: mergeFlankMode([existing.leadingMode, f.leadingMode]),
+			hasTrailingDelimiter: existing.hasTrailingDelimiter || f.hasTrailingDelimiter,
+			hasLeadingDelimiter: existing.hasLeadingDelimiter || f.hasLeadingDelimiter,
+			trailingDelimiter: mergeDelimiterMode([existing.trailingDelimiter, f.trailingDelimiter]),
+			leadingDelimiter: mergeDelimiterMode([existing.leadingDelimiter, f.leadingDelimiter]),
 			sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, f.sourceRuleIds)
 		});
 	}
@@ -1370,7 +1368,11 @@ export function deriveValuesForRule(
 			// plain union arms' kinds.
 			return nonBlank.flatMap((m) => {
 				const values = deriveValuesForRule(m, ctx, armMult);
-				const fieldName = (m as { fieldName?: string }).fieldName;
+				// A fielded arm appears either as a genuine FIELD wrapper
+				// (link-phase rule, e.g. a separatedList's element choice) or
+				// as a pushed-down `fieldName` attribute (post-wrapper-deletion
+				// members) — both route by field label at read time.
+				const fieldName = m.type === FIELD ? m.name : (m as { fieldName?: string }).fieldName;
 				return fieldName === undefined ? values : values.map((v) => ({ ...v, parseName: fieldName }));
 			});
 		}
@@ -1654,23 +1656,23 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 export interface AssembledNonterminalInit {
 	readonly values: readonly NodeOrTerminal[];
 	readonly fieldName?: string;
-	readonly hasTrailing: boolean;
-	readonly hasLeading: boolean;
+	readonly hasTrailingDelimiter: boolean;
+	readonly hasLeadingDelimiter: boolean;
 	/**
-	 * Tri-state flank mode backing `hasTrailing`/`hasLeading`'s boolean
+	 * Tri-state flank mode backing `hasTrailingDelimiter`/`hasLeadingDelimiter`'s boolean
 	 * presence check, when the producer has it — `AssembledSeparatedList`'s
-	 * `trailingMode`/`leadingMode` counterpart, for a per-*slot* (not
+	 * `trailingDelimiter`/`leadingDelimiter` counterpart, for a per-*slot* (not
 	 * per-kind) array field. Optional so every existing constructor caller
 	 * (test fixtures, merge helpers that only ever OR the booleans) keeps
 	 * working unchanged; `collect-slots.ts::buildSlot` — the sole real
 	 * derivation site — stamps it from the same `sep` it already reads to
-	 * compute `hasTrailing`/`hasLeading`, so the two facts can't disagree at
-	 * the point of truth. Defaults to `hasTrailing ? 'mandatory' : 'none'`
+	 * compute `hasTrailingDelimiter`/`hasLeadingDelimiter`, so the two facts can't disagree at
+	 * the point of truth. Defaults to `hasTrailingDelimiter ? 'mandatory' : 'none'`
 	 * when omitted, matching today's collapsed-boolean behavior exactly.
 	 */
-	readonly trailingMode?: 'mandatory' | 'optional' | 'none';
-	/** See `trailingMode`'s doc comment — same rationale, `leading` side. */
-	readonly leadingMode?: 'mandatory' | 'optional' | 'none';
+	readonly trailingDelimiter?: 'mandatory' | 'optional' | 'none';
+	/** See `trailingDelimiter`'s doc comment — same rationale, `leading` side. */
+	readonly leadingDelimiter?: 'mandatory' | 'optional' | 'none';
 	readonly sourceRuleIds: readonly RuleId[];
 	readonly metadata?: OpaqueFacts;
 	readonly ruleMetadata?: RuleMetadata;
@@ -1693,12 +1695,12 @@ export function mergeSourceRuleIds(...groups: readonly (readonly RuleId[] | unde
 export class AssembledNonterminal {
 	readonly values: readonly NodeOrTerminal[];
 	readonly fieldName?: string;
-	readonly hasTrailing: boolean;
-	readonly hasLeading: boolean;
-	/** See `AssembledNonterminalInit.trailingMode`'s doc comment. */
-	readonly trailingMode: 'mandatory' | 'optional' | 'none';
-	/** See `AssembledNonterminalInit.leadingMode`'s doc comment. */
-	readonly leadingMode: 'mandatory' | 'optional' | 'none';
+	readonly hasTrailingDelimiter: boolean;
+	readonly hasLeadingDelimiter: boolean;
+	/** See `AssembledNonterminalInit.trailingDelimiter`'s doc comment. */
+	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
+	/** See `AssembledNonterminalInit.leadingDelimiter`'s doc comment. */
+	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	/**
 	 * Rule<'link'>-ids of every simplified/render-rule position that produced this slot.
 	 * Used by `NodeMap.slotByRuleId` to back-pointer from whichever rule-tree
@@ -1746,10 +1748,10 @@ export class AssembledNonterminal {
 	constructor(init: AssembledNonterminalInit) {
 		this.values = init.values;
 		this.fieldName = init.fieldName;
-		this.hasTrailing = init.hasTrailing;
-		this.hasLeading = init.hasLeading;
-		this.trailingMode = init.trailingMode ?? (init.hasTrailing ? 'mandatory' : 'none');
-		this.leadingMode = init.leadingMode ?? (init.hasLeading ? 'mandatory' : 'none');
+		this.hasTrailingDelimiter = init.hasTrailingDelimiter;
+		this.hasLeadingDelimiter = init.hasLeadingDelimiter;
+		this.trailingDelimiter = init.trailingDelimiter ?? (init.hasTrailingDelimiter ? 'mandatory' : 'none');
+		this.leadingDelimiter = init.leadingDelimiter ?? (init.hasLeadingDelimiter ? 'mandatory' : 'none');
 		this.sourceRuleIds = init.sourceRuleIds;
 		this.metadata = init.metadata ?? opaqueFacts({});
 		this.ruleMetadata = init.ruleMetadata;
@@ -1760,10 +1762,10 @@ export class AssembledNonterminal {
 		return new AssembledNonterminal({
 			values: this.values,
 			fieldName: this.fieldName,
-			hasTrailing: this.hasTrailing,
-			hasLeading: this.hasLeading,
-			trailingMode: this.trailingMode,
-			leadingMode: this.leadingMode,
+			hasTrailingDelimiter: this.hasTrailingDelimiter,
+			hasLeadingDelimiter: this.hasLeadingDelimiter,
+			trailingDelimiter: this.trailingDelimiter,
+			leadingDelimiter: this.leadingDelimiter,
 			sourceRuleIds: this.sourceRuleIds,
 			metadata: this.metadata,
 			ruleMetadata: this.ruleMetadata,
@@ -2843,11 +2845,11 @@ export class AssembledMulti extends AssembledNodeBase<RenderRule> {
 		return extractSeparatorString(this.rule.separator);
 	}
 
-	get trailing(): SeparatorFlankMode | undefined {
+	get trailing(): DelimiterMode | undefined {
 		return this.rule.separator?.trailing;
 	}
 
-	get leading(): SeparatorFlankMode | undefined {
+	get leading(): DelimiterMode | undefined {
 		return this.rule.separator?.leading;
 	}
 }
@@ -2989,7 +2991,7 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 	readonly separatorRule: Rule<'link'> | undefined;
 	/**
 	 * Leading/trailing flank state — a direct passthrough of
-	 * `RuleBase.separator`'s own `leading`/`trailing` (`SeparatorFlankMode`,
+	 * `RuleBase.separator`'s own `leading`/`trailing` (`DelimiterMode`,
 	 * types/rule.ts): `'mandatory'`/`'optional'` when link.ts's
 	 * `liftCommaSep`/`absorbTrailingSeparator` absorbed a bare vs.
 	 * `optional(sepLit)`-wrapped flank member into the repeat, `'none'` when
@@ -3004,14 +3006,14 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 	 * (a nonterminal separator routes here regardless of flank state) — a
 	 * literal separator with ONLY `'mandatory'`/`'none'` flanks stays
 	 * classified as `'branch'`, rendered by the pre-existing
-	 * `hasTrailing`/`hasLeading` boolean mechanism instead. So a
+	 * `hasTrailingDelimiter`/`hasLeadingDelimiter` boolean mechanism instead. So a
 	 * literal-separator kind reaching this class always has at least one
 	 * `'optional'` flank; `'mandatory'` is only reachable here in
 	 * combination with a nonterminal separator or the OTHER flank being
 	 * `'optional'`.
 	 */
-	readonly leadingMode: 'mandatory' | 'optional' | 'none';
-	readonly trailingMode: 'mandatory' | 'optional' | 'none';
+	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
+	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
 
 	/**
 	 * TEMPORARY behavior-preserving stub (separator-as-slot Task 2 follow-up,
@@ -3029,7 +3031,7 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 	 * byte-identically to their pre-Task-2 `'branch'` output, so `cargo
 	 * build` stays green and existing corpus round-trips don't regress.
 	 * Tasks 4-6 replace this with real per-instance separator capture
-	 * (`_separator_kind`/`_leading_sep`/`_trailing_sep`); at that point this
+	 * (`_separator`/`_leading_sep`/`_trailing_sep`); at that point this
 	 * slot-bearing surface goes away — do NOT build new capture logic on
 	 * top of it.
 	 */
@@ -3055,10 +3057,17 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 	) {
 		super(kind, rule, {});
 		const sep = rule.separator;
-		this.elements = deriveValuesForRule(rule.content, ctx, rule.type === REPEAT1 ? 'nonEmptyArray' : 'array');
+		// Fielded element arms (`choice(field('name', …), enum_assignment)`)
+		// route by field label at read time — stamp the label as `parseName`
+		// so the wrap capture keys can include it.
+		this.elements = deriveValuesForRule(
+			rule.content,
+			{ ...ctx, stampArmFieldNamesAsParseName: true },
+			rule.type === REPEAT1 ? 'nonEmptyArray' : 'array'
+		);
 		this.separatorRule = opts.separatorRule;
-		this.leadingMode = sep?.leading ?? 'none';
-		this.trailingMode = sep?.trailing ?? 'none';
+		this.leadingDelimiter = sep?.leading ?? 'none';
+		this.trailingDelimiter = sep?.trailing ?? 'none';
 		this.simplifiedRule = opts.simplifiedRule;
 		this.renderRule = opts.renderRule;
 		this._slots = buildSlotsRecord(
@@ -3070,6 +3079,17 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 
 	get nonEmpty(): boolean {
 		return this.rule.type === REPEAT1;
+	}
+
+	/**
+	 * Comma-TERMINATED list family (the lift's mandatory-head suffix window,
+	 * `x sep (x sep)* x?`): every element trails its own separator, so a
+	 * SINGLE element requires the trailing delimiter — the undelimited
+	 * one-element form belongs to a different construct (rust `(1,)` vs
+	 * parenthesized `(1)`). The factory asserts this validity invariant.
+	 */
+	get terminatedSeparator(): boolean {
+		return (this.rule.separator as { terminated?: true } | undefined)?.terminated === true;
 	}
 
 	get separator(): string | undefined {
@@ -3499,3 +3519,19 @@ function ruleEdgeCharSet(
 			return undefined;
 	}
 }
+
+// ---------------------------------------------------------------------------
+// Delimiter flags — the separated-list options struct's instance value
+// ---------------------------------------------------------------------------
+
+/** Bitflag encoding of a separated list's OPTIONAL flank state — the
+ *  `delimiter` member of the list options struct. Mandatory flanks are
+ *  template text and never encoded; a slot's permitted values are exactly
+ *  the grammar's optional flanks (see `permittedDelimiters`). */
+export const DelimiterFlags = {
+	none: 0,
+	leading: 1,
+	trailing: 2,
+	both: 3
+} as const;
+

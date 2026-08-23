@@ -296,6 +296,7 @@ export interface IsGuards {
 	FormalParametersElements<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.FormalParametersElements };
+	EnumBodyElements<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.EnumBodyElements };
 	Types<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Types };
 	TypeParametersElements<T extends { readonly $type: number }>(
 		v: T
@@ -546,6 +547,7 @@ export interface AssertGuards {
 	FormalParametersElements(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.FormalParametersElements };
+	EnumBodyElements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumBodyElements };
 	Types(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Types };
 	TypeParametersElements(v: {
 		readonly $type: number;
@@ -1120,6 +1122,7 @@ export const is = {
 	ImportClauseGroup1: _g(TSKindId.ImportClauseGroup1),
 	ImportSpecifiers: _g(TSKindId.ImportSpecifiers),
 	FormalParametersElements: _g(TSKindId.FormalParametersElements),
+	EnumBodyElements: _g(TSKindId.EnumBodyElements),
 	Types: _g(TSKindId.Types),
 	TypeParametersElements: _g(TSKindId.TypeParametersElements),
 	TupleTypeMembers: _g(TSKindId.TupleTypeMembers),
@@ -1355,6 +1358,7 @@ export const assert = {
 	ImportClauseGroup1: _makeAssert('ImportClauseGroup1', is.ImportClauseGroup1 as _AnyGuard),
 	ImportSpecifiers: _makeAssert('ImportSpecifiers', is.ImportSpecifiers as _AnyGuard),
 	FormalParametersElements: _makeAssert('FormalParametersElements', is.FormalParametersElements as _AnyGuard),
+	EnumBodyElements: _makeAssert('EnumBodyElements', is.EnumBodyElements as _AnyGuard),
 	Types: _makeAssert('Types', is.Types as _AnyGuard),
 	TypeParametersElements: _makeAssert('TypeParametersElements', is.TypeParametersElements as _AnyGuard),
 	TupleTypeMembers: _makeAssert('TupleTypeMembers', is.TupleTypeMembers as _AnyGuard),

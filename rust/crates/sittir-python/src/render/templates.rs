@@ -58,30 +58,30 @@ pub mod filters {
     #[allow(non_snake_case)]
     pub fn joinWithTrailing<'a, T: JoinSource<'a> + ?Sized>(
         xs: &'a T,
-        values: &dyn ::askama::Values,
+        _values: &dyn ::askama::Values,
         sep: &'a str,
     ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
-        ::sittir_core::filters::joinWithTrailing(xs, values, sep)
+        ::sittir_core::filters::joinWithTrailing(xs, sep)
     }
 
     #[::askama::filter_fn]
     #[allow(non_snake_case)]
     pub fn joinWithLeading<'a, T: JoinSource<'a> + ?Sized>(
         xs: &'a T,
-        values: &dyn ::askama::Values,
+        _values: &dyn ::askama::Values,
         sep: &'a str,
     ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
-        ::sittir_core::filters::joinWithLeading(xs, values, sep)
+        ::sittir_core::filters::joinWithLeading(xs, sep)
     }
 
     #[::askama::filter_fn]
     #[allow(non_snake_case)]
     pub fn joinWithFlanks<'a, T: JoinSource<'a> + ?Sized>(
         xs: &'a T,
-        values: &dyn ::askama::Values,
+        _values: &dyn ::askama::Values,
         sep: &'a str,
     ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
-        ::sittir_core::filters::joinWithFlanks(xs, values, sep)
+        ::sittir_core::filters::joinWithFlanks(xs, sep)
     }
 
     pub use ::sittir_core::filters::{
@@ -230,6 +230,18 @@ pub struct PatternListPatternsTemplate<'a> {
 #[template(path = "_patterns.jinja", escape = "none")]
 pub struct PatternsTemplate<'a> {
     pub pattern: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_print_arguments.jinja", escape = "none")]
+pub struct PrintArgumentsTemplate<'a> {
+    pub argument: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_print_chevron_arguments.jinja", escape = "none")]
+pub struct PrintChevronArgumentsTemplate<'a> {
+    pub argument: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -835,14 +847,14 @@ pub struct PatternListTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "print_statement_group1.jinja", escape = "none")]
 pub struct PrintStatementGroup1Template<'a> {
-    pub argument: ListNonterminalView<'a>,
     pub chevron: SingleNonterminalView<'a>,
+    pub print_chevron_arguments: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "print_statement_group2.jinja", escape = "none")]
 pub struct PrintStatementGroup2Template<'a> {
-    pub argument: ListNonterminalView<'a>,
+    pub print_arguments: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

@@ -93,8 +93,12 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 
 			readonly separator?: {
 				readonly value: Rule<Phase>;
-				readonly trailing?: SeparatorFlankMode;
-				readonly leading?: SeparatorFlankMode;
+				readonly trailing?: DelimiterMode;
+				readonly leading?: DelimiterMode;
+				// Comma-TERMINATED list family (`(x sep)+ x?`): every element
+				// trails its own separator, so a single element REQUIRES the
+				// trailing delimiter (rust `(1,)` vs parenthesized `(1)`).
+				readonly terminated?: true;
 			};
 
 			// The deleted wrapper was an optional at the ELEMENT POSITION of a
@@ -181,7 +185,7 @@ export type ChoiceRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly members: Rule<T>[];
 };
 
-export type SeparatorFlankMode = 'mandatory' | 'optional';
+export type DelimiterMode = 'mandatory' | 'optional';
 
 export type RepeatRule<T extends PhaseName = 'link'> = T extends 'link'
 	? RuleBase<T> & {
@@ -189,8 +193,10 @@ export type RepeatRule<T extends PhaseName = 'link'> = T extends 'link'
 			readonly content: Rule<T>;
 			readonly separator?: {
 				readonly value: Rule<T>;
-				readonly trailing?: SeparatorFlankMode;
-				readonly leading?: SeparatorFlankMode;
+				readonly trailing?: DelimiterMode;
+				readonly leading?: DelimiterMode;
+				/** See RuleBase.separator — comma-terminated list family. */
+				readonly terminated?: true;
 			};
 		}
 	: T extends 'evaluate'
@@ -198,8 +204,8 @@ export type RepeatRule<T extends PhaseName = 'link'> = T extends 'link'
 				readonly type: typeof REPEAT;
 				readonly content: Rule<T>;
 				readonly separator?: string;
-				readonly trailing?: SeparatorFlankMode;
-				readonly leading?: SeparatorFlankMode;
+				readonly trailing?: DelimiterMode;
+				readonly leading?: DelimiterMode;
 			}
 		: never;
 
@@ -209,8 +215,10 @@ export type Repeat1Rule<T extends PhaseName = 'link'> = T extends 'link'
 			readonly content: Rule<T>;
 			readonly separator?: {
 				readonly value: Rule<T>;
-				readonly trailing?: SeparatorFlankMode;
-				readonly leading?: SeparatorFlankMode;
+				readonly trailing?: DelimiterMode;
+				readonly leading?: DelimiterMode;
+				/** See RuleBase.separator — comma-terminated list family. */
+				readonly terminated?: true;
 			};
 		}
 	: T extends 'evaluate'
@@ -218,8 +226,8 @@ export type Repeat1Rule<T extends PhaseName = 'link'> = T extends 'link'
 				readonly type: typeof REPEAT1;
 				readonly content: Rule<T>;
 				readonly separator?: string;
-				readonly trailing?: SeparatorFlankMode;
-				readonly leading?: SeparatorFlankMode;
+				readonly trailing?: DelimiterMode;
+				readonly leading?: DelimiterMode;
 			}
 		: never;
 

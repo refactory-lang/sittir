@@ -124,6 +124,8 @@ import type {
 	ExpressionListTree,
 	ExpressionStatement,
 	ExpressionStatementTree,
+	ExpressionStatementTuple,
+	ExpressionStatementTupleTree,
 	False,
 	FalseTree,
 	FinallyClause,
@@ -228,6 +230,10 @@ import type {
 	PatternListTree,
 	Patterns,
 	PatternsTree,
+	PrintArguments,
+	PrintArgumentsTree,
+	PrintChevronArguments,
+	PrintChevronArgumentsTree,
 	PrintStatement,
 	PrintStatementGroup1,
 	PrintStatementGroup1Tree,
@@ -518,11 +524,18 @@ export type _Type_CaseAsPattern = _TypeAssert<_TypeExtends<CaseAsPattern['$type'
 export type _Type_ComprehensionClauses = _TypeAssert<
 	_TypeExtends<ComprehensionClauses['$type'], TSKindId.ComprehensionClauses>
 >;
+export type _Type_PrintArguments = _TypeAssert<_TypeExtends<PrintArguments['$type'], TSKindId.PrintArguments>>;
+export type _Type_PrintChevronArguments = _TypeAssert<
+	_TypeExtends<PrintChevronArguments['$type'], TSKindId.PrintChevronArguments>
+>;
 export type _Type_PrintStatementGroup1 = _TypeAssert<
 	_TypeExtends<PrintStatementGroup1['$type'], TSKindId.PrintStatementGroup1>
 >;
 export type _Type_PrintStatementGroup2 = _TypeAssert<
 	_TypeExtends<PrintStatementGroup2['$type'], TSKindId.PrintStatementGroup2>
+>;
+export type _Type_ExpressionStatementTuple = _TypeAssert<
+	_TypeExtends<ExpressionStatementTuple['$type'], TSKindId.ExpressionStatementTuple>
 >;
 export type _Type_WithClauseBare = _TypeAssert<_TypeExtends<WithClauseBare['$type'], TSKindId.WithClauseBare>>;
 export type _Type_WithClauseParen = _TypeAssert<_TypeExtends<WithClauseParen['$type'], TSKindId.WithClauseParen>>;
@@ -761,11 +774,18 @@ export type _Tree_CaseAsPattern = _TypeAssert<_TypeExtends<CaseAsPatternTree['ty
 export type _Tree_ComprehensionClauses = _TypeAssert<
 	_TypeExtends<ComprehensionClausesTree['type'], 'comprehension_clauses'>
 >;
+export type _Tree_PrintArguments = _TypeAssert<_TypeExtends<PrintArgumentsTree['type'], '_print_arguments'>>;
+export type _Tree_PrintChevronArguments = _TypeAssert<
+	_TypeExtends<PrintChevronArgumentsTree['type'], '_print_chevron_arguments'>
+>;
 export type _Tree_PrintStatementGroup1 = _TypeAssert<
 	_TypeExtends<PrintStatementGroup1Tree['type'], 'print_statement_group1'>
 >;
 export type _Tree_PrintStatementGroup2 = _TypeAssert<
 	_TypeExtends<PrintStatementGroup2Tree['type'], 'print_statement_group2'>
+>;
+export type _Tree_ExpressionStatementTuple = _TypeAssert<
+	_TypeExtends<ExpressionStatementTupleTree['type'], '_expression_statement_tuple'>
 >;
 export type _Tree_WithClauseBare = _TypeAssert<_TypeExtends<WithClauseBareTree['type'], '_with_clause_bare'>>;
 export type _Tree_WithClauseParen = _TypeAssert<_TypeExtends<WithClauseParenTree['type'], '_with_clause_paren'>>;

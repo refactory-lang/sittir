@@ -1585,8 +1585,8 @@ export interface NodeToConfigOpts {
 	readonly kindNameFromId?: (id: number) => string | undefined;
 	/** `KIND_LITERAL_TEXT` (types.ts) — literal punctuation/keyword text for
 	 * anonymous-token kind ids. Reverses a separatedList's captured
-	 * `_separator_kind` back to the literal string its factory's
-	 * `options.separatorKind` expects. */
+	 * `_separator` back to the literal string its factory's
+	 * `options.separator` expects. */
 	readonly kindLiteralText?: ReadonlyMap<number, string>;
 }
 
@@ -1739,7 +1739,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		return factory(...childArgs);
 	}
 	// 'elements' shape: separatedList factory — spread with a LEADING
-	// optional options bag, `(...elements)` / `({separatorKind?, leading?,
+	// optional options bag, `(...elements)` / `({separator?, delimiter?,
 	// trailing?}, ...elements)` — distinct from 'spread's plain rest-param
 	// convention (see classifyFactoryShape).
 	if (shape === 'elements') {
@@ -2821,29 +2821,21 @@ export function dedupeMismatchesByContainment<T extends { entry?: string; start:
 
 /**
  * Build a separatedList factory's options bag from a read/wrap node's
- * separator facts. The flank keys have two generated spellings — the
- * kind-level `_trailing_sep`/`_leading_sep` (separatedList modelType) and
- * the field-prefixed `_<field>_trailing_sep` (per-field flank capture on
- * field-backed lists) — so the key is discovered on the node itself by
- * suffix rather than hardcoded: the exact kind-level key wins, else a
- * unique suffix-matching key (multiple matches are ambiguous → absent).
+ * kind-level separator facts — `_delimiter` (bitflag: leading = 1,
+ * trailing = 2) and `_separator` (dynamic separator kind id). One wire
+ * spelling: a delimiter-bearing list is always its own separatedList
+ * kind, so the kind-level keys are the only place these facts live.
  */
 export function separatedListFactoryOptions(
 	data: unknown,
 	kindLiteralText: ReadonlyMap<number, string> | undefined
-): { separatorKind?: string; leading?: boolean; trailing?: boolean } | undefined {
+): { separator?: string; delimiter?: number } | undefined {
 	const rec = (data ?? {}) as Record<string, unknown>;
-	const flank = (which: 'leading' | 'trailing'): boolean => {
-		const exact = `_${which}_sep`;
-		if (typeof rec[exact] === 'boolean') return rec[exact] === true;
-		const matches = Object.keys(rec).filter((k) => k.endsWith(exact));
-		return matches.length === 1 && rec[matches[0]!] === true;
-	};
-	const separatorSourceKind = rec['_separator_kind'] as number | undefined;
-	const separatorKind = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
-	const options: { separatorKind?: string; leading?: boolean; trailing?: boolean } = {};
-	if (separatorKind !== undefined) options.separatorKind = separatorKind;
-	if (flank('leading')) options.leading = true;
-	if (flank('trailing')) options.trailing = true;
+	const delimiter = typeof rec['_delimiter'] === 'number' ? rec['_delimiter'] : 0;
+	const separatorSourceKind = rec['_separator'] as number | undefined;
+	const separator = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
+	const options: { separator?: string; delimiter?: number } = {};
+	if (separator !== undefined) options.separator = separator;
+	if (delimiter !== 0) options.delimiter = delimiter;
 	return Object.keys(options).length > 0 ? options : undefined;
 }

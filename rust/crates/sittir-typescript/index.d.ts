@@ -427,8 +427,6 @@ export interface CatchClauseTransport {
   '$triviaData'?: TransportTrivia
   _body: StatementBlockTransport
   _catch_clause_group1?: CatchClauseGroup1Transport
-  _parameter?: CatchClauseGroup1ParameterTransportSlot
-  _type?: TypeAnnotationTransport
 }
 
 export interface ClassBodyMemberTransport {
@@ -740,7 +738,7 @@ export interface EnumBodyElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<EnumBodyElementsContentTransportSlot>
-  _content_trailing_sep?: boolean
+  _delimiter?: number
 }
 
 export interface EnumBodyTransport {
@@ -776,7 +774,6 @@ export interface ExportClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _export_specifiers?: ExportSpecifiersTransport
-  _export_specifier?: Array<ExportSpecifierTransport>
 }
 
 export interface ExportSpecifierOptional1Transport {
@@ -799,8 +796,7 @@ export interface ExportSpecifiersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _export_specifier: Array<ExportSpecifierTransport>
-  _export_specifier_trailing_sep?: boolean
-  _trailing_sep?: boolean
+  _delimiter?: number
 }
 
 export interface ExportSpecifierTransport {
@@ -1113,8 +1109,7 @@ export interface FormalParametersElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _formal_parameter: Array<FormalParameterTransport>
-  _formal_parameter_trailing_sep?: boolean
-  _trailing_sep?: boolean
+  _delimiter?: number
 }
 
 export interface FormalParametersTransport {
@@ -1126,7 +1121,6 @@ export interface FormalParametersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _formal_parameters_elements?: FormalParametersElementsTransport
-  _formal_parameter?: Array<FormalParameterTransport>
 }
 
 export interface ForStatementTransport {
@@ -1377,8 +1371,7 @@ export interface ImportSpecifiersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _import_specifier: Array<ImportSpecifierTransport>
-  _import_specifier_trailing_sep?: boolean
-  _trailing_sep?: boolean
+  _delimiter?: number
 }
 
 export interface ImportSpecifierTransport {
@@ -1622,7 +1615,6 @@ export interface JsxOpeningElementContentTransport {
   _name?: JsxOpeningElementContentNameTransportSlot
   _attribute?: Array<_JsxAttributeTransport>
   _jsx_start_opening_element_group1?: JsxStartOpeningElementGroup1Transport
-  _type_arguments?: TypeArgumentsTransport
 }
 
 export interface JsxOpeningElementTransport {
@@ -1634,8 +1626,6 @@ export interface JsxOpeningElementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _jsx_opening_element_content?: JsxOpeningElementContentTransport
-  _name?: JsxOpeningElementContentNameTransportSlot
-  _attribute?: Array<_JsxAttributeTransport>
 }
 
 export interface JsxSelfClosingElementTransport {
@@ -1647,8 +1637,6 @@ export interface JsxSelfClosingElementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _jsx_opening_element_content?: JsxOpeningElementContentTransport
-  _name?: JsxOpeningElementContentNameTransportSlot
-  _attribute?: Array<_JsxAttributeTransport>
 }
 
 export interface JsxStartOpeningElementGroup1Transport {
@@ -1672,8 +1660,6 @@ export interface JsxStartOpeningElementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _jsx_opening_element_content?: JsxOpeningElementContentTransport
-  _name?: JsxOpeningElementContentNameTransportSlot
-  _attribute?: Array<_JsxAttributeTransport>
 }
 
 export interface JsxStringTransport {
@@ -1860,7 +1846,6 @@ export interface NamedImportsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _import_specifiers?: ImportSpecifiersTransport
-  _import_specifier?: Array<ImportSpecifierTransport>
 }
 
 export interface NamespaceExportTransport {
@@ -1988,11 +1973,8 @@ export interface ObjectTypeContentTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<ObjectTypeContentContentTransportSlot>
-  _content_trailing_sep?: boolean
-  _content_leading_sep?: boolean
-  _leading_sep?: boolean
-  _trailing_sep?: boolean
-  _separator_kind?: number
+  _delimiter?: number
+  _separator?: number
 }
 
 export interface ObjectTypeTransport {
@@ -2564,8 +2546,7 @@ export interface TupleTypeMembersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _tuple_type_member: Array<TupleTypeMemberTransport>
-  _tuple_type_member_trailing_sep?: boolean
-  _trailing_sep?: boolean
+  _delimiter?: number
 }
 
 export interface TupleTypeTransport {
@@ -2577,7 +2558,6 @@ export interface TupleTypeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _tuple_type_members?: TupleTypeMembersTransport
-  _tuple_type_member?: Array<TupleTypeMemberTransport>
 }
 
 export interface TypeAliasDeclarationTransport {
@@ -2614,7 +2594,6 @@ export interface TypeArgumentsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _types: TypesTransport
-  _type?: Array<TypeTransport>
 }
 
 export interface TypeAssertionTransport {
@@ -2638,8 +2617,7 @@ export interface TypeParametersElementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type_parameter: Array<TypeParameterTransport>
-  _type_parameter_trailing_sep?: boolean
-  _trailing_sep?: boolean
+  _delimiter?: number
 }
 
 export interface TypeParametersTransport {
@@ -2651,7 +2629,6 @@ export interface TypeParametersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type_parameters_elements: TypeParametersElementsTransport
-  _type_parameter?: Array<TypeParameterTransport>
 }
 
 export interface TypeParameterTransport {
@@ -2784,8 +2761,7 @@ export interface TypesTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: Array<TypeTransport>
-  _type_trailing_sep?: boolean
-  _trailing_sep?: boolean
+  _delimiter?: number
 }
 
 export interface UnaryExpressionTransport {

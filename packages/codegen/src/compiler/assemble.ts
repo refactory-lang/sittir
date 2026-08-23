@@ -327,7 +327,17 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					break;
 				}
 				case 'separatedList': {
-					const listRule = inlinedRule as RepeatRule | Repeat1Rule;
+					// Group-wrapped separated lists (polymorph forms / content
+					// aliases) peel the same wrappers classification peeled:
+					// the GROUP layer across all three phase views (identity
+					// for non-group kinds), then the sole-member SEQ the lift's
+					// absorption left around the repeat.
+					const { groupRule, groupSimplified, groupRenderRule } = unwrapGroupRuleAndSimplified(
+						inlinedRule,
+						simplifiedRule,
+						renderRule
+					);
+					const listRule = peelSeparatedListCore(groupRule) as RepeatRule | Repeat1Rule;
 					const sep = listRule.separator;
 					const separatorRule = sep && isNonterminalRuleType(sep.value as Rule<'evaluate'>) ? sep.value : undefined;
 					nodes.set(
@@ -341,11 +351,12 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 								// TEMPORARY behavior-preserving stub (see
 								// AssembledSeparatedList's doc comment) — the SAME
 								// simplifiedRule/renderRule/parseKindCollisionContext
-								// the 'branch' case above passes, so wrap/render/
-								// factory emission reusing 'branch's code path stays
-								// byte-identical to pre-Task-2 output.
-								simplifiedRule,
-								renderRule,
+								// the 'branch' case above passes (group-unwrapped for
+								// group-wrapped kinds, exactly as the 'group' case
+								// would have), so wrap/render/factory emission reusing
+								// 'branch's code path stays byte-identical.
+								simplifiedRule: groupSimplified,
+								renderRule: groupRenderRule,
 								parseKindCollisionContext
 							}
 						)
@@ -1317,6 +1328,12 @@ export function classifyNode(
 			case SUPERTYPE:
 				return 'supertype';
 			case GROUP:
+				// A polymorph-form / content-alias GROUP is a transparent
+				// wrapper: when its (sole) content carries a lifted separated
+				// list's multiplicity + separator, the kind IS that list — the
+				// delimiter belongs to the kind, so it classifies
+				// separatedList, not opaque group.
+				if (isSeparatedListShape(peelSeparatedListCore(rule) as RenderRule)) return 'separatedList';
 				return 'group';
 			// No TERMINAL case: that rule type doesn't exist — terminal-shaped
 			// leaves classify via classifyTerminalFallback below instead.
@@ -1335,6 +1352,20 @@ export function classifyNode(
 	return classifyTerminalFallback(kind, rule);
 }
 
+/**
+ * Peel the transparent wrappers a group-wrapped separated list sits under —
+ * the GROUP wrapper itself and a sole-member SEQ left behind when the
+ * separator lift absorbed every other member — to reach the rule that
+ * carries the list's multiplicity + separator (phase-generic: the same two
+ * wrappers appear in the link view as in the wrapper-deleted render view).
+ * Identity for any other shape.
+ */
+function peelSeparatedListCore(rule: AnyRule): AnyRule {
+	let r: AnyRule = rule.type === GROUP ? (rule.content as AnyRule) : rule;
+	if (r.type === SEQ && r.members.length === 1) r = r.members[0] as AnyRule;
+	return r;
+}
+
 function isSeparatedListShape(rule: RenderRule): boolean {
 	if (rule.multiplicity !== 'array' && rule.multiplicity !== 'nonEmptyArray') return false;
 	const sep = rule.separator;
@@ -1343,7 +1374,7 @@ function isSeparatedListShape(rule: RenderRule): boolean {
 	// Only a genuinely OPTIONAL flank has per-instance variability worth
 	// this classification — 'mandatory' (always present) is compile-time
 	// renderable exactly like 'none' (absent), and stays classified as
-	// 'branch' via the pre-existing hasTrailing/hasLeading mechanism.
+	// 'branch' via the pre-existing hasTrailingDelimiter/hasLeadingDelimiter mechanism.
 	return sep.trailing === 'optional' || sep.leading === 'optional';
 }
 

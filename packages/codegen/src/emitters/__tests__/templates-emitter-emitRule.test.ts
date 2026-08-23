@@ -80,8 +80,8 @@ function makeSlot(overrides: Partial<AssembledNonterminal>): AssembledNontermina
 		storageName: 'value',
 		values: [SINGLE_REQUIRED_VALUE],
 		paramName: 'value',
-		hasTrailing: false,
-		hasLeading: false,
+		hasTrailingDelimiter: false,
+		hasLeadingDelimiter: false,
 		...overrides
 	} as AssembledNonterminal;
 }

@@ -2,8 +2,8 @@
  * render-module.ts — 'separatedList' render wiring (separator-as-slot Task 5).
  *
  * Covers:
- * - renderTransportDataStruct: `leading_sep`/`trailing_sep`/`separator_kind`
- *   sibling transport-struct fields, gated on leadingMode/trailingMode/
+ * - renderTransportDataStruct: `delimiter`/`separator_kind`
+ *   sibling transport-struct fields, gated on leadingDelimiter/trailingDelimiter/
  *   separatorRule exactly like wrap.ts's `emitSeparatedListWrap` wire capture.
  * - buildTypedTemplateBody: real `leading`/`trailing`/`separator` expressions
  *   in the emitted `ListNonterminalView` for 'separatedList' kinds, instead
@@ -110,7 +110,7 @@ const GENERATED_ID_TABLES: GeneratedIdTables = {
 };
 
 describe('renderTransportDataStruct — separatedList sibling fields', () => {
-	it('emits leading_sep/trailing_sep/separator_kind for a nonterminal separator with both flanks optional', () => {
+	it('emits delimiter/separator_kind for a nonterminal separator with both flanks optional', () => {
 		const sepChoice: Rule<'link'> = {
 			type: CHOICE,
 			members: [
@@ -126,15 +126,13 @@ describe('renderTransportDataStruct — separatedList sibling fields', () => {
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
 		const emitted = emitRenderModule('rust', [], nodeMap, GENERATED_ID_TABLES).transportRs.contents;
 
-		expect(emitted).toContain('pub leading_sep: Option<bool>,');
-		expect(emitted).toContain('pub trailing_sep: Option<bool>,');
+		expect(emitted).toContain('pub delimiter: Option<u8>,');
 		expect(emitted).toContain('pub separator_kind: Option<u16>,');
-		expect(emitted).toContain('napi(js_name = "_leading_sep")');
-		expect(emitted).toContain('napi(js_name = "_trailing_sep")');
-		expect(emitted).toContain('napi(js_name = "_separator_kind")');
+		expect(emitted).toContain('napi(js_name = "_delimiter")');
+		expect(emitted).toContain('napi(js_name = "_separator")');
 	});
 
-	it('omits separator_kind and leading_sep for a literal-separator node with only an optional trailing flank', () => {
+	it('omits separator_kind for a literal-separator node with only an optional trailing flank', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
@@ -144,8 +142,7 @@ describe('renderTransportDataStruct — separatedList sibling fields', () => {
 		const emitted = emitRenderModule('rust', [], nodeMap, GENERATED_ID_TABLES).transportRs.contents;
 
 		expect(emitted).not.toContain('pub separator_kind:');
-		expect(emitted).not.toContain('pub leading_sep:');
-		expect(emitted).toContain('pub trailing_sep: Option<bool>,');
+		expect(emitted).toContain('pub delimiter: Option<u8>,');
 	});
 
 	it('emits no sibling fields at all for a mandatory (non-optional) literal separator', () => {
@@ -158,8 +155,7 @@ describe('renderTransportDataStruct — separatedList sibling fields', () => {
 		const emitted = emitRenderModule('rust', [], nodeMap, GENERATED_ID_TABLES).transportRs.contents;
 
 		expect(emitted).not.toContain('pub separator_kind:');
-		expect(emitted).not.toContain('pub leading_sep:');
-		expect(emitted).not.toContain('pub trailing_sep:');
+		expect(emitted).not.toContain('pub delimiter:');
 	});
 });
 
@@ -185,8 +181,8 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 			GENERATED_ID_TABLES
 		).transportRs.contents;
 
-		expect(emitted).toContain('leading: node.leading_sep.unwrap_or(false),');
-		expect(emitted).toContain('trailing: node.trailing_sep.unwrap_or(false),');
+		expect(emitted).toContain('leading: node.delimiter.map(|d| d & 1 != 0).unwrap_or(false),');
+		expect(emitted).toContain('trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),');
 		expect(emitted).toContain('separator: match node.separator_kind {');
 		expect(emitted).toContain('Some(3) => ",",');
 		expect(emitted).toContain('Some(4) => ";",');
@@ -207,10 +203,9 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		).transportRs.contents;
 
 		expect(emitted).toContain('leading: true,');
-		expect(emitted).toContain('trailing: node.trailing_sep.unwrap_or(false),');
+		expect(emitted).toContain('trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),');
 		// A 'mandatory' flank has no per-instance capture — no leading_sep field.
-		expect(emitted).not.toContain('pub leading_sep:');
-		expect(emitted).toContain('pub trailing_sep: Option<bool>,');
+		expect(emitted).toContain('pub delimiter: Option<u8>,');
 	});
 
 	it('emits literal false/false and the plain literal separator for a mandatory literal separator (no capture fields)', () => {
@@ -248,7 +243,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		).transportRs.contents;
 
 		expect(emitted).toContain('leading: false,');
-		expect(emitted).toContain('trailing: node.trailing_sep.unwrap_or(false),');
+		expect(emitted).toContain('trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),');
 	});
 
 	it('resolves only leading from the transport-struct field for a literal separator with an optional leading flank (mirror of the trailing-only case)', () => {
@@ -265,7 +260,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 			GENERATED_ID_TABLES
 		).transportRs.contents;
 
-		expect(emitted).toContain('leading: node.leading_sep.unwrap_or(false),');
+		expect(emitted).toContain('leading: node.delimiter.map(|d| d & 1 != 0).unwrap_or(false),');
 		expect(emitted).toContain('trailing: false,');
 	});
 
@@ -278,8 +273,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 			GENERATED_ID_TABLES
 		).transportRs.contents;
 
-		expect(emitted).not.toContain('pub leading_sep:');
-		expect(emitted).not.toContain('pub trailing_sep:');
+		expect(emitted).not.toContain('pub delimiter:');
 		expect(emitted).not.toContain('pub separator_kind:');
 		expect(emitted).toContain('leading: false,');
 		expect(emitted).toContain('trailing: false,');

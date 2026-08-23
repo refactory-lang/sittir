@@ -2268,14 +2268,17 @@ export function absorbSuffixSeparatedList(members: Rule<'link'>[]): Rule<'link'>
 				out.push({
 					type: REPEAT1,
 					content: repeat.content,
-					separator: { ...repeat.separator!, trailing: 'optional' }
+					separator: { ...repeat.separator!, trailing: 'optional', terminated: true }
 				});
 				i += 3;
 				changed = true;
 				continue;
 			}
 		}
-		// 2-window: repeat + optional tail, no standalone head.
+		// 2-window: repeat + optional tail, no standalone head. NOT stamped
+		// `terminated` — with no mandatory head, a lone element can be the
+		// optional (unterminated) tail itself, so a single element does not
+		// require its separator the way the 3-window's mandatory head does.
 		const repeat = repeatAt(i);
 		if (repeat && tailMatches(repeat, i + 1)) {
 			out.push({ ...repeat, separator: { ...repeat.separator!, trailing: 'optional' } });
@@ -2359,10 +2362,10 @@ export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
 	// Case 3: [sep, x, repeat(sep, x)] — a MANDATORY leading separator
 	// (bare, not `optional(...)`-wrapped): always present, no per-instance
 	// variability. Stamped `leading: 'mandatory'` — a real, distinct
-	// `SeparatorFlankMode` value from Case 4's `'optional'`, not the same
+	// `DelimiterMode` value from Case 4's `'optional'`, not the same
 	// boolean `true` both used to share (which is what let a genuinely
 	// mandatory flank get misclassified as `'optional'` downstream, per
-	// `AssembledSeparatedList.leadingMode`'s doc comment, node-map.ts).
+	// `AssembledSeparatedList.leadingDelimiter`'s doc comment, node-map.ts).
 	if (members.length === 3 && repeatIdx === 2 && rulesEqual(members[0]!, sep.value) && matchesElem(members[1]!)) {
 		return { type: REPEAT1, content: elem, separator: { ...sep, leading: 'mandatory' } };
 	}

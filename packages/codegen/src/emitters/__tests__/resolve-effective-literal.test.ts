@@ -30,8 +30,8 @@ function makeField(
 		propertyName: 'field',
 		configKey: 'field',
 		paramName: 'field',
-		hasTrailing: false,
-		hasLeading: false,
+		hasTrailingDelimiter: false,
+		hasLeadingDelimiter: false,
 		...overrides
 	} as AssembledNonterminal;
 }

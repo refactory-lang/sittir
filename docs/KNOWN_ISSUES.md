@@ -11,7 +11,6 @@ Suggested attack order (by payoff ÷ effort; remove a line when its entry is del
 3. `ki-nodemembervalue-boolean` — small type-union fix, deferred with the type-debt class
 4. `ki-interp-brace-padding` — cosmetic byte divergence, reparse-safe; walker-emitter change
 5. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
-6. `ki-perfield-flank-residual` — design-blocked (tuple separator-possession; print/expression-tuple override rewrites)
 
 ## `ki-emitsymbol-fielded-seq` — `emitSymbol`'s generalized hidden-helper inlining doesn't yet handle a fielded sequence inside the inlined target
 
@@ -39,23 +38,6 @@ The generalization was verified safe for every CURRENT occurrence (`_suite`'s ow
 **Found during:** closing the `rest_pattern` reparse rows — their wrapper (`let [${r}] = [];`) never reparsed because of this, not because of wrapper selection.
 
 The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the EXPRESSION fork: `let [c] = [];` parses as `expression_statement > assignment_expression > subscript_expression(object: reserved_identifier, ERROR, …)` — even the simplest array-destructuring `let` fails, while `const [c] = [];` (unambiguous keyword) parses correctly, and upstream tree-sitter-typescript parses the `let` form as a `lexical_declaration`. A GLR tie-break in the override grammar diverges from upstream's here (`let` doubles as a reserved identifier, so `let [` genuinely forks). No corpus entry currently exercises statement-level `let`-destructuring, so no validator row pins this — but it corrupts any real-world source using the construct. Fix belongs at the grammar level (a dynamic-precedence tie-break restoring upstream's resolution, the `primary_expression`/`list_splat_pattern` treatment in python's grammar being the in-repo precedent), not in consumers.
-
-## `ki-perfield-flank-residual` — five kinds keep per-field flank capture until their own designs land
-
-**Found during:** the separated-list redesign (visible list kinds + kind-level `_trailing_sep`/`_leading_sep`/`_separator_kind` keys). Every enrich-owned flank-carrying list now classifies `separatedList` and carries the kind-level keys; per-field `_<field>_trailing_sep` capture survives on exactly five kinds whose list shape can't be a plain separated list yet:
-
-- **rust `tuple_expression` / `tuple_type`** — the mandatory-first-separator family (`pair pair* elem?`): a single-element instance structurally REQUIRES the trailing separator (`(1,)` vs a parenthesized expression), so the shape is not language-equal to a classic separated list and the run hoist deliberately declines it. Needs the separator-possession design (the S3 family) to model "every element separator-terminated, last optionally bare".
-- **python `print_statement_group1` / `print_statement_group2` / `_expression_statement_tuple`** — override-authored bodies in the leading-mandatory family; enrich does not rewrite authored override bodies, and their lists are entangled with the chevron/polymorph machinery.
-
-The validator's suffix-discovery options helper (`separatedListFactoryOptions`, `packages/tools/src/validate/common.ts`) is retained for exactly these config-shaped factories — do not delete it while any generated wrap still emits a field-prefixed flank key (auditable via `rg '_\w+_(trailing|leading)_sep' packages/*/src/wrap.ts`).
-
-**Fix, if/when prioritized:** the separated-list options struct
-(`docs/superpowers/specs/2026-08-21-separated-list-options-struct.md`)
-retires the per-field representation wholesale — one
-`{ separator?, delimiter? }` struct per list slot replaces both key
-spellings; the rust tuple family becomes `delimiter: trailing` with a
-length invariant, and the python trio stores the same struct once their
-override bodies reference it.
 
 ## `ki-interp-brace-padding` — interpolation braces render with template-authored padding (`f"{ x }"`, `` `${ x }` ``)
 

@@ -1,5 +1,16 @@
 # Separated-List Options Struct — One Home for List Facts
 
+**Status:** Realized (2026-08-21) — all slices landed on
+`separated-list-options`: delimiter vocabulary + `_delimiter` bitflag +
+`_separator`, spread + leading-options factories, realification of every
+field-embedded delimiter-bearing list into its own separatedList kind
+(rust `tuple_type`/`tuple_expression` extractions, python print-group
+extractions, group-wrapped classification for `enum_body_elements` /
+`expression_statement_tuple` / `print_chevron_arguments`), the
+terminated-list single-element invariant, and deletion of the per-field
+flank machinery (emitters, sittir-core anon matching, validator suffix
+discovery).
+
 A separated list's slot is its identity: kinds like `enum_body_elements`
 exist to hold one element list, and every fact about that list (does a
 trailing separator render? which separator token did this instance use?)
@@ -40,10 +51,17 @@ elements:
   lists store the same struct as classified separated lists. Flanks can
   no longer be orphaned from their list by a consumer that reads only
   the elements key.
+- **The delimiter belongs in the kind itself.** A delimiter-bearing
+  separated list embedded in a field is realized as its own top-level
+  separatedList rule (hidden rule + visible alias — the existing
+  `*_elements` pattern), so the field holds a list NODE carrying the
+  kind-level struct and no field-prefixed storage exists anywhere.
+  Delimiter-less repeated fields stay bare arrays — there is nothing
+  to store.
 - **Wire shape = view shape.** `ListNonterminalView` is constructed
-  from the struct directly; the flat-key reassembly (and the
-  validator's suffix-discovery helper `separatedListFactoryOptions`)
-  is deleted.
+  from the struct directly; the flat-key reassembly and the validator's
+  suffix discovery are deleted (`separatedListFactoryOptions` survives
+  as a plain reader of the kind-level keys).
 
 ## Vocabulary
 
@@ -56,7 +74,8 @@ stamped fact's spelling and storage shape move.
 ## What it absorbs
 
 - `ki-perfield-flank-residual` retires as a distinct representation:
-  the five per-field kinds store the same struct. The rust tuple family
+  the five per-field kinds realify into (or reclassify as) their own
+  separatedList kinds carrying the kind-level struct. The rust tuple family
   (`(1,)`) is `delimiter: trailing` with one element — the
   single-element-requires-trailing rule is a validity invariant the
   factory asserts, not a storage shape (a conditional requirement is

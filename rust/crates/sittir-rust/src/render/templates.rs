@@ -58,30 +58,30 @@ pub mod filters {
     #[allow(non_snake_case)]
     pub fn joinWithTrailing<'a, T: JoinSource<'a> + ?Sized>(
         xs: &'a T,
-        values: &dyn ::askama::Values,
+        _values: &dyn ::askama::Values,
         sep: &'a str,
     ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
-        ::sittir_core::filters::joinWithTrailing(xs, values, sep)
+        ::sittir_core::filters::joinWithTrailing(xs, sep)
     }
 
     #[::askama::filter_fn]
     #[allow(non_snake_case)]
     pub fn joinWithLeading<'a, T: JoinSource<'a> + ?Sized>(
         xs: &'a T,
-        values: &dyn ::askama::Values,
+        _values: &dyn ::askama::Values,
         sep: &'a str,
     ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
-        ::sittir_core::filters::joinWithLeading(xs, values, sep)
+        ::sittir_core::filters::joinWithLeading(xs, sep)
     }
 
     #[::askama::filter_fn]
     #[allow(non_snake_case)]
     pub fn joinWithFlanks<'a, T: JoinSource<'a> + ?Sized>(
         xs: &'a T,
-        values: &dyn ::askama::Values,
+        _values: &dyn ::askama::Values,
         sep: &'a str,
     ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
-        ::sittir_core::filters::joinWithFlanks(xs, values, sep)
+        ::sittir_core::filters::joinWithFlanks(xs, sep)
     }
 
     pub use ::sittir_core::filters::{
@@ -462,9 +462,21 @@ pub struct TokenTreePatternParenTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_tuple_expression_elements.jinja", escape = "none")]
+pub struct TupleExpressionElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_tuple_pattern_elements.jinja", escape = "none")]
 pub struct TuplePatternElementsTemplate<'a> {
     pub element: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_tuple_type_elements.jinja", escape = "none")]
+pub struct TupleTypeElementsTemplate<'a> {
+    pub type_: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1365,7 +1377,7 @@ pub struct TryExpressionTemplate<'a> {
 #[template(path = "tuple_expression.jinja", escape = "none")]
 pub struct TupleExpressionTemplate<'a> {
     pub attributes: ListNonterminalView<'a>,
-    pub elements: ListNonterminalView<'a>,
+    pub tuple_expression_elements: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1384,7 +1396,7 @@ pub struct TupleStructPatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "tuple_type.jinja", escape = "none")]
 pub struct TupleTypeTemplate<'a> {
-    pub type_: ListNonterminalView<'a>,
+    pub tuple_type_elements: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

@@ -745,7 +745,7 @@ export function forwardedTargetKind(node: AssembledNode, nodeMap: NodeMap): stri
 	// A field carrying per-instance flank options keeps the direct/config
 	// surface (its factory signature carries an options parameter the
 	// forwarding dispatch has no slot for).
-	if (node.fields.some((f) => f.trailingMode === 'optional' || f.leadingMode === 'optional')) return null;
+	if (node.fields.some((f) => f.trailingDelimiter === 'optional' || f.leadingDelimiter === 'optional')) return null;
 	const target = nodeMap.nodes.get(kinds[0]!);
 	// The target must itself emit a factory to forward to.
 	if (!target?.rawFactoryName) return null;

@@ -6,7 +6,7 @@
  * `elements` argument, plus a trailing options object (only emitted when at
  * least one of separatorKind/leading/trailing genuinely varies per-instance)
  * for `separatorKind`/`leading`/`trailing` overrides — mirroring wrap.ts's
- * `_separator_kind`/`_leading_sep`/`_trailing_sep` wire-key naming (Task 4)
+ * `_separator`/`_delimiter` wire-key naming
  * so the same three concepts share one naming scheme across
  * capture/render/construct. The elements' own storage key is NOT a fixed
  * `_content` bucket — it's the fixture's real single-field canonical slot
@@ -105,13 +105,12 @@ describe('factories emitter — separatedList', () => {
 
 		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): ');
 		expect(emitted).toContain('export function buildMemberList(options: ');
-		expect(emitted).toContain('separatorKind?: "," | ";"');
-		expect(emitted).toContain('leading?: boolean');
-		expect(emitted).toContain('trailing?: boolean');
+		expect(emitted).toContain('separator?: "," | ";"');
+		expect(emitted).toContain('delimiter?: 1 | 2 | 3');
 		expect(emitted).toContain('_member');
-		expect(emitted).toContain('_separator_kind');
-		expect(emitted).toContain('_leading_sep');
-		expect(emitted).toContain('_trailing_sep');
+		expect(emitted).toContain('_separator');
+		expect(emitted).toContain('_delimiter');
+		expect(emitted).toContain('options.delimiter ?? 0');
 		// Selection maps the caller's literal choice to its KindId, defaulting
 		// to the first candidate arm when omitted.
 		expect(emitted).toContain('TSKindId.Comma');
@@ -128,12 +127,11 @@ describe('factories emitter — separatedList', () => {
 
 		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): ');
 		expect(emitted).toContain('export function buildMemberList(options: ');
-		expect(emitted).not.toContain('separatorKind?:');
-		expect(emitted).not.toContain('leading?: boolean');
-		expect(emitted).toContain('trailing?: boolean');
-		expect(emitted).not.toContain('_separator_kind');
-		expect(emitted).not.toContain('_leading_sep');
-		expect(emitted).toContain('_trailing_sep');
+		expect(emitted).not.toContain('separator?:');
+		expect(emitted).toContain('delimiter?: 2');
+		expect(emitted).not.toContain('_separator');
+		expect(emitted).toContain('_delimiter');
+		expect(emitted).toContain('options.delimiter ?? 0');
 	});
 
 	it('literal separator with both flanks optional (mirrors object_type_content_comma/_semi): leading + trailing, no separatorKind', () => {
@@ -144,12 +142,11 @@ describe('factories emitter — separatedList', () => {
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
-		expect(emitted).not.toContain('separatorKind?:');
-		expect(emitted).toContain('leading?: boolean');
-		expect(emitted).toContain('trailing?: boolean');
-		expect(emitted).not.toContain('_separator_kind');
-		expect(emitted).toContain('_leading_sep');
-		expect(emitted).toContain('_trailing_sep');
+		expect(emitted).not.toContain('separator?:');
+		expect(emitted).toContain('delimiter?: 1 | 2 | 3');
+		expect(emitted).not.toContain('_separator');
+		expect(emitted).toContain('_delimiter');
+		expect(emitted).toContain('options.delimiter ?? 0');
 	});
 
 	it('literal separator with mandatory-only (no optional flanks): no options object at all — bare elements signature', () => {
@@ -162,9 +159,8 @@ describe('factories emitter — separatedList', () => {
 
 		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>) {');
 		expect(emitted).not.toContain('options');
-		expect(emitted).not.toContain('_separator_kind');
-		expect(emitted).not.toContain('_leading_sep');
-		expect(emitted).not.toContain('_trailing_sep');
+		expect(emitted).not.toContain('_separator');
+		expect(emitted).not.toContain('_delimiter');
 	});
 
 	it('multi-kind element choice on a plain (non-nonEmpty) repeat: parenthesizes the union before appending []', () => {

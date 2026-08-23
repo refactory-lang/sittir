@@ -334,7 +334,7 @@ function readTerminalFromOther(data: _NodeData, allowedKindIds: readonly number[
 // "this is the trailing flank", and the count alone cannot tell them
 // apart (both queries would compute the identical boolean off the
 // identical formula). `otherFlankOptional` is the codegen-time fact
-// (`node.leadingMode === 'optional' && node.trailingMode === 'optional'`)
+// (`node.leadingDelimiter === 'optional' && node.trailingDelimiter === 'optional'`)
 // that flags this — a kind combining both-optional flanks with
 // text-collapsed content has no real-grammar coverage today (all such
 // kinds currently retain per-element span), so this throws loudly rather
@@ -1022,7 +1022,7 @@ export function wrapImportList(
 			...data,
 			$type: TSKindId.ImportList as const,
 			_name: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			names() {
 				return drillInAll<T.DottedName | T.AliasedImport>(
@@ -3634,7 +3634,7 @@ export function wrap_Parameters(
 			...data,
 			$type: TSKindId._Parameters as const,
 			_parameter: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			parameters() {
 				return drillInAll<T.Parameter>(this._parameter as readonly T.Parameter[] | undefined, tree);
@@ -3660,7 +3660,7 @@ export function wrapPatterns(
 			...data,
 			$type: TSKindId.Patterns as const,
 			_pattern: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			patterns() {
 				return drillInAll<T.Pattern>(this._pattern as readonly T.Pattern[] | undefined, tree);
@@ -5827,7 +5827,7 @@ export function wrapCollectionElements(
 			...data,
 			$type: TSKindId.CollectionElements as const,
 			_element: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			elements() {
 				return drillInAll<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(
@@ -6314,7 +6314,7 @@ export function wrapSimpleStatementsElements(
 			...data,
 			$type: TSKindId.SimpleStatementsElements as const,
 			_simple_statement: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			simpleStatements() {
 				return drillInAll<T.SimpleStatement>(this._simple_statement as readonly T.SimpleStatement[] | undefined, tree);
@@ -6368,7 +6368,7 @@ export function wrapSubjects(
 			...data,
 			$type: TSKindId.Subjects as const,
 			_subject: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			subjects() {
 				return drillInAll<T.Expression>(this._subject as readonly T.Expression[] | undefined, tree);
@@ -6394,7 +6394,7 @@ export function wrapCasePatterns(
 			...data,
 			$type: TSKindId.CasePatterns as const,
 			_case_pattern: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			casePatterns() {
 				return drillInAll<T.CasePattern>(this._case_pattern as readonly T.CasePattern[] | undefined, tree);
@@ -6455,7 +6455,7 @@ export function wrapWithClauseWithItems(
 			...data,
 			$type: TSKindId.WithClauseWithItems as const,
 			_with_item: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			withItems() {
 				return drillInAll<T.WithItem>(this._with_item as readonly T.WithItem[] | undefined, tree);
@@ -6481,7 +6481,7 @@ export function wrapTypes(
 			...data,
 			$type: TSKindId.Types as const,
 			_type: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			types() {
 				return drillInAll<T.Type>(this._type as readonly T.Type[] | undefined, tree);
@@ -6510,7 +6510,7 @@ export function wrapArgumentListElements(
 			...data,
 			$type: TSKindId.ArgumentListElements as const,
 			_element: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			elements() {
 				return drillInAll<
@@ -6646,7 +6646,7 @@ export function wrapExpressionListExpressions(
 			]),
 			$type: TSKindId.ExpressionListExpressions as const,
 			_expression: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 1),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 1) ? 2 : 0,
 
 			expressions() {
 				return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree);
@@ -6675,7 +6675,7 @@ export function wrapListPatternCasePatterns(
 			...data,
 			$type: TSKindId.ListPatternCasePatterns as const,
 			_case_pattern: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			casePatterns() {
 				return drillInAll<T.CasePattern>(this._case_pattern as readonly T.CasePattern[] | undefined, tree);
@@ -6704,7 +6704,7 @@ export function wrapDictPatternElements(
 			...data,
 			$type: TSKindId.DictPatternElements as const,
 			_element: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			elements() {
 				return drillInAll<T.KeyValuePattern | T.SplatPattern>(
@@ -6758,7 +6758,7 @@ export function wrapPatternListPatterns(
 			]),
 			$type: TSKindId.PatternListPatterns as const,
 			_pattern: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 1),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 1) ? 2 : 0,
 
 			patterns() {
 				return drillInAll<T.Pattern>(this._pattern as readonly T.Pattern[] | undefined, tree);
@@ -6784,7 +6784,7 @@ export function wrapSubscripts(
 			...data,
 			$type: TSKindId.Subscripts as const,
 			_subscript: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			subscripts() {
 				return drillInAll<T.Expression | T.Slice>(
@@ -6942,7 +6942,7 @@ export function wrapDictionaryElements(
 			...data,
 			$type: TSKindId.DictionaryElements as const,
 			_element: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			elements() {
 				return drillInAll<T.Pair | T.DictionarySplat>(
@@ -7106,10 +7106,70 @@ export function wrapComprehensionClauses(data: T.ComprehensionClauses, tree: Tre
 	return _node;
 }
 
-export function wrapPrintStatementGroup1(data: T.PrintStatementGroup1, tree: TreeHandle) {
-	const _node = withMethods(
+export function wrapPrintArguments(
+	data: T.PrintArguments & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._argument, true, 'argument', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'argument',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
 		{
 			...data,
+			$type: TSKindId.PrintArguments as const,
+			_argument: _content,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
+
+			arguments() {
+				return drillInAll<T.Expression>(this._argument as readonly T.Expression[] | undefined, tree);
+			},
+			$with: {}
+		},
+		methodsEngine
+	);
+}
+
+export function wrapPrintChevronArguments(
+	data: T.PrintChevronArguments & {
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._argument, true, 'argument', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'argument',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
+		{
+			...data,
+			$type: TSKindId.PrintChevronArguments as const,
+			_argument: _content,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 1) ? 2 : 0,
+
+			arguments() {
+				return drillInAll<T.Expression>(this._argument as readonly T.Expression[] | undefined, tree);
+			},
+			$with: {}
+		},
+		methodsEngine
+	);
+}
+
+export function wrapPrintStatementGroup1(
+	data: T.PrintStatementGroup1 & { readonly _comma?: T.PrintChevronArguments | ',' },
+	tree: TreeHandle
+) {
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.PrintStatementGroup1 as const }, methodsEngine);
+	const _node = withMethods(
+		{
+			..._omitWrapKeys(data, ['_comma']),
 			$type: TSKindId.PrintStatementGroup1 as const,
 			_chevron: normalizeSingularWrapSlot(data._chevron, 'chevron', true, data.$type, {
 				tree,
@@ -7117,70 +7177,25 @@ export function wrapPrintStatementGroup1(data: T.PrintStatementGroup1, tree: Tre
 				slotName: 'chevron',
 				span: (data as _NodeData).$span
 			}),
-			_argument: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._argument, [
-					'expression',
-					'comparison_operator',
-					'not_operator',
-					'boolean_operator',
-					'lambda',
-					'primary_expression',
-					'await',
-					'binary_operator',
-					'identifier',
-					'keyword_identifier',
-					'string',
-					'concatenated_string',
-					'integer',
-					'float',
-					'true',
-					'false',
-					'none',
-					'unary_operator',
-					'attribute',
-					'subscript',
-					'call',
-					'list',
-					'list_comprehension',
-					'dictionary',
-					'dictionary_comprehension',
-					'set',
-					'set_comprehension',
-					'tuple',
-					'parenthesized_expression',
-					'generator_expression',
-					'ellipsis',
-					'list_splat_pattern',
-					'conditional_expression',
-					'named_expression',
-					'as_pattern'
-				]),
+			_print_chevron_arguments: normalizeSingularWrapSlot(
+				data._print_chevron_arguments ?? data._comma,
+				'print_chevron_arguments',
 				false,
-				'argument',
-				{ tree, nodeType: data.$type, slotName: 'argument', span: (data as _NodeData).$span }
-			),
-			_argument_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._argument) ? data._argument : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'print_chevron_arguments', span: (data as _NodeData).$span }
 			),
 
 			chevron() {
 				return drillIn<T.Chevron>(this._chevron, tree);
 			},
-			arguments() {
-				return drillInAll<T.Expression>(this._argument as readonly T.Expression[] | undefined, tree);
+			printChevronArguments() {
+				return drillIn<T.PrintChevronArguments | ',' | undefined>(this._print_chevron_arguments, tree);
 			},
 			$with: {
 				chevron: (v: NonNullable<T.PrintStatementGroup1['_chevron']>) =>
 					wrapPrintStatementGroup1({ ...data, _chevron: v }, tree),
-				arguments: (...v: NonNullable<T.PrintStatementGroup1['_argument']>[number][]) =>
-					wrapPrintStatementGroup1({ ...data, _argument: v }, tree)
+				printChevronArguments: (v: NonNullable<T.PrintStatementGroup1['_print_chevron_arguments']>) =>
+					wrapPrintStatementGroup1({ ...data, _print_chevron_arguments: v }, tree)
 			}
 		},
 		methodsEngine
@@ -7193,65 +7208,19 @@ export function wrapPrintStatementGroup2(data: T.PrintStatementGroup2, tree: Tre
 		{
 			...data,
 			$type: TSKindId.PrintStatementGroup2 as const,
-			_argument: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._argument, [
-					'expression',
-					'comparison_operator',
-					'not_operator',
-					'boolean_operator',
-					'lambda',
-					'primary_expression',
-					'await',
-					'binary_operator',
-					'identifier',
-					'keyword_identifier',
-					'string',
-					'concatenated_string',
-					'integer',
-					'float',
-					'true',
-					'false',
-					'none',
-					'unary_operator',
-					'attribute',
-					'subscript',
-					'call',
-					'list',
-					'list_comprehension',
-					'dictionary',
-					'dictionary_comprehension',
-					'set',
-					'set_comprehension',
-					'tuple',
-					'parenthesized_expression',
-					'generator_expression',
-					'ellipsis',
-					'list_splat_pattern',
-					'conditional_expression',
-					'named_expression',
-					'as_pattern'
-				]),
-				false,
-				'argument',
-				{ tree, nodeType: data.$type, slotName: 'argument', span: (data as _NodeData).$span }
-			),
-			_argument_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._argument) ? data._argument : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			),
+			_print_arguments: normalizeSingularWrapSlot(data._print_arguments, 'print_arguments', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'print_arguments',
+				span: (data as _NodeData).$span
+			}),
 
-			arguments() {
-				return drillInAll<T.Expression>(this._argument as readonly T.Expression[] | undefined, tree);
+			printArguments() {
+				return drillIn<T.PrintArguments>(this._print_arguments, tree);
 			},
 			$with: {
-				arguments: (...v: NonNullable<T.PrintStatementGroup2['_argument']>[number][]) =>
-					wrapPrintStatementGroup2({ ...data, _argument: v }, tree)
+				printArguments: (v: NonNullable<T.PrintStatementGroup2['_print_arguments']>) =>
+					wrapPrintStatementGroup2({ ...data, _print_arguments: v }, tree)
 			}
 		},
 		methodsEngine
@@ -7341,75 +7310,33 @@ export function wrapAssignmentTyped(data: T.AssignmentTyped, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapExpressionStatementTuple(data: T.ExpressionStatementTuple, tree: TreeHandle) {
-	const _node = withMethods(
+export function wrapExpressionStatementTuple(
+	data: T.ExpressionStatementTuple & {
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(data._expression, true, 'expression', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'expression',
+		span: (data as _NodeData).$span
+	});
+	return withMethods(
 		{
 			...data,
 			$type: TSKindId.ExpressionStatementTuple as const,
-			_expression: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._expression, [
-					'expression',
-					'comparison_operator',
-					'not_operator',
-					'boolean_operator',
-					'lambda',
-					'primary_expression',
-					'await',
-					'binary_operator',
-					'identifier',
-					'keyword_identifier',
-					'string',
-					'concatenated_string',
-					'integer',
-					'float',
-					'true',
-					'false',
-					'none',
-					'unary_operator',
-					'attribute',
-					'subscript',
-					'call',
-					'list',
-					'list_comprehension',
-					'dictionary',
-					'dictionary_comprehension',
-					'set',
-					'set_comprehension',
-					'tuple',
-					'parenthesized_expression',
-					'generator_expression',
-					'ellipsis',
-					'list_splat_pattern',
-					'conditional_expression',
-					'named_expression',
-					'as_pattern'
-				]),
-				true,
-				'expression',
-				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
-			),
-			_expression_trailing_sep: _hasSeparatorFlank(
-				{},
-				Array.isArray(data._expression) ? data._expression : [],
-				(Array.isArray(data.$other) ? data.$other : data.$other !== undefined ? [data.$other] : []).filter(
-					(e) => (typeof e === 'object' && e !== null ? (e as { $type?: number }).$type : e) === TSKindId.Comma
-				),
-				'trailing',
-				false,
-				0
-			),
+			_expression: _content,
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			expressions() {
 				return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree);
 			},
-			$with: {
-				expressions: (...v: NonEmptyArray<NonNullable<T.ExpressionStatementTuple['_expression']>[number]>) =>
-					wrapExpressionStatementTuple({ ...data, _expression: v }, tree)
-			}
+			$with: {}
 		},
 		methodsEngine
 	);
-	return _node;
 }
 
 export function wrapWithClauseBare(
@@ -7427,7 +7354,7 @@ export function wrapWithClauseBare(
 			...data,
 			$type: TSKindId.WithClauseBare as const,
 			_with_item: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
+			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0) ? 2 : 0,
 
 			withItems() {
 				return drillInAll<T.WithItem>(this._with_item as readonly T.WithItem[] | undefined, tree);
@@ -8058,6 +7985,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.CaseListPattern]: (d, t) => wrapCaseListPattern(d as unknown as T.CaseListPattern, t),
 	[TSKindId.CaseAsPattern]: (d, t) => wrapCaseAsPattern(d as unknown as T.CaseAsPattern, t),
 	[TSKindId.ComprehensionClauses]: (d, t) => wrapComprehensionClauses(d as unknown as T.ComprehensionClauses, t),
+	[TSKindId.PrintArguments]: (d, t) => wrapPrintArguments(d as unknown as T.PrintArguments, t),
+	[TSKindId.PrintChevronArguments]: (d, t) => wrapPrintChevronArguments(d as unknown as T.PrintChevronArguments, t),
 	[TSKindId.PrintStatementGroup1]: (d, t) => wrapPrintStatementGroup1(d as unknown as T.PrintStatementGroup1, t),
 	[TSKindId.PrintStatementGroup2]: (d, t) => wrapPrintStatementGroup2(d as unknown as T.PrintStatementGroup2, t),
 	[TSKindId.WildcardPattern]: (d) => ({ ...d, $type: TSKindId.WildcardPattern as const }),

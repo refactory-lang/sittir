@@ -4491,15 +4491,12 @@ var enrichedBase = enrich(import_grammar.default, {
   // innermost field name, so 'declarators' ends up matching nothing
   // (`accessor-throw: repeated slot "declarators" requires at least one
   // value`).
-  // `_enum_body_elements`'s element is a multi-field separated list (each
-  // occurrence is either a bare `name` or an `enum_assignment` pattern —
-  // see the '#170' comment on `enum_body_elements` further down in this
-  // file) — a single uniform 'element' field loses that distinction the
-  // same way `emitSeparatedListFactory`'s existing single-field-storage
-  // path already does (a documented, pre-existing gap, not something
-  // this pass should paper over with its own conflicting 'element'
-  // field: `accessor-throw: repeated slot "element" requires at least
-  // one value`).
+  // `_enum_body_elements`'s element is a choice of a `name`-fielded arm
+  // and a bare `enum_assignment` arm — a single uniform 'element' field
+  // would erase that distinction (the fielded arm routes by its field
+  // label at read time; the classifier merges the arms into one union
+  // content slot as-is): `accessor-throw: repeated slot "element"
+  // requires at least one value`.
   // `object`, `object_pattern`, `array`, `array_pattern`, and `arguments`
   // already field their separated list's WHOLE span at a positional
   // index below ('properties', 'elements', 'arguments' respectively) —
@@ -5008,8 +5005,7 @@ var grammar_sittir_default = grammar(
         debugger_statement: "#170 \u2014 _resolveOneLeaf cannot resolve the _semicolon stub",
         import_require_clause: "#170 \u2014 Missing field _content on ImportRequireClauseTransport._source",
         object_type_content: "#170 (#172-adjacent) \u2014 Missing field _content through export-arm transport",
-        string: "#170 \u2014 StringContentTransportSlot rejects stub ($type property missing)",
-        enum_body_elements: "#170 \u2014 multi-field separatedList (name/enum_assignment); emitSeparatedListFactory only fixes the single-field-storage case, needs a real per-field partition of the flat elements array"
+        string: "#170 \u2014 StringContentTransportSlot rejects stub ($type property missing)"
       },
       rules: {
         // `template_substitution` sits only in string-interior contexts

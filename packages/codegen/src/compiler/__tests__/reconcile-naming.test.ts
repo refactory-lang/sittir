@@ -39,8 +39,8 @@ function cleanSlot(): AssembledNonterminal {
 		propertyName: camel,
 		paramName: safeParamName(camel),
 		values: [nodeRefValue('expression')],
-		hasTrailing: false,
-		hasLeading: false,
+		hasTrailingDelimiter: false,
+		hasLeadingDelimiter: false,
 		fieldName: undefined
 	} as unknown as AssembledNonterminal;
 }

@@ -7,13 +7,10 @@
 //! Spec 012 T012. Parity with the TS engine is tested in
 //! `tests/filters.rs` (T013).
 //!
-//! Shape choice for `joinby`: TS ships four separate filters (`join`,
-//! `joinWithTrailing`, `joinWithLeading`, `joinWithFlanks`) because
-//! the flank decision is driven by tree-sitter-attached metadata
-//! (`_leading_anon` / `_trailing_anon`) that only the TS reader can
-//! see. On the Rust side the generated render crate already surfaces
-//! typed boolean flank fields on each Askama struct, so a single
-//! `joinby` filter with boolean arguments covers every variant.
+//! Shape choice for `joinby`: the generated render crate surfaces typed
+//! boolean flank fields on each Askama struct (populated from the wire's
+//! `_delimiter` bitflag), so a single `joinby` filter with boolean
+//! arguments covers every join variant.
 //! Templates will call:
 //!
 //! ```jinja
@@ -482,27 +479,6 @@ pub fn joinby<'a, T: JoinSource<'a> + ?Sized>(
 
 /// Minimal askama values bridge for flank-aware filters.
 ///
-/// The direct-render path no longer builds a shared `TemplateContext`,
-/// but `joinWithTrailing` / `joinWithLeading` / `joinWithFlanks` still
-/// need a `Values` bag to read the optional anonymous flank tokens.
-/// Generated render crates pass Askama's internal values object during
-/// normal rendering; tests can construct this helper directly.
-#[derive(Debug, Default, Clone, PartialEq, Eq)]
-pub struct FlankValues {
-    pub leading_anon: Option<String>,
-    pub trailing_anon: Option<String>,
-}
-
-impl askama::Values for FlankValues {
-    fn get_value<'a>(&'a self, key: &str) -> Option<&'a dyn std::any::Any> {
-        match key {
-            "trailing_anon" => Some(&self.trailing_anon),
-            "leading_anon" => Some(&self.leading_anon),
-            _ => None,
-        }
-    }
-}
-
 /// Presence test — true when a field is absent / empty / whitespace-only.
 ///
 /// Mirrors the TS `isBlank` nunjucks filter registered in
@@ -648,81 +624,35 @@ pub fn isPresent<T: PresenceCheck + ?Sized>(
     Ok(s.is_present_check())
 }
 
-/// Probe `values` for a flank-anon text registered under `key`. Returns
-/// the captured text iff it matches `sep` (the join filter's separator
-/// argument), so the filter can emit `sep` at the flank position.
-///
-/// Mirrors the TS Nunjucks `flankJoin` semantics: the filter only emits
-/// a flank when the parser observed an anonymous token there AND that
-/// token's text equals the separator the template asked for. A `,`-anon
-/// flanking a `;`-joined list contributes nothing — the separator
-/// argument is the source of truth for what to emit.
-///
-/// `key` is `"trailing_anon"` or `"leading_anon"`. Generated render
-/// crates surface those names through Askama's `Values` bag; this
-/// helper does the downcast + match in one place so the per-filter
-/// wrappers stay one-liners.
-fn flank_match(values: &dyn askama::Values, key: &str, sep: &str) -> bool {
-    match values.get_value(key) {
-        Some(any) => {
-            if let Some(opt) = any.downcast_ref::<Option<String>>() {
-                return opt.as_deref() == Some(sep);
-            }
-            if let Some(s) = any.downcast_ref::<String>() {
-                return s.as_str() == sep;
-            }
-            if let Some(s) = any.downcast_ref::<&str>() {
-                return *s == sep;
-            }
-            false
-        }
-        None => false,
-    }
-}
-
 /// Plain Rust implementation for `joinWithTrailing` — callable from both
 /// Rust tests and via the per-grammar `#[askama::filter_fn]` wrapper in
-/// generated render crates.
-///
-/// Emits a trailing `sep` iff the children list captured a trailing anonymous
-/// token whose text matches `sep`. Source: the generated render crate's
-/// Askama values bag under key `"trailing_anon"`.
-///
-/// On a context with no flank metadata the filter degrades to plain
-/// `join` — matches TS engine behavior when the children array has no
-/// `_trailing_anon` property.
+/// generated render crates. Emits a trailing `sep` iff the view's own
+/// trailing flag is set (populated from the wire's `_delimiter` bitflag).
 #[allow(non_snake_case)]
 pub fn joinWithTrailing<'a, T: JoinSource<'a> + ?Sized>(
     xs: &'a T,
-    values: &dyn askama::Values,
     sep: &'a str,
 ) -> Result<askama::filters::Safe<Joined<'a>>, askama::Error> {
-    let trailing = xs.trailing() || flank_match(values, "trailing_anon", sep);
-    joinby(xs, sep, false, trailing)
+    joinby(xs, sep, false, xs.trailing())
 }
 
 /// Plain Rust implementation for `joinWithLeading`. Symmetric to
-/// `joinWithTrailing`: emits a leading `sep` iff the children list
-/// captured a leading anonymous token whose text matches `sep`.
+/// `joinWithTrailing`: emits a leading `sep` iff the view's leading flag
+/// is set.
 #[allow(non_snake_case)]
 pub fn joinWithLeading<'a, T: JoinSource<'a> + ?Sized>(
     xs: &'a T,
-    values: &dyn askama::Values,
     sep: &'a str,
 ) -> Result<askama::filters::Safe<Joined<'a>>, askama::Error> {
-    let leading = xs.leading() || flank_match(values, "leading_anon", sep);
-    joinby(xs, sep, leading, false)
+    joinby(xs, sep, xs.leading(), false)
 }
 
 /// Plain Rust implementation for `joinWithFlanks`. Both directions;
-/// emits each flank independently iff its captured anon text matches `sep`.
+/// emits each flank independently from the view's own flags.
 #[allow(non_snake_case)]
 pub fn joinWithFlanks<'a, T: JoinSource<'a> + ?Sized>(
     xs: &'a T,
-    values: &dyn askama::Values,
     sep: &'a str,
 ) -> Result<askama::filters::Safe<Joined<'a>>, askama::Error> {
-    let leading = xs.leading() || flank_match(values, "leading_anon", sep);
-    let trailing = xs.trailing() || flank_match(values, "trailing_anon", sep);
-    joinby(xs, sep, leading, trailing)
+    joinby(xs, sep, xs.leading(), xs.trailing())
 }

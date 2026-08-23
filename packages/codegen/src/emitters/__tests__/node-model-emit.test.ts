@@ -37,8 +37,8 @@ describe('node-model emitter', () => {
 								multiplicity: 'single'
 							}
 						],
-						hasTrailing: false,
-						hasLeading: false,
+						hasTrailingDelimiter: false,
+						hasLeadingDelimiter: false,
 						sourceRuleIds: []
 					})
 				})

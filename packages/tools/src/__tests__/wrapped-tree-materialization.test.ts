@@ -106,8 +106,8 @@ async function loadAliasRoutingWrapWitnessModule(): Promise<{
 							multiplicity: 'single'
 						}
 					],
-					hasTrailing: false,
-					hasLeading: false,
+					hasTrailingDelimiter: false,
+					hasLeadingDelimiter: false,
 					sourceRuleIds: []
 				})
 			})

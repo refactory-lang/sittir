@@ -343,6 +343,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_import_clause_group1: TSKindId.ImportClauseGroup1,
 	_import_specifiers: TSKindId.ImportSpecifiers,
 	_formal_parameters_elements: TSKindId.FormalParametersElements,
+	_enum_body_elements: TSKindId.EnumBodyElements,
 	_types: TSKindId.Types,
 	_type_parameters_elements: TSKindId.TypeParametersElements,
 	_tuple_type_members: TSKindId.TupleTypeMembers,
@@ -417,6 +418,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildImportSpecifiers as (...args: unknown[]) => unknown)(...children);
 		case '_formal_parameters_elements':
 			return (F.buildFormalParametersElements as (...args: unknown[]) => unknown)(...children);
+		case '_enum_body_elements':
+			return (F.buildEnumBodyElements as (...args: unknown[]) => unknown)(...children);
 		case '_types':
 			return (F.buildTypes as (...args: unknown[]) => unknown)(...children);
 		case '_type_parameters_elements':
@@ -3321,15 +3324,11 @@ export function coerceToObjectTypeContent(
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildObjectTypeContent(
 			{
-				separatorKind: (() => {
-					const sk = (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
-						._separator_kind;
+				separator: (() => {
+					const sk = (data as unknown as { _separator?: number; _delimiter?: number })._separator;
 					return sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk);
 				})(),
-				leading: (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
-					._leading_sep,
-				trailing: (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
-					._trailing_sep
+				delimiter: (data as unknown as { _separator?: number; _delimiter?: number })._delimiter
 			},
 			...(children as unknown as NonEmptyArray<
 				| T.ExportStatement
