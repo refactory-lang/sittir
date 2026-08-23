@@ -201,29 +201,6 @@ export default grammar(
 				[$.variable_declarator, $._for_header_var_kind],
 				[$.variable_declarator, $._for_header_let_const_kind]
 			],
-			inline: ($, previous) => [
-				...(previous ?? []),
-				$._object_arm1,
-				$._object_pattern_arm1,
-				$._reserved_identifier_arm1,
-				$._primary_expression_arm1,
-				$._meta_property_arm1,
-				$._meta_property_arm2,
-				$._lhs_expression_arm1,
-				$._method_definition_arm1,
-				$._public_field_definition_arm2,
-				$._public_field_definition_arm3,
-				$._public_field_definition_arm4,
-				$._export_statement_arm1,
-				$._export_statement_arm2,
-				$._export_statement_arm3,
-				$._export_statement_arm4,
-				$._export_statement_arm5,
-				$._export_statement_arm6,
-				$._export_statement_arm7,
-				$._export_statement_arm8,
-				$._public_field_definition_accessor_opt
-			],
 			polymorphs: {
 				arrow_function: { '1/0': 'parameter', '1/1': '_call_signature' },
 				class_heritage: { '0': 'extends_clause', '1': 'implements_clause' },
@@ -427,7 +404,6 @@ export default grammar(
 					1: field('statements'),
 					3: field('automatic_semicolon')
 				},
-
 
 				union_type: {
 					0: field('left'),

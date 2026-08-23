@@ -762,6 +762,11 @@ function buildWiredInlineFn(userInline: DollarFn<unknown[]> | undefined, context
 		for (const name of context.syntheticInline) {
 			if (existingNames.has(name)) continue;
 			if (context.inlineRemovals.has(name)) continue;
+			// An orphaned synthetic (its owner was redeclared by an authored
+			// `rules:` override, dropping the mint's only reference) must not
+			// reach `inline:` — tree-sitter warns `inline rule '<name>' is
+			// not defined` and discards it (typescript's `_object_arm1`).
+			if (context.orphanedSyntheticGroups.has(name)) continue;
 			appended.push(nativeInlineRef($, name));
 		}
 		return appended.length === 0 ? (base as unknown[]) : [...(base as unknown[]), ...appended];

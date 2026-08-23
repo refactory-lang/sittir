@@ -3683,6 +3683,7 @@ function buildWiredInlineFn(userInline, context) {
     for (const name of context.syntheticInline) {
       if (existingNames.has(name)) continue;
       if (context.inlineRemovals.has(name)) continue;
+      if (context.orphanedSyntheticGroups.has(name)) continue;
       appended.push(nativeInlineRef($, name));
     }
     return appended.length === 0 ? base2 : [...base2, ...appended];
@@ -4789,29 +4790,6 @@ var grammar_sittir_default = grammar(
         [$.primary_expression, $._for_header_let_const_kind],
         [$.variable_declarator, $._for_header_var_kind],
         [$.variable_declarator, $._for_header_let_const_kind]
-      ],
-      inline: ($, previous) => [
-        ...previous ?? [],
-        $._object_arm1,
-        $._object_pattern_arm1,
-        $._reserved_identifier_arm1,
-        $._primary_expression_arm1,
-        $._meta_property_arm1,
-        $._meta_property_arm2,
-        $._lhs_expression_arm1,
-        $._method_definition_arm1,
-        $._public_field_definition_arm2,
-        $._public_field_definition_arm3,
-        $._public_field_definition_arm4,
-        $._export_statement_arm1,
-        $._export_statement_arm2,
-        $._export_statement_arm3,
-        $._export_statement_arm4,
-        $._export_statement_arm5,
-        $._export_statement_arm6,
-        $._export_statement_arm7,
-        $._export_statement_arm8,
-        $._public_field_definition_accessor_opt
       ],
       polymorphs: {
         arrow_function: { "1/0": "parameter", "1/1": "_call_signature" },
