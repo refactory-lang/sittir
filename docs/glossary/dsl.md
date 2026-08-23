@@ -1685,3 +1685,17 @@ handles and returns `false` silently for a `.value` shape `rulesEqual` doesn't
 recognise. That is harmless today — a post-wrapper-deletion separator's
 `.value` is always a STRING literal at this point — but it is the thing to
 revisit if separators ever grow richer rule-shaped values.
+
+### `collapseSingletonMintOrdinals` (enrich.ts)
+
+Drops the ordinal from arm/group mint names whose parent minted exactly one
+of that flavor — the ordinal only disambiguates siblings, so a lone
+`<parent>_group1` / `<parent>_arm2` becomes `<parent>_group` / `<parent>_arm`.
+Runs once over the merged rule bag right after the clause-group mints merge,
+before the later passes and wire's override callbacks read names. Renames
+the hidden rule key (in the merged bag AND the minted-rule bag, whose keys
+later derive the `inline:` list), the visible alias value, every symbol
+reference, and the wire-facing tracking structures (`visibleGroupHiddenNames`,
+`clauseGroupOwners`). A name collision with any existing rule keeps the
+ordinal. Only the clause-group mint namespace is surveyed; a sibling that was
+registered but later unused still counts as a sibling.

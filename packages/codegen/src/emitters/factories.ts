@@ -594,12 +594,15 @@ export function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): str
 }
 
 
-/** Numeric-literal union of the delimiter values a slot's grammar permits
- *  (leading = 1, trailing = 2, both = 3) — the factory option's type offers
- *  exactly what the grammar allows. */
-function delimiterUnionFor(f: AssembledNonterminal): string {
-	const l = f.leadingDelimiter === 'optional';
-	const t = f.trailingDelimiter === 'optional';
+/** The `delimiter` option's type for a list with these flank modes — the
+ *  bitflag values the grammar permits a caller to select (leading = 1,
+ *  trailing = 2, both = 3); empty when neither flank is optional. */
+function delimiterUnionFor(list: {
+	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
+	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
+}): string {
+	const l = list.leadingDelimiter === 'optional';
+	const t = list.trailingDelimiter === 'optional';
 	return [...(l ? ['1'] : []), ...(t ? ['2'] : []), ...(l && t ? ['3'] : [])].join(' | ');
 }
 
@@ -1029,11 +1032,7 @@ function emitSeparatedListFactory(
 	const hasLeadingOption = node.leadingDelimiter === 'optional';
 	const hasTrailingOption = node.trailingDelimiter === 'optional';
 	const hasDelimiterOption = hasLeadingOption || hasTrailingOption;
-	const delimiterUnion = [
-		...(hasLeadingOption ? ['1'] : []),
-		...(hasTrailingOption ? ['2'] : []),
-		...(hasLeadingOption && hasTrailingOption ? ['3'] : [])
-	].join(' | ');
+	const delimiterUnion = delimiterUnionFor(node);
 	const hasOptions = hasSeparatorKindOption || hasDelimiterOption;
 
 	// `never` when the separator is nonterminal but zero candidates resolve
@@ -1058,8 +1057,12 @@ function emitSeparatedListFactory(
 		lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
 		lines.push(`export function ${fn}(options: ${optionsType}, ...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
 		lines.push(`export function ${fn}(...args: (${optionsType} | ${elemTypeForArray})[]) {`);
+		const permittedKeys = [...(hasSeparatorKindOption ? ['separator'] : []), ...(hasDelimiterOption ? ['delimiter'] : [])];
+		// Options are recognized by shape: a plain object (not an array, not a
+		// node — no `$type`) whose keys are all permitted option names.
 		lines.push(
-			`  const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));`
+			`  const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !Array.isArray(args[0]) && !('$type' in (args[0] as object)) && ` +
+				`Object.keys(args[0] as object).every((k) => ${JSON.stringify(permittedKeys)}.includes(k));`
 		);
 		lines.push(`  const options = (_optsFirst ? args[0] : {}) as ${optionsType};`);
 		lines.push(`  const elements = (_optsFirst ? args.slice(1) : args) as unknown as ${elementsType};`);
@@ -1130,7 +1133,7 @@ function emitSeparatedListFactory(
 		lines.push(`      separator: (v: ${separatorKindUnion}) => ${fn}({ ...options, separator: v }, ...elements),`);
 	}
 	if (hasDelimiterOption) {
-		lines.push(`      delimiter: (v: ${delimiterUnion}) => ${fn}({ ...options, delimiter: v }, ...elements),`);
+		lines.push(`      delimiter: (v?: ${delimiterUnion}) => ${fn}({ ...options, delimiter: v }, ...elements),`);
 	}
 	lines.push('    },');
 	lines.push('  }, {');
