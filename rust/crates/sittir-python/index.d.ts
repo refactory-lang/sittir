@@ -606,6 +606,17 @@ export interface EngineOptions {
   format?: string
 }
 
+export interface ExceptClauseArmTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _content: ExceptClauseArmContentTransportSlot
+}
+
 export interface ExceptClauseAsOptional1Transport {
   '$source'?: Source
   '$named'?: boolean
@@ -629,17 +640,6 @@ export interface ExceptClauseAsTransport {
   _alias?: ExpressionTransport
 }
 
-export interface ExceptClauseGroup1Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _content: ExceptClauseGroup1ContentTransportSlot
-}
-
 export interface ExceptClauseListTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -660,7 +660,7 @@ export interface ExceptClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _star_marker?: boolean
-  _except_clause_group1?: ExceptClauseGroup1Transport
+  _except_clause_arm?: ExceptClauseArmTransport
   _content: ExceptClauseContentTransportSlot
 }
 
@@ -812,7 +812,7 @@ export interface FunctionDefinitionTransport {
   _body: FunctionDefinitionBodyTransportSlot
 }
 
-export interface FutureImportStatementGroup1Transport {
+export interface FutureImportStatementArmTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1289,7 +1289,7 @@ export interface PrintChevronArgumentsTransport {
   _delimiter?: number
 }
 
-export interface PrintStatementGroup1Transport {
+export interface PrintStatementArm1Transport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1298,10 +1298,10 @@ export interface PrintStatementGroup1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _chevron: ChevronTransport
-  _print_chevron_arguments?: PrintStatementGroup1PrintChevronArgumentsTransportSlot
+  _print_chevron_arguments?: PrintStatementArm1PrintChevronArgumentsTransportSlot
 }
 
-export interface PrintStatementGroup2Transport {
+export interface PrintStatementArm2Transport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1428,7 +1428,7 @@ export interface SimpleStatementsTransport {
   _newline: NewlineTransport
 }
 
-export interface SliceGroup1Transport {
+export interface SliceGroupTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1449,7 +1449,7 @@ export interface SliceTransport {
   '$triviaData'?: TransportTrivia
   _start?: ExpressionTransport
   _stop?: ExpressionTransport
-  _step?: SliceGroup1Transport
+  _step?: SliceGroupTransport
 }
 
 export interface SplatPatternTransport {

@@ -1109,6 +1109,7 @@ function enrich(baseInput, config) {
     }
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+  collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupHiddenNames, clauseGroupOwners);
   for (const name of Object.keys(mergedRules)) {
     if (enrichSkip.has(name)) continue;
     const rule = mergedRules[name];
@@ -1201,7 +1202,7 @@ function applyFieldWrapPasses(ruleName, rule, kwRules, supertypeNames, rulesBag,
 }
 function applyHoistAndUnalias(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, unaliasSink) {
   let r = rule;
-  const clauseHoistCounter = { opt: 0, grp: 0, supertypeNames };
+  const clauseHoistCounter = { opt: 0, grp: 0, arm: 0, supertypeNames };
   r = applyClauseHoist(
     ruleName,
     r,
@@ -2868,7 +2869,56 @@ function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag,
   clauseGroupRules[name] = seqBody;
   return name;
 }
-function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, ambientPrec, enclosingFieldName) {
+function collapseSingletonMintOrdinals(mergedRules, mintedRules, visibleGroupHiddenNames, clauseGroupOwners) {
+  const byParentFlavor = /* @__PURE__ */ new Map();
+  for (const hidden of Object.keys(mintedRules)) {
+    const m = /^_(.+)_(arm|group)(\d+)$/.exec(hidden);
+    if (!m) continue;
+    const key = `${m[1]}_${m[2]}`;
+    const bucket = byParentFlavor.get(key);
+    if (bucket) bucket.push(hidden);
+    else byParentFlavor.set(key, [hidden]);
+  }
+  const renames = /* @__PURE__ */ new Map();
+  for (const [bare, hiddens] of byParentFlavor) {
+    if (hiddens.length !== 1) continue;
+    const oldHidden = hiddens[0];
+    const newHidden = `_${bare}`;
+    if (newHidden in mergedRules || bare in mergedRules) continue;
+    renames.set(oldHidden, newHidden);
+    renames.set(oldHidden.replace(/^_/, ""), bare);
+  }
+  if (renames.size === 0) return;
+  for (const [oldName, newName] of renames) {
+    if (oldName.startsWith("_") && oldName in mergedRules) {
+      mergedRules[newName] = mergedRules[oldName];
+      delete mergedRules[oldName];
+    }
+    if (oldName.startsWith("_") && oldName in mintedRules) {
+      mintedRules[newName] = mintedRules[oldName];
+      delete mintedRules[oldName];
+    }
+    if (visibleGroupHiddenNames.delete(oldName)) visibleGroupHiddenNames.add(newName);
+    const owner = clauseGroupOwners.get(oldName);
+    if (owner !== void 0) {
+      clauseGroupOwners.delete(oldName);
+      clauseGroupOwners.set(newName, owner);
+    }
+  }
+  const rewrite = (node) => {
+    if (Array.isArray(node)) {
+      for (const m of node) rewrite(m);
+      return;
+    }
+    if (node === null || typeof node !== "object") return;
+    const r = node;
+    if (typeof r.name === "string" && renames.has(r.name)) r.name = renames.get(r.name);
+    if (r.type === "ALIAS" && typeof r.value === "string" && renames.has(r.value)) r.value = renames.get(r.value);
+    for (const v of Object.values(r)) rewrite(v);
+  };
+  for (const name of Object.keys(mergedRules)) rewrite(mergedRules[name]);
+}
+function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, ambientPrec, enclosingFieldName, flavor = "group") {
   if (process.env.SITTIR_DEBUG_LISTNAME) {
     const info = separatedListBodyInfo(content);
     process.stderr.write(
@@ -2913,8 +2963,8 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
       return register(visibleName2);
     }
   }
-  counter.grp += 1;
-  const visibleName = `${base2}_group${counter.grp}`;
+  const ordinal = flavor === "arm" ? ++counter.arm : ++counter.grp;
+  const visibleName = `${base2}_${flavor}${ordinal}`;
   const hiddenName = `_${visibleName}`;
   if (visibleName in rulesBag || hiddenName in rulesBag) {
     process.stderr.write(
@@ -2925,7 +2975,7 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
   }
   return register(visibleName);
 }
-function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedupeMap, counter, rulesBag) {
+function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedupeMap, counter, rulesBag, flavor = "group") {
   const existing = groupDedupeMap[existingHiddenName];
   if (existing !== void 0) return { visibleName: existing };
   const natural = existingHiddenName.replace(/^_+/, "");
@@ -2933,8 +2983,8 @@ function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedu
     groupDedupeMap[existingHiddenName] = natural;
     return { visibleName: natural };
   }
-  counter.grp += 1;
-  const visibleName = `${parentKind.replace(/^_+/, "")}_group${counter.grp}`;
+  const ordinal = flavor === "arm" ? ++counter.arm : ++counter.grp;
+  const visibleName = `${parentKind.replace(/^_+/, "")}_${flavor}${ordinal}`;
   if (visibleName in rulesBag) {
     process.stderr.write(
       `enrich: visible-group promotion skipped for '${parentKind}' \u2014 rule '${visibleName}' already exists in base.grammar.rules
@@ -3005,7 +3055,7 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
     const body = rulesBag[name];
     if (!body || ruleMatchesEmpty(body) || isInlineSafe(body, rulesBag)) return null;
     if (isSupertypeLike(body)) return null;
-    const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag);
+    const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag, "arm");
     if (!promoted) return null;
     visibleGroupHiddenNames.add(name);
     if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
@@ -3022,7 +3072,8 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
       rulesBag,
       clauseGroupRules,
       ambientPrec,
-      enclosingFieldName
+      enclosingFieldName,
+      "arm"
     );
     if (!names) return null;
     visibleGroupHiddenNames.add(names.hiddenName);
@@ -4521,7 +4572,7 @@ var grammar_sittir_default = grammar(
       conflicts: ($, previous) => [
         ...previous ?? [],
         [$.sequence_expression, $._parenthesized_expression_typed],
-        [$.sequence_expression, $._parenthesized_expression_group1],
+        [$.sequence_expression, $._parenthesized_expression_arm],
         [$.primary_expression, $.arrow_function],
         [$.readonly_type, $._kw_readonly_marker],
         [$.abstract_method_signature, $._kw_abstract_marker],
@@ -4593,47 +4644,47 @@ var grammar_sittir_default = grammar(
         [$.primary_expression, $._export_statement_default],
         [$.string],
         [$.await_expression, $._update_expression_postfix],
-        [$.await_expression, $._update_expression_group1],
-        [$.arrow_function, $._update_expression_group1],
+        [$.await_expression, $._update_expression_arm1],
+        [$.arrow_function, $._update_expression_arm1],
         [$.await_expression, $._call_expression_call],
         [$.instantiation_expression, $._call_expression_call],
-        [$.await_expression, $._binary_expression_group1],
-        [$.as_expression, $._binary_expression_group1],
-        [$._call_expression_call, $._binary_expression_group1],
-        // _binary_expression_group1 (the `in`-operator arm, freshly extracted —
+        [$.await_expression, $._binary_expression_arm],
+        [$.as_expression, $._binary_expression_arm],
+        [$._call_expression_call, $._binary_expression_arm],
+        // _binary_expression_arm (the `in`-operator arm, freshly extracted —
         // same PREC-descent mechanism as call_expression's arms above) mirrors
         // binary_expression's own conflict set: every continuation that used to
         // share LR state with the whole (unsplit) binary_expression choice needs
         // the same explicit GLR declaration now that this one arm has its own
         // symbol boundary.
-        [$.call_expression, $._binary_expression_group1, $.unary_expression, $.instantiation_expression],
-        [$.call_expression, $.await_expression, $._binary_expression_group1, $.instantiation_expression],
-        [$.call_expression, $._binary_expression_group1, $.update_expression, $.instantiation_expression],
-        [$.call_expression, $._binary_expression_group1, $.instantiation_expression],
-        [$._initializer, $._binary_expression_group1],
-        [$._binary_expression_group1, $.unary_expression, $.instantiation_expression, $._call_expression_call],
-        [$.await_expression, $._binary_expression_group1, $.instantiation_expression, $._call_expression_call],
-        [$._binary_expression_group1, $.update_expression, $.instantiation_expression, $._call_expression_call],
-        [$._binary_expression_group1, $.instantiation_expression, $._call_expression_call],
-        [$.subscript_expression, $._binary_expression_group1],
-        [$.member_expression, $._binary_expression_group1],
-        [$.member_expression, $.subscript_expression, $._binary_expression_group1],
-        [$.binary_expression, $.instantiation_expression, $._call_expression_call, $._binary_expression_group1],
-        [$.non_null_expression, $._binary_expression_group1],
-        [$.satisfies_expression, $._binary_expression_group1],
-        [$._binary_expression_group1, $._update_expression_postfix],
-        [$._binary_expression_group1, $._update_expression_prefix],
-        [$._binary_expression_group1, $._update_expression_group1],
-        [$.ternary_expression, $._binary_expression_group1],
+        [$.call_expression, $._binary_expression_arm, $.unary_expression, $.instantiation_expression],
+        [$.call_expression, $.await_expression, $._binary_expression_arm, $.instantiation_expression],
+        [$.call_expression, $._binary_expression_arm, $.update_expression, $.instantiation_expression],
+        [$.call_expression, $._binary_expression_arm, $.instantiation_expression],
+        [$._initializer, $._binary_expression_arm],
+        [$._binary_expression_arm, $.unary_expression, $.instantiation_expression, $._call_expression_call],
+        [$.await_expression, $._binary_expression_arm, $.instantiation_expression, $._call_expression_call],
+        [$._binary_expression_arm, $.update_expression, $.instantiation_expression, $._call_expression_call],
+        [$._binary_expression_arm, $.instantiation_expression, $._call_expression_call],
+        [$.subscript_expression, $._binary_expression_arm],
+        [$.member_expression, $._binary_expression_arm],
+        [$.member_expression, $.subscript_expression, $._binary_expression_arm],
+        [$.binary_expression, $.instantiation_expression, $._call_expression_call, $._binary_expression_arm],
+        [$.non_null_expression, $._binary_expression_arm],
+        [$.satisfies_expression, $._binary_expression_arm],
+        [$._binary_expression_arm, $._update_expression_postfix],
+        [$._binary_expression_arm, $._update_expression_prefix],
+        [$._binary_expression_arm, $._update_expression_arm1],
+        [$.ternary_expression, $._binary_expression_arm],
         [$.arrow_function, $._call_expression_call],
-        [$.arrow_function, $._binary_expression_group1],
+        [$.arrow_function, $._binary_expression_arm],
         [$.expression, $._call_expression_template_call],
-        [$._variable_declarator_group1, $._for_header_group2],
-        [$.primary_expression, $._for_header_group2],
-        [$._variable_declarator_group1, $._for_header_let_const_kind],
-        [$._class_body_group1, $._class_body_group2],
-        [$.import, $._meta_property_group2],
-        [$.primary_expression, $._meta_property_group1],
+        [$._variable_declarator_arm1, $._for_header_arm2],
+        [$.primary_expression, $._for_header_arm2],
+        [$._variable_declarator_arm1, $._for_header_let_const_kind],
+        [$._class_body_arm1, $._class_body_arm2],
+        [$.import, $._meta_property_arm2],
+        [$.primary_expression, $._meta_property_arm1],
         [$._lhs_expression, $._export_statement_equals_export],
         [$.object_assignment_pattern, $._lhs_expression],
         [$.object_assignment_pattern, $._lhs_expression, $._export_statement_equals_export],
@@ -4674,25 +4725,25 @@ var grammar_sittir_default = grammar(
       ],
       inline: ($, previous) => [
         ...previous ?? [],
-        $._object_group1,
-        $._object_pattern_group1,
-        $._reserved_identifier_group1,
-        $._primary_expression_group1,
-        $._meta_property_group1,
-        $._meta_property_group2,
-        $._lhs_expression_group1,
-        $._method_definition_group1,
-        $._public_field_definition_group2,
-        $._public_field_definition_group3,
-        $._public_field_definition_group4,
-        $._export_statement_group1,
-        $._export_statement_group2,
-        $._export_statement_group3,
-        $._export_statement_group4,
-        $._export_statement_group5,
-        $._export_statement_group6,
-        $._export_statement_group7,
-        $._export_statement_group8,
+        $._object_arm1,
+        $._object_pattern_arm1,
+        $._reserved_identifier_arm1,
+        $._primary_expression_arm1,
+        $._meta_property_arm1,
+        $._meta_property_arm2,
+        $._lhs_expression_arm1,
+        $._method_definition_arm1,
+        $._public_field_definition_arm2,
+        $._public_field_definition_arm3,
+        $._public_field_definition_arm4,
+        $._export_statement_arm1,
+        $._export_statement_arm2,
+        $._export_statement_arm3,
+        $._export_statement_arm4,
+        $._export_statement_arm5,
+        $._export_statement_arm6,
+        $._export_statement_arm7,
+        $._export_statement_arm8,
         $._public_field_definition_accessor_opt
       ],
       polymorphs: {
@@ -4745,7 +4796,7 @@ var grammar_sittir_default = grammar(
         jsx_opening_element_content: ($) => seq(
           choice(
             field("name", choice($._jsx_identifier, $.jsx_namespace_name)),
-            alias($._jsx_start_opening_element_group1, $.jsx_start_opening_element_group1)
+            alias($._jsx_start_opening_element_arm, $.jsx_start_opening_element_arm)
           ),
           repeat(field("attribute", $._jsx_attribute))
         )

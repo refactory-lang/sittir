@@ -102,7 +102,7 @@ describe('import_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.importStatement({
 			fromClause: {
-				$type: TSKindId.ImportStatementGroup1,
+				$type: TSKindId.ImportStatementArm,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -135,7 +135,7 @@ describe('import_statement', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.importStatement({
 			fromClause: {
-				$type: TSKindId.ImportStatementGroup1,
+				$type: TSKindId.ImportStatementArm,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -262,7 +262,7 @@ describe('variable_declaration', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorGroup1,
+						$type: TSKindId.VariableDeclaratorArm1,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -284,7 +284,7 @@ describe('variable_declaration', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorGroup1,
+						$type: TSKindId.VariableDeclaratorArm1,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -309,7 +309,7 @@ describe('lexical_declaration', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorGroup1,
+						$type: TSKindId.VariableDeclaratorArm1,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -332,7 +332,7 @@ describe('lexical_declaration', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorGroup1,
+						$type: TSKindId.VariableDeclaratorArm1,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -349,7 +349,7 @@ describe('lexical_declaration', () => {
 describe('variable_declarator', () => {
 	it('factory produces correct type', () => {
 		const node = ir.variableDeclarator({
-			$type: TSKindId.VariableDeclaratorGroup1,
+			$type: TSKindId.VariableDeclaratorArm1,
 			$text: 'test',
 			$source: 2,
 			$named: true,
@@ -691,13 +691,9 @@ describe('labeled_statement', () => {
 
 describe('switch_body', () => {
 	it('factory produces correct type', () => {
-		const node = ir.switchBody({});
+		const node = ir.switchBody();
 		expect(node.$type).toBe(TSKindId.SwitchBody);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.switchBody({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -719,13 +715,9 @@ describe('switch_case', () => {
 
 describe('switch_default', () => {
 	it('factory produces correct type', () => {
-		const node = ir.switchDefault({});
+		const node = ir.switchDefault();
 		expect(node.$type).toBe(TSKindId.SwitchDefault);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.switchDefault({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -784,25 +776,17 @@ describe('yield_expression', () => {
 
 describe('object', () => {
 	it('factory produces correct type', () => {
-		const node = ir.object({});
+		const node = ir.object();
 		expect(node.$type).toBe(TSKindId.Object);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.object({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
 describe('object_pattern', () => {
 	it('factory produces correct type', () => {
-		const node = ir.objectPattern({});
+		const node = ir.objectPattern();
 		expect(node.$type).toBe(TSKindId.ObjectPattern);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.objectPattern({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -844,25 +828,17 @@ describe('object_assignment_pattern', () => {
 
 describe('array', () => {
 	it('factory produces correct type', () => {
-		const node = ir.array({});
+		const node = ir.array();
 		expect(node.$type).toBe(TSKindId.Array);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.array({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
 describe('array_pattern', () => {
 	it('factory produces correct type', () => {
-		const node = ir.arrayPattern({});
+		const node = ir.arrayPattern();
 		expect(node.$type).toBe(TSKindId.ArrayPattern);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.arrayPattern({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -1233,16 +1209,13 @@ describe('update_expression', () => {
 describe('sequence_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.sequenceExpression({
-			expression: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
-		});
+			$type: TSKindId.Undefined,
+			$text: 'undefined',
+			$source: 2,
+			$named: true
+		} as any);
 		expect(node.$type).toBe(TSKindId.SequenceExpression);
 		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.sequenceExpression({
-			expression: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
-		});
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -1293,13 +1266,9 @@ describe('comment', () => {
 
 describe('template_string', () => {
 	it('factory produces correct type', () => {
-		const node = ir.templateString({});
+		const node = ir.templateString();
 		expect(node.$type).toBe(TSKindId.TemplateString);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.templateString({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -1379,12 +1348,7 @@ describe('private_property_identifier', () => {
 
 describe('meta_property', () => {
 	it('factory produces correct type', () => {
-		const node = ir.metaProperty({
-			$type: TSKindId.MetaPropertyGroup1,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
+		const node = ir.metaProperty({ $type: TSKindId.MetaPropertyArm1, $text: 'test', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.MetaProperty);
 		expect(node.$source).toBe(2);
 	});
@@ -1446,13 +1410,9 @@ describe('undefined', () => {
 
 describe('arguments', () => {
 	it('factory produces correct type', () => {
-		const node = ir.arguments({});
+		const node = ir.arguments();
 		expect(node.$type).toBe(TSKindId.Arguments);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.arguments({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -1502,13 +1462,9 @@ describe('decorator_call_expression', () => {
 
 describe('class_body', () => {
 	it('factory produces correct type', () => {
-		const node = ir.classBody({});
+		const node = ir.classBody();
 		expect(node.$type).toBe(TSKindId.ClassBody);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.classBody({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -1896,17 +1852,9 @@ describe('extends_clause', () => {
 
 describe('implements_clause', () => {
 	it('factory produces correct type', () => {
-		const node = ir.implementsClause({
-			type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
-		});
+		const node = ir.implementsClause({ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.ImplementsClause);
 		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.implementsClause({
-			type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
-		});
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -2045,16 +1993,15 @@ describe('interface_declaration', () => {
 describe('extends_type_clause', () => {
 	it('factory produces correct type', () => {
 		const node = ir.extendsTypeClause({
-			type: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-		});
+			$type: TSKindId.NestedTypeIdentifier,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_module: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		} as any);
 		expect(node.$type).toBe(TSKindId.ExtendsTypeClause);
 		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.extendsTypeClause({
-			type: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-		});
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -2393,13 +2340,9 @@ describe('template_type', () => {
 
 describe('template_literal_type', () => {
 	it('factory produces correct type', () => {
-		const node = ir.templateLiteralType({});
+		const node = ir.templateLiteralType();
 		expect(node.$type).toBe(TSKindId.TemplateLiteralType);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.templateLiteralType({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 

@@ -225,7 +225,7 @@ export function buildImportStatement(config: T.ImportStatement.Config) {
 				$with: {
 					importClause: (value?: NonNullable<Parameters<typeof buildImportStatement>[0]>['importClause']) =>
 						buildImportStatement({ ...config, importClause: value }),
-					fromClause: (value: T.ImportStatementGroup1 | T.ImportRequireClause | T.String) =>
+					fromClause: (value: T.ImportStatementArm | T.ImportRequireClause | T.String) =>
 						buildImportStatement({ ...config, fromClause: value }),
 					importAttribute: (value?: T.ImportAttribute) => buildImportStatement({ ...config, importAttribute: value }),
 					semicolon: (value: NonNullable<Parameters<typeof buildImportStatement>[0]>['semicolon']) =>
@@ -517,7 +517,7 @@ export function buildLexicalDeclaration(config: T.LexicalDeclaration.Config) {
 	);
 }
 
-export function buildVariableDeclarator(child: T.VariableDeclaratorGroup1 | T.VariableDeclaratorGroup2) {
+export function buildVariableDeclarator(child: T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -526,7 +526,7 @@ export function buildVariableDeclarator(child: T.VariableDeclaratorGroup1 | T.Va
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.VariableDeclaratorGroup1 | T.VariableDeclaratorGroup2) => buildVariableDeclarator(v) }
+				$with: { $child: (v: T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2) => buildVariableDeclarator(v) }
 			},
 			{
 				content: () => _content
@@ -1046,8 +1046,8 @@ export function buildLabeledStatement(config: T.LabeledStatement.Config) {
 	);
 }
 
-export function buildSwitchBody(config: Partial<T.SwitchBody.Config> = {}) {
-	const _cases = config.cases ?? [];
+export function buildSwitchBody(...children: (T.SwitchCase | T.SwitchDefault)[]) {
+	const _cases = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -1055,9 +1055,7 @@ export function buildSwitchBody(config: Partial<T.SwitchBody.Config> = {}) {
 				$source: 2 as const,
 				$named: true as const,
 				_cases,
-				$with: {
-					cases: (...values: (T.SwitchCase | T.SwitchDefault)[]) => buildSwitchBody({ ...config, cases: values })
-				}
+				$with: { $children: (...vs: (T.SwitchCase | T.SwitchDefault)[]) => buildSwitchBody(...vs) }
 			},
 			{
 				cases: () => _cases
@@ -1092,8 +1090,8 @@ export function buildSwitchCase(config: T.SwitchCase.Config) {
 	);
 }
 
-export function buildSwitchDefault(config: Partial<T.SwitchDefault.Config> = {}) {
-	const _body = config.body ?? [];
+export function buildSwitchDefault(...children: T.Statement[]) {
+	const _body = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -1101,9 +1099,7 @@ export function buildSwitchDefault(config: Partial<T.SwitchDefault.Config> = {})
 				$source: 2 as const,
 				$named: true as const,
 				_body,
-				$with: {
-					bodies: (...values: T.Statement[]) => buildSwitchDefault({ ...config, body: values })
-				}
+				$with: { $children: (...vs: T.Statement[]) => buildSwitchDefault(...vs) }
 			},
 			{
 				bodies: () => _body
@@ -1114,7 +1110,7 @@ export function buildSwitchDefault(config: Partial<T.SwitchDefault.Config> = {})
 }
 
 export function buildCatchClause(config: T.CatchClause.Config) {
-	const _catch_clause_group1 = config.catchClauseGroup1;
+	const _catch_clause_group = config.catchClauseGroup;
 	const _body = config.body;
 	return withMethods(
 		withAccessors(
@@ -1122,15 +1118,15 @@ export function buildCatchClause(config: T.CatchClause.Config) {
 				$type: TSKindId.CatchClause as const,
 				$source: 2 as const,
 				$named: true as const,
-				_catch_clause_group1,
+				_catch_clause_group,
 				_body,
 				$with: {
-					catchClauseGroup1: (value?: T.CatchClauseGroup1) => buildCatchClause({ ...config, catchClauseGroup1: value }),
+					catchClauseGroup: (value?: T.CatchClauseGroup) => buildCatchClause({ ...config, catchClauseGroup: value }),
 					body: (value: T.StatementBlock) => buildCatchClause({ ...config, body: value })
 				}
 			},
 			{
-				catchClauseGroup1: () => _catch_clause_group1,
+				catchClauseGroup: () => _catch_clause_group,
 				body: () => _body
 			}
 		),
@@ -1234,8 +1230,10 @@ export function buildYieldExpression(expression?: T.YieldExpression.Config['expr
 	);
 }
 
-export function buildObject(config: Partial<T.Object.Config> = {}) {
-	const _properties = config.properties ?? [];
+export function buildObject(
+	...children: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]
+) {
+	const _properties = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -1244,8 +1242,8 @@ export function buildObject(config: Partial<T.Object.Config> = {}) {
 				$named: true as const,
 				_properties,
 				$with: {
-					properties: (...values: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) =>
-						buildObject({ ...config, properties: values })
+					$children: (...vs: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) =>
+						buildObject(...vs)
 				}
 			},
 			{
@@ -1256,8 +1254,10 @@ export function buildObject(config: Partial<T.Object.Config> = {}) {
 	);
 }
 
-export function buildObjectPattern(config: Partial<T.ObjectPattern.Config> = {}) {
-	const _properties = config.properties ?? [];
+export function buildObjectPattern(
+	...children: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]
+) {
+	const _properties = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -1266,14 +1266,9 @@ export function buildObjectPattern(config: Partial<T.ObjectPattern.Config> = {})
 				$named: true as const,
 				_properties,
 				$with: {
-					properties: (
-						...values: (
-							| T.PairPattern
-							| T.RestPattern
-							| T.ObjectAssignmentPattern
-							| T.ShorthandPropertyIdentifierPattern
-						)[]
-					) => buildObjectPattern({ ...config, properties: values })
+					$children: (
+						...vs: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]
+					) => buildObjectPattern(...vs)
 				}
 			},
 			{
@@ -1335,8 +1330,8 @@ export function buildObjectAssignmentPattern(config: T.ObjectAssignmentPattern.C
 	);
 }
 
-export function buildArray(config: Partial<T.Array.Config> = {}) {
-	const _elements = config.elements ?? [];
+export function buildArray(...children: (T.Expression | T.SpreadElement)[]) {
+	const _elements = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -1344,9 +1339,7 @@ export function buildArray(config: Partial<T.Array.Config> = {}) {
 				$source: 2 as const,
 				$named: true as const,
 				_elements,
-				$with: {
-					elements: (...values: (T.Expression | T.SpreadElement)[]) => buildArray({ ...config, elements: values })
-				}
+				$with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => buildArray(...vs) }
 			},
 			{
 				elements: () => _elements
@@ -1356,8 +1349,8 @@ export function buildArray(config: Partial<T.Array.Config> = {}) {
 	);
 }
 
-export function buildArrayPattern(config: Partial<T.ArrayPattern.Config> = {}) {
-	const _elements = config.elements ?? [];
+export function buildArrayPattern(...children: (T.Pattern | T.AssignmentPattern)[]) {
+	const _elements = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -1365,10 +1358,7 @@ export function buildArrayPattern(config: Partial<T.ArrayPattern.Config> = {}) {
 				$source: 2 as const,
 				$named: true as const,
 				_elements,
-				$with: {
-					elements: (...values: (T.Pattern | T.AssignmentPattern)[]) =>
-						buildArrayPattern({ ...config, elements: values })
-				}
+				$with: { $children: (...vs: (T.Pattern | T.AssignmentPattern)[]) => buildArrayPattern(...vs) }
 			},
 			{
 				elements: () => _elements
@@ -2065,7 +2055,7 @@ export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config>
 		['instanceof', TSKindId.Instanceof] as const
 	]);
 	const _right = config.right;
-	const _binary_expression_group1 = config.binaryExpressionGroup1;
+	const _binary_expression_arm = config.binaryExpressionArm;
 	return withMethods(
 		withAccessors(
 			{
@@ -2075,21 +2065,21 @@ export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config>
 				_left,
 				_operator,
 				_right,
-				_binary_expression_group1,
+				_binary_expression_arm,
 				$with: {
 					left: (value?: T.Expression) => buildBinaryExpression({ ...config, left: value }),
 					operator: (value?: NonNullable<Parameters<typeof buildBinaryExpression>[0]>['operator']) =>
 						buildBinaryExpression({ ...config, operator: value }),
 					right: (value?: T.Expression) => buildBinaryExpression({ ...config, right: value }),
-					binaryExpressionGroup1: (value?: T.BinaryExpressionGroup1) =>
-						buildBinaryExpression({ ...config, binaryExpressionGroup1: value })
+					binaryExpressionArm: (value?: T.BinaryExpressionArm) =>
+						buildBinaryExpression({ ...config, binaryExpressionArm: value })
 				}
 			},
 			{
 				left: () => _left,
 				operator: () => _operator,
 				right: () => _right,
-				binaryExpressionGroup1: () => _binary_expression_group1
+				binaryExpressionArm: () => _binary_expression_arm
 			}
 		),
 		methodsEngine
@@ -2149,8 +2139,9 @@ export function buildUpdateExpression(child: T.UpdateExpressionPostfix | T.Updat
 	);
 }
 
-export function buildSequenceExpression(config: T.SequenceExpression.Config) {
-	const _expression = config.expression ?? [];
+export function buildSequenceExpression(...children: T.Expression[]) {
+	_assertNonEmpty(children, 'sequence_expression.children');
+	const _expression = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -2158,10 +2149,7 @@ export function buildSequenceExpression(config: T.SequenceExpression.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				$with: {
-					expressions: (...values: NonEmptyArray<T.Expression>) =>
-						buildSequenceExpression({ ...config, expression: values })
-				}
+				$with: { $children: (...vs: T.Expression[]) => buildSequenceExpression(...vs) }
 			},
 			{
 				expressions: () => _expression
@@ -2258,8 +2246,8 @@ export function buildComment(text: string) {
 	);
 }
 
-export function buildTemplateString(config: Partial<T.TemplateString.Config> = {}) {
-	const _elements = config.elements ?? [];
+export function buildTemplateString(...children: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) {
+	const _elements = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -2268,8 +2256,8 @@ export function buildTemplateString(config: Partial<T.TemplateString.Config> = {
 				$named: true as const,
 				_elements,
 				$with: {
-					elements: (...values: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) =>
-						buildTemplateString({ ...config, elements: values })
+					$children: (...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) =>
+						buildTemplateString(...vs)
 				}
 			},
 			{
@@ -2396,7 +2384,7 @@ export function buildPrivatePropertyIdentifier(text: string) {
 	);
 }
 
-export function buildMetaProperty(child: T.MetaPropertyGroup1 | T.MetaPropertyGroup2) {
+export function buildMetaProperty(child: T.MetaPropertyArm1 | T.MetaPropertyArm2) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -2405,7 +2393,7 @@ export function buildMetaProperty(child: T.MetaPropertyGroup1 | T.MetaPropertyGr
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T.MetaPropertyGroup1 | T.MetaPropertyGroup2) => buildMetaProperty(v) }
+				$with: { $child: (v: T.MetaPropertyArm1 | T.MetaPropertyArm2) => buildMetaProperty(v) }
 			},
 			{
 				content: () => _content
@@ -2487,8 +2475,8 @@ export function buildUndefined() {
 	);
 }
 
-export function buildArguments(config: Partial<T.Arguments.Config> = {}) {
-	const _arguments = config.arguments ?? [];
+export function buildArguments(...children: (T.Expression | T.SpreadElement)[]) {
+	const _arguments = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -2496,9 +2484,7 @@ export function buildArguments(config: Partial<T.Arguments.Config> = {}) {
 				$source: 2 as const,
 				$named: true as const,
 				_arguments,
-				$with: {
-					arguments: (...values: (T.Expression | T.SpreadElement)[]) => buildArguments({ ...config, arguments: values })
-				}
+				$with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => buildArguments(...vs) }
 			},
 			{
 				arguments: () => _arguments
@@ -2593,8 +2579,10 @@ export function buildDecoratorCallExpression(config: T.DecoratorCallExpression.C
 	);
 }
 
-export function buildClassBody(config: Partial<T.ClassBody.Config> = {}) {
-	const _content = config.content ?? [];
+export function buildClassBody(
+	...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]
+) {
+	const _content = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -2603,9 +2591,8 @@ export function buildClassBody(config: Partial<T.ClassBody.Config> = {}) {
 				$named: true as const,
 				_content,
 				$with: {
-					contents: (
-						...values: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[]
-					) => buildClassBody({ ...config, content: values })
+					$children: (...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]) =>
+						buildClassBody(...vs)
 				}
 			},
 			{
@@ -3364,8 +3351,9 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config) {
 	);
 }
 
-export function buildImplementsClause(config: T.ImplementsClause.Config) {
-	const _type = config.type ?? [];
+export function buildImplementsClause(...children: T.Type[]) {
+	_assertNonEmpty(children, 'implements_clause.children');
+	const _type = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -3373,9 +3361,7 @@ export function buildImplementsClause(config: T.ImplementsClause.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_type,
-				$with: {
-					types: (...values: NonEmptyArray<T.Type>) => buildImplementsClause({ ...config, type: values })
-				}
+				$with: { $children: (...vs: T.Type[]) => buildImplementsClause(...vs) }
 			},
 			{
 				types: () => _type
@@ -3616,8 +3602,9 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 	);
 }
 
-export function buildExtendsTypeClause(config: T.ExtendsTypeClause.Config) {
-	const _type = config.type ?? [];
+export function buildExtendsTypeClause(...children: (T.Identifier | T.NestedTypeIdentifier | T.GenericType)[]) {
+	_assertNonEmpty(children, 'extends_type_clause.children');
+	const _type = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -3626,8 +3613,7 @@ export function buildExtendsTypeClause(config: T.ExtendsTypeClause.Config) {
 				$named: true as const,
 				_type,
 				$with: {
-					types: (...values: NonEmptyArray<T.Identifier | T.NestedTypeIdentifier | T.GenericType>) =>
-						buildExtendsTypeClause({ ...config, type: values })
+					$children: (...vs: (T.Identifier | T.NestedTypeIdentifier | T.GenericType)[]) => buildExtendsTypeClause(...vs)
 				}
 			},
 			{
@@ -4286,8 +4272,8 @@ export function buildTemplateType(child: T.PrimaryType | T.InferType) {
 	);
 }
 
-export function buildTemplateLiteralType(config: Partial<T.TemplateLiteralType.Config> = {}) {
-	const _elements = config.elements ?? [];
+export function buildTemplateLiteralType(...children: (T.TemplateChars | T.TemplateType)[]) {
+	const _elements = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -4295,10 +4281,7 @@ export function buildTemplateLiteralType(config: Partial<T.TemplateLiteralType.C
 				$source: 2 as const,
 				$named: true as const,
 				_elements,
-				$with: {
-					elements: (...values: (T.TemplateChars | T.TemplateType)[]) =>
-						buildTemplateLiteralType({ ...config, elements: values })
-				}
+				$with: { $children: (...vs: (T.TemplateChars | T.TemplateType)[]) => buildTemplateLiteralType(...vs) }
 			},
 			{
 				elements: () => _elements
@@ -5435,50 +5418,6 @@ function _buildExportSpecifiers(elements: NonEmptyArray<T.ExportSpecifier>, opti
 	);
 }
 
-export function buildImportStatementGroup1(config: T.ImportStatementGroup1.Config) {
-	const _import_clause = config.importClause;
-	const _source = config.source;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ImportStatementGroup1 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_import_clause,
-				_source,
-				$with: {
-					importClause: (value: T.ImportClause) => buildImportStatementGroup1({ ...config, importClause: value }),
-					source: (value: T.String) => buildImportStatementGroup1({ ...config, source: value })
-				}
-			},
-			{
-				importClause: () => _import_clause,
-				source: () => _source
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildImportClauseGroup1(child: T.NamespaceImport | T.NamedImports) {
-	const _content = child;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ImportClauseGroup1 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: { $child: (v: T.NamespaceImport | T.NamedImports) => buildImportClauseGroup1(v) }
-			},
-			{
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildImportSpecifiers(
 	...elements: NonEmptyArray<T.ImportSpecifier>
 ): ReturnType<typeof _buildImportSpecifiers>;
@@ -5522,14 +5461,14 @@ function _buildImportSpecifiers(elements: NonEmptyArray<T.ImportSpecifier>, opti
 	);
 }
 
-export function buildVariableDeclaratorGroup1(config: T.VariableDeclaratorGroup1.Config) {
+export function buildVariableDeclaratorArm1(config: T.VariableDeclaratorArm1.Config) {
 	const _name = config.name;
 	const _type = config.type;
 	const _value = config.value;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.VariableDeclaratorGroup1 as const,
+				$type: TSKindId.VariableDeclaratorArm1 as const,
 				$source: 2 as const,
 				$named: true as const,
 				_name,
@@ -5537,9 +5476,9 @@ export function buildVariableDeclaratorGroup1(config: T.VariableDeclaratorGroup1
 				_value,
 				$with: {
 					name: (value: T.Identifier | T.DestructuringPattern) =>
-						buildVariableDeclaratorGroup1({ ...config, name: value }),
-					type: (value?: T.TypeAnnotation) => buildVariableDeclaratorGroup1({ ...config, type: value }),
-					value: (value?: T.Expression) => buildVariableDeclaratorGroup1({ ...config, value: value })
+						buildVariableDeclaratorArm1({ ...config, name: value }),
+					type: (value?: T.TypeAnnotation) => buildVariableDeclaratorArm1({ ...config, type: value }),
+					value: (value?: T.Expression) => buildVariableDeclaratorArm1({ ...config, value: value })
 				}
 			},
 			{
@@ -5552,20 +5491,20 @@ export function buildVariableDeclaratorGroup1(config: T.VariableDeclaratorGroup1
 	);
 }
 
-export function buildVariableDeclaratorGroup2(config: T.VariableDeclaratorGroup2.Config) {
+export function buildVariableDeclaratorArm2(config: T.VariableDeclaratorArm2.Config) {
 	const _name = config.name;
 	const _type = config.type;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.VariableDeclaratorGroup2 as const,
+				$type: TSKindId.VariableDeclaratorArm2 as const,
 				$source: 2 as const,
 				$named: true as const,
 				_name,
 				_type,
 				$with: {
-					name: (value: T.Identifier) => buildVariableDeclaratorGroup2({ ...config, name: value }),
-					type: (value: T.TypeAnnotation) => buildVariableDeclaratorGroup2({ ...config, type: value })
+					name: (value: T.Identifier) => buildVariableDeclaratorArm2({ ...config, name: value }),
+					type: (value: T.TypeAnnotation) => buildVariableDeclaratorArm2({ ...config, type: value })
 				}
 			},
 			{
@@ -5577,67 +5516,12 @@ export function buildVariableDeclaratorGroup2(config: T.VariableDeclaratorGroup2
 	);
 }
 
-export function buildCatchClauseGroup1(config: T.CatchClauseGroup1.Config) {
-	const _parameter = config.parameter;
-	const _type = config.type;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CatchClauseGroup1 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_parameter,
-				_type,
-				$with: {
-					parameter: (value: T.Identifier | T.DestructuringPattern) =>
-						buildCatchClauseGroup1({ ...config, parameter: value }),
-					type: (value?: T.TypeAnnotation) => buildCatchClauseGroup1({ ...config, type: value })
-				}
-			},
-			{
-				parameter: () => _parameter,
-				type: () => _type
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildBinaryExpressionGroup1(config: T.BinaryExpressionGroup1.Config) {
-	const _left = config.left;
-	const _operator = coerceKindEnumStorage('in' as const, [['in', TSKindId.In] as const]);
-	const _right = config.right;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.BinaryExpressionGroup1 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_left,
-				_operator,
-				_right,
-				$with: {
-					left: (value: T.Expression | T.PrivatePropertyIdentifier) =>
-						buildBinaryExpressionGroup1({ ...config, left: value }),
-					right: (value: T.Expression) => buildBinaryExpressionGroup1({ ...config, right: value })
-				}
-			},
-			{
-				left: () => _left,
-				operator: () => _operator,
-				right: () => _right
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildMetaPropertyGroup1(text: string) {
+export function buildMetaPropertyArm1(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_meta_property_group1: text must be non-empty`);
+		throw new Error(`_meta_property_arm1: text must be non-empty`);
 	return withMethods(
 		{
-			$type: TSKindId.MetaPropertyGroup1 as const,
+			$type: TSKindId.MetaPropertyArm1 as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -5646,12 +5530,12 @@ export function buildMetaPropertyGroup1(text: string) {
 	);
 }
 
-export function buildMetaPropertyGroup2(text: string) {
+export function buildMetaPropertyArm2(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_meta_property_group2: text must be non-empty`);
+		throw new Error(`_meta_property_arm2: text must be non-empty`);
 	return withMethods(
 		{
-			$type: TSKindId.MetaPropertyGroup2 as const,
+			$type: TSKindId.MetaPropertyArm2 as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -5870,6 +5754,105 @@ function _buildTupleTypeMembers(elements: NonEmptyArray<T.TupleTypeMember>, opti
 			},
 			{
 				tupleTypeMembers: () => _tuple_type_member
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildImportStatementArm(config: T.ImportStatementArm.Config) {
+	const _import_clause = config.importClause;
+	const _source = config.source;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ImportStatementArm as const,
+				$source: 2 as const,
+				$named: true as const,
+				_import_clause,
+				_source,
+				$with: {
+					importClause: (value: T.ImportClause) => buildImportStatementArm({ ...config, importClause: value }),
+					source: (value: T.String) => buildImportStatementArm({ ...config, source: value })
+				}
+			},
+			{
+				importClause: () => _import_clause,
+				source: () => _source
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildImportClauseGroup(child: T.NamespaceImport | T.NamedImports) {
+	const _content = child;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ImportClauseGroup as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { $child: (v: T.NamespaceImport | T.NamedImports) => buildImportClauseGroup(v) }
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config) {
+	const _parameter = config.parameter;
+	const _type = config.type;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CatchClauseGroup as const,
+				$source: 2 as const,
+				$named: true as const,
+				_parameter,
+				_type,
+				$with: {
+					parameter: (value: T.Identifier | T.DestructuringPattern) =>
+						buildCatchClauseGroup({ ...config, parameter: value }),
+					type: (value?: T.TypeAnnotation) => buildCatchClauseGroup({ ...config, type: value })
+				}
+			},
+			{
+				parameter: () => _parameter,
+				type: () => _type
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildBinaryExpressionArm(config: T.BinaryExpressionArm.Config) {
+	const _left = config.left;
+	const _operator = coerceKindEnumStorage('in' as const, [['in', TSKindId.In] as const]);
+	const _right = config.right;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.BinaryExpressionArm as const,
+				$source: 2 as const,
+				$named: true as const,
+				_left,
+				_operator,
+				_right,
+				$with: {
+					left: (value: T.Expression | T.PrivatePropertyIdentifier) =>
+						buildBinaryExpressionArm({ ...config, left: value }),
+					right: (value: T.Expression) => buildBinaryExpressionArm({ ...config, right: value })
+				}
+			},
+			{
+				left: () => _left,
+				operator: () => _operator,
+				right: () => _right
 			}
 		),
 		methodsEngine
@@ -6156,7 +6139,7 @@ export function buildClassHeritageExtendsClause(config: T.ClassHeritageExtendsCl
 
 export function buildImportClauseDefaultImport(config: T.ImportClauseDefaultImport.Config) {
 	const _import_identifier = config.importIdentifier;
-	const _import_clause_group1 = config.importClauseGroup1;
+	const _import_clause_group = config.importClauseGroup;
 	return withMethods(
 		withAccessors(
 			{
@@ -6164,17 +6147,17 @@ export function buildImportClauseDefaultImport(config: T.ImportClauseDefaultImpo
 				$source: 2 as const,
 				$named: true as const,
 				_import_identifier,
-				_import_clause_group1,
+				_import_clause_group,
 				$with: {
 					importIdentifier: (value: T.ImportIdentifier) =>
 						buildImportClauseDefaultImport({ ...config, importIdentifier: value }),
-					importClauseGroup1: (value?: T.ImportClauseGroup1) =>
-						buildImportClauseDefaultImport({ ...config, importClauseGroup1: value })
+					importClauseGroup: (value?: T.ImportClauseGroup) =>
+						buildImportClauseDefaultImport({ ...config, importClauseGroup: value })
 				}
 			},
 			{
 				importIdentifier: () => _import_identifier,
-				importClauseGroup1: () => _import_clause_group1
+				importClauseGroup: () => _import_clause_group
 			}
 		),
 		methodsEngine
@@ -7339,20 +7322,20 @@ export type FluentKindMap = {
 	function_type: FluentNode<'function_type', T.FunctionType.Config>;
 	_type_identifier: T.TypeIdentifier;
 	_export_specifiers: FluentNode<'_export_specifiers', T.ExportSpecifiers.Config>;
-	_import_statement_group1: FluentNode<'_import_statement_group1', T.ImportStatementGroup1.Config>;
-	_import_clause_group1: FluentNode<'_import_clause_group1', T.ImportClauseGroup1.Config>;
 	_import_specifiers: FluentNode<'_import_specifiers', T.ImportSpecifiers.Config>;
-	_variable_declarator_group1: T.VariableDeclaratorGroup1;
-	_variable_declarator_group2: T.VariableDeclaratorGroup2;
-	_catch_clause_group1: T.CatchClauseGroup1;
-	_binary_expression_group1: T.BinaryExpressionGroup1;
-	_meta_property_group1: T.MetaPropertyGroup1;
-	_meta_property_group2: T.MetaPropertyGroup2;
+	_variable_declarator_arm1: T.VariableDeclaratorArm1;
+	_variable_declarator_arm2: T.VariableDeclaratorArm2;
+	_meta_property_arm1: T.MetaPropertyArm1;
+	_meta_property_arm2: T.MetaPropertyArm2;
 	_formal_parameters_elements: FluentNode<'_formal_parameters_elements', T.FormalParametersElements.Config>;
 	_enum_body_elements: FluentNode<'_enum_body_elements', T.EnumBodyElements.Config>;
 	_types: FluentNode<'_types', T.Types.Config>;
 	_type_parameters_elements: FluentNode<'_type_parameters_elements', T.TypeParametersElements.Config>;
 	_tuple_type_members: FluentNode<'_tuple_type_members', T.TupleTypeMembers.Config>;
+	_import_statement_arm: FluentNode<'_import_statement_arm', T.ImportStatementArm.Config>;
+	_import_clause_group: FluentNode<'_import_clause_group', T.ImportClauseGroup.Config>;
+	_catch_clause_group: T.CatchClauseGroup;
+	_binary_expression_arm: T.BinaryExpressionArm;
 	_kind: T.Kind;
 	__for_header_operator: T.ForHeaderOperator;
 	_ambient_declaration_global: T.AmbientDeclarationGlobal;
@@ -7607,20 +7590,20 @@ export const _factoryMap = {
 	function_type: buildFunctionType,
 	_type_identifier: buildTypeIdentifier,
 	_export_specifiers: buildExportSpecifiers,
-	_import_statement_group1: buildImportStatementGroup1,
-	_import_clause_group1: buildImportClauseGroup1,
 	_import_specifiers: buildImportSpecifiers,
-	_variable_declarator_group1: buildVariableDeclaratorGroup1,
-	_variable_declarator_group2: buildVariableDeclaratorGroup2,
-	_catch_clause_group1: buildCatchClauseGroup1,
-	_binary_expression_group1: buildBinaryExpressionGroup1,
-	_meta_property_group1: buildMetaPropertyGroup1,
-	_meta_property_group2: buildMetaPropertyGroup2,
+	_variable_declarator_arm1: buildVariableDeclaratorArm1,
+	_variable_declarator_arm2: buildVariableDeclaratorArm2,
+	_meta_property_arm1: buildMetaPropertyArm1,
+	_meta_property_arm2: buildMetaPropertyArm2,
 	_formal_parameters_elements: buildFormalParametersElements,
 	_enum_body_elements: buildEnumBodyElements,
 	_types: buildTypes,
 	_type_parameters_elements: buildTypeParametersElements,
 	_tuple_type_members: buildTupleTypeMembers,
+	_import_statement_arm: buildImportStatementArm,
+	_import_clause_group: buildImportClauseGroup,
+	_catch_clause_group: buildCatchClauseGroup,
+	_binary_expression_arm: buildBinaryExpressionArm,
 	_kind: buildKind,
 	__for_header_operator: buildForHeaderOperator,
 	_ambient_declaration_global: buildAmbientDeclarationGlobal,

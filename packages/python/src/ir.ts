@@ -527,13 +527,13 @@ export const ir = {
 		from: FR.coerceToComprehensionClauses,
 		strict: F.buildComprehensionClauses
 	}),
-	printStatementGroup1: _attach(FR.coerceToPrintStatementGroup1, {
-		from: FR.coerceToPrintStatementGroup1,
-		strict: F.buildPrintStatementGroup1
+	printStatementArm1: _attach(FR.coerceToPrintStatementArm1, {
+		from: FR.coerceToPrintStatementArm1,
+		strict: F.buildPrintStatementArm1
 	}),
-	printStatementGroup2: _attach(FR.coerceToPrintStatementGroup2, {
-		from: FR.coerceToPrintStatementGroup2,
-		strict: F.buildPrintStatementGroup2
+	printStatementArm2: _attach(FR.coerceToPrintStatementArm2, {
+		from: FR.coerceToPrintStatementArm2,
+		strict: F.buildPrintStatementArm2
 	}),
 
 	// Keyword factories

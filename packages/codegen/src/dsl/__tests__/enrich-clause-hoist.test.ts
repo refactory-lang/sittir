@@ -617,8 +617,9 @@ describe('enrich clause-hoist pass — cross-parent group dedupe ignores runtime
 		// carry different id/_ref provenance stamps.
 		expect(aliasB.value).toBe(aliasA.value);
 
-		// Exactly ONE hidden backing rule was minted (shared), not one per parent.
-		const hiddenKeys = Object.keys(rules).filter((k) => k.startsWith('_') && k.endsWith('_group1'));
-		expect(hiddenKeys.length).toBe(1);
+		// Exactly ONE hidden backing rule was minted (shared), not one per parent —
+		// and as the sole group mint under its parent it carries no ordinal.
+		const hiddenKeys = Object.keys(rules).filter((k) => k.startsWith('_') && /_group\d*$/.test(k));
+		expect(hiddenKeys).toEqual(['_parent_a_group']);
 	});
 });

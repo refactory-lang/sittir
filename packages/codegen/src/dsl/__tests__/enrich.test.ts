@@ -462,14 +462,14 @@ describe('enrich()', () => {
 			};
 			expect(rule.members[0]).toMatchObject({
 				type: 'ALIAS',
-				content: { type: 'SYMBOL', name: '_stmt_group1' }
+				content: { type: 'SYMBOL', name: '_stmt_arm1' }
 			});
 			expect(rule.members[1]).toMatchObject({
 				type: 'ALIAS',
-				content: { type: 'SYMBOL', name: '_stmt_group2' }
+				content: { type: 'SYMBOL', name: '_stmt_arm2' }
 			});
-			const group1 = out.grammar.rules._stmt_group1 as { type: 'SEQ'; members: Rule[] };
-			const group2 = out.grammar.rules._stmt_group2 as { type: 'SEQ'; members: Rule[] };
+			const group1 = out.grammar.rules._stmt_arm1 as { type: 'SEQ'; members: Rule[] };
+			const group2 = out.grammar.rules._stmt_arm2 as { type: 'SEQ'; members: Rule[] };
 			expect(group1.members[0]).toMatchObject({
 				type: 'OPTIONAL',
 				content: { type: 'FIELD', name: 'let_marker' }
@@ -897,7 +897,7 @@ describe('enrich()', () => {
 				b: { type: STRING, value: 'b' }
 			});
 			const out = runEnrich(input);
-			expect(out.grammar.rules._call_group1).toMatchObject({
+			expect(out.grammar.rules._call_group).toMatchObject({
 				type: 'SEQ',
 				members: [
 					{ type: 'SYMBOL', name: 'a' },
@@ -1017,7 +1017,7 @@ describe('enrich()', () => {
 				]
 			});
 			// The second arm falls back to an ordinal instead of overwriting it.
-			expect(out.grammar.rules._call_group1).toMatchObject({
+			expect(out.grammar.rules._call_group).toMatchObject({
 				type: 'SEQ',
 				members: [
 					{ type: 'SYMBOL', name: 'c' },
@@ -1111,7 +1111,7 @@ describe('enrich()', () => {
 				b: { type: STRING, value: 'b' }
 			});
 			const out = runEnrich(input);
-			expect(out.grammar.rules._call_group1).toMatchObject({
+			expect(out.grammar.rules._call_group).toMatchObject({
 				type: 'SEQ',
 				members: [
 					{ type: 'SYMBOL', name: 'a' },

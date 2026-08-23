@@ -155,11 +155,9 @@ pub enum AnyTransport {
     KeywordSeparator(KeywordSeparatorTransport),
     KwAsyncMarker(KwAsyncMarkerTransport),
     SimpleStatementsElements(SimpleStatementsElementsTransport),
-    FutureImportStatementGroup1(FutureImportStatementGroup1Transport),
     RaiseStatementOptional1(RaiseStatementOptional1Transport),
     Subjects(SubjectsTransport),
     CasePatterns(CasePatternsTransport),
-    ExceptClauseGroup1(ExceptClauseGroup1Transport),
     WithClauseWithItems(WithClauseWithItemsTransport),
     FunctionDefinitionOptional1(FunctionDefinitionOptional1Transport),
     ExecStatementOptional1(ExecStatementOptional1Transport),
@@ -170,8 +168,10 @@ pub enum AnyTransport {
     DictPatternElements(DictPatternElementsTransport),
     PatternListPatterns(PatternListPatternsTransport),
     Subscripts(SubscriptsTransport),
-    SliceGroup1(SliceGroup1Transport),
     DictionaryElements(DictionaryElementsTransport),
+    FutureImportStatementArm(FutureImportStatementArmTransport),
+    ExceptClauseArm(ExceptClauseArmTransport),
+    SliceGroup(SliceGroupTransport),
     UnaryOperatorOperator(UnaryOperatorOperatorEnum),
     AugmentedAssignmentOperator(AugmentedAssignmentOperatorEnum),
     ExceptClauseAs(ExceptClauseAsTransport),
@@ -182,8 +182,8 @@ pub enum AnyTransport {
     ComprehensionClauses(ComprehensionClausesTransport),
     PrintArguments(PrintArgumentsTransport),
     PrintChevronArguments(PrintChevronArgumentsTransport),
-    PrintStatementGroup1(PrintStatementGroup1Transport),
-    PrintStatementGroup2(PrintStatementGroup2Transport),
+    PrintStatementArm1(PrintStatementArm1Transport),
+    PrintStatementArm2(PrintStatementArm2Transport),
     WildcardPattern(WildcardPatternTransport),
     AssignmentEq(AssignmentEqTransport),
     AssignmentType(AssignmentTypeTransport),
@@ -851,61 +851,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 237 => Ok(AnyTransport::SimpleStatementsElements(
                     SimpleStatementsElementsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _future_import_statement_group1 (_FUTURE_IMPORT_STATEMENT_GROUP1)
-                238 => Ok(AnyTransport::FutureImportStatementGroup1(
-                    FutureImportStatementGroup1Transport::from_napi_value(env, napi_val)?
-                )),
                 // kind: _subjects (_SUBJECTS)
-                239 => Ok(AnyTransport::Subjects(
+                238 => Ok(AnyTransport::Subjects(
                     SubjectsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _case_patterns (_CASE_PATTERNS)
-                240 => Ok(AnyTransport::CasePatterns(
+                239 => Ok(AnyTransport::CasePatterns(
                     CasePatternsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _except_clause_group1 (_EXCEPT_CLAUSE_GROUP1)
-                241 => Ok(AnyTransport::ExceptClauseGroup1(
-                    ExceptClauseGroup1Transport::from_napi_value(env, napi_val)?
-                )),
                 // kind: _with_clause_with_items (_WITH_CLAUSE_WITH_ITEMS)
-                242 => Ok(AnyTransport::WithClauseWithItems(
+                240 => Ok(AnyTransport::WithClauseWithItems(
                     WithClauseWithItemsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _types (_TYPES)
-                243 => Ok(AnyTransport::Types(
+                241 => Ok(AnyTransport::Types(
                     TypesTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _argument_list_elements (_ARGUMENT_LIST_ELEMENTS)
-                244 => Ok(AnyTransport::ArgumentListElements(
+                242 => Ok(AnyTransport::ArgumentListElements(
                     ArgumentListElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _expression_list_expressions (_EXPRESSION_LIST_EXPRESSIONS)
-                245 => Ok(AnyTransport::ExpressionListExpressions(
+                243 => Ok(AnyTransport::ExpressionListExpressions(
                     ExpressionListExpressionsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _list_pattern_case_patterns (_LIST_PATTERN_CASE_PATTERNS)
-                246 => Ok(AnyTransport::ListPatternCasePatterns(
+                244 => Ok(AnyTransport::ListPatternCasePatterns(
                     ListPatternCasePatternsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _dict_pattern_elements (_DICT_PATTERN_ELEMENTS)
-                247 => Ok(AnyTransport::DictPatternElements(
+                245 => Ok(AnyTransport::DictPatternElements(
                     DictPatternElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _pattern_list_patterns (_PATTERN_LIST_PATTERNS)
-                248 => Ok(AnyTransport::PatternListPatterns(
+                246 => Ok(AnyTransport::PatternListPatterns(
                     PatternListPatternsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _subscripts (_SUBSCRIPTS)
-                249 => Ok(AnyTransport::Subscripts(
+                247 => Ok(AnyTransport::Subscripts(
                     SubscriptsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _slice_group1 (_SLICE_GROUP1)
-                250 => Ok(AnyTransport::SliceGroup1(
-                    SliceGroup1Transport::from_napi_value(env, napi_val)?
-                )),
                 // kind: _dictionary_elements (_DICTIONARY_ELEMENTS)
-                251 => Ok(AnyTransport::DictionaryElements(
+                248 => Ok(AnyTransport::DictionaryElements(
                     DictionaryElementsTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _future_import_statement_arm (_FUTURE_IMPORT_STATEMENT_ARM)
+                249 => Ok(AnyTransport::FutureImportStatementArm(
+                    FutureImportStatementArmTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _except_clause_arm (_EXCEPT_CLAUSE_ARM)
+                250 => Ok(AnyTransport::ExceptClauseArm(
+                    ExceptClauseArmTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _slice_group (_SLICE_GROUP)
+                251 => Ok(AnyTransport::SliceGroup(
+                    SliceGroupTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _augmented_assignment_operator (_AUGMENTED_ASSIGNMENT_OPERATOR)
                 252 => Ok(AnyTransport::AugmentedAssignmentOperator(
@@ -939,13 +939,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 259 => Ok(AnyTransport::PrintChevronArguments(
                     PrintChevronArgumentsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: print_statement_group1 (PRINT_STATEMENT_GROUP1)
-                260 => Ok(AnyTransport::PrintStatementGroup1(
-                    PrintStatementGroup1Transport::from_napi_value(env, napi_val)?
+                // kind: print_statement_arm1 (PRINT_STATEMENT_ARM1)
+                260 => Ok(AnyTransport::PrintStatementArm1(
+                    PrintStatementArm1Transport::from_napi_value(env, napi_val)?
                 )),
-                // kind: print_statement_group2 (PRINT_STATEMENT_GROUP2)
-                261 => Ok(AnyTransport::PrintStatementGroup2(
-                    PrintStatementGroup2Transport::from_napi_value(env, napi_val)?
+                // kind: print_statement_arm2 (PRINT_STATEMENT_ARM2)
+                261 => Ok(AnyTransport::PrintStatementArm2(
+                    PrintStatementArm2Transport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _wildcard_pattern (_WILDCARD_PATTERN)
                 262 => Ok(AnyTransport::WildcardPattern(
@@ -5437,7 +5437,7 @@ impl RenderableTransport for SimpleStatementsNewlineTransportSlot {
 #[derive(Debug, Clone)]
 pub enum FutureImportStatementContentTransportSlot {
     ImportList(ImportListTransport),
-    FutureImportStatementGroup1(FutureImportStatementGroup1Transport),
+    FutureImportStatementArm(FutureImportStatementArmTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -5452,8 +5452,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FutureImportStatementContentTran
                     116 => Ok(Self::ImportList(
                         ImportListTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::FutureImportStatementGroup1(
-                        FutureImportStatementGroup1Transport::from_napi_value(env, napi_val)?
+                    249 => Ok(Self::FutureImportStatementArm(
+                        FutureImportStatementArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FutureImportStatementContentTransportSlot",
@@ -5469,8 +5469,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FutureImportStatementContentTran
                     116 => Ok(Self::ImportList(
                         ImportListTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::FutureImportStatementGroup1(
-                        FutureImportStatementGroup1Transport::from_napi_value(env, napi_val)?
+                    249 => Ok(Self::FutureImportStatementArm(
+                        FutureImportStatementArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FutureImportStatementContentTransportSlot",
@@ -5515,7 +5515,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FutureImportStatementContentTr
 fn future_import_statement_content_transport_slot_to_any(t: FutureImportStatementContentTransportSlot) -> AnyTransport {
     match t {
         FutureImportStatementContentTransportSlot::ImportList(inner) => AnyTransport::ImportList(inner),
-        FutureImportStatementContentTransportSlot::FutureImportStatementGroup1(inner) => AnyTransport::FutureImportStatementGroup1(inner),
+        FutureImportStatementContentTransportSlot::FutureImportStatementArm(inner) => AnyTransport::FutureImportStatementArm(inner),
     }
 }
 
@@ -5526,7 +5526,7 @@ impl RenderableTransport for FutureImportStatementContentTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             FutureImportStatementContentTransportSlot::ImportList(inner) => inner.render_into(dest),
-            FutureImportStatementContentTransportSlot::FutureImportStatementGroup1(inner) => inner.render_into(dest),
+            FutureImportStatementContentTransportSlot::FutureImportStatementArm(inner) => inner.render_into(dest),
         }
     }
 }
@@ -5631,7 +5631,7 @@ impl RenderableTransport for ImportFromStatementModuleNameTransportSlot {
 #[derive(Debug, Clone)]
 pub enum ImportFromStatementContentTransportSlot {
     ImportList(ImportListTransport),
-    FutureImportStatementGroup1(FutureImportStatementGroup1Transport),
+    FutureImportStatementArm(FutureImportStatementArmTransport),
     WildcardImport(WildcardImportTransport),
 }
 
@@ -5647,8 +5647,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportFromStatementContentTransp
                     116 => Ok(Self::ImportList(
                         ImportListTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::FutureImportStatementGroup1(
-                        FutureImportStatementGroup1Transport::from_napi_value(env, napi_val)?
+                    249 => Ok(Self::FutureImportStatementArm(
+                        FutureImportStatementArmTransport::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::WildcardImport(
                         WildcardImportTransport::from_napi_value(env, napi_val)?
@@ -5667,8 +5667,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportFromStatementContentTransp
                     116 => Ok(Self::ImportList(
                         ImportListTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::FutureImportStatementGroup1(
-                        FutureImportStatementGroup1Transport::from_napi_value(env, napi_val)?
+                    249 => Ok(Self::FutureImportStatementArm(
+                        FutureImportStatementArmTransport::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::WildcardImport(
                         WildcardImportTransport::from_napi_value(env, napi_val)?
@@ -5716,7 +5716,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportFromStatementContentTran
 fn import_from_statement_content_transport_slot_to_any(t: ImportFromStatementContentTransportSlot) -> AnyTransport {
     match t {
         ImportFromStatementContentTransportSlot::ImportList(inner) => AnyTransport::ImportList(inner),
-        ImportFromStatementContentTransportSlot::FutureImportStatementGroup1(inner) => AnyTransport::FutureImportStatementGroup1(inner),
+        ImportFromStatementContentTransportSlot::FutureImportStatementArm(inner) => AnyTransport::FutureImportStatementArm(inner),
         ImportFromStatementContentTransportSlot::WildcardImport(inner) => AnyTransport::WildcardImport(inner),
     }
 }
@@ -5728,7 +5728,7 @@ impl RenderableTransport for ImportFromStatementContentTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             ImportFromStatementContentTransportSlot::ImportList(inner) => inner.render_into(dest),
-            ImportFromStatementContentTransportSlot::FutureImportStatementGroup1(inner) => inner.render_into(dest),
+            ImportFromStatementContentTransportSlot::FutureImportStatementArm(inner) => inner.render_into(dest),
             ImportFromStatementContentTransportSlot::WildcardImport(inner) => inner.render_into(dest),
         }
     }
@@ -5833,8 +5833,8 @@ impl RenderableTransport for ImportListNameTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum PrintStatementContentTransportSlot {
-    PrintStatementGroup1(PrintStatementGroup1Transport),
-    PrintStatementGroup2(PrintStatementGroup2Transport),
+    PrintStatementArm1(PrintStatementArm1Transport),
+    PrintStatementArm2(PrintStatementArm2Transport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -5846,11 +5846,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementContentTransportSl
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    260 => Ok(Self::PrintStatementGroup1(
-                        PrintStatementGroup1Transport::from_napi_value(env, napi_val)?
+                    260 => Ok(Self::PrintStatementArm1(
+                        PrintStatementArm1Transport::from_napi_value(env, napi_val)?
                     )),
-                    261 => Ok(Self::PrintStatementGroup2(
-                        PrintStatementGroup2Transport::from_napi_value(env, napi_val)?
+                    261 => Ok(Self::PrintStatementArm2(
+                        PrintStatementArm2Transport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PrintStatementContentTransportSlot",
@@ -5863,11 +5863,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementContentTransportSl
                     ::napi::Error::from_reason("$type property missing in PrintStatementContentTransportSlot")
                 )?;
                 match kind_id {
-                    260 => Ok(Self::PrintStatementGroup1(
-                        PrintStatementGroup1Transport::from_napi_value(env, napi_val)?
+                    260 => Ok(Self::PrintStatementArm1(
+                        PrintStatementArm1Transport::from_napi_value(env, napi_val)?
                     )),
-                    261 => Ok(Self::PrintStatementGroup2(
-                        PrintStatementGroup2Transport::from_napi_value(env, napi_val)?
+                    261 => Ok(Self::PrintStatementArm2(
+                        PrintStatementArm2Transport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PrintStatementContentTransportSlot",
@@ -5911,8 +5911,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintStatementContentTransport
 
 fn print_statement_content_transport_slot_to_any(t: PrintStatementContentTransportSlot) -> AnyTransport {
     match t {
-        PrintStatementContentTransportSlot::PrintStatementGroup1(inner) => AnyTransport::PrintStatementGroup1(inner),
-        PrintStatementContentTransportSlot::PrintStatementGroup2(inner) => AnyTransport::PrintStatementGroup2(inner),
+        PrintStatementContentTransportSlot::PrintStatementArm1(inner) => AnyTransport::PrintStatementArm1(inner),
+        PrintStatementContentTransportSlot::PrintStatementArm2(inner) => AnyTransport::PrintStatementArm2(inner),
     }
 }
 
@@ -5922,8 +5922,8 @@ impl RenderableTransport for PrintStatementContentTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            PrintStatementContentTransportSlot::PrintStatementGroup1(inner) => inner.render_into(dest),
-            PrintStatementContentTransportSlot::PrintStatementGroup2(inner) => inner.render_into(dest),
+            PrintStatementContentTransportSlot::PrintStatementArm1(inner) => inner.render_into(dest),
+            PrintStatementContentTransportSlot::PrintStatementArm2(inner) => inner.render_into(dest),
         }
     }
 }
@@ -8846,7 +8846,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListTailTransportSlot 
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    245 => Ok(Self::ExpressionListExpressions(
+                    243 => Ok(Self::ExpressionListExpressions(
                         ExpressionListExpressionsTransport::from_napi_value(env, napi_val)?
                     )),
                     6 => Ok(Self::Literal4_2c),
@@ -8861,7 +8861,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListTailTransportSlot 
                     ::napi::Error::from_reason("$type property missing in ExpressionListTailTransportSlot")
                 )?;
                 match kind_id {
-                    245 => Ok(Self::ExpressionListExpressions(
+                    243 => Ok(Self::ExpressionListExpressions(
                         ExpressionListExpressionsTransport::from_napi_value(env, napi_val)?
                     )),
                     6 => Ok(Self::Literal4_2c),
@@ -10561,7 +10561,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternListTailTransportSlot {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    248 => Ok(Self::PatternListPatterns(
+                    246 => Ok(Self::PatternListPatterns(
                         PatternListPatternsTransport::from_napi_value(env, napi_val)?
                     )),
                     6 => Ok(Self::Literal4_2c),
@@ -10576,7 +10576,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternListTailTransportSlot {
                     ::napi::Error::from_reason("$type property missing in PatternListTailTransportSlot")
                 )?;
                 match kind_id {
-                    248 => Ok(Self::PatternListPatterns(
+                    246 => Ok(Self::PatternListPatterns(
                         PatternListPatternsTransport::from_napi_value(env, napi_val)?
                     )),
                     6 => Ok(Self::Literal4_2c),
@@ -13346,103 +13346,6 @@ impl RenderableTransport for FormatSpecifierContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ExceptClauseGroup1ContentTransportSlot {
-    ExceptClauseAs(ExceptClauseAsTransport),
-    ExceptClauseList(ExceptClauseListTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseGroup1ContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    253 => Ok(Self::ExceptClauseAs(
-                        ExceptClauseAsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    272 => Ok(Self::ExceptClauseList(
-                        ExceptClauseListTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExceptClauseGroup1ContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ExceptClauseGroup1ContentTransportSlot")
-                )?;
-                match kind_id {
-                    253 => Ok(Self::ExceptClauseAs(
-                        ExceptClauseAsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    272 => Ok(Self::ExceptClauseList(
-                        ExceptClauseListTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExceptClauseGroup1ContentTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("ExceptClauseGroup1ContentTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExceptClauseGroup1ContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExceptClauseGroup1ContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseGroup1ContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ExceptClauseGroup1ContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseGroup1ContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExceptClauseGroup1ContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn except_clause_group1_content_transport_slot_to_any(t: ExceptClauseGroup1ContentTransportSlot) -> AnyTransport {
-    match t {
-        ExceptClauseGroup1ContentTransportSlot::ExceptClauseAs(inner) => AnyTransport::ExceptClauseAs(inner),
-        ExceptClauseGroup1ContentTransportSlot::ExceptClauseList(inner) => AnyTransport::ExceptClauseList(inner),
-    }
-}
-
-impl RenderableTransport for ExceptClauseGroup1ContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            ExceptClauseGroup1ContentTransportSlot::ExceptClauseAs(inner) => inner.render_into(dest),
-            ExceptClauseGroup1ContentTransportSlot::ExceptClauseList(inner) => inner.render_into(dest),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum ArgumentListElementsElementTransportSlot {
     ComparisonOperator(ComparisonOperatorTransport),
     NotOperator(NotOperatorTransport),
@@ -14502,6 +14405,103 @@ impl RenderableTransport for DictionaryElementsElementTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum ExceptClauseArmContentTransportSlot {
+    ExceptClauseAs(ExceptClauseAsTransport),
+    ExceptClauseList(ExceptClauseListTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseArmContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    253 => Ok(Self::ExceptClauseAs(
+                        ExceptClauseAsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    272 => Ok(Self::ExceptClauseList(
+                        ExceptClauseListTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ExceptClauseArmContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ExceptClauseArmContentTransportSlot")
+                )?;
+                match kind_id {
+                    253 => Ok(Self::ExceptClauseAs(
+                        ExceptClauseAsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    272 => Ok(Self::ExceptClauseList(
+                        ExceptClauseListTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ExceptClauseArmContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ExceptClauseArmContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ExceptClauseArmContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ExceptClauseArmContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseArmContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExceptClauseArmContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseArmContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExceptClauseArmContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn except_clause_arm_content_transport_slot_to_any(t: ExceptClauseArmContentTransportSlot) -> AnyTransport {
+    match t {
+        ExceptClauseArmContentTransportSlot::ExceptClauseAs(inner) => AnyTransport::ExceptClauseAs(inner),
+        ExceptClauseArmContentTransportSlot::ExceptClauseList(inner) => AnyTransport::ExceptClauseList(inner),
+    }
+}
+
+impl RenderableTransport for ExceptClauseArmContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ExceptClauseArmContentTransportSlot::ExceptClauseAs(inner) => inner.render_into(dest),
+            ExceptClauseArmContentTransportSlot::ExceptClauseList(inner) => inner.render_into(dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ComprehensionClausesContentTransportSlot {
     ForInClause(ForInClauseTransport),
     IfClause(IfClauseTransport),
@@ -14599,13 +14599,13 @@ impl RenderableTransport for ComprehensionClausesContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum PrintStatementGroup1PrintChevronArgumentsTransportSlot {
+pub enum PrintStatementArm1PrintChevronArgumentsTransportSlot {
     PrintChevronArguments(PrintChevronArgumentsTransport),
     Literal4_2c,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementGroup1PrintChevronArgumentsTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementArm1PrintChevronArgumentsTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -14618,14 +14618,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementGroup1PrintChevron
                     )),
                     6 => Ok(Self::Literal4_2c),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in PrintStatementGroup1PrintChevronArgumentsTransportSlot",
+                        "unknown kind id {other} in PrintStatementArm1PrintChevronArgumentsTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in PrintStatementGroup1PrintChevronArgumentsTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in PrintStatementArm1PrintChevronArgumentsTransportSlot")
                 )?;
                 match kind_id {
                     259 => Ok(Self::PrintChevronArguments(
@@ -14633,60 +14633,60 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementGroup1PrintChevron
                     )),
                     6 => Ok(Self::Literal4_2c),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in PrintStatementGroup1PrintChevronArgumentsTransportSlot",
+                        "unknown kind id {other} in PrintStatementArm1PrintChevronArgumentsTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("PrintStatementGroup1PrintChevronArgumentsTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("PrintStatementArm1PrintChevronArgumentsTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PrintStatementGroup1PrintChevronArgumentsTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for PrintStatementArm1PrintChevronArgumentsTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PrintStatementGroup1PrintChevronArgumentsTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("PrintStatementArm1PrintChevronArgumentsTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PrintStatementGroup1PrintChevronArgumentsTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PrintStatementArm1PrintChevronArgumentsTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        PrintStatementGroup1PrintChevronArgumentsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        PrintStatementArm1PrintChevronArgumentsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintStatementGroup1PrintChevronArgumentsTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintStatementArm1PrintChevronArgumentsTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        PrintStatementGroup1PrintChevronArgumentsTransportSlot::to_napi_value(env, *val)
+        PrintStatementArm1PrintChevronArgumentsTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn print_statement_group1_print_chevron_arguments_transport_slot_to_any(t: PrintStatementGroup1PrintChevronArgumentsTransportSlot) -> AnyTransport {
+fn print_statement_arm1_print_chevron_arguments_transport_slot_to_any(t: PrintStatementArm1PrintChevronArgumentsTransportSlot) -> AnyTransport {
     match t {
-        PrintStatementGroup1PrintChevronArgumentsTransportSlot::PrintChevronArguments(inner) => AnyTransport::PrintChevronArguments(inner),
-        PrintStatementGroup1PrintChevronArgumentsTransportSlot::Literal4_2c => AnyTransport::Literal4_2c,
+        PrintStatementArm1PrintChevronArgumentsTransportSlot::PrintChevronArguments(inner) => AnyTransport::PrintChevronArguments(inner),
+        PrintStatementArm1PrintChevronArgumentsTransportSlot::Literal4_2c => AnyTransport::Literal4_2c,
     }
 }
 
-impl RenderableTransport for PrintStatementGroup1PrintChevronArgumentsTransportSlot {
+impl RenderableTransport for PrintStatementArm1PrintChevronArgumentsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            PrintStatementGroup1PrintChevronArgumentsTransportSlot::PrintChevronArguments(inner) => inner.render_into(dest),
-            PrintStatementGroup1PrintChevronArgumentsTransportSlot::Literal4_2c => dest.write_str(",").map_err(::askama::Error::from),
+            PrintStatementArm1PrintChevronArgumentsTransportSlot::PrintChevronArguments(inner) => inner.render_into(dest),
+            PrintStatementArm1PrintChevronArgumentsTransportSlot::Literal4_2c => dest.write_str(",").map_err(::askama::Error::from),
         }
     }
 }
@@ -16850,8 +16850,8 @@ pub struct ExceptClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_marker"))]
     pub star_marker: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_group1"))]
-    pub except_clause_group1: Option<ExceptClauseGroup1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_arm"))]
+    pub except_clause_arm: Option<ExceptClauseArmTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ExceptClauseContentTransportSlot,
 }
@@ -19853,7 +19853,7 @@ pub struct SliceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_stop"))]
     pub stop: Option<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_step"))]
-    pub step: Option<SliceGroup1Transport>,
+    pub step: Option<SliceGroupTransport>,
 }
 
 impl RenderableTransport for SliceTransport {
@@ -23031,56 +23031,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SimpleStatementsElementsTransp
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct FutureImportStatementGroup1Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_list"))]
-    pub import_list: ImportListTransport,
-}
-
-impl RenderableTransport for FutureImportStatementGroup1Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_future_import_statement_group1(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FutureImportStatementGroup1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        FutureImportStatementGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FutureImportStatementGroup1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        FutureImportStatementGroup1Transport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
 pub struct RaiseStatementOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
@@ -23230,56 +23180,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CasePatternsTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         CasePatternsTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct ExceptClauseGroup1Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ExceptClauseGroup1ContentTransportSlot,
-}
-
-impl RenderableTransport for ExceptClauseGroup1Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_except_clause_group1(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseGroup1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ExceptClauseGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseGroup1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExceptClauseGroup1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -23801,56 +23701,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SubscriptsTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct SliceGroup1Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: Option<ExpressionTransport>,
-}
-
-impl RenderableTransport for SliceGroup1Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_slice_group1(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<SliceGroup1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        SliceGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<SliceGroup1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        SliceGroup1Transport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
 pub struct DictionaryElementsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
@@ -23898,6 +23748,156 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DictionaryElementsTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         DictionaryElementsTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct FutureImportStatementArmTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_list"))]
+    pub import_list: ImportListTransport,
+}
+
+impl RenderableTransport for FutureImportStatementArmTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_future_import_statement_arm(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FutureImportStatementArmTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FutureImportStatementArmTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FutureImportStatementArmTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FutureImportStatementArmTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct ExceptClauseArmTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: ExceptClauseArmContentTransportSlot,
+}
+
+impl RenderableTransport for ExceptClauseArmTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_except_clause_arm(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseArmTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExceptClauseArmTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseArmTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExceptClauseArmTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct SliceGroupTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    pub expression: Option<ExpressionTransport>,
+}
+
+impl RenderableTransport for SliceGroupTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_slice_group(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SliceGroupTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SliceGroupTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SliceGroupTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SliceGroupTransport::to_napi_value(env, *val)
     }
 }
 
@@ -24577,7 +24577,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintChevronArgumentsTransport
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct PrintStatementGroup1Transport {
+pub struct PrintStatementArm1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -24595,41 +24595,41 @@ pub struct PrintStatementGroup1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_chevron"))]
     pub chevron: ChevronTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_chevron_arguments"))]
-    pub print_chevron_arguments: Option<PrintStatementGroup1PrintChevronArgumentsTransportSlot>,
+    pub print_chevron_arguments: Option<PrintStatementArm1PrintChevronArgumentsTransportSlot>,
 }
 
-impl RenderableTransport for PrintStatementGroup1Transport {
+impl RenderableTransport for PrintStatementArm1Transport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_print_statement_group1(self, dest))
+        render_with_trivia!(self, dest, render_print_statement_arm1(self, dest))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PrintStatementGroup1Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PrintStatementArm1Transport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        PrintStatementGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+        PrintStatementArm1Transport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintStatementGroup1Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintStatementArm1Transport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        PrintStatementGroup1Transport::to_napi_value(env, *val)
+        PrintStatementArm1Transport::to_napi_value(env, *val)
     }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct PrintStatementGroup2Transport {
+pub struct PrintStatementArm2Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -24648,32 +24648,32 @@ pub struct PrintStatementGroup2Transport {
     pub print_arguments: PrintArgumentsTransport,
 }
 
-impl RenderableTransport for PrintStatementGroup2Transport {
+impl RenderableTransport for PrintStatementArm2Transport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_print_statement_group2(self, dest))
+        render_with_trivia!(self, dest, render_print_statement_arm2(self, dest))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PrintStatementGroup2Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PrintStatementArm2Transport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        PrintStatementGroup2Transport::from_napi_value(env, napi_val).map(Box::new)
+        PrintStatementArm2Transport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintStatementGroup2Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintStatementArm2Transport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        PrintStatementGroup2Transport::to_napi_value(env, *val)
+        PrintStatementArm2Transport::to_napi_value(env, *val)
     }
 }
 
@@ -33908,7 +33908,7 @@ fn render_try_statement(node: &TryStatementTransport, dest: &mut dyn ::std::fmt:
 fn render_except_clause(node: &ExceptClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExceptClauseTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        except_clause_group1: match &node.except_clause_group1 {
+        except_clause_arm: match &node.except_clause_arm {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -34977,13 +34977,6 @@ fn render_simple_statements_elements(node: &SimpleStatementsElementsTransport, d
     template.render_into(dest)
 }
 
-fn render_future_import_statement_group1(node: &FutureImportStatementGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = FutureImportStatementGroup1Template {
-        import_list: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.import_list)),
-    };
-    template.render_into(dest)
-}
-
 fn render_raise_statement_optional1(node: &RaiseStatementOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     render_expression(&node.cause, dest)?;
     Ok(())
@@ -35025,13 +35018,6 @@ fn render_case_patterns(node: &CasePatternsTransport, dest: &mut dyn ::std::fmt:
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
-    };
-    template.render_into(dest)
-}
-
-fn render_except_clause_group1(node: &ExceptClauseGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = ExceptClauseGroup1Template {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
     template.render_into(dest)
 }
@@ -35208,21 +35194,6 @@ fn render_subscripts(node: &SubscriptsTransport, dest: &mut dyn ::std::fmt::Writ
     template.render_into(dest)
 }
 
-fn render_slice_group1(node: &SliceGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.expression.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
-    let template = SliceGroup1Template {
-        expression: match &node.expression {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    template.render_into(dest)
-}
-
 fn render_dictionary_elements(node: &DictionaryElementsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
@@ -35238,6 +35209,35 @@ fn render_dictionary_elements(node: &DictionaryElementsTransport, dest: &mut dyn
             separator: ",",
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        },
+    };
+    template.render_into(dest)
+}
+
+fn render_future_import_statement_arm(node: &FutureImportStatementArmTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = FutureImportStatementArmTemplate {
+        import_list: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.import_list)),
+    };
+    template.render_into(dest)
+}
+
+fn render_except_clause_arm(node: &ExceptClauseArmTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = ExceptClauseArmTemplate {
+        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
+    };
+    template.render_into(dest)
+}
+
+fn render_slice_group(node: &SliceGroupTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.expression.is_none() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
+    let template = SliceGroupTemplate {
+        expression: match &node.expression {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -35366,8 +35366,8 @@ fn render_print_chevron_arguments(node: &PrintChevronArgumentsTransport, dest: &
     template.render_into(dest)
 }
 
-fn render_print_statement_group1(node: &PrintStatementGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = PrintStatementGroup1Template {
+fn render_print_statement_arm1(node: &PrintStatementArm1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = PrintStatementArm1Template {
         chevron: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.chevron)),
         print_chevron_arguments: match &node.print_chevron_arguments {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -35377,8 +35377,8 @@ fn render_print_statement_group1(node: &PrintStatementGroup1Transport, dest: &mu
     template.render_into(dest)
 }
 
-fn render_print_statement_group2(node: &PrintStatementGroup2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = PrintStatementGroup2Template {
+fn render_print_statement_arm2(node: &PrintStatementArm2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = PrintStatementArm2Template {
         print_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.print_arguments)),
     };
     template.render_into(dest)
@@ -36212,11 +36212,9 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::KeywordSeparator(t) => t.render_into(dest),
             AnyTransport::KwAsyncMarker(t) => t.render_into(dest),
             AnyTransport::SimpleStatementsElements(t) => t.render_into(dest),
-            AnyTransport::FutureImportStatementGroup1(t) => t.render_into(dest),
             AnyTransport::RaiseStatementOptional1(t) => t.render_into(dest),
             AnyTransport::Subjects(t) => t.render_into(dest),
             AnyTransport::CasePatterns(t) => t.render_into(dest),
-            AnyTransport::ExceptClauseGroup1(t) => t.render_into(dest),
             AnyTransport::WithClauseWithItems(t) => t.render_into(dest),
             AnyTransport::FunctionDefinitionOptional1(t) => t.render_into(dest),
             AnyTransport::ExecStatementOptional1(t) => t.render_into(dest),
@@ -36227,8 +36225,10 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::DictPatternElements(t) => t.render_into(dest),
             AnyTransport::PatternListPatterns(t) => t.render_into(dest),
             AnyTransport::Subscripts(t) => t.render_into(dest),
-            AnyTransport::SliceGroup1(t) => t.render_into(dest),
             AnyTransport::DictionaryElements(t) => t.render_into(dest),
+            AnyTransport::FutureImportStatementArm(t) => t.render_into(dest),
+            AnyTransport::ExceptClauseArm(t) => t.render_into(dest),
+            AnyTransport::SliceGroup(t) => t.render_into(dest),
             AnyTransport::UnaryOperatorOperator(t) => t.render_into(dest),
             AnyTransport::AugmentedAssignmentOperator(t) => t.render_into(dest),
             AnyTransport::ExceptClauseAs(t) => t.render_into(dest),
@@ -36239,8 +36239,8 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::ComprehensionClauses(t) => t.render_into(dest),
             AnyTransport::PrintArguments(t) => t.render_into(dest),
             AnyTransport::PrintChevronArguments(t) => t.render_into(dest),
-            AnyTransport::PrintStatementGroup1(t) => t.render_into(dest),
-            AnyTransport::PrintStatementGroup2(t) => t.render_into(dest),
+            AnyTransport::PrintStatementArm1(t) => t.render_into(dest),
+            AnyTransport::PrintStatementArm2(t) => t.render_into(dest),
             AnyTransport::WildcardPattern(t) => t.render_into(dest),
             AnyTransport::AssignmentEq(t) => t.render_into(dest),
             AnyTransport::AssignmentType(t) => t.render_into(dest),
@@ -36507,11 +36507,9 @@ impl AnyTransport {
             Self::KeywordSeparator(t) => t.transport_named,
             Self::KwAsyncMarker(t) => t.transport_named,
             Self::SimpleStatementsElements(t) => t.transport_named,
-            Self::FutureImportStatementGroup1(t) => t.transport_named,
             Self::RaiseStatementOptional1(t) => t.transport_named,
             Self::Subjects(t) => t.transport_named,
             Self::CasePatterns(t) => t.transport_named,
-            Self::ExceptClauseGroup1(t) => t.transport_named,
             Self::WithClauseWithItems(t) => t.transport_named,
             Self::FunctionDefinitionOptional1(t) => t.transport_named,
             Self::ExecStatementOptional1(t) => t.transport_named,
@@ -36522,8 +36520,10 @@ impl AnyTransport {
             Self::DictPatternElements(t) => t.transport_named,
             Self::PatternListPatterns(t) => t.transport_named,
             Self::Subscripts(t) => t.transport_named,
-            Self::SliceGroup1(t) => t.transport_named,
             Self::DictionaryElements(t) => t.transport_named,
+            Self::FutureImportStatementArm(t) => t.transport_named,
+            Self::ExceptClauseArm(t) => t.transport_named,
+            Self::SliceGroup(t) => t.transport_named,
             Self::ExceptClauseAs(t) => t.transport_named,
             Self::ExceptClauseAsOptional1(t) => t.transport_named,
             Self::CaseTuplePattern(t) => t.transport_named,
@@ -36532,8 +36532,8 @@ impl AnyTransport {
             Self::ComprehensionClauses(t) => t.transport_named,
             Self::PrintArguments(t) => t.transport_named,
             Self::PrintChevronArguments(t) => t.transport_named,
-            Self::PrintStatementGroup1(t) => t.transport_named,
-            Self::PrintStatementGroup2(t) => t.transport_named,
+            Self::PrintStatementArm1(t) => t.transport_named,
+            Self::PrintStatementArm2(t) => t.transport_named,
             Self::WildcardPattern(t) => t.transport_named,
             Self::AssignmentEq(t) => t.transport_named,
             Self::AssignmentType(t) => t.transport_named,

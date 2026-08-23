@@ -11,7 +11,7 @@ import {
 	classifyChildFactorySurface,
 	classifyFactoryShape,
 	resolveFactoryFieldNames,
-	unnamedChildSlotFacts
+	soleSlotFacts
 } from '../../emitters/shared.ts';
 import { buildFactoryMap } from '../../emitters/factory-map.ts';
 
@@ -58,11 +58,12 @@ describe('child factory surface classification', () => {
 		// the native read keys every element into one ordered array instead
 		// of per-kind buckets — a named slot, hence no child surface (the
 		// spread shape itself stays pinned via python string_content below).
-		// declaration_list carries a named declaration_statements slot, so it
-		// is not a child surface either.
+		// declaration_list's sole slot is a NAMED list (declaration_statements):
+		// a sole slot's arity decides the surface regardless of field-name
+		// presence, so it is a spread child surface.
 		expect(classifyChildFactorySurface(nodeMap.nodes.get('array_expression')!, nodeMap)).toBe('direct');
 		expect(classifyChildFactorySurface(nodeMap.nodes.get('_token_tree_paren')!, nodeMap)).toBeNull();
-		expect(classifyChildFactorySurface(nodeMap.nodes.get('declaration_list')!, nodeMap)).toBeNull();
+		expect(classifyChildFactorySurface(nodeMap.nodes.get('declaration_list')!, nodeMap)).toBe('spread');
 	});
 
 	it('detects direct unnamed-child factories from inferred single-slot branches', () => {
@@ -104,7 +105,7 @@ describe('child factory surface classification', () => {
 		// (content), not positionally fields[0] (ref_marker, a marker):
 		// stamping the child into `_ref_marker` while the read stores
 		// `_content` breaks every factory round-trip of the kind.
-		const facts = unnamedChildSlotFacts(nodeMap.nodes.get('field_pattern')!, nodeMap);
+		const facts = soleSlotFacts(nodeMap.nodes.get('field_pattern')!, nodeMap);
 		expect(facts?.slot.name).toBe('content');
 	});
 
@@ -156,7 +157,7 @@ describe('factory field metadata', () => {
 		// node-model.json5 factoryFields.
 		expect(map.factoryFields.reference_expression).toEqual(['content', 'value']);
 		expect(map.factoryFields.binary_expression).toEqual(['left', 'operator', 'right']);
-		expect(map.factoryFields.attribute).toEqual(['path', 'attribute_group1']);
+		expect(map.factoryFields.attribute).toEqual(['path', 'attribute_arm']);
 	});
 });
 

@@ -315,13 +315,13 @@ export default grammar(
 						repeat(choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression)))
 					),
 
-				parameters: ($) => seq('(', optional(alias($._parameters, $.parameter_list)), ')'),
-				lambda_parameters: ($) => alias($._parameters, $.parameter_list),
-				tuple_pattern: ($) => seq('(', optional(alias($._patterns, $.pattern_group)), ')'),
-				list_pattern: ($) => seq('[', optional(alias($._patterns, $.pattern_group)), ']'),
-				list: ($) => seq('[', optional(alias($._collection_elements, $.element_list)), ']'),
-				set: ($) => seq('{', alias($._collection_elements, $.element_list), '}'),
-				tuple: ($) => seq('(', optional(alias($._collection_elements, $.element_list)), ')'),
+				parameters: ($) => seq('(', optional(alias($._parameters, $.parameters_elements)), ')'),
+				lambda_parameters: ($) => alias($._parameters, $.parameters_elements),
+				tuple_pattern: ($) => seq('(', optional(alias($._patterns, $.patterns)), ')'),
+				list_pattern: ($) => seq('[', optional(alias($._patterns, $.patterns)), ']'),
+				list: ($) => seq('[', optional(alias($._collection_elements, $.collection_elements)), ']'),
+				set: ($) => seq('{', alias($._collection_elements, $.collection_elements), '}'),
+				tuple: ($) => seq('(', optional(alias($._collection_elements, $.collection_elements)), ')'),
 
 				// Reference the shared case-pattern list kind (the enrich mint
 				// serving _list_pattern/_tuple_pattern/class_pattern) instead of
@@ -362,9 +362,9 @@ export default grammar(
 				// 'comprehension_clauses' … requires one value; got undefined").
 				// A Track-B reference-site alias can't help here — every reference
 				// is mandatory (no `optional(...)` site to satisfy
-				// `parentIsOptionalSeq`, see the `set`/`element_list` note above) —
+				// `parentIsOptionalSeq`, see the `set`/`collection_elements` note above) —
 				// so declare it as a REAL visible rule (natural stripped name, per
-				// the `print_statement_group1/2` precedent: it's what the generated
+				// the `print_statement_arm1/2` precedent: it's what the generated
 				// model already expects) and reference it directly.
 				// Body is `repeat1(choice(...))`, NOT the base's
 				// `seq($.for_in_clause, repeat(choice(...)))`: the seq shape derives
@@ -393,21 +393,21 @@ export default grammar(
 				// chevron, ...)), prec(-3, prec.dynamic(-1, seq('print',
 				// commaSep1(field('argument', expression)), ...))))` — TWO
 				// anonymous seq arms, neither BLANK. Sittir's own IR auto-names
-				// these `_print_statement_group1`/`_print_statement_group2` and
+				// these `_print_statement_arm1`/`_print_statement_arm2` and
 				// (per the multi-slot/single-slot visible-group rule) models
 				// `content` as a union referencing both — but since neither
 				// arm is authored as its own named rule OR wrapped in
 				// `alias($._x, $.x)`, tree-sitter's native grammar compiler
 				// just flattens both arms' fields (chevron / argument) directly
-				// onto `print_statement` itself. The `_print_statement_group1`/
-				// `_print_statement_group2` node-refs in the IR's `content`
+				// onto `print_statement` itself. The `_print_statement_arm1`/
+				// `_print_statement_arm2` node-refs in the IR's `content`
 				// field never resolve against the real parser output —
 				// `hydrateSlots` (assemble.ts) correctly detects this as its
 				// documented "inlined-before-assemble" category and leaves
 				// them `UnresolvedRef`, but nothing downstream falls back to
 				// the flattened fields, so `wrapPrintStatement`'s `_content`
-				// accessor chain (`_content ?? _print_statement_group1 ??
-				// _print_statement_group2`) never finds a value — every
+				// accessor chain (`_content ?? _print_statement_arm1 ??
+				// _print_statement_arm2`) never finds a value — every
 				// print-statement form throws at wrap time.
 				//
 				// Per the `case_tuple_pattern`/`case_list_pattern` precedent
@@ -436,15 +436,15 @@ export default grammar(
 					),
 				_print_chevron_arguments: ($) =>
 					seq(repeat1(seq(',', field('argument', $.expression))), optional(',')),
-				print_statement_group1: ($) =>
+				print_statement_arm1: ($) =>
 					seq(
 						'print',
 						$.chevron,
 						optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ','))
 					),
-				print_statement_group2: ($) => seq('print', alias($._print_arguments, $.print_arguments)),
+				print_statement_arm2: ($) => seq('print', alias($._print_arguments, $.print_arguments)),
 				print_statement: ($) =>
-					choice(prec(1, $.print_statement_group1), prec(-3, prec.dynamic(-1, $.print_statement_group2))),
+					choice(prec(1, $.print_statement_arm1), prec(-3, prec.dynamic(-1, $.print_statement_arm2))),
 				// Base `_simple_pattern`'s last arm is the bare literal `'_'`
 				// (the match-statement wildcard pattern). Every other arm is a
 				// named rule (`$.dotted_name`, `$.string`, ...), so when
