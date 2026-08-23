@@ -19,16 +19,19 @@ import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
  * via `childElementType`), not from whichever field happens to be
  * `fields[0]`.
  */
-function makeMixedMarkerAndContentNodeMap() {
-	const parentRule: SeqRule<'link'> = {
-		type: SEQ,
-		members: [
+function makeFieldPatternNodeMap(withMarkers: boolean) {
+	const markers: SeqRule<'link'>['members'] = [
 			{ type: FIELD, name: 'ref_marker', content: { type: OPTIONAL, content: { type: STRING, value: 'ref' } } },
 			{
 				type: FIELD,
 				name: 'mutable_specifier',
 				content: { type: OPTIONAL, content: { type: SYMBOL, name: '_mutable_specifier' } }
 			},
+		];
+	const parentRule: SeqRule<'link'> = {
+		type: SEQ,
+		members: [
+			...(withMarkers ? markers : []),
 			{
 				type: CHOICE,
 				members: [
@@ -50,10 +53,19 @@ function makeMixedMarkerAndContentNodeMap() {
 }
 
 describe('from() container element type', () => {
-	it('unions every field, not just fields[0], matching the factory signature', () => {
-		const src = emitFrom({ grammar: 'synth', nodeMap: makeMixedMarkerAndContentNodeMap() });
+	it('unions every choice arm of the sole slot, matching the factory signature', () => {
+		const src = emitFrom({ grammar: 'synth', nodeMap: makeFieldPatternNodeMap(false) });
 
-		expect(src).toContain('"mut" | T.Identifier | T.FieldPatternNamed');
+		expect(src).toContain('T.Identifier | T.FieldPatternNamed');
 		expect(src).not.toContain('never | T.FieldPattern');
+	});
+
+	it('emits no container element type for a kind whose sole slot sits beside configurable markers', () => {
+		// ref_marker / mutable_specifier are configurable keyword markers: the
+		// kind is multi-slot for surface purposes and takes a config object,
+		// so from() must not treat it as a child-spread container.
+		const src = emitFrom({ grammar: 'synth', nodeMap: makeFieldPatternNodeMap(true) });
+
+		expect(src).not.toContain('"mut" | T.Identifier | T.FieldPatternNamed');
 	});
 });

@@ -490,8 +490,8 @@ export function buildForeignModItem(config: T.ForeignModItem.Config) {
 	);
 }
 
-export function buildDeclarationList(config: Partial<T.DeclarationList.Config> = {}) {
-	const _declaration_statements = config.declarationStatements ?? [];
+export function buildDeclarationList(...children: T.DeclarationStatement[]) {
+	const _declaration_statements = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -499,10 +499,7 @@ export function buildDeclarationList(config: Partial<T.DeclarationList.Config> =
 				$source: 2 as const,
 				$named: true as const,
 				_declaration_statements,
-				$with: {
-					declarationStatements: (...values: T.DeclarationStatement[]) =>
-						buildDeclarationList({ ...config, declarationStatements: values })
-				}
+				$with: { $children: (...vs: T.DeclarationStatement[]) => buildDeclarationList(...vs) }
 			},
 			{
 				declarationStatements: () => _declaration_statements
@@ -1061,8 +1058,9 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 	);
 }
 
-export function buildFunctionModifiers(config: T.FunctionModifiers.Config) {
-	const _modifier = config.modifier ?? [];
+export function buildFunctionModifiers(...children: T.ExternModifier[]) {
+	_assertNonEmpty(children, 'function_modifiers.children');
+	const _modifier = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -1070,10 +1068,7 @@ export function buildFunctionModifiers(config: T.FunctionModifiers.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_modifier,
-				$with: {
-					modifiers: (...values: NonEmptyArray<'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier>) =>
-						buildFunctionModifiers({ ...config, modifier: values })
-				}
+				$with: { $children: (...vs: T.ExternModifier[]) => buildFunctionModifiers(...vs) }
 			},
 			{
 				modifiers: () => _modifier
@@ -1279,8 +1274,9 @@ export function buildAssociatedType(config: T.AssociatedType.Config) {
 	);
 }
 
-export function buildTraitBounds(config: T.TraitBounds.Config) {
-	const _bounds = config.bounds ?? [];
+export function buildTraitBounds(...children: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]) {
+	_assertNonEmpty(children, 'trait_bounds.children');
+	const _bounds = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -1288,10 +1284,7 @@ export function buildTraitBounds(config: T.TraitBounds.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_bounds,
-				$with: {
-					bounds: (...values: NonEmptyArray<T._Type | T.Lifetime | T.HigherRankedTraitBound>) =>
-						buildTraitBounds({ ...config, bounds: values })
-				}
+				$with: { $children: (...vs: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]) => buildTraitBounds(...vs) }
 			},
 			{
 				bounds: () => _bounds
@@ -3493,8 +3486,8 @@ export function buildClosureExpression(config: T.ClosureExpression.Config) {
 	);
 }
 
-export function buildClosureParameters(config: Partial<T.ClosureParameters.Config> = {}) {
-	const _parameters = config.parameters ?? [];
+export function buildClosureParameters(...children: (T.Pattern | T.Parameter)[]) {
+	const _parameters = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -3502,10 +3495,7 @@ export function buildClosureParameters(config: Partial<T.ClosureParameters.Confi
 				$source: 2 as const,
 				$named: true as const,
 				_parameters,
-				$with: {
-					parameters: (...values: (T.Pattern | T.Parameter)[]) =>
-						buildClosureParameters({ ...config, parameters: values })
-				}
+				$with: { $children: (...vs: (T.Pattern | T.Parameter)[]) => buildClosureParameters(...vs) }
 			},
 			{
 				parameters: () => _parameters
@@ -3992,18 +3982,30 @@ export function buildStructPattern(config: T.StructPattern.Config) {
 	);
 }
 
-export function buildFieldPattern(child: T.Identifier | T.FieldPatternNamed) {
-	const _content = child;
+export function buildFieldPattern(config: T.FieldPattern.Config) {
+	const _ref_marker = coerceBooleanKeywordStorage(config.refMarker);
+	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
+	const _content = config.content;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.FieldPattern as const,
 				$source: 2 as const,
 				$named: true as const,
+				_ref_marker,
+				_mutable_specifier,
 				_content,
-				$with: { $child: (v: T.Identifier | T.FieldPatternNamed) => buildFieldPattern(v) }
+				$with: {
+					refMarker: (value?: NonNullable<Parameters<typeof buildFieldPattern>[0]>['refMarker']) =>
+						buildFieldPattern({ ...config, refMarker: value }),
+					mutableSpecifier: (value?: NonNullable<Parameters<typeof buildFieldPattern>[0]>['mutableSpecifier']) =>
+						buildFieldPattern({ ...config, mutableSpecifier: value }),
+					content: (value: T.Identifier | T.FieldPatternNamed) => buildFieldPattern({ ...config, content: value })
+				}
 			},
 			{
+				refMarker: () => _ref_marker,
+				mutableSpecifier: () => _mutable_specifier,
 				content: () => _content
 			}
 		),

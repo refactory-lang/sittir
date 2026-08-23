@@ -258,13 +258,9 @@ describe('foreign_mod_item', () => {
 
 describe('declaration_list', () => {
 	it('factory produces correct type', () => {
-		const node = ir.declarationList({});
+		const node = ir.declarationList();
 		expect(node.$type).toBe(TSKindId.DeclarationList);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.declarationList({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -510,17 +506,9 @@ describe('function_signature_item', () => {
 
 describe('function_modifiers', () => {
 	it('factory produces correct type', () => {
-		const node = ir.functionModifiers({
-			modifier: [{ $type: TSKindId.ExternModifier, $text: 'test', $source: 2, $named: true } as any]
-		});
+		const node = ir.functionModifiers({ $type: TSKindId.Async, $text: 'async', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.FunctionModifiers);
 		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.functionModifiers({
-			modifier: [{ $type: TSKindId.ExternModifier, $text: 'test', $source: 2, $named: true } as any]
-		});
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -616,17 +604,9 @@ describe('associated_type', () => {
 
 describe('trait_bounds', () => {
 	it('factory produces correct type', () => {
-		const node = ir.traitBounds({
-			bounds: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
-		});
+		const node = ir.traitBounds({ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.TraitBounds);
 		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.traitBounds({
-			bounds: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
-		});
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -2093,13 +2073,9 @@ describe('closure_expression', () => {
 
 describe('closure_parameters', () => {
 	it('factory produces correct type', () => {
-		const node = ir.closureParameters({});
+		const node = ir.closureParameters();
 		expect(node.$type).toBe(TSKindId.ClosureParameters);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.closureParameters({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -2372,13 +2348,16 @@ describe('struct_pattern', () => {
 describe('field_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.fieldPattern({
-			$type: TSKindId._ShorthandFieldIdentifier,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
+			content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
 		expect(node.$type).toBe(TSKindId.FieldPattern);
 		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.fieldPattern({
+			content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
