@@ -1512,7 +1512,6 @@ export type PythonGrammar = {
 		fields: {
 			left: { multiple: false; required: true; types: [{ type: 'type'; named: true }] };
 			right: { multiple: false; required: true; types: [{ type: 'type'; named: true }] };
-			type: { multiple: false; required: true; types: [{ type: 'type'; named: false }] };
 		};
 	};
 	readonly type_parameter: {

@@ -1074,7 +1074,6 @@ export interface GenericTypeWithTurbofishTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: Box<GenericTypeWithTurbofishTypeTransportSlot>
-  _turbofish: Box<AnyTransport>
   _type_arguments: TypeArgumentsTransport
 }
 
@@ -2634,7 +2633,6 @@ export interface VisibilityModifierPubTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _pub: Box<AnyTransport>
   _visibility_modifier_group?: VisibilityModifierGroupTransport
 }
 

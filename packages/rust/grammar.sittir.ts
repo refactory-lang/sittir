@@ -199,7 +199,6 @@ export default grammar(
 				},
 
 				visibility_modifier: {
-					'1/0': field('pub'),
 					'1/1/0/1/3/0': field('in')
 				},
 
@@ -207,10 +206,6 @@ export default grammar(
 
 				gen_block: {
 					'1/0': field('move_marker')
-				},
-
-				generic_type_with_turbofish: {
-					1: field('turbofish')
 				},
 
 				index_expression: {

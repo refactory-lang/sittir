@@ -525,7 +525,6 @@ pub struct VisibilityModifierInPathTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_visibility_modifier_pub.jinja", escape = "none")]
 pub struct VisibilityModifierPubTemplate<'a> {
-    pub pub_: SingleNonterminalView<'a>,
     pub visibility_modifier_group: OptionalNonterminalView<'a>,
 }
 
@@ -925,7 +924,6 @@ pub struct GenericPatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "generic_type_with_turbofish.jinja", escape = "none")]
 pub struct GenericTypeWithTurbofishTemplate<'a> {
-    pub turbofish: SingleNonterminalView<'a>,
     pub type_: SingleNonterminalView<'a>,
     pub type_arguments: SingleNonterminalView<'a>,
 }

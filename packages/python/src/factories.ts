@@ -1076,7 +1076,6 @@ export function buildExecStatement(config: T.ExecStatement.Config) {
 }
 
 export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config) {
-	const _type = coerceKindEnumStorage('type' as const, [['type', TSKindId.AnonType] as const]);
 	const _left = config.left;
 	const _right = config.right;
 	return withMethods(
@@ -1085,7 +1084,6 @@ export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config) {
 				$type: TSKindId.TypeAliasStatement as const,
 				$source: 2 as const,
 				$named: true as const,
-				_type,
 				_left,
 				_right,
 				$with: {
@@ -1094,7 +1092,6 @@ export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config) {
 				}
 			},
 			{
-				type: () => _type,
 				left: () => _left,
 				right: () => _right
 			}

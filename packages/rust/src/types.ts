@@ -4108,13 +4108,8 @@ export interface GenericType {
 export interface GenericTypeWithTurbofish {
 	readonly $type: TSKindId.GenericTypeWithTurbofish;
 	readonly _type: Identifier | ScopedIdentifier;
-	readonly _turbofish: AutoStamp<number>;
 	readonly _type_arguments: TypeArguments;
-	readonly __inputHints__?: {
-		readonly turbofish: AutoStamp<KindEnum<'::', TSKindId.ColonColon>>;
-	};
 	type(): Identifier | ScopedIdentifier;
-	turbofish(): AutoStamp<number>;
 	typeArguments(): TypeArguments;
 }
 
@@ -5200,12 +5195,7 @@ export interface StructItemTuple {
 
 export interface VisibilityModifierPub {
 	readonly $type: TSKindId.VisibilityModifierPub;
-	readonly _pub: AutoStamp<number>;
 	readonly _visibility_modifier_group?: VisibilityModifierGroup;
-	readonly __inputHints__?: {
-		readonly pub: AutoStamp<KindEnum<'pub', TSKindId.Pub>>;
-	};
-	pub(): AutoStamp<number>;
 	visibilityModifierGroup(): VisibilityModifierGroup | undefined;
 }
 

@@ -3959,15 +3959,8 @@
           }
         },
         {
-          "type": "FIELD",
-          "name": "turbofish",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_kw_turbofish"
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
+          "type": "STRING",
+          "value": "::"
         },
         {
           "type": "FIELD",
@@ -11337,15 +11330,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "FIELD",
-          "name": "pub",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_kw_pub"
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
+          "type": "STRING",
+          "value": "pub"
         },
         {
           "type": "CHOICE",
@@ -11397,14 +11383,6 @@
     "_kw_comma": {
       "type": "STRING",
       "value": ","
-    },
-    "_kw_pub": {
-      "type": "STRING",
-      "value": "pub"
-    },
-    "_kw_turbofish": {
-      "type": "STRING",
-      "value": "::"
     },
     "_pointer_type_const": {
       "type": "STRING",
@@ -12297,8 +12275,6 @@
     "_block_comment_arm1",
     "_kw_operator",
     "_kw_comma",
-    "_kw_pub",
-    "_kw_turbofish",
     "_kw_reference"
   ],
   "supertypes": [

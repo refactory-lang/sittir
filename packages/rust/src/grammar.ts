@@ -1028,7 +1028,6 @@ export type RustGrammar = {
 		type: 'generic_type';
 		named: true;
 		fields: {
-			turbofish: { multiple: false; required: false; types: [{ type: '::'; named: false }] };
 			type: {
 				multiple: false;
 				required: true;
@@ -1046,7 +1045,6 @@ export type RustGrammar = {
 		type: 'generic_type_with_turbofish';
 		named: true;
 		fields: {
-			turbofish: { multiple: false; required: true; types: [{ type: '::'; named: false }] };
 			type: {
 				multiple: false;
 				required: true;
@@ -2465,7 +2463,7 @@ export type RustGrammar = {
 	readonly visibility_modifier_pub: {
 		type: 'visibility_modifier_pub';
 		named: true;
-		fields: { pub: { multiple: false; required: true; types: [{ type: 'pub'; named: false }] } };
+		fields: {};
 		children: { multiple: false; required: false; types: [{ type: 'visibility_modifier_group'; named: true }] };
 	};
 	readonly where_clause: {

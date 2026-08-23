@@ -1653,15 +1653,8 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "FIELD",
-            "name": "type",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_kw_type"
-            },
-            "metadata": {
-              "fieldSource": "override"
-            }
+            "type": "STRING",
+            "value": "type"
           },
           {
             "type": "FIELD",
@@ -7304,10 +7297,6 @@
       "type": "STRING",
       "value": "="
     },
-    "_kw_type": {
-      "type": "STRING",
-      "value": "type"
-    },
     "_comparison_operator_comparator": {
       "type": "SEQ",
       "members": [
@@ -7686,8 +7675,7 @@
     "_slice_group1",
     "_kw_real",
     "_kw_comma",
-    "_kw_eq_marker",
-    "_kw_type"
+    "_kw_eq_marker"
   ],
   "supertypes": [
     "_simple_statement",

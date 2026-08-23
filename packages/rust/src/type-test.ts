@@ -407,6 +407,8 @@ import type {
 	VisibilityModifierGroupTree,
 	VisibilityModifierInPath,
 	VisibilityModifierInPathTree,
+	VisibilityModifierPub,
+	VisibilityModifierPubTree,
 	VisibilityModifierTree,
 	WhereClause,
 	WhereClauseTree,
@@ -675,6 +677,9 @@ export type _Type_MacroDefinitionBracket = _TypeAssert<
 >;
 export type _Type_MacroDefinitionBrace = _TypeAssert<
 	_TypeExtends<MacroDefinitionBrace['$type'], TSKindId.MacroDefinitionBrace>
+>;
+export type _Type_VisibilityModifierPub = _TypeAssert<
+	_TypeExtends<VisibilityModifierPub['$type'], TSKindId.VisibilityModifierPub>
 >;
 export type _Type_VisibilityModifierInPath = _TypeAssert<
 	_TypeExtends<VisibilityModifierInPath['$type'], TSKindId.VisibilityModifierInPath>
@@ -1125,6 +1130,9 @@ export type _Tree_MacroDefinitionBracket = _TypeAssert<
 >;
 export type _Tree_MacroDefinitionBrace = _TypeAssert<
 	_TypeExtends<MacroDefinitionBraceTree['type'], '_macro_definition_brace'>
+>;
+export type _Tree_VisibilityModifierPub = _TypeAssert<
+	_TypeExtends<VisibilityModifierPubTree['type'], '_visibility_modifier_pub'>
 >;
 export type _Tree_VisibilityModifierInPath = _TypeAssert<
 	_TypeExtends<VisibilityModifierInPathTree['type'], '_visibility_modifier_in_path'>

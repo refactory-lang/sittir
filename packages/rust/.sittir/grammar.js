@@ -4663,15 +4663,11 @@ var grammar_sittir_default = grammar(
           _: field2("modifier")
         },
         visibility_modifier: {
-          "1/0": field2("pub"),
           "1/1/0/1/3/0": field2("in")
         },
         function_type: [],
         gen_block: {
           "1/0": field2("move_marker")
-        },
-        generic_type_with_turbofish: {
-          1: field2("turbofish")
         },
         index_expression: {
           0: field2("object"),
