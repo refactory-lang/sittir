@@ -134,9 +134,13 @@ baseline compare (fail ceiling never rises).
   (`renderRuleEdge`) subdivide every tag-adjacent SEQ boundary. Only
   rust 5, typescript 12, python 1 have statically knowable outcomes —
   per-instance PRESENCE (optional and array slots) and pattern trailing
-  edges dominate, which no class analysis can resolve. Consuming these (a
-  template-position mark) is not worth its mechanism absent profiling
-  evidence.
+  edges dominate, which no class analysis can resolve. Baking this bucket
+  is scheduled (`docs/superpowers/plans/2026-08-23-static-seam-bake-plan.md`):
+  no template-position mark is needed — the decision goes into the
+  template text through the same `joinParts` invariant the fixed × fixed
+  class already uses, and the writer's check is idempotent with a baked
+  space. Determined slots (keywords becoming fixed literals) enlarge this
+  bucket, which is what makes it worth its mechanism now.
 - **class-derivable, list interiors** — realized, with a settled
   representation principle: **the separator string captures the
   resolution** — presence or absence of the space character, never a
