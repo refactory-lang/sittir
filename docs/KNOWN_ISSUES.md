@@ -12,7 +12,6 @@ Suggested attack order (by payoff ÷ effort; remove a line when its entry is del
 4. `ki-interp-brace-padding` — cosmetic byte divergence, reparse-safe; walker-emitter change
 5. `ki-exercise-legacy-renderer` — exercise tool's renders are garbage until it moves off legacy-core
 6. `ki-inline-integrity-check` — cheap post-generate guard against a warning class tree-sitter masks
-7. `ki-parity-fixture-schema` — cargo parity red at HEAD; pre-existing serde break
 8. `ki-dict-pattern-comma` — python inter-entry comma vanishes; not yet root-caused
 9. `ki-from-default-empty-delimiter` — TS2739 type-debt cluster in generated from.ts
 10. `ki-mapentry-forwarded` — one-line type-union gap in the factory-map emitter
@@ -75,12 +74,6 @@ The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the
 **Found during:** root-causing the `inline rule '_object_arm1' is not defined` warning. The typescript override had authored an `inline:` list of 20 mint names of which every entry was dead — but tree-sitter's generate step warns about exactly one undefined inline name per run and silently drops the others, so 19 dangling entries hid behind the first for the whole life of the list. The authored list is deleted (wire auto-manages mint inlining, and its builder now also skips `orphanedSyntheticGroups`), but nothing today would catch a NEW dangling inline name beyond the single masked warning.
 
 **Fix, if/when prioritized:** a post-generate assertion in the gen pipeline — every name in the wired `inline:` output must exist in the final rule bag (compare against `.sittir/src/grammar.json`'s `rules`); fail loudly with the full list, not one name at a time.
-
-## `ki-parity-fixture-schema` — cargo parity tests red at HEAD on a fixture serde break
-
-**Found during:** an earlier native-build pass (pre-dating this entry's write-up); re-confirmed while rebuilding crates after `cargo clean`. The parity crate's fixtures fail `FieldValueItem` deserialization at HEAD — a schema drift between the committed fixtures and the current transport types, unrelated to any recent change (it reproduces on master). CI's parity job is red for this reason, which also camouflages real regressions in that job.
-
-**Fix, if/when prioritized:** regenerate the parity fixtures against the current transport schema (the fixture-collection script exists in the parity crate) and re-pin; then the job goes back to being a signal.
 
 ## `ki-dict-pattern-comma` — python `dict_pattern` drops the inter-entry comma on render
 
