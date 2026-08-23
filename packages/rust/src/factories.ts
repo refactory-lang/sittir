@@ -4457,7 +4457,12 @@ export function buildMacroRules(
 	...elements: NonEmptyArray<T.MacroRule>
 ): ReturnType<typeof _buildMacroRules>;
 export function buildMacroRules(...args: ({ delimiter?: 2 } | T.MacroRule)[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.MacroRule>;
 	return _buildMacroRules(elements, options);
@@ -4476,7 +4481,7 @@ function _buildMacroRules(elements: NonEmptyArray<T.MacroRule>, options: { delim
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.MacroRule>) => buildMacroRules(options, ...vs),
-					delimiter: (v: 2) => buildMacroRules({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildMacroRules({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4520,7 +4525,12 @@ export function buildEnumVariantListElements(
 	...elements: NonEmptyArray<T.AttributedEnumVariant>
 ): ReturnType<typeof _buildEnumVariantListElements>;
 export function buildEnumVariantListElements(...args: ({ delimiter?: 2 } | T.AttributedEnumVariant)[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedEnumVariant>;
 	return _buildEnumVariantListElements(elements, options);
@@ -4539,7 +4549,7 @@ function _buildEnumVariantListElements(elements: NonEmptyArray<T.AttributedEnumV
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedEnumVariant>) => buildEnumVariantListElements(options, ...vs),
-					delimiter: (v: 2) => buildEnumVariantListElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildEnumVariantListElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4558,7 +4568,12 @@ export function buildFieldDeclarationListElements(
 	...elements: NonEmptyArray<T.AttributedFieldDeclaration>
 ): ReturnType<typeof _buildFieldDeclarationListElements>;
 export function buildFieldDeclarationListElements(...args: ({ delimiter?: 2 } | T.AttributedFieldDeclaration)[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedFieldDeclaration>;
 	return _buildFieldDeclarationListElements(elements, options);
@@ -4581,7 +4596,7 @@ function _buildFieldDeclarationListElements(
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedFieldDeclaration>) =>
 						buildFieldDeclarationListElements(options, ...vs),
-					delimiter: (v: 2) => buildFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4600,7 +4615,12 @@ export function buildOrderedFieldDeclarationListElements(
 	...elements: NonEmptyArray<T.AttributedOrderedField>
 ): ReturnType<typeof _buildOrderedFieldDeclarationListElements>;
 export function buildOrderedFieldDeclarationListElements(...args: ({ delimiter?: 2 } | T.AttributedOrderedField)[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedOrderedField>;
 	return _buildOrderedFieldDeclarationListElements(elements, options);
@@ -4623,7 +4643,7 @@ function _buildOrderedFieldDeclarationListElements(
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedOrderedField>) =>
 						buildOrderedFieldDeclarationListElements(options, ...vs),
-					delimiter: (v: 2) => buildOrderedFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildOrderedFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4642,7 +4662,12 @@ export function buildWherePredicates(
 	...elements: NonEmptyArray<T.WherePredicate>
 ): ReturnType<typeof _buildWherePredicates>;
 export function buildWherePredicates(...args: ({ delimiter?: 2 } | T.WherePredicate)[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.WherePredicate>;
 	return _buildWherePredicates(elements, options);
@@ -4661,7 +4686,7 @@ function _buildWherePredicates(elements: NonEmptyArray<T.WherePredicate>, option
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.WherePredicate>) => buildWherePredicates(options, ...vs),
-					delimiter: (v: 2) => buildWherePredicates({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildWherePredicates({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4680,7 +4705,12 @@ export function buildTypeParametersElements(
 	...elements: NonEmptyArray<T.AttributedTypeParameter>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(...args: ({ delimiter?: 2 } | T.AttributedTypeParameter)[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedTypeParameter>;
 	return _buildTypeParametersElements(elements, options);
@@ -4699,7 +4729,7 @@ function _buildTypeParametersElements(elements: NonEmptyArray<T.AttributedTypePa
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedTypeParameter>) => buildTypeParametersElements(options, ...vs),
-					delimiter: (v: 2) => buildTypeParametersElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildTypeParametersElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4716,7 +4746,12 @@ export function buildUseClauses(
 	...elements: NonEmptyArray<T.UseClause>
 ): ReturnType<typeof _buildUseClauses>;
 export function buildUseClauses(...args: ({ delimiter?: 2 } | T.UseClause)[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.UseClause>;
 	return _buildUseClauses(elements, options);
@@ -4735,7 +4770,7 @@ function _buildUseClauses(elements: NonEmptyArray<T.UseClause>, options: { delim
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.UseClause>) => buildUseClauses(options, ...vs),
-					delimiter: (v: 2) => buildUseClauses({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildUseClauses({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4754,7 +4789,12 @@ export function buildParametersElements(
 	...elements: NonEmptyArray<T.AttributedParameter>
 ): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements(...args: ({ delimiter?: 2 } | T.AttributedParameter)[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedParameter>;
 	return _buildParametersElements(elements, options);
@@ -4773,7 +4813,7 @@ function _buildParametersElements(elements: NonEmptyArray<T.AttributedParameter>
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedParameter>) => buildParametersElements(options, ...vs),
-					delimiter: (v: 2) => buildParametersElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildParametersElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4811,7 +4851,12 @@ export function buildLifetimes(
 	...elements: NonEmptyArray<T.Lifetime>
 ): ReturnType<typeof _buildLifetimes>;
 export function buildLifetimes(...args: ({ delimiter?: 2 } | T.Lifetime)[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Lifetime>;
 	return _buildLifetimes(elements, options);
@@ -4830,7 +4875,7 @@ function _buildLifetimes(elements: NonEmptyArray<T.Lifetime>, options: { delimit
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Lifetime>) => buildLifetimes(options, ...vs),
-					delimiter: (v: 2) => buildLifetimes({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildLifetimes({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4849,7 +4894,12 @@ export function buildUseBoundsElements(
 	...elements: NonEmptyArray<T.Lifetime | T.Identifier>
 ): ReturnType<typeof _buildUseBoundsElements>;
 export function buildUseBoundsElements(...args: ({ delimiter?: 2 } | (T.Lifetime | T.Identifier))[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Lifetime | T.Identifier>;
 	return _buildUseBoundsElements(elements, options);
@@ -4868,7 +4918,7 @@ function _buildUseBoundsElements(elements: NonEmptyArray<T.Lifetime | T.Identifi
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Lifetime | T.Identifier>) => buildUseBoundsElements(options, ...vs),
-					delimiter: (v: 2) => buildUseBoundsElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildUseBoundsElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4887,7 +4937,12 @@ export function buildTypeArgumentsElements(
 	...elements: NonEmptyArray<T.TypeArgument>
 ): ReturnType<typeof _buildTypeArgumentsElements>;
 export function buildTypeArgumentsElements(...args: ({ delimiter?: 2 } | T.TypeArgument)[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.TypeArgument>;
 	return _buildTypeArgumentsElements(elements, options);
@@ -4906,7 +4961,7 @@ function _buildTypeArgumentsElements(elements: NonEmptyArray<T.TypeArgument>, op
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.TypeArgument>) => buildTypeArgumentsElements(options, ...vs),
-					delimiter: (v: 2) => buildTypeArgumentsElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildTypeArgumentsElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4925,7 +4980,12 @@ export function buildArgumentsElements(
 	...elements: NonEmptyArray<T.AttributedArgument>
 ): ReturnType<typeof _buildArgumentsElements>;
 export function buildArgumentsElements(...args: ({ delimiter?: 2 } | T.AttributedArgument)[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedArgument>;
 	return _buildArgumentsElements(elements, options);
@@ -4944,7 +5004,7 @@ function _buildArgumentsElements(elements: NonEmptyArray<T.AttributedArgument>, 
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedArgument>) => buildArgumentsElements(options, ...vs),
-					delimiter: (v: 2) => buildArgumentsElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildArgumentsElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4990,7 +5050,12 @@ export function buildFieldInitializerListElements(
 export function buildFieldInitializerListElements(
 	...args: ({ delimiter?: 2 } | (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer))[]
 ) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer
@@ -5016,7 +5081,7 @@ function _buildFieldInitializerListElements(
 					$children: (
 						...vs: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
 					) => buildFieldInitializerListElements(options, ...vs),
-					delimiter: (v: 2) => buildFieldInitializerListElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildFieldInitializerListElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5035,7 +5100,12 @@ export function buildTuplePatternElements(
 	...elements: NonEmptyArray<T.Pattern | T.ClosureExpression>
 ): ReturnType<typeof _buildTuplePatternElements>;
 export function buildTuplePatternElements(...args: ({ delimiter?: 2 } | (T.Pattern | T.ClosureExpression))[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Pattern | T.ClosureExpression>;
 	return _buildTuplePatternElements(elements, options);
@@ -5058,7 +5128,7 @@ function _buildTuplePatternElements(
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Pattern | T.ClosureExpression>) =>
 						buildTuplePatternElements(options, ...vs),
-					delimiter: (v: 2) => buildTuplePatternElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildTuplePatternElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5075,7 +5145,12 @@ export function buildPatterns(
 	...elements: NonEmptyArray<T.Pattern>
 ): ReturnType<typeof _buildPatterns>;
 export function buildPatterns(...args: ({ delimiter?: 2 } | T.Pattern)[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Pattern>;
 	return _buildPatterns(elements, options);
@@ -5094,7 +5169,7 @@ function _buildPatterns(elements: NonEmptyArray<T.Pattern>, options: { delimiter
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Pattern>) => buildPatterns(options, ...vs),
-					delimiter: (v: 2) => buildPatterns({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildPatterns({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5115,7 +5190,12 @@ export function buildStructPatternElements(
 export function buildStructPatternElements(
 	...args: ({ delimiter?: 2 } | (T.FieldPattern | T.RemainingFieldPattern))[]
 ) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.FieldPattern | T.RemainingFieldPattern
@@ -5140,7 +5220,7 @@ function _buildStructPatternElements(
 				$with: {
 					$children: (...vs: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>) =>
 						buildStructPatternElements(options, ...vs),
-					delimiter: (v: 2) => buildStructPatternElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildStructPatternElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5213,7 +5293,12 @@ export function buildTupleTypeElements(
 	...elements: NonEmptyArray<T._Type>
 ): ReturnType<typeof _buildTupleTypeElements>;
 export function buildTupleTypeElements(...args: ({ delimiter?: 2 } | T._Type)[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T._Type>;
 	return _buildTupleTypeElements(elements, options);
@@ -5232,7 +5317,7 @@ function _buildTupleTypeElements(elements: NonEmptyArray<T._Type>, options: { de
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T._Type>) => buildTupleTypeElements(options, ...vs),
-					delimiter: (v: 2) => buildTupleTypeElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildTupleTypeElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5251,7 +5336,12 @@ export function buildTupleExpressionElements(
 	...elements: NonEmptyArray<T.Expression>
 ): ReturnType<typeof _buildTupleExpressionElements>;
 export function buildTupleExpressionElements(...args: ({ delimiter?: 2 } | T.Expression)[]) {
-	const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !('$type' in (args[0] as object));
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: 2 };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Expression>;
 	return _buildTupleExpressionElements(elements, options);
@@ -5273,7 +5363,7 @@ function _buildTupleExpressionElements(elements: NonEmptyArray<T.Expression>, op
 				_delimiter,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Expression>) => buildTupleExpressionElements(options, ...vs),
-					delimiter: (v: 2) => buildTupleExpressionElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: 2) => buildTupleExpressionElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
