@@ -202,8 +202,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * types emitter passes it as NodeNs' `Built` argument (pinning the
  * `Fluent` projection to the factory's exact return type), and
  * buildFactoryMapEntries drives FluentKindMap entries with it. Deriving
- * the set locally at either site would let the generated `F.<TypeName>Built`
- * references and the actually-emitted aliases drift.
+ * the set locally at either site would let the generated
+ * `F$.<TypeName>Built` references and the actually-emitted aliases drift.
+ * (The factories namespace alias is `F$` — kind names are tree-sitter
+ * identifiers, so no generated interface name can contain `$`.)
  */
 ```
 

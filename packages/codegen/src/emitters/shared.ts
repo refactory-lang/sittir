@@ -855,11 +855,9 @@ export function classifyFactoryEmission(
 	return node.rawFactoryName ? 'emit' : 'skip-no-factory-name';
 }
 
-/** Whether the factories emitter declares a plain `<TypeName>Built` return
- *  alias for this kind — the field-carrying and separated-list emission
- *  paths (branch/group/separatedList with an emitted factory). Leaves and
- *  polymorph forms never carry one. Consumed by the types emitter (NodeNs
- *  `Built` argument) and the factory map so both mirror the same set. */
+/** ONE predicate for "this kind declares a plain `<TypeName>Built` alias" —
+ *  a local re-derivation would let the generated references and the
+ *  actually-emitted aliases drift. */
 export function emitsPlainBuiltAlias(kind: string, node: AssembledNode, context: FactoryDispatchContext): boolean {
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return false;
 	return node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList';

@@ -13,7 +13,9 @@
  */
 
 import { describe, it } from 'vitest';
-import type { FunctionItem, ConfigFor, FluentFor, LooseFor, TreeFor, NamespaceMap } from '../src/index.ts';
+import type { FunctionItem, Comment, ConfigFor, FluentFor, LooseFor, TreeFor, NamespaceMap } from '../src/index.ts';
+import type { FunctionItemBuilt } from '../src/factories.ts';
+import type { FluentNodeOf } from '@sittir/types';
 
 type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
@@ -31,6 +33,20 @@ describe('rust NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<FunctionItem.Loose, LooseFor<'function_item'>>>();
 		expectTrue<Equals<FunctionItem.Tree, TreeFor<'function_item'>>>();
 		expectTrue<Equals<FunctionItem.Kind, 'function_item'>>();
+	});
+
+	it('Fluent is the factory-emitted Built alias for factory-backed kinds', () => {
+		// Every Fluent access path resolves to the factory's EXACT return
+		// type — not a re-derived generic projection.
+		expectTrue<Equals<FunctionItem.Fluent, FunctionItemBuilt>>();
+		expectTrue<Equals<FluentFor<'function_item'>, FunctionItemBuilt>>();
+		expectTrue<Equals<NamespaceMap['function_item']['Fluent'], FunctionItemBuilt>>();
+	});
+
+	it('factory-less kinds keep the FluentNodeOf fallback', () => {
+		// comment has no emitted factory (no Built alias exists), so
+		// NodeNs' default Fluent projection remains in effect.
+		expectTrue<Equals<Comment.Fluent, FluentNodeOf<Comment>>>();
 	});
 
 	// The pre-008 `FunctionItemConfig` / `LooseFunctionItem` flat aliases
