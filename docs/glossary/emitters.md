@@ -188,6 +188,25 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `emitsPlainBuiltAlias` (`packages/codegen/src/emitters/shared.ts:858`)
+
+```text
+/**
+ * Whether the factories emitter declares a plain `<TypeName>Built` return
+ * alias for this kind — the field-carrying and separated-list emission
+ * paths (branch/group/separatedList with an emitted factory). Leaves and
+ * polymorph forms never carry one.
+ *
+ * @remarks
+ * ONE predicate for every consumer of "this kind has a Built alias": the
+ * types emitter passes it as NodeNs' `Built` argument (pinning the
+ * `Fluent` projection to the factory's exact return type), and
+ * buildFactoryMapEntries drives FluentKindMap entries with it. Deriving
+ * the set locally at either site would let the generated `F.<TypeName>Built`
+ * references and the actually-emitted aliases drift.
+ */
+```
+
 ### `namespaceOf` (`packages/codegen/src/emitters/factories.ts:297`)
 
 ```text

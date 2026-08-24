@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "19fb7b6bb0b68f3f116020385fae43a6636caecb5bdcf373a845d7e9c5a150c2",
+  "source_hash": "f908441449c1dc27990b9abc356779b659427c8cb4be0a10a1e8ab890574ebc2",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "913b954ae204d46dc4e35c41d1a5738f8f65cbd4f32a0b38bf6c0ffad392bfdc",
     "packages/python/.sittir/grammar.js": "d79d1e03183e49f956d11ea1efd02bbb7543378633526c23ad30d864214b279f",
@@ -20,7 +20,7 @@
     "packages/python/src/boundary.ts": "24637b5d59f133c9bcf18cc4a8f941ac745dc9ad4f6f0643f9ad5d4103c0c71d",
     "packages/python/src/consts.ts": "c238bd4517c5392b019ee0bf06573fdfb93f5508d5c92f28717293eb83da4d67",
     "packages/python/src/engine.ts": "8ad98d46d0066af6603ea5971daf4ae709bd85773b6897c7d12446e73b4958c5",
-    "packages/python/src/factories.ts": "a33226d6adf38104c0f3d551e650c661115cbdd987e3347b37572deb91883e5a",
+    "packages/python/src/factories.ts": "8f6bb845f1347ec0aba5d1271e101748553cff2a3a60f3196ed81f71cec56f5c",
     "packages/python/src/from.ts": "685bccfba302fdeab15b10cce38fdb96925edf5d9f96cb250ef8f98218797277",
     "packages/python/src/grammar.ts": "657f2e48204edaca177cb96fa7e9a8cbd98ec937571241352eba582546197158",
     "packages/python/src/hash.ts": "18ac72b4c9fbf55b24fac1feb076c1c6d046a4275046525744101a5551fa6ac3",
@@ -29,7 +29,7 @@
     "packages/python/src/is.ts": "521b910dd95b2912dd6f959929d12cd8561eafe15089a26caadc877d31b7438f",
     "packages/python/src/node-model.json5": "5989282860e2c1b201c47bc31c25833701865226b996704c90a7f1038142f989",
     "packages/python/src/type-test.ts": "26b9a88181565a982d363b0af54a59b3cbc0e8eec79dd1210d4aa9f6804c2df8",
-    "packages/python/src/types.ts": "32238583503c8e1ed34b2b4db81e349f0f27e9b11e2e6d2d2cf9e69f87a1ac72",
+    "packages/python/src/types.ts": "523a9ba759670b276406a27237d1c8fdc9adf93e0fb603df863dacdd196f3cb1",
     "packages/python/src/utils.ts": "5bb731ea32f4fe737f381ea776dd0c39c65cc78268d33b268e16c63987028a17",
     "packages/python/src/wrap.ts": "d2cf21dc13b373ea6e2502adf38acdfe87afbc1bc354467231c80ccc31e7c860",
     "packages/python/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",

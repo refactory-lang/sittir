@@ -5,17 +5,9 @@ import type { NodeMap } from '../../compiler/types.ts';
 import type { SeqRule } from '../../types/rule.ts';
 import { emitTypes } from '../types.ts';
 import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
+import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 
-function nodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {
-	return {
-		grammar: 'synth',
-		grammarSha: 'test',
-		rules: {},
-		nodes,
-		externals: new Set(),
-		word: undefined
-	} as unknown as NodeMap;
-}
+const nodeMapWith = (nodes: Map<string, AssembledNode>): NodeMap => makeNodeMapWith(nodes);
 
 function makeRequiredSingleChildNodeMap(): NodeMap {
 	const parentRule: SeqRule<'link'> = {

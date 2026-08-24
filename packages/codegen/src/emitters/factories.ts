@@ -49,7 +49,8 @@ import {
 	warnSkippedParserSymbol,
 	soleSlotFacts,
 	canonicalSeparatedListField,
-	escForSource
+	escForSource,
+	emitsPlainBuiltAlias
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -236,7 +237,7 @@ function buildFactoryMapEntries(
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
 		// isSlotBearingCompound's doc comment (shared.ts).
-		const fluent = node.modelType === 'branch' || node.modelType === 'separatedList';
+		const fluent = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries });
 		const classified = classifyFactoryShape(node, nodeMap, { includeTokenText: true });
 		if (!classified) continue;
 		// `MapEntry.shape` is dead-to-runtime (emitFactoryMapConst/
@@ -262,9 +263,10 @@ function emitFluentKindMap(mapEntries: MapEntry[]): string[] {
 	lines.push('export type FluentKindMap = {');
 	for (const { kind, typeName, fluent } of mapEntries) {
 		if (fluent) {
-			// Base kinds (mapEntries skips polymorph forms) have namespace
-			// sugar — use `T.${typeName}.Config` instead of the legacy flat alias.
-			lines.push(`  ${JSON.stringify(kind)}: FluentNode<${JSON.stringify(kind)}, T.${typeName}.Config>;`);
+			// The kind's own `<TypeName>Built` alias IS the factory return
+			// type — the map mirrors it instead of re-deriving a fluent
+			// shape from the Config surface.
+			lines.push(`  ${JSON.stringify(kind)}: ${typeName}Built;`);
 		} else {
 			lines.push(`  ${JSON.stringify(kind)}: T.${typeName};`);
 		}
@@ -1602,7 +1604,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				namespaceOf(node, nodeMap, kindEntries).entries.length > 0
 		);
 		const refineKindInfos = collectRefineKindInfos(nodeMap) ?? [];
-		const utilImports = ['AnyNodeData', 'ByteRange', 'Edit', 'FluentNode'];
+		const utilImports = ['AnyNodeData', 'ByteRange', 'Edit'];
 		if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
 		// resolveConfigType() emits `ConfigOf<T.X>` (rather than `T.X.Config`)
 		// for every refine-form kind's config parameter — import it whenever
