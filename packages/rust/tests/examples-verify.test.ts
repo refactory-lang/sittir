@@ -148,6 +148,16 @@ describe('structuralShape trivia handling', () => {
 		expect(shape.$text).toBe('main');
 		expect(shape.$triviaData).toBeDefined();
 	});
+	it('differs when only the comment text differs', () => {
+		const alpha = ir.from.identifier('main').$trivia(ir.lineComment('// alpha'));
+		const beta = ir.from.identifier('main').$trivia(ir.lineComment('// beta'));
+		expect(JSON.stringify(structuralShape(alpha))).not.toBe(JSON.stringify(structuralShape(beta)));
+	});
+	it('differs when the same comment is leading vs. trailing', () => {
+		const leading = ir.from.identifier('main').$trivia({ leading: [ir.lineComment('// c')] });
+		const trailing = ir.from.identifier('main').$trivia({ trailing: [ir.lineComment('// c')] });
+		expect(JSON.stringify(structuralShape(leading))).not.toBe(JSON.stringify(structuralShape(trailing)));
+	});
 });
 
 // GAP inventory (examples/17): A=6 B=8 C=1 — each marked in the example at
