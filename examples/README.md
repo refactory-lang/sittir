@@ -43,4 +43,6 @@ Current compile-checked examples:
 | `18-dogfood-typescript.ts` | Dogfooding — rebuild `common/src/format.ts` with `ir.*` |
 | `17-dogfood-rust-strict.ts` | Dogfooding — same items through `.strict` alone |
 | `18-dogfood-typescript-strict.ts` | Dogfooding — same items through `.strict` alone |
+| `19-dogfood-python.ts` | Dogfooding — rebuild `tools/scripts/probe-sweep.py` with `ir.*` |
+| `19-dogfood-python-strict.ts` | Dogfooding — same items through `.strict` alone |
 | `index.ts` | Convenience barrel for all use-case modules |

@@ -1,0 +1,37 @@
+// Runtime verification of the Python use-case examples against the native
+// engine: every export executes and produces what the guide promises.
+import { describe, expect, it } from 'vitest';
+import { createEngine } from '@sittir/python';
+import { dogfoodContract } from '../../../examples/helpers.ts';
+import { rebuildProbeSweep, callStatement } from '../../../examples/19-dogfood-python.ts';
+import { rebuildProbeSweepStrict, callStatementStrict } from '../../../examples/19-dogfood-python-strict.ts';
+
+// GAP inventory (examples/19): D=2 (every suite-carrying slot rejects a block,
+// at BOTH layers; the strict statement list rejects what the coercer accepts)
+// A=1 (import statements route through a hidden list with no public
+// constructor). A python module can hold neither a comment nor an
+// expression_statement, and no function definition can be built by any path.
+describe('examples/19 dogfood python (probe-sweep.py) — coercion surface', () => {
+	const target = new URL('../../tools/scripts/probe-sweep.py', import.meta.url).pathname;
+	it('builds and renders the fragments that cross the boundary', () => {
+		expect(rebuildProbeSweep().$render()).toBe('pass');
+	});
+	it('composes a call statement, which no statement list will then accept', () => {
+		expect(callStatement().$render()).toBe('main()');
+	});
+	it.fails('re-parses to the same tree as the real file', () => {
+		expect(dogfoodContract(createEngine(), rebuildProbeSweep(), target).reparsesEqual).toBe(true);
+	});
+	it.fails('is identical to the real file modulo whitespace', () => {
+		expect(dogfoodContract(createEngine(), rebuildProbeSweep(), target).sameModuloWhitespace).toBe(true);
+	});
+});
+
+describe('examples/19 dogfood python — strict factory surface', () => {
+	it('composes a call statement with strict inner nodes', () => {
+		expect(callStatementStrict().$render()).toBe('main()');
+	});
+	it.fails('assembles the statements the coercion surface assembles', () => {
+		expect(rebuildProbeSweepStrict().$render()).toContain('#!/usr/bin/env python3');
+	});
+});

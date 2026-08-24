@@ -18,3 +18,5 @@ export * from './17-dogfood-rust.ts';
 export * from './18-dogfood-typescript.ts';
 export * from './17-dogfood-rust-strict.ts';
 export * from './18-dogfood-typescript-strict.ts';
+export * from './19-dogfood-python.ts';
+export * from './19-dogfood-python-strict.ts';
