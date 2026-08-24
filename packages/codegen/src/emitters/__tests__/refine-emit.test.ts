@@ -451,7 +451,9 @@ describe('factories emitter — per-form factory emission', () => {
 		// Per-form Config lives under the parent namespace as a sub-namespace
 		// (`T.IfaceBody.Curly.Config`), not as a flat alias. See
 		// emitRefineFormSubNamespaces in emitters/types.ts.
-		expect(factoriesSrc).toMatch(/export function buildIfaceBodyCurly\(config\??: T\.IfaceBody\.Curly\.Config\)/);
+		// `_config` when the form narrows every field (nothing is read off
+		// the config parameter — renameUnusedConfigParam fires).
+		expect(factoriesSrc).toMatch(/export function buildIfaceBodyCurly\(_?config\??: T\.IfaceBody\.Curly\.Config\)/);
 	});
 
 	it('emitAll keeps refine form factories in the real generation path', () => {

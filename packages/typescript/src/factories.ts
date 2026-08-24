@@ -1596,7 +1596,7 @@ export type FinallyClauseBuilt = T.FinallyClause & {
 } & _NodeMethods;
 
 export function buildFinallyClause(child: T.FinallyClause.Config['body']): ReturnType<typeof _buildFinallyClause>;
-export function buildFinallyClause(config?: Partial<T.StatementBlock.Config>): ReturnType<typeof _buildFinallyClause>;
+export function buildFinallyClause(_config?: Partial<T.StatementBlock.Config>): ReturnType<typeof _buildFinallyClause>;
 export function buildFinallyClause(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildFinallyClause(args[0] as T.FinallyClause.Config['body']);
@@ -6256,7 +6256,7 @@ export function buildTypePredicateAnnotation(
 	child: T.TypePredicateAnnotation.Config['typePredicate']
 ): ReturnType<typeof _buildTypePredicateAnnotation>;
 export function buildTypePredicateAnnotation(
-	config: T.TypePredicate.Config
+	_config: T.TypePredicate.Config
 ): ReturnType<typeof _buildTypePredicateAnnotation>;
 export function buildTypePredicateAnnotation(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {

@@ -29,17 +29,13 @@ import { load } from '../codegen-surface.ts';
 import { deriveRuleKinds } from './templates-path.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
-const { snakeToCamel } = await load('modelNodeMap');
 import {
-	separatedListFactoryOptions,
 	loadCorpusEntries,
 	loadLanguageForGrammar,
 	buildReadHandle,
 	walkWrappedTree,
 	materializeWrappedNodeData,
 	loadReadTreeNode,
-	getChildFactoryArgs,
-	nodeToConfig,
 	emitValidatorMetrics,
 	loadNodeModel,
 	dedupeMismatchesByContainment,

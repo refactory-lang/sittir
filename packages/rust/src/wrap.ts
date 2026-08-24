@@ -9402,7 +9402,7 @@ export function wrapUseWildcardClause(data: T.UseWildcardClause, tree: TreeHandl
 	return _node;
 }
 
-export function wrapReferenceExpressionRawMut(data: T.ReferenceExpressionRawMut, tree: TreeHandle) {
+export function wrapReferenceExpressionRawMut(data: T.ReferenceExpressionRawMut, _tree: TreeHandle) {
 	return withMethods(
 		{
 			...data,

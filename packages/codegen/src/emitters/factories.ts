@@ -1110,10 +1110,14 @@ export function childrenSetterRestType(
 }
 
 function renameUnusedConfigParam(lines: string[]): string {
-	const header = lines[0]!;
-	const body = lines.slice(1).join('\n');
-	if (!/\bconfig\b/.test(body)) {
-		lines[0] = header.replace(/\bconfig(\??:)/, '_config$1');
+	// Locate the signature line rather than assuming lines[0] — callers
+	// prepend Built-alias (and forwarded-wrapper) lines before the
+	// implementation's own header.
+	const idx = lines.findIndex((l) => /^(?:export )?function \w+\(config\??:/.test(l));
+	if (idx === -1) return lines.join('\n');
+	const rest = [...lines.slice(0, idx), ...lines.slice(idx + 1)].join('\n');
+	if (!/\bconfig\b/.test(rest)) {
+		lines[idx] = lines[idx]!.replace(/\bconfig(\??:)/, '_config$1');
 	}
 	return lines.join('\n');
 }
@@ -1196,8 +1200,10 @@ function emitRefineFormFactory(
 	}
 	lines.push('  }), methodsEngine);');
 	lines.push('}');
-	lines.unshift(...builtAliasLines(formBuiltName, `T.${info.typeName}`, formWithTypeMembers));
-	return lines.join('\n');
+	// An all-narrowed form reads nothing off `config` — rename before the
+	// alias lines are prepended (the rename inspects lines[0] as the header).
+	const fnSource = renameUnusedConfigParam(lines);
+	return [...builtAliasLines(formBuiltName, `T.${info.typeName}`, formWithTypeMembers), fnSource].join('\n');
 }
 
 function resolveRefineFormConfigOptional(

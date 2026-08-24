@@ -112,6 +112,16 @@ function collectTypeImports(_nodeMap: NodeMap): Set<string> {
 // Namespace — taxonomy-keyed wrap dispatch API
 // ---------------------------------------------------------------------------
 
+/** `tree` is threaded to every wrap function for lazy drill-ins; a body
+ *  with nothing to drill never reads it — rename the parameter so the
+ *  generated package lints clean. */
+function renameUnusedTreeParam(source: string): string {
+	const header = source.match(/^export function wrap\w+\(data: .*, tree: TreeHandle\) \{$/m)?.[0];
+	if (header === undefined) return source;
+	if (/\btree\b/.test(source.replace(header, ''))) return source;
+	return source.replace(header, header.replace(', tree: TreeHandle)', ', _tree: TreeHandle)'));
+}
+
 /**
  * Taxonomy-keyed wrap dispatch namespace.
  *
@@ -141,7 +151,7 @@ export namespace wrap {
 			kindEntries,
 			nodeMap
 		);
-		output.push(result);
+		output.push(renameUnusedTreeParam(result));
 	}
 
 	export function group(
@@ -162,7 +172,7 @@ export namespace wrap {
 			kindEntries,
 			nodeMap
 		);
-		output.push(result);
+		output.push(renameUnusedTreeParam(result));
 	}
 
 	export function supertype(
@@ -170,7 +180,7 @@ export namespace wrap {
 		node: Extract<AssembledNode, { modelType: 'supertype' }>,
 		_kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
-		output.push(emitTransparentSupertypeWrap(node));
+		output.push(renameUnusedTreeParam(emitTransparentSupertypeWrap(node)));
 	}
 
 	export function separatedList(
@@ -180,7 +190,7 @@ export namespace wrap {
 		nodeMap: NodeMap
 	): void {
 		const result = emitSeparatedListWrap(node, kindEntries, nodeMap);
-		if (result !== undefined) output.push(result);
+		if (result !== undefined) output.push(renameUnusedTreeParam(result));
 	}
 }
 

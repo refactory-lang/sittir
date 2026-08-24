@@ -119,7 +119,7 @@ function isNonterminalSeparatorRule(rule: AnyRule | undefined): boolean {
 /** Naive English pluralization, mirroring the array-slot naming convention.
  *  Names that already end in a plural-looking 's' pass through unchanged. */
 export function pluralizeFieldName(name: string): string {
-	if (/(?:s|ses|xes|zes|ches|shes)$/.test(name) && !/ss$/.test(name)) return name;
+	if (/(?:s|ses|xes|zes|ches|shes)$/.test(name) && !name.endsWith('ss')) return name;
 	if (/(?:s|x|z|ch|sh)$/.test(name)) return `${name}es`;
 	if (/[^aeiou]y$/.test(name)) return `${name.slice(0, -1)}ies`;
 	return `${name}s`;
@@ -172,7 +172,7 @@ function fallbackNameOf(listKind: string, pluralField: string): string {
 }
 
 export function computeSeparatedListsCensus(grammar: string, nm: NodeMap): SeparatedListsCensus {
-	const allKinds = new Set([...nm.nodes.keys()]);
+	const allKinds = new Set(nm.nodes.keys());
 
 	// Reverse index: list kind -> referencing parents (for the forwarded-factory
 	// column: a single-slot parent forwards the hoisted list's constructor).

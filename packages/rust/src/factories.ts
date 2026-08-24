@@ -491,7 +491,7 @@ export type AttributeItemBuilt = T.AttributeItem & {
 } & _NodeMethods;
 
 export function buildAttributeItem(child: T.AttributeItem.Config['attribute']): ReturnType<typeof _buildAttributeItem>;
-export function buildAttributeItem(config: T.Attribute.Config): ReturnType<typeof _buildAttributeItem>;
+export function buildAttributeItem(_config: T.Attribute.Config): ReturnType<typeof _buildAttributeItem>;
 export function buildAttributeItem(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildAttributeItem(args[0] as T.AttributeItem.Config['attribute']);
@@ -539,7 +539,7 @@ export type InnerAttributeItemBuilt = T.InnerAttributeItem & {
 export function buildInnerAttributeItem(
 	child: T.InnerAttributeItem.Config['attribute']
 ): ReturnType<typeof _buildInnerAttributeItem>;
-export function buildInnerAttributeItem(config: T.Attribute.Config): ReturnType<typeof _buildInnerAttributeItem>;
+export function buildInnerAttributeItem(_config: T.Attribute.Config): ReturnType<typeof _buildInnerAttributeItem>;
 export function buildInnerAttributeItem(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildInnerAttributeItem(args[0] as T.InnerAttributeItem.Config['attribute']);
@@ -2370,7 +2370,7 @@ export type ExternModifierBuilt = T.ExternModifier & {
 export function buildExternModifier(
 	child?: T.ExternModifier.Config['stringLiteral']
 ): ReturnType<typeof _buildExternModifier>;
-export function buildExternModifier(config: T.StringLiteral.Config): ReturnType<typeof _buildExternModifier>;
+export function buildExternModifier(_config: T.StringLiteral.Config): ReturnType<typeof _buildExternModifier>;
 export function buildExternModifier(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildExternModifier(args[0] as T.ExternModifier.Config['stringLiteral']);
@@ -4361,7 +4361,7 @@ export type MatchBlockBuilt = T.MatchBlock & {
 } & _NodeMethods;
 
 export function buildMatchBlock(child?: T.MatchBlockArms): ReturnType<typeof _buildMatchBlock>;
-export function buildMatchBlock(config: T.MatchBlockArms.Config): ReturnType<typeof _buildMatchBlock>;
+export function buildMatchBlock(_config: T.MatchBlockArms.Config): ReturnType<typeof _buildMatchBlock>;
 export function buildMatchBlock(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildMatchBlock(args[0] as T.MatchBlockArms);
@@ -4641,7 +4641,7 @@ export type ConstBlockBuilt = T.ConstBlock & {
 } & _NodeMethods;
 
 export function buildConstBlock(child: T.ConstBlock.Config['body']): ReturnType<typeof _buildConstBlock>;
-export function buildConstBlock(config?: Partial<T.Block.Config>): ReturnType<typeof _buildConstBlock>;
+export function buildConstBlock(_config?: Partial<T.Block.Config>): ReturnType<typeof _buildConstBlock>;
 export function buildConstBlock(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildConstBlock(args[0] as T.ConstBlock.Config['body']);
@@ -4994,7 +4994,7 @@ export type UnsafeBlockBuilt = T.UnsafeBlock & {
 } & _NodeMethods;
 
 export function buildUnsafeBlock(child: T.UnsafeBlock.Config['block']): ReturnType<typeof _buildUnsafeBlock>;
-export function buildUnsafeBlock(config?: Partial<T.Block.Config>): ReturnType<typeof _buildUnsafeBlock>;
+export function buildUnsafeBlock(_config?: Partial<T.Block.Config>): ReturnType<typeof _buildUnsafeBlock>;
 export function buildUnsafeBlock(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildUnsafeBlock(args[0] as T.UnsafeBlock.Config['block']);
@@ -5108,7 +5108,7 @@ export type TryBlockBuilt = T.TryBlock & {
 } & _NodeMethods;
 
 export function buildTryBlock(child: T.TryBlock.Config['block']): ReturnType<typeof _buildTryBlock>;
-export function buildTryBlock(config?: Partial<T.Block.Config>): ReturnType<typeof _buildTryBlock>;
+export function buildTryBlock(_config?: Partial<T.Block.Config>): ReturnType<typeof _buildTryBlock>;
 export function buildTryBlock(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildTryBlock(args[0] as T.TryBlock.Config['block']);
@@ -5817,7 +5817,7 @@ export type BlockCommentBuilt = T.BlockComment & {
 } & _NodeMethods;
 
 export function buildBlockComment(child?: T.BlockCommentArm): ReturnType<typeof _buildBlockComment>;
-export function buildBlockComment(config?: Partial<T.BlockCommentArm.Config>): ReturnType<typeof _buildBlockComment>;
+export function buildBlockComment(_config?: Partial<T.BlockCommentArm.Config>): ReturnType<typeof _buildBlockComment>;
 export function buildBlockComment(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildBlockComment(args[0] as T.BlockCommentArm);
@@ -7341,7 +7341,7 @@ export type ReferenceExpressionRawMutBuilt = T.ReferenceExpressionRawMut & {
 } & _NodeMethods;
 
 export function buildReferenceExpressionRawMut(
-	config?: T.ReferenceExpressionRawMut.Config
+	_config?: T.ReferenceExpressionRawMut.Config
 ): ReferenceExpressionRawMutBuilt {
 	return withMethods(
 		withAccessors(
