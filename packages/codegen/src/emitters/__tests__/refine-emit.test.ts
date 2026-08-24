@@ -453,7 +453,7 @@ describe('factories emitter — per-form factory emission', () => {
 		// emitRefineFormSubNamespaces in emitters/types.ts.
 		// `_config` when the form narrows every field (nothing is read off
 		// the config parameter — renameUnusedConfigParam fires).
-		expect(factoriesSrc).toMatch(/export function buildIfaceBodyCurly\(_?config\??: T\.IfaceBody\.Curly\.Config\)/);
+		expect(factoriesSrc).toMatch(/export function buildIfaceBodyCurly\(_config\??: T\.IfaceBody\.Curly\.Config\)/);
 	});
 
 	it('emitAll keeps refine form factories in the real generation path', () => {

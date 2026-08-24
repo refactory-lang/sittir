@@ -1,119 +1,123 @@
 {
-	"backend": "native",
-	"commit": "462454f",
-	"grammars": {
-		"python": {
-			"parityFixtures": {
-				"failingByKind": {},
-				"formatDeferredByKind": {},
-				"pass": 1307,
-				"total": 1307
-			},
-			"validators": {
-				"coverage": {
-					"failingKinds": [],
-					"formatDeferredKinds": [],
-					"pass": 142,
-					"total": 142
-				},
-				"factoryRoundtrip": {
-					"astMatchPass": 1385,
-					"failingKinds": ["_simple_pattern_negative"],
-					"formatDeferredKinds": [],
-					"pass": 1385,
-					"total": 1390
-				},
-				"from": {
-					"failingKinds": [],
-					"formatDeferredKinds": [],
-					"pass": 122,
-					"total": 122
-				},
-				"roundtrip": {
-					"astMatchPass": 113,
-					"failingKinds": ["module"],
-					"formatDeferredKinds": [],
-					"pass": 113,
-					"total": 116
-				}
-			}
-		},
-		"rust": {
-			"parityFixtures": {
-				"failingByKind": {},
-				"formatDeferredByKind": {},
-				"pass": 1486,
-				"total": 1486
-			},
-			"validators": {
-				"coverage": {
-					"failingKinds": [],
-					"formatDeferredKinds": [],
-					"pass": 206,
-					"total": 206
-				},
-				"factoryRoundtrip": {
-					"astMatchPass": 1519,
-					"failingKinds": [],
-					"formatDeferredKinds": [],
-					"pass": 1519,
-					"total": 1519
-				},
-				"from": {
-					"failingKinds": [],
-					"formatDeferredKinds": [],
-					"pass": 146,
-					"total": 146
-				},
-				"roundtrip": {
-					"astMatchPass": 134,
-					"failingKinds": [],
-					"formatDeferredKinds": [],
-					"pass": 134,
-					"total": 137
-				}
-			}
-		},
-		"typescript": {
-			"parityFixtures": {
-				"failingByKind": {},
-				"formatDeferredByKind": {},
-				"pass": 1500,
-				"total": 1500
-			},
-			"validators": {
-				"coverage": {
-					"failingKinds": [],
-					"formatDeferredKinds": [],
-					"pass": 199,
-					"total": 199
-				},
-				"factoryRoundtrip": {
-					"astMatchPass": 1203,
-					"failingKinds": ["object_type_content"],
-					"formatDeferredKinds": [],
-					"pass": 1203,
-					"total": 1212
-				},
-				"from": {
-					"failingKinds": ["member_expression"],
-					"formatDeferredKinds": [],
-					"pass": 142,
-					"total": 143
-				},
-				"roundtrip": {
-					"astMatchPass": 112,
-					"failingKinds": [],
-					"formatDeferredKinds": [],
-					"pass": 112,
-					"total": 114
-				}
-			}
-		}
-	},
-	"totals": {
-		"fail": 23,
-		"pass": 9716,
-		"total": 9739
-	}
+    "backend": "native",
+    "commit": "3b325c4",
+    "grammars": {
+        "python": {
+            "parityFixtures": {
+                "failingByKind": {},
+                "formatDeferredByKind": {},
+                "pass": 1361,
+                "total": 1361
+            },
+            "validators": {
+                "coverage": {
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 142,
+                    "total": 142
+                },
+                "factoryRoundtrip": {
+                    "astMatchPass": 1385,
+                    "failingKinds": [
+                        "_simple_pattern_negative"
+                    ],
+                    "formatDeferredKinds": [],
+                    "pass": 1385,
+                    "total": 1390
+                },
+                "from": {
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 122,
+                    "total": 122
+                },
+                "roundtrip": {
+                    "astMatchPass": 115,
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 115,
+                    "total": 116
+                }
+            }
+        },
+        "rust": {
+            "parityFixtures": {
+                "failingByKind": {},
+                "formatDeferredByKind": {},
+                "pass": 1486,
+                "total": 1486
+            },
+            "validators": {
+                "coverage": {
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 206,
+                    "total": 206
+                },
+                "factoryRoundtrip": {
+                    "astMatchPass": 1519,
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 1519,
+                    "total": 1519
+                },
+                "from": {
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 146,
+                    "total": 146
+                },
+                "roundtrip": {
+                    "astMatchPass": 134,
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 134,
+                    "total": 137
+                }
+            }
+        },
+        "typescript": {
+            "parityFixtures": {
+                "failingByKind": {},
+                "formatDeferredByKind": {},
+                "pass": 1500,
+                "total": 1500
+            },
+            "validators": {
+                "coverage": {
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 194,
+                    "total": 194
+                },
+                "factoryRoundtrip": {
+                    "astMatchPass": 1202,
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 1202,
+                    "total": 1202
+                },
+                "from": {
+                    "failingKinds": [
+                        "member_expression"
+                    ],
+                    "formatDeferredKinds": [],
+                    "pass": 142,
+                    "total": 143
+                },
+                "roundtrip": {
+                    "astMatchPass": 112,
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 112,
+                    "total": 114
+                }
+            }
+        }
+    },
+    "totals": {
+        "fail": 12,
+        "pass": 9766,
+        "total": 9778
+    }
 }

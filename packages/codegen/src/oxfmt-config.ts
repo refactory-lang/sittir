@@ -29,7 +29,10 @@ export const OXFMT_CONFIG: FormatConfig = {
 		'.specify/**',
 		'.changeset/**',
 		'specs/**',
-		'examples/**'
+		'examples/**',
+		// Producer-owned serialization: collect-baseline.ts emits a strict
+		// 4-space-indent contract — a formatter pass here breaks refresh diffs.
+		'packages/tools/baselines/**'
 	]
 };
 
