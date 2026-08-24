@@ -5158,6 +5158,16 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.SplatType as const,
+			_operator: projectKindEnumStorage(
+				normalizeSingularWrapSlot(
+					data._operator ?? readTerminalFromOther(data, [TSKindId.Star, TSKindId.StarStar]),
+					'operator',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
+				),
+				{ '*': 8, '**': 35 }
+			),
 			_identifier: normalizeSingularWrapSlot(data._identifier, 'identifier', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -5165,10 +5175,14 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle) {
 				span: (data as _NodeData).$span
 			}),
 
+			operator() {
+				return this._operator;
+			},
 			identifier() {
-				return drillIn<'*' | '**' | T.Identifier>(this._identifier, tree);
+				return drillIn<T.Identifier>(this._identifier, tree);
 			},
 			$with: {
+				operator: (v: NonNullable<T.SplatType['_operator']>) => wrapSplatType({ ...data, _operator: v }, tree),
 				identifier: (v: NonNullable<T.SplatType['_identifier']>) => wrapSplatType({ ...data, _identifier: v }, tree)
 			}
 		},

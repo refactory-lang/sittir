@@ -2068,20 +2068,18 @@ export function coerceToType(
 }
 
 export function coerceToSplatType(input: T.SplatType.Loose): ReturnType<typeof F.buildSplatType> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.SplatType)
-		return input as unknown as ReturnType<typeof F.buildSplatType>;
-	return F.buildSplatType(
-		_requireField(
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSplatType>;
+	return F.buildSplatType({
+		operator: _requireField(
 			'splat_type',
-			'identifier',
-			_resolveOneLeaf<'*' | '**' | T.Identifier>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'identifier' in input
-					? input.identifier
-					: input,
-				'identifier'
-			)
-		)
-	);
+			'operator',
+			coerceKindEnumStorage(_resolveOne<'*' | '**'>(input.operator, _K0, _K0), [
+				['*', TSKindId.Star] as const,
+				['**', TSKindId.StarStar] as const
+			])
+		),
+		identifier: _requireField('splat_type', 'identifier', _resolveOneLeaf<T.Identifier>(input.identifier, 'identifier'))
+	});
 }
 
 export function coerceToGenericType(input: T.GenericType.Loose): ReturnType<typeof F.buildGenericType> {

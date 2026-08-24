@@ -3720,7 +3720,17 @@
     "named": true,
     "fields": {
       "identifier": {
-        "multiple": true,
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
         "required": true,
         "types": [
           {
@@ -3730,10 +3740,6 @@
           {
             "type": "**",
             "named": false
-          },
-          {
-            "type": "identifier",
-            "named": true
           }
         ]
       }

@@ -1470,7 +1470,8 @@ export interface SplatTypeTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _identifier: SplatTypeIdentifierTransportSlot
+  _operator: Box<AnyTransport>
+  _identifier: IdentifierTransport
 }
 
 export interface StringContentTransport {

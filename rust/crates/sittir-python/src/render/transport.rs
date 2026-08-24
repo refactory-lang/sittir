@@ -11516,15 +11516,13 @@ impl RenderableTransport for TypeContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum SplatTypeIdentifierTransportSlot {
-    Identifier(IdentifierTransport),
+pub enum SplatTypeOperatorTransportSlot {
     Literal2_2a,
     Literal4_2a_2a,
-    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for SplatTypeIdentifierTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for SplatTypeOperatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -11532,126 +11530,76 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatTypeIdentifierTransportSlot
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    71 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    72 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    73 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    22 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
                     8 => Ok(Self::Literal2_2a),
                     35 => Ok(Self::Literal4_2a_2a),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in SplatTypeIdentifierTransportSlot",
+                        "unknown kind id {other} in SplatTypeOperatorTransportSlot",
                     ))),
                 }
-            }
-            ::napi::ValueType::String => {
-                let text = String::from_napi_value(env, napi_val)?;
-                Ok(Self::Verbatim(VerbatimTransport { text }))
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in SplatTypeIdentifierTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in SplatTypeOperatorTransportSlot")
                 )?;
                 match kind_id {
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    71 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    72 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    73 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    22 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
                     8 => Ok(Self::Literal2_2a),
                     35 => Ok(Self::Literal4_2a_2a),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in SplatTypeIdentifierTransportSlot",
+                        "unknown kind id {other} in SplatTypeOperatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("SplatTypeIdentifierTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("SplatTypeOperatorTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SplatTypeIdentifierTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for SplatTypeOperatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SplatTypeIdentifierTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("SplatTypeOperatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<SplatTypeIdentifierTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SplatTypeOperatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        SplatTypeIdentifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        SplatTypeOperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatTypeIdentifierTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatTypeOperatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        SplatTypeIdentifierTransportSlot::to_napi_value(env, *val)
+        SplatTypeOperatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn splat_type_identifier_transport_slot_to_any(t: SplatTypeIdentifierTransportSlot) -> AnyTransport {
+fn splat_type_operator_transport_slot_to_any(t: SplatTypeOperatorTransportSlot) -> AnyTransport {
     match t {
-        SplatTypeIdentifierTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        SplatTypeIdentifierTransportSlot::Literal2_2a => AnyTransport::Literal2_2a,
-        SplatTypeIdentifierTransportSlot::Literal4_2a_2a => AnyTransport::Literal4_2a_2a,
-        SplatTypeIdentifierTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        SplatTypeOperatorTransportSlot::Literal2_2a => AnyTransport::Literal2_2a,
+        SplatTypeOperatorTransportSlot::Literal4_2a_2a => AnyTransport::Literal4_2a_2a,
     }
 }
 
-impl RenderableTransport for SplatTypeIdentifierTransportSlot {
+impl RenderableTransport for SplatTypeOperatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            SplatTypeIdentifierTransportSlot::Identifier(inner) => inner.render_into(dest),
-            SplatTypeIdentifierTransportSlot::Literal2_2a => dest.write_str("*").map_err(::askama::Error::from),
-            SplatTypeIdentifierTransportSlot::Literal4_2a_2a => dest.write_str("**").map_err(::askama::Error::from),
-            SplatTypeIdentifierTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            SplatTypeOperatorTransportSlot::Literal2_2a => dest.write_str("*").map_err(::askama::Error::from),
+            SplatTypeOperatorTransportSlot::Literal4_2a_2a => dest.write_str("**").map_err(::askama::Error::from),
         }
     }
 }
@@ -19902,8 +19850,10 @@ pub struct SplatTypeTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    pub operator: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
-    pub identifier: SplatTypeIdentifierTransportSlot,
+    pub identifier: IdentifierTransport,
 }
 
 impl RenderableTransport for SplatTypeTransport {
@@ -34326,6 +34276,7 @@ fn render_type(node: &TypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result
 fn render_splat_type(node: &SplatTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = SplatTypeTemplate {
         identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
     };
     template.render_into(dest)
 }

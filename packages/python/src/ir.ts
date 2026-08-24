@@ -554,7 +554,12 @@ export const ir = {
 		strict: F.buildTypedParameter
 	}),
 	type: attachProps(FR.coerceToType, { from: FR.coerceToType, strict: F.buildType }),
-	splatType: attachProps(FR.coerceToSplatType, { from: FR.coerceToSplatType, strict: F.buildSplatType }),
+	splatType: attachProps(FR.coerceToSplatType, {
+		from: FR.coerceToSplatType,
+		strict: F.buildSplatType,
+		star: F.buildSplatType.star,
+		starStar: F.buildSplatType.starStar
+	}),
 	genericType: attachProps(FR.coerceToGenericType, { from: FR.coerceToGenericType, strict: F.buildGenericType }),
 	unionType: attachProps(FR.coerceToUnionType, { from: FR.coerceToUnionType, strict: F.buildUnionType }),
 	constrainedType: attachProps(FR.coerceToConstrainedType, {

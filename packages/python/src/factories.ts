@@ -2422,26 +2422,41 @@ export function buildType(
 	);
 }
 
-export function buildSplatType(identifier: T.SplatType.Config['identifier']) {
-	const _identifier = identifier;
+function buildSplatType$impl(config: T.SplatType.Config) {
+	const _operator = coerceKindEnumStorage<number>(config.operator, [
+		['*', TSKindId.Star] as const,
+		['**', TSKindId.StarStar] as const
+	]);
+	const _identifier = config.identifier;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.SplatType as const,
 				$source: 2 as const,
 				$named: true as const,
+				_operator,
 				_identifier,
 				$with: {
-					identifier: (value: T.SplatType.Config['identifier']) => buildSplatType(value)
+					operator: (value: NonNullable<Parameters<typeof buildSplatType$impl>[0]>['operator']) =>
+						buildSplatType$impl({ ...config, operator: value }),
+					identifier: (value: T.Identifier) => buildSplatType$impl({ ...config, identifier: value })
 				}
 			},
 			{
+				operator: () => _operator,
 				identifier: () => _identifier
 			}
 		),
 		methodsEngine
 	);
 }
+
+export const buildSplatType = attachProps(buildSplatType$impl, {
+	star: (identifier: T.SplatType.Config['identifier']) =>
+		buildSplatType$impl({ identifier: identifier, operator: TSKindId.Star }),
+	starStar: (identifier: T.SplatType.Config['identifier']) =>
+		buildSplatType$impl({ identifier: identifier, operator: TSKindId.StarStar })
+});
 
 export function buildGenericType(config: T.GenericType.Config) {
 	const _identifier = config.identifier;

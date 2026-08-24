@@ -2044,7 +2044,10 @@ export const FIELD_MAP: Record<
 		{ name: 'operator', required: true, multiple: false },
 		{ name: 'identifier', required: true, multiple: false }
 	],
-	splat_type: [{ name: 'identifier', required: true, multiple: false }],
+	splat_type: [
+		{ name: 'operator', required: true, multiple: false },
+		{ name: 'identifier', required: true, multiple: false }
+	],
 	string: [
 		{ name: 'stringStart', required: true, multiple: false },
 		{ name: 'contents', required: false, multiple: true },

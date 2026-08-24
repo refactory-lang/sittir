@@ -2934,8 +2934,13 @@ export interface Type {
 
 export interface SplatType {
 	readonly $type: TSKindId.SplatType;
-	readonly _identifier: '*' | '**' | Identifier;
-	identifier(): '*' | '**' | Identifier;
+	readonly _operator: number;
+	readonly _identifier: Identifier;
+	readonly __inputHints__?: {
+		readonly operator: KindEnum<'*' | '**', TSKindId.Star | TSKindId.StarStar>;
+	};
+	operator(): number;
+	identifier(): Identifier;
 }
 
 export interface GenericType {
