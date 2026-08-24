@@ -400,7 +400,11 @@ export interface SubtypeRef {
 	readonly storageKindId?: number;
 }
 
-export function isNodeRef(v: NodeOrTerminal): v is NodeRef & { node: AssembledNode | UnresolvedRef } {
+// A NodeRef that actually targets a node — the non-literal arm of the
+// node/value mutual exclusion documented on NodeRef.
+export type NodeBackedRef = NodeRef & { node: AssembledNode | UnresolvedRef };
+
+export function isNodeRef(v: NodeOrTerminal): v is NodeBackedRef {
 	return v.node !== undefined;
 }
 

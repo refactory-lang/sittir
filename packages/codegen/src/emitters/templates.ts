@@ -1582,7 +1582,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			// restoreEmittedSlotNames' doc comment) — only committed to
 			// `ctx.emittedSlotNames` for real once we know which bodies
 			// actually survive into the returned text.
-			const arraySlotDeltaByKey = new Map<string, AssembledNonterminal[]>();
+			const arraySlotDeltaByKey = new Map<string, string[]>();
 			for (const arm of rule.members) {
 				// The arm's EMITTED BODY is the authority on what it references —
 				// structural partitioning is unreliable here because the render
@@ -1678,7 +1678,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			discriminatorKey: string | undefined;
 			body: string;
 			needsGate: boolean;
-			delta: AssembledNonterminal[];
+			delta: string[];
 		}
 		const armInfos: ArmInfo[] = [];
 		let ungateableArm = false;
@@ -1832,7 +1832,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 		// See the union-backed branch above for why array-slot marks must stay
 		// speculative (snapshot/restore per arm) until we know a body survives
 		// into the returned text.
-		const arraySlotDeltaByKey = new Map<string, AssembledNonterminal[]>();
+		const arraySlotDeltaByKey = new Map<string, string[]>();
 		for (const info of armInfos) {
 			// An arm whose whole body was the hoisted shared tail has nothing
 			// arm-specific left to gate — the unconditional tail covers it.

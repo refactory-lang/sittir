@@ -7,7 +7,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNonterminal,
 	NodeOrTerminal,
-	NodeRef,
+	NodeBackedRef,
 	AssembledNode,
 	AssembledBranch,
 	AssembledGroup,
@@ -29,7 +29,8 @@ import {
 	deriveSlotCardinality,
 	deriveChildrenCardinality,
 	allSlotsOf,
-	storageKindOfRef
+	storageKindOfRef,
+	structuralFieldsOf
 } from '../compiler/model/node-map.ts';
 
 export function isSlotBearingCompound(
@@ -497,7 +498,7 @@ export function computeFieldStorageInfo(nodeMap: NodeMap): void {
  * storage emitter consumes this instead of ordering the stamps locally.
  */
 export function keywordRefWireIdentity(
-	value: NodeRef,
+	value: NodeBackedRef,
 	node: { resolvedKind?: string; resolvedKindId?: number }
 ): { kindName: string | undefined; kindId: number | undefined } {
 	const ownKind = storageKindOfRef(value.node);
@@ -627,7 +628,7 @@ export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: Node
 export function resolveDirectFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
 	const slot = resolveSingleFieldFactorySlot(node, nodeMap);
 	if (!slot) return undefined;
-	return node.fields.length === 1 ? slot : undefined;
+	return structuralFieldsOf(node).length === 1 ? slot : undefined;
 }
 
 /**
@@ -712,6 +713,7 @@ export interface SoleSlotFacts {
 }
 
 export function soleSlotFacts(node: AssembledNode, nodeMap: NodeMap): SoleSlotFacts | null {
+	if (!isSlotBearingCompound(node)) return null;
 	// The container's stamped slot is the classified sole user slot — NOT
 	// positionally `fields[0]`, which can be a keyword-presence marker
 	// preceding the payload (e.g. rust field_pattern's [ref_marker,
