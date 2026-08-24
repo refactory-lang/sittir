@@ -41,4 +41,6 @@ Current compile-checked examples:
 | `16-dogfooding.ts` | Dogfooding *(pending template/snippet-free rewrite)* |
 | `17-dogfood-rust.ts` | Dogfooding — rebuild `sittir-core/src/splice.rs` with `ir.*` |
 | `18-dogfood-typescript.ts` | Dogfooding — rebuild `common/src/format.ts` with `ir.*` |
+| `17-dogfood-rust-strict.ts` | Dogfooding — same items through `.strict` alone |
+| `18-dogfood-typescript-strict.ts` | Dogfooding — same items through `.strict` alone |
 | `index.ts` | Convenience barrel for all use-case modules |

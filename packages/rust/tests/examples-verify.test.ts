@@ -18,6 +18,7 @@ import { readSource, readFirstFunction, wrappedLazyAccess } from '../../../examp
 import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
 import { dogfoodContract } from '../../../examples/helpers.ts';
 import { rebuildSplice } from '../../../examples/17-dogfood-rust.ts';
+import { rebuildSpliceStrict } from '../../../examples/17-dogfood-rust-strict.ts';
 import { createEngine, ir } from '@sittir/rust';
 import { writeFileSync, mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
@@ -154,5 +155,13 @@ describe('examples/17 dogfood rust (splice.rs)', () => {
 		const r = dogfoodContract(createEngine(), rebuildSplice(), target);
 		expect(r.firstDifference).toBeUndefined();
 		expect(r.sameModuloWhitespace).toBe(true);
+	});
+});
+
+// The strict half: the same items through `.strict` alone, so each gap lands on
+// the layer that owns it.
+describe('examples/17 dogfood rust — strict factory surface', () => {
+	it('builds the items the public surface can reach', () => {
+		expect(rebuildSpliceStrict().$render()).toContain('pub enum SpliceError');
 	});
 });

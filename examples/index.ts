@@ -16,3 +16,5 @@ export * from './15-generate-file.ts';
 export * from './16-dogfooding.ts';
 export * from './17-dogfood-rust.ts';
 export * from './18-dogfood-typescript.ts';
+export * from './17-dogfood-rust-strict.ts';
+export * from './18-dogfood-typescript-strict.ts';

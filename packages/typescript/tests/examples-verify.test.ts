@@ -4,6 +4,11 @@ import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/typescript';
 import { dogfoodContract } from '../../../examples/helpers.ts';
 import { rebuildFormat, formatBoundary, returnResult } from '../../../examples/18-dogfood-typescript.ts';
+import {
+	rebuildFormatStrict,
+	formatBoundaryStrict,
+	returnResultStrict
+} from '../../../examples/18-dogfood-typescript-strict.ts';
 
 // GAP inventory (examples/18): A=2 cross-cutting (statement arms, import
 // clauses) B=1 (type-annotation wrapper) C=1 cross-cutting (required
@@ -25,5 +30,19 @@ describe('examples/18 dogfood typescript (format.ts)', () => {
 	});
 	it.fails('is identical to the real file modulo whitespace', () => {
 		expect(dogfoodContract(createEngine(), rebuildFormat(), target).sameModuloWhitespace).toBe(true);
+	});
+});
+
+// The strict half: same items through `.strict` alone, so each gap lands on the
+// layer that owns it.
+describe('examples/18 dogfood typescript — strict factory surface', () => {
+	it('builds a function declaration and a program', () => {
+		expect(rebuildFormatStrict().$render()).toContain('function applyFormat');
+	});
+	it('composes a member expression once its separator is supplied', () => {
+		expect(formatBoundaryStrict().$render()).toBe('format.boundary');
+	});
+	it.fails('renders a return statement with its expression', () => {
+		expect(returnResultStrict().$render()).toBe('return result;');
 	});
 });

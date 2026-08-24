@@ -5,8 +5,18 @@ import { Delimiter, ir } from '@sittir/rust';
 // `ir.*` API directly — no local wrappers, so the surface's own ergonomics
 // are what the example shows.
 //
-// Each `ir.<kind>` bundle IS its coercer, so the loose form is a direct call
-// and `.strict` is the explicit-node builder.
+// This module uses the COERCION surface: each `ir.<kind>` bundle IS its
+// coercer, so a loose call is a direct call. `17-dogfood-rust-strict.ts`
+// rebuilds the same items through `.strict` alone, so a coercion failure is
+// never mistaken for a factory one.
+//
+// Every gap marker names the layer that fails:
+//   (exposure) the factory builds the shape correctly, but no public
+//              constructor reaches it — no `ir` entry, and `build*` is not
+//              exported from the package.
+//   (coercion) the factory accepts the shape; the coercer will not resolve
+//              the loose input into it.
+//   (factory)  the builder itself cannot produce the shape.
 //
 // GAP B (whole file): the emitted `Loose` types are far narrower than what the
 // coercers accept at runtime — they reject `{ kind: … }` discriminated configs,
