@@ -29,8 +29,13 @@ function readGrammarJson(grammar: string): GrammarJsonFile | undefined {
 	if (!existsSync(grammarJsonPath)) return undefined;
 	try {
 		return JSON.parse(readFileSync(grammarJsonPath, 'utf8')) as GrammarJsonFile;
-	} catch {
-		return undefined;
+	} catch (e) {
+		// An ABSENT file is tolerated (early return above); an existing
+		// file that fails to read or parse must surface — swallowing it
+		// would let generation continue with empty inline/alias metadata.
+		throw new Error(
+			`readGrammarJson[${grammar}]: failed to read/parse ${grammarJsonPath}: ${e instanceof Error ? e.message : String(e)}`
+		);
 	}
 }
 
@@ -43,10 +48,8 @@ export function loadGrammarJsonInlineList(grammar: string): readonly string[] | 
 	return undefined;
 }
 
-/** Inline names the compiled rule bag does not define. tree-sitter's
- *  generate step warns about exactly ONE undefined inline name per run
- *  and silently drops the rest, so a dangling entry can hide for the
- *  life of the list behind the first. */
+// tree-sitter's generate step warns about only the FIRST undefined inline
+// name per run — later dangling entries hide behind it.
 export function danglingInlineNames(parsed: GrammarJsonFile): string[] {
 	if (!Array.isArray(parsed.inline)) return [];
 	const rules = new Set(Object.keys(parsed.rules ?? {}));

@@ -112,9 +112,8 @@ function collectTypeImports(_nodeMap: NodeMap): Set<string> {
 // Namespace — taxonomy-keyed wrap dispatch API
 // ---------------------------------------------------------------------------
 
-/** `tree` is threaded to every wrap function for lazy drill-ins; a body
- *  with nothing to drill never reads it — rename the parameter so the
- *  generated package lints clean. */
+// A wrap body with nothing to drill never reads `tree` — rename the param
+// so the generated package lints clean.
 function renameUnusedTreeParam(source: string): string {
 	const header = source.match(/^export function wrap\w+\(data: .*, tree: TreeHandle\) \{$/m)?.[0];
 	if (header === undefined) return source;
