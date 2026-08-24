@@ -17,6 +17,7 @@ import { renderMainFunction, renderUntouched, roundTrip } from '../../../example
 import { readSource, readFirstFunction, wrappedLazyAccess } from '../../../examples/07-read-source.ts';
 import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
 import { dogfoodContract } from '../../../examples/helpers.ts';
+import { rebuildSplice } from '../../../examples/17-dogfood-rust.ts';
 import { createEngine, ir } from '@sittir/rust';
 import { writeFileSync, mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
@@ -136,5 +137,22 @@ describe('dogfoodContract helper', () => {
 		const result = dogfoodContract(createEngine(), rebuilt, target);
 		expect(result.sameModuloWhitespace).toBe(false);
 		expect(result.firstDifference).toContain('other');
+	});
+});
+
+// GAP inventory (examples/17): A=6 B=7 C=1 — each marked in the example at
+// the construct it blocks. Both assertions flip to `it` as the classes close.
+describe('examples/17 dogfood rust (splice.rs)', () => {
+	const target = new URL('../../../rust/crates/sittir-core/src/splice.rs', import.meta.url).pathname;
+	it('builds and renders the whole file through the construction surface', () => {
+		expect(rebuildSplice().$render()).toContain('pub enum SpliceError');
+	});
+	it.fails('re-parses to the same tree as the real file', () => {
+		expect(dogfoodContract(createEngine(), rebuildSplice(), target).reparsesEqual).toBe(true);
+	});
+	it.fails('is identical to the real file modulo whitespace', () => {
+		const r = dogfoodContract(createEngine(), rebuildSplice(), target);
+		expect(r.firstDifference).toBeUndefined();
+		expect(r.sameModuloWhitespace).toBe(true);
 	});
 });

@@ -14,3 +14,4 @@ export * from './13-bulk-file-processing.ts';
 export * from './14-format-preserving-transform.ts';
 export * from './15-generate-file.ts';
 export * from './16-dogfooding.ts';
+export * from './17-dogfood-rust.ts';

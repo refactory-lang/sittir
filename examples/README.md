@@ -19,6 +19,7 @@ Current compile-checked examples:
 - `02-render-round-trip.ts`
 - `07-read-source.ts`
 - `09-type-guards.ts`
+- `17-dogfood-rust.ts`
 
 | File | Guide section |
 | ---- | ------------- |
@@ -38,4 +39,5 @@ Current compile-checked examples:
 | `14-format-preserving-transform.ts` | Format-preserving transforms *(pending `engine.findAndRead(...)`)* |
 | `15-generate-file.ts` | Generate a file from scratch *(pending richer Rust generation examples)* |
 | `16-dogfooding.ts` | Dogfooding *(pending template/snippet-free rewrite)* |
+| `17-dogfood-rust.ts` | Dogfooding — rebuild `sittir-core/src/splice.rs` with `ir.*` |
 | `index.ts` | Convenience barrel for all use-case modules |
