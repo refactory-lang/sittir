@@ -40,7 +40,13 @@ import {
 	type SoleSlotFacts,
 	canonicalSeparatedListField
 } from './shared.ts';
-import { fieldElementType, childElementType, kindEnumTextMapExpr, namespaceOf, delimiterMembersFor } from './factories.ts';
+import {
+	fieldElementType,
+	childElementType,
+	kindEnumTextMapExpr,
+	namespaceOf,
+	delimiterMembersFor
+} from './factories.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
 import { isNodeRef, storageKindIdByNameOf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
@@ -225,10 +231,7 @@ function withNamespaceProps(
 
 /** True when any emitted from() function carries namespaced props (drives
  *  the generated attachProps import). */
-export function fromUsesAttachProps(
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): boolean {
+export function fromUsesAttachProps(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): boolean {
 	for (const [, node] of nodeMap.nodes) {
 		if (!node.fromFunctionName || !node.rawFactoryName) continue;
 		if (node.modelType === 'token' || node.modelType === 'supertype' || node.modelType === 'group') continue;
@@ -281,7 +284,12 @@ export namespace from {
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
 		output.push(
-			withNamespaceProps(emitBranchFrom(node, nodeMap, intern, kindEntries), node as AssembledNode, nodeMap, kindEntries)
+			withNamespaceProps(
+				emitBranchFrom(node, nodeMap, intern, kindEntries),
+				node as AssembledNode,
+				nodeMap,
+				kindEntries
+			)
 		);
 	}
 
@@ -818,7 +826,9 @@ function emitSeparatedListFrom(
 			const guard = delimiterMembersFor(node)
 				.map((m) => `d === ${m}`)
 				.join(' || ');
-			optionParts.push(`delimiter: (() => { const d = ${sourceFields}._delimiter; return ${guard} ? d : undefined; })()`);
+			optionParts.push(
+				`delimiter: (() => { const d = ${sourceFields}._delimiter; return ${guard} ? d : undefined; })()`
+			);
 		}
 		return `${factory}({ ${optionParts.join(', ')} }, ${spreadElements(varExpr)})`;
 	};

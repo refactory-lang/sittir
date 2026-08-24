@@ -133,7 +133,10 @@ interface Manifest {
 const HOST_BINARY_SENTINEL = 'freshness-checked';
 
 function sourceInputsFor(grammar: Grammar): string[] {
-	return [join(REPO_ROOT, `packages/${grammar}/grammar.sittir.ts`), join(REPO_ROOT, `packages/${grammar}/package.json`)];
+	return [
+		join(REPO_ROOT, `packages/${grammar}/grammar.sittir.ts`),
+		join(REPO_ROOT, `packages/${grammar}/package.json`)
+	];
 }
 
 let cachedCodegenHash: string | null = null;

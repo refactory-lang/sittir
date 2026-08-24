@@ -209,7 +209,10 @@ function makeReservedNestedSupertypeNodeMap(): NodeMap {
 	nodes.set('string_literal', new AssembledPattern('string_literal', { type: PATTERN, value: '".*"' }));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('_literal', new AssembledSupertype('_literal', literalRule, [{ name: 'string_literal' }]));
-	nodes.set('_expression', new AssembledSupertype('_expression', expressionRule, [{ name: '_literal' }, { name: 'identifier' }]));
+	nodes.set(
+		'_expression',
+		new AssembledSupertype('_expression', expressionRule, [{ name: '_literal' }, { name: 'identifier' }])
+	);
 	return nodeMapWith(nodes);
 }
 

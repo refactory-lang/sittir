@@ -22,7 +22,9 @@ describe('RuleWalker.childrenOf', () => {
 	it('empty for leaves (string/pattern/symbol/supertype/indent)', () => {
 		expect(w.childrenOf(str('a'))).toEqual([]);
 		expect(w.childrenOf(sym('x'))).toEqual([]);
-		expect(w.childrenOf({ type: 'SUPERTYPE', name: 's', subtypes: [{ type: SYMBOL, name: 'a' }] } as AnyRule)).toEqual([]);
+		expect(w.childrenOf({ type: 'SUPERTYPE', name: 's', subtypes: [{ type: SYMBOL, name: 'a' }] } as AnyRule)).toEqual(
+			[]
+		);
 	});
 	it('separator string form (evaluate-phase, unlifted) contributes no edges', () => {
 		const r = { type: REPEAT, content: sym('x'), separator: ',' } as AnyRule;

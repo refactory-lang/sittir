@@ -239,9 +239,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		...(input.rawGrammar.bodyPatternZeroMatches ?? []).map((name) =>
 			fromBodyPatternZeroMatch(input.rawGrammar.name, name)
 		),
-		...(input.rawGrammar.desugarDivergences ?? []).map((event) =>
-			fromDesugarDivergence(input.rawGrammar.name, event)
-		)
+		...(input.rawGrammar.desugarDivergences ?? []).map((event) => fromDesugarDivergence(input.rawGrammar.name, event))
 	];
 	return {
 		nodeMap,

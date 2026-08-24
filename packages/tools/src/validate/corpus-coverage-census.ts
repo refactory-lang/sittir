@@ -26,7 +26,10 @@ export interface CorpusCoverageCensus {
 	zeroExposureKinds: string[];
 }
 
-export async function computeCorpusCoverageCensus(grammar: string, templatesPath: string): Promise<CorpusCoverageCensus> {
+export async function computeCorpusCoverageCensus(
+	grammar: string,
+	templatesPath: string
+): Promise<CorpusCoverageCensus> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);

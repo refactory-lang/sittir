@@ -4739,11 +4739,7 @@ var enrichedBase = enrich(base_default, {
   // regressed coverage (-1) when enabled — found via bisection against
   // `validate:native`, root cause not further isolated (each is a small,
   // contained loss, not a hard failure); left skipped until diagnosed.
-  skip: [
-    "tuple_type",
-    "trait_bounds",
-    "function_modifiers"
-  ]
+  skip: ["tuple_type", "trait_bounds", "function_modifiers"]
 });
 var grammar_sittir_default = grammar(
   enrichedBase,

@@ -395,7 +395,15 @@ async function computeValidatorWrapDiag(
 		findReparsedNodeAtOffset(tree2, targetKind, wrapped, triviaOffsetAdjust) ??
 		(renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, wrapped, triviaOffsetAdjust) : null);
 	if (!node2) {
-		return { renderedKind, targetKind, wrapped, reparseHasError: false, triviaOffsetAdjust, node2Found: false, astDiff: null };
+		return {
+			renderedKind,
+			targetKind,
+			wrapped,
+			reparseHasError: false,
+			triviaOffsetAdjust,
+			node2Found: false,
+			astDiff: null
+		};
 	}
 
 	const namedExtras = NAMED_EXTRAS_BY_GRAMMAR[grammar] ?? new Set<string>();
@@ -978,7 +986,9 @@ async function readProbeNodeData(
 		const deepReadTreeNodeRaw =
 			targetHandle && readTreeNodeFn ? readTreeNodeFn(handle, targetHandle.handle, targetHandle.childIndex) : undefined;
 		const deep =
-			readTreeNodeFn && !targetHandle ? target : resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData, onAccessorThrow);
+			readTreeNodeFn && !targetHandle
+				? target
+				: resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData, onAccessorThrow);
 		return { shallow, deep, deepReadTreeNodeRaw, legacyDeepNodeData };
 	}
 	const rawKindIdFromName = await loadKindIdFromName(grammar);

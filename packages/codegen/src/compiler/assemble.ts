@@ -47,7 +47,13 @@ import {
 	type GeneratedIdTables,
 	type GeneratedKindEntry
 } from './generated-metadata.ts';
-import type { AssembledNode, AssembledNonterminal, NodeOrTerminal, SubtypeRef, UnresolvedRef } from './model/node-map.ts';
+import type {
+	AssembledNode,
+	AssembledNonterminal,
+	NodeOrTerminal,
+	SubtypeRef,
+	UnresolvedRef
+} from './model/node-map.ts';
 import {
 	AssembledBranch,
 	AssembledPattern,
@@ -599,7 +605,10 @@ function resolveSupertypeSubtypes(
 ): SubtypeRef[] {
 	let subtypes: SubtypeRef[];
 	if (rule.type === SUPERTYPE) {
-		subtypes = rule.subtypes.map((s) => ({ name: s.aliasedFrom ?? s.name, storageKindId: s.aliasedFromId ?? s.kindId }));
+		subtypes = rule.subtypes.map((s) => ({
+			name: s.aliasedFrom ?? s.name,
+			storageKindId: s.aliasedFromId ?? s.kindId
+		}));
 	} else if (rule.type === CHOICE) {
 		subtypes = rule.members
 			.map((m) => (m.type === VARIANT ? m.content : m))
@@ -867,7 +876,9 @@ function resolveHiddenRuleContent(
 			if (seen.has(refName)) return [];
 			seen.add(refName);
 			const target = rules[refName];
-			return target ? resolveHiddenRuleContent(target, seen, ctx, kindEntries) : [{ name: refName, storageKindId: refStamp }];
+			return target
+				? resolveHiddenRuleContent(target, seen, ctx, kindEntries)
+				: [{ name: refName, storageKindId: refStamp }];
 		}
 		case SUPERTYPE:
 			return rule.subtypes.flatMap((symbolRef) => {

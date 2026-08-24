@@ -1365,9 +1365,7 @@ function emitSeparatedListFactory(
 		...(hasSeparatorKindOption ? ['  readonly _separator: number | undefined;'] : []),
 		...(hasDelimiterOption ? ['  readonly _delimiter: Delimiter;'] : [])
 	];
-	lines.push(
-		...builtAliasLines(listBuiltName, `T.${node.typeName}`, listWithTypeMembers, undefined, listExtraMembers)
-	);
+	lines.push(...builtAliasLines(listBuiltName, `T.${node.typeName}`, listWithTypeMembers, undefined, listExtraMembers));
 	if (hasOptions) {
 		lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
 		lines.push(
@@ -1586,7 +1584,14 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	readonly #output: string[] = [];
 
 	constructor(config: EmitFactoriesConfig) {
-		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries, inlineKinds, synthesizedKinds, triviaKinds } = config;
+		const {
+			nodeMap,
+			generatedIdTables,
+			kindEntries: providedKindEntries,
+			inlineKinds,
+			synthesizedKinds,
+			triviaKinds
+		} = config;
 		const kindEntries =
 			providedKindEntries ??
 			(generatedIdTables

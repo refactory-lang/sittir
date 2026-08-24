@@ -172,7 +172,9 @@ describe('terminated separated lists', () => {
 		const fnStart = src.indexOf('function _buildTupleExpressionElements(');
 		expect(fnStart).toBeGreaterThan(-1);
 		const body = src.slice(fnStart, src.indexOf('\n}\n', fnStart));
-		expect(body).toContain('elements.length === 1 && ((options.delimiter ?? Delimiter.None) & Delimiter.Trailing) === 0');
+		expect(body).toContain(
+			'elements.length === 1 && ((options.delimiter ?? Delimiter.None) & Delimiter.Trailing) === 0'
+		);
 		expect(body).toContain('requires a trailing delimiter');
 		// A prefix-style list (optional trailing comma, no mandatory head) must NOT carry the assert.
 		const tt = src.indexOf('function _buildTupleTypeElements(');

@@ -16,8 +16,18 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
-import { allSlotsOf, deriveSlotCardinality, resolveSlotAliasPairs, structuralFieldsOf } from '../compiler/model/node-map.ts';
-import { classifyFactoryShape, collectAliasSourceKinds, forwardedTargetKind, resolveFactoryFieldNames } from './shared.ts';
+import {
+	allSlotsOf,
+	deriveSlotCardinality,
+	resolveSlotAliasPairs,
+	structuralFieldsOf
+} from '../compiler/model/node-map.ts';
+import {
+	classifyFactoryShape,
+	collectAliasSourceKinds,
+	forwardedTargetKind,
+	resolveFactoryFieldNames
+} from './shared.ts';
 import type { FactoryShape } from './shared.ts';
 import type { PolymorphVariantDescriptor, PolymorphVariantMap } from '../polymorph-variant.ts';
 import { prefixNamedSuffix } from '../compiler/variant-structural.ts';
@@ -128,4 +138,3 @@ function createFactorySlotMeta(
 		...cardinality
 	};
 }
-

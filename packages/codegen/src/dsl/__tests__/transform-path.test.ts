@@ -376,10 +376,7 @@ describe('transform() — field() override unifies already-fielded choice arms',
 		// `isFieldLike` check in `unifyChoiceArmFieldNames` rather than the
 		// narrower enrich-only case already covered above. The third arm has
 		// no existing field and must be left untouched.
-		const rule = seq(
-			choice(fld('source', sym('string')), fld('target', sym('identifier')), sym('other')),
-			sym('rest')
-		);
+		const rule = seq(choice(fld('source', sym('string')), fld('target', sym('identifier')), sym('other')), sym('rest'));
 		const result = transform(rule, { 0: oneArgField('from_clause') as Rule<'evaluate'> });
 		const r = result as any;
 		expect(r.members[0]).toMatchObject({ type: 'FIELD', name: 'from_clause' });

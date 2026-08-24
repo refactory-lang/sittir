@@ -19,8 +19,8 @@ files:
   - packages/python/grammar.sittir.ts
   - packages/rust/base.ts
 ignores:
-  - "**/__tests__/**"
-  - "**/*.test.ts"
+  - '**/__tests__/**'
+  - '**/*.test.ts'
 rule:
   pattern: $X as unknown as $T
 note: >

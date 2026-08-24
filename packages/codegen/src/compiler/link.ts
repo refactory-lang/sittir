@@ -875,7 +875,9 @@ function foldAliasLiteralsIntoEnumRules(rules: Record<string, Rule<'link'>>): vo
 		const targetRule = rules[target]!;
 		if (!isEnumChoiceRule(targetRule)) return;
 		const known = new Set(
-			(targetRule as ChoiceRule<'link'>).members.map((m) => literalTextOf(m)).filter((t): t is string => t !== undefined)
+			(targetRule as ChoiceRule<'link'>).members
+				.map((m) => literalTextOf(m))
+				.filter((t): t is string => t !== undefined)
 		);
 		if (!known.has(sym.literal)) {
 			const set = extras.get(target) ?? new Set<string>();
@@ -1994,8 +1996,7 @@ function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'
 				if (!current.named) return;
 				if (current.content.type === SYMBOL) {
 					const storageName = current.content.name;
-					const parseName =
-						typeof current.value === 'string' && current.value.length > 0 ? current.value : undefined;
+					const parseName = typeof current.value === 'string' && current.value.length > 0 ? current.value : undefined;
 					subtypes.push(
 						parseName !== undefined && parseName !== storageName
 							? { type: SYMBOL, name: parseName, aliasedFrom: storageName }

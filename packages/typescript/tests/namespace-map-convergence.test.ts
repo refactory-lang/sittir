@@ -4,7 +4,16 @@
  */
 
 import { describe, it } from 'vitest';
-import type { ClassDeclaration, Program, JsxElement, ConfigFor, FluentFor, LooseFor, TreeFor, NamespaceMap } from '../src/index.ts';
+import type {
+	ClassDeclaration,
+	Program,
+	JsxElement,
+	ConfigFor,
+	FluentFor,
+	LooseFor,
+	TreeFor,
+	NamespaceMap
+} from '../src/index.ts';
 import type { ProgramBuilt } from '../src/factories.ts';
 import type { FluentNodeOf } from '@sittir/types';
 

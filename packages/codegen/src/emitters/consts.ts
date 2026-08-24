@@ -7,12 +7,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import type { GeneratedIdEntry, GeneratedIdTable, GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import {
-	keywordPresenceKind,
-	keywordPresenceValues,
-	keywordPresenceIsNonEmptyRepeat,
-	escForSource
-} from './shared.ts';
+import { keywordPresenceKind, keywordPresenceValues, keywordPresenceIsNonEmptyRepeat, escForSource } from './shared.ts';
 import { collectCatalogKinds } from './kind-discriminant.ts';
 
 export interface EmitConstsConfig {
@@ -561,4 +556,3 @@ function fieldsOfNode(node: AssembledNode): readonly AssembledNonterminal[] {
 			return [];
 	}
 }
-

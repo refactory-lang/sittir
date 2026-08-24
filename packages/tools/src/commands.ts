@@ -555,7 +555,10 @@ export function writeMergedValidationReport(
  *
  * Returns true when the gate passes.
  */
-export function enforceSClassCeilings(grammars: readonly Grammar[], entries: readonly ValidationReportEntry[]): boolean {
+export function enforceSClassCeilings(
+	grammars: readonly Grammar[],
+	entries: readonly ValidationReportEntry[]
+): boolean {
 	const ceilingsPath = resolvePath(join('packages', 'tools', 'sclass-ceilings.json'));
 	let ceilings: SClassCeilings;
 	try {
@@ -591,7 +594,9 @@ function readExistingValidationReportEntries(path: string): ValidationReportEntr
 	try {
 		return JSON.parse(readFileSync(path, 'utf8')) as ValidationReportEntry[];
 	} catch (e) {
-		throw new Error(`writeMergedValidationReport: failed to read/parse existing report at ${path}: ${(e as Error).message}`);
+		throw new Error(
+			`writeMergedValidationReport: failed to read/parse existing report at ${path}: ${(e as Error).message}`
+		);
 	}
 }
 

@@ -91,7 +91,11 @@ describe('classifySClass', () => {
 		['read-render-parse-ast-mismatch', 'childCount 7 ≠ 6 [...,automatic_semicolon]', 'S7'],
 		['read-render-parse-error', 'render: Missing field `_content`', 'S6'],
 		['factory-render-parse-ast-mismatch', 'root._line_continuation: missing on factory output', 'S6'],
-		['from-error', 'native coords unresolved for alias target — comparing against a mismatched WASM id would be unsound', 'S1'],
+		[
+			'from-error',
+			'native coords unresolved for alias target — comparing against a mismatched WASM id would be unsound',
+			'S1'
+		],
 		['read-render-parse-error', 'render: alias-wrapper kind id 436: no kind-keyed child slot to unwrap', 'S1'],
 		['read-render-parse-error', 'render: unknown kind id 428 in EnumBodyGroup1Content', 'S1']
 	] as const)('message fallback for %s: %s -> %s', (code, message, expected) => {
@@ -110,7 +114,8 @@ describe('classifySClass', () => {
 		expect(
 			classifySClass({
 				code: 'read-render-parse-error',
-				message: 'render: Missing field `_left` on IfExpressionTransport._condition on ExpressionStatementTransport._content on SourceFileTransport._statements'
+				message:
+					'render: Missing field `_left` on IfExpressionTransport._condition on ExpressionStatementTransport._content on SourceFileTransport._statements'
 			})
 		).toBeUndefined();
 	});
