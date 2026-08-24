@@ -218,11 +218,11 @@ function buildTokenTreePattern$impl(
 
 export const buildTokenTreePattern = attachProps(buildTokenTreePattern$impl, {
 	paren: (config: Partial<T.TokenTreePatternParen.Config> = {}) =>
-		buildTokenTreePattern$impl(buildTokenTreePatternParen(config)),
+		buildTokenTreePattern$impl(buildTokenTreePatternParen(config) as T.TokenTreePatternParen),
 	bracket: (config: Partial<T.TokenTreePatternBracket.Config> = {}) =>
-		buildTokenTreePattern$impl(buildTokenTreePatternBracket(config)),
+		buildTokenTreePattern$impl(buildTokenTreePatternBracket(config) as T.TokenTreePatternBracket),
 	brace: (config: Partial<T.TokenTreePatternBrace.Config> = {}) =>
-		buildTokenTreePattern$impl(buildTokenTreePatternBrace(config))
+		buildTokenTreePattern$impl(buildTokenTreePatternBrace(config) as T.TokenTreePatternBrace)
 });
 
 export type TokenBindingPatternBuilt = T.TokenBindingPattern & {
@@ -418,15 +418,18 @@ function buildTokenTree$impl(
 }
 
 export const buildTokenTree = attachProps(buildTokenTree$impl, {
-	paren: (config: Partial<T.TokenTreeParen.Config> = {}) => buildTokenTree$impl(buildTokenTreeParen(config)),
-	bracket: (config: Partial<T.TokenTreeBracket.Config> = {}) => buildTokenTree$impl(buildTokenTreeBracket(config)),
-	brace: (config: Partial<T.TokenTreeBrace.Config> = {}) => buildTokenTree$impl(buildTokenTreeBrace(config)),
+	paren: (config: Partial<T.TokenTreeParen.Config> = {}) =>
+		buildTokenTree$impl(buildTokenTreeParen(config) as T.TokenTreeParen),
+	bracket: (config: Partial<T.TokenTreeBracket.Config> = {}) =>
+		buildTokenTree$impl(buildTokenTreeBracket(config) as T.TokenTreeBracket),
+	brace: (config: Partial<T.TokenTreeBrace.Config> = {}) =>
+		buildTokenTree$impl(buildTokenTreeBrace(config) as T.TokenTreeBrace),
 	delimTokenTreeParen: (config: Partial<T.DelimTokenTreeParen.Config> = {}) =>
-		buildTokenTree$impl(buildDelimTokenTreeParen(config)),
+		buildTokenTree$impl(buildDelimTokenTreeParen(config) as T.DelimTokenTreeParen),
 	delimTokenTreeBracket: (config: Partial<T.DelimTokenTreeBracket.Config> = {}) =>
-		buildTokenTree$impl(buildDelimTokenTreeBracket(config)),
+		buildTokenTree$impl(buildDelimTokenTreeBracket(config) as T.DelimTokenTreeBracket),
 	delimTokenTreeBrace: (config: Partial<T.DelimTokenTreeBrace.Config> = {}) =>
-		buildTokenTree$impl(buildDelimTokenTreeBrace(config))
+		buildTokenTree$impl(buildDelimTokenTreeBrace(config) as T.DelimTokenTreeBrace)
 });
 
 export type TokenRepetitionBuilt = T.TokenRepetition & {
@@ -2442,9 +2445,13 @@ function buildVisibilityModifier$impl(child: T.Crate | T.VisibilityModifierPub):
 }
 
 export const buildVisibilityModifier = attachProps(buildVisibilityModifier$impl, {
-	crate: () => buildVisibilityModifier$impl(buildCrate()),
+	crate: () => buildVisibilityModifier$impl(buildCrate() as T.Crate),
 	pub: (child?: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath) =>
-		buildVisibilityModifier$impl(child === undefined ? buildVisibilityModifierPub() : buildVisibilityModifierPub(child))
+		buildVisibilityModifier$impl(
+			(child === undefined
+				? buildVisibilityModifierPub()
+				: buildVisibilityModifierPub(child)) as T.VisibilityModifierPub
+		)
 });
 
 export type BracketedTypeBuilt = T.BracketedType & {
@@ -3255,11 +3262,11 @@ function buildDelimTokenTree$impl(
 
 export const buildDelimTokenTree = attachProps(buildDelimTokenTree$impl, {
 	paren: (config: Partial<T.DelimTokenTreeParen.Config> = {}) =>
-		buildDelimTokenTree$impl(buildDelimTokenTreeParen(config)),
+		buildDelimTokenTree$impl(buildDelimTokenTreeParen(config) as T.DelimTokenTreeParen),
 	bracket: (config: Partial<T.DelimTokenTreeBracket.Config> = {}) =>
-		buildDelimTokenTree$impl(buildDelimTokenTreeBracket(config)),
+		buildDelimTokenTree$impl(buildDelimTokenTreeBracket(config) as T.DelimTokenTreeBracket),
 	brace: (config: Partial<T.DelimTokenTreeBrace.Config> = {}) =>
-		buildDelimTokenTree$impl(buildDelimTokenTreeBrace(config))
+		buildDelimTokenTree$impl(buildDelimTokenTreeBrace(config) as T.DelimTokenTreeBrace)
 });
 
 export type ScopedIdentifierBuilt = T.ScopedIdentifier & {
@@ -3900,9 +3907,10 @@ function buildArrayExpression$impl(child: T.ArrayExpressionSemi | T.ArrayExpress
 }
 
 export const buildArrayExpression = attachProps(buildArrayExpression$impl, {
-	semi: (config: T.ArrayExpressionSemi.Config) => buildArrayExpression$impl(buildArrayExpressionSemi(config)),
+	semi: (config: T.ArrayExpressionSemi.Config) =>
+		buildArrayExpression$impl(buildArrayExpressionSemi(config) as T.ArrayExpressionSemi),
 	list: (config: Partial<T.ArrayExpressionList.Config> = {}) =>
-		buildArrayExpression$impl(buildArrayExpressionList(config))
+		buildArrayExpression$impl(buildArrayExpressionList(config) as T.ArrayExpressionList)
 });
 
 export type ParenthesizedExpressionBuilt = T.ParenthesizedExpression & {
@@ -3976,7 +3984,7 @@ export const buildTupleExpression = attachProps(buildTupleExpression$impl, {
 		buildTupleExpression$impl({
 			tupleExpressionElements: (
 				buildTupleExpressionElements as (...a: unknown[]) => ReturnType<typeof buildTupleExpressionElements>
-			)(...args)
+			)(...args) as T.TupleExpressionElements
 		})
 });
 
@@ -4330,8 +4338,8 @@ function buildElseClause$impl(child: T.Block | T.IfExpression): ElseClauseBuilt 
 }
 
 export const buildElseClause = attachProps(buildElseClause$impl, {
-	block: (config: Partial<T.Block.Config> = {}) => buildElseClause$impl(buildBlock(config)),
-	ifExpression: (config: T.IfExpression.Config) => buildElseClause$impl(buildIfExpression(config))
+	block: (config: Partial<T.Block.Config> = {}) => buildElseClause$impl(buildBlock(config) as T.Block),
+	ifExpression: (config: T.IfExpression.Config) => buildElseClause$impl(buildIfExpression(config) as T.IfExpression)
 });
 
 export type MatchExpressionBuilt = T.MatchExpression & {
@@ -5493,12 +5501,14 @@ function buildRangePattern$impl(child: T.RangePatternArm2 | T.RangePatternPrefix
 }
 
 export const buildRangePattern = attachProps(buildRangePattern$impl, {
-	arm2: (config: T.RangePatternArm2.Config) => buildRangePattern$impl(buildRangePatternArm2(config)),
-	prefix: (config: T.RangePatternPrefix.Config) => buildRangePattern$impl(buildRangePatternPrefix(config)),
+	arm2: (config: T.RangePatternArm2.Config) =>
+		buildRangePattern$impl(buildRangePatternArm2(config) as T.RangePatternArm2),
+	prefix: (config: T.RangePatternPrefix.Config) =>
+		buildRangePattern$impl(buildRangePatternPrefix(config) as T.RangePatternPrefix),
 	dotDotEq: (...args: Parameters<typeof buildRangePatternPrefix.dotDotEq>) =>
-		buildRangePattern$impl(buildRangePatternPrefix.dotDotEq(...args)),
+		buildRangePattern$impl(buildRangePatternPrefix.dotDotEq(...args) as T.RangePatternPrefix),
 	dotDot: (...args: Parameters<typeof buildRangePatternPrefix.dotDot>) =>
-		buildRangePattern$impl(buildRangePatternPrefix.dotDot(...args))
+		buildRangePattern$impl(buildRangePatternPrefix.dotDot(...args) as T.RangePatternPrefix)
 });
 
 export type RefPatternBuilt = T.RefPattern & {
@@ -5629,8 +5639,8 @@ function buildOrPattern$impl(child: T.OrPatternBinary | T.OrPatternPrefix): OrPa
 }
 
 export const buildOrPattern = attachProps(buildOrPattern$impl, {
-	binary: (config: T.OrPatternBinary.Config) => buildOrPattern$impl(buildOrPatternBinary(config)),
-	prefix: (config: T.OrPatternPrefix.Config) => buildOrPattern$impl(buildOrPatternPrefix(config))
+	binary: (config: T.OrPatternBinary.Config) => buildOrPattern$impl(buildOrPatternBinary(config) as T.OrPatternBinary),
+	prefix: (config: T.OrPatternPrefix.Config) => buildOrPattern$impl(buildOrPatternPrefix(config) as T.OrPatternPrefix)
 });
 
 export type NegativeLiteralBuilt = T.NegativeLiteral & {
@@ -6073,11 +6083,14 @@ function _buildEnumVariantListElements(
 	options: { delimiter?: Delimiter.Trailing }
 ): EnumVariantListElementsBuilt {
 	_assertNonEmpty(elements, '_enum_variant_list_elements.elements');
-	const _element = elements.map((e) =>
-		isNodeData(e) && e.$type === TSKindId.AttributedEnumVariant
-			? e
-			: buildAttributedEnumVariant({ enumVariant: e } as Parameters<typeof buildAttributedEnumVariant>[0])
-	) as unknown as NonEmptyArray<T.AttributedEnumVariant>;
+	const _mapped = elements.map(
+		(e): T.AttributedEnumVariant =>
+			isNodeData(e) && e.$type === TSKindId.AttributedEnumVariant
+				? (e as T.AttributedEnumVariant)
+				: buildAttributedEnumVariant({ enumVariant: e } as Parameters<typeof buildAttributedEnumVariant>[0])
+	);
+	_assertNonEmpty(_mapped, '_enum_variant_list_elements.elements');
+	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -6140,13 +6153,16 @@ function _buildFieldDeclarationListElements(
 	options: { delimiter?: Delimiter.Trailing }
 ): FieldDeclarationListElementsBuilt {
 	_assertNonEmpty(elements, '_field_declaration_list_elements.elements');
-	const _element = elements.map((e) =>
-		isNodeData(e) && e.$type === TSKindId.AttributedFieldDeclaration
-			? e
-			: buildAttributedFieldDeclaration({ fieldDeclaration: e } as Parameters<
-					typeof buildAttributedFieldDeclaration
-				>[0])
-	) as unknown as NonEmptyArray<T.AttributedFieldDeclaration>;
+	const _mapped = elements.map(
+		(e): T.AttributedFieldDeclaration =>
+			isNodeData(e) && e.$type === TSKindId.AttributedFieldDeclaration
+				? (e as T.AttributedFieldDeclaration)
+				: buildAttributedFieldDeclaration({ fieldDeclaration: e } as Parameters<
+						typeof buildAttributedFieldDeclaration
+					>[0])
+	);
+	_assertNonEmpty(_mapped, '_field_declaration_list_elements.elements');
+	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -6206,11 +6222,14 @@ function _buildOrderedFieldDeclarationListElements(
 	options: { delimiter?: Delimiter.Trailing }
 ): OrderedFieldDeclarationListElementsBuilt {
 	_assertNonEmpty(elements, '_ordered_field_declaration_list_elements.elements');
-	const _element = elements.map((e) =>
-		isNodeData(e) && e.$type === TSKindId.AttributedOrderedField
-			? e
-			: buildAttributedOrderedField({ type: e } as Parameters<typeof buildAttributedOrderedField>[0])
-	) as unknown as NonEmptyArray<T.AttributedOrderedField>;
+	const _mapped = elements.map(
+		(e): T.AttributedOrderedField =>
+			isNodeData(e) && e.$type === TSKindId.AttributedOrderedField
+				? (e as T.AttributedOrderedField)
+				: buildAttributedOrderedField({ type: e } as Parameters<typeof buildAttributedOrderedField>[0])
+	);
+	_assertNonEmpty(_mapped, '_ordered_field_declaration_list_elements.elements');
+	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -6341,11 +6360,14 @@ function _buildTypeParametersElements(
 	options: { delimiter?: Delimiter.Trailing }
 ): TypeParametersElementsBuilt {
 	_assertNonEmpty(elements, '_type_parameters_elements.elements');
-	const _element = elements.map((e) =>
-		isNodeData(e) && e.$type === TSKindId.AttributedTypeParameter
-			? e
-			: buildAttributedTypeParameter({ content: e } as Parameters<typeof buildAttributedTypeParameter>[0])
-	) as unknown as NonEmptyArray<T.AttributedTypeParameter>;
+	const _mapped = elements.map(
+		(e): T.AttributedTypeParameter =>
+			isNodeData(e) && e.$type === TSKindId.AttributedTypeParameter
+				? (e as T.AttributedTypeParameter)
+				: buildAttributedTypeParameter({ content: e } as Parameters<typeof buildAttributedTypeParameter>[0])
+	);
+	_assertNonEmpty(_mapped, '_type_parameters_elements.elements');
+	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -6472,11 +6494,14 @@ function _buildParametersElements(
 	options: { delimiter?: Delimiter.Trailing }
 ): ParametersElementsBuilt {
 	_assertNonEmpty(elements, '_parameters_elements.elements');
-	const _element = elements.map((e) =>
-		isNodeData(e) && e.$type === TSKindId.AttributedParameter
-			? e
-			: buildAttributedParameter({ content: e } as Parameters<typeof buildAttributedParameter>[0])
-	) as unknown as NonEmptyArray<T.AttributedParameter>;
+	const _mapped = elements.map(
+		(e): T.AttributedParameter =>
+			isNodeData(e) && e.$type === TSKindId.AttributedParameter
+				? (e as T.AttributedParameter)
+				: buildAttributedParameter({ content: e } as Parameters<typeof buildAttributedParameter>[0])
+	);
+	_assertNonEmpty(_mapped, '_parameters_elements.elements');
+	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -6655,11 +6680,14 @@ function _buildTypeArgumentsElements(
 	options: { delimiter?: Delimiter.Trailing }
 ): TypeArgumentsElementsBuilt {
 	_assertNonEmpty(elements, '_type_arguments_elements.elements');
-	const _element = elements.map((e) =>
-		isNodeData(e) && e.$type === TSKindId.TypeArgument
-			? e
-			: buildTypeArgument({ content: e } as Parameters<typeof buildTypeArgument>[0])
-	) as unknown as NonEmptyArray<T.TypeArgument>;
+	const _mapped = elements.map(
+		(e): T.TypeArgument =>
+			isNodeData(e) && e.$type === TSKindId.TypeArgument
+				? (e as T.TypeArgument)
+				: buildTypeArgument({ content: e } as Parameters<typeof buildTypeArgument>[0])
+	);
+	_assertNonEmpty(_mapped, '_type_arguments_elements.elements');
+	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -6719,11 +6747,14 @@ function _buildArgumentsElements(
 	options: { delimiter?: Delimiter.Trailing }
 ): ArgumentsElementsBuilt {
 	_assertNonEmpty(elements, '_arguments_elements.elements');
-	const _element = elements.map((e) =>
-		isNodeData(e) && e.$type === TSKindId.AttributedArgument
-			? e
-			: buildAttributedArgument({ expression: e } as Parameters<typeof buildAttributedArgument>[0])
-	) as unknown as NonEmptyArray<T.AttributedArgument>;
+	const _mapped = elements.map(
+		(e): T.AttributedArgument =>
+			isNodeData(e) && e.$type === TSKindId.AttributedArgument
+				? (e as T.AttributedArgument)
+				: buildAttributedArgument({ expression: e } as Parameters<typeof buildAttributedArgument>[0])
+	);
+	_assertNonEmpty(_mapped, '_arguments_elements.elements');
+	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -7089,10 +7120,11 @@ function buildVisibilityModifierGroup$impl(
 }
 
 export const buildVisibilityModifierGroup = attachProps(buildVisibilityModifierGroup$impl, {
-	self: () => buildVisibilityModifierGroup$impl(buildSelf()),
-	super: () => buildVisibilityModifierGroup$impl(buildSuper()),
-	crate: () => buildVisibilityModifierGroup$impl(buildCrate()),
-	visibilityModifierInPath: (child: T.Path) => buildVisibilityModifierGroup$impl(buildVisibilityModifierInPath(child))
+	self: () => buildVisibilityModifierGroup$impl(buildSelf() as T.Self),
+	super: () => buildVisibilityModifierGroup$impl(buildSuper() as T.Super),
+	crate: () => buildVisibilityModifierGroup$impl(buildCrate() as T.Crate),
+	visibilityModifierInPath: (child: T.Path) =>
+		buildVisibilityModifierGroup$impl(buildVisibilityModifierInPath(child) as T.VisibilityModifierInPath)
 });
 
 export type ArrayExpressionArmBuilt = T.ArrayExpressionArm & {

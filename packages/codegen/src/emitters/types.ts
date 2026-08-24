@@ -1096,14 +1096,8 @@ function fieldInputHintTypeExpr(
 	return undefined;
 }
 
-/**
- * from()/loose-only input widening — never reaches the strict Config
- * surface (strict factories store config values directly, so a widened
- * strict input would leak literals into Built storage). Keyword-
- * constructible widening: a sole-ref-kind field whose target builds from
- * a bare keyword string accepts those literals — mirrors _resolveOne's
- * string routes exactly (same stringConstructibleTexts derivation).
- */
+// Loose-only: strict factories store config values directly, so widened
+// literals must never reach Config. See glossary.
 function fieldFromInputHintTypeExpr(f: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
 	if (f.values.length === 1 && slotKindNames(f).length === 1) {
 		const texts = stringConstructibleTexts(slotKindNames(f)[0]!, nodeMap);

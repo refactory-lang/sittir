@@ -18,12 +18,15 @@ export function explicitMainFunction() {
 
 export function nestedGreetFunction() {
 	return ir.functionItem.strict({
-		visibilityModifier: ir.visibilityModifier.pub(), /* TODO: elevate choice arms to 'subfactories'  */
+		visibilityModifier: ir.visibilityModifier.pub(ir.visibilityModifier.inPath), /* TODO: elevate choice arms to 'subfactories'  */
 		name: ir.identifier('greet'),
 		parameters: ir.parameters.strict(
 			ir.parameter({ name: 'name', type: 'String' }),
 		),
-		body: ir.block.strict(),
+		body: ir.block.strict({
+			statements: [
+			],
+		}),
 	});
 }
 

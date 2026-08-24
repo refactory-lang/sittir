@@ -577,14 +577,8 @@ export function userSlotsOf(node: AssembledNode, nodeMap: NodeMap): AssembledNon
 	return node.fields.filter((f) => !isHiddenInfraSlot(f, nodeMap) && keywordPresenceKind(f, nodeMap) === null);
 }
 
-/**
- * Texts that construct `kind` from a bare string via from(): a keyword's
- * own text, a keyword-constructible branch's leading keyword, or — for a
- * branch whose sole user slot is its content — the constructible texts of
- * that content's arms, one level deep. Single derivation shared by the
- * runtime resolver tables (from emitter) and the config-input literal
- * widening (types emitter).
- */
+// One derivation shared by the runtime string routes and the
+// config-literal widening — see glossary.
 export function stringConstructibleTexts(kind: string, nodeMap: NodeMap): string[] {
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined) return [];
@@ -607,26 +601,16 @@ export function stringConstructibleTexts(kind: string, nodeMap: NodeMap): string
 	return out;
 }
 
-/**
- * `keywordConstructibleText` gated by the grammar's word shape — brace/
- * paren-led list kinds also open with a fixed STRING, but only a WORD
- * keyword may claim a bare-string construction route. The single filter
- * both the runtime routing tables and the literal widening go through.
- */
+// Word-shape gate: brace/paren-led list kinds also open with a fixed
+// STRING — only a WORD keyword claims a bare-string route.
 export function wordConstructibleText(node: AssembledNode, nodeMap: NodeMap): string | undefined {
 	if (!(node instanceof AssembledBranch)) return undefined;
 	const text = node.keywordConstructibleText;
 	return text !== undefined && matchesWordShape(text, nodeMap.wordMatcher) ? text : undefined;
 }
 
-/**
- * A wrapper kind is TRANSPARENT when exactly ONE of its slots is required
- * (a singular content payload beside only-optional decoration — e.g.
- * parameters' `attributed_parameter`: optional attribute + required
- * content). Callers may hand the content directly; the consuming factory
- * wraps it. Returns the content slot, or undefined when the shape doesn't
- * qualify.
- */
+// ≥2 slots required: a single-slot kind IS the element — its factory may
+// take a direct text value. See glossary.
 export function transparentWrapperContentSlot(kind: string, nodeMap: NodeMap): AssembledNonterminal | undefined {
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined || !isSlotBearingCompound(node) || node.rawFactoryName === undefined) return undefined;

@@ -57,11 +57,8 @@ export interface GrammarRoles {
 	get(role: Role): string[];
 }
 
-/**
- * Compose the scm-derived roles with the grammar's `root` role. The start
- * symbol is a grammar fact — the rule record's first rule — not an scm
- * capture, so the caller that owns the rule record stamps it here.
- */
+// The start symbol is a rule-record fact, not an scm capture — the
+// rule-record owner stamps it.
 export function withRootRole(roles: GrammarRoles, rootKind: string): GrammarRoles {
 	const entries: RoleEntry[] = [...roles.entries, { role: 'root', kinds: [rootKind] }];
 	return {

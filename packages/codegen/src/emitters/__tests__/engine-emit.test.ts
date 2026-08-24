@@ -31,7 +31,7 @@ describe('emitEngine', () => {
 
 	it('createEngine returns SittirEngineLike (not Promise)', () => {
 		const output = emitEngine({ grammar: 'python', rootTypeName: 'Module' });
-		expect(output).toContain('): SittirEngineLike<Module> {');
+		expect(output).toContain('): SittirEngineLike<ModuleRoot> {');
 	});
 
 	it('throws when native engine is unavailable (no JS-engine fallback)', () => {

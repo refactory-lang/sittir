@@ -257,6 +257,10 @@ const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {
 	default: 'switch_default',
 	yield: 'yield_expression'
 };
+const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData) | undefined> = {
+	switch_default: () => F.buildSwitchDefault(),
+	yield_expression: () => F.buildYieldExpression()
+};
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['asserts', 'type_query', 'literal_type']);
 
 function _resolveOne<T>(v: _FromFieldInput, leafKinds: readonly string[], branchKinds: readonly string[]): T {
@@ -272,7 +276,11 @@ function _resolveOne<T>(v: _FromFieldInput, leafKinds: readonly string[], branch
 	}
 	if (typeof v === 'string') {
 		const bk = _KEYWORD_BRANCH_BY_TEXT[v];
-		if (bk !== undefined && branchKinds.includes(bk) && _isFromKind(bk)) return _resolveByKind(bk, {}) as T;
+		if (bk !== undefined && branchKinds.includes(bk)) {
+			const build = _KEYWORD_BRANCH_BUILD[bk];
+			if (build !== undefined) return build() as T;
+			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;
+		}
 		const fwd = branchKinds.length === 1 ? branchKinds[0]! : undefined;
 		if (fwd !== undefined && _STRING_CAPABLE_BRANCHES.has(fwd) && _isFromKind(fwd)) return _resolveByKind(fwd, v) as T;
 	}

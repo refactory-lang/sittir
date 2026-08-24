@@ -144,17 +144,17 @@ function buildExportStatement$impl(
 
 export const buildExportStatement = attachProps(buildExportStatement$impl, {
 	default: (child: T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm) =>
-		buildExportStatement$impl(buildExportStatementDefault(child)),
+		buildExportStatement$impl(buildExportStatementDefault(child) as T.ExportStatementDefault),
 	fromArm: (...args: Parameters<typeof buildExportStatementDefault.fromArm>) =>
-		buildExportStatement$impl(buildExportStatementDefault.fromArm(...args)),
+		buildExportStatement$impl(buildExportStatementDefault.fromArm(...args) as T.ExportStatementDefault),
 	declArm: (...args: Parameters<typeof buildExportStatementDefault.declArm>) =>
-		buildExportStatement$impl(buildExportStatementDefault.declArm(...args)),
+		buildExportStatement$impl(buildExportStatementDefault.declArm(...args) as T.ExportStatementDefault),
 	typeExport: (config: T.ExportStatementTypeExport.Config) =>
-		buildExportStatement$impl(buildExportStatementTypeExport(config)),
+		buildExportStatement$impl(buildExportStatementTypeExport(config) as T.ExportStatementTypeExport),
 	equalsExport: (config: T.ExportStatementEqualsExport.Config) =>
-		buildExportStatement$impl(buildExportStatementEqualsExport(config)),
+		buildExportStatement$impl(buildExportStatementEqualsExport(config) as T.ExportStatementEqualsExport),
 	namespaceExport: (config: T.ExportStatementNamespaceExport.Config) =>
-		buildExportStatement$impl(buildExportStatementNamespaceExport(config))
+		buildExportStatement$impl(buildExportStatementNamespaceExport(config) as T.ExportStatementNamespaceExport)
 });
 
 export type NamespaceExportBuilt = T.NamespaceExport & {
@@ -408,9 +408,11 @@ export const buildImportClause = attachProps(buildImportClause$impl, {
 	namedImports: (
 		...args: ({ delimiter?: Delimiter.Trailing } | (T.ImportSpecifier | T.ImportIdentifier | T.ImportSpecifierAs))[]
 	) =>
-		buildImportClause$impl((buildNamedImports as (...a: unknown[]) => ReturnType<typeof buildNamedImports>)(...args)),
+		buildImportClause$impl(
+			(buildNamedImports as (...a: unknown[]) => ReturnType<typeof buildNamedImports>)(...args) as T.NamedImports
+		),
 	defaultImport: (config: T.ImportClauseDefaultImport.Config) =>
-		buildImportClause$impl(buildImportClauseDefaultImport(config))
+		buildImportClause$impl(buildImportClauseDefaultImport(config) as T.ImportClauseDefaultImport)
 });
 
 export type FromClauseBuilt = T.FromClause & {
@@ -790,8 +792,10 @@ function buildVariableDeclarator$impl(
 }
 
 export const buildVariableDeclarator = attachProps(buildVariableDeclarator$impl, {
-	arm1: (config: T.VariableDeclaratorArm1.Config) => buildVariableDeclarator$impl(buildVariableDeclaratorArm1(config)),
-	arm2: (config: T.VariableDeclaratorArm2.Config) => buildVariableDeclarator$impl(buildVariableDeclaratorArm2(config))
+	arm1: (config: T.VariableDeclaratorArm1.Config) =>
+		buildVariableDeclarator$impl(buildVariableDeclaratorArm1(config) as T.VariableDeclaratorArm1),
+	arm2: (config: T.VariableDeclaratorArm2.Config) =>
+		buildVariableDeclarator$impl(buildVariableDeclaratorArm2(config) as T.VariableDeclaratorArm2)
 });
 
 export type StatementBlockBuilt = T.StatementBlock & {
@@ -1990,7 +1994,7 @@ function buildClass$impl(config: T.Class.Config): ClassBuilt {
 
 export const buildClass = attachProps(buildClass$impl, {
 	body: (...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[]) =>
-		buildClass$impl({ body: buildClassBody(...children) })
+		buildClass$impl({ body: buildClassBody(...children) as T.ClassBody })
 });
 
 export type ClassDeclarationBuilt = T.ClassDeclaration & {
@@ -2080,8 +2084,9 @@ function buildClassHeritage$impl(child: T.ClassHeritageExtendsClause | T.Impleme
 
 export const buildClassHeritage = attachProps(buildClassHeritage$impl, {
 	extendsClause: (config: T.ClassHeritageExtendsClause.Config) =>
-		buildClassHeritage$impl(buildClassHeritageExtendsClause(config)),
-	implementsClause: (...children: T.Type[]) => buildClassHeritage$impl(buildImplementsClause(...children))
+		buildClassHeritage$impl(buildClassHeritageExtendsClause(config) as T.ClassHeritageExtendsClause),
+	implementsClause: (...children: T.Type[]) =>
+		buildClassHeritage$impl(buildImplementsClause(...children) as T.ImplementsClause)
 });
 
 export type FunctionExpressionBuilt = T.FunctionExpression & {
@@ -2454,10 +2459,12 @@ function buildCallExpression$impl(
 }
 
 export const buildCallExpression = attachProps(buildCallExpression$impl, {
-	call: (config: T.CallExpressionCall.Config) => buildCallExpression$impl(buildCallExpressionCall(config)),
+	call: (config: T.CallExpressionCall.Config) =>
+		buildCallExpression$impl(buildCallExpressionCall(config) as T.CallExpressionCall),
 	templateCall: (config: T.CallExpressionTemplateCall.Config) =>
-		buildCallExpression$impl(buildCallExpressionTemplateCall(config)),
-	member: (config: T.CallExpressionMember.Config) => buildCallExpression$impl(buildCallExpressionMember(config))
+		buildCallExpression$impl(buildCallExpressionTemplateCall(config) as T.CallExpressionTemplateCall),
+	member: (config: T.CallExpressionMember.Config) =>
+		buildCallExpression$impl(buildCallExpressionMember(config) as T.CallExpressionMember)
 });
 
 export type NewExpressionBuilt = T.NewExpression & {
@@ -2888,7 +2895,7 @@ function buildBinaryExpression$impl(config: Partial<T.BinaryExpression.Config> =
 
 export const buildBinaryExpression = attachProps(buildBinaryExpression$impl, {
 	arm: (config: T.BinaryExpressionArm.Config) =>
-		buildBinaryExpression$impl({ binaryExpressionArm: buildBinaryExpressionArm(config) }),
+		buildBinaryExpression$impl({ binaryExpressionArm: buildBinaryExpressionArm(config) as T.BinaryExpressionArm }),
 	ampAmp: (left?: T.BinaryExpression.Config['left'], right?: T.BinaryExpression.Config['right']) =>
 		buildBinaryExpression$impl({ left: left, right: right, operator: TSKindId.AmpAmp }),
 	pipePipe: (left?: T.BinaryExpression.Config['left'], right?: T.BinaryExpression.Config['right']) =>
@@ -3013,8 +3020,9 @@ function buildUpdateExpression$impl(
 
 export const buildUpdateExpression = attachProps(buildUpdateExpression$impl, {
 	postfix: (config: T.UpdateExpressionPostfix.Config) =>
-		buildUpdateExpression$impl(buildUpdateExpressionPostfix(config)),
-	prefix: (config: T.UpdateExpressionPrefix.Config) => buildUpdateExpression$impl(buildUpdateExpressionPrefix(config))
+		buildUpdateExpression$impl(buildUpdateExpressionPostfix(config) as T.UpdateExpressionPostfix),
+	prefix: (config: T.UpdateExpressionPrefix.Config) =>
+		buildUpdateExpression$impl(buildUpdateExpressionPrefix(config) as T.UpdateExpressionPrefix)
 });
 
 export type SequenceExpressionBuilt = T.SequenceExpression & {
@@ -3073,8 +3081,9 @@ function buildString$impl(child: T.StringDouble | T.StringSingle): StringBuilt {
 }
 
 export const buildString = attachProps(buildString$impl, {
-	double: (config: Partial<T.StringDouble.Config> = {}) => buildString$impl(buildStringDouble(config)),
-	single: (config: Partial<T.StringSingle.Config> = {}) => buildString$impl(buildStringSingle(config))
+	double: (config: Partial<T.StringDouble.Config> = {}) =>
+		buildString$impl(buildStringDouble(config) as T.StringDouble),
+	single: (config: Partial<T.StringSingle.Config> = {}) => buildString$impl(buildStringSingle(config) as T.StringSingle)
 });
 
 export function buildUnescapedDoubleStringFragment(text: string) {
@@ -7625,11 +7634,14 @@ function _buildExportSpecifiers(
 	options: { delimiter?: Delimiter.Trailing }
 ): ExportSpecifiersBuilt {
 	_assertNonEmpty(elements, '_export_specifiers.elements');
-	const _export_specifier = elements.map((e) =>
-		isNodeData(e) && e.$type === TSKindId.ExportSpecifier
-			? e
-			: buildExportSpecifier({ name: e } as Parameters<typeof buildExportSpecifier>[0])
-	) as unknown as NonEmptyArray<T.ExportSpecifier>;
+	const _mapped = elements.map(
+		(e): T.ExportSpecifier =>
+			isNodeData(e) && e.$type === TSKindId.ExportSpecifier
+				? (e as T.ExportSpecifier)
+				: buildExportSpecifier({ name: e } as Parameters<typeof buildExportSpecifier>[0])
+	);
+	_assertNonEmpty(_mapped, '_export_specifiers.elements');
+	const _export_specifier = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -7692,11 +7704,14 @@ function _buildImportSpecifiers(
 	options: { delimiter?: Delimiter.Trailing }
 ): ImportSpecifiersBuilt {
 	_assertNonEmpty(elements, '_import_specifiers.elements');
-	const _import_specifier = elements.map((e) =>
-		isNodeData(e) && e.$type === TSKindId.ImportSpecifier
-			? e
-			: buildImportSpecifier({ content: e } as Parameters<typeof buildImportSpecifier>[0])
-	) as unknown as NonEmptyArray<T.ImportSpecifier>;
+	const _mapped = elements.map(
+		(e): T.ImportSpecifier =>
+			isNodeData(e) && e.$type === TSKindId.ImportSpecifier
+				? (e as T.ImportSpecifier)
+				: buildImportSpecifier({ content: e } as Parameters<typeof buildImportSpecifier>[0])
+	);
+	_assertNonEmpty(_mapped, '_import_specifiers.elements');
+	const _import_specifier = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -8023,11 +8038,14 @@ function _buildTypeParametersElements(
 	options: { delimiter?: Delimiter.Trailing }
 ): TypeParametersElementsBuilt {
 	_assertNonEmpty(elements, '_type_parameters_elements.elements');
-	const _type_parameter = elements.map((e) =>
-		isNodeData(e) && e.$type === TSKindId.TypeParameter
-			? e
-			: buildTypeParameter({ name: e } as Parameters<typeof buildTypeParameter>[0])
-	) as unknown as NonEmptyArray<T.TypeParameter>;
+	const _mapped = elements.map(
+		(e): T.TypeParameter =>
+			isNodeData(e) && e.$type === TSKindId.TypeParameter
+				? (e as T.TypeParameter)
+				: buildTypeParameter({ name: e } as Parameters<typeof buildTypeParameter>[0])
+	);
+	_assertNonEmpty(_mapped, '_type_parameters_elements.elements');
+	const _type_parameter = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -8173,7 +8191,7 @@ export const buildImportClauseGroup = attachProps(buildImportClauseGroup$impl, {
 		...args: ({ delimiter?: Delimiter.Trailing } | (T.ImportSpecifier | T.ImportIdentifier | T.ImportSpecifierAs))[]
 	) =>
 		buildImportClauseGroup$impl(
-			(buildNamedImports as (...a: unknown[]) => ReturnType<typeof buildNamedImports>)(...args)
+			(buildNamedImports as (...a: unknown[]) => ReturnType<typeof buildNamedImports>)(...args) as T.NamedImports
 		)
 });
 
@@ -8509,9 +8527,9 @@ function buildExportStatementDefault$impl(
 
 export const buildExportStatementDefault = attachProps(buildExportStatementDefault$impl, {
 	fromArm: (config: T.ExportStatementDefaultFromArm.Config) =>
-		buildExportStatementDefault$impl(buildExportStatementDefaultFromArm(config)),
+		buildExportStatementDefault$impl(buildExportStatementDefaultFromArm(config) as T.ExportStatementDefaultFromArm),
 	declArm: (config: T.ExportStatementDefaultDeclArm.Config) =>
-		buildExportStatementDefault$impl(buildExportStatementDefaultDeclArm(config))
+		buildExportStatementDefault$impl(buildExportStatementDefaultDeclArm(config) as T.ExportStatementDefaultDeclArm)
 });
 
 export type ArrowFunctionParameterBuilt = T.ArrowFunctionParameter & {

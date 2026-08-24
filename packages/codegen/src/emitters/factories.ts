@@ -763,9 +763,8 @@ export function constructorTargetKind(kind: string, nodeMap: NodeMap): string {
 	return target === null ? kind : constructorTargetKind(target, nodeMap);
 }
 
-/** Whether any hop of `kind`'s forwarding chain crosses an OPTIONAL
- *  slot — the hop target's surface alone loses that fact, so a form
- *  constructor consuming the chain's final surface must re-apply it. */
+// A hop target's surface alone loses an earlier optional slot's
+// optionality — see glossary.
 function chainParamOptional(kind: string, nodeMap: NodeMap): boolean {
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined || (node.modelType !== 'branch' && node.modelType !== 'group')) return false;
@@ -778,7 +777,7 @@ function chainParamOptional(kind: string, nodeMap: NodeMap): boolean {
 
 /** The parameters a form constructor declares for `kind` and how it
  *  forwards them — the target factory's own surface. */
-function constructorSurface(
+export function constructorSurface(
 	kind: string,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
@@ -1073,12 +1072,19 @@ function emitNamespacedConstructors(
 			if (sig === undefined) continue;
 			// An `(options | element)[]` surface has no overload to resolve
 			// against — the same untyped-args call the forwarded wrapper makes.
-			const call =
+			let call =
 				sig.args === '...args' && entry.path.length === 0
 					? `(${ctor} as (...a: unknown[]) => ReturnType<typeof ${ctor}>)(...args)`
 					: sig.argOptional === true
 						? `${sig.args} === undefined ? ${ctor}() : ${ctor}(${sig.args})`
 						: `${ctor}(${sig.args})`;
+			// Upcast the built child to its base interface: the Built literal
+			// is deep enough to blow TS's comparison depth against the
+			// parent's Config union; the base interface IS a union member, so
+			// the compare short-circuits (a shallow supertype hop, not an
+			// escape hatch).
+			const childTypeName = nodeMap.nodes.get(entry.childKind)?.typeName;
+			if (childTypeName !== undefined) call = `(${call}) as T.${childTypeName}`;
 			lines.push(`  ${key}: (${sig.params}) => ${fill(entry.slot, call)},`);
 		} else {
 			// TS forbids a required parameter after an optional one: a slot is
@@ -1310,7 +1316,12 @@ export function separatedListSurface(
 	/** Present when the sole element kind is a transparent wrapper (see
 	 *  transparentWrapperContentSlot): the loose element union admits the
 	 *  wrapper's content directly, and the factory wraps bare content. */
-	readonly wrapper?: { readonly member: string; readonly factory: string; readonly contentKey: string };
+	readonly wrapper?: {
+		readonly member: string;
+		readonly factory: string;
+		readonly contentKey: string;
+		readonly typeName: string;
+	};
 	/** The UN-widened elements tuple — what storage actually holds after
 	 *  the factory's wrap pass; Built assignability depends on it. */
 	readonly storageElementsType: string;
@@ -1318,7 +1329,7 @@ export function separatedListSurface(
 	const contentSlot = buildSeparatedListContentSlot(node);
 	let elemType = fieldElementType(contentSlot, nodeMap);
 	const baseElemType = elemType;
-	let wrapper: { member: string; factory: string; contentKey: string } | undefined;
+	let wrapper: { member: string; factory: string; contentKey: string; typeName: string } | undefined;
 	const contentKinds = slotKindNames(contentSlot);
 	if (contentKinds.length === 1 && kindEntries) {
 		const wKind = contentKinds[0]!;
@@ -1326,7 +1337,12 @@ export function separatedListSurface(
 		const content = transparentWrapperContentSlot(wKind, nodeMap);
 		const factoryName = nodeMap.nodes.get(wKind)?.rawFactoryName;
 		if (entry !== undefined && content !== undefined && factoryName !== undefined) {
-			wrapper = { member: entry.member, factory: factoryName, contentKey: content.configKey };
+			wrapper = {
+				member: entry.member,
+				factory: factoryName,
+				contentKey: content.configKey,
+				typeName: nodeMap.nodes.get(wKind)!.typeName
+			};
 			elemType = `${elemType} | ${fieldElementType(content, nodeMap)}`;
 		}
 	}
@@ -1455,12 +1471,15 @@ function emitSeparatedListFactory(
 	}
 	const w = surface.wrapper;
 	if (w !== undefined) {
-		// Transparent-wrapper coercion: bare content becomes the wrapper;
-		// a pre-built wrapper passes through. The cast restores the
-		// rest-tuple shape the storage key expects.
+		// Transparent-wrapper coercion: bare content becomes the wrapper; a
+		// pre-built wrapper passes through. `.map` erases the rest-tuple
+		// shape, so a nonEmpty list re-narrows via the runtime assertion
+		// instead of a cast.
 		lines.push(
-			`  const ${contentStorageKey} = elements.map((e) => (isNodeData(e) && e.$type === TSKindId.${w.member} ? e : ${w.factory}({ ${w.contentKey}: e } as Parameters<typeof ${w.factory}>[0]))) as unknown as ${surface.storageElementsType};`
+			`  const _mapped = elements.map((e): T.${w.typeName} => (isNodeData(e) && e.$type === TSKindId.${w.member} ? (e as T.${w.typeName}) : ${w.factory}({ ${w.contentKey}: e } as Parameters<typeof ${w.factory}>[0])));`
 		);
+		if (node.nonEmpty) lines.push(`  _assertNonEmpty(_mapped, '${node.kind}.elements');`);
+		lines.push(`  const ${contentStorageKey} = _mapped;`);
 	} else {
 		lines.push(`  const ${contentStorageKey} = elements;`);
 	}

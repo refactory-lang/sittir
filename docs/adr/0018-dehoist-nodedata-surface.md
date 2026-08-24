@@ -102,8 +102,8 @@ non-enumerable accessor, `$with.<name>` setter. No generated kind interface
 carries `$child` or `$children`; `$other` remains the residual storage for
 anonymous escape tokens only. Generic ordered iteration over a node's
 children (what `$children` would have offered) is deferred to the typed
-query API's cursor surface (ADR-0023); until then, consumers narrow via
-`is.*` guards and read the typed accessors.
+query API's cursor surface; until then, consumers narrow via `is.*`
+guards and read the typed accessors.
 
 ## Alternatives Considered
 

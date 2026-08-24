@@ -285,3 +285,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * fires if the role has no kinds after SCM extraction.
  */
 ```
+
+---
+
+### `withRootRole` (`packages/codegen/src/scm/extract-roles.ts:64`)
+
+```text
+/**
+ * Compose the scm-derived roles with the grammar's `root` role. The start
+ * symbol is a grammar fact — the rule record's first rule — not an scm
+ * capture, so the caller that owns the rule record stamps it here.
+ */
+```

@@ -1,7 +1,9 @@
-// Runtime verification of the compile-checked use-case examples: every
-// exported example function executes against the native engine and
-// produces the output the guide promises. Typecheck (`type-check:examples`)
-// pins the surface; this suite pins the behavior.
+// Runtime verification of the COMPILE-CHECKED use-case examples
+// (01/02/07/09 — the `type-check:examples` include set): every export of
+// those modules executes against the native engine and produces the
+// output the guide promises. Typecheck pins the surface; this suite pins
+// the behavior. The pending-surface examples (03–06, 08, 10–16) join as
+// their APIs land.
 import { describe, expect, it } from 'vitest';
 import {
 	explicitMainFunction,

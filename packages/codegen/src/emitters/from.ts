@@ -1233,9 +1233,11 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('  }');
 	lines.push('  if (typeof v === "string") {');
 	lines.push('    const bk = _KEYWORD_BRANCH_BY_TEXT[v];');
-	lines.push(
-		'    if (bk !== undefined && branchKinds.includes(bk) && _isFromKind(bk)) return _resolveByKind(bk, {}) as T;'
-	);
+	lines.push('    if (bk !== undefined && branchKinds.includes(bk)) {');
+	lines.push('      const build = _KEYWORD_BRANCH_BUILD[bk];');
+	lines.push('      if (build !== undefined) return build() as T;');
+	lines.push('      if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;');
+	lines.push('    }');
 	lines.push('    const fwd = branchKinds.length === 1 ? branchKinds[0]! : undefined;');
 	lines.push(
 		'    if (fwd !== undefined && _STRING_CAPABLE_BRANCHES.has(fwd) && _isFromKind(fwd)) return _resolveByKind(fwd, v) as T;'
@@ -1440,18 +1442,32 @@ function emitResolverHelpers(
 	// Keyword-constructible branch routing (see _resolveOne's string
 	// routes): text → branch kind for exact-arm construction, plus the
 	// single-target branches whose coercer can consume a bare string.
-	// Both derive from the model's stringConstructibleTexts stamp.
+	// Both derive from the model's stringConstructibleTexts stamp. HIDDEN
+	// arms (`_visibility_modifier_pub`) have no from() route of their own,
+	// so a parallel build table maps each constructible kind to its STRICT
+	// factory — an empty build IS the keyword (all slots optional).
 	const byText: [string, string][] = [];
+	const buildByKind: [string, string][] = [];
 	const stringCapable: string[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') || !node.fromFunctionName) continue;
 		if (!(node instanceof AssembledBranch)) continue;
 		const own = wordConstructibleText(node, nodeMap);
-		if (own !== undefined) byText.push([own, kind]);
-		else if (stringConstructibleTexts(kind, nodeMap).length > 0) stringCapable.push(kind);
+		if (own !== undefined && node.rawFactoryName !== undefined) {
+			byText.push([own, kind]);
+			buildByKind.push([kind, node.rawFactoryName]);
+		} else if (
+			!kind.startsWith('_') &&
+			node.fromFunctionName !== undefined &&
+			stringConstructibleTexts(kind, nodeMap).length > 0
+		) {
+			stringCapable.push(kind);
+		}
 	}
 	lines.push('const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {');
 	for (const [text, k] of byText) lines.push(`  ${JSON.stringify(text)}: ${JSON.stringify(k)},`);
+	lines.push('};');
+	lines.push('const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData) | undefined> = {');
+	for (const [k, factory] of buildByKind) lines.push(`  ${JSON.stringify(k)}: () => F.${factory}(),`);
 	lines.push('};');
 	lines.push(`const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(${JSON.stringify(stringCapable)});`);
 	lines.push('');
